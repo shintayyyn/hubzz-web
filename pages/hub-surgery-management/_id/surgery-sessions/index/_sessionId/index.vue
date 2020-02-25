@@ -62,6 +62,7 @@ export default {
           message: "This session could not be found"
         });
       }
+      return error({ status: 404, message: "Page Not Found" });
       throw err;
     }
   },

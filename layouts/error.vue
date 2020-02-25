@@ -9,6 +9,9 @@
     <h1 v-else-if="error.statusCode === 400">
       <span v-if="error.message">{{error.response.data.message}}</span>
     </h1>
+    <h1 v-else-if="error.statusCode === 404">
+      <span class="text-xl" v-if="error.message">{{error.message}}</span>
+    </h1>
     <h1 v-else-if="error.statusCode === 404" class="text-xl">Page not found</h1>
     <h1 v-else>
       <span v-if="error.message">Something went wrong.</span>

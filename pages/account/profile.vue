@@ -126,7 +126,7 @@
                     class="w-1/2 px-1"
                     required
                   />
-                  <AppInput
+                  <!-- <AppInput
                     v-model="form.max_rate_per_hour"
                     :type="'number'"
                     :name="'max_rate_per_hour'"
@@ -136,7 +136,7 @@
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
                     class="w-1/2 px-1"
                     required
-                  />
+                  />-->
                 </div>
               </div>
               <div class="flex flex-col w-full sm:w-1/3 px-1">
@@ -153,7 +153,7 @@
                     required
                   />
                   <div class="mx-1"></div>
-                  <AppInput
+                  <!-- <AppInput
                     v-model="form.max_rate_per_half_day_session"
                     :type="'number'"
                     :name="'max_rate_per_half_day_session'"
@@ -162,7 +162,7 @@
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
                     required
-                  />
+                  />-->
                 </div>
               </div>
               <div class="flex flex-col w-full sm:w-1/3 px-1">
@@ -179,7 +179,7 @@
                     required
                   />
                   <div class="mx-1"></div>
-                  <AppInput
+                  <!-- <AppInput
                     v-model="form.max_rate_per_whole_day_session"
                     :type="'number'"
                     :name="'max_rate_per_whole_day_session'"
@@ -188,7 +188,7 @@
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
                     required
-                  />
+                  />-->
                 </div>
               </div>
             </div>
@@ -198,10 +198,10 @@
             :type="'multi-checkbox'"
             :name="'mandatory_training_id'"
             :label="'Please select mandatory training courses completed.'"
-            :error="formError.find(item => item.field === 'mandatory_training_id')"
             :lists="mandatoryTrainings"
-            @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
-            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
+            @checked="form.mandatory_training_id.push(parseInt($event))"
+            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
+            @uncheckAll="form.mandatory_training_id = []"
           />
           <AppInput
             v-model="form.practice_type_id"
@@ -492,6 +492,7 @@ export default {
         max_rate_per_half_day_session: "",
         min_rate_per_whole_day_session: "",
         max_rate_per_whole_day_session: "",
+        mandatory_training_id: [],
         practice_type_id: [],
         post_code: "",
         miles: "",
@@ -734,6 +735,10 @@ export default {
         "ir35",
         "claim_nhs"
       ];
+      this.max_rate_per_hour = 999999999;
+      this.max_rate_per_half_day_session = 999999999;
+      this.max_rate_per_whole_day_session = 999999999;
+
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
       } else if (this.form.employment_type === "Limited Company") {

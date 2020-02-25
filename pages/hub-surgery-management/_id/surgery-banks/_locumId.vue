@@ -156,6 +156,7 @@ export default {
         user
       };
     } catch (err) {
+      return error({ status: 404, message: "Page Not Found" });
       throw err;
     }
   },

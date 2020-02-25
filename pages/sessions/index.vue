@@ -509,15 +509,15 @@ export default {
       columns.push(
         {
           name: "From",
-          dataIndex: "date_start",
+          dataIndex: "date_time_start",
           sortable: true,
-          class: "text-center localDate"
+          class: "text-center"
         },
         {
           name: "To",
-          dataIndex: "date_end",
+          dataIndex: "date_time_end",
           sortable: true,
-          class: "text-center localDate"
+          class: "text-center"
         }
       );
       if (queryStatus === "allocated") {
@@ -638,6 +638,7 @@ export default {
       let job_rate = "";
       let rate_type_id = "";
       let job_rate_type_id = "";
+
       let near_post_code = "";
       let miles = "";
       let calendar_date_start = "";
@@ -645,6 +646,7 @@ export default {
       let time_start = "";
       let time_end = "";
       let invoice_status = "";
+
       let viewing_locum_user_id = [];
       let title_includes = "";
       let job_title_includes = "";
@@ -673,10 +675,6 @@ export default {
             params: {
               status,
               order_by: [],
-              job_number: !isJobPart ? job_number : "",
-              job_part_number: isJobPart ? job_part_number : "",
-              title: !isJobPart ? title : "",
-              job_title: isJobPart ? job_title : "",
               type: !isJobPart ? type : "",
               job_type: isJobPart ? job_type : "",
               practice_id: !isJobPart
@@ -691,18 +689,20 @@ export default {
               job_rate: isJobPart ? job_rate : "",
               rate_type_id: !isJobPart ? rate_type_id : "",
               job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
+              near_post_code: near_post_code,
+              miles: miles,
+              calendar_date_start: calendar_date_start,
+              calendar_date_end: calendar_date_end,
+              time_start: time_start,
+              time_end: time_end,
+              invoice_status: invoice_status,
               viewing_locum_user_id: [],
-              title_includes: "",
-              job_title_includes: "",
-              job_number_includes: "",
-              job_part_number_includes: "",
+              title_includes: !isJobPart ? title_includes : "",
+              job_title_includes: isJobPart ? job_title_includes : "",
+              job_number_includes: !isJobPart ? job_number_includes : "",
+              job_part_number_includes: isJobPart
+                ? job_part_number_includes
+                : "",
               has_favorite_applicants:
                 queryStatus === "Applied" && bankStatus === "true"
                   ? true
@@ -742,18 +742,20 @@ export default {
               job_rate: isJobPart ? job_rate : "",
               rate_type_id: !isJobPart ? rate_type_id : "",
               job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
+              near_post_code: near_post_code,
+              miles: miles,
+              calendar_date_start: calendar_date_start,
+              calendar_date_end: calendar_date_end,
+              time_start: time_start,
+              time_end: time_end,
+              invoice_status: invoice_status,
               viewing_locum_user_id: [],
-              title_includes: "",
-              job_title_includes: "",
-              job_number_includes: "",
-              job_part_number_includes: "",
+              title_includes: !isJobPart ? title_includes : "",
+              job_title_includes: isJobPart ? job_title_includes : "",
+              job_number_includes: !isJobPart ? job_number_includes : "",
+              job_part_number_includes: isJobPart
+                ? job_part_number_includes
+                : "",
               has_favorite_applicants:
                 queryStatus === "Applied" && bankStatus === "true"
                   ? true
@@ -773,14 +775,26 @@ export default {
                       assigned_to: item.platform_job.appointed_to_locum.user
                         ? item.platform_job.appointed_to_locum.user
                             .personal_detail.name
-                        : null
+                        : null,
+                      date_time_start: `${app
+                        .$moment(item.date_start)
+                        .format("DD-MM-YYYY")} | ${item.time_start}`,
+                      date_time_end: `${app
+                        .$moment(item.date_end)
+                        .format("DD-MM-YYYY")} | ${item.time_end}`
                     };
                   })
                 : res.data.job_parts
                 ? res.data.job_parts.map(item => {
                     return {
                       ...item,
-                      tag_status: item.terminated ? "Terminated" : item.status
+                      tag_status: item.terminated ? "Terminated" : item.status,
+                      date_time_start: `${app
+                        .$moment(item.date_start)
+                        .format("DD-MM-YYYY")} | ${item.time_start}`,
+                      date_time_end: `${app
+                        .$moment(item.date_end)
+                        .format("DD-MM-YYYY")} | ${item.time_end}`
                     };
                   })
                 : [];
@@ -795,7 +809,9 @@ export default {
         jobs
       };
     } catch (err) {
-      throw err;
+      console.log(err || err.response);
+      return error({ status: 404 });
+      // throw err;
     }
   },
   mounted() {
@@ -885,10 +901,6 @@ export default {
             params: {
               status,
               order_by: [],
-              job_number: !this.isJobPart ? this.job_number : "",
-              job_part_number: this.isJobPart ? this.job_part_number : "",
-              title: !this.isJobPart ? this.title : "",
-              job_title: this.isJobPart ? this.job_title : "",
               type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
               practice_id: !this.isJobPart
@@ -903,19 +915,22 @@ export default {
               job_rate: this.isJobPart ? this.job_rate : "",
               rate_type_id: !this.isJobPart ? this.rate_type_id : "",
               job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.isJobPart ? this.near_post_code : "",
-              miles: this.isJobPart ? this.miles : "",
-              calendar_date_start: this.isJobPart
-                ? this.calendar_date_start
-                : "",
-              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-              time_start: this.isJobPart ? this.time_start : "",
-              time_end: this.isJobPart ? this.time_end : "",
-              invoice_status: this.isJobPart ? this.invoice_status : "",
+              near_post_code: this.near_post_code,
+              miles: this.miles,
+              calendar_date_start: this.calendar_date_start,
+              calendar_date_end: this.calendar_date_end,
+              time_start: this.time_start,
+              time_end: this.time_end,
+              invoice_status: this.invoice_status,
               viewing_locum_user_id: this.viewing_locum_user_id,
-              title_includes: this.title_includes,
-              job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
+              title_includes: !this.isJobPart ? this.title_includes : "",
+              job_title_includes: this.isJobPart ? this.job_title_includes : "",
+              job_number_includes: !this.isJobPart
+                ? this.job_number_includes
+                : "",
+              job_part_number_includes: this.isJobPart
+                ? this.job_part_number_includes
+                : "",
               has_favorite_applicants:
                 queryStatus === "Applied" && bankStatus === "true"
                   ? true
@@ -934,10 +949,6 @@ export default {
               limit: 5,
               status,
               order_by: [],
-              job_number: !this.isJobPart ? this.job_number : "",
-              job_part_number: this.isJobPart ? this.job_part_number : "",
-              title: !this.isJobPart ? this.title : "",
-              job_title: this.isJobPart ? this.job_title : "",
               type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
               practice_id: !this.isJobPart
@@ -952,21 +963,22 @@ export default {
               job_rate: this.isJobPart ? this.job_rate : "",
               rate_type_id: !this.isJobPart ? this.rate_type_id : "",
               job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.isJobPart ? this.near_post_code : "",
-              miles: this.isJobPart ? this.miles : "",
-              calendar_date_start: this.isJobPart
-                ? this.calendar_date_start
-                : "",
-              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-              time_start: this.isJobPart ? this.time_start : "",
-              time_end: this.isJobPart ? this.time_end : "",
+              near_post_code: this.near_post_code,
+              miles: this.miles,
+              calendar_date_start: this.calendar_date_start,
+              calendar_date_end: this.calendar_date_end,
+              time_start: this.time_start,
+              time_end: this.time_end,
               invoice_status: this.isJobPart ? this.invoice_status : "",
               viewing_locum_user_id: this.viewing_locum_user_id,
-              title_includes: this.title_includes,
-              job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
-              job_part_number_includes: this.job_part_number_includes,
-
+              title_includes: !this.isJobPart ? this.title_includes : "",
+              job_title_includes: this.isJobPart ? this.job_title_includes : "",
+              job_number_includes: !this.isJobPart
+                ? this.job_number_includes
+                : "",
+              job_part_number_includes: this.isJobPart
+                ? this.job_part_number_includes
+                : "",
               has_favorite_applicants:
                 queryStatus === "Applied" && bankStatus === "true"
                   ? true
@@ -1008,14 +1020,28 @@ export default {
                         assigned_to: item.platform_job.appointed_to_locum.user
                           ? item.platform_job.appointed_to_locum.user
                               .personal_detail.name
-                          : null
+                          : null,
+                        date_time_start: `${this.$moment(
+                          item.date_start
+                        ).format("DD-MM-YYYY")} | ${item.time_start}`,
+                        date_time_end: `${this.$moment(item.date_end).format(
+                          "DD-MM-YYYY"
+                        )} | ${item.time_end}`
                       };
                     })
                   : responseJobs.data.job_parts
                   ? responseJobs.data.job_parts.map(item => {
                       return {
                         ...item,
-                        tag_status: item.terminated ? "Terminated" : item.status
+                        tag_status: item.terminated
+                          ? "Terminated"
+                          : item.status,
+                        date_time_start: `${this.$moment(
+                          item.date_start
+                        ).format("DD-MM-YYYY")} | ${item.time_start}`,
+                        date_time_end: `${this.$moment(item.date_end).format(
+                          "DD-MM-YYYY"
+                        )} | ${item.time_end}`
                       };
                     })
                   : [];
@@ -1057,10 +1083,6 @@ export default {
             limit: this.limit,
             status,
             order_by: this.order_by,
-            job_number: !this.isJobPart ? this.job_number : "",
-            job_part_number: this.isJobPart ? this.job_part_number : "",
-            title: !this.isJobPart ? this.title : "",
-            job_title: this.isJobPart ? this.job_title : "",
             type: !this.isJobPart ? this.type : "",
             job_type: this.isJobPart ? this.job_type : "",
             practice_id: !this.isJobPart
@@ -1083,9 +1105,14 @@ export default {
             time_end: this.isJobPart ? this.time_end : "",
             invoice_status: this.isJobPart ? this.invoice_status : "",
             viewing_locum_user_id: this.viewing_locum_user_id,
-            title_includes: this.title_includes,
-            job_title_includes: this.job_title_includes,
-            job_number_includes: this.job_number_includes,
+            title_includes: !this.isJobPart ? this.title_includes : "",
+            job_title_includes: this.isJobPart ? this.job_title_includes : "",
+            job_number_includes: !this.isJobPart
+              ? this.job_number_includes
+              : "",
+            job_part_number_includes: this.isJobPart
+              ? this.job_part_number_includes
+              : "",
             has_favorite_applicants:
               queryStatus === "Applied" && bankStatus === "true"
                 ? true
@@ -1104,14 +1131,26 @@ export default {
                     assigned_to: item.platform_job.appointed_to_locum.user
                       ? item.platform_job.appointed_to_locum.user
                           .personal_detail.name
-                      : null
+                      : null,
+                    date_time_start: `${this.$moment(item.date_start).format(
+                      "DD-MM-YYYY"
+                    )} | ${item.time_start}`,
+                    date_time_end: `${this.$moment(item.date_end).format(
+                      "DD-MM-YYYY"
+                    )} | ${item.time_end}`
                   };
                 })
               : res.data.job_parts
               ? res.data.job_parts.map(item => {
                   return {
                     ...item,
-                    tag_status: item.terminated ? "Terminated" : item.status
+                    tag_status: item.terminated ? "Terminated" : item.status,
+                    date_time_start: `${this.$moment(item.date_start).format(
+                      "DD-MM-YYYY"
+                    )} | ${item.time_start}`,
+                    date_time_end: `${this.$moment(item.date_end).format(
+                      "DD-MM-YYYY"
+                    )} | ${item.time_end}`
                   };
                 })
               : [];
@@ -1392,6 +1431,15 @@ export default {
         }
         return `${sorting}:${order}`;
       });
+      if (orderBy.includes("date_start:desc")) {
+        orderBy.push("time_start:desc");
+      } else if (orderBy.includes("date_start:asc")) {
+        orderBy.push("time_start:asc");
+      } else if (orderBy.includes("date_end:asc")) {
+        orderBy.push("time_end:asc");
+      } else if (orderBy.includes("date_end:desc")) {
+        orderBy.push("time_end:desc");
+      }
       this.current_page = 1;
       this.offset = 0;
       this.order_by = orderBy;
