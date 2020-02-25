@@ -26,8 +26,8 @@
         </div>
         <template v-if="type === 'multi-checkbox'">
           <div class="flex flex-row justify-start items-center mt-1" v-if="!required">
-            <input v-model="na" :id="'na'" type="checkbox" />
-            <label :for="'na'" class="text-xs sm:text-sm flex items-center">N/A</label>
+            <input v-model="na" :id="name" type="checkbox" />
+            <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
           </div>
           <div
             class="flex flex-row justify-start items-center mt-1"
@@ -338,21 +338,20 @@ export default {
     return {
       passwordValue: "",
       // show/hide password
-      passwordToggle: false,
-      na: false
+      passwordToggle: false
     };
   },
-  watch: {
-    na(newValue, oldValue) {
-      if (newValue) {
-        this.$emit("uncheckAll");
-      }
-    },
-    value(newValue, oldValue) {
-      if (this.type === "multi-checkbox" && newValue.length === 0) {
-        this.na = true;
-      } else if (this.type === "multi-checkbox" && newValue.length > 0) {
-        this.na = false;
+  computed: {
+    na: {
+      get() {
+        return this.value.length === 0 ? true : false;
+      },
+      set(naValue) {
+        if (naValue) {
+          return this.$emit("uncheckAll");
+        } else if (!naValue) {
+          return this.value.length > 0 ? false : true;
+        }
       }
     }
   },

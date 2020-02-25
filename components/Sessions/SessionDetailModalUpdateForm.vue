@@ -981,32 +981,14 @@ export default {
         "include_sunday",
         "compliance_document_id",
         "bank_only",
-        "auto_assign_at"
+        "auto_assign_at",
+        "session_requirements",
+        "session_structure_information"
       ];
 
       if (!["Allocated", "Applied"].includes(this.job.status)) {
         notRequired.push("update_accepted_until");
       }
-
-      // let startDateTime = this.$moment(
-      //   `${this.form.date_start} ${this.form.time_start}`,
-      //   "YYYY-MM-DD HH:mm"
-      // ).format("YYYY-MM-DD HH:mm");
-      // let endDateTime = this.$moment(
-      //   `${this.form.date_end} ${this.form.time_end}`,
-      //   "YYYY-MM-DD HH:mm"
-      // ).format("YYYY-MM-DD HH:mm");
-
-      // if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
-      //   this.formError.push({
-      //     field: "date_end",
-      //     message: "Invalid End Date"
-      //   });
-      //   this.formError.push({
-      //     field: "date_start",
-      //     message: "Invalid Start Date"
-      //   });
-      // }
 
       if (
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(

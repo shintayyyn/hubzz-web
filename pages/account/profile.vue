@@ -199,8 +199,8 @@
             :name="'mandatory_training_id'"
             :label="'Please select mandatory training courses completed.'"
             :lists="mandatoryTrainings"
-            @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id'), CheckNotApplicable($event)"
-            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
+            @checked="form.mandatory_training_id.push(parseInt($event))"
+            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
             @uncheckAll="form.mandatory_training_id = []"
           />
           <AppInput
@@ -717,11 +717,6 @@ export default {
     }
   },
   methods: {
-    CheckNotApplicable(item) {
-      if (!item) {
-        this.form.mandatory_training_id = [];
-      }
-    },
     save() {
       let notRequired = [
         "nhs_smart_card_id_number",
