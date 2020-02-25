@@ -4,7 +4,7 @@
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job part number</div>
         <div class="text-xs sm:text-sm mb-8">{{job_part.job_part_number}}</div>
-        <template v-if="job_part.status === 'Cancelled' && job_part.terminated">
+        <!-- <template v-if="job_part.status === 'Cancelled' && job_part.terminated">
           <div class="font-bold text-sm sm:text-md">Terminated At</div>
           <div
             class="text-xs sm:text-sm mb-8"
@@ -19,13 +19,13 @@
           >{{job_part.job.platform_job.cancelled_at | localDate}}</div>
           <div class="font-bold text-sm sm:text-md">Reason for cancellation</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
-        </template>
-        <template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
+        </template>-->
+        <!-- <template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
           <div class="font-bold text-sm sm:text-md">Withdrawn At</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_at | localDate}}</div>
           <div class="font-bold text-sm sm:text-md">Reason for withdrawal</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_reason}}</div>
-        </template>
+        </template>-->
         <div class="font-bold text-sm sm:text-md">Job description</div>
         <div class="text-xs sm:text-sm mb-8">{{job_part.job.description}}</div>
         <div class="font-bold text-sm sm:text-md">Rate</div>
