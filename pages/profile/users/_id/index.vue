@@ -61,7 +61,7 @@
       :label="'Status'"
       :error="formError.find(item => item.field === 'status')"
       :items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
-      :disabled="verifiedEmail"
+      :disabled="!Boolean(verifiedEmail)"
     />
     <div
       class="text-left mt-5"
@@ -117,8 +117,8 @@ export default {
   },
   data() {
     return {
-      user: null,
       practice_roles,
+      user: null,
       user_roles: [],
       form: {
         email: "",
@@ -143,10 +143,37 @@ export default {
       return this.user && this.user.email_verified_at ? true : false;
     }
   },
-  async mounted() {
-    this.loading = true;
-    await this.getUserRoles();
-    await this.getUser();
+  async asyncData({ app, params, error }) {
+    try {
+      const response = await app.$axios.$get(
+        `/api/v1/practice/practice-users/${params.id}`
+      );
+      const user =
+        response.data && response.data.user ? response.data.user : null;
+
+      const responseRoles = await app.$axios.$get(
+        `/api/v1/practice/practice-roles?include_all`
+      );
+      const roles =
+        response.data && response.data.roles
+          ? response.data.roles.map(item => {
+              return {
+                label: item.name,
+                value: item.id
+              };
+            })
+          : [];
+
+      return {
+        user,
+        roles
+      };
+    } catch (err) {
+      console.log("err", err || err.response);
+      return error({ status: 404, message: "Page Not Found" });
+    }
+  },
+  mounted() {
     this.form.email = this.user.email;
     this.form.title = this.user.personal_detail.title;
     this.form.first_name = this.user.personal_detail.first_name;
@@ -157,46 +184,8 @@ export default {
       ? this.user.practice_detail.role.id
       : null;
     this.form.status = this.user.status;
-    this.loading = false;
-    console.log(this.user.status);
   },
   methods: {
-    getUser() {
-      return this.$axios
-        .$get(`/api/v1/practice/practice-users/${this.$route.params.id}`)
-        .then(res => {
-          this.user = res.data.user;
-        })
-        .catch(err => {
-          console.log("err", err.response || err);
-          if (err.response.data.message) {
-            return this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          }
-        });
-    },
-    getUserRoles() {
-      return this.$axios
-        .$get(`/api/v1/practice/practice-roles?include_all`)
-        .then(res => {
-          return res.data.roles.forEach(role => {
-            this.user_roles.push({ label: role.name, value: role.id });
-          });
-        })
-        .catch(err => {
-          console.log("err", err.response || err);
-          if (err.response.data.message) {
-            return this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          }
-        });
-    },
     save() {
       this.Validate(this.form, ["title", "suffix"]);
       if (!this.formError.length) {
