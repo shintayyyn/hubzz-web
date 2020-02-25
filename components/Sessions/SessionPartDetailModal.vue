@@ -39,18 +39,38 @@
 					<div class="flex flex-col">
 						<div
 							class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
-							v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'"
+							v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn' || job_part.status === 'Cancelled'"
 						>
-							<div class="leading-tight pb-4">
-								<p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
-								<p
-									class="text-xs sm:text-sm"
-								>{{ job_part.job.platform_job.declined_reason ? job_part.job.platform_job.declined_reason : '(none)'}}</p>
-							</div>
-							<div class="leading-tight">
-								<p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
-								<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_at | localDate}}</p>
-							</div>
+							<template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
+								<div class="leading-tight pb-4">
+									<p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
+									<p
+										class="text-xs sm:text-sm"
+									>{{ job_part.job.platform_job.declined_reason ? job_part.job.platform_job.declined_reason : '(none)'}}</p>
+								</div>
+								<div class="leading-tight pb-4">
+									<p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
+									<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_at | localDate}}</p>
+								</div>
+								<div class="leading-tight pb-4">
+									<p class="font-bold text-sm sm:text-md">Withdrawn by</p>
+									<p class="text-xs sm:text-sm">{{ job_part.locum_first_name}}</p>
+								</div>
+							</template>
+							<template v-if="job_part.status === 'Cancelled'">
+								<div class="leading-tight pb-4">
+									<p
+										class="font-bold text-sm sm:text-md"
+									>{{job_part.terminated ? 'Terminated' : 'Cancelled'}} At</p>
+									<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.cancelled_at | localDate}}</p>
+								</div>
+								<div class="leading-tight">
+									<p
+										class="font-bold text-sm sm:text-md"
+									>Reason for {{job_part.terminated ? 'termination' : 'cancellation'}}</p>
+									<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.cancelled_reason}}</p>
+								</div>
+							</template>
 						</div>
 						<SessionPartDetailModalInfo :job_part="job_part" />
 						<div
@@ -80,7 +100,7 @@
 						<SessionPartDetailModalParts :job_id="job_part.job.id" />
 						<SessionDetailModalLocum
 							:job="job_part.job"
-							v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Completed' || job_part.status === 'Approved')"
+							v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Completed' || job_part.status === 'Approved' || job_part.status === 'Withdrawn' || (job_part.status === 'Cancelled' && job_part.appointed_to_locum_user_id))"
 						/>
 					</div>
 				</div>
