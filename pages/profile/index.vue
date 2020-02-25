@@ -480,6 +480,7 @@ export default {
               text: [`${err.response.data.message}`]
             });
           }
+          error({ statusCode: 401, message: err.response.data.message });
           throw err;
         }
       } else if (permissions.includes("View Profile Users")) {

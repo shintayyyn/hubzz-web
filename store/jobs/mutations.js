@@ -41,6 +41,7 @@ export default {
     // NOTIF
     ADD_PRACTICE_JOB_NOTIFICATION(state, payload) {
         let index = state.practice_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
+        console.log('test', index, state.practice_job_notifications, payload)
         if (index < 0) {
             state.practice_job_notifications.unshift(payload)
         } else if (index >= 0) {

@@ -99,26 +99,29 @@
 
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row justify-between">
-              <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
+              <label for="rates" class="text-xs sm:text-sm py-1">
+                Your preferred rates £
+                <small>(minimum)</small>
+              </label>
               <div
                 class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm"
               >To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label>
+                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_hour"
                     :type="'number'"
                     :name="'min_rate_per_hour'"
-                    :label="'From £'"
+                    :label="'Per Hour £'"
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                     required
                   />
-                  <div class="mx-1"></div>
-                  <AppInput
+                  <!-- <div class="mx-1"></div> -->
+                  <!-- <AppInput
                     v-model="form.max_rate_per_hour"
                     :type="'number'"
                     :name="'max_rate_per_hour'"
@@ -126,22 +129,22 @@
                     :error="formError.find(item => item.field === 'max_rate_per_hour')"
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
                     required
-                  />
+                  />-->
                 </div>
               </div>
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label>
+                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Minimum Per Half Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_half_day_session"
                     :type="'number'"
                     :name="'min_rate_per_half_day_session'"
-                    :label="'From £'"
+                    :label="'Per Half Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                     required
                   />
-                  <div class="mx-1"></div>
+                  <!-- <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_half_day_session"
                     :type="'number'"
@@ -150,22 +153,22 @@
                     :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
                     @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
                     required
-                  />
+                  />-->
                 </div>
               </div>
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label>
+                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_whole_day_session"
                     :type="'number'"
                     :name="'min_rate_per_whole_day_session'"
-                    :label="'From £'"
+                    :label="'Per Whole Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                     required
                   />
-                  <div class="mx-1"></div>
+                  <!-- <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_whole_day_session"
                     :type="'number'"
@@ -174,7 +177,7 @@
                     :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
                     @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
                     required
-                  />
+                  />-->
                 </div>
               </div>
             </div>
@@ -383,15 +386,9 @@ export default {
         "mandatory_training_id"
       ]);
       if (!this.formError.length) {
-        // this.form.qualification_id = this.form.qualification_id.length
-        //   ? this.form.qualification_id.map(item => item.value)
-        //   : [];
-        // this.form.clinical_system_id = this.form.clinical_system_id
-        //   ? this.form.clinical_system_id.map(item => item.value)
-        //   : [];
-        // this.form.spoken_language_id = this.form.spoken_language_id
-        //   ? this.form.spoken_language_id.map(item => item.value)
-        //   : [];
+        this.form.max_rate_per_hour = 999999999;
+        this.form.max_rate_per_half_day_session = 999999999;
+        this.form.max_rate_per_whole_day_session = 999999999;
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
           ...this.form,
           profession_category_id: this.selectedProfession.profession_category.id

@@ -98,7 +98,7 @@ export default {
         this.$socket.on('Locum Notification Job Updated', async (job) => {
             // doesn't need to notify the locum
         })
-        this.$socket.on('Locum Notification Job Declined', async (job) => {
+        this.$socket.on('Locum Notification Job Withdrawn', async (job) => {
             const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
             if (response.data && response.data.job) {
                 commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Declined' })
@@ -212,7 +212,7 @@ export default {
                 commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Amended' })
             }
         })
-        this.$socket.on('Practice Notification Job Declined', async (job) => {
+        this.$socket.on('Practice Notification Job Withdrawn', async (job) => {
             const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.id}`)
             if (response.data && response.data.job) {
                 commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Declined' })
