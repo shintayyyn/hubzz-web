@@ -380,15 +380,15 @@ export default {
   methods: {
     next() {
       this.formError = [];
+      this.form.max_rate_per_hour = 999999999;
+      this.form.max_rate_per_half_day_session = 999999999;
+      this.form.max_rate_per_whole_day_session = 999999999;
       this.Validate(this.form, [
         "nhs_smart_card_id_number",
         "spoken_language_id",
         "mandatory_training_id"
       ]);
       if (!this.formError.length) {
-        this.form.max_rate_per_hour = 999999999;
-        this.form.max_rate_per_half_day_session = 999999999;
-        this.form.max_rate_per_whole_day_session = 999999999;
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
           ...this.form,
           profession_category_id: this.selectedProfession.profession_category.id
