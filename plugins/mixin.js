@@ -92,21 +92,12 @@ Vue.mixin({
         });
       }
       if (inputField) {
-        if (fieldName === 'email') {
-          let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          if (!re.test(String(inputField).toLowerCase())) {
-            this.formError.push({
-              field: fieldName,
-              message: "This is not a valid email"
-            });
-          }
-        }
-
-        // if (fieldName.includes('password')) {
-        //   if (inputField.length < 6) {
+        // if (fieldName === 'email') {
+        //   let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        //   if (!re.test(String(inputField).toLowerCase())) {
         //     this.formError.push({
         //       field: fieldName,
-        //       message: "Password Must Be Atleast 6 Characters"
+        //       message: "This is not a valid email"
         //     });
         //   }
         // }
