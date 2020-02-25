@@ -28,7 +28,7 @@ export default {
   },
   async asyncData({ app, params, query, redirect, router, error }) {
     try {
-      let url = `/api/v1/practice/jobs`;
+      let url = `/api/v1/practice/locums/${params.locumId}/jobs`;
 
       if (
         query &&
@@ -37,7 +37,7 @@ export default {
           query.jobStatus.toLowerCase()
         )
       ) {
-        url = `/api/v1/practice/job-parts`;
+        url = `/api/v1/practice/locums/${params.locumId}/job-parts`;
       }
 
       let response = await app.$axios.get(`${url}/${params.jobId}`);
