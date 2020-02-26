@@ -16,7 +16,9 @@ export default {
 					this.$router.push(`/messages/${message.id}`);
 					commit("SET_ACTIVE_CONVERSATION", message.id);
 				}
-				commit("ADD_TOTAL_UNREAD_MESSAGES");
+				if (!user) {
+					commit("ADD_TOTAL_UNREAD_MESSAGES");
+				}
 				// commit("ADD_UNREAD_MESSAGE", message);
 			} else {
 				if (!user) {

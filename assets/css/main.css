@@ -342,6 +342,10 @@ input[type="checkbox"]:disabled + label:after {
 		4px -6px 0 white, 4px -8px 0 white;
 }
 
+input::placeholder, textarea::placeholder {
+	color: #8896a9;
+}
+
 /* Customized Select Dropdown */
 .customized-select {
 	position: relative;

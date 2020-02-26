@@ -338,10 +338,9 @@
 
           <AppInput
             v-model="form.claim_nhs"
-            :type="'select'"
+            :type="'single-checkbox'"
             :name="'claim_nhs'"
             :label="'Are you willing to claim NHS Pension contributions?'"
-            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
           />
 
           <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">

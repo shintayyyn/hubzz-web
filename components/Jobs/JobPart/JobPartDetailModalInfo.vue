@@ -2,6 +2,8 @@
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
+        <div class="font-bold text-sm sm:text-md">Practice is OOH</div>
+        <div class="text-xs sm:text-sm mb-8">{{job_part.ooh ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Job part number</div>
         <div class="text-xs sm:text-sm mb-8">{{job_part.job_part_number}}</div>
         <template v-if="job_part.locum_status === 'Cancelled' && job_part.terminated">
