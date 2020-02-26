@@ -42,7 +42,7 @@
           class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
               v-model="type"
@@ -51,30 +51,20 @@
               :label="'Type'"
               :items="practiceTypeList"
             />
-          </div>
+          </div>-->
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
-              v-model="job_number"
+              v-model="job_number_includes"
               :type="'text'"
-              :name="'job_number'"
+              :name="'job_number_includes'"
               :label="'Job number'"
             />
           </div>
-          <div
+          <!-- <div
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
             v-if="!$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() !== 'private')"
           >
-            <!-- <AppAutoComplete
-              class="px-1"
-              v-model="search_practice"
-              :name="'practice_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :data="'surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-              @add="addPractice"
-            />-->
             <AppInput
               v-model="practice_id"
               :type="'select'"
@@ -83,21 +73,11 @@
               :label="'Surgery'"
               :items="practiceLists"
             />
-          </div>
-          <div
+          </div>-->
+          <!-- <div
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
             v-if="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'private'"
           >
-            <!-- <AppAutoComplete
-              class="px-1"
-              v-model="search_private_practice"
-              :name="'job_private_practice_id'"
-              :label="'Private Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :data="'surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-              @add="addPrivatePractice"
-            />-->
             <AppInput
               v-model="private_practice_id"
               :type="'select'"
@@ -106,13 +86,13 @@
               :label="'Surgery'"
               :items="practiceLists"
             />
-          </div>
+          </div>-->
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
-              v-model="title"
+              v-model="title_includes"
               :type="'text'"
-              :name="'title'"
+              :name="'title_includes'"
               :label="'Job Title'"
             />
           </div>
@@ -213,79 +193,16 @@
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
-              v-model="job_type"
-              :type="'select'"
-              :name="'job_type'"
-              :label="'Type'"
-              :items="practiceTypeList"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="job_part_number"
+              v-model="job_part_number_includes"
               :type="'text'"
-              :name="'job_part_number'"
+              :name="'job_part_number_includes'"
               :label="'Job part number'"
             />
           </div>
-          <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="job_practice_id"
-              :name="'job_practice_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="job_private_practice_id"
-              :name="'job_practice_id'"
-              :label="'Private Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>-->
-          <div
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-            v-if="!$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() !== 'private')"
-          >
-            <!-- <AppAutoComplete
-              class="px-1"
-              v-model="search_practice"
-              :name="'job_practice_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :data="'surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-              @add="addPractice"
-            />-->
-            <AppInput
-              v-model="job_practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>
-          <div
+          <!-- <div
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
             v-if="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'private'"
           >
-            <!-- <AppAutoComplete
-              class="px-1"
-              v-model="search_private_practice"
-              :name="'job_private_practice_id'"
-              :label="'Private Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :data="'surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-              @add="addPrivatePractice"
-            />-->
             <AppInput
               v-model="job_private_practice_id"
               :type="'select'"
@@ -294,14 +211,14 @@
               :label="'Surgery'"
               :items="practiceLists"
             />
-          </div>
+          </div>-->
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
-              v-model="job_title"
+              v-model="job_title_includes"
               :type="'text'"
-              :name="'job_title'"
+              :name="'job_title_includes'"
               :label="'Job Title'"
             />
           </div>
@@ -536,6 +453,10 @@ export default {
       shifts: [],
       rates: [],
       viewing_locum_user_id: "",
+      title_includes: "",
+      job_title_includes: "",
+      job_number_includes: "",
+      job_part_number_includes: "",
       filterModal: false,
       isFiltered: false,
       showRefresh: false
@@ -693,13 +614,13 @@ export default {
       columns.push(
         {
           name: "From",
-          dataIndex: "date_start",
+          dataIndex: "date_time_start",
           sortable: true,
           class: "text-center"
         },
         {
           name: "To",
-          dataIndex: "date_end",
+          dataIndex: "date_time_end",
           sortable: true,
           class: "text-center"
         }
@@ -827,7 +748,11 @@ export default {
       let time_start = "";
       let time_end = "";
       let invoice_status = "";
-      let viewing_locum_user_id = "";
+      let viewing_locum_user_id = [];
+      let title_includes = "";
+      let job_title_includes = "";
+      let job_number_includes = "";
+      let job_part_number_includes = "";
 
       const [shifts, rates, total, jobs] = await Promise.all([
         app.$axios.$get(`/api/v1/shifts`).then(res => {
@@ -865,16 +790,22 @@ export default {
               job_rate: isJobPart ? job_rate : "",
               rate_type_id: !isJobPart ? rate_type_id : "",
               job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
+              near_post_code: near_post_code,
+              miles: miles,
+              calendar_date_start: calendar_date_start,
+              calendar_date_end: calendar_date_end,
+              time_start: time_start,
+              time_end: time_end,
+              invoice_status: invoice_status,
+              viewing_locum_user_id: [app.$auth.user.id],
+              title_includes: !isJobPart ? title_includes : "",
+              job_title_includes: isJobPart ? job_title_includes : "",
+              job_number_includes: !isJobPart ? job_number_includes : "",
+              job_part_number_includes: isJobPart
+                ? job_part_number_includes
+                : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
-              viewing_locum_user_id: app.$auth.user.id
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           })
           .then(res => {
@@ -903,16 +834,22 @@ export default {
               job_rate: isJobPart ? job_rate : "",
               rate_type_id: !isJobPart ? rate_type_id : "",
               job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
+              near_post_code: near_post_code,
+              miles: miles,
+              calendar_date_start: calendar_date_start,
+              calendar_date_end: calendar_date_end,
+              time_start: time_start,
+              time_end: time_end,
+              invoice_status: invoice_status,
+              viewing_locum_user_id: [app.$auth.user.id],
+              title_includes: !isJobPart ? title_includes : "",
+              job_title_includes: isJobPart ? job_title_includes : "",
+              job_number_includes: !isJobPart ? job_number_includes : "",
+              job_part_number_includes: isJobPart
+                ? job_part_number_includes
+                : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
-              viewing_locum_user_id: app.$auth.user.id
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           })
           .then(res => {
@@ -1073,18 +1010,24 @@ export default {
               job_rate: this.isJobPart ? this.job_rate : "",
               rate_type_id: !this.isJobPart ? this.rate_type_id : "",
               job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.isJobPart ? this.near_post_code : "",
-              miles: this.isJobPart ? this.miles : "",
-              calendar_date_start: this.isJobPart
-                ? this.calendar_date_start
+              near_post_code: this.near_post_code,
+              miles: this.miles,
+              calendar_date_start: this.calendar_date_start,
+              calendar_date_end: this.calendar_date_end,
+              time_start: this.time_start,
+              time_end: this.time_end,
+              invoice_status: this.invoice_status,
+              viewing_locum_user_id: [this.$auth.user.id],
+              title_includes: !this.isJobPart ? this.title_includes : "",
+              job_title_includes: this.isJobPart ? this.job_title_includes : "",
+              job_number_includes: !this.isJobPart
+                ? this.job_number_includes
                 : "",
-              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-              time_start: this.isJobPart ? this.time_start : "",
-              time_end: this.isJobPart ? this.time_end : "",
-              invoice_status: this.isJobPart ? this.invoice_status : "",
+              job_part_number_includes: this.isJobPart
+                ? this.job_part_number_includes
+                : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
-              viewing_locum_user_id: this.$auth.user.id
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
         ),
@@ -1112,18 +1055,24 @@ export default {
               job_rate: this.isJobPart ? this.job_rate : "",
               rate_type_id: !this.isJobPart ? this.rate_type_id : "",
               job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.isJobPart ? this.near_post_code : "",
-              miles: this.isJobPart ? this.miles : "",
-              calendar_date_start: this.isJobPart
-                ? this.calendar_date_start
+              near_post_code: this.near_post_code,
+              miles: this.miles,
+              calendar_date_start: this.calendar_date_start,
+              calendar_date_end: this.calendar_date_end,
+              time_start: this.time_start,
+              time_end: this.time_end,
+              invoice_status: this.invoice_status,
+              viewing_locum_user_id: [this.$auth.user.id],
+              title_includes: !this.isJobPart ? this.title_includes : "",
+              job_title_includes: this.isJobPart ? this.job_title_includes : "",
+              job_number_includes: !this.isJobPart
+                ? this.job_number_includes
                 : "",
-              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-              time_start: this.isJobPart ? this.time_start : "",
-              time_end: this.isJobPart ? this.time_end : "",
-              invoice_status: this.isJobPart ? this.invoice_status : "",
+              job_part_number_includes: this.isJobPart
+                ? this.job_part_number_includes
+                : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
-              viewing_locum_user_id: this.$auth.user.id
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
         )
@@ -1185,16 +1134,24 @@ export default {
             job_rate: this.isJobPart ? this.job_rate : "",
             rate_type_id: !this.isJobPart ? this.rate_type_id : "",
             job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-            near_post_code: this.isJobPart ? this.near_post_code : "",
-            miles: this.isJobPart ? this.miles : "",
-            calendar_date_start: this.isJobPart ? this.calendar_date_start : "",
-            calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-            time_start: this.isJobPart ? this.time_start : "",
-            time_end: this.isJobPart ? this.time_end : "",
-            invoice_status: this.isJobPart ? this.invoice_status : "",
+            near_post_code: this.near_post_code,
+            miles: this.miles,
+            calendar_date_start: this.calendar_date_start,
+            calendar_date_end: this.calendar_date_end,
+            time_start: this.time_start,
+            time_end: this.time_end,
+            invoice_status: this.invoice_status,
+            viewing_locum_user_id: [this.$auth.user.id],
+            title_includes: !this.isJobPart ? this.title_includes : "",
+            job_title_includes: this.isJobPart ? this.job_title_includes : "",
+            job_number_includes: !this.isJobPart
+              ? this.job_number_includes
+              : "",
+            job_part_number_includes: this.isJobPart
+              ? this.job_part_number_includes
+              : "",
             type: queryStatus === "Private" ? "Private" : "Platform",
-            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
-            viewing_locum_user_id: this.$auth.user.id
+            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
           }
         })
         .then(res => {
@@ -1557,6 +1514,11 @@ export default {
       this.time_start = "";
       this.time_end = "";
       this.invoice_status = "";
+      this.viewing_locum_user_id = [];
+      this.title_includes = "";
+      this.job_title_includes = "";
+      this.job_number_includes = "";
+      this.job_part_number_includes = "";
     }
   }
 };

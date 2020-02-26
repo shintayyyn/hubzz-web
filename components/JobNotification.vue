@@ -328,7 +328,9 @@ export default {
               this.$store.commit(
                 "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
                 this.$store.state.jobs.practice_job_notifications.find(notif =>
-                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Withdrawn"
+                  )
                 ).id
               );
               break;
@@ -354,7 +356,9 @@ export default {
               this.$store.commit(
                 "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
                 this.$store.state.jobs.locum_job_notifications.find(notif =>
-                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Withdrawn"
+                  )
                 ).id
               );
               break;

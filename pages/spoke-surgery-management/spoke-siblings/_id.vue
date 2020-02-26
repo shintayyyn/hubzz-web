@@ -169,6 +169,7 @@ export default {
         practiceSibling
       };
     } catch (err) {
+      return error({ status: 404, message: "Page Not Found" });
       console.log("get locum error!", err);
     }
   },
