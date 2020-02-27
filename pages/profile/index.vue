@@ -143,8 +143,8 @@
                 v-model="form.practice_type_id"
                 :type="'multi-checkbox'"
                 :error="formError.find(item => item.field === 'practice_type_id')"
-                @checked="form.practice_type_id.push($event)"
-                @unchecked="uncheckPractice($event)"
+                @checked="form.practice_type_id.push(parseInt($event))"
+                @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event))"
                 :name="'practice_type_id'"
                 :label="'What type of Practice are you?'"
                 :lists="practice_types"
@@ -160,11 +160,12 @@
                   v-model="form.gp_compliance_document_id"
                   :type="'multi-checkbox'"
                   :error="formError.find(item => item.field === 'gp_compliance_document_id')"
-                  @checked="form.gp_compliance_document_id.push($event)"
-                  @unchecked="uncheckGp($event)"
+                  @checked="form.gp_compliance_document_id.push(parseInt($event))"
+                  @unchecked="form.gp_compliance_document_id = form.gp_compliance_document_id.filter(id => id !== parseInt($event))"
                   :name="'gp_compliance_document_id'"
                   :label="'For GPs:'"
                   :lists="gp_documents"
+                  @uncheckAll="form.gp_compliance_document_id = []"
                 />
               </div>
               <div class="flex flex-col w-full md:w-1/2 px-2">
@@ -172,11 +173,12 @@
                   v-model="form.others_compliance_document_id"
                   :type="'multi-checkbox'"
                   :error="formError.find(item => item.field === 'others_compliance_document_id')"
-                  @checked="form.others_compliance_document_id.push($event)"
-                  @unchecked="uncheckOther($event)"
+                  @checked="form.others_compliance_document_id.push(parseInt($event))"
+                  @unchecked="form.others_compliance_document_id = form.others_compliance_document_id.filter(id => id !== parseInt($event))"
                   :name="'others_compliance_document_id'"
                   :label="'For Nurses, et al:'"
                   :lists="others_documents"
+                  @uncheckAll="form.others_compliance_document_id = []"
                 />
               </div>
             </div>
@@ -186,12 +188,12 @@
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
-                :error="formError.find(item => item.field === 'mandatory_training_id')"
-                @checked="form.mandatory_training_id.push($event)"
-                @unchecked="uncheckMandatory($event)"
                 :name="'mandatory_training_id'"
                 :label="'Mandatory training required from Locums:'"
                 :lists="mandatory_trainings"
+                @checked="form.mandatory_training_id.push(parseInt($event))"
+                @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
+                @uncheckAll="form.mandatory_training_id = []"
               />
             </div>
             <div class="flex flex-col w-full md:w-1/2 px-2">
@@ -478,6 +480,7 @@ export default {
               text: [`${err.response.data.message}`]
             });
           }
+          error({ statusCode: 401, message: err.response.data.message });
           throw err;
         }
       } else if (permissions.includes("View Profile Users")) {
@@ -581,26 +584,6 @@ export default {
           this.input_file_loading = false;
         });
     },
-    uncheckPractice(value) {
-      this.form.practice_type_id = this.form.practice_type_id.filter(
-        id => id != value
-      );
-    },
-    uncheckGp(value) {
-      this.form.gp_compliance_document_id = this.form.gp_compliance_document_id.filter(
-        id => id != value
-      );
-    },
-    uncheckOther(value) {
-      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(
-        id => id != value
-      );
-    },
-    uncheckMandatory(value) {
-      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
-        id => id != value
-      );
-    },
     remove() {
       this.input_file_loading = true;
       this.modal = false;
@@ -646,15 +629,6 @@ export default {
       ) {
         notRequired.push("use_variation_terms");
       }
-      //  else if (
-      //   this.form.use_variation_terms === true &&
-      //   this.practice.variation_terms_file === null
-      // ) {
-      //   this.formError.push({
-      //     field: "use_variation_terms",
-      //     message: "Your Variation Standard Terms file is required"
-      //   });
-      // }
       if (["false", false].includes(this.form.vat_registered)) {
         notRequired.push("vat_number", "tax_year_end_date");
       }

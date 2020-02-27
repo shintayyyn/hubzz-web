@@ -5,10 +5,10 @@
       :total="practice_compliance_documents.length"
       :items="practice_compliance_documents"
       :columns="columns"
-      :routerLink="'/profile/practice-documents'"
-      :routerId="'fileId'"
       :customWidth="480"
     >
+      <!-- :routerLink="'/profile/practice-documents'"
+      :routerId="'fileId'"-->
       <template v-slot:actions="slotProps">
         <div
           v-if="slotProps.item.info"
@@ -16,9 +16,11 @@
       </template>
       <template v-slot:actions-button="slotProps">
         <AppButton
+          v-if="slotProps.item.fileId"
           :label="'View'"
           @click="$router.push({ path: `/profile/practice-documents/${slotProps.item.fileId}` })"
         />
+        <div v-if="!slotProps.item.fileId">Waiting for Huzz to upload documents</div>
       </template>
     </AppTable>
     <template v-if="terms.length > 0">

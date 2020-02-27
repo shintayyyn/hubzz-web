@@ -85,6 +85,13 @@
                   <template
                     v-else-if="
 											column.class &&
+											column.class.includes('currency') &&
+											dataCell(item, column) !== '(none)'
+										"
+                  >{{ dataCell(item, column) | currency }}</template>
+                  <template
+                    v-else-if="
+											column.class &&
 											column.class.includes('fileSize') &&
 											dataCell(item, column) !== '(none)'
 										"

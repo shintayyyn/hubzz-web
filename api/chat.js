@@ -19,6 +19,10 @@ export function fetchActiveConversationMessages(axios, offset, limit = 20, order
   })
 }
 
+export function getUnreadMessages(axios) {
+  return axios.$get(`/api/v1/conversations/unread`)
+}
+
 export function sendMessage(axios, {
   user_id,
   message

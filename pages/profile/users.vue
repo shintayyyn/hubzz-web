@@ -87,12 +87,13 @@
 			:perPage="params.limit"
 			:columns="columns"
 			:orderBy="params.order_by"
-			:routerLink="'/profile/users'"
 			:customWidth="920"
 			@pagechanged="pagechanged"
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
+      <!-- :routerLink="'/profile/users'" -->
+
 			<!-- <template v-slot:actions="slotProps">
 				<div class="flex justify-center">
 					<AppButton
@@ -111,6 +112,18 @@
 					>{{ slotProps.item.status }}</div>
 				</div>
 			</template>
+      <template v-slot:actions="slotProps">
+        <div 
+          
+          class="flex items-center justify-center">
+          <AppButton
+            :disabled="$auth.user.id == slotProps.item.id ? true : false"
+            class="mx-2"
+            :label="'View'"
+            @click="$router.push({ path: `/profile/users/${slotProps.item.id}`})"
+          />
+        </div>
+      </template>
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-600">No User Found</div>
 		<transition name="fade" mode="out-in">
@@ -224,12 +237,12 @@ export default {
 					slotName: "status_slot",
 					dataIndex: "",
 					class: "text-center"
+				},
+				{
+					name: "Actions",
+					dataIndex: "actions",
+					class: "text-center"
 				}
-				// {
-				// 	name: "Actions",
-				// 	dataIndex: "actions",
-				// 	class: "text-center"
-				// }
 			]
 		};
 	},
@@ -258,6 +271,7 @@ export default {
 
 			if (permissions.includes("View Profile Users")) {
 				try {
+
 					const responseCount = await app.$axios.$get(
 						`/api/v1/practice/practice-users/count`
 					);
@@ -303,12 +317,12 @@ export default {
 				error({ statusCode: 401, message: "Your Practice is Not Authorized" });
 			}
 		}
-	},
+  },
+  
 	watch: {
 		$route(to, from) {
 			if (from.name === "profile-users-id") {
 				this.getUsers(this.params);
-				console.log("users", this.users);
 			}
 		}
 	},

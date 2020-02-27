@@ -336,7 +336,12 @@ export default {
 				}
 			)
 			.finally(() => {
-        this.form.parent_practice_id = this.practice.parent_practice_id ? this.practice.parent_practice_id : null
+        this.form.parent_practice_id = 
+          this.practice.type === 'Spoke' 
+          && this.practice.parent_practice_id 
+            ? this.practice.parent_practice_id 
+            : null
+            
 				this.loading = false;
 			});
 	},

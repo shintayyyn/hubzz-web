@@ -253,6 +253,7 @@ export default {
         "Locum Notification Job Part Completed",
         this.getJobsRealTime
       );
+      this.$socket.on("Locum Notification Job Completed", this.getJobsRealTime);
       this.$socket.on(
         "Locum Notification Locum Invoice Updated",
         this.getJobsRealTime
@@ -299,6 +300,10 @@ export default {
       );
       this.$socket.on(
         "Practice Notification Job Part Completed",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Completed",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -373,6 +378,10 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
+          "Locum Notification Job Completed",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
           "Locum Notification Locum Invoice Updated",
           this.getJobsRealTime
         );
@@ -431,6 +440,10 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
+          "Practice Notification Job Completed",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
           "Practice Notification Locum Invoice Updated",
           this.getJobsRealTime
         );
@@ -472,7 +485,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
+              status: ["Allocated", "Applied", "Unfilled", "Withdrawn", "Live"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -689,13 +702,13 @@ export default {
         .endOf("month")
         .format("YYYY-MM-DD");
 
-      // this.$store.commit(
-      //   "calendar/SELECT_DATE",
-      //   this.$moment(this.$store.state.calendar.selected_date, "YYYY-MM-DD")
-      //     .set("month", this.selectedMonth)
-      //     .set("year", this.selectedYear)
-      //     .format("YYYY-MM-DD")
-      // );
+      this.$store.commit(
+        "calendar/SELECT_DATE",
+        this.$moment(this.$store.state.calendar.selected_date, "YYYY-MM-DD")
+          .set("month", this.selectedMonth)
+          .set("year", this.selectedYear)
+          .format("YYYY-MM-DD")
+      );
       // this.getJobs();
     }
   }

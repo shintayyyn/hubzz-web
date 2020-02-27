@@ -115,7 +115,7 @@ export default {
             spoken_language_id: state.professional_details.spoken_language_id.map(item => item.value)
         }
         this.$axios
-            .$post(`/api/v1/register/locum`, form)
+            .$post(`/api/v1/register/locum?referral_code=${this.$router.app._route.query.referral_code}`, form)
             .then((res) => {
                 commit('CLEAR_FORM_ERROR_DETAILS')
                 this.$router.push('/sign-up/success')
@@ -210,6 +210,8 @@ export default {
                         commit('SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')
                     } else if (credentialDetailError.length > 0) {
                         commit('SET_ACTIVE_COMPONENT', 'LocumCredentialDetails')
+                    } else if (payrollDetailError.length > 0) {
+                        commit('SET_ACTIVE_COMPONENT', 'LocumPayrollDetails')
                     }
                 }
             })

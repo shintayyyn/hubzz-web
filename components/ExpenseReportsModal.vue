@@ -9,30 +9,31 @@
         class="cursor-pointer"
       />
     </div>
-    <div class="font-bold text-lg mt-4">EXPENSES REPORTS</div>
     <div class="flex flex-row flex-wrap justify-between items-center">
+      <div class="font-bold text-lg mt-4">EXPENSES REPORTS</div>
       <AppButton
         :label="'Add expense report'"
         @click="addModal"
         :inStyle="'padding:5px 14px;'"
         class="mb-4"
       />
-      <div class="mr-20">
-        <!-- <AppButton
-          :label="'Go back to Current date'"
-          @click="date = $moment().format('YYYY-MM-DD')"
-          :inStyle="'padding:0px 5px;font-size:1em'"
-          class="mb-4"
-        />-->
-        <AppDate
-          v-model="date"
-          :name="'date'"
-          :label="'Date'"
-          :inStyle="'margin-bottom:0px'"
-          isBefore
-        />
-      </div>
     </div>
+    <div class="flex flex-row flex-wrap justify-start items-center">
+      <AppDate
+        v-model="date_start"
+        :name="'date_start'"
+        :label="'From'"
+        :inStyle="'margin-bottom:0px'"
+      />
+      <div class="mx-2"></div>
+      <AppDate v-model="date_end" :name="'date_end'" :label="'To'" :inStyle="'margin-bottom:0px'" />
+    </div>
+    <AppButton
+      :label="'Show expense reports'"
+      @click="getExpenseReportsPromiseAll"
+      :inStyle="'padding:5px 14px;'"
+      class="mb-4"
+    />
     <transition name="slide" mode="out-in">
       <div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
         <div>
@@ -69,14 +70,14 @@
             :error="formError.find(item => item.field === 'date')"
             @input="CheckEmptyField(form.date, 'date')"
           />
-          <AppButton
-            :label="'Save report'"
-            @click="save"
-            :inStyle="'padding:5px 14px;'"
-            :disabled="loading"
-          />
           <AppLoading :loading="loading" spinner />
         </div>
+        <AppButton
+          :label="'Save report'"
+          @click="save"
+          :inStyle="'padding:5px 14px;'"
+          :disabled="loading"
+        />
       </div>
     </transition>
     <transition name="fade" mode="out-in">
@@ -88,7 +89,21 @@
         <div class="w-full lg:w-1/3 xl:max-w-sm">
           <div
             class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
-            @click="filterExpenseReports('week')"
+          >
+            <transition name="fade" mode="out-in">
+              <AppLoading :loading="initialLoading" spinner />
+            </transition>
+            <div class="flex justify-start text-md sm:text-md">Filtered Date</div>
+            <div
+              class="flex justify-end font-bold text-5xl"
+              v-if="!initialLoading"
+            >{{filter_date_total}}</div>
+          </div>
+        </div>
+        <div class="w-full lg:w-1/3 xl:max-w-sm">
+          <div
+            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
+            @click="filterExpenseReport('week')"
           >
             <transition name="fade" mode="out-in">
               <AppLoading :loading="initialLoading" spinner />
@@ -100,7 +115,7 @@
         <div class="w-full lg:w-1/3 xl:max-w-sm">
           <div
             class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
-            @click="filterExpenseReports('month')"
+            @click="filterExpenseReport('month')"
           >
             <transition name="fade" mode="out-in">
               <AppLoading :loading="initialLoading" spinner />
@@ -174,10 +189,11 @@ export default {
       limit: 20,
       order_by: ["date:asc"],
 
-      date: null,
+      date_start: null,
+      date_end: null,
+      filter_date_total: 0,
       week_total: 0,
-      month_total: 0,
-      filter_date_total: 0
+      month_total: 0
     };
   },
   computed: {
@@ -215,73 +231,67 @@ export default {
         : 0;
     }
   },
-  watch: {
-    async date(newValue, oldValue) {
-      this.form.date = newValue;
-      if (newValue && oldValue) {
-        this.date = newValue;
-        this.initialLoading = true;
-        await this.getExpenseReportsWeekTotal();
-        await this.getExpenseReportsMonthTotal();
-        await this.filterExpenseReports("current");
-        // await this.getExpenseReportsPromiseAll();
-        this.initialLoading = false;
-      }
-    }
-  },
   async mounted() {
-    this.date = this.$moment().format("YYYY-MM-DD");
+    this.date_start = this.$moment().format("YYYY-MM-DD");
+    this.date_end = this.$moment().format("YYYY-MM-DD");
     this.initialLoading = true;
-    await this.getExpenseReportsWeekTotal();
-    await this.getExpenseReportsMonthTotal();
+    await this.getExpenseReportsTotal();
     await this.getExpenseReportsPromiseAll();
     this.initialLoading = false;
   },
   methods: {
-    getExpenseReportsWeekTotal() {
-      let date_start = this.$moment(this.date, "YYYY-MM-DD")
+    async getExpenseReportsTotal() {
+      let week_date_start = this.$moment()
         .day("Monday")
         .format("YYYY-MM-DD");
-      let date_end = this.$moment(date_start, "YYYY-MM-DD")
+      let week_date_end = this.$moment()
         .add(6, "days")
         .format("YYYY-MM-DD");
-      this.getExpenseReportsTotal(date_start, date_end, "week");
-    },
-    getExpenseReportsMonthTotal() {
-      let month = this.$moment(this.date).month();
-      let year = this.$moment(this.date).year();
-      let date_start = this.getDaysInMonth(month, year)[0].fullDate;
-      let date_end = this.getDaysInMonth(month, year)[
+
+      let month = this.$moment().month();
+      let year = this.$moment().year();
+      let month_date_start = this.getDaysInMonth(month, year)[0].fullDate;
+      let month_date_end = this.getDaysInMonth(month, year)[
         this.getDaysInMonth(month, year).length - 1
       ].fullDate;
-      this.getExpenseReportsTotal(date_start, date_end, "month");
-    },
-    async getExpenseReportsTotal(date_start, date_end, type) {
+
       try {
-        let response = await this.$axios.$get("/api/v1/locum/locum-expenses", {
-          params: {
-            date_start: this.$moment(date_start).format("YYYY-MM-DD"),
-            date_end: this.$moment(date_end).format("YYYY-MM-DD"),
-            total: true
-          }
+        Promise.all([
+          this.$axios.$get(`/api/v1/locum/locum-expenses`, {
+            params: {
+              date_start: this.$moment().format("YYYY-MM-DD"),
+              date_end: this.$moment().format("YYYY-MM-DD"),
+              total: true
+            }
+          }),
+          this.$axios.$get(`/api/v1/locum/locum-expenses`, {
+            params: {
+              date_start: this.$moment(week_date_start).format("YYYY-MM-DD"),
+              date_end: this.$moment(week_date_end).format("YYYY-MM-DD"),
+              total: true
+            }
+          }),
+          this.$axios.$get(`/api/v1/locum/locum-expenses`, {
+            params: {
+              date_start: this.$moment(month_date_start).format("YYYY-MM-DD"),
+              date_end: this.$moment(month_date_end).format("YYYY-MM-DD"),
+              total: true
+            }
+          })
+        ]).then(([response, responseWeek, responseMonth]) => {
+          this.filter_date_total =
+            response.data && response.data.locum_expenses
+              ? response.data.locum_expenses
+              : 0;
+          this.week_total =
+            responseWeek.data && responseWeek.data.locum_expenses
+              ? responseWeek.data.locum_expenses
+              : 0;
+          this.month_total =
+            responseMonth.data && responseMonth.data.locum_expenses
+              ? responseMonth.data.locum_expenses
+              : 0;
         });
-
-        let total =
-          response.data && response.data.locum_expenses
-            ? response.data.locum_expenses
-            : 0;
-
-        switch (type) {
-          case "week":
-            return (this.week_total = total);
-            break;
-          case "month":
-            return (this.month_total = total);
-            break;
-          case "filter_date":
-            return (this.filter_date_total = total);
-            break;
-        }
       } catch (err) {
         this.initialLoading = false;
         throw err;
@@ -292,15 +302,15 @@ export default {
         return Promise.all([
           this.$axios.$get("/api/v1/locum/locum-expenses/count", {
             params: {
-              date_start: this.date,
-              date_end: this.date,
+              date_start: this.date_start,
+              date_end: this.date_end,
               order_by: this.order_by
             }
           }),
           this.$axios.$get("/api/v1/locum/locum-expenses", {
             params: {
-              date_start: this.date,
-              date_end: this.date,
+              date_start: this.date_start,
+              date_end: this.date_end,
               order_by: this.order_by,
               offset: this.offset,
               limit: this.limit
@@ -319,43 +329,43 @@ export default {
         throw err;
       }
     },
-    async filterExpenseReports(type) {
+    async filterExpenseReport(type) {
       let date_start;
       let date_end;
       if (type === "week") {
-        date_start = this.$moment(this.date, "YYYY-MM-DD")
+        date_start = this.$moment()
           .day("Monday")
           .format("YYYY-MM-DD");
-        date_end = this.$moment(date_start, "YYYY-MM-DD")
+        date_end = this.$moment()
           .add(6, "days")
           .format("YYYY-MM-DD");
-
-        this.getExpenseReportsPromiseAll();
       } else if (type === "month") {
-        let month = this.$moment(this.date).month();
-        let year = this.$moment(this.date).year();
+        let month = this.$moment().month();
+        let year = this.$moment().year();
         date_start = this.getDaysInMonth(month, year)[0].fullDate;
         date_end = this.getDaysInMonth(month, year)[
           this.getDaysInMonth(month, year).length - 1
         ].fullDate;
-      } else if (type === "current") {
-        date_start = this.date;
-        date_end = this.date;
       }
-
+      console.log(type);
+      this.loading = true;
+      await this.getExpenseReports(date_start, date_end);
+      this.loading = false;
+    },
+    async getExpenseReports(date_start, date_end) {
       try {
         return Promise.all([
           this.$axios.$get("/api/v1/locum/locum-expenses/count", {
             params: {
-              date_start: date_start,
-              date_end: date_end,
+              date_start,
+              date_end,
               order_by: this.order_by
             }
           }),
           this.$axios.$get("/api/v1/locum/locum-expenses", {
             params: {
-              date_start: date_start,
-              date_end: date_end,
+              date_start,
+              date_end,
               order_by: this.order_by,
               offset: this.offset,
               limit: this.limit
@@ -370,7 +380,7 @@ export default {
               : [];
         });
       } catch (err) {
-        this.initialLoading = false;
+        this.loading = false;
         throw err;
       }
     },
@@ -390,9 +400,8 @@ export default {
             text: [`${response.message}`]
           });
           this.closeModal();
-          this.expense_reports.push(response.data.locum_expense);
-          this.getExpenseReportsWeekTotal();
-          this.getExpenseReportsMonthTotal();
+          // this.expense_reports.push(response.data.locum_expense);
+          this.getExpenseReportsPromiseAll();
         } catch (e) {
           throw e;
         }

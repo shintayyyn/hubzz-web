@@ -29,11 +29,11 @@ export default function ({ store, route, redirect }) {
       }
     }
 
-    if (store.$auth.user.practice_detail.practice.allow_surgery_bill_hubzz === false) {
-      if (route.path.includes('/practice-billing/invoices-from-hubzz')) {
-        return redirect('/')
-      }
-    }
+    // if (store.$auth.user.practice_detail.practice.allow_surgery_bill_hubzz === false) {
+    //   if (route.path.includes('/practice-billing/invoices-from-hubzz')) {
+    //     return redirect('/')
+    //   }
+    // }
 
     if (store.$auth.user.practice_detail.practice.share_banks_to_other_surgeries === false) {
       if (route.path.includes('/surgery-management/practice-hub/spoke-siblings')) {

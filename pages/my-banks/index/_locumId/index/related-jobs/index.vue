@@ -619,7 +619,7 @@ export default {
         isJobPart = true;
       }
 
-      let viewing_locum_user_id = params.locumId;
+      // let viewing_locum_user_id = params.locumId;
       let offset = 0;
       let limit = 5;
       let order_by = [];
@@ -669,100 +669,108 @@ export default {
           return rates;
         }),
         app.$axios
-          .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
-            params: {
-              viewing_locum_user_id,
-              locum_status,
-              order_by: [],
-              job_number: !isJobPart ? job_number : "",
-              job_part_number: isJobPart ? job_part_number : "",
-              title: !isJobPart ? title : "",
-              job_title: isJobPart ? job_title : "",
-              type: !isJobPart ? type : "",
-              job_type: isJobPart ? job_type : "",
-              practice_id: !isJobPart
-                ? app.$auth.user.practice_detail.practice.id
-                : "",
-              job_practice_id: isJobPart
-                ? app.$auth.user.practice_detail.practice.id
-                : "",
-              shift_id: !isJobPart ? shift_id : "",
-              job_shift_id: isJobPart ? job_shift_id : "",
-              rate: !isJobPart ? rate : "",
-              job_rate: isJobPart ? job_rate : "",
-              rate_type_id: !isJobPart ? rate_type_id : "",
-              job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
-              title_includes: "",
-              job_title_includes: "",
-              job_number_includes: "",
-              job_part_number_includes: "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+          .$get(
+            `/api/v1/practice/locums/${params.locumId}/${
+              isJobPart ? "job-parts" : "jobs"
+            }/count`,
+            {
+              params: {
+                locum_status,
+                order_by: [],
+                job_number: !isJobPart ? job_number : "",
+                job_part_number: isJobPart ? job_part_number : "",
+                title: !isJobPart ? title : "",
+                job_title: isJobPart ? job_title : "",
+                type: !isJobPart ? type : "",
+                job_type: isJobPart ? job_type : "",
+                practice_id: !isJobPart
+                  ? app.$auth.user.practice_detail.practice.id
+                  : "",
+                job_practice_id: isJobPart
+                  ? app.$auth.user.practice_detail.practice.id
+                  : "",
+                shift_id: !isJobPart ? shift_id : "",
+                job_shift_id: isJobPart ? job_shift_id : "",
+                rate: !isJobPart ? rate : "",
+                job_rate: isJobPart ? job_rate : "",
+                rate_type_id: !isJobPart ? rate_type_id : "",
+                job_rate_type_id: isJobPart ? job_rate_type_id : "",
+                near_post_code: isJobPart ? near_post_code : "",
+                miles: isJobPart ? miles : "",
+                calendar_date_start: isJobPart ? calendar_date_start : "",
+                calendar_date_end: isJobPart ? calendar_date_end : "",
+                time_start: isJobPart ? time_start : "",
+                time_end: isJobPart ? time_end : "",
+                invoice_status: isJobPart ? invoice_status : "",
+                title_includes: "",
+                job_title_includes: "",
+                job_number_includes: "",
+                job_part_number_includes: "",
+                has_favorite_applicants:
+                  queryStatus === "Applied" && bankStatus === "true"
+                    ? true
+                    : queryStatus === "Applied" &&
+                      (bankStatus === "false" || !bankStatus)
+                    ? false
+                    : null
+              }
             }
-          })
+          )
           .then(res => {
             let total = 0;
             total = res.data.count;
             return total;
           }),
         app.$axios
-          .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}`, {
-            params: {
-              viewing_locum_user_id,
-              offset: 0,
-              limit: 5,
-              locum_status,
-              order_by: [],
-              job_number: !isJobPart ? job_number : "",
-              job_part_number: isJobPart ? job_part_number : "",
-              title: !isJobPart ? title : "",
-              job_title: isJobPart ? job_title : "",
-              type: !isJobPart ? type : "",
-              job_type: isJobPart ? job_type : "",
-              practice_id: !isJobPart
-                ? app.$auth.user.practice_detail.practice.id
-                : "",
-              job_practice_id: isJobPart
-                ? app.$auth.user.practice_detail.practice.id
-                : "",
-              shift_id: !isJobPart ? shift_id : "",
-              job_shift_id: isJobPart ? job_shift_id : "",
-              rate: !isJobPart ? rate : "",
-              job_rate: isJobPart ? job_rate : "",
-              rate_type_id: !isJobPart ? rate_type_id : "",
-              job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
-              title_includes: "",
-              job_title_includes: "",
-              job_number_includes: "",
-              job_part_number_includes: "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+          .$get(
+            `/api/v1/practice/locums/${params.locumId}/${
+              isJobPart ? "job-parts" : "jobs"
+            }`,
+            {
+              params: {
+                offset: 0,
+                limit: 5,
+                locum_status,
+                order_by: [],
+                job_number: !isJobPart ? job_number : "",
+                job_part_number: isJobPart ? job_part_number : "",
+                title: !isJobPart ? title : "",
+                job_title: isJobPart ? job_title : "",
+                type: !isJobPart ? type : "",
+                job_type: isJobPart ? job_type : "",
+                practice_id: !isJobPart
+                  ? app.$auth.user.practice_detail.practice.id
+                  : "",
+                job_practice_id: isJobPart
+                  ? app.$auth.user.practice_detail.practice.id
+                  : "",
+                shift_id: !isJobPart ? shift_id : "",
+                job_shift_id: isJobPart ? job_shift_id : "",
+                rate: !isJobPart ? rate : "",
+                job_rate: isJobPart ? job_rate : "",
+                rate_type_id: !isJobPart ? rate_type_id : "",
+                job_rate_type_id: isJobPart ? job_rate_type_id : "",
+                near_post_code: isJobPart ? near_post_code : "",
+                miles: isJobPart ? miles : "",
+                calendar_date_start: isJobPart ? calendar_date_start : "",
+                calendar_date_end: isJobPart ? calendar_date_end : "",
+                time_start: isJobPart ? time_start : "",
+                time_end: isJobPart ? time_end : "",
+                invoice_status: isJobPart ? invoice_status : "",
+                title_includes: "",
+                job_title_includes: "",
+                job_number_includes: "",
+                job_part_number_includes: "",
+                has_favorite_applicants:
+                  queryStatus === "Applied" && bankStatus === "true"
+                    ? true
+                    : queryStatus === "Applied" &&
+                      (bankStatus === "false" || !bankStatus)
+                    ? false
+                    : null
+              }
             }
-          })
+          )
           .then(res => {
             let jobs = 0;
             jobs =
@@ -816,6 +824,10 @@ export default {
     );
     this.$socket.on(
       "Practice Notification Job Part Completed",
+      this.getCompletedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Completed",
       this.getCompletedJobsRealTime
     );
     this.$socket.on(
@@ -875,10 +887,11 @@ export default {
 
       return Promise.all([
         this.$axios.$get(
-          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
+          `/api/v1/practice/locums/${this.$route.params.locumId}/${
+            this.isJobPart ? "job-parts" : "jobs"
+          }/count`,
           {
             params: {
-              viewing_locum_user_id: this.$route.params.locumId,
               locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
@@ -922,10 +935,11 @@ export default {
           }
         ),
         this.$axios.$get(
-          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`,
+          `/api/v1/practice/locums/${this.$route.params.locumId}/${
+            this.isJobPart ? "job-parts" : "jobs"
+          }`,
           {
             params: {
-              viewing_locum_user_id: this.$route.params.locumId,
               offset: 0,
               limit: 5,
               locum_status,
@@ -1014,50 +1028,56 @@ export default {
       }
 
       return this.$axios
-        .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
-          params: {
-            viewing_locum_user_id: this.$route.params.locumId,
-            offset: this.offset,
-            limit: this.limit,
-            locum_status,
-            order_by: this.order_by,
-            job_number: !this.isJobPart ? this.job_number : "",
-            job_part_number: this.isJobPart ? this.job_part_number : "",
-            title: !this.isJobPart ? this.title : "",
-            job_title: this.isJobPart ? this.job_title : "",
-            type: !this.isJobPart ? this.type : "",
-            job_type: this.isJobPart ? this.job_type : "",
-            practice_id: !this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            job_practice_id: this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-            near_post_code: this.isJobPart ? this.near_post_code : "",
-            miles: this.isJobPart ? this.miles : "",
-            calendar_date_start: this.isJobPart ? this.calendar_date_start : "",
-            calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-            time_start: this.isJobPart ? this.time_start : "",
-            time_end: this.isJobPart ? this.time_end : "",
-            invoice_status: this.isJobPart ? this.invoice_status : "",
-            title_includes: this.title_includes,
-            job_title_includes: this.job_title_includes,
-            job_number_includes: this.job_number_includes,
-            has_favorite_applicants:
-              queryStatus === "Applied" && bankStatus === "true"
-                ? true
-                : queryStatus === "Applied" &&
-                  (bankStatus === "false" || !bankStatus)
-                ? false
-                : null
+        .$get(
+          `/api/v1/practice/locums/${this.$route.params.locumId}/${
+            this.isJobPart ? "job-parts" : "jobs"
+          }`,
+          {
+            params: {
+              offset: this.offset,
+              limit: this.limit,
+              locum_status,
+              order_by: this.order_by,
+              job_number: !this.isJobPart ? this.job_number : "",
+              job_part_number: this.isJobPart ? this.job_part_number : "",
+              title: !this.isJobPart ? this.title : "",
+              job_title: this.isJobPart ? this.job_title : "",
+              type: !this.isJobPart ? this.type : "",
+              job_type: this.isJobPart ? this.job_type : "",
+              practice_id: !this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
+              job_practice_id: this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
+              shift_id: !this.isJobPart ? this.shift_id : "",
+              job_shift_id: this.isJobPart ? this.job_shift_id : "",
+              rate: !this.isJobPart ? this.rate : "",
+              job_rate: this.isJobPart ? this.job_rate : "",
+              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
+              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+              near_post_code: this.isJobPart ? this.near_post_code : "",
+              miles: this.isJobPart ? this.miles : "",
+              calendar_date_start: this.isJobPart
+                ? this.calendar_date_start
+                : "",
+              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
+              time_start: this.isJobPart ? this.time_start : "",
+              time_end: this.isJobPart ? this.time_end : "",
+              invoice_status: this.isJobPart ? this.invoice_status : "",
+              title_includes: this.title_includes,
+              job_title_includes: this.job_title_includes,
+              job_number_includes: this.job_number_includes,
+              has_favorite_applicants:
+                queryStatus === "Applied" && bankStatus === "true"
+                  ? true
+                  : queryStatus === "Applied" &&
+                    (bankStatus === "false" || !bankStatus)
+                  ? false
+                  : null
+            }
           }
-        })
+        )
         .then(res => {
           this.jobs =
             res.data && res.data.jobs
@@ -1277,6 +1297,10 @@ export default {
       );
       this.$socket.removeListener(
         "Practice Notification Job Part Completed",
+        this.getCompletedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Completed",
         this.getCompletedJobsRealTime
       );
       this.$socket.removeListener(

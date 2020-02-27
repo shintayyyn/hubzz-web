@@ -2,24 +2,24 @@
   <section class="relative">
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'to-be-invoiced' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && (!$route.query.status || ($route.query.status  && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status  && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be Invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'disputed' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'issued' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'approved' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
@@ -47,15 +47,19 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-wrap justify-center">
+            <div
+              v-if="practice.type !== 'Spoke' || 
+              (practice.type === 'Spoke' && !practice.parent_practice_id) ||
+              (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
+              class="flex flex-wrap justify-center">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                 class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
               >View</div>
               <button
@@ -63,6 +67,9 @@
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none cursor-pointer bg-yellow-400 hover:bg-yellow-500"
               >Mark as Paid</button>
+            </div>
+            <div class="text-gray-600" v-else>
+              Disabled by Hub
             </div>
           </template>
         </AppTable>
@@ -134,8 +141,8 @@
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            :to="{ name: 'practice-billing-index', query: {...$route.query}}"
-            v-if="['practice-billing-index-id', 'practice-billing-index-id-edit'].includes($route.name) || payment_modal"
+            :to="{ name: 'practice-billing-invoices-from-locums', query: {...$route.query}}"
+            v-if="['practice-billing-invoices-from-locums-id', 'practice-billing-invoices-from-locums-id-edit'].includes($route.name) || payment_modal"
             class="shield"
           ></nuxt-link>
         </transition>
@@ -164,6 +171,9 @@ export default {
   },
   data() {
     return {
+      user: '',
+      practice: '',
+
       initialLoading: false,
       loading: false,
       filterModal: false,
@@ -190,6 +200,10 @@ export default {
       },
       formError: []
     };
+  },
+  created(){
+    this.user = this.$auth.user
+    this.practice = this.$auth.user.practice_detail.practice
   },
   computed: {
     columns() {
@@ -221,7 +235,7 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center",
+          class: "text-center currency",
           sortable: true
         },
         {
@@ -237,6 +251,11 @@ export default {
           class: "text-center"
         });
       }
+      columns.push({
+        name: "Under Parent Practice",
+        dataIndex: "under_parent_practice",
+        class: "text-center"
+      });
       columns.push({
         name: "Actions",
         dataIndex: "actions",
@@ -398,9 +417,7 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount: total
-            .toFixed(2)
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          total_amount: total,
           paid:
             jobPart.status === "Approved" &&
             jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -408,7 +425,12 @@ export default {
               : "No",
           nhs_claimable: jobPart.locum_invoice_id
             ? jobPart.locum_invoices_nhs_claimable
-            : jobPart.locum_details_nhs_claimable
+            : jobPart.locum_details_nhs_claimable,
+          under_parent_practice:
+            jobPart.locum_invoice_id &&
+            jobPart.locum_invoice_item.locum_invoice.parent_practice_id
+              ? "Yes"
+              : "No"
         };
       });
 
@@ -507,7 +529,6 @@ export default {
               ? jobPart.job.rate * jobPart.final_hours
               : (jobPart.job.rate / jobPart.job.total_hours) *
                 jobPart.final_hours;
-
             return {
               ...jobPart,
               practice_name:
@@ -520,9 +541,7 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total
-                .toFixed(2)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              total_amount: total,
               paid:
                 jobPart.status === "Approved" &&
                 jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -530,7 +549,12 @@ export default {
                   : "No",
               nhs_claimable: jobPart.locum_invoice_id
                 ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable
+                : jobPart.locum_details_nhs_claimable,
+              under_parent_practice:
+                jobPart.locum_invoice_id &&
+                jobPart.locum_invoice_item.locum_invoice.parent_practice_id
+                  ? "Yes"
+                  : "No"
             };
           });
         })
@@ -613,9 +637,7 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total
-                .toFixed(2)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              total_amount: total,
               paid:
                 jobPart.status === "Approved" &&
                 jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -623,7 +645,12 @@ export default {
                   : "No",
               nhs_claimable: jobPart.locum_invoice_id
                 ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable
+                : jobPart.locum_details_nhs_claimable,
+              under_parent_practice:
+                jobPart.locum_invoice_id &&
+                jobPart.locum_invoice_item.locum_invoice.parent_practice_id
+                  ? "Yes"
+                  : "No"
             };
           });
         })

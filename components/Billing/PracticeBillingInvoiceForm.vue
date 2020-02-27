@@ -81,13 +81,7 @@
           >
             <!-- item description / total / dispute checkbox -->
             <div class="relative flex justify-start mt-2">
-              <!-- <div
-                class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300"
-              >{{form.items[0].description}}</div>-->
               <div class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300">{{description}}</div>
-              <!-- <div
-                class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
-              >{{form.items[0].total}}</div>-->
               <div
                 class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
               >{{total | currency }}</div>

@@ -50,6 +50,9 @@ export default {
                 case 'Practice Notification Job Part Completed':
                     message = 'This part of your job has been completed'
                     break;
+                case 'Practice Notification Job Completed':
+                    message = 'This job has been completed'
+                    break;
                 case 'Practice Notification Job Approved':
                     message = 'This part of your job has been approved'
                     break;
@@ -95,6 +98,9 @@ export default {
                 case 'Practice Notification Job Declined':
                     id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
                     break;
+                case 'Practice Notification Job Withdrawn':
+                    id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
+                    break;
                 default:
                     id = notif.id
             }
@@ -103,7 +109,7 @@ export default {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status === 'Declined' ? 'Withdrawn' : notif.status,
-                status_tag: notif.status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : "",
+                status_tag: notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -111,6 +117,9 @@ export default {
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
+                parent_practice_id: notif.parent_practice_id,
+                // for surgery-management
+                // practice_surgery_id: notif.practice_surgery_id,
                 type: 'Jobs',
                 message
             }
@@ -567,6 +576,9 @@ export default {
                 case 'Locum Notification Job Part Completed':
                     message = 'This part of your job has been completed'
                     break;
+                case 'Locum Notification Job Completed':
+                    message = 'This job has been completed'
+                    break;
                 case 'Locum Notification Job Approved':
                     message = 'This part of your job has been approved'
                     break;
@@ -593,7 +605,7 @@ export default {
                 id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
                 locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status,
-                status_tag: notif.locum_status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : "",
+                status_tag: notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,

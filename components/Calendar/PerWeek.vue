@@ -666,6 +666,7 @@ export default {
         "Locum Notification Job Part Completed",
         this.getJobsRealTime
       );
+      this.$socket.on("Locum Notification Job Completed", this.getJobsRealTime);
       this.$socket.on(
         "Locum Notification Locum Invoice Updated",
         this.getJobsRealTime
@@ -712,6 +713,10 @@ export default {
       );
       this.$socket.on(
         "Practice Notification Job Part Completed",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Completed",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -1037,6 +1042,10 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
+          "Locum Notification Job Completed",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
           "Locum Notification Locum Invoice Updated",
           this.getJobsRealTime
         );
@@ -1092,6 +1101,10 @@ export default {
         );
         this.$socket.removeListener(
           "Practice Notification Job Part Completed",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Completed",
           this.getJobsRealTime
         );
         this.$socket.removeListener(

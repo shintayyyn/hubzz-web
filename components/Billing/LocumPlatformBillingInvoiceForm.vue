@@ -6,7 +6,7 @@
         <AppButton
           v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
           class="m-1"
-          :label="'Save changes'"
+          :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
           @click="save(false)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading"
@@ -14,7 +14,7 @@
         <AppButton
           v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
           class="m-1"
-          :label="'Save and archive as final'"
+          :label="'Save as final'"
           @click="save(true)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading"
