@@ -47,16 +47,16 @@
     <div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5">
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
             v-if="item.day === 1"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{(item.date)}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{(item.date)}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -64,16 +64,16 @@
       </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
+            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             v-if="item.day === 2"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{item.date}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -82,16 +82,16 @@
       </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
+            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             v-if="item.day === 3"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{(item.date)}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{(item.date)}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -99,16 +99,16 @@
       </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
+            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             v-if="item.day === 4"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{item.date}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -116,16 +116,16 @@
       </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-          :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
+          :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             v-if="item.day === 5"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{(item.date)}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{(item.date)}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -133,16 +133,16 @@
       </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
+            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             v-if="item.day === 6"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{item.date}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -150,16 +150,16 @@
       </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 md:w-20 date"
+            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             v-if="item.day === 0"
           >
-            <div class="text-xs md:text-sm z-10 pb-2">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{item.date}}</div>
             <!-- <PerMonthInfoDateCell :item="item" /> -->
             <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
           </div>
@@ -709,9 +709,20 @@ export default {
       // this.getJobs();
     },
     getActivities(date) {
-      console.log("date", date)
       this.hasEvent.push(date)
     }
   }
 };
 </script>
+
+<style scoped>
+.date {
+  min-height: 2em;
+}
+
+@media (min-width: 768px) {
+  .date {
+  min-height: 4em;
+}
+}
+</style>

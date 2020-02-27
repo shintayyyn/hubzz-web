@@ -1,190 +1,184 @@
 <template>
-	<div>
-		<!-- 4 Shifts -->
-		<!-- 
-      <div class="bg-blue-400 h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-transparent"></div>
-      <div class="bg-blue-400 w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-transparent" style="height:50%"></div>
-      <div class="bg-orange-500 h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-transparent"></div>
-      <div class="bg-orange-500 w-1 absolute top-0 left-0 rounded-tl border-b-2 border-transparent" style="height:50%"></div>
+	<div class="flex flex-row flex-wrap justify-center w-full px-1">
+		<span
+			v-if="hasActiveJobs(item.fullDate, item.day)"
+			class="bg-green-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+		></span>
+		<span
+			v-if="hasActiveJobs(item.fullDate, item.day)"
+			class="bg-green-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+		></span>
+		<span
+			v-if="hasActiveJobs(item.fullDate, item.day)"
+			class="bg-green-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+		></span>
+		<span
+			v-if="hasPendingJobs(item.fullDate, item.day)"
+			class="bg-yellow-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+		></span>
+		<span
+			v-if="hasUnfilledJobs(item.fullDate, item.day)"
+			class="bg-red-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+		></span>
+		<template v-if="getStatusCount(item.fullDate, item.day) === 1">
+			<!-- {{getStatusCount(item.fullDate, item.day)}} -->
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="w-1 absolute bottom-0 left-0 rounded-bl"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="h-1 w-1/2 absolute left-0 top-0 rounded-tl"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="w-1 absolute top-0 left-0 rounded-tl"
+				style="height:50%"
+			></div>
 
-      <div class="bg-purple-500 h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-transparent"></div>
-			<div class="bg-purple-500 w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-transparent" style="height:50%"></div>
-      <div class="bg-pink-500 h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-transparent"></div>
-			<div class="bg-pink-500 w-1 absolute top-0 right-0 rounded-tr border-b-2 border-transparent" style="height:50%"></div>
-		-->
-
-		<!-- SESSION STATUS -->
-
-		<!-- 
-		<span class="bg-red-500 w-3 h-3 rounded mx-1"></span>
-		<span class="bg-yellow-500 w-3 h-3 rounded mx-1"></span>
-		<span class="bg-green-500 w-3 h-3 rounded mx-1"></span> 
-		-->
-
-		<div class="flex flex-row flex-no-wrap justify-start w-full">
-			<span v-if="hasActiveJobs(item.fullDate, item.day)" class="bg-green-500 w-3 h-3 rounded mx-1"></span>
-			<span v-if="hasPendingJobs(item.fullDate, item.day)" class="bg-yellow-500 w-3 h-3 rounded mx-1"></span>
-			<span v-if="hasUnfilledJobs(item.fullDate, item.day)" class="bg-red-500 w-3 h-3 rounded mx-1"></span>
-			<template v-if="getStatusCount(item.fullDate, item.day) === 1">
-				<!-- {{getStatusCount(item.fullDate, item.day)}} -->
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="w-1 absolute bottom-0 left-0 rounded-bl"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="h-1 w-1/2 absolute left-0 top-0 rounded-tl"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="w-1 absolute top-0 left-0 rounded-tl"
-					style="height:50%"
-				></div>
-
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="w-1 absolute bottom-0 right-0 rounded-br"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="h-1 w-1/2 absolute right-0 top-0 rounded-tr"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 1)"
-					class="w-1 absolute top-0 right-0 rounded-tr"
-					style="height:50%"
-				></div>
-			</template>
-			<template v-if="getStatusCount(item.fullDate, item.day) === 2">
-				<!-- left -->
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[0].style"
-					class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[0].style"
-					class="w-1 absolute bottom-0 left-0 rounded-bl"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[0].style"
-					class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[0].style"
-					class="w-1 absolute top-0 left-0 rounded-tl"
-					style="height:50%"
-				></div>
-				<!-- right -->
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[1].style"
-					class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-white"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[1].style"
-					class="w-1 absolute bottom-0 right-0 rounded-br"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[1].style"
-					class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 2)[1].style"
-					class="w-1 absolute top-0 right-0 rounded-tr"
-					style="height:50%"
-				></div>
-			</template>
-			<template v-if="getStatusCount(item.fullDate, item.day) === 3">
-				<!-- top left -->
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[0].style"
-					class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[0].style"
-					class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-white"
-					style="height:50%"
-				></div>
-				<!-- top right -->
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[1].style"
-					class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[1].style"
-					class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-white"
-					style="height:50%"
-				></div>
-				<!-- bottom -->
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[2].style"
-					class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[2].style"
-					class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-white"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[2].style"
-					class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 3)[2].style"
-					class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-white"
-					style="height:50%"
-				></div>
-			</template>
-			<template v-if="getStatusCount(item.fullDate, item.day) === 4">
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[0].style"
-					class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-transparent"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[0].style"
-					class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-transparent"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[1].style"
-					class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-transparent"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[1].style"
-					class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-transparent"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[2].style"
-					class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-transparent"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[2].style"
-					class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-transparent"
-					style="height:50%"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[3].style"
-					class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-transparent"
-				></div>
-				<div
-					:class="statusStyle(item.fullDate, item.day, 4)[3].style"
-					class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-transparent"
-					style="height:50%"
-				></div>
-			</template>
-		</div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="w-1 absolute bottom-0 right-0 rounded-br"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="h-1 w-1/2 absolute right-0 top-0 rounded-tr"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 1)"
+				class="w-1 absolute top-0 right-0 rounded-tr"
+				style="height:50%"
+			></div>
+		</template>
+		<template v-if="getStatusCount(item.fullDate, item.day) === 2">
+			<!-- left -->
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[0].style"
+				class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[0].style"
+				class="w-1 absolute bottom-0 left-0 rounded-bl"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[0].style"
+				class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[0].style"
+				class="w-1 absolute top-0 left-0 rounded-tl"
+				style="height:50%"
+			></div>
+			<!-- right -->
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[1].style"
+				class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-white"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[1].style"
+				class="w-1 absolute bottom-0 right-0 rounded-br"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[1].style"
+				class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 2)[1].style"
+				class="w-1 absolute top-0 right-0 rounded-tr"
+				style="height:50%"
+			></div>
+		</template>
+		<template v-if="getStatusCount(item.fullDate, item.day) === 3">
+			<!-- top left -->
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[0].style"
+				class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[0].style"
+				class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-white"
+				style="height:50%"
+			></div>
+			<!-- top right -->
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[1].style"
+				class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[1].style"
+				class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-white"
+				style="height:50%"
+			></div>
+			<!-- bottom -->
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[2].style"
+				class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[2].style"
+				class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-white"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[2].style"
+				class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 3)[2].style"
+				class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-white"
+				style="height:50%"
+			></div>
+		</template>
+		<template v-if="getStatusCount(item.fullDate, item.day) === 4">
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[0].style"
+				class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-transparent"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[0].style"
+				class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-transparent"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[1].style"
+				class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-transparent"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[1].style"
+				class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-transparent"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[2].style"
+				class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-transparent"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[2].style"
+				class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-transparent"
+				style="height:50%"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[3].style"
+				class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-transparent"
+			></div>
+			<div
+				:class="statusStyle(item.fullDate, item.day, 4)[3].style"
+				class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-transparent"
+				style="height:50%"
+			></div>
+		</template>
 	</div>
 </template>
 <script>
