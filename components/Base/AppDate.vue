@@ -20,7 +20,6 @@
           :class="{ inClass, 'border-red-500': error}"
           @click="modal = true"
           @keypress="validateInput($event)"
-          @input="$emit('input', $event.target.value)"
           :style="inStyle"
           :format="format"
           :disabled="disabled"
@@ -485,12 +484,12 @@ export default {
       // });
     },
     validateInput(e) {
-      e.preventDefault();
-      // if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
-      //   return;
-      // } else {
-      //   e.preventDefault();
-      // }
+      // e.preventDefault();
+      if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
+        return;
+      } else {
+        e.preventDefault();
+      }
     },
     select(date) {
       if (!this.isDisabled(date)) {

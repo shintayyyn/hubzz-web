@@ -971,6 +971,10 @@ export default {
       this.getCompletedJobsRealTime
     );
     this.$socket.on(
+      "Locum Notification Job Completed",
+      this.getCompletedJobsRealTime
+    );
+    this.$socket.on(
       "Locum Notification Locum Invoice Updated",
       this.getApprovedJobsRealTime
     );
@@ -1529,6 +1533,10 @@ export default {
       );
       this.$socket.removeListener(
         "Locum Notification Job Part Completed",
+        this.getCompletedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Completed",
         this.getCompletedJobsRealTime
       );
       this.$socket.removeListener(

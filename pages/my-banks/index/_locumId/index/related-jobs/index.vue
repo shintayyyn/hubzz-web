@@ -827,6 +827,10 @@ export default {
       this.getCompletedJobsRealTime
     );
     this.$socket.on(
+      "Practice Notification Job Completed",
+      this.getCompletedJobsRealTime
+    );
+    this.$socket.on(
       "Practice Notification Locum Invoice Updated",
       this.getApprovedJobsRealTime
     );
@@ -1293,6 +1297,10 @@ export default {
       );
       this.$socket.removeListener(
         "Practice Notification Job Part Completed",
+        this.getCompletedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Completed",
         this.getCompletedJobsRealTime
       );
       this.$socket.removeListener(

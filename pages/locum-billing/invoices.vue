@@ -22,6 +22,11 @@
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
       <nuxt-link
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'solo-form' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Solo Forms</nuxt-link>
+      <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -139,6 +144,11 @@
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >View Form A</div>
+                <div
+                  v-if="$route.query.status && $route.query.status === 'solo-form' && slotProps.item.ooh && slotProps.item.locum_solo_form_id"
+                  @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                >View Solo Form</div>
               </div>
             </template>
           </AppTable>
@@ -306,13 +316,15 @@ export default {
           dataIndex: "total_amount",
           class: "text-center currency",
           sortable: true
-        },
-        {
+        }
+      );
+      if (!["solo-form"].includes(queryStatus)) {
+        columns.push({
           name: "NHS Claimable",
           dataIndex: "nhs_claimable",
           class: "text-center"
-        }
-      );
+        });
+      }
       if (["approved", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",
@@ -345,6 +357,9 @@ export default {
           break;
         case "approved":
           str = "You do not have any approved job parts.";
+          break;
+        case "solo-form":
+          str = "You do not have any solo forms.";
           break;
         case "pension-form-a":
           str = "You do not have any nhs form a.";
@@ -383,6 +398,7 @@ export default {
       let locum_status = [];
       let locum_invoiceable = null;
       let nhs_claimable = null;
+      let ooh = null;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -404,6 +420,11 @@ export default {
           locum_status.push("Approved");
           locum_invoiceable = true;
           break;
+        case "solo-form":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
@@ -428,6 +449,7 @@ export default {
               locum_status,
               locum_invoiceable,
               nhs_claimable,
+              ooh,
               viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform"
@@ -444,6 +466,7 @@ export default {
               locum_status,
               locum_invoiceable,
               nhs_claimable,
+              ooh,
               viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform",
@@ -543,7 +566,11 @@ export default {
   methods: {
     viewAsPdf(formId, type) {
       let url =
-        type === "form-a" ? `/api/v1/locum-form-a` : `/api/v1/locum-form-b`;
+        type === "form-a"
+          ? `/api/v1/locum-form-a`
+          : type === "solo-form"
+          ? `/api/v1/locum-solo-form`
+          : `/api/v1/locum-form-b`;
       window.open(`${process.env.API_URL}${url}/${formId}/pdf`);
     },
     generateFormA() {
@@ -588,6 +615,7 @@ export default {
       let locum_status = [];
       let locum_invoiceable = null;
       let nhs_claimable = null;
+      let ooh = null;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -611,6 +639,12 @@ export default {
           locum_status.push("Approved");
           locum_invoiceable = true;
           break;
+        case "solo-form":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
@@ -632,6 +666,7 @@ export default {
             locum_status,
             locum_invoiceable,
             nhs_claimable,
+            ooh,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
@@ -644,6 +679,7 @@ export default {
             locum_status,
             locum_invoiceable,
             nhs_claimable,
+            ooh,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
@@ -734,6 +770,7 @@ export default {
       let locum_status = [];
       let locum_invoiceable;
       let nhs_claimable;
+      let ooh;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -757,6 +794,11 @@ export default {
           locum_status.push("Approved");
           locum_invoiceable = true;
           break;
+        case "solo-form":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          ooh = true;
+          break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
@@ -777,6 +819,7 @@ export default {
             locum_status,
             locum_invoiceable,
             nhs_claimable,
+            ooh,
             job_type: "Platform",
             type: "Platform",
             viewing_locum_user_id: this.$auth.user.id,

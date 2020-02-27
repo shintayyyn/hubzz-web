@@ -50,6 +50,9 @@ export default {
                 case 'Practice Notification Job Part Completed':
                     message = 'This part of your job has been completed'
                     break;
+                case 'Practice Notification Job Completed':
+                    message = 'This job has been completed'
+                    break;
                 case 'Practice Notification Job Approved':
                     message = 'This part of your job has been approved'
                     break;
@@ -116,7 +119,7 @@ export default {
                 notification_type: notif.notificationType,
                 parent_practice_id: notif.parent_practice_id,
                 // for surgery-management
-                // practice_surgery_id: notif.practice_surgery_id,
+                practice_surgery_id: notif.practice_surgery_id,
                 type: 'Jobs',
                 message
             }
@@ -572,6 +575,9 @@ export default {
                     break;
                 case 'Locum Notification Job Part Completed':
                     message = 'This part of your job has been completed'
+                    break;
+                case 'Locum Notification Job Completed':
+                    message = 'This job has been completed'
                     break;
                 case 'Locum Notification Job Approved':
                     message = 'This part of your job has been approved'

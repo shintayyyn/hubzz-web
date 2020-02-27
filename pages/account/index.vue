@@ -142,6 +142,17 @@
         @blur="CheckEmptyField(locumForm.gender, 'gender')"
         required
       />
+      <AppDate
+        v-model="locumForm.date_of_birth"
+        :name="'date_of_birth'"
+        :label="'Date of Birth'"
+        :error="formError.find(item => item.field === 'date_of_birth')"
+        @blur="CheckEmptyField(locumForm.date_of_birth, 'date_of_birth')"
+        isBefore
+        :limitYear="100"
+        :maxYearBefore="10"
+        required
+      />
       <AppInput
         v-model="locumForm.mobile_number"
         :type="'text'"
@@ -216,6 +227,7 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import AppFormError from "@/components/Base/AppFormError";
@@ -232,6 +244,7 @@ export default {
   },
   components: {
     AppInput,
+    AppDate,
     AppButton,
     AppLoading,
     AppFormError,
@@ -304,6 +317,7 @@ export default {
         locumForm.last_name = user.personal_detail.last_name;
         locumForm.suffix = user.personal_detail.suffix;
         locumForm.gender = user.personal_detail.gender;
+        locumForm.date_of_birth = user.personal_detail.date_of_birth;
         locumForm.mobile_number = user.contact_detail.mobile_number;
         locumForm.home_number = user.contact_detail.home_number;
         locumForm.work_number = user.contact_detail.work_number;
