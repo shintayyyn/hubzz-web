@@ -119,7 +119,7 @@ export default {
                 notification_type: notif.notificationType,
                 parent_practice_id: notif.parent_practice_id,
                 // for surgery-management
-                // practice_surgery_id: notif.practice_surgery_id,
+                practice_surgery_id: notif.practice_surgery_id,
                 type: 'Jobs',
                 message
             }
