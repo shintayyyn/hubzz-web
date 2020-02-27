@@ -115,7 +115,7 @@ export default {
             spoken_language_id: state.professional_details.spoken_language_id.map(item => item.value)
         }
         this.$axios
-            .$post(`/api/v1/register/locum`, form)
+            .$post(`/api/v1/register/locum?referral_code=${this.$router.app._route.query.referral_code}`, form)
             .then((res) => {
                 commit('CLEAR_FORM_ERROR_DETAILS')
                 this.$router.push('/sign-up/success')
