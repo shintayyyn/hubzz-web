@@ -426,6 +426,17 @@ module.exports = {
       '40': '40',
       '50': '50',
     },
+    rotate: {
+      '-180': '-180deg',
+      '-90': '-90deg',
+      '-45': '-45deg',
+      '0': '0',
+      '45': '45deg',
+      '90': '90deg',
+      '135': '135deg',
+      '180': '180deg',
+      '270': '270deg',
+    }
   },
   variants: {
     accessibility: ['responsive', 'focus'],
@@ -481,6 +492,7 @@ module.exports = {
     pointerEvents: ['responsive'],
     position: ['responsive'],
     resize: ['responsive'],
+    rotate: ['responsive', 'hover', 'focus', 'active', 'group-hover'],
     stroke: ['responsive'],
     tableLayout: ['responsive'],
     textAlign: ['responsive'],
