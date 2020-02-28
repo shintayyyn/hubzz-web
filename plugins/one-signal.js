@@ -13,7 +13,7 @@ export default (ctx) => {
       }
     })
 
-    OneSignal.showNativePrompt()
+    // OneSignal.showNativePrompt()
   })
 
   OneSignal.push(() => {
@@ -27,7 +27,7 @@ export default (ctx) => {
 
     OneSignal.on('subscriptionChange', (isSubscribed) => {
       console.log('subscriptionChange', isSubscribed)
-      
+
       ctx.store.dispatch('one-signal/setOneSignalUser')
     })
 
