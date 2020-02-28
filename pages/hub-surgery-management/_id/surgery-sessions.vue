@@ -1,6 +1,6 @@
 <template>
   <section class="surgery-sessions-sections">
-    <div class="flex flex-row justify-start overflow-x-auto py-3">
+    <div class="flex flex-row justify-start overflow-x-auto py-3 mt-2">
       <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"

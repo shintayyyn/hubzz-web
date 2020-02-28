@@ -1,38 +1,47 @@
 <template>
-	<div
-		class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300 transition-hover"
+	<nuxt-link
+		:to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : `/availability/${job.date}`, query: {...$route.query}}"
+		class="flex flex-col items-start pl-2 rounded-lg mb-2 job-card transition-hover"
+		:class="bgStatus"
 	>
-		<nuxt-link
-			:to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : `/availability/${job.date}`, query: {...$route.query}}"
-		>
-			<template v-if="isNotUnavailable">
-				<div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
-				<div class="ml-2">
-					<div class="text-gray-500 text-xs xl:text-sm">Job Number: {{jobNumber}}</div>
-					<div class="my-3 font-bold text-sm sm:text-md">{{jobTitle}}</div>
-					<div class="my-3 text-sm sm:text-md">{{jobSurgeryName}}</div>
-					<div class="my-3 text-sm sm:text-md">{{jobSurgeryCode}}</div>
-					<div class="text-gray-500 my-3 text-xs xl:text-sm">From {{dateStart}} to {{dateEnd}}</div>
-					<div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{jobShift}}</div>
-					<div class="my-3 text-xs xl:text-sm break-words">{{jobDescription}}</div>
+		<template>
+			<div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
+				<div class="text-gray-600 text-sm xl:text-sm">Job ID: {{ jobNumber }}</div>
+				<div class="text-gray-800 my-1 font-bold">{{ jobTitle }}</div>
+				<div
+					class="my-2 text-sm px-1 text-white rounded w-1/2 sm:w-1/4 lg:w-1/2 text-center"
+					:class="shiftStyle(jobShift)"
+				>{{ jobShift }}</div>
+				<div class="text-gray-600 mt-2 text-sm sm:text-md">{{ jobSurgeryName }}</div>
+				<div class="text-gray-600 mb-2 text-sm sm:text-md">{{ jobSurgeryCode }}</div>
+				<div class="text-gray-600 text-xs xl:text-sm font-bold text-center">
+					{{ $moment(dateStart).format('DD / MM / YYYY') }}
+					<span class="font-normal px-1">to</span>
+					{{ $moment(dateEnd).format('DD / MM / YYYY') }}
 				</div>
-			</template>
-			<template v-if="!isNotUnavailable">
-				<div class="bg-pink-500 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
-				<div class="ml-2">
-					<div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
-					<div
-						class="my-3 text-xs xl:text-sm"
-						v-if="$store.state.calendar.view_type === 'per_month'"
-					>Shifts: {{unavailableShift}}</div>
-					<div
-						class="my-3 text-xs xl:text-sm"
-						v-if="$store.state.calendar.view_type === 'per_week'"
-					>Shift: {{unavailableShift}}</div>
-				</div>
-			</template>
-		</nuxt-link>
-	</div>
+			</div>
+		</template>
+		<!-- <template v-if="!isNotUnavailable">
+      <div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
+        <div class="my-2 font-bold text-sm sm:text-md">
+          Unavailable
+        </div>
+        <div
+          v-if="$store.state.calendar.view_type === 'per_month'"
+          class="my-2 text-xs xl:text-sm"
+        >
+          Shifts: {{ unavailableShift }}
+        </div>
+        <div
+          v-if="$store.state.calendar.view_type === 'per_week'"
+          class="my-2 text-xs xl:text-sm"
+        >
+          Shift: {{ unavailableShift }}
+        </div>
+      </div>
+		</template>-->
+		<p class="text-center text-white py-1 text-sm w-full font-bold">Click to view Details</p>
+	</nuxt-link>
 </template>
 <script>
 export default {
@@ -49,45 +58,38 @@ export default {
 				)
 			);
 		},
-		isNotUnavailable() {
-			if (this.isJobPart) {
-				if (
-					this.propJob.job.type &&
-					["private", "platform"].includes(this.propJob.job.type.toLowerCase())
-				) {
-					return true;
-				}
-			}
-			if (!this.isJobPart) {
-				if (
-					this.propJob.type &&
-					["private", "platform"].includes(this.propJob.type.toLowerCase())
-				) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-			// return this.isJobPart;
-		},
+		// isNotUnavailable () {
+		// 	if (this.isJobPart) {
+		// 		if (
+		// 			this.propJob.job.type &&
+		// 			["private", "platform"].includes(this.propJob.job.type.toLowerCase())
+		// 		) {
+		// 			return true
+		// 		}
+		// 	}
+		// 	if (!this.isJobPart) {
+		// 		if (
+		// 			this.propJob.type &&
+		// 			["private", "platform"].includes(this.propJob.type.toLowerCase())
+		// 		) {
+		// 			return true
+		// 		} else {
+		// 			return false
+		// 		}
+		// 	}
+		// 	// return this.isJobPart;
+		// },
 		bgStatus() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			switch (job.locum_status) {
-				case "Available":
-					return "bg-yellow-500";
-					break;
 				case "Applied":
-					return "bg-orange-400";
-					break;
-				case "Allocated":
-					return "bg-green-300";
+					return "bg-job-pending";
 					break;
 				case "Ongoing":
-				case "Completed":
-					return "bg-green-500";
+					return "bg-job-active";
 					break;
 				default:
-					return "bg-red-500";
+					return "";
 			}
 		},
 		dateStart() {
@@ -96,29 +98,29 @@ export default {
 		dateEnd() {
 			return this.propJob.date_end;
 		},
-		unavailableShift() {
-			// if (this.propJob.type === "Platform") {
-			let shifts = this.propJob.shifts;
-			if (this.$store.state.calendar.view_type === "per_month") {
-				return shifts.map(shift => shift.name).join();
-			}
+		// unavailableShift() {
+		// 	// if (this.propJob.type === "Platform") {
+		// 	let shifts = this.propJob.shifts;
+		// 	if (this.$store.state.calendar.view_type === "per_month") {
+		// 		return shifts.map(shift => shift.name).join();
+		// 	}
 
-			if (this.$store.state.calendar.view_type === "per_week") {
-				let filteredShifts = shifts.filter(
-					shift =>
-						shift.name === this.$store.state.calendar.selected_date_shift.shift
-				);
+		// 	if (this.$store.state.calendar.view_type === "per_week") {
+		// 		let filteredShifts = shifts.filter(
+		// 			shift =>
+		// 				shift.name === this.$store.state.calendar.selected_date_shift.shift
+		// 		);
 
-				if (filteredShifts && filteredShifts.length > 0) {
-					return filteredShifts[0].name;
-				} else {
-					return this.propJob.shifts[0].name;
-				}
-			}
-			// } else if (this.propJob.type === "Private") {
-			//   return this.propJob.shift.name;
-			// }
-		},
+		// 		if (filteredShifts && filteredShifts.length > 0) {
+		// 			return filteredShifts[0].name;
+		// 		} else {
+		// 			return this.propJob.shifts[0].name;
+		// 		}
+		// 	}
+		// 	// } else if (this.propJob.type === "Private") {
+		// 	//   return this.propJob.shift.name;
+		// 	// }
+		// },
 		jobNumber() {
 			return this.isJobPart
 				? this.propJob.job_part_number
@@ -148,6 +150,64 @@ export default {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			return job.description;
 		}
+	},
+	methods: {
+		shiftStyle(shift) {
+			switch (shift) {
+				case "PM":
+					return "bg-shift-pm";
+					break;
+				case "AM":
+					return "bg-shift-am";
+					break;
+
+				case "Whole Day":
+					return "bg-shift-whole-day";
+					break;
+
+				case "OOH":
+					return "bg-shift-ooh";
+					break;
+
+				default:
+					break;
+			}
+		}
 	}
 };
 </script>
+<style scoped>
+.bg-job-active {
+	background-color: #38b460;
+}
+
+.bg-job-pending {
+	background-color: #ffa901;
+}
+
+.bg-job-unfilled {
+	background-color: #cd1424;
+}
+
+.bg-shift-whole-day {
+	background-color: #fe703e;
+}
+.bg-shift-am {
+	background-color: #ff59ca;
+}
+.bg-shift-pm {
+	background-color: #34bbff;
+}
+.bg-shift-ooh {
+	background-color: #947ffe;
+}
+/* .job-card {
+	background-color: #45e577;
+}
+.job-card:hover {
+	background-color: #35cc65;
+} */
+.job-card:hover > div {
+	background-color: #f0f0f0;
+}
+</style>
