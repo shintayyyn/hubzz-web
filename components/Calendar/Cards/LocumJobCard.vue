@@ -1,38 +1,42 @@
 <template>
-	<div
-		class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300 transition-hover"
+	<nuxt-link
+		:to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : `/availability/${job.date}`, query: {...$route.query}}"
+		class="flex flex-col items-start pl-2 rounded-lg mb-2 job-card transition-hover"
+		:class="isNotUnavailable ? bgStatus : 'bg-pink-500'"
 	>
-		<nuxt-link
-			:to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : `/availability/${job.date}`, query: {...$route.query}}"
-		>
-			<template v-if="isNotUnavailable">
-				<div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
-				<div class="ml-2">
-					<div class="text-gray-500 text-xs xl:text-sm">Job Number: {{jobNumber}}</div>
-					<div class="my-3 font-bold text-sm sm:text-md">{{jobTitle}}</div>
-					<div class="my-3 text-sm sm:text-md">{{jobSurgeryName}}</div>
-					<div class="my-3 text-sm sm:text-md">{{jobSurgeryCode}}</div>
-					<div class="text-gray-500 my-3 text-xs xl:text-sm">From {{dateStart}} to {{dateEnd}}</div>
-					<div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{jobShift}}</div>
-					<div class="my-3 text-xs xl:text-sm break-words">{{jobDescription}}</div>
+		<template v-if="isNotUnavailable">
+			<div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
+				<div class="text-gray-600 text-sm xl:text-sm">Job ID: {{jobNumber}}</div>
+				<div class="text-gray-800 my-1 font-bold">{{jobTitle}}</div>
+				<div
+					class="my-2 text-sm px-1 text-white rounded w-1/2 sm:w-1/4 lg:w-1/2 text-center"
+					:class="shiftStyle(jobShift)"
+				>{{jobShift}}</div>
+				<div class="text-gray-600 mt-2 text-sm sm:text-md">{{jobSurgeryName}}</div>
+				<div class="text-gray-600 mb-2 text-sm sm:text-md">{{jobSurgeryCode}}</div>
+				<div class="text-gray-600 text-xs xl:text-sm font-bold text-center">
+					{{$moment(dateStart).format('DD / MM / YYYY')}}
+					<span class="font-normal px-1">to</span>
+					{{$moment(dateEnd).format('DD / MM / YYYY')}}
 				</div>
-			</template>
-			<template v-if="!isNotUnavailable">
-				<div class="bg-pink-500 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
-				<div class="ml-2">
-					<div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
-					<div
-						class="my-3 text-xs xl:text-sm"
-						v-if="$store.state.calendar.view_type === 'per_month'"
-					>Shifts: {{unavailableShift}}</div>
-					<div
-						class="my-3 text-xs xl:text-sm"
-						v-if="$store.state.calendar.view_type === 'per_week'"
-					>Shift: {{unavailableShift}}</div>
-				</div>
-			</template>
-		</nuxt-link>
-	</div>
+			</div>
+		</template>
+		<template v-if="!isNotUnavailable">
+			<!-- <div class="bg-pink-500 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div> -->
+			<div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
+				<div class="my-2 font-bold text-sm sm:text-md">Unavailable</div>
+				<div
+					class="my-2 text-xs xl:text-sm"
+					v-if="$store.state.calendar.view_type === 'per_month'"
+				>Shifts: {{unavailableShift}}</div>
+				<div
+					class="my-2 text-xs xl:text-sm"
+					v-if="$store.state.calendar.view_type === 'per_week'"
+				>Shift: {{unavailableShift}}</div>
+			</div>
+		</template>
+		<p class="text-center text-white py-1 text-sm w-full font-bold">Click to view Details</p>
+	</nuxt-link>
 </template>
 <script>
 export default {
@@ -73,17 +77,10 @@ export default {
 		bgStatus() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			switch (job.locum_status) {
-				case "Available":
-					return "bg-yellow-500";
-					break;
 				case "Applied":
 					return "bg-orange-400";
 					break;
-				case "Allocated":
-					return "bg-green-300";
-					break;
 				case "Ongoing":
-				case "Completed":
 					return "bg-green-500";
 					break;
 				default:
@@ -148,6 +145,52 @@ export default {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			return job.description;
 		}
+	},
+	methods: {
+		shiftStyle(shift) {
+			switch (shift) {
+				case "PM":
+					return "bg-blue-400";
+					break;
+				case "AM":
+					return "bg-pink-500";
+					break;
+
+				case "Whole Day":
+					return "bg-orange-500";
+					break;
+
+				case "OOH":
+					return "bg-purple-500";
+					break;
+
+				default:
+					break;
+			}
+		}
 	}
 };
 </script>
+<style scoped>
+.bg-blue {
+	background-color: #34bbff;
+}
+.bg-pink {
+	background-color: #ff5abf;
+}
+.bg-violet {
+	background-color: #947ffe;
+}
+.bg-orange {
+	background-color: #fe703e;
+}
+/* .job-card {
+	background-color: #45e577;
+}
+.job-card:hover {
+	background-color: #35cc65;
+} */
+.job-card:hover > div {
+	background-color: #f0f0f0;
+}
+</style>

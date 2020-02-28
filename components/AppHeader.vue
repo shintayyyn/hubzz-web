@@ -76,7 +76,7 @@
 								>{{ this.unreadMessages }}</span>
 							</button>
 						</div>
-						<div class="relative" v-if="$auth.user.domain === 'Locum'">
+						<!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
 							<AppButton
 								:label="'Expenses'"
 								@click="expense_modal = true"
@@ -89,7 +89,7 @@
 							>
 								<svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
 							</button>
-						</div>
+						</div>-->
 					</div>
 				</div>
 			</div>
@@ -97,13 +97,13 @@
 		<transition name="shield" mode="out-in">
 			<div class="shield" v-if="create_job_modal || expense_modal" @click="close"></div>
 		</transition>
-		<transition name="slide" mode="out-in">
+		<!-- <transition name="slide" mode="out-in">
 			<template v-if="expense_modal">
 				<div class="expense-modal shadow-lg">
 					<ExpenseReportsModal @close="expense_modal = false" />
 				</div>
 			</template>
-		</transition>
+		</transition>-->
 		<transition name="slide" mode="out-in">
 			<template v-if="create_job_modal">
 				<div class="modal-container shadow-lg">
