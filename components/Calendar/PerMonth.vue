@@ -583,7 +583,7 @@ export default {
               this.$store.commit(
                 "jobs/SET_PRACTICE_DECLINED_JOBS",
                 responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Declined"
+                  job => job.status === "Withdrawn"
                 )
               )
               this.$store.commit(
@@ -629,7 +629,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Applied"],
+              locum_status: ["Applied", "Available"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
