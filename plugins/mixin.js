@@ -1,7 +1,7 @@
-import Vue from "vue";
+import Vue from "vue"
 Vue.mixin({
   methods: {
-    async CheckIfUserIsDeactivated() {
+    async CheckIfUserIsDeactivated () {
       if (this.$auth.loggedIn) {
         await this.$auth.fetchUser()
         if (this.$auth.user.status === 'Deactivated') {
@@ -9,7 +9,7 @@ Vue.mixin({
         }
       }
     },
-    async CheckUserVerification() {
+    async CheckUserVerification () {
       if (this.$auth.user.domain === 'Locum') {
         let oldStatus = this.$auth.user.status
         const response = await this.$axios.$get(`/api/v1/me`)
@@ -37,21 +37,21 @@ Vue.mixin({
         }
       }
     },
-    scrollToTop() {
-      window.scrollTo(0, 0);
+    scrollToTop () {
+      window.scrollTo(0, 0)
     },
-    getDateArray(start, end) {
-      let arr = new Array();
-      let dt = new Date(start);
+    getDateArray (start, end) {
+      let arr = new Array()
+      let dt = new Date(start)
       while (dt <= new Date(end)) {
-        arr.push(this.$moment(new Date(dt)).format("YYYY-MM-DD"));
-        dt.setDate(dt.getDate() + 1);
+        arr.push(this.$moment(new Date(dt)).format("YYYY-MM-DD"))
+        dt.setDate(dt.getDate() + 1)
       }
-      return arr;
+      return arr
     },
-    CheckEmptyField(inputField, fieldName, preferredDisplayName) {
-      let trimmedFieldName = fieldName;
-      let displayFieldName = null;
+    CheckEmptyField (inputField, fieldName, preferredDisplayName) {
+      let trimmedFieldName = fieldName
+      let displayFieldName = null
       if (!preferredDisplayName) {
         if (fieldName.includes('_id')) {
           trimmedFieldName = fieldName.replace(/_id/g, "")
@@ -67,29 +67,29 @@ Vue.mixin({
         return
       }
 
-      let index = this.formError.findIndex(item => item.field === fieldName);
+      let index = this.formError.findIndex(item => item.field === fieldName)
 
       if (index >= 0) {
-        this.formError.splice(index, 1);
+        this.formError.splice(index, 1)
       }
 
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
           message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
-        });
+        })
       }
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({
           field: fieldName,
           message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
-        });
+        })
       }
       if (typeof inputField === "boolean" && inputField === false) {
         this.formError.push({
           field: fieldName,
           message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
-        });
+        })
       }
       if (inputField) {
         // if (fieldName === 'email') {
@@ -103,11 +103,11 @@ Vue.mixin({
         // }
       }
     },
-    Validate(form, lists, preferredDisplayName) {
-      let items = Object.entries(form);
+    Validate (form, lists, preferredDisplayName) {
+      let items = Object.entries(form)
       for (const [key, value] of items) {
-        let trimmedFieldName = key;
-        let displayFieldName = null;
+        let trimmedFieldName = key
+        let displayFieldName = null
 
         if (key.includes('_id')) {
           trimmedFieldName = key.replace(/_id/g, "")
@@ -130,13 +130,13 @@ Vue.mixin({
               this.formError.push({
                 field: key,
                 message: `${displayFieldName} is required`
-              });
+              })
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
                 message: `${displayFieldName} is required`
-              });
+              })
             }
           }
         } else {
@@ -145,84 +145,84 @@ Vue.mixin({
               this.formError.push({
                 field: key,
                 message: `${displayFieldName} is required`
-              });
+              })
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
                 message: `${displayFieldName} is required`
-              });
+              })
             }
           }
         }
       }
     },
-    CheckPermissions(permissions) {
-      let hasPermission = true;
+    CheckPermissions (permissions) {
+      let hasPermission = true
       switch (this.$route.name) {
         case "profile-practice":
           if (!permissions.includes("View Profile Practice")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-branches-surgeries":
           if (!permissions.includes("View Profile Surgeries")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-branches-surgeries-id":
           if (!permissions.includes("Show Profile Surgeries")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-branches-surgeries-create":
           if (!permissions.includes("Create Profile Surgeries")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-users":
           if (!permissions.includes("View Profile Users")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-users-id":
           if (!permissions.includes("Show Profile Users")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-users-create":
           if (!permissions.includes("Create Profile Users")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-practice-documents":
           if (!permissions.includes("View Profile Practice Document")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "profile-practice-documents-id":
           if (!permissions.includes("Show Profile Practice Document")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "sessions-index":
           if (!permissions.includes("View Sessions Job")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
         case "sessions-index-id":
           if (!permissions.includes("Show Sessions Job")) {
-            hasPermission = false;
+            hasPermission = false
           }
-          break;
+          break
       }
       return {
         hasPermission
-      };
+      }
     },
-    changeDateFormat(form, dates, oldFormat, newFormat) {
+    changeDateFormat (form, dates, oldFormat, newFormat) {
       let submitForm = { ...form }
-      let items = Object.entries(form);
+      let items = Object.entries(form)
       for (const [key, value] of items) {
         if (dates.includes(key)) {
           let newValueFormat = this.$moment(value, oldFormat).format(newFormat)
@@ -231,36 +231,35 @@ Vue.mixin({
       }
       return submitForm
     },
-    isNumber(e) {
+    isNumber (e) {
       // for input type number to avoid entering 'e'
-      e = e ? e : window.event;
-      let charCode = (e.which) ? e.which : e.keyCode;
-      console.log(charCode)
+      e = e ? e : window.event
+      let charCode = (e.which) ? e.which : e.keyCode
       if (charCode === 101 || charCode === 43 || charCode === 45) {
-        e.preventDefault();;
+        e.preventDefault()
       } else {
-        return true;
+        return true
       }
     },
-    inputNumberOnly(e) {
+    inputNumberOnly (e) {
       // numbers only [0-9]
-      e = (e) ? e : window.event;
-      var charCode = (e.which) ? e.which : e.keyCode;
+      e = (e) ? e : window.event
+      var charCode = (e.which) ? e.which : e.keyCode
       if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
-        e.preventDefault();
+        e.preventDefault()
       } else {
-        return true;
+        return true
       }
     },
-    inputTelephone(e) {
+    inputTelephone (e) {
       // [0-9,+,-,#]
-      e = (e) ? e : window.event;
-      var charCode = (e.which) ? e.which : e.keyCode;
+      e = (e) ? e : window.event
+      var charCode = (e.which) ? e.which : e.keyCode
       if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 35 && charCode !== 43 && charCode !== 45) {
-        e.preventDefault();;
+        e.preventDefault()
       } else {
-        return true;
+        return true
       }
     }
   }
-});
+})

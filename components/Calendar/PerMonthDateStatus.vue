@@ -268,6 +268,14 @@ export default {
 						((job_part.job.include_sunday === false && day !== 0) ||
 							job_part.job.include_sunday === true)
 				)
+				hasLive = this.getLocumAvailableJobs.find(
+					job =>
+						this.getDateArray(job.date_start, job.date_end).includes(date) &&
+						((job.include_saturday === false && day !== 6) ||
+							job.include_saturday === true) &&
+						((job.include_sunday === false && day !== 0) ||
+							job.include_sunday === true)
+				)
 			}
 			if (hasOngoing || hasLive) {
 				this.$emit("hasActivities")
@@ -363,10 +371,20 @@ export default {
 								job_part.date_start,
 								job_part.date_end
 							).includes(date) &&
+							job_part.job.shift.name === "AM" &&
 							((job_part.job.include_saturday === false && day !== 6) ||
 								job_part.job.include_saturday === true) &&
 							((job_part.job.include_sunday === false && day !== 0) ||
 								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "AM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
 					)
 				}
 				hasActiveAMShift = hasOngoing || hasLive ? true : false
@@ -375,6 +393,17 @@ export default {
 				let hasApplied = false
 				if (this.$auth.user.domain === "Practice") {
 					hasApplied = this.getPracticeAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "AM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "AM" &&
@@ -411,7 +440,6 @@ export default {
 				}
 				hasActiveAMShift = hasUnfilled || hasDeclined ? true : false
 			}
-
 			return hasActiveAMShift || hasPendingAMShift || hasUnfilledAMShift
 				? true
 				: false
@@ -446,12 +474,46 @@ export default {
 								job.include_sunday === true)
 					)
 				}
+				if (this.$auth.user.domain === "Locum") {
+					hasOngoing = this.getLocumOngoingJobs.find(
+						job_part =>
+							this.getDateArray(
+								job_part.date_start,
+								job_part.date_end
+							).includes(date) &&
+							job_part.job.shift.name === "PM" &&
+							((job_part.job.include_saturday === false && day !== 6) ||
+								job_part.job.include_saturday === true) &&
+							((job_part.job.include_sunday === false && day !== 0) ||
+								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "PM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
 				hasActivePMShift = hasOngoing || hasLive ? true : false
 			}
 			if (this.hasPendingJobs(date, day)) {
 				let hasApplied = false
 				if (this.$auth.user.domain === "Practice") {
 					hasApplied = this.getPracticeAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "PM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "PM" &&
@@ -520,12 +582,46 @@ export default {
 								job.include_sunday === true)
 					)
 				}
+				if (this.$auth.user.domain === "Locum") {
+					hasOngoing = this.getLocumOngoingJobs.find(
+						job_part =>
+							this.getDateArray(
+								job_part.date_start,
+								job_part.date_end
+							).includes(date) &&
+							job_part.job.shift.name === "AM" &&
+							((job_part.job.include_saturday === false && day !== 6) ||
+								job_part.job.include_saturday === true) &&
+							((job_part.job.include_sunday === false && day !== 0) ||
+								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "OOH" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
 				hasActiveOOHShift = hasOngoing || hasLive ? true : false
 			}
 			if (this.hasPendingJobs(date, day)) {
 				let hasApplied = false
 				if (this.$auth.user.domain === "Practice") {
 					hasApplied = this.getPracticeAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "OOH" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "OOH" &&
@@ -591,6 +687,29 @@ export default {
 							job.shift.name === "Whole Day"
 					)
 				}
+				if (this.$auth.user.domain === "Locum") {
+					hasOngoing = this.getLocumOngoingJobs.find(
+						job_part =>
+							this.getDateArray(
+								job_part.date_start,
+								job_part.date_end
+							).includes(date) &&
+							job_part.job.shift.name === "Whole Day" &&
+							((job_part.job.include_saturday === false && day !== 6) ||
+								job_part.job.include_saturday === true) &&
+							((job_part.job.include_sunday === false && day !== 0) ||
+								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "Whole Day" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
 				hasActiveWDShift = hasOngoing || hasLive ? true : false
 				if (date === "2020-02-28") {
 				}
@@ -602,6 +721,17 @@ export default {
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "Whole Day"
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "Whole Day" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
 					)
 				}
 				hasPendingWDShift = hasApplied ? true : false
