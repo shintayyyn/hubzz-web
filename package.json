@@ -34,42 +34,80 @@
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {
-    "@commitlint/cli": "^7.6.1",
-    "@commitlint/config-conventional": "^7.6.0",
-    "@nuxtjs/tailwindcss": "^1.1.2",
     "autoprefixer": "^8.6.4",
     "babel-eslint": "^10.0.2",
-    "commitizen": "^3.1.2",
-    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.14.1",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-nuxt": "^0.4.3",
+    "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-vue": "^5.2.3",
     "husky": "^2.7.0",
     "lint-staged": "^8.2.1",
     "nodemon": "^1.19.1",
+    "prettier": "^1.19.1",
     "tailwindcss": "^1.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "browser": true
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:vue/recommended",
+      "plugin:vue/essential",
+      "plugin:nuxt/recommended"
+    ],
+    "plugins": [
+      "vue",
+      "nuxt"
+    ],
+    "rules": {
+      "vue/max-attributes-per-line": "off",
+      "vue/no-use-v-if-with-v-for": "off",
+      "object-curly-newline": "off",
+      "no-restricted-syntax": "off",
+      "no-underscore-dangle": "off",
+      "prefer-rest-params": "off",
+      "no-shadow": "off",
+      "no-multi-assign": "off",
+      "consistent-return": "off",
+      "no-param-reassign": "off",
+      "strict": "off",
+      "class-methods-use-this": "off",
+      "no-nested-ternary": "off",
+      "semi": [
+        "error",
+        "never"
+      ],
+      "space-before-function-paren": [
+        "error",
+        "always"
+      ],
+      "camelcase": "off",
+      "max-len": "off",
+      "no-console": "off",
+      "no-plusplus": "off",
+      "no-await-in-loop": "off",
+      "func-names": "off",
+      "global-require": "off",
+      "import/no-dynamic-require": "off"
+    }
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
     }
   },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
   "lint-staged": {
-    "*.js": [
+    "*.{js,vue}": [
       "eslint --fix",
       "git add",
       "eslint"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }
