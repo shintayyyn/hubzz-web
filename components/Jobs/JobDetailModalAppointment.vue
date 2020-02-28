@@ -37,8 +37,8 @@
               :name="'date_start'"
               :label="'From'"
               :error="this.formError.find(item => item.field === 'date_start')"
-              isAfter
             />
+            <!-- isAfter -->
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime
@@ -55,8 +55,8 @@
               :label="'To'"
               :startDate="form.date_start"
               :error="this.formError.find(item => item.field === 'date_end')"
-              isAfter
             />
+            <!-- isAfter -->
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime
@@ -229,33 +229,37 @@ export default {
         error => error.field !== "date_end"
       );
 
-      let hour = this.form.time_start.split(":")[0]
-      let amShift = this.shifts.find(item => item.label === 'AM')
-      let pmShift = this.shifts.find(item => item.label === 'PM')
+      let hour = this.form.time_start.split(":")[0];
+      let amShift = this.shifts.find(item => item.label === "AM");
+      let pmShift = this.shifts.find(item => item.label === "PM");
       if (this.$moment(value).isSame(this.form.date_start)) {
         if (parseInt(hour) > 11) {
-          amShift.disabled = true
-          pmShift.disabled = false
-        }else {
-          amShift.disabled = false
-          pmShift.disabled = true
+          amShift.disabled = true;
+          pmShift.disabled = false;
+        } else {
+          amShift.disabled = false;
+          pmShift.disabled = true;
         }
-      }else {
-        amShift.disabled = false
-        pmShift.disabled = false
+      } else {
+        amShift.disabled = false;
+        pmShift.disabled = false;
       }
     },
     "form.time_start"(value) {
-      let hour = value.split(":")[0]
-      if ((this.form.date_start && this.form.date_end) && (this.$moment(this.form.date_start).isSame(this.form.date_end))) {
-        let amShift = this.shifts.find(item => item.label === 'AM')
-        let pmShift = this.shifts.find(item => item.label === 'PM')
+      let hour = value.split(":")[0];
+      if (
+        this.form.date_start &&
+        this.form.date_end &&
+        this.$moment(this.form.date_start).isSame(this.form.date_end)
+      ) {
+        let amShift = this.shifts.find(item => item.label === "AM");
+        let pmShift = this.shifts.find(item => item.label === "PM");
         if (parseInt(hour) > 11) {
-          amShift.disabled = true
-          pmShift.disabled = false
-        }else {
-          amShift.disabled = false
-          pmShift.disabled = true
+          amShift.disabled = true;
+          pmShift.disabled = false;
+        } else {
+          amShift.disabled = false;
+          pmShift.disabled = true;
         }
       }
 
@@ -302,7 +306,11 @@ export default {
 
         this.shifts = [];
         responseShifts.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id, disabled: false });
+          this.shifts.push({
+            label: item.name,
+            value: item.id,
+            disabled: false
+          });
         });
 
         this.rate_types = [];
@@ -419,10 +427,16 @@ export default {
           });
           this.loading = false;
         } catch (err) {
-          this.$emit('scrollTop')
+          this.$emit("scrollTop");
           console.log("err", err.response || err);
-          if (err.response.data.message && err.response.data.message === 'Invalid Dates') {
-            this.formError.push({ field: 'date_end', message: 'Invalid End Date'})
+          if (
+            err.response.data.message &&
+            err.response.data.message === "Invalid Dates"
+          ) {
+            this.formError.push({
+              field: "date_end",
+              message: "Invalid End Date"
+            });
           }
           // if (err.response.data.message) {
           //   this.$store.commit("SET_NOTIFICATION", {
@@ -439,7 +453,7 @@ export default {
           this.loading = false;
         }
       } else {
-        this.$emit('scrollTop')
+        this.$emit("scrollTop");
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
