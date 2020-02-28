@@ -136,38 +136,38 @@
     <template v-if="getStatusCount(item.fullDate, item.day) === 4">
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[0].style"
-        class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-transparent"
+        class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[0].style"
-        class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-transparent"
+        class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-white"
         style="height:50%"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[1].style"
-        class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-transparent"
+        class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[1].style"
-        class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-transparent"
+        class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-white"
         style="height:50%"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[2].style"
-        class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-transparent"
+        class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[2].style"
-        class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-transparent"
+        class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-white"
         style="height:50%"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[3].style"
-        class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-transparent"
+        class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[3].style"
-        class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-transparent"
+        class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-white"
         style="height:50%"
       />
     </template>
@@ -341,6 +341,7 @@ export default {
 			if (this.hasActiveJobs(date, day)) {
 				let hasOngoing = false
 				let hasLive = false
+
 				if (this.$auth.user.domain === "Practice") {
 					hasOngoing = this.getPracticeOngoingJobs.find(
 						job_part =>
@@ -413,7 +414,7 @@ export default {
 								job.include_sunday === true)
 					)
 				}
-				hasActiveAMShift = hasApplied ? true : false
+				hasPendingAMShift = hasApplied ? true : false
 			}
 			if (this.hasUnfilledJobs(date, day)) {
 				let hasUnfilled = false
@@ -438,7 +439,7 @@ export default {
 								job.include_sunday === true)
 					)
 				}
-				hasActiveAMShift = hasUnfilled || hasDeclined ? true : false
+				hasUnfilledAMShift = hasUnfilled || hasDeclined ? true : false
 			}
 			return hasActiveAMShift || hasPendingAMShift || hasUnfilledAMShift
 				? true
@@ -589,7 +590,7 @@ export default {
 								job_part.date_start,
 								job_part.date_end
 							).includes(date) &&
-							job_part.job.shift.name === "AM" &&
+							job_part.job.shift.name === "OOH" &&
 							((job_part.job.include_saturday === false && day !== 6) ||
 								job_part.job.include_saturday === true) &&
 							((job_part.job.include_sunday === false && day !== 0) ||
