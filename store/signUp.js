@@ -278,7 +278,7 @@ export const actions = {
       ...state.practice_account_details
     }
     this.$axios
-      .$post(`/api/v1/practice/register`, form)
+      .$post(`/api/v1/practice/register${this.$route.query.referral_code ? `?referral_code=${this.$route.query.referral_code}` : ''}`, form)
       .then((res) => {
         commit('CLEAR_FORM_PRACTICE_DETAILS')
         this.$router.push('/sign-up/success')

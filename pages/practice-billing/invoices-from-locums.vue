@@ -28,11 +28,51 @@
       </div>
       <div v-if="!initialLoading">
         <AppButton
+          v-if="!['pension-form-a', 'pension-form-b'].includes($route.query.status)"
+          :label="'Filter'"
+          @click="filterModal = !filterModal"
+          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+        />
+        <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
           @click="refreshInvoices"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
+        <div
+          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          :class="filterModal ? 'flex' : 'hidden'"
+        >
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              class="px-1"
+              v-model="job_ir35"
+              :type="'select'"
+              :name="'type'"
+              :label="'Inside ir35'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+            />
+          </div>
+          <div class="md:px-1 flex w-full">
+            <AppButton
+              :label="'Clear'"
+              @click="clearFilters"
+              :inStyle="'padding:5px 14px;margin-bottom:5px'"
+            />
+            <AppButton
+              class="mx-2"
+              :label="'Search'"
+              @click="filterJobParts"
+              :inStyle="'padding:5px 14px;margin-bottom:5px'"
+            />
+            <AppButton
+              class="mx-2 md:hidden"
+              :label="'Close'"
+              @click="filterModal = false"
+              :inStyle="'padding:5px 14px;margin-bottom:5px'"
+            />
+          </div>
+        </div>
         <AppTable
           v-if="job_parts.length > 0"
           :total="total"
@@ -51,7 +91,8 @@
               v-if="practice.type !== 'Spoke' || 
               (practice.type === 'Spoke' && !practice.parent_practice_id) ||
               (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
-              class="flex flex-wrap justify-center">
+              class="flex flex-wrap justify-center"
+            >
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
@@ -68,9 +109,7 @@
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none cursor-pointer bg-yellow-400 hover:bg-yellow-500"
               >Mark as Paid</button>
             </div>
-            <div class="text-gray-600" v-else>
-              Disabled by Hub
-            </div>
+            <div class="text-gray-600" v-else>Disabled by Hub</div>
           </template>
         </AppTable>
         <div
@@ -171,8 +210,8 @@ export default {
   },
   data() {
     return {
-      user: '',
-      practice: '',
+      user: "",
+      practice: "",
 
       initialLoading: false,
       loading: false,
@@ -201,9 +240,9 @@ export default {
       formError: []
     };
   },
-  created(){
-    this.user = this.$auth.user
-    this.practice = this.$auth.user.practice_detail.practice
+  created() {
+    this.user = this.$auth.user;
+    this.practice = this.$auth.user.practice_detail.practice;
   },
   computed: {
     columns() {
@@ -504,6 +543,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
+            job_ir35: this.job_ir35,
             job_practice_id: [this.$auth.user.practice_id]
           }
         }),
@@ -513,6 +553,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
+            job_ir35: this.job_ir35,
             job_practice_id: [this.$auth.user.practice_id],
             offset: 0,
             limit: 5
@@ -569,6 +610,16 @@ export default {
           });
         });
     },
+    async filterJobParts() {
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = 5;
+      this.initialLoading = true;
+      this.isFiltered = true;
+      await this.getJobPartsPromiseAll();
+      this.initialLoading = false;
+      this.filterModal = false;
+    },
     getJobParts() {
       let status = [];
       let invoice_status = [];
@@ -608,6 +659,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
+            job_ir35: this.job_ir35,
             job_practice_id: [this.$auth.user.practice_id],
             offset: this.offset,
             limit: this.limit,
@@ -829,6 +881,7 @@ export default {
       this.offset = 0;
       this.limit = 5;
       this.order_by = [];
+      this.job_ir35 = null;
     }
   }
 };
