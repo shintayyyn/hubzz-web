@@ -1,7 +1,10 @@
 <template>
-  <div class="info-section h-full rounded-b-lg lg:rounded-b-none lg:rounded-r-lg">
-    <div class="text-white text-sm py-4 px-4 md:px-8">{{$moment(dateInfo).format('Do MMM, YYYY')}}</div>
-    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-4 md:px-8 h-full info-card">
+  <div class="info-section h-full rounded-b-lg lg:rounded-b-none lg:rounded-r-lg pb-4">
+    <div class="text-center leading-relaxed py-4">
+      <p class="text-gray-900 quick-view text-sm">QUICK VIEW</p>
+      <p class="text-white uppercase text-lg font-bold">{{$moment(dateInfo).format('Do MMMM, YYYY')}}</p>
+    </div>
+    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-2 mx-2 h-full info-card">
       <transition name="slide" mode="out-in">
         <div
           class="mt-4 md:text-xl text-white"
@@ -246,14 +249,14 @@ export default {
       this.loading = true;
       this.viewPracticeJobs = false;
       let foundPracticeOngoingJobs = [];
-      let foundPracticeCompletedJobs = [];
-      let foundPracticeAllocatedJobs = [];
+      // let foundPracticeCompletedJobs = [];
+      // let foundPracticeAllocatedJobs = [];
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
       let foundPracticeDeclinedJobs = [];
       let foundPracticeAvailableJobs = [];
-      let foundPracticeAppliedJobsReminder = [];
-      let foundPracticeAvailableJobsReminder = [];
+      // let foundPracticeAppliedJobsReminder = [];
+      // let foundPracticeAvailableJobsReminder = [];
       // PARTS
       if (this.getPracticeOngoingJobs.length > 0) {
         foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(
@@ -262,21 +265,21 @@ export default {
             this.includesWeekends(job.job, date)
         );
       }
-      if (this.getPracticeCompletedJobs.length > 0) {
-        foundPracticeCompletedJobs = this.getPracticeCompletedJobs.filter(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            this.includesWeekends(job.job, date)
-        );
-      }
+      // if (this.getPracticeCompletedJobs.length > 0) {
+      //   foundPracticeCompletedJobs = this.getPracticeCompletedJobs.filter(
+      //     job =>
+      //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
+      //       this.includesWeekends(job.job, date)
+      //   );
+      // }
       // WHOLE
-      if (this.getPracticeAllocatedJobs.length > 0) {
-        foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            this.includesWeekends(job, date)
-        );
-      }
+      // if (this.getPracticeAllocatedJobs.length > 0) {
+      //   foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(
+      //     job =>
+      //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
+      //       this.includesWeekends(job, date)
+      //   );
+      // }
       if (this.getPracticeAppliedJobs.length > 0) {
         foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(
           job =>
@@ -306,43 +309,43 @@ export default {
         );
       }
       // REMINDERS
-      if (this.getPracticeAppliedJobsReminder.length > 0) {
-        foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(
-          job => job.platform_job.selection_date === date
-        );
-        foundPracticeAppliedJobsReminder = foundPracticeAppliedJobsReminder.map(
-          item => {
-            return {
-              ...item,
-              status: "AppliedReminder"
-            };
-          }
-        );
-      }
+      // if (this.getPracticeAppliedJobsReminder.length > 0) {
+      //   foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(
+      //     job => job.platform_job.selection_date === date
+      //   );
+      //   foundPracticeAppliedJobsReminder = foundPracticeAppliedJobsReminder.map(
+      //     item => {
+      //       return {
+      //         ...item,
+      //         status: "AppliedReminder"
+      //       };
+      //     }
+      //   );
+      // }
 
-      if (this.getPracticeAvailableJobsReminder.length > 0) {
-        foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(
-          job => job.platform_job.selection_date === date
-        );
-        foundPracticeAvailableJobsReminder = foundPracticeAvailableJobsReminder.map(
-          item => {
-            return {
-              ...item,
-              status: "AvailableReminder"
-            };
-          }
-        );
-      }
+      // if (this.getPracticeAvailableJobsReminder.length > 0) {
+      //   foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(
+      //     job => job.platform_job.selection_date === date
+      //   );
+      //   foundPracticeAvailableJobsReminder = foundPracticeAvailableJobsReminder.map(
+      //     item => {
+      //       return {
+      //         ...item,
+      //         status: "AvailableReminder"
+      //       };
+      //     }
+      //   );
+      // }
       this.foundPracticeJobs = [
         ...foundPracticeOngoingJobs,
-        ...foundPracticeCompletedJobs,
-        ...foundPracticeAllocatedJobs,
+        // ...foundPracticeCompletedJobs,
+        // ...foundPracticeAllocatedJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
         ...foundPracticeAvailableJobs,
-        ...foundPracticeAppliedJobsReminder,
-        ...foundPracticeAvailableJobsReminder
+        // ...foundPracticeAppliedJobsReminder,
+        // ...foundPracticeAvailableJobsReminder
       ];
 
       if (this.foundPracticeJobs.length > 0) {
@@ -457,14 +460,14 @@ export default {
       }
       this.foundPracticeJobs = [
         ...foundPracticeOngoingJobs,
-        ...foundPracticeCompletedJobs,
-        ...foundPracticeAllocatedJobs,
+        // ...foundPracticeCompletedJobs,
+        // ...foundPracticeAllocatedJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
         ...foundPracticeAvailableJobs,
-        ...foundPracticeAppliedJobsReminder,
-        ...foundPracticeAvailableJobsReminder
+        // ...foundPracticeAppliedJobsReminder,
+        // ...foundPracticeAvailableJobsReminder
       ];
 
       if (this.foundPracticeJobs.length > 0) {
@@ -549,12 +552,12 @@ export default {
 
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
-        ...foundLocumCompletedJobs,
+        // ...foundLocumCompletedJobs,
         ...foundLocumAppliedJobs,
-        ...foundLocumAvailableJobs,
-        ...foundLocumAllocatedPlatformJobs,
-        ...foundLocumAllocatedPrivateJobs,
-        ...foundLocumUnavailabilities
+        // ...foundLocumAvailableJobs,
+        // ...foundLocumAllocatedPlatformJobs,
+        // ...foundLocumAllocatedPrivateJobs,
+        // ...foundLocumUnavailabilities
       ];
       if (this.foundLocumJobs.length > 0) {
         setTimeout(() => {
@@ -640,12 +643,12 @@ export default {
       }
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
-        ...foundLocumCompletedJobs,
+        // ...foundLocumCompletedJobs,
         ...foundLocumAppliedJobs,
-        ...foundLocumAvailableJobs,
-        ...foundLocumAllocatedPrivateJobs,
-        ...foundLocumAllocatedPlatformJobs,
-        ...foundLocumUnavailabilities
+        // ...foundLocumAvailableJobs,
+        // ...foundLocumAllocatedPrivateJobs,
+        // ...foundLocumAllocatedPlatformJobs,
+        // ...foundLocumUnavailabilities
       ];
       if (this.foundLocumJobs.length > 0) {
         setTimeout(() => {
@@ -661,24 +664,32 @@ export default {
 </script>
 <style scoped>
 .info-section {
-  background-image: url("/images/hubzz-bg.png");
+  /* background-image: url("/images/hubzz-bg.png"); */
+  background-image:linear-gradient(#60686a, #363d40) ;
+}
+.quick-view {
+  text-shadow: 0 2px #7d888a;
+  letter-spacing: 4px;
 }
 .info-card {
   height: 300px;
 }
 @media screen and (min-width: 768px) {
   .info-card {
-    height: 600px;
+    height: 100%;
+    max-height: 500px;
   }
 }
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #202226;
+  border-radius: 10px;
+
 }
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: #949fa5;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {

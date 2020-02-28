@@ -24,6 +24,7 @@
         </div>
       </template>
     </AppTable>
+    <div v-if="!invoices.length" class="flex justify-center">No Invoices From Hubzz Found</div>
     <!-- <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
         <AppDate

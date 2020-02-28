@@ -13,7 +13,7 @@
       <div class="font-bold text-lg mt-4">EXPENSES REPORTS</div>
       <AppButton
         :label="'Add expense report'"
-        @click="addModal"
+        @click="addExpenseReports"
         :inStyle="'padding:5px 14px;'"
         class="mb-4"
       />
@@ -41,7 +41,7 @@
             name="left-arrow"
             height="32"
             width="32"
-            @click="closeModal"
+            @click="modal = false"
             class="cursor-pointer"
           />
         </div>
@@ -81,8 +81,16 @@
       </div>
     </transition>
     <transition name="fade" mode="out-in">
-      <div class="shield" v-if="modal" @click="closeModal"></div>
+      <div class="shield" v-if="modal" @click="modal = false"></div>
     </transition>
+    <AppConfirmationModal
+      :label="'Proceed to add delete this expense report?'"
+      :confirmLabel="'Delete'"
+      :cancelLabel="'Cancel'"
+      :modal="delete_modal"
+      @confirm="remove"
+      @cancel="delete_modal = false"
+    />
     <AppLoading :loading="initialLoading" spinner />
     <template v-if="!initialLoading">
       <div class="flex flex-row flex-wrap justify-start">
@@ -145,6 +153,10 @@
               @click="editExpenseReports(slotProps.item.id)"
               class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
             >Edit</div>
+            <div
+              @click="removeExpenseReports(slotProps.item.id)"
+              class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+            >Delete</div>
           </div>
         </template>
       </AppTable>
@@ -156,6 +168,7 @@
   </div>
 </template>
 <script>
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
@@ -163,6 +176,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppTable from "@/components/Base/AppTable";
 export default {
   components: {
+    AppConfirmationModal,
     AppLoading,
     AppInput,
     AppDate,
@@ -171,12 +185,14 @@ export default {
   },
   data() {
     return {
+      selectedExpenseReportId: null,
       initialLoading: false,
       loading: false,
       expense_reports: [],
       total: 0,
 
       modal: false,
+      delete_modal: false,
       form: {
         description: "",
         total: 0,
@@ -347,27 +363,28 @@ export default {
           this.getDaysInMonth(month, year).length - 1
         ].fullDate;
       }
-      console.log(type);
       this.loading = true;
-      await this.getExpenseReports(date_start, date_end);
+      this.date_start = date_start;
+      this.date_end = date_end;
+      await this.getExpenseReportsPromiseAll();
       this.loading = false;
     },
-    async getExpenseReports(date_start, date_end) {
+    async getExpenseReports() {
       try {
         return Promise.all([
           this.$axios.$get("/api/v1/locum/locum-expenses/count", {
             params: {
-              date_start,
-              date_end,
+              date_start: this.date_start,
+              date_end: this.date_end,
               order_by: this.order_by
             }
           }),
           this.$axios.$get("/api/v1/locum/locum-expenses", {
             params: {
-              date_start,
-              date_end,
+              date_start: this.date_start,
+              date_end: this.date_end,
               order_by: this.order_by,
-              offset: this.offset,
+              offset: (this.current_page - 1) * this.limit,
               limit: this.limit
             }
           })
@@ -385,41 +402,74 @@ export default {
       }
     },
     async save() {
+      this.formError = [];
       this.Validate(this.form);
+      this.form.date = this.$moment(this.form.date).format("YYYY-MM-DD");
       if (!this.formError.length) {
         try {
           this.loading = true;
-          let response = await this.$axios.$post(
-            `/api/v1/locum/locum-expenses`,
-            this.form
-          );
-          this.loading = false;
+          let response;
+          if (this.selectedExpenseReportId) {
+            response = await this.$axios.$put(
+              `/api/v1/locum/locum-expenses/${this.selectedExpenseReportId}`,
+              this.form
+            );
+          } else if (!this.selectedExpenseReportId) {
+            response = await this.$axios.$post(
+              `/api/v1/locum/locum-expenses`,
+              this.form
+            );
+          }
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${response.message}`]
           });
-          this.closeModal();
-          // this.expense_reports.push(response.data.locum_expense);
-          this.getExpenseReportsPromiseAll();
+          this.selectedExpenseReportId = null;
+          this.form.description = "";
+          this.form.total = 0;
+          this.form.date = null;
+          this.modal = false;
+          await this.getExpenseReportsTotal();
+          await this.getExpenseReports();
+          this.loading = false;
         } catch (e) {
           throw e;
         }
       }
+    },
+    async remove() {
+      this.loading = true;
+      await this.$axios.$delete(
+        `/api/v1/locum/locum-expenses/${this.selectedExpenseReportId}`
+      );
+      await this.getExpenseReportsTotal();
+      await this.getExpenseReports();
+      this.selectedExpenseReportId = null;
+      this.delete_modal = false;
+      this.loading = false;
     },
     async editExpenseReports(id) {
       let foundExpenseReport = this.expense_reports.find(
         item => item.id === id
       );
       if (foundExpenseReport) {
+        this.selectedExpenseReportId = id;
         this.form.description = foundExpenseReport.description;
         this.form.total = foundExpenseReport.total;
         this.form.date = foundExpenseReport.date;
         this.modal = true;
       }
     },
-    addModal() {
-      this.form.date = this.date;
+    async removeExpenseReports(id) {
+      this.selectedExpenseReportId = id;
+      this.delete_modal = true;
+    },
+    addExpenseReports() {
+      this.selectedExpenseReportId = null;
+      this.form.description = "";
+      this.form.total = 0;
+      this.form.date = null;
       this.modal = true;
     },
     closeModal() {
@@ -472,14 +522,14 @@ export default {
       this.offset = 0;
       this.order_by = orderBy;
       this.loading = true;
-      await this.getJobs();
+      await this.getExpenseReports();
       this.loading = false;
     },
     async pagechanged(page) {
       this.current_page = page;
       this.offset = this.limit * (page - 1);
       this.loading = true;
-      await this.getJobs();
+      await this.getExpenseReports();
       this.loading = false;
     },
     async limitchanged(limit) {
@@ -487,7 +537,7 @@ export default {
       this.offset = 0;
       this.limit = limit;
       this.loading = true;
-      await this.getJobs();
+      await this.getExpenseReports();
       this.loading = false;
     }
   }
