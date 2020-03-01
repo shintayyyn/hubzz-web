@@ -12,6 +12,11 @@
         :class="$route.name.includes('locum-billing-private-invoices') && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
+        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'solo-form' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class=" $route.name.includes('locum-billing-private-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Solo Forms</nuxt-link>
+      <nuxt-link
         :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-private-invoices') && $route.query.status === 'pension-form-a' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -84,6 +89,23 @@
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Mark as Paid</button>
+                <template v-if="$route.query.status && $route.query.status === 'issued'">
+                  <div
+                    v-if="slotProps.item.nhs_claimable && !slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                    @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
+                    class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-xs"
+                  >Generate Form A</div>
+                  <div
+                    v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                    @click="select_invoice(slotProps.item.locum_invoice_id, 'generateSoloForm')"
+                    class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-xs"
+                  >Generate Solo Form</div>
+                </template>
+                <div
+                  v-if="$route.query.status && $route.query.status === 'solo-form' && slotProps.item.locum_solo_form_id"
+                  @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                >View Solo Form</div>
                 <div
                   v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.nhs_claimable && slotProps.item.locum_form_a_id"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
@@ -138,6 +160,15 @@
       :modal="generate_form_a_modal"
       @confirm="generateFormA"
       @cancel="generate_form_a_modal = false"
+    />
+
+    <AppConfirmationModal
+      :label="'Generate Solo Form for this Private Invoice?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="generate_solo_form_modal"
+      @confirm="generateSoloForm"
+      @cancel="generate_solo_form_modal = false"
     />
 
     <div v-if="payment_modal" class="p-2">
@@ -201,8 +232,8 @@
     <transition name="fade" mode="out-in">
       <nuxt-link
         :to="{ name: 'locum-billing-private-invoices', query: {...$route.query }}"
-        :event="payment_modal || generate_form_a_modal || delete_invoice_modal ? '' : 'click'"
-        v-if="['locum-billing-private-invoices-id', 'locum-billing-private-invoices-id-create', 'locum-billing-private-invoices-id-edit', 'locum-billing-private-invoices-form-b-create'].includes($route.name) || delete_invoice_modal || payment_modal || generate_form_a_modal"
+        :event="payment_modal || generate_form_a_modal || generate_solo_form_modal || delete_invoice_modal ? '' : 'click'"
+        v-if="['locum-billing-private-invoices-id', 'locum-billing-private-invoices-id-create', 'locum-billing-private-invoices-id-edit', 'locum-billing-private-invoices-form-b-create'].includes($route.name) || generate_solo_form_modal || delete_invoice_modal || payment_modal || generate_form_a_modal"
         class="shield"
       ></nuxt-link>
     </transition>
@@ -260,6 +291,7 @@ export default {
 
       delete_invoice_modal: false,
       generate_form_a_modal: false,
+      generate_solo_form_modal: false,
       payment_modal: false,
       invoice_id: null
     };
@@ -352,6 +384,9 @@ export default {
         case "issued":
           str = "You do not have any issued invoices.";
           break;
+        case "solo-form":
+          str = "You do not have any solo forms.";
+          break;
         case "pension-form-a":
           str = "You do not have any form a's.";
           break;
@@ -395,6 +430,7 @@ export default {
       let invoice_status = [];
       let locum_status = [];
       let nhs_claimable = null;
+      let ooh = null;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -404,6 +440,9 @@ export default {
         case "issued":
           locum_status = ["Approved"];
           break;
+        case "solo-form":
+          locum_status.push("Approved");
+        // ooh = true;
         case "pension-form-a":
           locum_status = ["Approved"];
           nhs_claimable = true;
@@ -423,6 +462,7 @@ export default {
               locum_status,
               job_type: "Private",
               type: "Private",
+              ooh,
               nhs_claimable
             }
           })
@@ -436,6 +476,7 @@ export default {
               locum_status,
               job_type: "Private",
               type: "Private",
+              ooh,
               nhs_claimable,
               offset: 0,
               limit: 5
@@ -541,8 +582,18 @@ export default {
   },
   methods: {
     viewAsPdf(formId, type) {
-      let url =
-        type === "form-a" ? `/api/v1/locum-form-a` : `/api/v1/locum-form-b`;
+      let url;
+      switch (type) {
+        case "form-a":
+          url = "/api/v1/locum-form-a";
+          break;
+        case "form-b":
+          url = "/api/v1/locum-form-b";
+          break;
+        case "solo-form":
+          url = "/api/v1/locum-solo-form";
+          break;
+      }
       window.open(`${process.env.API_URL}${url}/${formId}/pdf`);
     },
     createFormB(invoice) {
@@ -553,6 +604,7 @@ export default {
       let url = `/api/v1/locum/job-parts`;
       let locum_status = [];
       let nhs_claimable;
+      let ooh;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -562,6 +614,9 @@ export default {
         case "issued":
           locum_status = ["Approved"];
           break;
+        case "solo-form":
+          locum_status.push("Approved");
+        // ooh = true;
         case "pension-form-a":
           locum_status = ["Approved"];
           nhs_claimable = true;
@@ -579,6 +634,7 @@ export default {
             locum_status,
             job_type: "Private",
             type: "Private",
+            ooh,
             nhs_claimable
           }
         }),
@@ -587,6 +643,7 @@ export default {
             locum_status,
             job_type: "Private",
             type: "Private",
+            ooh,
             nhs_claimable,
             offset: 0,
             limit: 5
@@ -668,6 +725,7 @@ export default {
       let queryStatus = this.$route.query.status;
       let locum_status = [];
       let nhs_claimable;
+      let ooh;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
@@ -676,6 +734,9 @@ export default {
         case "issued":
           locum_status = ["Approved"];
           break;
+        case "solo-form":
+          locum_status.push("Approved");
+        // ooh = true;
         case "pension-form-a":
           locum_status = ["Approved"];
           break;
@@ -692,6 +753,7 @@ export default {
             locum_status,
             job_type: "Private",
             type: "Private",
+            ooh,
             nhs_claimable,
             order_by: this.order_by,
             offset: this.offset,
@@ -796,6 +858,8 @@ export default {
         this.delete_invoice_modal = true;
       } else if (type === "generateFormA") {
         this.generate_form_a_modal = true;
+      } else if (type === "generateSoloForm") {
+        this.generate_solo_form_modal = true;
       } else if (type === "markAsPaid") {
         this.payment_modal = true;
       }
@@ -940,6 +1004,33 @@ export default {
         })
         .finally(() => {
           this.generate_form_a_modal = false;
+        });
+    },
+    generateSoloForm() {
+      this.$axios
+        .$post(`/api/v1/locum/locum-solo-form`, {
+          locum_invoice_id: this.invoice_id
+        })
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+          throw err;
+        })
+        .finally(() => {
+          this.generate_solo_form_modal = false;
         });
     },
     confirmPayment() {
