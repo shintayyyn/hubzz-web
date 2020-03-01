@@ -1,49 +1,55 @@
 <template>
   <section class="relative">
     <div
-      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
       v-if="$route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase())"
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
     >
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           to="/jobs?status=Available"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Available</nuxt-link>
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >
+          Available
+        </nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           to="/jobs?status=Public"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Public</nuxt-link>
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'public' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >
+          Public
+        </nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           to="/jobs?status=Bank"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'bank'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Bank</nuxt-link>
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'bank' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >
+          Bank
+        </nuxt-link>
       </div>
     </div>
     <transition name="fade" mode="out-in">
-      <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
+      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
       <div v-if="!initialLoading">
         <AppButton
           :label="'Filter'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="filterModal = !filterModal"
-          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="refreshJobs"
-          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <div
           v-if="!isJobPart"
@@ -52,8 +58,8 @@
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="job_number_includes"
+              class="px-1"
               :type="'text'"
               :name="'job_number_includes'"
               :label="'Job number'"
@@ -87,8 +93,8 @@
           </div>-->
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="title_includes"
+              class="px-1"
               :type="'text'"
               :name="'title_includes'"
               :label="'Job Title'"
@@ -96,8 +102,8 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="shift_id"
+              class="px-1"
               :type="'select'"
               :name="'shift_id'"
               :label="'Shift'"
@@ -106,18 +112,18 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="rate"
+              class="px-1"
               :type="'number'"
               :name="'rate'"
               :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="rate_type_id"
+              class="px-1"
               :type="'select'"
               :name="'rate_type_id'"
               :label="'per'"
@@ -148,16 +154,16 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppPostCode
-              class="px-1"
               v-model="near_post_code"
+              class="px-1"
               :name="'near_post_code'"
               :label="'Post code'"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="miles"
+              class="px-1"
               :type="'number'"
               :name="'miles'"
               :label="'Miles'"
@@ -166,20 +172,20 @@
           <div class="md:px-1 flex w-full">
             <AppButton
               :label="'Clear'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="clearFilters"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
             <AppButton
               class="mx-2"
               :label="'Search'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="filterJob"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="filterModal = false"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
           </div>
         </div>
@@ -190,8 +196,8 @@
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="job_part_number_includes"
+              class="px-1"
               :type="'text'"
               :name="'job_part_number_includes'"
               :label="'Job part number'"
@@ -226,8 +232,8 @@
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="job_title_includes"
+              class="px-1"
               :type="'text'"
               :name="'job_title_includes'"
               :label="'Job Title'"
@@ -235,8 +241,8 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="job_shift_id"
+              class="px-1"
               :type="'select'"
               :name="'job_shift_id'"
               :label="'Shift'"
@@ -246,18 +252,18 @@
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="job_rate"
+              class="px-1"
               :type="'number'"
               :name="'job_rate'"
               :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="job_rate_type_id"
+              class="px-1"
               :type="'select'"
               :name="'job_rate_type_id'"
               :label="'per'"
@@ -289,16 +295,16 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppPostCode
-              class="px-1"
               v-model="near_post_code"
+              class="px-1"
               :name="'near_post_code'"
               :label="'Post code'"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="miles"
+              class="px-1"
               :type="'number'"
               :name="'miles'"
               :label="'Miles'"
@@ -306,8 +312,8 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              class="px-1"
               v-model="invoice_status"
+              class="px-1"
               :type="'select'"
               :name="'invoice_status'"
               :label="'Invoice Status'"
@@ -317,20 +323,20 @@
           <div class="md:px-1 flex w-full">
             <AppButton
               :label="'Clear'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="clearFilters"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
             <AppButton
               class="mx-2"
               :label="'Search'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="filterJob"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="filterModal = false"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
           </div>
         </div>
@@ -338,16 +344,16 @@
           v-if="jobs.length > 0"
           :total="total"
           :items="jobs"
-          :currentPage="current_page"
-          :perPage="limit"
+          :current-page="current_page"
+          :per-page="limit"
           :columns="columns"
-          :orderBy="order_by"
+          :order-by="order_by"
           :loading="loading"
-          :routerLink="'/jobs'"
+          :router-link="'/jobs'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
-        ></AppTable>
+        />
         <!-- <div
           class="relative flex w-full"
           v-if="jobs.length === 0 && loading"
@@ -358,17 +364,21 @@
         <div
           v-if="!jobs.length && !loading && !isFiltered"
           class="flex justify-center py-4"
-        >{{noJobsToDisplay}}</div>
+        >
+          {{ noJobsToDisplay }}
+        </div>
         <div
           v-if="!jobs.length && !loading && isFiltered"
           class="flex justify-center py-4"
-        >No Jobs Found</div>
+        >
+          No Jobs Found
+        </div>
         <transition name="fade" mode="out-in">
           <nuxt-link
-            class="shield"
             v-if="$route.name === 'jobs-index-id'"
+            class="shield"
             :to="{ path: `/jobs?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
-          ></nuxt-link>
+          />
         </transition>
         <div>
           <nuxt-child
@@ -383,27 +393,34 @@
   </section>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable";
-import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
-import AppTime from "@/components/Base/AppTime";
-import AppPostCode from "@/components/Base/AppPostCode";
-import AppAutoComplete from "@/components/Base/AppAutoComplete";
-import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
+import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput"
+import AppDate from "@/components/Base/AppDate"
+import AppTime from "@/components/Base/AppTime"
+import AppPostCode from "@/components/Base/AppPostCode"
+import AppButton from "@/components/Base/AppButton"
+import AppLoading from "@/components/Base/AppLoading"
 export default {
-  props: ["invoiceStatusList", "practiceTypeList"],
   components: {
     AppTable,
     AppInput,
     AppDate,
     AppTime,
     AppPostCode,
-    AppAutoComplete,
     AppButton,
     AppLoading
   },
-  middleware({ query, redirect, error }) {
+  props: {
+    invoiceStatusList: {
+      type: Array,
+      default: () => []
+    },
+    practiceTypeList: {
+      type: Array,
+      default: () => []
+    }
+  },
+  middleware ({ query, error }) {
     if (
       query.status &&
       ![
@@ -421,10 +438,10 @@ export default {
         "private"
       ].includes(query.status.toLowerCase())
     ) {
-      return error({ status: 404, message: "This Job Status is Invalid" });
+      return error({ status: 404, message: "This Job Status is Invalid" })
     }
   },
-  data() {
+  data () {
     return {
       practiceLists: [],
       total: 0,
@@ -471,22 +488,21 @@ export default {
       filterModal: false,
       isFiltered: false,
       showRefresh: false
-    };
+    }
   },
   computed: {
-    isJobPart() {
+    isJobPart () {
       if (
-        !this.$route.query.status ||
-        (this.$route.query.status &&
-          ![
-            "ongoing",
-            "completed",
-            "approved",
-            "cancelled",
-            "withdrawn"
-          ].includes(this.$route.query.status.toLowerCase()))
+        this.$route.query.status &&
+        ![
+          "ongoing",
+          "completed",
+          "approved",
+          "cancelled",
+          "withdrawn"
+        ].includes(this.$route.query.status.toLowerCase())
       ) {
-        return false;
+        return false
       }
       if (
         this.$route.query.status &&
@@ -494,13 +510,17 @@ export default {
           this.$route.query.status.toLowerCase()
         )
       ) {
-        return true;
+        return true
       }
+      if (!this.$route.query.status) {
+        return false
+      }
+      return false
     },
-    noJobsToDisplay() {
+    noJobsToDisplay () {
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
-        : "";
+        : ""
       switch (queryStatus) {
         case "allocated":
         case "ongoing":
@@ -509,30 +529,30 @@ export default {
         case "withdrawn":
         case "approved":
         case "private":
-          return `You do not have any ${queryStatus} jobs`;
+          return `You do not have any ${queryStatus} jobs`
         case "available":
         case "matched":
-          return `There are no ${queryStatus} jobs nearby and suited for you at this time`;
+          return `There are no ${queryStatus} jobs nearby and suited for you at this time`
         case "public":
         case "bank":
-          return `There are no available jobs nearby and suited for you at this time`;
+          return `There are no available jobs nearby and suited for you at this time`
         case "applied":
         case "unsuccessful":
           return `You have not yet ${
             queryStatus === "applied" ? "applied" : "rejected"
-          } for a job`;
+          } for a job`
         case "completed":
-          return "You have not yet completed any job";
+          return "You have not yet completed any job"
 
         default:
-          return "You do not have any allocated jobs";
+          return "You do not have any allocated jobs"
       }
     },
-    columns() {
-      let columns = [];
+    columns () {
+      let columns = []
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
-        : "allocated";
+        : "allocated"
       if (
         ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
           queryStatus
@@ -574,7 +594,7 @@ export default {
             class: "text-center",
             sortable: true
           }
-        );
+        )
       } else if (
         ![
           "ongoing",
@@ -620,7 +640,7 @@ export default {
             class: "text-center",
             sortable: true
           }
-        );
+        )
       }
       columns.push(
         {
@@ -635,27 +655,27 @@ export default {
           sortable: true,
           class: "text-center"
         }
-      );
+      )
       if (queryStatus === "applied") {
         columns.push({
           name: "Applicants",
           dataIndex: "applicants_count",
           class: "text-center"
-        });
+        })
       }
       if (queryStatus === "unsuccessful") {
         columns.push({
           name: "Rejected At",
           dataIndex: "platform_job.appointed_at",
           class: "text-center localDate"
-        });
+        })
       }
       if (queryStatus === "withdrawn") {
         columns.push({
           name: "Withdrawn At",
           dataIndex: "job.platform_job.declined_at",
           class: "text-center localDate"
-        });
+        })
       }
       if (queryStatus === "cancelled") {
         columns.push(
@@ -669,7 +689,7 @@ export default {
             dataIndex: "tag_status",
             class: "text-center"
           }
-        );
+        )
       }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
@@ -683,120 +703,116 @@ export default {
             dataIndex: "invoice_status",
             class: "text-center"
           }
-        );
+        )
       }
-      return columns;
+      return columns
     }
   },
   watch: {
-    async "$route.query"(newValue, oldValue) {
-      let newStatus = newValue.status;
-      let oldStatus = oldValue.status;
+    async "$route.query" (newValue, oldValue) {
+      let newStatus = newValue.status
+      let oldStatus = oldValue.status
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.current_page = 1;
-        this.filterModal = false;
-        this.showRefresh = false;
-        this.total = 0;
-        this.jobs = [];
-        this.clearFilters();
-        this.isFiltered = false;
-        this.initialLoading = true;
-        await this.getJobsPromiseAll();
-        this.initialLoading = false;
+        this.current_page = 1
+        this.filterModal = false
+        this.showRefresh = false
+        this.total = 0
+        this.jobs = []
+        this.clearFilters()
+        this.isFiltered = false
+        this.initialLoading = true
+        await this.getJobsPromiseAll()
+        this.initialLoading = false
       }
     }
   },
-  async asyncData({ app, params, query, store, error }) {
+  async asyncData ({ app, query, error }) {
     try {
-      let locum_status = [];
-      let queryStatus = query.status;
+      let locum_status = []
+      let queryStatus = query.status
 
       if (!queryStatus) {
-        locum_status = ["Allocated"];
+        locum_status = ["Allocated"]
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Bank":
-            locum_status = ["Available"];
-            break;
+            locum_status = ["Available"]
+            break
           case "Completed":
-            locum_status = ["Completed", "Terminated"];
-            break;
+            locum_status = ["Completed", "Terminated"]
+            break
+          case "Available":
+            locum_status = ["Matched"]
+            break
+          case "Public":
+            locum_status = ["Available"]
+            break
           case "Private":
-            locum_status = [];
-            break;
+            locum_status = []
+            break
           default:
-            locum_status = [`${queryStatus}`];
-            break;
+            locum_status = [`${queryStatus}`]
+            break
         }
       }
 
-      let isJobPart = false;
+      let isJobPart = false
       if (
         queryStatus &&
         ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
           queryStatus.toLowerCase()
         )
       ) {
-        isJobPart = true;
+        isJobPart = true
       }
 
-      let offset = 0;
-      let limit = 5;
-      let order_by = [];
-      let job_number = "";
-      let job_part_number = "";
-      let title = "";
-      let job_title = "";
-      let type = "";
-      let job_type = "";
-      let practice_id = "";
-      let job_practice_id = "";
-      let private_practice_id = "";
-      let job_private_practice_id = "";
-      let shift_id = "";
-      let job_shift_id = "";
-      let rate = "";
-      let job_rate = "";
-      let rate_type_id = "";
-      let job_rate_type_id = "";
+      let job_type = ""
+      let practice_id = ""
+      let job_practice_id = ""
+      let private_practice_id = ""
+      let job_private_practice_id = ""
+      let shift_id = ""
+      let job_shift_id = ""
+      let rate = ""
+      let job_rate = ""
+      let rate_type_id = ""
+      let job_rate_type_id = ""
 
-      let near_post_code = "";
-      let miles = "";
-      let calendar_date_start = "";
-      let calendar_date_end = "";
-      let time_start = "";
-      let time_end = "";
-      let invoice_status = "";
+      let near_post_code = ""
+      let miles = ""
+      let calendar_date_start = ""
+      let calendar_date_end = ""
+      let time_start = ""
+      let time_end = ""
+      let invoice_status = ""
 
-      let viewing_locum_user_id = [];
-      let title_includes = "";
-      let job_title_includes = "";
-      let job_number_includes = "";
-      let job_part_number_includes = "";
+      let title_includes = ""
+      let job_title_includes = ""
+      let job_number_includes = ""
+      let job_part_number_includes = ""
 
       const [shifts, rates, total, jobs] = await Promise.all([
         app.$axios.$get(`/api/v1/shifts`).then(res => {
-          let shifts = [];
-          shifts.push({ label: "All", value: "" });
+          let shifts = []
+          shifts.push({ label: "All", value: "" })
           res.data.shifts.forEach(shift => {
-            shifts.push({ label: shift.name, value: shift.id });
-          });
-          return shifts;
+            shifts.push({ label: shift.name, value: shift.id })
+          })
+          return shifts
         }),
         app.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-          let rates = [];
-          rates.push({ label: "All", value: "" });
+          let rates = []
+          rates.push({ label: "All", value: "" })
           res.data.locum_detail_rate_types.forEach(rateType => {
-            rates.push({ label: rateType.name, value: rateType.id });
-          });
-          return rates;
+            rates.push({ label: rateType.name, value: rateType.id })
+          })
+          return rates
         }),
         app.$axios
           .$get(`/api/v1/locum/${isJobPart ? "job-parts" : "jobs"}/count`, {
             params: {
               locum_status,
               order_by: [],
-              type: !isJobPart ? type : "",
               job_type: isJobPart ? job_type : "",
               practice_id:
                 !isJobPart && queryStatus === "Platform" ? practice_id : "",
@@ -835,9 +851,9 @@ export default {
             }
           })
           .then(res => {
-            let total = 0;
-            total = res.data.count;
-            return total;
+            let total = 0
+            total = res.data.count
+            return total
           }),
         app.$axios
           .$get(`/api/v1/locum/${isJobPart ? "job-parts" : "jobs"}`, {
@@ -846,7 +862,6 @@ export default {
               limit: 5,
               locum_status,
               order_by: [],
-              type: !isJobPart ? type : "",
               job_type: isJobPart ? job_type : "",
               practice_id:
                 !isJobPart && queryStatus === "Platform" ? practice_id : "",
@@ -885,7 +900,7 @@ export default {
             }
           })
           .then(res => {
-            let jobs = 0;
+            let jobs = 0
             jobs =
               res.data && res.data.jobs
                 ? res.data.jobs.map(item => {
@@ -897,7 +912,7 @@ export default {
                       date_time_end: `${app
                         .$moment(item.date_end)
                         .format("DD-MM-YYYY")} | ${item.time_end}`
-                    };
+                    }
                   })
                 : res.data.job_parts
                 ? res.data.job_parts.map(item => {
@@ -912,24 +927,24 @@ export default {
                       date_time_end: `${app
                         .$moment(item.date_end)
                         .format("DD-MM-YYYY")} | ${item.time_end}`
-                    };
+                    }
                   })
-                : [];
-            return jobs;
+                : []
+            return jobs
           })
-      ]);
+      ])
 
       return {
         shifts,
         rates,
         total,
         jobs
-      };
+      }
     } catch (err) {
-      return error({ status: 404 });
+      return error({ status: 404 })
     }
   },
-  mounted() {
+  mounted () {
     this.$axios
       .$get(`/api/v1/locum/practices`, {
         params: {
@@ -942,115 +957,121 @@ export default {
           return {
             label: item.name,
             value: item.id
-          };
-        });
-        console.log(res);
-      });
+          }
+        })
+        console.log(res)
+      })
     this.$socket.on(
       "Locum Notification Job Available",
       this.getAvailableJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Matched",
       this.getMatchedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Unsuccessful",
       this.getUnsuccessfulJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Current",
       this.getCurrentJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Ongoing",
       this.getOngoingJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Part Completed",
       this.getCompletedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Completed",
       this.getCompletedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Locum Invoice Updated",
       this.getApprovedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Cancelled",
       this.getCancelledJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Amended",
       this.getAmendedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Updated",
       this.getUpdatedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Declined",
       this.getDeclinedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Terminated",
       this.getTerminatedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Auto Declined",
       this.getAutoDeclinedJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Unavailable",
       this.getUnavailableJobsRealTime
-    );
+    )
     this.$socket.on(
       "Locum Notification Job Unqualified",
       this.getUnqualifiedJobsRealTime
-    );
+    )
   },
-  destroyed() {
-    this.removeListener();
-    this.showRefresh = false;
+  destroyed () {
+    this.removeListener()
+    this.showRefresh = false
   },
   methods: {
-    addPractice(payload) {
-      this.search_practice = payload.name;
-      this.practice_id = payload.id;
+    addPractice (payload) {
+      this.search_practice = payload.name
+      this.practice_id = payload.id
     },
-    addPrivatePractice(payload) {
-      this.search_private_practice = payload.name;
-      this.private_practice_id = payload.id;
+    addPrivatePractice (payload) {
+      this.search_private_practice = payload.name
+      this.private_practice_id = payload.id
     },
-    async filterJobList(id) {
+    async filterJobList () {
       // this.jobs = this.jobs.filter(item => item.id !== id);
-      this.loading = true;
-      await this.getJobs();
-      this.loading = false;
+      this.loading = true
+      await this.getJobs()
+      this.loading = false
     },
-    getJobsPromiseAll() {
-      let locum_status = [];
-      let queryStatus = this.$route.query.status;
+    getJobsPromiseAll () {
+      let locum_status = []
+      let queryStatus = this.$route.query.status
 
       if (queryStatus) {
         switch (queryStatus) {
           case "Bank":
-            locum_status = ["Available"];
-            break;
+            locum_status = ["Available"]
+            break
           case "Completed":
-            locum_status = ["Completed", "Terminated"];
-            break;
+            locum_status = ["Completed", "Terminated"]
+            break
+          case "Available":
+            locum_status = ["Matched"]
+            break
+          case "Public":
+            locum_status = ["Available"]
+            break
           case "Private":
-            locum_status = [];
-            break;
+            locum_status = []
+            break
           default:
-            locum_status = [`${queryStatus}`];
-            break;
+            locum_status = [`${queryStatus}`]
+            break
         }
       } else if (!queryStatus) {
-        locum_status = ["Allocated"];
+        locum_status = ["Allocated"]
       }
       return Promise.all([
         this.$axios.$get(
@@ -1059,7 +1080,6 @@ export default {
             params: {
               locum_status,
               order_by: [],
-              type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
               practice_id:
                 !this.isJobPart && (!queryStatus || queryStatus !== "Private")
@@ -1112,7 +1132,6 @@ export default {
               limit: 5,
               locum_status,
               order_by: [],
-              type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
               practice_id:
                 !this.isJobPart && (!queryStatus || queryStatus !== "Private")
@@ -1170,7 +1189,7 @@ export default {
                     date_time_end: `${this.$moment(item.date_end).format(
                       "DD-MM-YYYY"
                     )} | ${item.time_end}`
-                  };
+                  }
                 })
               : responseJobs.data.job_parts
               ? responseJobs.data.job_parts.map(item => {
@@ -1185,36 +1204,42 @@ export default {
                     date_time_end: `${this.$moment(item.date_end).format(
                       "DD-MM-YYYY"
                     )} | ${item.time_end}`
-                  };
+                  }
                 })
-              : [];
-          this.total = responseCount.data.count;
+              : []
+          this.total = responseCount.data.count
         })
         .catch(err => {
-          console.log("err", err.response || err);
-          throw err;
-        });
+          console.log("err", err.response || err)
+          throw err
+        })
     },
-    getJobs() {
-      let locum_status = [];
-      let queryStatus = this.$route.query.status;
+    getJobs () {
+      let locum_status = []
+      let queryStatus = this.$route.query.status
 
       if (!queryStatus) {
-        locum_status = ["Allocated"];
+        locum_status = ["Allocated"]
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Bank":
-            locum_status = ["Available"];
-            break;
+            locum_status = ["Available"]
+            break
           case "Completed":
-            locum_status = ["Completed", "Terminated"];
-            break;
+            locum_status = ["Completed", "Terminated"]
+            break
+          case "Available":
+            locum_status = ["Matched"]
+            break
+          case "Public":
+            locum_status = ["Available"]
+            break
           case "Private":
-            locum_status = [];
-            break;
+            locum_status = []
+            break
           default:
-            locum_status = [`${queryStatus}`];
-            break;
+            locum_status = [`${queryStatus}`]
+            break
         }
       }
 
@@ -1225,7 +1250,6 @@ export default {
             limit: this.limit,
             locum_status,
             order_by: this.order_by,
-            type: !this.isJobPart ? this.type : "",
             job_type: this.isJobPart ? this.job_type : "",
             practice_id:
               !this.isJobPart && queryStatus === "Platform"
@@ -1281,7 +1305,7 @@ export default {
                     date_time_end: `${this.$moment(item.date_end).format(
                       "DD-MM-YYYY"
                     )} | ${item.time_end}`
-                  };
+                  }
                 })
               : res.data.job_parts
               ? res.data.job_parts.map(item => {
@@ -1296,101 +1320,101 @@ export default {
                     date_time_end: `${this.$moment(item.date_end).format(
                       "DD-MM-YYYY"
                     )} | ${item.time_end}`
-                  };
+                  }
                 })
-              : [];
+              : []
         })
         .catch(err => {
-          console.log("err", err.response || err);
-          throw err;
-        });
+          console.log("err", err.response || err)
+          throw err
+        })
     },
-    async getAvailableJobsRealTime(job) {
+    async getAvailableJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         this.$route.query.status === "Available"
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getMatchedJobsRealTime(job) {
+    async getMatchedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Available" ||
           this.$route.query.status === "Matched")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getUnsuccessfulJobsRealTime(job) {
+    async getUnsuccessfulJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Unsuccessful" ||
           this.$route.query.status === "Applied")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getCurrentJobsRealTime(job) {
+    async getCurrentJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Allocated" ||
           this.$route.query.status === "Applied")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getOngoingJobsRealTime(job) {
+    async getOngoingJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Ongoing" ||
           this.$route.query.status === "Allocated")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getCompletedJobsRealTime(job) {
+    async getCompletedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Completed" ||
           this.$route.query.status === "Ongoing")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getApprovedJobsRealTime(job) {
+    async getApprovedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Approved" ||
           this.$route.query.status === "Completed")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getCancelledJobsRealTime(job) {
+    async getCancelledJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
@@ -1401,12 +1425,12 @@ export default {
           this.$route.query.status === "Matched" ||
           this.$route.query.status === "Applied")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getAmendedJobsRealTime(job) {
+    async getAmendedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
@@ -1417,24 +1441,24 @@ export default {
           this.$route.query.status === "Matched" ||
           this.$route.query.status === "Applied")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getUpdatedJobsRealTime(job) {
+    async getUpdatedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Available" ||
           this.$route.query.status === "Matched")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getDeclinedJobsRealTime(job) {
+    async getDeclinedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
@@ -1442,46 +1466,46 @@ export default {
           this.$route.query.status === "Allocated" ||
           this.$route.query.status === "Applied")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getTerminatedJobsRealTime(job) {
+    async getTerminatedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         this.$route.query.status === "Ongoing"
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getAutoDeclinedJobsRealTime(job) {
+    async getAutoDeclinedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         (this.$route.query.status === "Declined" ||
           this.$route.query.status === "Allocated")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getUnavailableJobsRealTime(job) {
+    async getUnavailableJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
         this.$route.query.status === "Available"
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async getUnqualifiedJobsRealTime(job) {
+    async getUnqualifiedJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
       if (
         this.$route.path.includes("/jobs") &&
@@ -1490,10 +1514,10 @@ export default {
           this.$route.query.status === "Matched" ||
           this.$route.query.status === "Applied")
       ) {
-        this.showRefresh = true;
+        this.showRefresh = true
       }
     },
-    async appointmentUpdated() {
+    async appointmentUpdated () {
       // this.loading = true;
       // await this.getJobsCount(
       //   this.isJobPart ? this.jobPartParams : this.params
@@ -1501,182 +1525,182 @@ export default {
       // await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
       // this.loading = false;
     },
-    async refreshJobs() {
-      this.current_page = 1;
-      this.offset = 0;
-      this.limit = 5;
-      this.initialLoading = true;
-      await this.getJobsPromiseAll();
-      this.initialLoading = false;
-      this.showRefresh = false;
+    async refreshJobs () {
+      this.current_page = 1
+      this.offset = 0
+      this.limit = 5
+      this.initialLoading = true
+      await this.getJobsPromiseAll()
+      this.initialLoading = false
+      this.showRefresh = false
     },
-    removeListener() {
+    removeListener () {
       this.$socket.removeListener(
         "Locum Notification Job Available",
         this.getAvailableJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Matched",
         this.getMatchedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Unsuccessful",
         this.getUnsuccessfulJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Current",
         this.getCurrentJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Ongoing",
         this.getOngoingJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Part Completed",
         this.getCompletedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Completed",
         this.getCompletedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Locum Invoice Updated",
         this.getApprovedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Cancelled",
         this.getCancelledJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Amended",
         this.getAmendedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Updated",
         this.getUpdatedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Declined",
         this.getDeclinedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Terminated",
         this.getTerminatedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Auto Declined",
         this.getAutoDeclinedJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Unavailable",
         this.getUnavailableJobsRealTime
-      );
+      )
       this.$socket.removeListener(
         "Locum Notification Job Unqualified",
         this.getUnqualifiedJobsRealTime
-      );
+      )
     },
-    async filterJob() {
-      this.current_page = 1;
-      this.offset = 0;
-      this.limit = 5;
-      this.initialLoading = true;
-      this.isFiltered = true;
-      await this.getJobsPromiseAll();
-      this.initialLoading = false;
-      this.filterModal = false;
+    async filterJob () {
+      this.current_page = 1
+      this.offset = 0
+      this.limit = 5
+      this.initialLoading = true
+      this.isFiltered = true
+      await this.getJobsPromiseAll()
+      this.initialLoading = false
+      this.filterModal = false
     },
-    async sorted(order_by) {
+    async sorted (order_by) {
       let orderBy = order_by.map(item => {
-        let order = item.split(":")[1];
-        let sorting = item.split(":")[0];
+        let order = item.split(":")[1]
+        let sorting = item.split(":")[0]
         switch (sorting) {
           case "date_time_start":
-            sorting = "date_start";
-            break;
+            sorting = "date_start"
+            break
           case "date_time_end":
-            sorting = "date_end";
-            break;
+            sorting = "date_end"
+            break
           case "calendar_date_start":
-            sorting = "calendar_date_start";
-            break;
+            sorting = "calendar_date_start"
+            break
           case "calendar_date_end":
-            sorting = "calendar_date_end";
-            break;
+            sorting = "calendar_date_end"
+            break
           case "rate_name":
-            sorting = "rate";
-            break;
+            sorting = "rate"
+            break
           default:
-            sorting;
+            sorting
         }
-        return `${sorting}:${order}`;
-      });
+        return `${sorting}:${order}`
+      })
       if (orderBy.includes("date_start:desc")) {
-        orderBy.push("time_start:desc");
+        orderBy.push("time_start:desc")
       } else if (orderBy.includes("date_start:asc")) {
-        orderBy.push("time_start:asc");
+        orderBy.push("time_start:asc")
       } else if (orderBy.includes("date_end:asc")) {
-        orderBy.push("time_end:asc");
+        orderBy.push("time_end:asc")
       } else if (orderBy.includes("date_end:desc")) {
-        orderBy.push("time_end:desc");
+        orderBy.push("time_end:desc")
       }
-      this.current_page = 1;
-      this.offset = 0;
-      this.order_by = orderBy;
-      this.loading = true;
-      await this.getJobs();
-      this.loading = false;
+      this.current_page = 1
+      this.offset = 0
+      this.order_by = orderBy
+      this.loading = true
+      await this.getJobs()
+      this.loading = false
     },
-    async pagechanged(page) {
-      this.current_page = page;
-      this.offset = this.limit * (page - 1);
-      this.loading = true;
-      await this.getJobs();
-      this.loading = false;
+    async pagechanged (page) {
+      this.current_page = page
+      this.offset = this.limit * (page - 1)
+      this.loading = true
+      await this.getJobs()
+      this.loading = false
     },
-    async limitchanged(limit) {
-      this.current_page = 1;
-      this.offset = 0;
-      this.limit = limit;
-      this.loading = true;
-      await this.getJobs();
-      this.loading = false;
+    async limitchanged (limit) {
+      this.current_page = 1
+      this.offset = 0
+      this.limit = limit
+      this.loading = true
+      await this.getJobs()
+      this.loading = false
     },
-    clearFilters() {
-      this.search_practice = null;
-      this.search_private_practice = null;
-      this.offset = 0;
-      this.limit = 5;
-      this.order_by = [];
-      this.job_number = "";
-      this.job_part_number = "";
-      this.title = "";
-      this.job_title = "";
-      this.type = "";
-      this.job_type = "";
-      this.practice_id = "";
-      this.job_practice_id = "";
-      this.private_practice_id = "";
-      this.job_private_practice_id = "";
-      this.shift_id = "";
-      this.job_shift_id = "";
-      this.rate = "";
-      this.job_rate = "";
-      this.rate_type_id = "";
-      this.job_rate_type_id = "";
-      this.near_post_code = "";
-      this.miles = "";
-      this.calendar_date_start = "";
-      this.calendar_date_end = "";
-      this.time_start = "";
-      this.time_end = "";
-      this.invoice_status = "";
-      this.viewing_locum_user_id = [];
-      this.title_includes = "";
-      this.job_title_includes = "";
-      this.job_number_includes = "";
-      this.job_part_number_includes = "";
+    clearFilters () {
+      this.search_practice = null
+      this.search_private_practice = null
+      this.offset = 0
+      this.limit = 5
+      this.order_by = []
+      this.job_number = ""
+      this.job_part_number = ""
+      this.title = ""
+      this.job_title = ""
+      this.type = ""
+      this.job_type = ""
+      this.practice_id = ""
+      this.job_practice_id = ""
+      this.private_practice_id = ""
+      this.job_private_practice_id = ""
+      this.shift_id = ""
+      this.job_shift_id = ""
+      this.rate = ""
+      this.job_rate = ""
+      this.rate_type_id = ""
+      this.job_rate_type_id = ""
+      this.near_post_code = ""
+      this.miles = ""
+      this.calendar_date_start = ""
+      this.calendar_date_end = ""
+      this.time_start = ""
+      this.time_end = ""
+      this.invoice_status = ""
+      this.viewing_locum_user_id = []
+      this.title_includes = ""
+      this.job_title_includes = ""
+      this.job_number_includes = ""
+      this.job_part_number_includes = ""
     }
   }
-};
+}
 </script>

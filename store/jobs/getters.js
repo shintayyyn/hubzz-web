@@ -3,7 +3,7 @@ import moment from 'moment'
 export default {
     // practice
     // NOTIF
-    getPracticeJobNotifications(state) {
+    getPracticeJobNotifications (state) {
         let notifications = []
         state.practice_job_notifications.forEach(notif => {
             let message = ''
@@ -31,46 +31,46 @@ export default {
                     } else {
                         message = `This Job will start later.`
                     }
-                    break;
+                    break
                 case 'Practice Notification Job Available':
                     message = 'This job is now live.'
-                    break;
+                    break
                 case 'Practice Notification Job Application':
                     message = 'Someone applied to this job.'
-                    break;
+                    break
                 case 'Practice Notification Job Application Cancelled':
                     message = 'Someone cancelled his/her application to this job.'
-                    break;
+                    break
                 case 'Practice Notification Job Current':
                     message = 'A locum has been appointed to this job.'
-                    break;
+                    break
                 case 'Practice Notification Job Ongoing':
                     message = 'This Job has started.'
-                    break;
+                    break
                 case 'Practice Notification Job Part Completed':
                     message = 'This part of your job has been completed'
-                    break;
+                    break
                 case 'Practice Notification Job Completed':
                     message = 'This job has been completed'
-                    break;
+                    break
                 case 'Practice Notification Job Approved':
                     message = 'This part of your job has been approved'
-                    break;
+                    break
                 case 'Practice Notification Job Disputed':
                     message = 'This part of your job has been disputed'
-                    break;
+                    break
                 case 'Practice Notification Job Cancelled':
                     message = 'This job has been cancelled.'
-                    break;
+                    break
                 case 'Practice Notification Job Amended':
                     message = 'This job has been updated'
-                    break;
+                    break
                 case 'Practice Notification Job Declined':
                     message = 'The locum leave this job.'
-                    break;
+                    break
                 case 'Practice Notification Job Update Accept':
                     message = 'The locum accepted your changes on this job.'
-                    break;
+                    break
                 case 'Practice Notification Job Unfilled Warning':
                     if (days > 0) {
                         message = `This Job will start in ${days} days.`
@@ -81,26 +81,26 @@ export default {
                     } else {
                         message = `This Job will start later.`
                     }
-                    break;
+                    break
                 case 'Practice Notification Job Unfilled':
                     message = 'This job is unfilled.'
-                    break;
+                    break
             }
 
             let id = null
             switch (notif.notificationType) {
                 case 'Practice Notification Job Ongoing':
                     id = notif.job_parts.find(item => item.status === 'Ongoing').id
-                    break;
+                    break
                 case 'Practice Notification Job Cancelled':
                     id = notif.job_parts.find(item => ['Cancelled', 'Pending'].includes(item.status)).id
-                    break;
+                    break
                 case 'Practice Notification Job Declined':
                     id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
-                    break;
+                    break
                 case 'Practice Notification Job Withdrawn':
                     id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
-                    break;
+                    break
                 default:
                     id = notif.id
             }
@@ -108,7 +108,8 @@ export default {
                 ...notif,
                 id,
                 title: notif.title ? notif.title : notif.job.title,
-                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status,
+                status: notif.status,
+                // === 'Declined' ? 'Withdrawn' : notif.status
                 status_tag: notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
@@ -128,7 +129,7 @@ export default {
         return notifications
     },
     // PARTS
-    getPracticeOngoingJobs(state) {
+    getPracticeOngoingJobs (state) {
         let jobs = []
         if (state.practice_ongoing_job_parts) {
             state.practice_ongoing_job_parts.forEach(jobPart => {
@@ -161,7 +162,7 @@ export default {
         }
         return []
     },
-    getPracticeCompletedJobs(state) {
+    getPracticeCompletedJobs (state) {
         let jobs = []
         if (state.practice_completed_job_parts) {
             state.practice_completed_job_parts.forEach(jobPart => {
@@ -197,7 +198,7 @@ export default {
         }
         return []
     },
-    getPracticeApprovedJobs(state) {
+    getPracticeApprovedJobs (state) {
         let jobs = []
         if (state.practice_approved_job_parts) {
             state.practice_approved_job_parts.forEach(jobPart => {
@@ -233,7 +234,7 @@ export default {
         }
         return []
     },
-    getPracticeAllocatedPartJobs(state) {
+    getPracticeAllocatedPartJobs (state) {
         let jobs = []
         if (state.practice_allocated_job_parts) {
             state.practice_allocated_job_parts.forEach(jobPart => {
@@ -266,7 +267,7 @@ export default {
         }
         return []
     },
-    getPracticeCancelledJobs(state) {
+    getPracticeCancelledJobs (state) {
         let jobs = []
         if (state.practice_cancelled_job_parts) {
             state.practice_cancelled_job_parts.forEach(jobPart => {
@@ -299,7 +300,7 @@ export default {
         }
         return []
     },
-    getPracticeWithdrawnJobs(state) {
+    getPracticeWithdrawnJobs (state) {
         let jobs = []
         if (state.practice_withdrawn_job_parts) {
             state.practice_withdrawn_job_parts.forEach(jobPart => {
@@ -333,7 +334,7 @@ export default {
         return []
     },
     // WHOLE
-    getPracticePendingJobs(state) {
+    getPracticePendingJobs (state) {
         let jobs = []
         if (state.practice_pending_jobs) {
             state.practice_pending_jobs.forEach(job => {
@@ -363,7 +364,7 @@ export default {
         }
         return []
     },
-    getPracticeAllocatedJobs(state) {
+    getPracticeAllocatedJobs (state) {
         let jobs = []
         if (state.practice_allocated_jobs) {
             state.practice_allocated_jobs.forEach(job => {
@@ -396,7 +397,7 @@ export default {
         }
         return []
     },
-    getPracticeAvailableJobs(state) {
+    getPracticeAvailableJobs (state) {
         let jobs = []
         if (state.practice_available_jobs) {
             state.practice_available_jobs.forEach(job => {
@@ -426,7 +427,7 @@ export default {
         }
         return []
     },
-    getPracticeAppliedJobs(state) {
+    getPracticeAppliedJobs (state) {
         let jobs = []
         if (state.practice_applied_jobs) {
             state.practice_applied_jobs.forEach(job => {
@@ -456,7 +457,7 @@ export default {
         }
         return []
     },
-    getPracticeUnfilledJobs(state) {
+    getPracticeUnfilledJobs (state) {
         let jobs = []
         if (state.practice_unfilled_jobs) {
             state.practice_unfilled_jobs.forEach(job => {
@@ -486,7 +487,7 @@ export default {
         }
         return []
     },
-    getPracticeDeclinedJobs(state) {
+    getPracticeDeclinedJobs (state) {
         let jobs = []
         if (state.practice_declined_jobs) {
             state.practice_declined_jobs.forEach(job => {
@@ -517,34 +518,33 @@ export default {
         return []
     },
     // REMINDERS
-    getPracticeAvailableJobsReminder(state) {
+    getPracticeAvailableJobsReminder (state) {
         return state.practice_available_jobs_reminder
     },
-    getPracticeAppliedJobsReminder(state) {
+    getPracticeAppliedJobsReminder (state) {
         return state.practice_applied_jobs_reminder
     },
 
     // locum
     // NOTIF
-    getLocumJobNotifications(state) {
+    getLocumJobNotifications (state) {
         let notifications = []
         state.locum_job_notifications.forEach(notif => {
             let message = ''
             let notifObj = null
+            let days =
+                moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                    .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'days')
+
+            let hours =
+                moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                    .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'hours')
+
+            let minutes =
+                moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                    .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'minutes')
             switch (notif.notificationType) {
                 case 'Locum Notification Job Reminder':
-                    let days =
-                        moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
-                            .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'days')
-
-                    let hours =
-                        moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
-                            .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'hours')
-
-                    let minutes =
-                        moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
-                            .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'minutes')
-
                     if (days > 0) {
                         message = `This Job will start in ${days} days.`
                     } else if (days <= 0 && hours > 0) {
@@ -554,57 +554,60 @@ export default {
                     } else {
                         message = `This Job will start later.`
                     }
-                    break;
+                    break
                 case 'Locum Notification Job Available':
                     message = 'There is a new available job for you.'
-                    break;
+                    break
                 case 'Locum Notification Job Applied':
                     message = 'Successfully applied for this Job.'
-                    break;
+                    break
                 case 'Locum Notification Job Matched':
                     message = 'There is a new job that matched your qualifications.'
-                    break;
+                    break
                 case 'Locum Notification Job Unsuccessful':
                     message = 'Your application for this job is unsuccessful'
-                    break;
+                    break
                 case 'Locum Notification Job Current':
                     message = 'You have been appointed to this job.'
-                    break;
+                    break
                 case 'Locum Notification Job Ongoing':
                     message = 'Your Job has started.'
-                    break;
+                    break
                 case 'Locum Notification Job Part Completed':
                     message = 'This part of your job has been completed'
-                    break;
+                    break
                 case 'Locum Notification Job Completed':
                     message = 'This job has been completed'
-                    break;
+                    break
                 case 'Locum Notification Job Approved':
                     message = 'This part of your job has been approved'
-                    break;
+                    break
                 case 'Locum Notification Job Disputed':
                     message = 'This part of your job has been disputed'
-                    break;
+                    break
                 case 'Locum Notification Job Cancelled':
                     message = 'Your job has been cancelled by your practice'
-                    break;
+                    break
                 case 'Locum Notification Job Amended':
                     message = 'This job has been updated by your practice'
-                    break;
+                    break
                 case 'Locum Notification Job Declined':
                     message = 'You successfully leave this job.'
-                    break;
+                    break
                 case 'Locum Notification Job Terminated':
                     message = 'This Job has been terminated.'
-                    break;
+                    break
                 case 'Locum Notification Job Unqualified':
                     message = 'You are not qualified anymore on this job.'
-                    break;
+                    break
+                default:
+                    message = ''
             }
             notifObj = {
                 id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
-                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status,
+                locum_status: notif.locum_status,
+                // === 'Declined' ? 'Withdrawn' : notif.locum_status
                 status_tag: notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
@@ -623,7 +626,7 @@ export default {
         return notifications
     },
     // PARTS
-    getLocumAllocatedPartJobs(state) {
+    getLocumAllocatedPartJobs (state) {
         let jobs = []
         if (state.locum_allocated_job_parts) {
             state.locum_allocated_job_parts.forEach(jobPart => {
@@ -656,7 +659,7 @@ export default {
         }
         return []
     },
-    getLocumOngoingJobs(state) {
+    getLocumOngoingJobs (state) {
         let jobs = []
         if (state.locum_ongoing_job_parts) {
             state.locum_ongoing_job_parts.forEach(jobPart => {
@@ -689,7 +692,7 @@ export default {
         }
         return []
     },
-    getLocumCompletedJobs(state) {
+    getLocumCompletedJobs (state) {
         let jobs = []
         if (state.locum_completed_job_parts) {
             state.locum_completed_job_parts.forEach(jobPart => {
@@ -725,7 +728,7 @@ export default {
         }
         return []
     },
-    getLocumApprovedJobs(state) {
+    getLocumApprovedJobs (state) {
         let jobs = []
         if (state.locum_approved_job_parts) {
             state.locum_approved_job_parts.forEach(jobPart => {
@@ -762,7 +765,7 @@ export default {
         return []
     },
     // WHOLE
-    getLocumAllocatedJobs(state) {
+    getLocumAllocatedJobs (state) {
         let jobs = []
         if (state.locum_allocated_jobs) {
             state.locum_allocated_jobs.forEach(job => {
@@ -794,7 +797,7 @@ export default {
         }
         return jobs
     },
-    getLocumAllocatedPrivateJobs(state) {
+    getLocumAllocatedPrivateJobs (state) {
         let jobs = []
         if (state.locum_allocated_jobs) {
             state.locum_allocated_jobs.forEach(job => {
@@ -827,7 +830,7 @@ export default {
         }
         return jobs
     },
-    getLocumAllocatedPlatformJobs(state) {
+    getLocumAllocatedPlatformJobs (state) {
         let jobs = []
         if (state.locum_allocated_jobs) {
             state.locum_allocated_jobs.forEach(job => {
@@ -860,7 +863,7 @@ export default {
         }
         return jobs
     },
-    getLocumAvailableJobs(state) {
+    getLocumAvailableJobs (state) {
         let jobs = []
         if (state.locum_available_jobs) {
             state.locum_available_jobs.forEach(job => {
@@ -893,7 +896,7 @@ export default {
         }
         return []
     },
-    getLocumMatchedJobs(state) {
+    getLocumMatchedJobs (state) {
         let jobs = []
         if (state.locum_matched_jobs) {
             state.locum_matched_jobs.forEach(job => {
@@ -926,7 +929,7 @@ export default {
         }
         return []
     },
-    getLocumAppliedJobs(state) {
+    getLocumAppliedJobs (state) {
         let jobs = []
         if (state.locum_applied_jobs) {
             state.locum_applied_jobs.forEach(job => {
@@ -959,7 +962,7 @@ export default {
         }
         return []
     },
-    getLocumUnsuccessfulJobs(state) {
+    getLocumUnsuccessfulJobs (state) {
         let jobs = []
         if (state.locum_unsuccessful_jobs) {
             state.locum_unsuccessful_jobs.forEach(job => {
@@ -992,7 +995,7 @@ export default {
         }
         return []
     },
-    getLocumDeclinedJobs(state) {
+    getLocumDeclinedJobs (state) {
         let jobs = []
         if (state.locum_declined_jobs) {
             state.locum_declined_jobs.forEach(job => {
@@ -1025,7 +1028,7 @@ export default {
         }
         return []
     },
-    getLocumCancelledJobs(state) {
+    getLocumCancelledJobs (state) {
         let jobs = []
         if (state.locum_cancelled_jobs) {
             state.locum_cancelled_jobs.forEach(job => {
@@ -1058,7 +1061,7 @@ export default {
         }
         return []
     },
-    getLocumWithdrawnJobs(state) {
+    getLocumWithdrawnJobs (state) {
         let jobs = []
         if (state.locum_withdrawn_jobs) {
             state.locum_withdrawn_jobs.forEach(job => {
@@ -1092,11 +1095,11 @@ export default {
         return []
     },
     // UNAVAILABILITIES
-    getLocumUnavailabilities(state) {
+    getLocumUnavailabilities (state) {
         return state.locum_unavailabilities
     },
     // PARTS
-    getLocumPrivateJobs(state) {
+    getLocumPrivateJobs (state) {
         let jobs = []
         state.locum_private_jobs.forEach(job => {
             let surgery_name = ''
