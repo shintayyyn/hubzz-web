@@ -175,7 +175,7 @@ export default {
   props: {
     jobPart: {
       type: Object,
-      default: () => {}
+      required: true
     }
   },
   data () {
