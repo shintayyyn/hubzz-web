@@ -179,7 +179,7 @@ export default {
       let dateStart = notification.date_start
 
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
-
+      console.log(notification)
       // path url
       let url = ""
       if (type === "Jobs") {
@@ -212,7 +212,7 @@ export default {
             : this.$auth.user.domain === "Locum" &&
               notification.notification_billing_type === "Platform"
             ? `/locum-billing/invoices`
-            : this.auth.user.domain === "Locum" &&
+            : this.$auth.user.domain === "Locum" &&
               notification.notification_billing_type === "Private"
             ? `/locum-billing/private-invoices`
             : null
@@ -309,8 +309,10 @@ export default {
           default:
             routeStatus = status
         }
+
         // console.log(url, status, routeStatus, notification);
         // return;
+
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
