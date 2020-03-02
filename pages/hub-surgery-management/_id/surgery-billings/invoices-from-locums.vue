@@ -4,44 +4,52 @@
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=to-be-invoiced` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && (!$route.query.status || ($route.query.status  && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >To be Invoiced</nuxt-link>
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >
+        To be Invoiced
+      </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=disputed` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Disputed Invoices</nuxt-link>
+      >
+        Disputed Invoices
+      </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=issued` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Invoiced</nuxt-link>
+      >
+        Invoiced
+      </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=approved` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Approved Invoices</nuxt-link>
+      >
+        Approved Invoices
+      </nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
-      <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
+      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
       <div v-if="!initialLoading">
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="refreshInvoices"
-          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppTable
           v-if="job_parts.length > 0"
           :total="total"
           :items="job_parts"
           :loading="loading"
-          :currentPage="current_page"
-          :perPage="limit"
+          :current-page="current_page"
+          :per-page="limit"
           :columns="columns"
-          :orderBy="order_by"
+          :order-by="order_by"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -50,23 +58,31 @@
             <div class="flex flex-wrap justify-center">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                 class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >Edit</div>
+                @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+              >
+                Edit
+              </div>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>
+                @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+              >
+                View
+              </div>
               <button
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
-              >Mark as Paid</button>
+                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
+              >
+                Mark as Paid
+              </button>
             </div>
           </template>
         </AppTable>
-        <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
+        <div v-else class="flex justify-center">
+          {{ noJobPartsToDisplay }}
+        </div>
 
         <div v-if="payment_modal" class="p-2">
           <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
@@ -75,7 +91,7 @@
               :name="'paid_at'"
               :label="'Received payment on'"
               :error="formError.find(item => item.field === 'paid_at')"
-              isAfter
+              is-after
             />
             <AppInput
               v-model="form.ni"
@@ -90,7 +106,7 @@
               :type="'number'"
               :name="'ni_amount'"
               :label="'Ni Amount'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
               :error="formError.find(item => item.field === 'ni_amount')"
             />
             <AppInput
@@ -106,21 +122,21 @@
               :type="'number'"
               :name="'paye_amount'"
               :label="'Paye Amount'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
               :error="formError.find(item => item.field === 'paye_amount')"
             />
             <div class="flex flex-row flex-no-wrap justify-center">
               <AppButton
                 class="mx-1"
                 :label="'Save'"
+                :in-style="'padding:5px 10px'"
                 @click="confirmPayment"
-                :inStyle="'padding:5px 10px'"
               />
               <AppButton
                 class="mx-1"
                 :label="'Cancel'"
+                :in-style="'padding:5px 10px'"
                 @click="payment_modal = false"
-                :inStyle="'padding:5px 10px'"
               />
             </div>
           </div>
@@ -128,28 +144,23 @@
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
             v-if="['hub-surgery-management-id-surgery-billings-invoices-from-locums-invoiceId', 'hub-surgery-management-id-surgery-billings-invoices-from-locums-invoiceId-edit'].includes($route.name) || payment_modal"
+            :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
             class="shield"
-          ></nuxt-link>
+          />
         </transition>
-        <nuxt-child @updateInvoice="updateInvoice" />
+        <nuxt-child :child-practice-id="childPracticeId" @updateInvoice="updateInvoice" />
       </div>
     </transition>
   </section>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable";
-import AppLoading from "@/components/Base/AppLoading";
-import AppDate from "@/components/Base/AppDate";
-import AppButton from "@/components/Base/AppButton";
-import AppInput from "@/components/Base/AppInput";
+import AppTable from "@/components/Base/AppTable"
+import AppLoading from "@/components/Base/AppLoading"
+import AppDate from "@/components/Base/AppDate"
+import AppButton from "@/components/Base/AppButton"
+import AppInput from "@/components/Base/AppInput"
 export default {
-  props: ["childPracticeId"],
-  transition: {
-    name: "fade",
-    mode: "out-in"
-  },
   components: {
     AppTable,
     AppLoading,
@@ -157,7 +168,17 @@ export default {
     AppButton,
     AppInput
   },
-  data() {
+  props: {
+    childPracticeId: {
+      type: String,
+      default: ""
+    }
+  },
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  data () {
     return {
       initialLoading: false,
       showTable: false,
@@ -183,14 +204,14 @@ export default {
         paye_amount: null
       },
       formError: []
-    };
+    }
   },
   computed: {
-    columns() {
-      let columns = [];
+    columns () {
+      let columns = []
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
-        : "to-be-invoiced";
+        : "to-be-invoiced"
 
       columns.push(
         {
@@ -223,117 +244,117 @@ export default {
           dataIndex: "nhs_claimable",
           class: "text-center"
         }
-      );
+      )
       if (["approved", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",
           dataIndex: "paid",
           class: "text-center"
-        });
+        })
       }
       columns.push({
         name: "Actions",
         dataIndex: "actions",
         class: "text-center"
-      });
-      return columns;
+      })
+      return columns
     },
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
-    noJobPartsToDisplay() {
-      let str = "";
-      let queryStatus = this.$route.query.status;
+    noJobPartsToDisplay () {
+      let str = ""
+      let queryStatus = this.$route.query.status
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          str = "This spoke do not have any completed job parts.";
-          break;
+          str = "This spoke do not have any completed job parts."
+          break
         case "disputed":
-          str = "This spoke do not have any disputed invoices.";
-          break;
+          str = "This spoke do not have any disputed invoices."
+          break
         case "issued":
-          str = "This spoke do not have any invoiced job parts.";
-          break;
+          str = "This spoke do not have any invoiced job parts."
+          break
         case "approved":
-          str = "This spoke do not have any approved job parts.";
-          break;
+          str = "This spoke do not have any approved job parts."
+          break
         case "pension-form-a":
-          str = "This spoke do not have any nhs form a.";
-          break;
+          str = "This spoke do not have any nhs form a."
+          break
         case "pension-form-b":
-          str = "This spoke do not have any nhs form b.";
-          break;
+          str = "This spoke do not have any nhs form b."
+          break
         default:
-          str = "This spoke do not have any completed job parts.";
+          str = "This spoke do not have any completed job parts."
       }
-      return str;
+      return str
     }
   },
   watch: {
-    async "$route.query"(newValue, oldValue) {
-      let newStatus = newValue.status;
-      let oldStatus = oldValue.status;
+    async "$route.query" (newValue, oldValue) {
+      let newStatus = newValue.status
+      let oldStatus = oldValue.status
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.current_page = 1;
-        this.filterModal = false;
-        this.showRefresh = false;
-        this.total = 0;
-        this.job_parts = [];
-        this.initialLoading = true;
-        await this.getJobPartsPromiseAll();
-        this.initialLoading = false;
+        this.current_page = 1
+        this.filterModal = false
+        this.showRefresh = false
+        this.total = 0
+        this.job_parts = []
+        this.initialLoading = true
+        await this.getJobPartsPromiseAll()
+        this.initialLoading = false
       }
     },
-    "form.ni"(value) {
+    "form.ni" (value) {
       if ([false, "false"].includes(value)) {
-        this.form.ni_amount = 0;
+        this.form.ni_amount = 0
       }
     },
-    "form.paye"(value) {
+    "form.paye" (value) {
       if ([false, "false"].includes(value)) {
-        this.form.paye_amount = 0;
+        this.form.paye_amount = 0
       }
     }
   },
-  async asyncData({ app, query, route, error }) {
+  async asyncData ({ app, query, route, error }) {
     try {
-      let childPracticeId = null;
+      let childPracticeId = null
       await app.$axios
         .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
         .then(res => {
-          childPracticeId = res.data.practice_surgery.child_practice_id;
-        });
+          childPracticeId = res.data.practice_surgery.child_practice_id
+        })
 
-      let status = [];
-      let invoice_status = [];
-      let locum_invoiceable;
-      let queryStatus = query.status;
+      let status = []
+      let invoice_status = []
+      let locum_invoiceable
+      let queryStatus = query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("To Be Invoice")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "disputed":
-          invoice_status.push("Disputed");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Disputed")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "issued":
-          invoice_status.push("Invoiced");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Invoiced")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "approved":
-          invoice_status.push("Invoiced");
-          status.push("Approved");
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          break
         default:
-          invoice_status.push("To Be Invoice");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
+          invoice_status.push("To Be Invoice")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
       }
 
       let [total, job_parts] = await Promise.all([
@@ -348,8 +369,8 @@ export default {
             }
           })
           .then(res => {
-            const total = res.data.count;
-            return total;
+            const total = res.data.count
+            return total
           }),
         app.$axios
           .$get(`/api/v1/practice/job-parts`, {
@@ -364,17 +385,17 @@ export default {
             }
           })
           .then(res => {
-            const job_parts = res.data.job_parts;
-            return job_parts;
+            const job_parts = res.data.job_parts
+            return job_parts
           })
-      ]);
+      ])
 
       job_parts = job_parts.map(jobPart => {
         let total = jobPart.locum_invoice_id
           ? jobPart.locum_invoice_item.total
           : jobPart.job.locum_detail_rate_type.name === "Per Hour"
           ? jobPart.job.rate * jobPart.final_hours
-          : (jobPart.job.rate / jobPart.job.total_hours) * jobPart.final_hours;
+          : (jobPart.job.rate / jobPart.job.total_hours) * jobPart.final_hours
 
         return {
           ...jobPart,
@@ -399,73 +420,73 @@ export default {
           nhs_claimable: jobPart.locum_invoice_id
             ? jobPart.locum_invoices_nhs_claimable
             : jobPart.locum_details_nhs_claimable
-        };
-      });
+        }
+      })
 
-      const showTable = true;
+      const showTable = true
 
       return {
         total,
         job_parts,
         showTable
-      };
+      }
     } catch (err) {
-      console.log("err", err.response || err);
+      console.log("err", err.response || err)
       error({
         statusCode: err.status || 500,
         message: err.message || "Something went wrong!"
-      });
+      })
     }
   },
-  mounted() {
+  mounted () {
     this.$socket.on(
       "Practice Notification Locum Invoice Created",
       this.getLocumInvoiceRealTime
-    );
+    )
     this.$socket.on(
       "Practice Notification Locum Invoice Paid",
       this.getLocumInvoiceRealTime
-    );
+    )
     this.$socket.on(
       "Practice Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
-    );
+    )
   },
-  destroyed() {
-    this.removeListener();
+  destroyed () {
+    this.removeListener()
   },
   methods: {
-    getJobPartsPromiseAll() {
-      let status = [];
-      let invoice_status = [];
-      let locum_invoiceable;
-      let queryStatus = this.$route.query.status;
+    getJobPartsPromiseAll () {
+      let status = []
+      let invoice_status = []
+      let locum_invoiceable
+      let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("To Be Invoice")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "disputed":
-          invoice_status.push("Disputed");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Disputed")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "issued":
-          invoice_status.push("Invoiced");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Invoiced")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "approved":
-          invoice_status.push("Invoiced");
-          status.push("Approved");
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          break
         default:
-          invoice_status.push("To Be Invoice");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
+          invoice_status.push("To Be Invoice")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
       }
 
       return Promise.all([
@@ -491,8 +512,8 @@ export default {
         })
       ])
         .then(([responseTotal, responseJobParts]) => {
-          this.total = responseTotal.data.count;
-          let job_parts = responseJobParts.data.job_parts;
+          this.total = responseTotal.data.count
+          let job_parts = responseJobParts.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
             let total = jobPart.locum_invoice_id
@@ -500,7 +521,7 @@ export default {
               : jobPart.job.locum_detail_rate_type.name === "Per Hour"
               ? jobPart.job.rate * jobPart.final_hours
               : (jobPart.job.rate / jobPart.job.total_hours) *
-                jobPart.final_hours;
+                jobPart.final_hours
 
             return {
               ...jobPart,
@@ -525,51 +546,47 @@ export default {
               nhs_claimable: jobPart.locum_invoice_id
                 ? jobPart.locum_invoices_nhs_claimable
                 : jobPart.locum_details_nhs_claimable
-            };
-          });
+            }
+          })
         })
         .catch(([errTotal, errJobParts]) => {
           console.log(
             "err",
             errTotal.response || errTotal || errJobParts.response || errJobParts
-          );
-          error({
-            statusCode: err.status || 500,
-            message: err.message || "Something went wrong!"
-          });
-        });
+          )
+        })
     },
-    getJobParts() {
-      let status = [];
-      let invoice_status = [];
-      let locum_invoiceable;
-      let queryStatus = this.$route.query.status;
+    getJobParts () {
+      let status = []
+      let invoice_status = []
+      let locum_invoiceable
+      let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("To Be Invoice")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "disputed":
-          invoice_status.push("Disputed");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Disputed")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "issued":
-          invoice_status.push("Invoiced");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Invoiced")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
+          break
         case "approved":
-          invoice_status.push("Invoiced");
-          status.push("Approved");
-          locum_invoiceable = true;
-          break;
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          break
         default:
-          invoice_status.push("To Be Invoice");
-          status = ["Completed", "Declined", "Cancelled"];
-          locum_invoiceable = true;
+          invoice_status.push("To Be Invoice")
+          status = ["Completed", "Declined", "Cancelled"]
+          locum_invoiceable = true
       }
 
       // const params = {
@@ -594,7 +611,7 @@ export default {
           }
         })
         .then(res => {
-          let job_parts = res.data.job_parts;
+          let job_parts = res.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
             let total = jobPart.locum_invoice_id
@@ -602,7 +619,7 @@ export default {
               : jobPart.job.locum_detail_rate_type.name === "Per Hour"
               ? jobPart.job.rate * jobPart.final_hours
               : (jobPart.job.rate / jobPart.job.total_hours) *
-                jobPart.final_hours;
+                jobPart.final_hours
 
             return {
               ...jobPart,
@@ -627,60 +644,60 @@ export default {
               nhs_claimable: jobPart.locum_invoice_id
                 ? jobPart.locum_invoices_nhs_claimable
                 : jobPart.locum_details_nhs_claimable
-            };
-          });
+            }
+          })
         })
         .catch(err => {
-          console.log("err", err.response || err);
-          error({
+          console.log("err", err.response || err)
+          this.$nuxt.error({
             statusCode: err.status || 500,
             message: err.message || "Something went wrong!"
-          });
-        });
+          })
+        })
     },
-    async refreshInvoices() {
-      this.loading = true;
-      this.current_page = 1;
-      this.offset = 0;
-      this.limit = 5;
-      await this.getJobPartsPromiseAll();
-      this.loading = false;
-      this.showRefresh = false;
+    async refreshInvoices () {
+      this.loading = true
+      this.current_page = 1
+      this.offset = 0
+      this.limit = 5
+      await this.getJobPartsPromiseAll()
+      this.loading = false
+      this.showRefresh = false
     },
-    getLocumInvoiceRealTime({ id }) {
+    getLocumInvoiceRealTime ({ id }) {
       if (!id) {
-        return;
+        return
       }
-      this.showRefresh = true;
+      this.showRefresh = true
     },
-    removeListener() {
+    removeListener () {
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Created",
         this.getLocumInvoiceRealTime
-      );
+      )
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Paid",
         this.getLocumInvoiceRealTime
-      );
+      )
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Updated",
         this.getLocumInvoiceRealTime
-      );
+      )
     },
-    select_invoice(id) {
-      this.payment_modal = true;
-      this.invoice_id = id;
+    select_invoice (id) {
+      this.payment_modal = true
+      this.invoice_id = id
     },
-    updateInvoice(invoice) {
-      let queryStatus = this.$route.query.status.toLowerCase();
+    updateInvoice (invoice) {
+      let queryStatus = this.$route.query.status.toLowerCase()
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
-      );
-      job_part.locum_invoice_id = invoice.id;
-      job_part.total_amount = invoice.total_amount;
+      )
+      job_part.locum_invoice_id = invoice.id
+      job_part.total_amount = invoice.total_amount
 
-      let index = this.job_parts.findIndex(item => item.id === job_part.id);
+      let index = this.job_parts.findIndex(item => item.id === job_part.id)
       if (index >= 0) {
         if (
           ((!queryStatus ||
@@ -696,22 +713,22 @@ export default {
             queryStatus === "approved" &&
             invoice.status === "Approved")
         ) {
-          this.job_parts.splice(index, 1, job_part);
+          this.job_parts.splice(index, 1, job_part)
         } else {
-          this.job_parts.splice(index, 1);
+          this.job_parts.splice(index, 1)
         }
       }
     },
-    confirmPayment() {
-      let notRequired = ["ni", "paye"];
+    confirmPayment () {
+      let notRequired = ["ni", "paye"]
       if ([false, "false"].includes(this.form.ni)) {
-        notRequired.push("ni_amount");
+        notRequired.push("ni_amount")
       }
       if ([false, "false"].includes(this.form.paye)) {
-        notRequired.push("paye_amount");
+        notRequired.push("paye_amount")
       }
-      this.formError = [];
-      this.Validate(this.form, notRequired);
+      this.formError = []
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
         this.$axios
           .$put(
@@ -721,69 +738,69 @@ export default {
           .then(res => {
             let job_part = this.job_parts.find(
               item => item.id === res.data.locum_invoice.items[0].job_part.id
-            );
+            )
 
             let index = this.job_parts.findIndex(
               item => item.id === job_part.id
-            );
+            )
 
             if (index >= 0) {
               job_part.locum_invoice_item.locum_invoice.paid_at =
-                res.data.locum_invoice.paid_at;
+                res.data.locum_invoice.paid_at
               job_part.locum_invoice_item.locum_invoice.ni =
-                res.data.locum_invoice.ni;
+                res.data.locum_invoice.ni
               job_part.locum_invoice_item.locum_invoice.ni_amount =
-                res.data.locum_invoice.ni_amount;
+                res.data.locum_invoice.ni_amount
               job_part.locum_invoice_item.locum_invoice.paye =
-                res.data.locum_invoice.paye;
+                res.data.locum_invoice.paye
               job_part.locum_invoice_item.locum_invoice.paye_amount =
-                res.data.locum_invoice.paye_amount;
-              this.job_parts.splice(index, 1, job_part);
+                res.data.locum_invoice.paye_amount
+              this.job_parts.splice(index, 1, job_part)
             }
 
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            });
+            })
 
-            this.payment_modal = false;
-            this.form.ni = false;
-            this.form.ni_amount = null;
-            this.form.paye = false;
-            this.form.paye_amount = null;
+            this.payment_modal = false
+            this.form.ni = false
+            this.form.ni_amount = null
+            this.form.paye = false
+            this.form.paye_amount = null
           })
           .catch(err => {
-            console.log("err", err.response || err);
-            throw err;
-          });
+            console.log("err", err.response || err)
+            throw err
+          })
       }
     },
-    async sorted(order_by) {
-      this.current_page = 1;
-      this.offset = 0;
-      this.order_by = order_by;
-      this.loading = true;
-      await this.getJobParts();
-      this.loading = false;
+    async sorted (order_by) {
+      this.current_page = 1
+      this.offset = 0
+      this.order_by = order_by
+      this.loading = true
+      await this.getJobParts()
+      this.loading = false
     },
-    async pagechanged(page) {
-      this.current_page = page;
-      this.offset = this.limit * (page - 1);
-      this.loading = true;
-      await this.getJobParts();
-      this.loading = false;
+    async pagechanged (page) {
+      this.current_page = page
+      this.offset = this.limit * (page - 1)
+      this.loading = true
+      await this.getJobParts()
+      this.loading = false
     },
-    async limitchanged(limit) {
-      this.current_page = 1;
-      this.offset = 0;
-      this.limit = limit;
-      this.loading = true;
-      await this.getJobParts();
-      this.loading = false;
+    async limitchanged (limit) {
+      this.current_page = 1
+      this.offset = 0
+      this.limit = limit
+      this.loading = true
+      await this.getJobParts()
+      this.loading = false
     }
   }
-};
+}
 </script>
 <style scoped>
 .shield {
