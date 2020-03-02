@@ -68,12 +68,11 @@
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
       <div class="w-full text-center text-gray-600" style="min-width: 60px" />
       <div
-        v-for="({id, date, fullDate}, index) in daysInWeek"
+        v-for="({id, date}, index) in daysInWeek"
         :key="index"
         class="w-full text-center text-gray-600 font-bold"
       >
         {{ $moment(date).format('DD') }}
-        {{ fullDate }}
       </div>
     </div>
     <!-- PRACTICE -->
