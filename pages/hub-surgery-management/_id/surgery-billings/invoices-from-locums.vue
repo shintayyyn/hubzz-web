@@ -97,8 +97,8 @@
               v-model="form.ni"
               :type="'select'"
               :name="'ni'"
-              :label="'Ni'"
-              :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
+              :label="'NI'"
+              :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
             />
             <AppInput
               v-if="[true, 'true'].includes(form.ni)"
@@ -113,8 +113,8 @@
               v-model="form.paye"
               :type="'select'"
               :name="'paye'"
-              :label="'Paye'"
-              :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
+              :label="'PAYE'"
+              :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
             />
             <AppInput
               v-if="[true, 'true'].includes(form.paye)"
@@ -170,8 +170,8 @@ export default {
   },
   props: {
     childPracticeId: {
-      type: String,
-      default: ""
+      type: Number,
+      required: true
     }
   },
   transition: {
