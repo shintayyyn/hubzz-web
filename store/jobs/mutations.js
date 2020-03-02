@@ -501,6 +501,20 @@ export default {
         state.locum_matched_jobs = state.locum_matched_jobs.filter(job => job.id !== payload)
     },
 
+    SET_LOCUM_BANK_JOBS(state, payload) {
+        state.locum_bank_jobs = payload
+    },
+    SET_LOCUM_BANK_JOBS_COUNT(state, payload) {
+        state.locum_bank_jobs_count = payload
+    },
+    ADD_LOCUM_BANK_JOB(state, payload) {
+        state.locum_bank_jobs.push(payload)
+        state.locum_bank_jobs_count = state.locum_bank_jobs_count + 1
+    },
+    REMOVE_LOCUM_BANK_JOB(state, payload) {
+        state.locum_bank_jobs = state.locum_bank_jobs.filter(job => job.id !== payload)
+    },
+
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {
         state.locum_unsuccessful_jobs = payload
     },

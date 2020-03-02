@@ -629,10 +629,19 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Applied", "Available"],
+              locum_status: ["Applied", "Available", "Matched"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
+            }
+          }),
+          this.$axios.$get("/api/v1/locum/jobs", {
+            params: {
+              locum_status: ["Matched"],
+              calendar_date_start: `${this.startOfMonth}:gte`,
+              calendar_date_end: `${this.endOfMonth}:lte`,
+              limit: 100000000,
+              practice_is_favorite_of_locum: true
             }
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
@@ -643,19 +652,20 @@ export default {
               limit: 100000000
             }
           }),
-          this.$axios.$get("/api/v1/locum/unavailabilities", {
-            params: {
-              date_start: `${this.startOfMonth}:gte`,
-              date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          })
+          // this.$axios.$get("/api/v1/locum/unavailabilities", {
+          //   params: {
+          //     date_start: `${this.startOfMonth}:gte`,
+          //     date_end: `${this.endOfMonth}:lte`,
+          //     limit: 100000000
+          //   }
+          // })
         ])
           .then(
             ([
               responseAllocatedAndAppliedAndAvailable,
+              responseBank,
               responseOngoingAndCompleted,
-              responseUnavailabilities
+              // responseUnavailabilities
             ]) => {
               this.$store.commit(
                 "jobs/SET_LOCUM_APPLIED_JOBS",
@@ -675,6 +685,20 @@ export default {
                   job => job.locum_status === "Available"
                 )
               )
+              this.$store.commit(
+                "jobs/SET_LOCUM_MATCHED_JOBS",
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+                  job => job.locum_status === "Matched"
+                )
+              )
+
+              this.$store.commit(
+                "jobs/SET_LOCUM_BANK_JOBS",
+                responseBank.data.jobs.filter(
+                  job => job.locum_status === "Matched"
+                )
+              )
+
               this.$store.commit(
                 "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
                 responseOngoingAndCompleted.data.job_parts.filter(
