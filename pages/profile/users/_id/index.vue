@@ -70,14 +70,14 @@
 
 			<AppButton
 				v-if="authPermissions.includes('Update Profile Users')"
-				:label="'Delete User'"
+				:label="'Deactivate User'"
 				:disabled="loading"
 				:custom-theme="'bg-red-500 hover:bg-red-600 font-bold md:text-lg text-white'"
 				@click="modal = true"
 			/>
 		</div>
 		<AppConfirmationModal
-			:label="'Proceed to delete this user?'"
+			:label="'Proceed to deactivate this user?'"
 			:confirm-label="'Yes'"
 			:cancel-label="'Cancel'"
 			:modal="modal"
@@ -218,8 +218,9 @@ export default {
 		remove() {
 			this.loading = true;
 			this.$axios
-				.$delete(`/api/v1/practice/practice-users/${this.user.id}`, this.form)
+				.$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
 				.then(res => {
+					console.log(res);
 					this.loading = false;
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
@@ -238,7 +239,7 @@ export default {
 				.catch(err => {
 					this.loading = false;
 					this.modal = false;
-					console.log("err", err);
+					console.log("err", err.response);
 					this.formError = err.response.data.error_messages;
 				});
 		}
