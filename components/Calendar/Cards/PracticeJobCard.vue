@@ -58,6 +58,8 @@ export default {
 					return "bg-job-active hover:bg-green-600"
 					break
 				case "Unfilled":
+				case "Withdrawn":
+				case "Declined":
 					return "bg-job-unfilled hover:bg-red-700"
 					break
 				default:

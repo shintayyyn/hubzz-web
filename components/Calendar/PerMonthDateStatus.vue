@@ -136,38 +136,38 @@
     <template v-if="getStatusCount(item.fullDate, item.day) === 4">
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[0].style"
-        class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-transparent"
+        class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[0].style"
-        class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-transparent"
+        class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-white"
         style="height:50%"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[1].style"
-        class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-transparent"
+        class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[1].style"
-        class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-transparent"
+        class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-white"
         style="height:50%"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[2].style"
-        class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-transparent"
+        class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[2].style"
-        class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-transparent"
+        class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-white"
         style="height:50%"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[3].style"
-        class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-transparent"
+        class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
       />
       <div
         :class="statusStyle(item.fullDate, item.day, 4)[3].style"
-        class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-transparent"
+        class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-white"
         style="height:50%"
       />
     </template>
@@ -227,6 +227,12 @@ export default {
 		getLocumAvailableJobs () {
 			return this.$store.getters["jobs/getLocumAvailableJobs"]
 		},
+		getLocumBankJobs () {
+			return this.$store.getters["jobs/getLocumBankJobs"]
+		},
+		getLocumMatchedJobs () {
+			return this.$store.getters["jobs/getLocumMatchedJobs"]
+		},
 		// UNAVAILABILITIES
 		getLocumUnavailabilities () {
 			return this.$store.getters["jobs/getLocumUnavailabilities"]
@@ -237,6 +243,8 @@ export default {
 		hasActiveJobs (date, day) {
 			let hasOngoing = false
 			let hasLive = false
+			let hasMatched = false
+			let hasBank = false
 			if (this.$auth.user.domain === "Practice") {
 				hasOngoing = this.getPracticeOngoingJobs.find(
 					job_part =>
@@ -268,11 +276,35 @@ export default {
 						((job_part.job.include_sunday === false && day !== 0) ||
 							job_part.job.include_sunday === true)
 				)
+				hasLive = this.getLocumAvailableJobs.find(
+					job =>
+						this.getDateArray(job.date_start, job.date_end).includes(date) &&
+						((job.include_saturday === false && day !== 6) ||
+							job.include_saturday === true) &&
+						((job.include_sunday === false && day !== 0) ||
+							job.include_sunday === true)
+				)
+				hasMatched = this.getLocumMatchedJobs.find(
+					job =>
+						this.getDateArray(job.date_start, job.date_end).includes(date) &&
+						((job.include_saturday === false && day !== 6) ||
+							job.include_saturday === true) &&
+						((job.include_sunday === false && day !== 0) ||
+							job.include_sunday === true)
+				)
+				hasBank = this.getLocumBankJobs.find(
+					job =>
+						this.getDateArray(job.date_start, job.date_end).includes(date) &&
+						((job.include_saturday === false && day !== 6) ||
+							job.include_saturday === true) &&
+						((job.include_sunday === false && day !== 0) ||
+							job.include_sunday === true)
+				)
 			}
-			if (hasOngoing || hasLive) {
+			if (hasOngoing || hasLive || hasMatched || hasBank) {
 				this.$emit("hasActivities")
 			}
-			return hasOngoing || hasLive ? true : false
+			return hasOngoing || hasLive || hasMatched || hasBank ? true : false
 		},
 		hasPendingJobs (date, day) {
 			let hasApplied = false
@@ -333,6 +365,9 @@ export default {
 			if (this.hasActiveJobs(date, day)) {
 				let hasOngoing = false
 				let hasLive = false
+				let hasMatched = false
+				let hasBank = false
+
 				if (this.$auth.user.domain === "Practice") {
 					hasOngoing = this.getPracticeOngoingJobs.find(
 						job_part =>
@@ -363,13 +398,42 @@ export default {
 								job_part.date_start,
 								job_part.date_end
 							).includes(date) &&
+							job_part.job.shift.name === "AM" &&
 							((job_part.job.include_saturday === false && day !== 6) ||
 								job_part.job.include_saturday === true) &&
 							((job_part.job.include_sunday === false && day !== 0) ||
 								job_part.job.include_sunday === true)
 					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "AM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasMatched = this.getLocumMatchedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "AM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasBank = this.getLocumBankJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "AM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
 				}
-				hasActiveAMShift = hasOngoing || hasLive ? true : false
+				hasActiveAMShift =
+					hasOngoing || hasLive || hasMatched || hasBank ? true : false
 			}
 			if (this.hasPendingJobs(date, day)) {
 				let hasApplied = false
@@ -384,7 +448,18 @@ export default {
 								job.include_sunday === true)
 					)
 				}
-				hasActiveAMShift = hasApplied ? true : false
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "AM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				hasPendingAMShift = hasApplied ? true : false
 			}
 			if (this.hasUnfilledJobs(date, day)) {
 				let hasUnfilled = false
@@ -409,9 +484,8 @@ export default {
 								job.include_sunday === true)
 					)
 				}
-				hasActiveAMShift = hasUnfilled || hasDeclined ? true : false
+				hasUnfilledAMShift = hasUnfilled || hasDeclined ? true : false
 			}
-
 			return hasActiveAMShift || hasPendingAMShift || hasUnfilledAMShift
 				? true
 				: false
@@ -423,6 +497,8 @@ export default {
 			if (this.hasActiveJobs(date, day)) {
 				let hasOngoing = false
 				let hasLive = false
+				let hasMatched = false
+				let hasBank = false
 				if (this.$auth.user.domain === "Practice") {
 					hasOngoing = this.getPracticeOngoingJobs.find(
 						job_part =>
@@ -446,12 +522,65 @@ export default {
 								job.include_sunday === true)
 					)
 				}
-				hasActivePMShift = hasOngoing || hasLive ? true : false
+				if (this.$auth.user.domain === "Locum") {
+					hasOngoing = this.getLocumOngoingJobs.find(
+						job_part =>
+							this.getDateArray(
+								job_part.date_start,
+								job_part.date_end
+							).includes(date) &&
+							job_part.job.shift.name === "PM" &&
+							((job_part.job.include_saturday === false && day !== 6) ||
+								job_part.job.include_saturday === true) &&
+							((job_part.job.include_sunday === false && day !== 0) ||
+								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "PM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasMatched = this.getLocumMatchedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "PM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasBank = this.getLocumBankJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "PM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				hasActivePMShift =
+					hasOngoing || hasLive || hasMatched || hasBank ? true : false
 			}
 			if (this.hasPendingJobs(date, day)) {
 				let hasApplied = false
 				if (this.$auth.user.domain === "Practice") {
 					hasApplied = this.getPracticeAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "PM" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "PM" &&
@@ -497,6 +626,8 @@ export default {
 			if (this.hasActiveJobs(date, day)) {
 				let hasOngoing = false
 				let hasLive = false
+				let hasMatched = false
+				let hasBank = false
 				if (this.$auth.user.domain === "Practice") {
 					hasOngoing = this.getPracticeOngoingJobs.find(
 						job_part =>
@@ -520,12 +651,65 @@ export default {
 								job.include_sunday === true)
 					)
 				}
-				hasActiveOOHShift = hasOngoing || hasLive ? true : false
+				if (this.$auth.user.domain === "Locum") {
+					hasOngoing = this.getLocumOngoingJobs.find(
+						job_part =>
+							this.getDateArray(
+								job_part.date_start,
+								job_part.date_end
+							).includes(date) &&
+							job_part.job.shift.name === "OOH" &&
+							((job_part.job.include_saturday === false && day !== 6) ||
+								job_part.job.include_saturday === true) &&
+							((job_part.job.include_sunday === false && day !== 0) ||
+								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "OOH" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasMatched = this.getLocumMatchedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "OOH" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasBank = this.getLocumBankJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "OOH" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				hasActiveOOHShift =
+					hasOngoing || hasLive || hasMatched || hasBank ? true : false
 			}
 			if (this.hasPendingJobs(date, day)) {
 				let hasApplied = false
 				if (this.$auth.user.domain === "Practice") {
 					hasApplied = this.getPracticeAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "OOH" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "OOH" &&
@@ -572,6 +756,8 @@ export default {
 			if (this.hasActiveJobs(date, day)) {
 				let hasOngoing = false
 				let hasLive = false
+				let hasMatched = false
+				let hasBank = false
 				if (this.$auth.user.domain === "Practice") {
 					hasOngoing = this.getPracticeOngoingJobs.find(
 						job_part =>
@@ -591,7 +777,49 @@ export default {
 							job.shift.name === "Whole Day"
 					)
 				}
-				hasActiveWDShift = hasOngoing || hasLive ? true : false
+				if (this.$auth.user.domain === "Locum") {
+					hasOngoing = this.getLocumOngoingJobs.find(
+						job_part =>
+							this.getDateArray(
+								job_part.date_start,
+								job_part.date_end
+							).includes(date) &&
+							job_part.job.shift.name === "Whole Day" &&
+							((job_part.job.include_saturday === false && day !== 6) ||
+								job_part.job.include_saturday === true) &&
+							((job_part.job.include_sunday === false && day !== 0) ||
+								job_part.job.include_sunday === true)
+					)
+					hasLive = this.getLocumAvailableJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "Whole Day" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasMatched = this.getLocumMatchedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "Whole Day" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+					hasBank = this.getLocumBankJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "Whole Day" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
+					)
+				}
+				hasActiveWDShift =
+					hasOngoing || hasLive || hasMatched || hasBank ? true : false
 				if (date === "2020-02-28") {
 				}
 			}
@@ -602,6 +830,17 @@ export default {
 						job =>
 							this.getDateArray(job.date_start, job.date_end).includes(date) &&
 							job.shift.name === "Whole Day"
+					)
+				}
+				if (this.$auth.user.domain === "Locum") {
+					hasApplied = this.getLocumAppliedJobs.find(
+						job =>
+							this.getDateArray(job.date_start, job.date_end).includes(date) &&
+							job.shift.name === "Whole Day" &&
+							((job.include_saturday === false && day !== 6) ||
+								job.include_saturday === true) &&
+							((job.include_sunday === false && day !== 0) ||
+								job.include_sunday === true)
 					)
 				}
 				hasPendingWDShift = hasApplied ? true : false

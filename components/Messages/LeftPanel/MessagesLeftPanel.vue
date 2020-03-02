@@ -183,7 +183,7 @@ export default {
 				this.$store.commit("chat/REMOVE_TOTAL_UNREAD_MESSAGES");
 			}
 
-			console.log("conversations", this.conversations);
+			// console.log("conversations", this.conversations);
 		},
 		getResults(value) {
 			this.$axios.$get(`/api/v1/conversations?search=${value}`).then(res => {
@@ -200,7 +200,13 @@ export default {
 			let user = item.conversation_member_users.find(
 				item => item.user.id != this.$auth.user.id
 			);
-			return `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`;
+			let fullName;
+			if (user.user.email) {
+				fullName = `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`;
+			} else {
+				fullName = "Hubzz User";
+			}
+			return fullName;
 		},
 		userAvatar(item) {
 			let user_detail = item.conversation_member_users.find(

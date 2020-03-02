@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container shadow-lg" ref="modalContainer">
+  <div ref="modalContainer" class="modal-container shadow-lg">
     <template v-if="job && !job_part">
       <SessionDetailModal
         :job="job"
@@ -10,13 +10,13 @@
       />
     </template>
     <template v-if="!job && job_part">
-      <SessionPartDetailModal :job_part="job_part" @close="close" />
+      <SessionPartDetailModal :job-part="job_part" @close="close" />
     </template>
   </div>
 </template>
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
-import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal";
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 export default {
   transition: {
     name: "slide",
@@ -26,15 +26,15 @@ export default {
     SessionDetailModal,
     SessionPartDetailModal
   },
-  data() {
+  data () {
     return {
       job: null,
       job_part: null
-    };
+    }
   },
-  async asyncData({ app, params, query, redirect, router, error }) {
+  async asyncData ({ app, params, query, error }) {
     try {
-      let url = `/api/v1/practice/jobs`;
+      let url = `/api/v1/practice/jobs`
 
       if (
         query &&
@@ -43,47 +43,47 @@ export default {
           query.status.toLowerCase()
         )
       ) {
-        url = `/api/v1/practice/job-parts`;
+        url = `/api/v1/practice/job-parts`
       }
 
-      let response = await app.$axios.get(`${url}/${params.id}`);
+      let response = await app.$axios.get(`${url}/${params.id}`)
       if (response.data.data.job) {
-        let job = response.data.data.job;
+        let job = response.data.data.job
         return {
           job
-        };
+        }
       }
 
       if (response.data.data.job_part) {
-        let job_part = response.data.data.job_part;
+        let job_part = response.data.data.job_part
         return {
           job_part
-        };
+        }
       }
     } catch (err) {
       if (err && err.response && err.response.status === 404) {
         return error({
           status: 404,
           message: "This session could not be found"
-        });
+        })
       }
-      throw err;
+      throw err
     }
   },
   methods: {
-    close() {
+    close () {
       this.$router.push({
         path: `/sessions`,
         query: { ...this.$route.query }
-      });
+      })
     },
-    scrollToTop() {
+    scrollToTop () {
       this.$nextTick(() => {
-        this.$refs.modalContainer.scrollTop = 0;
-      });
+        this.$refs.modalContainer.scrollTop = 0
+      })
     }
   }
-};
+}
 </script>
 <style scoped>
 .modal-container {

@@ -342,14 +342,14 @@ export default {
         "Practice Notification Job Ongoing",
         this.getJobsRealTime
       )
-      this.$socket.on(
-        "Practice Notification Job Part Completed",
-        this.getJobsRealTime
-      )
-      this.$socket.on(
-        "Practice Notification Job Completed",
-        this.getJobsRealTime
-      )
+      // this.$socket.on(
+      //   "Practice Notification Job Part Completed",
+      //   this.getJobsRealTime
+      // )
+      // this.$socket.on(
+      //   "Practice Notification Job Completed",
+      //   this.getJobsRealTime
+      // )
       this.$socket.on(
         "Practice Notification Locum Invoice Updated",
         this.getJobsRealTime
@@ -479,14 +479,14 @@ export default {
           "Practice Notification Job Ongoing",
           this.getJobsRealTime
         )
-        this.$socket.removeListener(
-          "Practice Notification Job Part Completed",
-          this.getJobsRealTime
-        )
-        this.$socket.removeListener(
-          "Practice Notification Job Completed",
-          this.getJobsRealTime
-        )
+        // this.$socket.removeListener(
+        //   "Practice Notification Job Part Completed",
+        //   this.getJobsRealTime
+        // )
+        // this.$socket.removeListener(
+        //   "Practice Notification Job Completed",
+        //   this.getJobsRealTime
+        // )
         this.$socket.removeListener(
           "Practice Notification Locum Invoice Updated",
           this.getJobsRealTime
@@ -526,10 +526,12 @@ export default {
       ) {
         this.$store.commit("calendar/TOGGLE_LOADING", true)
 
+        // status: ["Allocated", "Applied", "Unfilled", "Withdrawn", "Live"],
+        // status: ["Ongoing", "Completed"],
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Allocated", "Applied", "Unfilled", "Withdrawn", "Live"],
+              status: ["Applied", "Unfilled", "Withdrawn", "Live"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -537,7 +539,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
-              status: ["Ongoing", "Completed"],
+              status: ["Ongoing"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -560,12 +562,12 @@ export default {
               responseOngoingAndCompleted,
               responseReminders
             ]) => {
-              this.$store.commit(
-                "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Allocated"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_ALLOCATED_JOBS",
+              //   responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
+              //     job => job.status === "Allocated"
+              //   )
+              // )
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS",
                 responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
@@ -581,7 +583,7 @@ export default {
               this.$store.commit(
                 "jobs/SET_PRACTICE_DECLINED_JOBS",
                 responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Declined"
+                  job => job.status === "Withdrawn"
                 )
               )
               this.$store.commit(
@@ -596,22 +598,22 @@ export default {
                   jobPart => jobPart.status === "Ongoing"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.status === "Completed"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(job => job.status === "Live")
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(
-                  job => job.status === "Applied"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
+              //   responseOngoingAndCompleted.data.job_parts.filter(
+              //     jobPart => jobPart.status === "Completed"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
+              //   responseReminders.data.jobs.filter(job => job.status === "Live")
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
+              //   responseReminders.data.jobs.filter(
+              //     job => job.status === "Applied"
+              //   )
+              // )
               this.$store.commit("calendar/TOGGLE_LOADING", false)
             }
           )
@@ -622,36 +624,48 @@ export default {
       // LOCUM
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
         this.$store.commit("calendar/TOGGLE_LOADING", true)
+        // locum_status: ["Allocated", "Applied", "Available"],
+        // locum_status: ["Ongoing", "Completed"],
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Allocated", "Applied", "Available"],
+              locum_status: ["Applied", "Available", "Matched"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
+            }
+          }),
+          this.$axios.$get("/api/v1/locum/jobs", {
+            params: {
+              locum_status: ["Matched"],
+              calendar_date_start: `${this.startOfMonth}:gte`,
+              calendar_date_end: `${this.endOfMonth}:lte`,
+              limit: 100000000,
+              practice_is_favorite_of_locum: true
             }
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
-              locum_status: ["Ongoing", "Completed"],
+              locum_status: ["Ongoing"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
             }
           }),
-          this.$axios.$get("/api/v1/locum/unavailabilities", {
-            params: {
-              date_start: `${this.startOfMonth}:gte`,
-              date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          })
+          // this.$axios.$get("/api/v1/locum/unavailabilities", {
+          //   params: {
+          //     date_start: `${this.startOfMonth}:gte`,
+          //     date_end: `${this.endOfMonth}:lte`,
+          //     limit: 100000000
+          //   }
+          // })
         ])
           .then(
             ([
               responseAllocatedAndAppliedAndAvailable,
+              responseBank,
               responseOngoingAndCompleted,
-              responseUnavailabilities
+              // responseUnavailabilities
             ]) => {
               this.$store.commit(
                 "jobs/SET_LOCUM_APPLIED_JOBS",
@@ -659,12 +673,12 @@ export default {
                   job => job.locum_status === "Applied"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_LOCUM_ALLOCATED_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Allocated"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_ALLOCATED_JOBS",
+              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+              //     job => job.locum_status === "Allocated"
+              //   )
+              // )
               this.$store.commit(
                 "jobs/SET_LOCUM_AVAILABLE_JOBS",
                 responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
@@ -672,24 +686,38 @@ export default {
                 )
               )
               this.$store.commit(
+                "jobs/SET_LOCUM_MATCHED_JOBS",
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+                  job => job.locum_status === "Matched"
+                )
+              )
+
+              this.$store.commit(
+                "jobs/SET_LOCUM_BANK_JOBS",
+                responseBank.data.jobs.filter(
+                  job => job.locum_status === "Matched"
+                )
+              )
+
+              this.$store.commit(
                 "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
                 responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.locum_status === "Ongoing"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_LOCUM_COMPLETED_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.locum_status === "Completed"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_UNAVAILABILITIES",
-                responseUnavailabilities.data.unavailabilities.filter(
-                  unavailable =>
-                    unavailable.shifts && unavailable.shifts.length !== 0
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_COMPLETED_JOB_PARTS",
+              //   responseOngoingAndCompleted.data.job_parts.filter(
+              //     jobPart => jobPart.locum_status === "Completed"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_UNAVAILABILITIES",
+              //   responseUnavailabilities.data.unavailabilities.filter(
+              //     unavailable =>
+              //       unavailable.shifts && unavailable.shifts.length !== 0
+              //   )
+              // )
             }
           )
           .finally(() => {

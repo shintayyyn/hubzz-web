@@ -5,21 +5,21 @@
 				name="left-arrow"
 				height="32"
 				width="32"
-				@click="$emit('close')"
 				class="cursor-pointer"
+				@click="$emit('close')"
 			/>
 		</div>
 
 		<div class="flex flex-row justify-start items-center mt-4">
-			<div class="leading-tight font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
+			<div class="leading-tight font-bold text-md sm:text-lg">{{ jobPart.job.title }}</div>
 			<div
 				class="py-2 px-4 mx-1 rounded font-semibold"
-				:class="bgStatus(job_part.status)"
-			>{{status(job_part.status)}}</div>
+				:class="bgStatus(jobPart.status)"
+			>{{ status(jobPart.status) }}</div>
 			<div
+				v-if="['Completed','Cancelled'].includes(jobPart.status) && tagStatus(jobPart)"
 				class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300"
-				v-if="['Completed','Cancelled'].includes(job_part.status) && tagStatus(job_part)"
-			>{{ tagStatus(job_part) }}</div>
+			>{{ tagStatus(jobPart) }}</div>
 			<!-- <template v-if="job_part.status === 'Completed'">
         <div
           class="py-2 px-4 mx-1 mx-rounded font-semibold"
@@ -27,9 +27,9 @@
         >{{jobPartStatus}}</div>
 			</template>-->
 			<template
-				v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(job_part.status)"
+				v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(jobPart.status)"
 			>
-				<AppButton :label="'Repost Job'" @click="repost" :inStyle="'font-size:1em'" />
+				<AppButton :label="'Repost Job'" :in-style="'font-size:1em'" @click="repost" />
 			</template>
 		</div>
 
@@ -38,55 +38,69 @@
 				<div class="p-0 md:pr-4 w-full md:w-1/2">
 					<div class="flex flex-col">
 						<div
+							v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn' || jobPart.status === 'Cancelled'"
 							class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
-							v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn' || job_part.status === 'Cancelled'"
 						>
-							<template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
+							<template v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn'">
 								<div class="leading-tight pb-4">
 									<p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
 									<p
 										class="text-xs sm:text-sm"
-									>{{ job_part.job.platform_job.declined_reason ? job_part.job.platform_job.declined_reason : '(none)'}}</p>
+									>{{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}</p>
 								</div>
 								<div class="leading-tight pb-4">
 									<p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
-									<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_at | localDate}}</p>
+									<p class="text-xs sm:text-sm">{{ jobPart.job.platform_job.declined_at | localDate }}</p>
 								</div>
 								<div class="leading-tight pb-4">
 									<p class="font-bold text-sm sm:text-md">Withdrawn by</p>
-									<p class="text-xs sm:text-sm">{{ job_part.locum_first_name}}</p>
+									<p class="text-xs sm:text-sm">{{ jobPart.locum_first_name }}</p>
 								</div>
 							</template>
-							<template v-if="job_part.status === 'Cancelled'">
+							<template v-if="jobPart.status === 'Cancelled'">
 								<div class="leading-tight pb-4">
 									<p
 										class="font-bold text-sm sm:text-md"
-									>{{job_part.terminated ? 'Terminated' : 'Cancelled'}} At</p>
-									<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.cancelled_at | localDate}}</p>
+									>{{ jobPart.terminated ? 'Terminated' : 'Cancelled' }} At</p>
+									<p class="text-xs sm:text-sm">{{ jobPart.job.platform_job.cancelled_at | localDate }}</p>
 								</div>
 								<div class="leading-tight">
 									<p
 										class="font-bold text-sm sm:text-md"
-									>Reason for {{job_part.terminated ? 'termination' : 'cancellation'}}</p>
-									<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.cancelled_reason}}</p>
+									>Reason for {{ jobPart.terminated ? 'termination' : 'cancellation' }}</p>
+									<p class="text-xs sm:text-sm">{{ jobPart.job.platform_job.cancelled_reason }}</p>
+								</div>
+								<div class="leading-tight mt-4">
+									<p
+										class="font-bold text-sm sm:text-md"
+									>{{ jobPart.terminated ? 'Terminated By' : 'Cancelled By' }}</p>
+									<p class="text-xs sm:text-sm">
+										{{
+										jobPart.cancelled_by_practice === 'Hub'
+										? jobPart.parent_practice_name
+										: jobPart.cancelled_by_practice === 'Spoke'
+										? jobPart.practice_name
+										: jobPart.practice_name
+										}}
+									</p>
 								</div>
 							</template>
 						</div>
-						<SessionPartDetailModalInfo :job_part="job_part" />
+						<SessionPartDetailModalInfo :job_part="jobPart" />
 						<div
 							v-if="practice.type !== 'Spoke' || 
-              (practice.type === 'Spoke' && !practice.parent_practice_id) ||
-              (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
+                (practice.type === 'Spoke' && !practice.parent_practice_id) ||
+                (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
 						>
 							<SessionDetailModalCompleteForm
-								:job_part="job_part"
+								v-if="jobPart.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
+								:job_part="jobPart"
 								@completed="$emit('close')"
-								v-if="job_part.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
 							/>
 							<SessionDetailModalCancelForm
-								:job="job_part.job"
+								v-if="['Live','Allocated','Ongoing','Applied'].includes(jobPart.status) && authPermissions.includes('Cancel Sessions Job')"
+								:job="jobPart.job"
 								@cancelled="$emit('close')"
-								v-if="['Live','Allocated','Ongoing','Applied'].includes(job_part.status) && authPermissions.includes('Cancel Sessions Job')"
 							/>
 						</div>
 						<div
@@ -97,10 +111,10 @@
 				</div>
 				<div class="p-0 md:pr-4 w-full md:w-1/2">
 					<div class="flex flex-col">
-						<SessionPartDetailModalParts :job_id="job_part.job.id" />
+						<SessionPartDetailModalParts :job_id="jobPart.job.id" />
 						<SessionDetailModalLocum
-							:job="job_part.job"
-							v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Completed' || job_part.status === 'Approved' || job_part.status === 'Withdrawn' || (job_part.status === 'Cancelled' && job_part.appointed_to_locum_user_id))"
+							v-if="(jobPart.status === 'Allocated' || jobPart.status === 'Ongoing' || jobPart.status === 'Completed' || jobPart.status === 'Approved' || jobPart.status === 'Withdrawn' || (jobPart.status === 'Cancelled' && jobPart.appointed_to_locum_user_id))"
+							:job="jobPart.job"
 						/>
 					</div>
 				</div>
@@ -116,7 +130,6 @@ import SessionDetailModalCompleteForm from "@/components/Sessions/SessionDetailM
 import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum";
 import AppButton from "@/components/Base/AppButton";
 export default {
-	props: ["job_part"],
 	components: {
 		SessionPartDetailModalInfo,
 		SessionPartDetailModalParts,
@@ -124,6 +137,12 @@ export default {
 		SessionDetailModalCancelForm,
 		SessionDetailModalLocum,
 		AppButton
+	},
+	props: {
+		jobPart: {
+			type: Object,
+			required: true
+		}
 	},
 	data() {
 		return {
@@ -160,15 +179,17 @@ export default {
 			return jobStatus.toUpperCase();
 		},
 		bgStatus(status) {
+			let str;
 			switch (status) {
 				case "Ongoing":
 				case "Completed":
 				case "Approved":
-					return "bg-green-600 text-white";
+					str = "bg-green-600 text-white";
 					break;
 				default:
-					return "bg-red-500 text-white";
+					str = "bg-red-500 text-white";
 			}
+			return str;
 		},
 		repost() {
 			this.$emit("close");
@@ -176,7 +197,10 @@ export default {
 				if (this.$route.name.includes("hub-surgery-management")) {
 					this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job);
 					this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true);
-				} else if (this.$route.name.includes("sessions")) {
+				} else if (
+					this.$route.name.includes("sessions") ||
+					this.$route.name.includes("dashboard")
+				) {
 					this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job);
 					this.$store.commit("calendar/CREATE_JOB_MODAL", true);
 				}
