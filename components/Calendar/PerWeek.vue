@@ -390,22 +390,22 @@
           ></div> -->
           <div
             v-else-if="hasLocumAvailableJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'AM')"
-          ></div>
+          />
           <div
             v-else-if="hasLocumMatchedJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'AM')"
-          ></div>
+          />
           <div
             v-else-if="hasLocumBankJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'AM')"
-          ></div>
+          />
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -449,24 +449,24 @@
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div> -->
-           <div
+          <div
             v-else-if="hasLocumAvailableJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'PM')"
-          ></div>
-           <div
+          />
+          <div
             v-else-if="hasLocumMatchedJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'PM')"
-          ></div>
+          />
           <div
             v-else-if="hasLocumBankJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'PM')"
-          ></div>
+          />
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -512,22 +512,22 @@
           ></div> -->
           <div
             v-else-if="hasLocumAvailableJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
-          ></div>
+          />
           <div
             v-else-if="hasLocumMatchedJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
-          ></div>
-           <div
+          />
+          <div
             v-else-if="hasLocumBankJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
-          ></div>
+          />
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -573,22 +573,22 @@
           ></div> -->
           <div
             v-else-if="hasLocumAvailableJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
-          ></div>
+          />
           <div
             v-else-if="hasLocumMatchedJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
-          ></div>
+          />
           <div
             v-else-if="hasLocumBankJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
-          ></div>
+          />
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
