@@ -40,7 +40,6 @@
               style="box-sizing:content-box;"
               v-for="item in shifts"
               :key="item.id"
-              :disabled="isDisabled(item.id)"
               @click="select(item.id)"
             >{{item.name}}</button>
           </div>
@@ -246,7 +245,9 @@ export default {
       if (index >= 0) {
         this.form.shift_id.splice(index, 1);
       } else {
-        this.form.shift_id.push(id);
+        if (!this.isDisabled(id)) {
+          this.form.shift_id.push(id);
+        }
       }
     },
     isSelected(id) {
