@@ -1,16 +1,16 @@
 <template>
   <section class="flex flex-col items-start w-full">
-    <template v-if="$auth.user.domain ===  'Practice'">
+    <template v-if="$auth.user.domain === 'Practice'">
       <AppTable
         v-if="permanent_jobs_for_practice_count > 0"
         class="w-full"
         :total="permanent_jobs_for_practice_count"
         :items="permanent_jobs_for_practice"
-        :currentPage="current_page"
-        :perPage="params.limit"
+        :current-page="current_page"
+        :per-page="params.limit"
         :columns="columns"
         :loading="loading"
-        :routerLink="'/permanent-jobs'"
+        :router-link="'/permanent-jobs'"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
@@ -33,17 +33,17 @@
       </p>
     </template>
 
-    <template v-if="$auth.user.domain ===  'Locum'">
+    <template v-if="$auth.user.domain === 'Locum'">
       <AppTable
         v-if="permanent_jobs_for_locum_count > 0"
         class="w-full"
         :total="permanent_jobs_for_locum_count"
         :items="permanent_jobs_for_locum"
-        :currentPage="current_page"
-        :perPage="params.limit"
+        :current-page="current_page"
+        :per-page="params.limit"
         :columns="locumColumns"
         :loading="loading"
-        :routerLink="'/permanent-jobs'"
+        :router-link="'/permanent-jobs'"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
@@ -62,7 +62,7 @@
         v-else
         class="text-gray-600 px-3 py-2"
       >
-        No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.
+        No {{ $route.query.status ? $route.query.status : 'Available' }} jobs yet.
       </p>
     </template>
     <div

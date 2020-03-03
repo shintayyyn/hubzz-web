@@ -14,7 +14,7 @@
 
       <div class="flex justify-start items-center flex-wrap md:px-2">
         <h4 class="text-lg md:text-xl font-bold mr-2">
-          <span>{{permanent_job.title}}</span>
+          <span>{{ permanent_job.title }}</span>
         </h4>
         <span
           class="mr-2 py-2 px-4 rounded font-semibold"
@@ -45,7 +45,7 @@
                     Salary Description
                   </p>
                   <p class="pl-2 pb-3">
-                    {{ permanent_job && permanent_job.salary_description_2 ?  permanent_job.salary_description_2 : 'N/A' }}
+                    {{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}
                   </p>
                   <p class="font-bold">
                     Posted
@@ -121,17 +121,19 @@
                 <AppButton
                   class="font-semibold"
                   :label="'Approve'"
+                  :custom-theme="'bg-green-500 hover:bg-green-600 text-white'"
                   @click="acceptRejectSpokePermanentJob('Approved')"
-                  :customTheme="'bg-green-500 hover:bg-green-600 text-white'"
                 />
                 <AppButton
                   class="font-semibold"
                   :label="'Reject'"
+                  :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
                   @click="showCancel = !showCancel"
-                  :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
                 />
                 <div v-if="showCancel === true">
-                  <p class="font-bold">Reason for Rejection (optional)</p>
+                  <p class="font-bold">
+                    Reason for Rejection (optional)
+                  </p>
                   <AppInput
                     v-if="showCancel === true"
                     v-model="approve_or_reject.cancelled_reason"
@@ -141,8 +143,8 @@
                   <AppButton
                     class="font-semibold"
                     :label="'Reject'"
+                    :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
                     @click="acceptRejectSpokePermanentJob('Rejected')"
-                    :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
                   />
                 </div>
               </div>
@@ -151,7 +153,9 @@
             <template v-if="edit === true">
               <div class="w-full flex flex-col md:flex-row">
                 <div class="w-full md:flex-w-1/2 pr-2">
-                  <p class="font-bold">Title</p>
+                  <p class="font-bold">
+                    Title
+                  </p>
                   <AppInput
                     v-model="form.title"
                     :type="'text'"
@@ -159,7 +163,9 @@
                     :error="formError.find(item => item.field === 'title')"
                   />
 
-                  <p class="font-bold">Practice</p>
+                  <p class="font-bold">
+                    Practice
+                  </p>
                   <AppInput
                     v-model="form.practice_id"
                     :type="'select'"
@@ -170,22 +176,24 @@
                     @blur="CheckEmptyField(form.practice_id, 'practice_id')"
                   />
 
-                  <p class="font-bold">Salary</p>
+                  <p class="font-bold">
+                    Salary
+                  </p>
                   <div class="flex flex-wrap">
                     <AppInput
-                      class="w-full pr-1"
                       v-model="form.salary_amount"
+                      class="w-full pr-1"
                       :type="'number'"
                       :name="'salary_amount'"
                       :label="'Salary Amount'"
                       :min="1"
                       :error="formError.find(item => item.field === 'salary_amount')"
+                      :in-style="'text-align:right'"
                       @blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
-                      :inStyle="'text-align:right'"
                     />
                     <AppInput
-                      class="w-full pl-1"
                       v-model="form.salary_description_2"
+                      class="w-full pl-1"
                       :type="'select'"
                       :name="'salary_description_2'"
                       :placeholder="'Select...'"
@@ -200,21 +208,23 @@
                     v-model="form.date_posted"
                     :name="'date_posted'"
                     :label="'Date Posted'"
-                    isAfter
+                    is-after
                     :error="formError.find(item => item.field === 'date_posted')"
                   />
                   <AppDate
                     v-model="form.date_closing"
                     :name="'date_closing'"
                     :label="'Date Closing'"
-                    isAfter
-                    :startDate="form.date_posted"
+                    is-after
+                    :start-date="form.date_posted"
                     :error="formError.find(item => item.field === 'date_closing')"
                   />
                 </div>
 
                 <div class="w-full md:flex-w-1/2 pl-2">
-                  <p class="font-bold">E-Mail</p>
+                  <p class="font-bold">
+                    E-Mail
+                  </p>
                   <AppInput
                     v-model="form.email"
                     :type="'text'"
@@ -222,7 +232,9 @@
                     :error="formError.find(item => item.field === 'email')"
                   />
 
-                  <p class="font-bold">Report to</p>
+                  <p class="font-bold">
+                    Report to
+                  </p>
                   <AppInput
                     v-model="form.report_to"
                     :type="'text'"
@@ -230,7 +242,9 @@
                     :error="formError.find(item => item.field === 'report_to')"
                   />
 
-                  <p class="font-bold">Role</p>
+                  <p class="font-bold">
+                    Role
+                  </p>
                   <AppInput
                     v-model="form.profession_id"
                     :type="'select'"
@@ -241,7 +255,9 @@
                     @blur="CheckEmptyField(form.profession_id, 'profession_id')"
                   />
 
-                  <p class="font-bold">Hours</p>
+                  <p class="font-bold">
+                    Hours
+                  </p>
                   <AppInput
                     v-model="form.work_hours"
                     :type="'select'"
@@ -253,7 +269,9 @@
                     @blur="CheckEmptyField(form.work_hours, 'work_hours')"
                   />
 
-                  <p class="font-bold">Industry</p>
+                  <p class="font-bold">
+                    Industry
+                  </p>
                   <AppInput
                     v-model="form.industry_type"
                     :type="'select'"
@@ -266,12 +284,14 @@
                 </div>
               </div>
 
-              <p class="font-bold">Description</p>
+              <p class="font-bold">
+                Description
+              </p>
               <no-ssr placeholder="Loading...">
                 <quill-editor
-                  class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
                   ref="myTextEditor"
                   v-model="form.description"
+                  class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
                   :options="editorOption"
                   @blur="CheckEmptyField(form.description, 'description')"
                   @focus="onEditorFocus($event)"
@@ -287,7 +307,7 @@
                 :resize="false"
                 :rows="4"
               />-->
-              <AppButton @click="editPermanentJob()" :label="'Save Changes'" />
+              <AppButton :label="'Save Changes'" @click="editPermanentJob()" />
             </template>
           </div>
           <PermanentJobMap

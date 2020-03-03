@@ -97,7 +97,7 @@
               Salary Description
             </p>
             <p class="pl-2 pb-3">
-              {{ permanent_job && permanent_job.salary_description_2 ?  permanent_job.salary_description_2 : 'N/A' }}
+              {{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}
             </p>
             <p class="font-bold">
               Posted

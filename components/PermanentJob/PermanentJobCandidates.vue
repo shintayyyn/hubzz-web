@@ -1,13 +1,15 @@
 <template>
   <div class="flex flex-col w-full">
-    <div class="text-xs sm:text-sm font-bold">Applicants</div>
+    <div class="text-xs sm:text-sm font-bold">
+      Applicants
+    </div>
     <div
-      class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5"
       v-for="application in permanent_job_applications"
       :key="application.id"
+      class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5"
     >
       <div class="flex flex-row flex-no-wrap justify-between items-center hover:text-gray-600">
-        <div @click.prevent="show(application.id)" class="cursor-pointer">
+        <div class="cursor-pointer" @click.prevent="show(application.id)">
           <AppAvatar
             :height="'40px'"
             :width="'40px'"
@@ -18,13 +20,17 @@
         <div
           class="text-sm font-bold leading-loose w-full px-2 md:text-center cursor-pointer"
           @click.prevent="show(application.id)"
-        >{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
+        >
+          {{ application.locum_user.first_name +' '+application.locum_user.last_name }}
+        </div>
 
         <div
           v-if="application.application_status !== 'Applied'"
           class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
           :class="statusStyle(application.application_status)"
-        >{{application.application_status}}</div>
+        >
+          {{ application.application_status }}
+        </div>
 
         <div class="flex items-center">
           <button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
@@ -39,47 +45,49 @@
     <p
       v-if="permanent_job_applications.length === 0"
       class="text-gray-600 text-sm"
-    >There's no applicants for this job at the moment.</p>
-    <div class="bottom-0 w-full" v-if="total > 0">
+    >
+      There's no applicants for this job at the moment.
+    </p>
+    <div v-if="total > 0" class="bottom-0 w-full">
       <AppPagination
         :total="total"
-        :totalPages="totalPages"
-        :currentPage="current_page"
+        :total-pages="totalPages"
+        :current-page="current_page"
+        :loading="loading"
+        :per-page="params.limit"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
-        :loading="loading"
-        :perPage="params.limit"
       />
     </div>
 
     <transition name="fade" mode="out-in">
-      <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
+      <div v-if="sendMessageModal" class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3">
         <SendMessageModal
           :user="user"
+          :profile-option="true"
           @close="sendMessageModal=false"
           @showProfile="show(user.id)"
-          :profileOption="true"
         />
       </div>
     </transition>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="modal">
+      <div v-if="modal" class="modal-container shadow-lg">
         <PermanentJobShowCandidate
-          @close="modal=false"
           :permanent_job_application="permanent_job_application"
           :user="user"
+          @close="modal=false"
         />
       </div>
     </transition>
-    <div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
-    <div class="shield" v-if="sendMessageModal" @click="closeModal()"></div>
+    <div v-if="modal" class="shield modal-shield" @click="closeModal()" />
+    <div v-if="sendMessageModal" class="shield" @click="closeModal()" />
   </div>
 </template>
 <script>
-import AppAvatar from "~/components/Base/AppAvatar";
-import AppPagination from "@/components/Base/AppPagination";
-import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate";
-import SendMessageModal from "@/components/Messages/SendMessageModal";
+import AppAvatar from "~/components/Base/AppAvatar"
+import AppPagination from "@/components/Base/AppPagination"
+import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate"
+import SendMessageModal from "@/components/Messages/SendMessageModal"
 
 export default {
 	components: {
@@ -88,7 +96,7 @@ export default {
 		PermanentJobShowCandidate,
 		SendMessageModal
 	},
-	props: ["permanent_job"],
+	props: ["permanentJob"],
 	data () {
 		return {
 			total: 0,
@@ -104,15 +112,15 @@ export default {
 			user: null,
 			modal: false,
 			sendMessageModal: false
-		};
+		}
 	},
 	computed: {
 		totalPages () {
-			return Math.ceil(this.total / this.params.limit);
+			return Math.ceil(this.total / this.params.limit)
 		}
 	},
 	created () {
-		this.getApplicantsCount();
+		this.getApplicantsCount()
 	},
 	methods: {
 		async getApplicantsCount () {
@@ -121,73 +129,73 @@ export default {
 					params: this.params
 				})
 				.then(res => {
-					this.total = res.data.count;
-					this.getApplicants(this.params);
-				});
+					this.total = res.data.count
+					this.getApplicants(this.params)
+				})
 		},
 		async getApplicants (params) {
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-job-applications`, { params })
 				.then(res => {
-					console.log("res", res);
-					this.permanent_job_applications = res.data.permanent_job_applications;
-				});
+					console.log("res", res)
+					this.permanent_job_applications = res.data.permanent_job_applications
+				})
 			console.log(
 				"permanent_job_applications",
 				this.permanent_job_applications
-			);
+			)
 		},
 		pagechanged (page) {
-			this.current_page = page;
-			this.params.offset = this.params.limit * (page - 1);
-			this.getApplicants(this.params);
+			this.current_page = page
+			this.params.offset = this.params.limit * (page - 1)
+			this.getApplicants(this.params)
 		},
 		limitchanged (limit) {
-			this.current_page = 1;
-			this.params.offset = 0;
-			this.params.limit = limit;
-			this.getApplicants(this.params);
+			this.current_page = 1
+			this.params.offset = 0
+			this.params.limit = limit
+			this.getApplicants(this.params)
 		},
 		statusStyle (applicationStatus) {
 			switch (applicationStatus) {
 				case "Available":
-					return "bg-green-500 text-white";
-					break;
+					return "bg-green-500 text-white"
+					break
 				case "Applied":
-					return "bg-yellow-600 text-white";
-					break;
+					return "bg-yellow-600 text-white"
+					break
 				case "For Interview":
-					return "bg-green-600 text-white";
-					break;
+					return "bg-green-600 text-white"
+					break
 				case "Accepted":
-					return "bg-green-700 text-white";
-					break;
+					return "bg-green-700 text-white"
+					break
 				case "Rejected":
-					return "bg-red-700 text-white";
-					break;
+					return "bg-red-700 text-white"
+					break
 				case "Closed":
-					return "bg-gray-700 text-white";
-					break;
+					return "bg-gray-700 text-white"
+					break
 				default:
-					return "bg-yellow-400 text-black";
+					return "bg-yellow-400 text-black"
 			}
 		},
 		async show (id) {
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-job-applications/${id}`)
 				.then(res => {
-					this.permanent_job_application = res.data.permanent_job_application;
-				});
+					this.permanent_job_application = res.data.permanent_job_application
+				})
 
 			await this.$axios
 				.$get(
 					`/api/v1/practice/locums/${this.permanent_job_application.locum_user.id}`
 				)
 				.then(res => {
-					this.user = res.data.user;
-					this.modal = true;
-				});
-			console.log("permanent job app", this.permanent_job_application);
+					this.user = res.data.user
+					this.modal = true
+				})
+			console.log("permanent job app", this.permanent_job_application)
 
 			// this.$axios.$put(`/api/v1/practice/permanent-job-applications/${id}/process-application`)
 			//   .then(res => {
@@ -204,18 +212,18 @@ export default {
 			// });
 		},
 		message (user) {
-			this.user = user;
-			this.sendMessageModal = true;
+			this.user = user
+			this.sendMessageModal = true
 		},
 		closeModal () {
 			if (this.modal) {
-				this.modal = false;
+				this.modal = false
 			} else if (this.sendMessageModal) {
-				this.sendMessageModal = false;
+				this.sendMessageModal = false
 			}
 		}
 	}
-};
+}
 </script>
 <style scoped>
 .avatar {

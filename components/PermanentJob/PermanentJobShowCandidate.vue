@@ -18,23 +18,23 @@
           <AppButton
             class="mx-1"
             :label="'Reject'"
+            :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
             @click="rejectConfirmModal = true"
-            :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
           />
         </div>
       </div>
       <div
-        class="flex flex-col bg-white shadow-lg rounded-lg md:w-2/3 lg:w-1/2 xl:w-1/3 p-4"
         v-if="accepted"
+        class="flex flex-col bg-white shadow-lg rounded-lg md:w-2/3 lg:w-1/2 xl:w-1/3 p-4"
       >
         <AppDate
           v-model="form.invitation_date"
           :name="'invitation_date'"
           :label="'Invitation Date'"
-          isAfter
+          is-after
         />
         <AppTime v-model="form.invitation_time" :name="'invitation_time'" :label="'Invitation Time'" />
-        <AppButton @click="inviteLocum()" class="ml-auto" :label="'Invite This Locum'" />
+        <AppButton class="ml-auto" :label="'Invite This Locum'" @click="inviteLocum()" />
       </div>
 
       <!-- <transition name="fade" mode="out-in">
@@ -54,17 +54,23 @@
 			/>-->
 
       <div class="flex flex-row flex-no-wrap justify-start items-center mt-4 md:mt-8">
-        <div class="font-bold text-md sm:text-lg">{{user.name}}</div>
+        <div class="font-bold text-md sm:text-lg">
+          {{ user.name }}
+        </div>
         <div
           class="px-4 py-1 rounded-lg w-32 text-center mx-2"
           :class="statusStyle(permanentJobApp.application_status)"
-        >{{permanentJobApp.application_status}}</div>
+        >
+          {{ permanentJobApp.application_status }}
+        </div>
       </div>
       <div
         v-if="permanentJobApp && 
           permanentJobApp.application_status &&
           permanentJobApp.invitation_schedule"
-      >You have invited this candidate {{ $moment(permanentJobApp.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT for an Interview.</div>
+      >
+        You have invited this candidate {{ $moment(permanentJobApp.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT for an Interview.
+      </div>
       <div class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
@@ -93,11 +99,21 @@
             <div class="text-xs sm:text-sm mb-4 md:mb-8">
               {{ user.locum_detail.short_biography }}
             </div>
-            <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
-            <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
-            <div class="font-bold text-sm sm:text-md">Specialty</div>
+            <div class="font-bold text-sm sm:text-md">
+              GMC / NMC Number
+            </div>
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{ user.locum_detail.gmc_or_nmc_number.number }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              MPL / NPL Number
+            </div>
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{ user.locum_detail.mpl_or_npl_number.number }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Specialty
+            </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
               <div
                 v-for="item in user.locum_detail.qualifications"
@@ -107,7 +123,9 @@
                 {{ item.name }}
               </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Clinical systems</div>
+            <div class="font-bold text-sm sm:text-md">
+              Clinical systems
+            </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
               <div
                 v-for="item in user.locum_detail.clinical_systems"
@@ -117,9 +135,13 @@
                 {{ item.name }}
               </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Languages</div>
+            <div class="font-bold text-sm sm:text-md">
+              Languages
+            </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
-              <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
+              <div class="rounded-lg bg-yellow-500 p-2 m-1">
+                English
+              </div>
               <div
                 v-for="item in user.locum_detail.spoken_languages"
                 :key="item.id"
@@ -148,42 +170,46 @@
             </div>
           </div>
           <div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
-            <div class="font-bold text-sm sm:text-md">Compliance documents</div>
+            <div class="font-bold text-sm sm:text-md">
+              Compliance documents
+            </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
-                class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
                 v-for="item in mandatory"
                 :key="item.id"
+                class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
               >
                 <span>
                   <svgicon name="cloud-download" height="24" width="24" />
                 </span>
                 <a
                   class="px-2 text-sm leading-tight"
-                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
                   :href="item.file.url"
                   :download="item.file.filename"
                   target="_blank"
-                >{{item.compliance_document.name}}</a>
+                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.compliance_document.name }}</a>
               </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Others documents</div>
+            <div class="font-bold text-sm sm:text-md">
+              Others documents
+            </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
-                class="flex flex-row mt-2 cursor-pointer hover:underline"
                 v-for="item in optional"
                 :key="item.id"
+                class="flex flex-row mt-2 cursor-pointer hover:underline"
               >
                 <span>
                   <svgicon name="cloud-download" height="24" width="24" />
                 </span>
                 <a
                   class="px-2"
-                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
                   :href="item.file.url"
                   :download="item.file.filename"
                   target="_blank"
-                >{{item.compliance_document.name}}</a>
+                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.compliance_document.name }}</a>
               </div>
             </div>
 
@@ -192,11 +218,13 @@
             </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
-                class="flex flex-row flex-no-wrap mt-2"
                 v-for="item in user.locum_detail.rates"
                 :key="item.id"
+                class="flex flex-row flex-no-wrap mt-2"
               >
-                <div class="text-xs sm:text-sm">{{item.rate_type.name}}: £ {{item.min}} - £ {{item.max}}</div>
+                <div class="text-xs sm:text-sm">
+                  {{ item.rate_type.name }}: £ {{ item.min }} - £ {{ item.max }}
+                </div>
               </div>
             </div>
             <div class="font-bold text-sm sm:text-md">
@@ -204,9 +232,9 @@
             </div>
             <div v-if="user.locum_detail.referees.length > 0">
               <div
-                class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
                 v-for="item in user.locum_detail.referees"
                 :key="item.id"
+                class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
               >
                 <div class="text-xs sm:text-sm">
                   {{ item ? item.name:null }}
@@ -220,35 +248,37 @@
               </div>
             </div>
             <div v-else>
-              <div class="text-xs sm:text-sm">(none)</div>
+              <div class="text-xs sm:text-sm">
+                (none)
+              </div>
             </div>
           </div>
           <AppButton
+            v-if="permanentJobApp.invitation_schedule && permanentJobApp.application_status === 'For Interview'"
             :label="'Appoint to this job'"
             @click="confirmation_modal = true"
-            v-if="permanentJobApp.invitation_schedule && permanentJobApp.application_status === 'For Interview'"
           />
         </div>
       </div>
     </div>
     <transition name="fade" mode="out-in">
-      <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
-        <SendMessageModal :user="user" @close="sendMessageModal=false" :profileOption="false" />
+      <div v-if="sendMessageModal" class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3">
+        <SendMessageModal :user="user" :profile-option="false" @close="sendMessageModal=false" />
       </div>
     </transition>
-    <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"/>
+    <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
     <AppConfirmationModal
       :label="'Are you sure you want to reject this Locum?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
       :modal="rejectConfirmModal"
       @confirm="rejectLocum()"
       @cancel="rejectConfirmModal = false"
     />
     <AppConfirmationModal
       :label="'Appoint this Locum?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
       :modal="confirmation_modal"
       @confirm="appoint"
       @cancel="confirmation_modal = false"
@@ -272,7 +302,7 @@ export default {
 		AppDate,
 		AppTime
 	},
-	props: ["user", "job", "permanent_job_application"],
+	props: ["user", "job", "permanentJobApplication"],
 	data () {
 		return {
       permanentJobApp: '',
