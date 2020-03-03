@@ -365,7 +365,7 @@ export default {
 	components: {
 		AppButton
 	},
-	props: ["jobPart"],
+	props: ["job_part"],
 	data () {
 		return {
 			modal: false
