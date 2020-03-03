@@ -3,9 +3,7 @@
     <div class="rounded-lg shadow-lg p-8 mt-4">
       <div
         class="font-bold text-md sm:text-lg"
-      >
-        {{ job.status === 'Ongoing' ? 'Terminate':'Cancel' }} this job
-      </div>
+      >{{ job.status === 'Ongoing' ? 'Terminate':'Cancel' }} this job</div>
       <AppFormError v-if="formError.length" :form-error="formError" />
 
       <AppInput
@@ -91,7 +89,7 @@
     <AppConfirmationModal
       :label="`${job.status === 'Ongoing' ? 'Terminate' : 'Cancel'} this job?`"
       :confirm-label="'Yes'"
-      :cancel-label="'Cancel'"
+      :cancel-label="'No'"
       :modal="confirmation_modal"
       @confirm="cancel"
       @cancel="confirmation_modal = false"
@@ -99,10 +97,10 @@
   </section>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton"
-import AppInput from "@/components/Base/AppInput"
-import AppFormError from "@/components/Base/AppFormError"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
+import AppFormError from "@/components/Base/AppFormError";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 const reasons = [
   {
     label: "In-house Locum can now cover the session",
@@ -128,7 +126,7 @@ const reasons = [
     label: "Session cancelled due to budgetary constraints",
     value: "Session cancelled due to budgetary constraints"
   }
-]
+];
 export default {
   components: {
     AppButton,
@@ -137,7 +135,7 @@ export default {
     AppConfirmationModal
   },
   props: ["job"],
-  data () {
+  data() {
     return {
       reasons,
       confirmation_modal: false,
@@ -152,12 +150,12 @@ export default {
         final_hours: 0
       },
       formError: []
-    }
+    };
   },
   methods: {
-    validateForm () {
-      this.formError = []
-      let notRequired = ["final_hours"]
+    validateForm() {
+      this.formError = [];
+      let notRequired = ["final_hours"];
 
       if (this.job.status !== "Ongoing") {
         notRequired.push(
@@ -165,23 +163,23 @@ export default {
           "absent_days_reason",
           "late_hours",
           "late_hours_reason"
-        )
+        );
       } else if (this.job.status === "Ongoing") {
         if (this.has_absences === "false" || this.has_absences === false) {
-          notRequired.push("absent_days", "absent_days_reason")
+          notRequired.push("absent_days", "absent_days_reason");
         }
         if (this.has_late === "false" || this.has_late === false) {
-          notRequired.push("late_hours", "late_hours_reason")
+          notRequired.push("late_hours", "late_hours_reason");
         }
       }
-      this.Validate(this.form, notRequired)
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
-        this.confirmation_modal = true
+        this.confirmation_modal = true;
       }
     },
-    cancel () {
-      this.formError = []
-      let notRequired = ["final_hours"]
+    cancel() {
+      this.formError = [];
+      let notRequired = ["final_hours"];
 
       if (this.job.status !== "Ongoing") {
         notRequired.push(
@@ -189,16 +187,16 @@ export default {
           "absent_days_reason",
           "late_hours",
           "late_hours_reason"
-        )
+        );
       } else if (this.job.status === "Ongoing") {
         if (this.has_absences === "false" || this.has_absences === false) {
-          notRequired.push("absent_days", "absent_days_reason")
+          notRequired.push("absent_days", "absent_days_reason");
         }
         if (this.has_late === "false" || this.has_late === false) {
-          notRequired.push("late_hours", "late_hours_reason")
+          notRequired.push("late_hours", "late_hours_reason");
         }
       }
-      this.Validate(this.form, notRequired)
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}/cancel`, this.form)
@@ -206,18 +204,18 @@ export default {
             this.$store.commit(
               "jobs/REMOVE_PRACTICE_ALLOCATED_JOB",
               res.data.job.id
-            )
+            );
             this.$store.commit(
               "jobs/REMOVE_PRACTICE_AVAILABLE_JOB",
               res.data.job.id
-            )
+            );
             this.$store.commit(
               "jobs/REMOVE_PRACTICE_APPLIED_JOB",
               res.data.job.id
-            )
+            );
             this.job.job_parts.forEach(({ id }) => {
-              this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id)
-            })
+              this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id);
+            });
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -228,12 +226,12 @@ export default {
                     : "Job cancelled"
                 }`
               ]
-            })
-            this.$emit("cancelled", this.job.id)
-          })
+            });
+            this.$emit("cancelled", this.job.id);
+          });
       }
-      this.confirmation_modal = false
+      this.confirmation_modal = false;
     }
   }
-}
+};
 </script>

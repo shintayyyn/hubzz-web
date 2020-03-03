@@ -545,22 +545,22 @@ export default {
               limit: 100000000
             }
           }),
-          this.$axios.$get("/api/v1/practice/jobs", {
-            params: {
-              platform_selection_date: [
-                `${this.startOfMonth}:gte`,
-                `${this.endOfMonth}:lte`
-              ],
-              limit: 100000000,
-              status: ["Live", "Applied"]
-            }
-          })
+          // this.$axios.$get("/api/v1/practice/jobs", {
+          //   params: {
+          //     platform_selection_date: [
+          //       `${this.startOfMonth}:gte`,
+          //       `${this.endOfMonth}:lte`
+          //     ],
+          //     limit: 100000000,
+          //     status: ["Live", "Applied"]
+          //   }
+          // })
         ])
           .then(
             ([
               responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
               responseOngoingAndCompleted,
-              responseReminders
+              // responseReminders
             ]) => {
               // this.$store.commit(
               //   "jobs/SET_PRACTICE_ALLOCATED_JOBS",

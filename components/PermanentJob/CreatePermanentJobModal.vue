@@ -65,17 +65,17 @@
               v-model="form.date_posted"
               :name="'date_posted'"
               :label="'Date Posted'"
-              isAfter
+              is-after
               :error="formError.find(item => item.field === 'date_posted')"
-              @blur="CheckEmptyField(form.date_posted, 'date_posted')"
               disabled
+              @blur="CheckEmptyField(form.date_posted, 'date_posted')"
             />
             <AppDate
               v-model="form.date_closing"
               :name="'date_closing'"
               :label="'Date Closing'"
-              isAfter
-              :startDate="form.date_posted"
+              is-after
+              :start-date="form.date_posted"
               :error="formError.find(item => item.field === 'date_closing')"
               @blur="CheckEmptyField(form.date_closing, 'date_closing')"
             />
@@ -104,7 +104,9 @@
               :error="formError.find(item => item.field === 'title')"
               @blur="CheckEmptyField(form.title, 'title')"
             />
-            <p class="text-sm">Description</p>
+            <p class="text-sm">
+              Description
+            </p>
             <div class="mb-3 md:mb-6">
               <no-ssr placeholder="Loading..." class>
                 <quill-editor
@@ -118,7 +120,8 @@
                 />
                 <div
                   v-if="formError && formError.find(item => item.field === 'description')"
-                  class="text-red-500 py-1 text-xs">
+                  class="text-red-500 py-1 text-xs"
+                >
                   {{ formError.find(item => item.field === 'description').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'description').message.slice(1) }}
                 </div>
               </no-ssr>
@@ -166,7 +169,7 @@
               :label="'Salary Amount (Optional)'"
               :min="1"
               :error="formError.find(item => item.field === 'salary_amount')"
-              :inStyle="'text-align:right'"
+              :in-style="'text-align:right'"
             />
             <AppInput
               v-model="form.salary_description_2"
@@ -208,7 +211,8 @@ export default {
 	},
 	data () {
 		return {
-			practice: "",
+      practice: "",
+      salary_amount_temporary: 0,
 			form: {
 				practice_id: "",
 				profession_id: "",
@@ -220,7 +224,7 @@ export default {
 				email: "",
 				industry_type: "",
 				work_hours: "",
-        salary_amount: 0,
+        salary_amount: this.salary_amount_final,
         parent_practice_id: "",
 				salary_description_2: ""
 			},
@@ -294,7 +298,12 @@ export default {
 				}
 			}
 		}
-	},
+  },
+  computed: {
+    salary_amount_final:function () {
+      return this.salary_amount_temporary ? this.salary_amount_temporary : 0
+    }
+  },
 	watch: {
 		// "form.profession_id"(newValue, oldValue) {
 		// 	// this.CheckEmptyField(newValue, "profession_id");

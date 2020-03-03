@@ -898,7 +898,6 @@ export default {
       }
     },
     getJobs () {
-      console.log("per week")
       if (this.$auth.user.domain === "Practice") {
         this.$store.commit("calendar/TOGGLE_LOADING", true)
               // status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
@@ -932,7 +931,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Live", "Applied"],
+              status: ["Applied"],
               platform_selection_date: [
                 `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
                   .subtract(1, "days")
