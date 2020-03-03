@@ -23,11 +23,11 @@ export default {
             switch (notif.notificationType) {
                 case 'Practice Notification Job Reminder':
                     if (days > 0) {
-                        message = `This Job will start in ${days} days.`
+                        message = `This Job will start in ${days} ${days === 1 ? 'day' : 'days'}.`
                     } else if (days <= 0 && hours > 0) {
-                        message = `This Job will start in ${hours} hours.`
+                        message = `This Job will start in ${hours} ${hours === 1 ? 'hour' : 'hours'}.`
                     } else if (hours <= 0 && minutes > 0) {
-                        message = `This Job will start in ${minutes} minute${minutes === 1 ? '' : 's'}.`
+                        message = `This Job will start in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`
                     } else {
                         message = `This Job will start later.`
                     }
@@ -73,11 +73,11 @@ export default {
                     break
                 case 'Practice Notification Job Unfilled Warning':
                     if (days > 0) {
-                        message = `This Job will start in ${days} days.`
+                        message = `This Job will start in ${days} ${days === 1 ? 'day' : 'days'}.`
                     } else if (days <= 0 && hours > 0) {
-                        message = `This Job will start in ${hours} hours.`
+                        message = `This Job will start in ${hours} ${hours === 1 ? 'hour' : 'hours'}.`
                     } else if (hours <= 0 && minutes > 0) {
-                        message = `This Job will start in ${minutes} minute${minutes === 1 ? '' : 's'}.`
+                        message = `This Job will start in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`
                     } else {
                         message = `This Job will start later.`
                     }
@@ -546,11 +546,11 @@ export default {
             switch (notif.notificationType) {
                 case 'Locum Notification Job Reminder':
                     if (days > 0) {
-                        message = `This Job will start in ${days} days.`
+                        message = `This Job will start in ${days} ${days === 1 ? 'day' : 'days'}.`
                     } else if (days <= 0 && hours > 0) {
-                        message = `This Job will start in ${hours} hours.`
+                        message = `This Job will start in ${hours} ${hours === 1 ? 'hour' : 'hours'}.`
                     } else if (hours <= 0 && minutes > 0) {
-                        message = `This Job will start in ${minutes} minute${minutes === 1 ? '' : 's'}.`
+                        message = `This Job will start in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`
                     } else {
                         message = `This Job will start later.`
                     }
