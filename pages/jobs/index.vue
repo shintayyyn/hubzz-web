@@ -358,30 +358,9 @@
 
     computed: {
       isJobPart () {
-        if (
-          this.$route.query.status &&
-          ![
-            "ongoing",
-            "completed",
-            "approved",
-            "cancelled",
-            "withdrawn"
-          ].includes(this.$route.query.status.toLowerCase())
-        ) {
-          return false
-        }
-        if (
-          this.$route.query.status &&
-          ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
-            this.$route.query.status.toLowerCase()
-          )
-        ) {
-          return true
-        }
-        if (!this.$route.query.status) {
-          return false
-        }
-        return false
+        const status = this.$route.query.status
+
+        return status && ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(status.toLowerCase())
       },
 
       noJobsToDisplay () {
@@ -777,7 +756,7 @@
                       }
                     })
                     : []
-                    
+
               return jobs
             })
         ])
