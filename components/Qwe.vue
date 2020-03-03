@@ -6,9 +6,15 @@
 
 <script>
   export default {
+
     props: {
       qweQwe: {
         type: String,
+      }
+    },
+    data () {
+      return {
+        qwe_asd: 'qweqwe',
       }
     }
   }
