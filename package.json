@@ -69,6 +69,7 @@
     "rules": {
       "vue/max-attributes-per-line": "off",
       "vue/no-use-v-if-with-v-for": "off",
+      "vue/attribute-hyphenation": "off",
       "object-curly-newline": "off",
       "no-restricted-syntax": "off",
       "no-underscore-dangle": "off",
