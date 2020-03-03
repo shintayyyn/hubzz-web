@@ -898,12 +898,15 @@ export default {
       }
     },
     getJobs () {
+      console.log("per week")
       if (this.$auth.user.domain === "Practice") {
         this.$store.commit("calendar/TOGGLE_LOADING", true)
+              // status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
+              // status: ["Ongoing", "Completed"],
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
+              status: ["Unfilled", "Withdrawn", "Applied"],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -916,7 +919,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
-              status: ["Ongoing", "Completed"],
+              status: ["Ongoing"],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -944,14 +947,14 @@ export default {
             ([
               responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
               responseOngoingAndCompleted,
-              responseReminders
+              // responseReminders
             ]) => {
-              this.$store.commit(
-                "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Allocated"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_ALLOCATED_JOBS",
+              //   responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
+              //     job => job.status === "Allocated"
+              //   )
+              // )
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS",
                 responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
@@ -967,37 +970,37 @@ export default {
               this.$store.commit(
                 "jobs/SET_PRACTICE_DECLINED_JOBS",
                 responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Declined"
+                  job => job.status === "Withdrawn"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_AVAILABLE_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Live"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_AVAILABLE_JOBS",
+              //   responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
+              //     job => job.status === "Live"
+              //   )
+              // )
               this.$store.commit(
                 "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
                 responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.status === "Ongoing"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.status === "Completed"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(job => job.status === "Live")
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(
-                  job => job.status === "Applied"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
+              //   responseOngoingAndCompleted.data.job_parts.filter(
+              //     jobPart => jobPart.status === "Completed"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
+              //   responseReminders.data.jobs.filter(job => job.status === "Live")
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
+              //   responseReminders.data.jobs.filter(
+              //     job => job.status === "Applied"
+              //   )
+              // )
             }
           )
           .finally(() => {
@@ -1012,7 +1015,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Applied", "Available", "Matched"],
+              locum_status: ["Applied"],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1021,20 +1024,6 @@ export default {
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
-            }
-          }),
-          this.$axios.$get("/api/v1/locum/jobs", {
-            params: {
-              locum_status: ["Matched"],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000,
-              practice_is_favorite_of_locum: true
             }
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
@@ -1063,7 +1052,6 @@ export default {
           .then(
             ([
               responseAllocatedAndAppliedAndAvailable,
-              responseBank,
               responseOngoingAndCompleted,
               // responseUnavailabilities
             ]) => {
@@ -1073,24 +1061,24 @@ export default {
                   job => job.locum_status === "Applied"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_LOCUM_AVAILABLE_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Available"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_MATCHED_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Matched"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_BANK_JOBS",
-                responseBank.data.jobs.filter(
-                  job => job.locum_status === "Matched"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
+              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+              //     job => job.locum_status === "Available"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_MATCHED_JOBS",
+              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+              //     job => job.locum_status === "Matched"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_BANK_JOBS",
+              //   responseBank.data.jobs.filter(
+              //     job => job.locum_status === "Matched"
+              //   )
+              // )
               // this.$store.commit(
               //   "jobs/SET_LOCUM_ALLOCATED_JOBS",
               //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
@@ -1350,8 +1338,7 @@ export default {
       ) {
         return this.getPracticeDeclinedJobs.find(
           job =>
-            this.$moment(job.platform_job.declined_at).format("YYYY-MM-DD") ===
-              date &&
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
             job.shift.name === type &&
             ((job.include_saturday === false && day !== 6) ||
               job.include_saturday === true) &&
