@@ -111,7 +111,6 @@
 <script>
 import AppButton from "@/components/Base/AppButton"
 import CreateJobModal from "@/components/CreateJobModal"
-import * as chatApi from "@/api/chat"
 export default {
 	components: {
 		AppButton,
@@ -144,12 +143,6 @@ export default {
 			} else {
 				document.body.style.overflow = "auto"
 			}
-		},
-		$route (value) {
-			this.$store.dispatch("chat/fetchTotalUnreadMessages")
-		},
-		unreadMessages (value) {
-			// console.log("unread", value);
 		}
 	},
 	async created () {
