@@ -8,7 +8,7 @@
   export default {
 
     props: {
-      qweQwe: {
+      qwe_qwe: {
         type: String,
       }
     },
