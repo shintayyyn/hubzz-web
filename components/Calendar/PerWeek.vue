@@ -898,6 +898,7 @@ export default {
       }
     },
     getJobs () {
+      console.log("per week")
       if (this.$auth.user.domain === "Practice") {
         this.$store.commit("calendar/TOGGLE_LOADING", true)
         Promise.all([
@@ -1012,7 +1013,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Applied", "Available", "Matched"],
+              locum_status: ["Applied"],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1021,20 +1022,6 @@ export default {
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
-            }
-          }),
-          this.$axios.$get("/api/v1/locum/jobs", {
-            params: {
-              locum_status: ["Matched"],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000,
-              practice_is_favorite_of_locum: true
             }
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
@@ -1063,7 +1050,6 @@ export default {
           .then(
             ([
               responseAllocatedAndAppliedAndAvailable,
-              responseBank,
               responseOngoingAndCompleted,
               // responseUnavailabilities
             ]) => {
@@ -1073,24 +1059,24 @@ export default {
                   job => job.locum_status === "Applied"
                 )
               )
-              this.$store.commit(
-                "jobs/SET_LOCUM_AVAILABLE_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Available"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_MATCHED_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Matched"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_BANK_JOBS",
-                responseBank.data.jobs.filter(
-                  job => job.locum_status === "Matched"
-                )
-              )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
+              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+              //     job => job.locum_status === "Available"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_MATCHED_JOBS",
+              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+              //     job => job.locum_status === "Matched"
+              //   )
+              // )
+              // this.$store.commit(
+              //   "jobs/SET_LOCUM_BANK_JOBS",
+              //   responseBank.data.jobs.filter(
+              //     job => job.locum_status === "Matched"
+              //   )
+              // )
               // this.$store.commit(
               //   "jobs/SET_LOCUM_ALLOCATED_JOBS",
               //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
