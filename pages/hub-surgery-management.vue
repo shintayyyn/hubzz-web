@@ -60,10 +60,10 @@
     />
     <transition name="fade" mode="out-in">
       <nuxt-link
+        v-if="$route.name === 'hub-surgery-management-create' || $route.name.includes('hub-surgery-management-id')"
         :to="`/hub-surgery-management`"
         class="shield"
-        v-if="$route.name === 'hub-surgery-management-create' || $route.name.includes('hub-surgery-management-id')"
-      ></nuxt-link>
+      />
     </transition>
     <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
   </section>
@@ -153,7 +153,7 @@ export default {
       this.getSurgeriesCount(this.params);
     });
   },
-  async asyncData({ app, store, error }) {
+  async asyncData ({ app, store, error }) {
     try {
       const responsePracticeType = await app.$axios.$get(
         `/api/v1/practice/me/practice-type`
@@ -265,36 +265,38 @@ export default {
       this.selectedSurgeryId = id;
       this.modal = true;
     },
-    async remove() {
-      this.loading = true;
+    async remove () {
+      this.loading = true
       if (!this.authPermissions.includes("Delete Profile Surgeries")) {
-        return;
+        return
       }
-      console.log(this.selectedSurgeryId, this.practice.type);
+      console.log(this.selectedSurgeryId, this.practice.type)
       if (this.practice.type === "Hub") {
         await this.$axios
           .$delete(
             `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
           )
-          .then(res => {
-            this.loading = false;
+          .then(() => {
+            this.loading = false
             this.surgeries = this.surgeries.filter(
               surgery => surgery.id !== this.selectedSurgeryId
-            );
-            this.modal = false;
+            )
+            this.modal = false
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Invitation Successfully Deleted"]
-            });
+            })
           })
           .catch(err => {
+            this.loading = false
+            this.modal = false
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [err.response.data.message]
-            });
-          });
+            })
+          })
       }
     },
     show(item) {

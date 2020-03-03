@@ -96,7 +96,7 @@ export default {
 		PermanentJobShowCandidate,
 		SendMessageModal
 	},
-	props: ["permanentJob"],
+	props: ["permanent_job"],
 	data () {
 		return {
 			total: 0,
