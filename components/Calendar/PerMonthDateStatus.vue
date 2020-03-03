@@ -9,7 +9,7 @@
       class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white"
     />
     <span
-      v-if="hasUnfilledJobs(item.fullDate, item.day)"
+      v-if="hasUnfilledJobs(item.fullDate, item.day) && $auth.user.domain === 'Practice'"
       class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white"
     />
     <template v-if="getStatusCount(item.fullDate, item.day) === 1">

@@ -46,7 +46,6 @@ export default {
       foundLocumJobs: [],
       viewLocumJobs: false,
       loading: false,
-      firstLoad: false
     }
   },
   computed: {
@@ -139,7 +138,6 @@ export default {
     view_type (value) {
       if (value === "per_month") {
         if (this.$auth.user.domain === "Practice") {
-        console.log("view_type")
           this.findPerMonthPractice(this.$store.state.calendar.selected_date)
           return
         }
@@ -162,7 +160,7 @@ export default {
       }
     },
     selected_date (value) {
-      // this.date_info = value
+      this.date_info = value
       if (this.$auth.user.domain === "Practice") {
         this.findPerMonthPractice(value)
         return
@@ -245,7 +243,6 @@ export default {
     // }
   },
   created () {
-    this.firstLoad = true
     if (this.$auth.user.domain === "Practice") {
       this.findPerMonthPractice(this.selected_date)
       return
@@ -322,13 +319,13 @@ export default {
             this.includesWeekends(job, date)
         )
       }
-      if (this.getPracticeAvailableJobs.length > 0) {
-        foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            this.includesWeekends(job, date)
-        )
-      }
+      // if (this.getPracticeAvailableJobs.length > 0) {
+      //   foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(
+      //     job =>
+      //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
+      //       this.includesWeekends(job, date)
+      //   )
+      // }
       // REMINDERS
       // if (this.getPracticeAppliedJobsReminder.length > 0) {
       //   foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(
@@ -364,7 +361,7 @@ export default {
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
-        ...foundPracticeAvailableJobs,
+        // ...foundPracticeAvailableJobs,
         // ...foundPracticeAppliedJobsReminder,
         // ...foundPracticeAvailableJobsReminder
       ]
@@ -372,7 +369,6 @@ export default {
       if (this.foundPracticeJobs.length > 0) {
         setTimeout(() => {
           this.viewPracticeJobs = true
-          this.firstLoad = false
         }, 500)
       }
       setTimeout(() => {
@@ -487,7 +483,7 @@ export default {
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
-        ...foundPracticeAvailableJobs,
+        // ...foundPracticeAvailableJobs,
         // ...foundPracticeAppliedJobsReminder,
         // ...foundPracticeAvailableJobsReminder
       ]
