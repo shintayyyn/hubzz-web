@@ -160,22 +160,16 @@ export default {
 			switch (applicationStatus) {
 				case "Available":
 					return "bg-green-500 text-white"
-					break
 				case "Applied":
 					return "bg-yellow-600 text-white"
-					break
 				case "For Interview":
 					return "bg-green-600 text-white"
-					break
 				case "Accepted":
 					return "bg-green-700 text-white"
-					break
 				case "Rejected":
 					return "bg-red-700 text-white"
-					break
 				case "Closed":
 					return "bg-gray-700 text-white"
-					break
 				default:
 					return "bg-yellow-400 text-black"
 			}
