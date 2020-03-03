@@ -378,9 +378,6 @@ export default {
 				: []
 		}
 	},
-	created () {
-		console.log("jobpart", this.job_part)
-	},
 	methods: {
 		convertDoc (document) {
 			return `https://docs.google.com/gview?url=${document}&embedded=true`
