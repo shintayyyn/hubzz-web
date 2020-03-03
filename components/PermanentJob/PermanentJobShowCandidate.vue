@@ -302,7 +302,7 @@ export default {
 		AppDate,
 		AppTime
 	},
-	props: ["user", "job", "permanentJobApplication"],
+	props: ["user", "job", "permanent_job_application"],
 	data () {
 		return {
       permanentJobApp: '',
