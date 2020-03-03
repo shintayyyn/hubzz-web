@@ -33,7 +33,7 @@
         >{{jobPartStatus}}</div>
       </template>-->
       <template
-        v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(jobPart.status)"
+        v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(jobPart.status) && !this.$route.name.includes('my-banks')"
       >
         <AppButton :label="'Repost Job'" :in-style="'font-size:1em'" @click="repost" />
       </template>
