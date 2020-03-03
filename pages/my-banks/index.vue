@@ -3,7 +3,6 @@
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
         <AppLoading :loading="loading" spinner />
-
         <div class="flex flex-row flex-wrap justify-start">
           <div
             class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
@@ -109,6 +108,10 @@ import AppAvatar from "@/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   components: {
     AppLoading,
     AppAvatar,
@@ -125,6 +128,7 @@ export default {
       ![
         "favorite",
         "completed",
+        "successful",
         "applied",
         "appointed",
         "rejected",
@@ -202,16 +206,20 @@ export default {
       this.current_page = page;
       this.$axios
         .$get(
-          `/api/v1/practice/locums?practice_locum_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`,
+          `/api/v1/practice/locums?practice_locum_type=${queryStatus}&offset=${
+            this.offset
+          }&limit=${this.perPage}`,
           { params: { detailed: true } }
         )
         .then(res => {
           this.locums = res.data.users;
-          this.toggleTable = true;
-          this.loading = false;
         })
         .catch(err => {
           console.log("err", err);
+        })
+        .finally(() => {
+          this.toggleTable = true;
+          this.loading = false;
         });
     },
     favorite(id) {

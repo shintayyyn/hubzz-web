@@ -5,8 +5,13 @@
         <nuxt-link
           to="/my-banks?status=Favorite"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorite') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.name === 'my-banks' && !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorite') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Favorites</nuxt-link>
+        <nuxt-link
+          to="/my-banks?status=Successful"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'successful' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Successful</nuxt-link>
         <nuxt-link
           to="/my-banks?status=Applied"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
@@ -27,6 +32,11 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
+        <nuxt-link
+          :to="{ name: 'my-banks-reports'}"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-banks-reports' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Reports</nuxt-link>
       </div>
       <div class="flex mt-2 md:mt-0">
         <nuxt-link
