@@ -229,13 +229,13 @@ export default {
       this.$emit("close")
       setTimeout(() => {
         if (this.$route.name.includes("hub-surgery-management")) {
-          this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job)
+          this.$store.commit("calendar/SET_REPOST_JOB", this.jobPart.job)
           this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true)
         } else if (
           this.$route.name.includes("sessions") ||
           this.$route.name.includes("dashboard")
         ) {
-          this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job)
+          this.$store.commit("calendar/SET_REPOST_JOB", this.jobPart.job)
           this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
       }, 500)
