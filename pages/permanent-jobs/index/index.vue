@@ -317,11 +317,13 @@ export default {
 					if (permanent_job_app_found) {
 						permanent_job.status = permanent_job_app_found.application_status
 					} else {
-						if (permanent_job.date_closing < moment().format()) {
-							permanent_job.status = "Closed"
-						} else {
-							permanent_job.status = "Available"
-						}
+						if (permanent_job.job_posting_status === 'Closed') {
+              permanent_job.status = "Closed"
+            } else if (permanent_job.job_posting_status === 'Unfilled' ) {
+              permanent_job.status = "Unfilled"
+            }  else if (permanent_job.job_posting_status === 'Available' ) {
+              permanent_job.status = "Available"
+            }
 					}
 					return permanent_job
 				})
@@ -362,16 +364,16 @@ export default {
 
 				permanent_jobs_for_practice = permanent_jobs_for_practice.map(permanent_job => {
 					const permanent_job_app_found = permanent_job_applications.find(
-						permanent_job_application =>
-							permanent_job_application.permanent_job_id === permanent_job.id
+						permanent_job_application => permanent_job_application.permanent_job_id === permanent_job.id
 					)
 					if (permanent_job_app_found) {
             console.log('route name', route.query.status)
-            if (route.query.status) {
-               permanent_job.status = permanent_job.job_posting_status
+            // DIFFERENT STATUSES ONLY IF IN AVAILABLE TAB
+            if (route.query.status === permanent_job.job_posting_status) {
+              permanent_job.status = permanent_job.job_posting_status
             } else {
-              permanent_job.status = permanent_job_app_found.application_status
-            }
+              permanent_job.status = 'Applied'
+            } 
 					} else {
             permanent_job.status = permanent_job.job_posting_status
 					}

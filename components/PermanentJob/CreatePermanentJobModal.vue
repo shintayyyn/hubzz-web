@@ -208,7 +208,8 @@ export default {
 	},
 	data () {
 		return {
-			practice: "",
+      practice: "",
+      salary_amount_temporary: 0,
 			form: {
 				practice_id: "",
 				profession_id: "",
@@ -220,7 +221,7 @@ export default {
 				email: "",
 				industry_type: "",
 				work_hours: "",
-        salary_amount: 0,
+        salary_amount: this.salary_amount_final,
         parent_practice_id: "",
 				salary_description_2: ""
 			},
@@ -294,7 +295,12 @@ export default {
 				}
 			}
 		}
-	},
+  },
+  computed: {
+    salary_amount_final:function () {
+      return this.salary_amount_temporary ? this.salary_amount_temporary : 0
+    }
+  },
 	watch: {
 		// "form.profession_id"(newValue, oldValue) {
 		// 	// this.CheckEmptyField(newValue, "profession_id");

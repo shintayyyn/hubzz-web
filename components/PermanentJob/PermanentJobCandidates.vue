@@ -1,79 +1,79 @@
 <template>
-	<div class="flex flex-col w-full">
-		<div class="text-xs sm:text-sm font-bold">Applicants</div>
-		<div
-			class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5"
-			v-for="application in permanent_job_applications"
-			:key="application.id"
-		>
-			<div class="flex flex-row flex-no-wrap justify-between items-center hover:text-gray-600">
-				<div @click.prevent="show(application.id)" class="cursor-pointer">
-					<AppAvatar
-						:height="'40px'"
-						:width="'40px'"
-						:src="application.locum_user.avatar && application.locum_user.avatar.file && application.locum_user.avatar.file.url ? application.locum_user.avatar.file.url : ''"
-					/>
-				</div>
+  <div class="flex flex-col w-full">
+    <div class="text-xs sm:text-sm font-bold">Applicants</div>
+    <div
+      class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5"
+      v-for="application in permanent_job_applications"
+      :key="application.id"
+    >
+      <div class="flex flex-row flex-no-wrap justify-between items-center hover:text-gray-600">
+        <div @click.prevent="show(application.id)" class="cursor-pointer">
+          <AppAvatar
+            :height="'40px'"
+            :width="'40px'"
+            :src="application.locum_user.avatar && application.locum_user.avatar.file && application.locum_user.avatar.file.url ? application.locum_user.avatar.file.url : ''"
+          />
+        </div>
 
-				<div
-					class="text-sm font-bold leading-loose w-full px-2 md:text-center cursor-pointer"
-					@click.prevent="show(application.id)"
-				>{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
+        <div
+          class="text-sm font-bold leading-loose w-full px-2 md:text-center cursor-pointer"
+          @click.prevent="show(application.id)"
+        >{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
 
-				<div
-					v-if="application.application_status !== 'Applied'"
-					class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
-					:class="statusStyle(application.application_status)"
-				>{{application.application_status}}</div>
+        <div
+          v-if="application.application_status !== 'Applied'"
+          class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
+          :class="statusStyle(application.application_status)"
+        >{{application.application_status}}</div>
 
-				<div class="flex items-center">
-					<button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
-						<svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
-					</button>
-					<button class="focus:outline-none" @click.prevent="show(application.id)">
-						<svgicon name="arrow-right" height="20" width="20" class="fill-current m-2" />
-					</button>
-				</div>
-			</div>
-		</div>
-		<p
-			v-if="permanent_job_applications.length === 0"
-			class="text-gray-600 text-sm"
-		>There's no applicants for this job at the moment.</p>
-		<div class="bottom-0 w-full" v-if="total > 0">
-			<AppPagination
-				:total="total"
-				:totalPages="totalPages"
-				:currentPage="current_page"
-				@pagechanged="pagechanged"
-				@limitchanged="limitchanged"
-				:loading="loading"
-				:perPage="params.limit"
-			/>
-		</div>
+        <div class="flex items-center">
+          <button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
+            <svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
+          </button>
+          <button class="focus:outline-none" @click.prevent="show(application.id)">
+            <svgicon name="arrow-right" height="20" width="20" class="fill-current m-2" />
+          </button>
+        </div>
+      </div>
+    </div>
+    <p
+      v-if="permanent_job_applications.length === 0"
+      class="text-gray-600 text-sm"
+    >There's no applicants for this job at the moment.</p>
+    <div class="bottom-0 w-full" v-if="total > 0">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="current_page"
+        @pagechanged="pagechanged"
+        @limitchanged="limitchanged"
+        :loading="loading"
+        :perPage="params.limit"
+      />
+    </div>
 
-		<transition name="fade" mode="out-in">
-			<div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
-				<SendMessageModal
-					:user="user"
-					@close="sendMessageModal=false"
-					@showProfile="show(user.id)"
-					:profileOption="true"
-				/>
-			</div>
-		</transition>
-		<transition name="slide" mode="out-in">
-			<div class="modal-container shadow-lg" v-if="modal">
-				<PermanentJobShowCandidate
-					@close="modal=false"
-					:permanent_job_application="permanent_job_application"
-					:user="user"
-				/>
-			</div>
-		</transition>
-		<div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
-		<div class="shield" v-if="sendMessageModal" @click="closeModal()"></div>
-	</div>
+    <transition name="fade" mode="out-in">
+      <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
+        <SendMessageModal
+          :user="user"
+          @close="sendMessageModal=false"
+          @showProfile="show(user.id)"
+          :profileOption="true"
+        />
+      </div>
+    </transition>
+    <transition name="slide" mode="out-in">
+      <div class="modal-container shadow-lg" v-if="modal">
+        <PermanentJobShowCandidate
+          @close="modal=false"
+          :permanent_job_application="permanent_job_application"
+          :user="user"
+        />
+      </div>
+    </transition>
+    <div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
+    <div class="shield" v-if="sendMessageModal" @click="closeModal()"></div>
+  </div>
 </template>
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
@@ -89,7 +89,7 @@ export default {
 		SendMessageModal
 	},
 	props: ["permanent_job"],
-	data() {
+	data () {
 		return {
 			total: 0,
 			permanent_job_applications: [],
@@ -99,7 +99,6 @@ export default {
 			params: {
 				offset: 0,
 				limit: 5,
-				status: ["Applied", "For Interview"],
 				permanent_job_id: this.permanent_job.id
 			},
 			user: null,
@@ -108,15 +107,15 @@ export default {
 		};
 	},
 	computed: {
-		totalPages() {
+		totalPages () {
 			return Math.ceil(this.total / this.params.limit);
 		}
 	},
-	created() {
+	created () {
 		this.getApplicantsCount();
 	},
 	methods: {
-		async getApplicantsCount() {
+		async getApplicantsCount () {
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-job-applications/count`, {
 					params: this.params
@@ -126,7 +125,7 @@ export default {
 					this.getApplicants(this.params);
 				});
 		},
-		async getApplicants(params) {
+		async getApplicants (params) {
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-job-applications`, { params })
 				.then(res => {
@@ -138,18 +137,18 @@ export default {
 				this.permanent_job_applications
 			);
 		},
-		pagechanged(page) {
+		pagechanged (page) {
 			this.current_page = page;
 			this.params.offset = this.params.limit * (page - 1);
 			this.getApplicants(this.params);
 		},
-		limitchanged(limit) {
+		limitchanged (limit) {
 			this.current_page = 1;
 			this.params.offset = 0;
 			this.params.limit = limit;
 			this.getApplicants(this.params);
 		},
-		statusStyle(applicationStatus) {
+		statusStyle (applicationStatus) {
 			switch (applicationStatus) {
 				case "Available":
 					return "bg-green-500 text-white";
@@ -173,7 +172,7 @@ export default {
 					return "bg-yellow-400 text-black";
 			}
 		},
-		async show(id) {
+		async show (id) {
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-job-applications/${id}`)
 				.then(res => {
@@ -204,11 +203,11 @@ export default {
 			// 	this.modal = true;
 			// });
 		},
-		message(user) {
+		message (user) {
 			this.user = user;
 			this.sendMessageModal = true;
 		},
-		closeModal() {
+		closeModal () {
 			if (this.modal) {
 				this.modal = false;
 			} else if (this.sendMessageModal) {

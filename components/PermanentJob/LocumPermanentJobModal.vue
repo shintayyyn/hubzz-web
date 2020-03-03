@@ -13,7 +13,7 @@
           <span>{{ permanent_job.title }}</span>
         </h4>
         <span
-          class="px-4 py-1 rounded-lg w-32 text-center mx-2"
+          class="ml-2 py-2 px-4 rounded font-semibold"
           :class="statusStyle(permanent_job.status)"
         >{{ permanent_job.status }}</span>
 
@@ -94,6 +94,12 @@
               {{ permanent_job ? permanent_job.salary_amount : null }}
             </p>
             <p class="font-bold">
+              Salary Description
+            </p>
+            <p class="pl-2 pb-3">
+              {{ permanent_job && permanent_job.salary_description_2 ?  permanent_job.salary_description_2 : 'N/A' }}
+            </p>
+            <p class="font-bold">
               Posted
             </p>
             <p class="pl-2 pb-3">
@@ -137,6 +143,11 @@
             @click="toShowLink = !toShowLink"
           />
           <!-- ${process.env.API_URL} -->
+          <!-- DELETE THIS AFTER TESTING ON LIVE  -->
+          <div>
+            {{ site }}
+          </div>
+          
           <div v-if="toShowLink" class="rounded-lg p-4 shadow-lg">
             <div class="font-semibold">
               <div> Copy the link: </div>
@@ -165,7 +176,7 @@ export default {
 		return {
       toApply: false,
       toShowLink: false,
-      site: window.location.origin,
+      site: "",
       job_application: {
         job_application_pitch: "",
       },
@@ -207,9 +218,11 @@ export default {
 				}
 			}
 		}
-	},
+  },
+  async beforeMount () {
+    this.site = await window && window.location.origin ? window.location.origin :"https://locum.halcyondigitalhost.com/"
+  },
 	async created () {
-    this.site = await process.env.WEB_URL
     let complianceDocs = []
     await this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents`)
       .then(res => {
@@ -234,7 +247,8 @@ export default {
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
 				.then(res => {
-					permanent_job = res.data.permanent_job
+          permanent_job = res.data.permanent_job
+          console.log('permanent job', permanent_job)
 				})
 
 			await this.$axios
@@ -253,16 +267,16 @@ export default {
 				console.log("app", this.permanent_job_application)
 				permanent_job.status = this.permanent_job_application.application_status
 				this.permanent_job = permanent_job
-			} else if (
-				this.$moment(permanent_job.date_closing).format() <=
-				this.$moment().format()
-			) {
+			} else if (permanent_job.job_posting_status === 'Closed') {
 				permanent_job.status = "Closed"
 				this.permanent_job = permanent_job
-			} else {
-				permanent_job.status = "Available"
+			} else if (permanent_job.job_posting_status === 'Unfilled' ) {
+				permanent_job.status = "Unfilled"
 				this.permanent_job = permanent_job
-			}
+			}  else if (permanent_job.job_posting_status === 'Available' ) {
+        permanent_job.status = "Available"
+				this.permanent_job = permanent_job
+      }
 		},
 
     onEditorBlur (editor) {
