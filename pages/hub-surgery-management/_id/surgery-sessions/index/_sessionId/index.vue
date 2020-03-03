@@ -4,13 +4,13 @@
       <SessionDetailModal :job="job" @close="close" />
     </template>
     <template v-if="!job && job_part">
-      <SessionPartDetailModal :job_part="job_part" @close="close" />
+      <SessionPartDetailModal :job-part="job_part" @close="close" />
     </template>
   </div>
 </template>
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
-import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal";
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 export default {
   transition: {
     name: "slide",
@@ -20,15 +20,15 @@ export default {
     SessionDetailModal,
     SessionPartDetailModal
   },
-  data() {
+  data () {
     return {
       job: null,
       job_part: null
-    };
+    }
   },
-  async asyncData({ app, params, query, redirect, router, error }) {
+  async asyncData ({ app, params, query, error }) {
     try {
-      let url = `/api/v1/practice/jobs`;
+      let url = `/api/v1/practice/jobs`
 
       if (
         query &&
@@ -37,44 +37,45 @@ export default {
           query.jobStatus.toLowerCase()
         )
       ) {
-        url = `/api/v1/practice/job-parts`;
+        url = `/api/v1/practice/job-parts`
       }
 
-      let response = await app.$axios.get(`${url}/${params.sessionId}`);
+      let response = await app.$axios.get(`${url}/${params.sessionId}`)
       if (response.data.data.job) {
-        let job = response.data.data.job;
+        let job = response.data.data.job
         return {
           job
-        };
+        }
       }
 
       if (response.data.data.job_part) {
-        let job_part = response.data.data.job_part;
+        let job_part = response.data.data.job_part
         return {
           job_part
-        };
+        }
       }
     } catch (err) {
-      console.log(err, err.response);
+      console.log(err, err.response)
       if (err && err.response && err.response.status === 404) {
         return error({
           status: 404,
           message: "This session could not be found"
-        });
+        })
       }
-      return error({ status: 404, message: "Page Not Found" });
-      throw err;
+      return error({ status: 404, message: "Page Not Found" })
     }
   },
   methods: {
-    close() {
+    close () {
       this.$router.push({
-        path: `/hub-surgery-management/${this.$route.params.id}/surgery-sessions`,
+        path: `/hub-surgery-management/${
+          this.$route.params.id
+        }/surgery-sessions`,
         query: { ...this.$route.query }
-      });
+      })
     }
   }
-};
+}
 </script>
 <style scoped>
 .modal-container {

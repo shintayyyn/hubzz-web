@@ -65,9 +65,9 @@
               :label="'Job number'"
             />
           </div>
-          <!-- <div
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+          <div
             v-if="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() !== 'private')"
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
           >
             <AppInput
               v-model="practice_id"
@@ -77,7 +77,7 @@
               :label="'Surgery'"
               :items="practiceLists"
             />
-          </div>-->
+          </div>
           <!-- <div
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
             v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
@@ -766,7 +766,6 @@ export default {
         isJobPart = true
       }
 
-      let job_type = ""
       let practice_id = ""
       let job_practice_id = ""
       let private_practice_id = ""
@@ -813,7 +812,6 @@ export default {
             params: {
               locum_status,
               order_by: [],
-              job_type: isJobPart ? job_type : "",
               practice_id:
                 !isJobPart && queryStatus === "Platform" ? practice_id : "",
               job_practice_id:
@@ -846,7 +844,16 @@ export default {
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
+              type: isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
+              job_type: isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
               practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           })
@@ -862,7 +869,6 @@ export default {
               limit: 5,
               locum_status,
               order_by: [],
-              job_type: isJobPart ? job_type : "",
               practice_id:
                 !isJobPart && queryStatus === "Platform" ? practice_id : "",
               job_practice_id:
@@ -895,7 +901,16 @@ export default {
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
+              type: isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
+              job_type: isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
               practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           })
@@ -1080,7 +1095,6 @@ export default {
             params: {
               locum_status,
               order_by: [],
-              job_type: this.isJobPart ? this.job_type : "",
               practice_id:
                 !this.isJobPart && (!queryStatus || queryStatus !== "Private")
                   ? this.practice_id
@@ -1119,7 +1133,16 @@ export default {
               job_part_number_includes: this.isJobPart
                 ? this.job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
+              type: !this.isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
+              job_type: this.isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
               practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
@@ -1132,7 +1155,6 @@ export default {
               limit: 5,
               locum_status,
               order_by: [],
-              job_type: this.isJobPart ? this.job_type : "",
               practice_id:
                 !this.isJobPart && (!queryStatus || queryStatus !== "Private")
                   ? this.practice_id
@@ -1171,7 +1193,16 @@ export default {
               job_part_number_includes: this.isJobPart
                 ? this.job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
+              type: !this.isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
+              job_type: this.isJobPart
+                ? queryStatus === "Private"
+                  ? "Private"
+                  : "Platform"
+                : "",
               practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
@@ -1250,7 +1281,6 @@ export default {
             limit: this.limit,
             locum_status,
             order_by: this.order_by,
-            job_type: this.isJobPart ? this.job_type : "",
             practice_id:
               !this.isJobPart && queryStatus === "Platform"
                 ? this.practice_id
@@ -1289,7 +1319,16 @@ export default {
             job_part_number_includes: this.isJobPart
               ? this.job_part_number_includes
               : "",
-            type: queryStatus === "Private" ? "Private" : "Platform",
+            type: !this.isJobPart
+              ? queryStatus === "Private"
+                ? "Private"
+                : "Platform"
+              : "",
+            job_type: this.isJobPart
+              ? queryStatus === "Private"
+                ? "Private"
+                : "Platform"
+              : "",
             practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
           }
         })
