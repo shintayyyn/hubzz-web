@@ -37,9 +37,9 @@
           :error="formError.find(item => item.field === 'absent_days')"
         />
         <AppInput
-          v-model="form.reason_of_absence"
+          v-model="form.absent_days_reason"
           :type="'textarea'"
-          :name="'reason_of_absence'"
+          :name="'absent_days_reason'"
           :label="'Reason of Absence'"
           :placeholder="'For e.g. No-show'"
           :resize="false"
@@ -146,7 +146,7 @@ export default {
 			form: {
 				cancelled_reason: "",
 				absent_days: 0,
-				reason_of_absence: "",
+				absent_days_reason: "",
 				late_hours: 0,
 				late_hours_reason: "",
 				final_hours: 0
@@ -162,13 +162,13 @@ export default {
 			if (this.job.status !== "Ongoing") {
 				notRequired.push(
 					"absent_days",
-					"reason_of_absence",
+					"absent_days_reason",
 					"late_hours",
 					"late_hours_reason"
 				)
 			} else if (this.job.status === "Ongoing") {
 				if (this.has_absences === "false" || this.has_absences === false) {
-					notRequired.push("absent_days", "reason_of_absence")
+					notRequired.push("absent_days", "absent_days_reason")
 				}
 				if (this.has_late === "false" || this.has_late === false) {
 					notRequired.push("late_hours", "late_hours_reason")
@@ -186,13 +186,13 @@ export default {
 			if (this.job.status !== "Ongoing") {
 				notRequired.push(
 					"absent_days",
-					"reason_of_absence",
+					"absent_days_reason",
 					"late_hours",
 					"late_hours_reason"
 				)
 			} else if (this.job.status === "Ongoing") {
 				if (this.has_absences === "false" || this.has_absences === false) {
-					notRequired.push("absent_days", "reason_of_absence")
+					notRequired.push("absent_days", "absent_days_reason")
 				}
 				if (this.has_late === "false" || this.has_late === false) {
 					notRequired.push("late_hours", "late_hours_reason")
