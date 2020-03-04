@@ -24,6 +24,11 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoicing-details') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoicing Details</nuxt-link>
+      <nuxt-link
+        :to="{ name: 'practice-billing-finance-reports' }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-finance-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Finance Reports</nuxt-link>
     </div>
     <div>
       <nuxt-child />
