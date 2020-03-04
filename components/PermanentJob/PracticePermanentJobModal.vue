@@ -22,6 +22,12 @@
         >{{ permanent_job.job_posting_status }}</span>
         <AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
       </div>
+      <div
+        v-if="permanent_job.job_posting_status === 'Closed'" 
+        class="bg-red-300 p-4 rounded-lg my-2"
+      >
+        This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }}
+      </div>
       <div class="flex flex-col md:flex-row">
         <div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
           <div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
@@ -669,7 +675,7 @@ export default {
 			}
 			if (edit === true) {
 				console.log("status", this.permanent_job.job_posting_status)
-				return "Cancel Editing"
+				return "Cancel"
 			}
 		},
 		editPermanentJob () {

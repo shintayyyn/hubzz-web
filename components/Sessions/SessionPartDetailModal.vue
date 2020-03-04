@@ -11,15 +11,21 @@
     </div>
 
     <div class="flex flex-row justify-start items-center mt-4">
-      <div class="leading-tight font-bold text-md sm:text-lg">{{ jobPart.job.title }}</div>
+      <div class="leading-tight font-bold text-md sm:text-lg">
+        {{ jobPart.job.title }}
+      </div>
       <div
         class="py-2 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(jobPart.status)"
-      >{{ status(jobPart.status) }}</div>
+      >
+        {{ status(jobPart.status) }}
+      </div>
       <div
         v-if="['Completed','Cancelled'].includes(jobPart.status) && tagStatus(jobPart)"
         class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300"
-      >{{ tagStatus(jobPart) }}</div>
+      >
+        {{ tagStatus(jobPart) }}
+      </div>
       <!-- <template v-if="jobPart.status === 'Completed'">
         <div
           class="py-2 px-4 mx-1 mx-rounded font-semibold"
@@ -43,57 +49,81 @@
             >
               <template v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn'">
                 <div class="leading-tight pb-4">
-                  <p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
+                  <p class="font-bold text-sm sm:text-md">
+                    Reason for Withdrawal
+                  </p>
                   <p
                     class="text-xs sm:text-sm"
-                  >{{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}</p>
+                  >
+                    {{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}
+                  </p>
                 </div>
                 <div class="leading-tight pb-4">
-                  <p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
+                  <p class="font-bold text-sm sm:text-md">
+                    Date of Withdrawal
+                  </p>
                   <p
                     class="text-xs sm:text-sm"
-                  >{{ jobPart.job.platform_job.declined_at | localDate }}</p>
+                  >
+                    {{ jobPart.job.platform_job.declined_at | localDate }}
+                  </p>
                 </div>
                 <div class="leading-tight pb-4">
-                  <p class="font-bold text-sm sm:text-md">Withdrawn by</p>
-                  <p class="text-xs sm:text-sm">{{ jobPart.locum_first_name }}</p>
+                  <p class="font-bold text-sm sm:text-md">
+                    Withdrawn by
+                  </p>
+                  <p class="text-xs sm:text-sm">
+                    {{ jobPart.locum_first_name }}
+                  </p>
                 </div>
               </template>
               <template v-if="jobPart.status === 'Cancelled'">
                 <div class="leading-tight pb-4">
                   <p
                     class="font-bold text-sm sm:text-md"
-                  >{{ jobPart.terminated ? 'Terminated' : 'Cancelled' }} At</p>
+                  >
+                    {{ jobPart.terminated ? 'Terminated' : 'Cancelled' }} At
+                  </p>
                   <p
                     class="text-xs sm:text-sm"
-                  >{{ jobPart.job.platform_job.cancelled_at | localDate }}</p>
+                  >
+                    {{ jobPart.job.platform_job.cancelled_at | localDate }}
+                  </p>
                 </div>
                 <div class="leading-tight">
                   <p
                     class="font-bold text-sm sm:text-md"
-                  >Reason for {{ jobPart.terminated ? 'termination' : 'cancellation' }}</p>
-                  <p class="text-xs sm:text-sm">{{ jobPart.job.platform_job.cancelled_reason }}</p>
+                  >
+                    Reason for {{ jobPart.terminated ? 'termination' : 'cancellation' }}
+                  </p>
+                  <p class="text-xs sm:text-sm">
+                    {{ jobPart.job.platform_job.cancelled_reason }}
+                  </p>
                 </div>
                 <div class="leading-tight mt-4">
                   <p
                     class="font-bold text-sm sm:text-md"
-                  >{{ jobPart.terminated ? 'Terminated By' : 'Cancelled By' }}</p>
+                  >
+                    {{ jobPart.terminated ? 'Terminated By' : 'Cancelled By' }}
+                  </p>
                   <div class="flex justify-start">
                     <div class="text-xs sm:text-sm">
                       {{
-                      jobPart.cancelled_by_practice === 'Hub'
-                      ? jobPart.parent_practice_name
-                      : jobPart.cancelled_by_practice === 'Spoke'
-                      ? jobPart.practice_name
-                      : jobPart.practice_name
+                        jobPart.cancelled_by_practice === 'Hub'
+                          ? jobPart.parent_practice_name
+                          : jobPart.cancelled_by_practice === 'Spoke'
+                            ? jobPart.practice_name
+                            : jobPart.practice_name
                       }}
                     </div>
-                    <div class="mx-1">-</div>
-                    <div class="text-xs sm:text-sm" v-if="jobPart.cancelled_by_user">
+                    <div v-if="jobPart.cancelled_by_user" class="mx-1">
+                      -
+                    </div>
+                    <div v-if="jobPart.cancelled_by_user" class="text-xs sm:text-sm">
                       {{
-                      jobPart.cancelled_by_user.email
-                      ? jobPart.cancelled_by_user.email
-                      : jobPart.cancelled_by_user.name
+                        jobPart.cancelled_by_user.email
+                          ? jobPart.cancelled_by_user.email
+                          : jobPart.cancelled_by_user.name
                       }}
                     </div>
                   </div>
@@ -120,7 +150,9 @@
             <div
               v-else
               class="mx-4 m-2"
-            >You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</div>
+            >
+              You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.
+            </div>
           </div>
         </div>
         <div class="p-0 md:pr-4 w-full md:w-1/2">
@@ -137,12 +169,12 @@
   </div>
 </template>
 <script>
-import SessionPartDetailModalInfo from "@/components/Sessions/SessionPart/SessionPartDetailModalInfo";
-import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts";
-import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm";
-import SessionDetailModalCompleteForm from "@/components/Sessions/SessionDetailModalCompleteForm";
-import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum";
-import AppButton from "@/components/Base/AppButton";
+import SessionPartDetailModalInfo from "@/components/Sessions/SessionPart/SessionPartDetailModalInfo"
+import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts"
+import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm"
+import SessionDetailModalCompleteForm from "@/components/Sessions/SessionDetailModalCompleteForm"
+import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum"
+import AppButton from "@/components/Base/AppButton"
 export default {
   components: {
     SessionPartDetailModalInfo,
@@ -158,70 +190,70 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
       user: null,
       practice: null
-    };
-  },
-  computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
     }
   },
-  created() {
-    this.user = this.$auth.user;
-    this.practice = this.$auth.user.practice_detail.practice;
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    }
+  },
+  created () {
+    this.user = this.$auth.user
+    this.practice = this.$auth.user.practice_detail.practice
   },
   methods: {
-    tagStatus(job_part) {
-      let status = "";
+    tagStatus (job_part) {
+      let status = ""
       if (job_part.status === "Completed") {
-        status = "TO BE INVOICED";
+        status = "TO BE INVOICED"
         if (job_part.disputed && job_part.issued) {
-          status = "DISPUTED";
+          status = "DISPUTED"
         } else if (job_part.invoiced && job_part.issued) {
-          status = "INVOICED";
+          status = "INVOICED"
         }
-        return status;
+        return status
       } else if (job_part.status === "Cancelled") {
-        return job_part.terminated ? "TERMINATED" : null;
+        return job_part.terminated ? "TERMINATED" : null
       }
     },
-    status(status) {
-      let jobStatus = status === "Available" ? "Live" : status;
-      return jobStatus.toUpperCase();
+    status (status) {
+      let jobStatus = status === "Available" ? "Live" : status
+      return jobStatus.toUpperCase()
     },
-    bgStatus(status) {
-      let str;
+    bgStatus (status) {
+      let str
       switch (status) {
         case "Ongoing":
         case "Completed":
         case "Approved":
-          str = "bg-green-600 text-white";
-          break;
+          str = "bg-green-600 text-white"
+          break
         default:
-          str = "bg-red-500 text-white";
+          str = "bg-red-500 text-white"
       }
-      return str;
+      return str
     },
-    repost() {
-      this.$emit("close");
+    repost () {
+      this.$emit("close")
       setTimeout(() => {
         if (this.$route.name.includes("hub-surgery-management")) {
-          this.$store.commit("calendar/SET_REPOST_JOB", this.jobPart.job);
-          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true);
+          this.$store.commit("calendar/SET_REPOST_JOB", this.jobPart.job)
+          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true)
         } else if (
           this.$route.name.includes("sessions") ||
           this.$route.name.includes("dashboard")
         ) {
-          this.$store.commit("calendar/SET_REPOST_JOB", this.jobPart.job);
-          this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+          this.$store.commit("calendar/SET_REPOST_JOB", this.jobPart.job)
+          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
-      }, 500);
+      }, 500)
     }
   }
-};
+}
 </script>
 <style scoped>
 .shield {
