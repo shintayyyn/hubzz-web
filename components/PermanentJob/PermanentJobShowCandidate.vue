@@ -58,17 +58,23 @@
       />-->
 
       <div class="flex flex-row flex-no-wrap justify-start items-center mt-4 md:mt-8">
-        <div class="font-bold text-md sm:text-lg">{{ user.name }}</div>
+        <div class="font-bold text-md sm:text-lg">
+          {{ user.name }}
+        </div>
         <div
           class="px-4 py-1 rounded-lg w-32 text-center mx-2"
           :class="statusStyle(permanentJobApp.application_status)"
-        >{{ permanentJobApp.application_status }}</div>
+        >
+          {{ permanentJobApp.application_status }}
+        </div>
       </div>
       <div
         v-if="permanentJobApp && 
           permanentJobApp.application_status &&
           permanentJobApp.invitation_schedule"
-      >You have invited this candidate {{ $moment(permanentJobApp.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT for an Interview.</div>
+      >
+        You have invited this candidate {{ $moment(permanentJobApp.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT for an Interview.
+      </div>
       <div class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
@@ -79,50 +85,86 @@
                 :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
               />
             </div>
-            <div class="font-bold text-sm sm:text-md">Candidate</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.name }}</div>
-            <div class="font-bold text-sm sm:text-md">Headline</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.headline }}</div>
-            <div class="font-bold text-sm sm:text-md">Biography</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.short_biography }}</div>
-            <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
+            <div class="font-bold text-sm sm:text-md">
+              Candidate
+            </div>
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{ user.name }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Headline
+            </div>
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{ user.locum_detail.headline }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Biography
+            </div>
+            <div class="text-xs sm:text-sm mb-4 md:mb-8">
+              {{ user.locum_detail.short_biography }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              GMC / NMC Number
+            </div>
             <div
               class="text-xs sm:text-sm mb-4 md:mb-8"
-            >{{ user.locum_detail.gmc_or_nmc_number.number }}</div>
-            <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
+            >
+              {{ user.locum_detail.gmc_or_nmc_number.number }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              MPL / NPL Number
+            </div>
             <div
               class="text-xs sm:text-sm mb-4 md:mb-8"
-            >{{ user.locum_detail.mpl_or_npl_number.number }}</div>
-            <div class="font-bold text-sm sm:text-md">Specialty</div>
+            >
+              {{ user.locum_detail.mpl_or_npl_number.number }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Specialty
+            </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
               <div
                 v-for="item in user.locum_detail.qualifications"
                 :key="item.id"
                 class="rounded-lg bg-yellow-500 p-2 m-1"
-              >{{ item.name }}</div>
+              >
+                {{ item.name }}
+              </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Clinical systems</div>
+            <div class="font-bold text-sm sm:text-md">
+              Clinical systems
+            </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
               <div
                 v-for="item in user.locum_detail.clinical_systems"
                 :key="item.id"
                 class="rounded-lg bg-yellow-500 p-2 m-1"
-              >{{ item.name }}</div>
+              >
+                {{ item.name }}
+              </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Languages</div>
+            <div class="font-bold text-sm sm:text-md">
+              Languages
+            </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
-              <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
+              <div class="rounded-lg bg-yellow-500 p-2 m-1">
+                English
+              </div>
               <div
                 v-for="item in user.locum_detail.spoken_languages"
                 :key="item.id"
                 class="rounded-lg bg-yellow-500 p-2 m-1"
-              >{{ item.name }}</div>
+              >
+                {{ item.name }}
+              </div>
             </div>
           </div>
         </div>
         <div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
           <div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
-            <div class="font-semibold">Job Pitch</div>
+            <div class="font-semibold">
+              Job Pitch
+            </div>
             <div>
               <no-ssr>
                 <quill-editor
@@ -136,7 +178,9 @@
             </div>
           </div>
           <div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
-            <div class="font-bold text-sm sm:text-md">Compliance documents</div>
+            <div class="font-bold text-sm sm:text-md">
+              Compliance documents
+            </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
                 v-for="item in mandatory"
@@ -155,7 +199,9 @@
                 >{{ item.compliance_document.name }}</a>
               </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Others documents</div>
+            <div class="font-bold text-sm sm:text-md">
+              Others documents
+            </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
                 v-for="item in optional"
@@ -175,30 +221,44 @@
               </div>
             </div>
 
-            <div class="font-bold text-sm sm:text-md">Preferred rates</div>
+            <div class="font-bold text-sm sm:text-md">
+              Preferred rates
+            </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
                 v-for="item in user.locum_detail.rates"
                 :key="item.id"
                 class="flex flex-row flex-no-wrap mt-2"
               >
-                <div class="text-xs sm:text-sm">{{ item.rate_type.name }}: £ {{ item.min }}</div>
+                <div class="text-xs sm:text-sm">
+                  {{ item.rate_type.name }}: £ {{ item.min }}
+                </div>
               </div>
             </div>
-            <div class="font-bold text-sm sm:text-md">Referees</div>
+            <div class="font-bold text-sm sm:text-md">
+              Referees
+            </div>
             <div v-if="user.locum_detail.referees.length > 0">
               <div
                 v-for="item in user.locum_detail.referees"
                 :key="item.id"
                 class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
               >
-                <div class="text-xs sm:text-sm">{{ item ? item.name:null }}</div>
-                <div class="text-xs sm:text-sm">{{ item ? item.phone_number:null }}</div>
-                <div class="text-xs sm:text-sm">{{ item ? item.email:null }}</div>
+                <div class="text-xs sm:text-sm">
+                  {{ item ? item.name:null }}
+                </div>
+                <div class="text-xs sm:text-sm">
+                  {{ item ? item.phone_number:null }}
+                </div>
+                <div class="text-xs sm:text-sm">
+                  {{ item ? item.email:null }}
+                </div>
               </div>
             </div>
             <div v-else>
-              <div class="text-xs sm:text-sm">(none)</div>
+              <div class="text-xs sm:text-sm">
+                (none)
+              </div>
             </div>
           </div>
           <AppButton
@@ -234,12 +294,12 @@
   </section>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton";
-import AppAvatar from "@/components/Base/AppAvatar";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import SendMessageModal from "@/components/Messages/SendMessageModal";
-import AppDate from "@/components/Base/AppDate";
-import AppTime from "@/components/Base/AppTime";
+import AppButton from "@/components/Base/AppButton"
+import AppAvatar from "@/components/Base/AppAvatar"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import SendMessageModal from "@/components/Messages/SendMessageModal"
+import AppDate from "@/components/Base/AppDate"
+import AppTime from "@/components/Base/AppTime"
 
 export default {
   components: {
@@ -251,7 +311,7 @@ export default {
     AppTime
   },
   props: ["user", "job", "permanent_job_application"],
-  data() {
+  data () {
     return {
       permanentJobApp: "",
       confirmation_modal: false,
@@ -269,32 +329,32 @@ export default {
           toolbar: null
         }
       }
-    };
+    }
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     }
   },
 
-  created() {
-    console.log(this.user);
+  created () {
+    console.log(this.user)
     this.getProfessionCategory(
       this.user.locum_detail.profession.profession_category.id
-    );
-    this.permanentJobApp = this.permanent_job_application;
-    console.log("permanent job app", this.permanent_job_application);
+    )
+    this.permanentJobApp = this.permanent_job_application
+    console.log("permanent job app", this.permanent_job_application)
 
-    console.log("referees", this.user.locum_detail.referees);
+    console.log("referees", this.user.locum_detail.referees)
   },
 
   methods: {
-    message(user) {
-      this.user = user;
-      this.sendMessageModal = true;
+    message (user) {
+      this.user = user
+      this.sendMessageModal = true
     },
 
-    getProfessionCategory(id) {
+    getProfessionCategory (id) {
       this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
         this.mandatory = this.user.locum_detail.compliance_documents.filter(
           compliance_document => {
@@ -302,22 +362,22 @@ export default {
               mandatory_compliance_document =>
                 mandatory_compliance_document.id ===
                 compliance_document.compliance_document.id
-            );
+            )
           }
-        );
+        )
         this.optional = this.user.locum_detail.compliance_documents.filter(
           compliance_document => {
             return res.data.profession_category.optional_compliance_documents.some(
               optional_compliance_document =>
                 optional_compliance_document.id ===
                 compliance_document.compliance_document.id
-            );
+            )
           }
-        );
-      });
+        )
+      })
     },
 
-    async inviteLocum() {
+    async inviteLocum () {
       await this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${
@@ -329,26 +389,26 @@ export default {
           }
         )
         .then(res => {
-          console.log("perm job app", res.data.permanent_job_application);
-          this.permanentJobApp = res.data.permanent_job_application;
-          this.accepted = false;
+          console.log("perm job app", res.data.permanent_job_application)
+          this.permanentJobApp = res.data.permanent_job_application
+          this.accepted = false
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Successfully Invited Locum"]
-          });
+          })
         })
         .catch(err => {
-          console.log("err", err.reponse | err);
+          console.log("err", err.reponse | err)
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          });
-        });
+          })
+        })
     },
 
-    async rejectLocum() {
+    async rejectLocum () {
       await this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${
@@ -360,18 +420,18 @@ export default {
             enabled: true,
             status: "success",
             text: ["Successfully Rejected Locum"]
-          });
+          })
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          });
-        });
+          })
+        })
     },
 
-    appoint() {
+    appoint () {
       this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${
@@ -385,59 +445,59 @@ export default {
             enabled: true,
             status: "success",
             text: ["Assign locum successfully"]
-          });
-          this.$route.push("/permanent-jobs");
+          })
+          this.$route.push("/permanent-jobs")
         })
         .catch(err => {
-          console.log("err", err.reponse | err);
+          console.log("err", err.reponse | err)
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          });
-          this.accepted = false;
+          })
+          this.accepted = false
         })
         .finally(() => {
-          this.confirmation_modal = false;
-        });
+          this.confirmation_modal = false
+        })
     },
 
-    downloadItem(fileUrl, fileName) {
-      const axios = require("axios");
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
       axios({
         url: fileUrl,
         method: "GET",
         responseType: "blob" // important
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-      });
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+      })
     },
 
-    statusStyle(jobStatus) {
+    statusStyle (jobStatus) {
       switch (jobStatus) {
         case "Available":
-          return "bg-green-500 text-white";
+          return "bg-green-500 text-white"
         case "Applied":
-          return "bg-yellow-600 text-white";
+          return "bg-yellow-600 text-white"
         case "For Interview":
-          return "bg-green-600 text-white";
+          return "bg-green-600 text-white"
         case "Accepted":
-          return "bg-green-700 text-white";
+          return "bg-green-700 text-white"
         case "Rejected":
-          return "bg-red-700 text-white";
+          return "bg-red-700 text-white"
         case "Closed":
-          return "bg-gray-700 text-white";
+          return "bg-gray-700 text-white"
         default:
-          return "bg-yellow-400 text-black";
+          return "bg-yellow-400 text-black"
       }
     }
   }
-};
+}
 </script>
 <style scoped>
 .document-filename {

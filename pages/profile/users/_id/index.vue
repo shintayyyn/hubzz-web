@@ -4,24 +4,40 @@
     <template v-if="user.status === 'Deactivated'">
       <div class="flex flex-col">
         <div class="flex justify-start">
-          <div class="font-bold text-lg">Title:</div>
-          <div class="mx-1"></div>
-          <div class="text-lg">{{user.title}}</div>
+          <div class="font-bold text-lg">
+            Title:
+          </div>
+          <div class="mx-1" />
+          <div class="text-lg">
+            {{ user.title }}
+          </div>
         </div>
         <div class="flex justify-start mt-2">
-          <div class="font-bold text-lg">Fullname:</div>
-          <div class="mx-1"></div>
-          <div class="text-lg">{{user.first_name}} {{user.last_name}}</div>
+          <div class="font-bold text-lg">
+            Fullname:
+          </div>
+          <div class="mx-1" />
+          <div class="text-lg">
+            {{ user.first_name }} {{ user.last_name }}
+          </div>
         </div>
         <div class="flex justify-start mt-2">
-          <div class="font-bold text-lg">Status:</div>
-          <div class="mx-1"></div>
-          <div class="text-lg">{{user.status}}</div>
+          <div class="font-bold text-lg">
+            Status:
+          </div>
+          <div class="mx-1" />
+          <div class="text-lg">
+            {{ user.status }}
+          </div>
         </div>
         <div class="flex justify-start mt-2">
-          <div class="font-bold text-lg">Deactivated At:</div>
-          <div class="mx-1"></div>
-          <div class="text-lg">{{$moment(user.deactivated_at).format('DD/MM/YYYY')}}</div>
+          <div class="font-bold text-lg">
+            Deactivated At:
+          </div>
+          <div class="mx-1" />
+          <div class="text-lg">
+            {{ $moment(user.deactivated_at).format('DD/MM/YYYY') }}
+          </div>
         </div>
       </div>
     </template>
@@ -125,15 +141,15 @@
   </div>
 </template>
 <script>
-import AppLoading from "@/components/Base/AppLoading";
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppLoading from "@/components/Base/AppLoading"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
   { value: "Practice Staff", label: "Practice Staff" }
-];
+]
 export default {
   components: {
     AppLoading,
@@ -145,7 +161,7 @@ export default {
     name: "fade",
     mode: "out-in"
   },
-  data() {
+  data () {
     return {
       practice_roles,
       user: null,
@@ -164,63 +180,63 @@ export default {
       loading: false,
       modal: false,
       formError: []
-    };
-  },
-  computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
-    },
-    verifiedEmail() {
-      return this.user && this.user.email_verified_at ? true : false;
     }
   },
-  async asyncData({ app, params, error }) {
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+    verifiedEmail () {
+      return this.user && this.user.email_verified_at ? true : false
+    }
+  },
+  async asyncData ({ app, params, error }) {
     try {
       const response = await app.$axios.$get(
         `/api/v1/practice/practice-users/${params.id}`
-      );
+      )
       const user =
-        response.data && response.data.user ? response.data.user : null;
+        response.data && response.data.user ? response.data.user : null
 
       const responseRoles = await app.$axios.$get(
         `/api/v1/practice/practice-roles?include_all=true`
-      );
+      )
       const roles =
         responseRoles.data && responseRoles.data.roles
           ? responseRoles.data.roles.map(item => {
               return {
                 label: item.name,
                 value: item.id
-              };
+              }
             })
-          : [];
+          : []
 
       return {
         user,
         roles
-      };
+      }
     } catch (err) {
-      console.log("err", err || err.response);
-      return error({ status: 404, message: "Page Not Found" });
+      console.log("err", err || err.response)
+      return error({ status: 404, message: "Page Not Found" })
     }
   },
-  mounted() {
-    this.form.email = this.user.email;
-    this.form.title = this.user.personal_detail.title;
-    this.form.first_name = this.user.personal_detail.first_name;
-    this.form.last_name = this.user.personal_detail.last_name;
-    this.form.suffix = this.user.personal_detail.suffix;
-    this.form.practice_role = this.user.practice_detail.practice_role;
+  mounted () {
+    this.form.email = this.user.email
+    this.form.title = this.user.personal_detail.title
+    this.form.first_name = this.user.personal_detail.first_name
+    this.form.last_name = this.user.personal_detail.last_name
+    this.form.suffix = this.user.personal_detail.suffix
+    this.form.practice_role = this.user.practice_detail.practice_role
     this.form.practice_user_role_id = this.user.practice_detail.role
       ? this.user.practice_detail.role.id
-      : null;
-    this.form.status = this.user.status;
+      : null
+    this.form.status = this.user.status
   },
   methods: {
-    save() {
-      this.Validate(this.form, ["title", "suffix"]);
+    save () {
+      this.Validate(this.form, ["title", "suffix"])
       if (!this.formError.length) {
-        this.loading = true;
+        this.loading = true
         this.$axios
           .$put(
             `/api/v1/practice/practice-users/${this.$route.params.id}/account`,
@@ -231,56 +247,56 @@ export default {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            });
-            this.$emit("updateUser", res.data.user);
-            this.$router.push("/profile/users");
+            })
+            this.$emit("updateUser", res.data.user)
+            this.$router.push("/profile/users")
           })
           .catch(err => {
-            console.log("err", err.response || err);
+            console.log("err", err.response || err)
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
                 text: [`${err.response.data.message}`]
-              });
+              })
             }
             if (err.response.data.error_messages) {
-              this.formError = err.response.data.error_messages;
+              this.formError = err.response.data.error_messages
             }
           })
           .finally(() => {
-            this.loading = false;
-          });
+            this.loading = false
+          })
       }
     },
-    remove() {
-      this.loading = true;
+    remove () {
+      this.loading = true
       this.$axios
         .$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
         .then(res => {
-          console.log(res);
-          this.loading = false;
+          console.log(res)
+          this.loading = false
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
-          });
+          })
           // let index = this.users.findIndex(
           // 	item => item.id == this.this.user.id
           // );
           // if (index >= 0) {
           // 	this.users.splice(index, 1);
           // }
-          this.modal = false;
-          this.$router.push("/profile/users");
+          this.modal = false
+          this.$router.push("/profile/users")
         })
         .catch(err => {
-          this.loading = false;
-          this.modal = false;
-          console.log("err", err.response);
-          this.formError = err.response.data.error_messages;
-        });
+          this.loading = false
+          this.modal = false
+          console.log("err", err.response)
+          this.formError = err.response.data.error_messages
+        })
     }
   }
-};
+}
 </script>

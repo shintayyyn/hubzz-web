@@ -64,7 +64,8 @@
       </div>
       <div
         v-if="permanent_job.job_posting_status === 'Closed'" 
-        class="bg-red-300 p-4 rounded-lg my-2">
+        class="bg-red-300 p-4 rounded-lg my-2"
+      >
         This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ?"thru HUBZZ." : "thru Direct Hiring." }}
       </div>
       <div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
