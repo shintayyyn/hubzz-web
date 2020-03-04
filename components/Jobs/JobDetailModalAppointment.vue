@@ -242,15 +242,9 @@ export default {
         if (parseInt(hour) > 11) {
           amShift.disabled = true;
           pmShift.disabled = false;
-          if (parseInt(this.form.shift_id) === 1) {
-            this.form.shift_id = "";
-          }
         } else {
           amShift.disabled = false;
           pmShift.disabled = true;
-          if (parseInt(this.form.shift_id) === 2) {
-            this.form.shift_id = "";
-          }
         }
       }
     },
@@ -268,15 +262,9 @@ export default {
         if (parseInt(hour) > 11) {
           amShift.disabled = true;
           pmShift.disabled = false;
-          if (parseInt(this.form.shift_id) === 1) {
-            this.form.shift_id = "";
-          }
         } else {
           amShift.disabled = false;
           pmShift.disabled = true;
-          if (parseInt(this.form.shift_id) === 2) {
-            this.form.shift_id = "";
-          }
         }
       }
 
@@ -381,6 +369,17 @@ export default {
       //   });
       // }
       this.Validate(this.form, ["description"]);
+      if (this.form.shift_id) {
+        let selectedShift = this.shifts.find(
+          item => item.value === parseInt(this.form.shift_id)
+        );
+        if (selectedShift.disabled) {
+          this.formError.push({
+            field: "shift_id",
+            message: "Invalid Selected Shift"
+          });
+        }
+      }
       if (!this.formError.length) {
         try {
           this.loading = true;
