@@ -233,7 +233,8 @@ export default {
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
 					profession_id: this.$auth.user.locum_detail.profession.id,
-					near_post_code: this.$auth.user.locum_postcode
+          near_post_code: this.$auth.user.locum_postcode,
+          limit: 5,
 				}
 				this.loading = true
 				setTimeout(async () => {
@@ -246,7 +247,8 @@ export default {
         console.log('new status', newStatus)
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
-					practice_id: this.$auth.user.practice_id
+          practice_id: this.$auth.user.practice_id,
+          limit: 5,
 				}
 				setTimeout(async () => {
 					this.loading = true
@@ -436,14 +438,14 @@ export default {
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/count`, { params })
 				.then(res => {
-					this.permanent_job_count =
+					this.permanent_jobs_for_locum_count =
 						res.data && res.data.count ? res.data.count : null
 				})
 
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs`, { params })
 				.then(res => {
-					this.permanent_jobs =
+					this.permanent_jobs_for_locum =
 						res.data && res.data.permanent_jobs
 							? res.data.permanent_jobs
 							: null
@@ -465,7 +467,7 @@ export default {
 							: null
 				})
 
-			this.permanent_jobs_for_locum = this.permanent_jobs.map(permanent_job => {
+			this.permanent_jobs_for_locum = this.permanent_jobs_for_locum.map(permanent_job => {
 				const permanent_job_app_found = this.permanent_job_applications.find(
 					permanent_job_application =>
 						permanent_job_application.permanent_job_id === permanent_job.id
@@ -491,14 +493,14 @@ export default {
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
 					console.log("permanent", res)
-					this.permanent_job_count =
+					this.permanent_jobs_for_practice_count =
 						res.data && res.data.count ? res.data.count : null
 				})
 
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-jobs`, { params })
 				.then(res => {
-					this.permanent_jobs =
+					this.permanent_jobs_for_practice =
 						res.data && res.data.permanent_jobs
 							? res.data.permanent_jobs
 							: null
@@ -520,7 +522,7 @@ export default {
 							: null
 				})
       
-			this.permanent_jobs_for_practice = this.permanent_jobs.map(permanent_job => {
+			this.permanent_jobs_for_practice = this.permanent_jobs_for_practice.map(permanent_job => {
 				const permanent_job_app_found = this.permanent_job_applications.find(
 					permanent_job_application =>
 						permanent_job_application.permanent_job_id === permanent_job.id
@@ -540,39 +542,37 @@ export default {
         return permanent_job
 			})
 		},
-		async sorted (order_by) {
-			let orderBy = order_by.map(item => {
-				let order = item.split(":")[1]
-				let sorting = item.split(":")[0]
-				switch (sorting) {
-					case "date_time_start":
-						sorting = "date_start"
-						break
-					case "date_time_end":
-						sorting = "date_end"
-						break
-					case "rate_name":
-						sorting = "rate"
-						break
-					default:
-						sorting
-				}
-				return `${sorting}:${order}`
-			})
-			this.current_page = 1
-			this.params.offset = 0
-			this.params.order_by = orderBy
-			this.jobPartParams.offset = 0
-			this.jobPartParams.order_by = orderBy
-			this.loading = true
-			await this.getJobs(this.isJobPart ? this.jobPartParams : this.params)
-			this.loading = false
-		},
+		// async sorted (order_by) {
+		// 	let orderBy = order_by.map(item => {
+		// 		let order = item.split(":")[1]
+		// 		let sorting = item.split(":")[0]
+		// 		switch (sorting) {
+		// 			case "date_time_start":
+		// 				sorting = "date_start"
+		// 				break
+		// 			case "date_time_end":
+		// 				sorting = "date_end"
+		// 				break
+		// 			case "rate_name":
+		// 				sorting = "rate"
+		// 				break
+		// 			default:
+		// 				sorting
+		// 		}
+		// 		return `${sorting}:${order}`
+		// 	})
+		// 	this.current_page = 1
+		// 	this.params.offset = 0
+		// 	this.params.order_by = orderBy
+		// 	this.jobPartParams.offset = 0
+		// 	this.jobPartParams.order_by = orderBy
+		// 	this.loading = true
+		// 	await this.getJobs(this.isJobPart ? this.jobPartParams : this.params)
+		// 	this.loading = false
+		// },
 		async pagechanged (page) {
-      console.log('page', page)
       this.current_page = page
       this.params.offset = this.params.limit * (page - 1)
-      console.log('params.offset', this.params.limit)
 			this.loading = true
 			this.getJobs(this.params)
 			this.loading = false
