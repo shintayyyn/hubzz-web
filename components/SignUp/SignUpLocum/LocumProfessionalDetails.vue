@@ -200,7 +200,6 @@
             :type="'multi-checkbox'"
             :name="'mandatory_training_id'"
             :label="'What type of Training(s) are you trained for?'"
-            :error="formError.find(item => item.field === 'mandatory_training_id')"
             :lists="mandatoryTrainings"
             @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
             @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
