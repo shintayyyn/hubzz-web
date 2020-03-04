@@ -746,7 +746,7 @@ export default {
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Bank":
-            locum_status = ["Available"];
+            locum_status = ["Matched"];
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
@@ -1031,7 +1031,7 @@ export default {
       if (queryStatus) {
         switch (queryStatus) {
           case "Bank":
-            locum_status = ["Available"];
+            locum_status = ["Matched"];
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
@@ -1218,7 +1218,7 @@ export default {
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Bank":
-            locum_status = ["Available"];
+            locum_status = ["Matched"];
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
