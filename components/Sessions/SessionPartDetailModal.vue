@@ -88,10 +88,9 @@
                       : jobPart.practice_name
                       }}
                     </div>
-                    <div class="mx-1">-</div>
-                    <div class="text-xs sm:text-sm">
+                    <div class="mx-1" v-if="jobPart.cancelled_by_user">-</div>
+                    <div class="text-xs sm:text-sm" v-if="jobPart.cancelled_by_user">
                       {{
-                      jobPart.cancelled_by_user &&
                       jobPart.cancelled_by_user.email
                       ? jobPart.cancelled_by_user.email
                       : jobPart.cancelled_by_user.name
