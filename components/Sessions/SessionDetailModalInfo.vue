@@ -2,8 +2,6 @@
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">Practice is OOH</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.ooh ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Job number</div>
         <div class="text-xs sm:text-sm mb-8">{{job.job_number}}</div>
         <div class="font-bold text-sm sm:text-md">Job description</div>
@@ -164,7 +162,7 @@
 
         <template v-if="job.use_variation_terms">
           <template v-if="job.variation_terms_file_id">
-            <div class="font-bold text-sm sm:text-md">Terms &amp; Condition</div>
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
@@ -188,7 +186,7 @@
             </div>
           </template>
           <template v-else-if="job.standard_terms_file_id">
-            <div class="font-bold text-sm sm:text-md">Terms &amp; Condition</div>
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
@@ -215,7 +213,7 @@
 
         <template v-if="!job.use_variation_terms">
           <template v-if="job.standard_terms_file_id">
-            <div class="font-bold text-sm sm:text-md">Terms &amp; Condition</div>
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
@@ -239,7 +237,7 @@
             </div>
           </template>
           <template v-else-if="job.variation_terms_file_id">
-            <div class="font-bold text-sm sm:text-md">Terms &amp; Condition</div>
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
