@@ -591,7 +591,6 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == newValue
         );
-        console.log(this.selectedProfession);
         let response = await this.$axios.$get(`/api/v1/practice/locums/count`, {
           params: {
             profession_category_id: this.selectedProfession.profession_category
@@ -953,6 +952,13 @@ export default {
         "compliance_document_id",
         "auto_assign_at"
       ];
+
+      if (!this.hasBanks) {
+        this.bank_only = false;
+        this.bank_first = false;
+        this.favorite_only_until.date = null;
+        this.favorite_only_until.time = null;
+      }
 
       if (
         [15, "15", 30, "30", 60, "60", false, "false"].includes(
