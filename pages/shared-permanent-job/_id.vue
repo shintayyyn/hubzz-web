@@ -37,6 +37,9 @@
           <p class="font-bold">Salary</p>
           <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.salary_amount : null}}</p>
 
+          <p class="font-bold">Salary Description</p>
+          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.salary_description_2 : null}}</p>
+
           <p class="font-bold">Posted</p>
           <p
             class="pl-2 pb-3"

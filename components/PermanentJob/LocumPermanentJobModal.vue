@@ -101,7 +101,7 @@
               Salary
             </p>
             <p class="pl-2 pb-3">
-              {{ permanent_job ? permanent_job.salary_amount : null }}
+              {{ permanent_job ? permanent_job.salary_amount : 'N/A' }}
             </p>
             <p class="font-bold">
               Salary Description
@@ -327,18 +327,18 @@ export default {
 			
 		},
 
-		cancelApplication () {
-			this.$axios
+		async cancelApplication () {
+			await this.$axios
 				.$delete(
 					`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/delete-application`
 				)
 				.then(() => {
+          this.$router.push('/permanent-jobs')
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
 						text: ["Application is now successfully Cancelled"]
 					})
-					this.getJob()
 				})
 		},
 
