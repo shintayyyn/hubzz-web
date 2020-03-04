@@ -93,13 +93,17 @@ export default {
 		// },
 		bgStatus () {
 			let job = this.isJobPart ? this.propJob.job : this.propJob
+			console.log(job)
+			// if (job.type === "Private") {
+			// 	if (job.locum_status === )
+			// }
+
 			switch (job.locum_status) {
 				case "Applied":
+				case "Allocated":
 					return "bg-job-pending"
 					break
 				case "Ongoing":
-				case "Available":
-				case "Matched":
 					return "bg-job-active"
 					break
 				default:

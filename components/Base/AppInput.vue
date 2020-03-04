@@ -411,8 +411,8 @@ export default {
 </script>
 
 <style>
-/* input::placeholder,
+input::placeholder,
 textarea::placeholder {
 	color: #9ea0af;
-} */
+}
 </style>  

@@ -209,24 +209,40 @@ export default {
       this.formError = this.formError.filter(
         error => error.field !== "date_start"
       )
+      // let amShift = this.shifts.find(item => item.label === "AM")
+      // let pmShift = this.shifts.find(item => item.label === "PM")
+    //   if (this.form.date_start && this.form.date_end && this.form.time_start) {
+    //     let hour = this.form.time_start.split(":")[0]
+    //     if (this.$moment(value).isSame(this.form.date_end)) {
+    //       if (parseInt(hour) > 11) {
+    //         amShift.disabled = true
+    //         pmShift.disabled = false
+    //       } else {
+    //         amShift.disabled = false
+    //         pmShift.disabled = true
+    //       }
+    //     }else {
+    //       amShift.disabled = false
+    //       pmShift.disabled = false
+    //     }
+    //  }
+      let hour = this.form.time_start.split(":")[0]
       let amShift = this.shifts.find(item => item.label === "AM")
       let pmShift = this.shifts.find(item => item.label === "PM")
-      if (this.form.date_start && this.form.date_end && this.form.time_start) {
-        let hour = this.form.time_start.split(":")[0]
-       
-        if (this.$moment(value).isSame(this.form.date_end)) {
-          if (parseInt(hour) > 11) {
-            amShift.disabled = true
-            pmShift.disabled = false
-          } else {
-            amShift.disabled = false
-            pmShift.disabled = true
-          }
-        }else {
-          amShift.disabled = false
+      if (amShift && pmShift) {
+        if (this.$moment(this.form.date_end).isSame(value) && hour !== "") {
+        if (parseInt(hour) > 11) {
+          amShift.disabled = true
           pmShift.disabled = false
+        } else {
+          amShift.disabled = false
+          pmShift.disabled = true
         }
-     }
+      } else if (!this.$moment(this.form.date_end).isSame(value)) {
+        amShift.disabled = false
+        pmShift.disabled = false
+      }
+      }
     },
     "form.date_end" (value) {
       let a_year = this.$moment(this.form.date_start).get("year")
@@ -258,6 +274,7 @@ export default {
       let hour = this.form.time_start.split(":")[0]
       let amShift = this.shifts.find(item => item.label === "AM")
       let pmShift = this.shifts.find(item => item.label === "PM")
+      if (amShift && pmShift) {
       if (this.$moment(value).isSame(this.form.date_start) && hour !== "") {
         if (parseInt(hour) > 11) {
           amShift.disabled = true
@@ -270,11 +287,13 @@ export default {
         amShift.disabled = false
         pmShift.disabled = false
       }
+      }
     },
     "form.time_start" (value) {
       let hour = value.split(":")[0]
       let amShift = this.shifts.find(item => item.label === "AM")
       let pmShift = this.shifts.find(item => item.label === "PM")
+      if (amShift && pmShift) {
       if (
         this.form.date_start &&
         this.form.date_end &&
@@ -293,6 +312,7 @@ export default {
       }else {
         amShift.disabled = false
         pmShift.disabled = false
+      }
       }
 
       // this.formError = this.formError.filter(

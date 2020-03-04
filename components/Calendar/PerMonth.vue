@@ -630,6 +630,7 @@ export default {
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
               locum_status: ["Applied"],
+              type: ["Platform"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -639,11 +640,23 @@ export default {
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
               locum_status: ["Ongoing"],
+              type: ["Platform"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
             }
           }),
+
+          this.$axios.$get("/api/v1/locum/jobs", {
+            params: {
+              type: ["Private"],
+              // locum_status: ["Ongoing"],
+              calendar_date_start: `${this.startOfMonth}:gte`,
+              calendar_date_end: `${this.endOfMonth}:lte`,
+              limit: 100000000
+            }
+          }),
+
           // this.$axios.$get("/api/v1/locum/unavailabilities", {
           //   params: {
           //     date_start: `${this.startOfMonth}:gte`,
@@ -656,6 +669,7 @@ export default {
             ([
               responseAllocatedAndAppliedAndAvailable,
               responseOngoingAndCompleted,
+              responsePrivate
               // responseUnavailabilities
             ]) => {
               this.$store.commit(
@@ -663,6 +677,15 @@ export default {
                 responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
                   job => job.locum_status === "Applied"
                 )
+              )
+
+              console.log("responsePrivat", responsePrivate.data.jobs)
+               this.$store.commit(
+                "jobs/SET_LOCUM_PRIVATE_JOBS",
+                responsePrivate.data.jobs
+                // responsePrivate.data.jobs.filter(
+                //   job => job.locum_status === "Ongoing"
+                // )
               )
               // this.$store.commit(
               //   "jobs/SET_LOCUM_ALLOCATED_JOBS",
