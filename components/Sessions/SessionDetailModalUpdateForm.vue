@@ -334,53 +334,55 @@
             </div>
           </template>
 
-          <AppInput
-            :type="'select'"
-            v-model="bank_only"
-            :name="'bank_only'"
-            :label="'Make this Job available for Bank Only?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
-            :disabled="job.status === 'Allocated'"
-          />
-
-          <template v-if="['false', false].includes(bank_only)">
+          <template v-if="hasBanks">
             <AppInput
               :type="'select'"
-              v-model="bank_first"
-              :name="'bank_first'"
-              :label="'Make this Job available for Bank First?'"
+              v-model="bank_only"
+              :name="'bank_only'"
+              :label="'Make this Job available for Bank Only?'"
               :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
               :disabled="job.status === 'Allocated'"
             />
-            <div
-              class="flex flex-row flex-wrap justify-between"
-              v-if="bank_first === true || bank_first === 'true'"
-            >
-              <div>Only favorite locum will be notified until this date</div>
-              <div class="px-1 w-full md:w-1/2">
-                <AppDate
-                  v-model="favorite_only_until.date"
-                  :name="'favorite_only_until'"
-                  :label="'Date'"
-                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
-                  :disabled="job.status === 'Allocated'"
-                />
+            <template v-if="['false', false].includes(bank_only)">
+              <AppInput
+                :type="'select'"
+                v-model="bank_first"
+                :name="'bank_first'"
+                :label="'Make this Job available for Bank First?'"
+                :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                :disabled="job.status === 'Allocated'"
+              />
+              <div
+                class="flex flex-row flex-wrap justify-between"
+                v-if="bank_first === true || bank_first === 'true'"
+              >
+                <div>Only favorite locum will be notified until this date</div>
+                <div class="px-1 w-full md:w-1/2">
+                  <AppDate
+                    v-model="favorite_only_until.date"
+                    :name="'favorite_only_until'"
+                    :label="'Date'"
+                    :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                    :disabled="job.status === 'Allocated'"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/2">
+                  <AppTime
+                    v-model="favorite_only_until.time"
+                    :type="'time'"
+                    :name="'time_end'"
+                    :label="'Time'"
+                    :error="formError.find(item => item.field === 'favorite_only_until')"
+                    :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                    :disabled="job.status === 'Allocated'"
+                  />
+                </div>
               </div>
-              <div class="px-1 w-full md:w-1/2">
-                <AppTime
-                  v-model="favorite_only_until.time"
-                  :type="'time'"
-                  :name="'time_end'"
-                  :label="'Time'"
-                  :error="formError.find(item => item.field === 'favorite_only_until')"
-                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
-                  :disabled="job.status === 'Allocated'"
-                />
-              </div>
-            </div>
+            </template>
           </template>
+
           <template v-if="parseInt(selectedProfessionCategoryId) === 1">
             <AppInput
               v-model="form.ir35"
@@ -547,6 +549,7 @@ export default {
   },
   data() {
     return {
+      banksCount: 0,
       loading: false,
       modal: false,
 
@@ -637,7 +640,7 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == newValue
         );
-
+        console.log(this.selectedProfession);
         if (this.selectedProfession.profession_category.id == 1) {
           this.compliances = this.gp_compliance_documents_lists;
         } else if (this.selectedProfession.profession_category.id == 2) {
@@ -682,6 +685,9 @@ export default {
     }
   },
   computed: {
+    hasBanks() {
+      return this.banksCount > 0 ? true : false;
+    },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
@@ -727,6 +733,17 @@ export default {
       this.selectedProfession = this.professions_categories.find(
         item => item.id == this.job.platform_job.profession.id
       );
+      this.$axios
+        .$get(`/api/v1/practice/locums/count`, {
+          params: {
+            profession_category_id: this.selectedProfession.profession_category
+              .id,
+            practice_locum_type: "Favorite"
+          }
+        })
+        .then(res => {
+          this.banksCount = res.data.count;
+        });
     });
 
     this.$axios.$get(`/api/v1/me`).then(res => {
@@ -985,6 +1002,13 @@ export default {
         "session_requirements",
         "session_structure_information"
       ];
+
+      if (!this.hasBanks) {
+        this.bank_only = false;
+        this.bank_first = false;
+        this.favorite_only_until.date = null;
+        this.favorite_only_until.time = null;
+      }
 
       if (!["Allocated", "Applied"].includes(this.job.status)) {
         notRequired.push("update_accepted_until");
