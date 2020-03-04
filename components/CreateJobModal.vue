@@ -447,8 +447,8 @@
               :label="'Mandatory training required for this job'"
               :lists="mandatory_training_lists"
               :info="'Check all that apply'"
-              @checked="form.mandatory_training_id.push($event)"
-              @unchecked="uncheckMandatory($event)"
+              @checked="form.mandatory_training_id.push(parseInt($event))"
+              @unchecked="form.mandatory_training_id.splice(form.mandatory_training_id.findIndex(item => item === parseInt($event)), 1)"
               @uncheckAll="form.mandatory_training_id = []"
             />
             <div v-if="mandatory_training_lists.length === 0" class="mb-6 text-center md:text-left">
