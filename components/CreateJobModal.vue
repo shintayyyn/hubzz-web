@@ -80,8 +80,8 @@
                       :name="'compliance_document_id'"
                       :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
                       :lists="compliances"
-                      @checked="form.compliance_document_id.push($event)"
-                      @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+                      @checked="form.compliance_document_id.push(parseInt($event))"
+                      @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
                       @uncheckAll="form.compliance_document_id = []"
                     />
                     <div v-if="compliances.length === 0" class="mb-6 text-center md:text-left mt-2">
