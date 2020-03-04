@@ -238,7 +238,7 @@ export default {
       let hour = this.form.time_start.split(":")[0];
       let amShift = this.shifts.find(item => item.label === "AM");
       let pmShift = this.shifts.find(item => item.label === "PM");
-      if (this.$moment(value).isSame(this.form.date_start)) {
+      if (this.$moment(value).isSame(this.form.date_start) && hour !== "") {
         if (parseInt(hour) > 11) {
           amShift.disabled = true;
           pmShift.disabled = false;
@@ -246,6 +246,9 @@ export default {
           amShift.disabled = false;
           pmShift.disabled = true;
         }
+      } else if (!this.$moment(value).isSame(this.form.date_start)) {
+        amShift.disabled = false;
+        pmShift.disabled = false;
       }
     },
     "form.time_start"(value) {
