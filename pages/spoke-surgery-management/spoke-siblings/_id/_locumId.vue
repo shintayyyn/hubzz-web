@@ -108,7 +108,7 @@
                 v-for="item in user.locum_detail.rates"
                 :key="item.id"
               >
-                <div class="text-sm">{{item.rate_type.name}}: £ {{item.min}} - £ {{item.max}}</div>
+                <div class="text-sm">{{item.rate_type.name}}: £ {{item.min}}</div>
               </div>
             </div>
             <div class="font-bold text-sm sm:text-md">Referees</div>
