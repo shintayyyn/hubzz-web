@@ -115,9 +115,7 @@
                 v-for="item in user.locum_detail.rates"
                 :key="item.id"
               >
-                <div
-                  class="text-xs sm:text-sm"
-                >{{item.rate_type.name}}: £ {{item.min}} - £ {{item.max}}</div>
+                <div class="text-xs sm:text-sm">{{item.rate_type.name}}: £ {{item.min}}</div>
               </div>
             </div>
             <div class="font-bold text-sm sm:text-md">Referees</div>
@@ -226,7 +224,9 @@ export default {
     appoint() {
       this.$axios
         .$put(
-          `/api/v1/practice/jobs/${this.job.id}/applicants/${this.user.id}/appoint`
+          `/api/v1/practice/jobs/${this.job.id}/applicants/${
+            this.user.id
+          }/appoint`
         )
         .then(res => {
           if (
