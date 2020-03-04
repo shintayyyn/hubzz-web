@@ -369,6 +369,18 @@
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'AM')"
           />
+          <div
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'AM', day)"
+            :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'AM')"
+          />
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'AM', day)"
+            :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            @click="selectDateShift(date, 'AM')"
+          />
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -387,7 +399,7 @@
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div> -->
-          <div
+          <!-- <div
             v-else-if="hasLocumAvailableJobs(date, 'AM', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
@@ -398,13 +410,13 @@
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'AM')"
-          />
-          <div
+          /> -->
+          <!-- <div
             v-else-if="hasLocumBankJobs(date, 'AM', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'AM')"
-          />
+          /> -->
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -430,6 +442,18 @@
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'PM')"
           />
+          <div
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'PM', day)"
+            :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'PM')"
+          />
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'PM', day)"
+            :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            @click="selectDateShift(date, 'PM')"
+          />
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -448,7 +472,7 @@
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div> -->
-          <div
+          <!-- <div
             v-else-if="hasLocumAvailableJobs(date, 'PM', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
@@ -465,7 +489,7 @@
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'PM')"
-          />
+          /> -->
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -491,6 +515,18 @@
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
           />
+          <div
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'OOH', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'OOH')"
+          />
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'OOH', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            @click="selectDateShift(date, 'OOH')"
+          />
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -509,7 +545,7 @@
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div> -->
-          <div
+          <!-- <div
             v-else-if="hasLocumAvailableJobs(date, 'OOH', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
@@ -526,7 +562,7 @@
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
-          />
+          /> -->
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -552,6 +588,18 @@
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
           />
+          <div
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'Whole Day', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'Whole Day')"
+          />
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'Whole Day', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            @click="selectDateShift(date, 'Whole Day')"
+          />
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -570,7 +618,7 @@
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div> -->
-          <div
+          <!-- <div
             v-else-if="hasLocumAvailableJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
@@ -587,7 +635,7 @@
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
-          />
+          /> -->
           <div
             v-else-if="currentDate(date)"
             :key="`${date}-${index}-${id}`"
@@ -701,6 +749,9 @@ export default {
     },
     getLocumBankJobs () {
       return this.$store.getters["jobs/getLocumBankJobs"]
+    },
+    getLocumPrivateJobs () {
+      return this.$store.getters["jobs/getLocumPrivateJobs"]
     },
     // UNAVAILABILITIES
     getLocumUnavailabilities () {
@@ -1038,6 +1089,19 @@ export default {
               limit: 100000000
             }
           }),
+          this.$axios.$get("/api/v1/locum/jobs", {
+            params: {
+              type: ["Private"],
+              calendar_date_start: `${this.$moment(
+                this.firstDayOfTheWeek,
+                "YYYY-MM-DD"
+              )
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
+              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+              limit: 100000000
+            }
+          }),
           // this.$axios.$get("/api/v1/locum/unavailabilities", {
           //   params: {
           //     date_start: `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
@@ -1052,6 +1116,7 @@ export default {
             ([
               responseAllocatedAndAppliedAndAvailable,
               responseOngoingAndCompleted,
+              responsePrivate,
               // responseUnavailabilities
             ]) => {
               this.$store.commit(
@@ -1059,6 +1124,13 @@ export default {
                 responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
                   job => job.locum_status === "Applied"
                 )
+              )
+              this.$store.commit(
+                "jobs/SET_LOCUM_PRIVATE_JOBS",
+                responsePrivate.data.jobs
+                // responsePrivate.data.jobs.filter(
+                //   job => job.locum_status === "Ongoing"
+                // )
               )
               // this.$store.commit(
               //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
@@ -1473,6 +1545,32 @@ export default {
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date)
            &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
+      )
+    },
+    hasLocumPrivateOngoingJobs (date, type, day) {
+      return this.getLocumPrivateJobs.find(
+        job =>
+          job.locum_status === 'Ongoing' && 
+          this.getDateArray(job.date_start, job.date_end).includes(date)
+           &&
+            job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
+      )
+    },
+    hasLocumPrivateAllocatedJobs (date, type, day) {
+      return this.getLocumPrivateJobs.find(
+        job =>
+          job.locum_status === 'Allocated' && 
+          this.getDateArray(job.date_start, job.date_end).includes(date)
+           &&
+            job.shift.name === type &&
           ((job.include_saturday === false && day !== 6) ||
             job.include_saturday === true) &&
           ((job.include_sunday === false && day !== 0) ||

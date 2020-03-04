@@ -179,68 +179,7 @@ export default {
         this.findPerWeekLocum(value)
       }
     },
-    // PRACTICE
-    // PARTS
-    getPracticeOngoingJobs (value) {
-      // this.findPerMonthPractice(this.selected_date)
-    },
-    // getPracticeCompletedJobs (value) {
-    //   this.findPerMonthPractice(this.selected_date)
-    // },
-    // WHOLE
-    // getPracticeAllocatedJobs (value) {
-    //   this.findPerMonthPractice(this.selected_date)
-    // },
-    getPracticeAppliedJobs (value) {
-      // this.findPerMonthPractice(this.selected_date)
-    },
-    getPracticeUnfilledJobs (value) {
-      // this.findPerMonthPractice(this.selected_date)
-    },
-    getPracticeDeclinedJobs (value) {
-      // this.findPerMonthPractice(this.selected_date)
-    },
-    getPracticeAvailableJobs (value) {
-      // this.findPerMonthPractice(this.selected_date)
-    },
-    // REMINDERS
-    // getPracticeAvailableJobsReminder (value) {
-    //   this.findPerMonthPractice(this.selected_date)
-    // },
-    // getPracticeAppliedJobsReminder (value) {
-    //   this.findPerMonthPractice(this.selected_date)
-    // },
-    // LOCUM
-    // PARTS
-    getLocumOngoingJobs (value) {
-      // this.findPerMonthLocum(this.selected_date)
-    },
-    // getLocumCompletedJobs (value) {
-    //   this.findPerMonthLocum(this.selected_date)
-    // },
-    // WHOLE
-    // getLocumAllocatedPlatformJobs (value) {
-    //   this.findPerMonthLocum(this.selected_date)
-    // },
-    // getLocumAllocatedPrivateJobs (value) {
-    //   this.findPerMonthLocum(this.selected_date)
-    // },
-    getLocumAppliedJobs (value) {
-      // this.findPerMonthLocum(this.selected_date)
-    },
-    getLocumAvailableJobs (value) {
-      // this.findPerMonthLocum(this.selected_date)
-    },
-    getLocumMatchedJobs (value) {
-      // this.findPerMonthLocum(this.selected_date)
-    },
-    // getLocumBankJobs (value) {
-    //   this.findPerMonthLocum(this.selected_date)
-    // },
-    // UNAVAILABILITIES
-    // getLocumUnavailabilities (value) {
-    //   this.findPerMonthLocum(this.selected_date)
-    // }
+   
   },
   created () {
     if (this.$auth.user.domain === "Practice") {
@@ -509,7 +448,7 @@ export default {
       let foundLocumAvailableJobs = []
       let foundLocumMatchedJobs = []
       // let foundLocumUnavailabilities = []
-      // let foundLocumPrivateJobs = []
+      let foundLocumPrivateJobs = []
       // PARTS
       if (this.getLocumOngoingJobs.length > 0) {
         foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
@@ -570,16 +509,17 @@ export default {
       //   )
       // }
       // PRIVATE
-      // if (this.getLocumPrivateJobs.length > 0) {
-      //   foundLocumPrivateJobs = this.getLocumPrivateJobs.filter(job =>
-      //     this.getDateArray(job.date_start, job.date_end).includes(date)
-      //   )
-      // }
+      if (this.getLocumPrivateJobs.length > 0) {
+        foundLocumPrivateJobs = this.getLocumPrivateJobs.filter(job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date)
+        )
+      }
 
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
         // ...foundLocumCompletedJobs,
         ...foundLocumAppliedJobs,
+        ...foundLocumPrivateJobs,
         // ...foundLocumAvailableJobs,
         // ...foundLocumMatchedJobs,
         // ...foundLocumBankJobs,
@@ -604,6 +544,7 @@ export default {
       let foundLocumAppliedJobs = []
       let foundLocumAvailableJobs = []
       let foundLocumMatchedJobs = []
+      let foundLocumPrivateJobs = []
       // let foundLocumAllocatedPlatformJobs = []
       // let foundLocumAllocatedPrivateJobs = []
       // let foundLocumUnavailabilities = []
@@ -635,6 +576,14 @@ export default {
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
             shift === "Available" &&
+            this.includesWeekends(job, date)
+        )
+      }
+      if (this.getLocumPrivateJobs.length > 0) {
+        foundLocumPrivateJobs = this.getLocumPrivateJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === shift &&
             this.includesWeekends(job, date)
         )
       }
@@ -682,6 +631,7 @@ export default {
         ...foundLocumOngoingJobs,
         // ...foundLocumCompletedJobs,
         ...foundLocumAppliedJobs,
+        ...foundLocumPrivateJobs,
         // ...foundLocumAvailableJobs,
         // ...foundLocumMatchedJobs,
         // ...foundLocumAllocatedPrivateJobs,
