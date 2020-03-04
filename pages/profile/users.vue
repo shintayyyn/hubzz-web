@@ -3,20 +3,20 @@
     <div class="flex overflow-x-auto whitespace-no-wrap">
       <AppButton
         :label="'Add User'"
-        @click="$router.push('/profile/users/create')"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+        @click="$router.push('/profile/users/create')"
       />
       <AppButton
         class="mx-2"
         :label="'Filter'"
-        @click="filterModal = !filterModal"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+        @click="filterModal = !filterModal"
       />
       <AppButton
         v-if="showRefresh"
         :label="'Refresh'"
-        @click="refreshUsers"
         :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+        @click="refreshUsers"
       />
     </div>
     <div
@@ -26,8 +26,8 @@
       <div class="flex flex-col md:flex-row h-full w-full items-end">
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            class="px-1"
             v-model="params.search"
+            class="px-1"
             :type="'text'"
             :name="'search'"
             :label="'Email'"
@@ -36,8 +36,8 @@
         </div>
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            class="px-1"
             v-model="params.practice_role"
+            class="px-1"
             :type="'select'"
             :name="'practice_role'"
             :label="'Practice Role'"
@@ -47,8 +47,8 @@
         </div>
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            class="px-1"
             v-model="params.role_id"
+            class="px-1"
             :type="'select'"
             :name="'role_id'"
             :label="'User Role'"
@@ -61,20 +61,20 @@
       <div class="md:px-1 h-full flex w-full">
         <AppButton
           :label="'Clear'"
-          @click="clearFilters"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          @click="clearFilters"
         />
         <AppButton
           class="mx-2"
           :label="'Search'"
-          @click="filterUsers"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          @click="filterUsers"
         />
         <AppButton
           class="mx-2 md:hidden"
           :label="'Close'"
-          @click="filterModal = false"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          @click="filterModal = false"
         />
       </div>
     </div>
@@ -109,7 +109,9 @@
           <div
             class="rounded-full px-6 py-1"
             :class="statusStyle(slotProps.item.status)"
-          >{{ slotProps.item.status }}</div>
+          >
+            {{ slotProps.item.status }}
+          </div>
         </div>
       </template>
       <template v-slot:actions="slotProps">
@@ -123,13 +125,15 @@
         </div>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-600">No User Found</div>
+    <div v-else class="flex justify-center py-4 text-gray-600">
+      No User Found
+    </div>
     <transition name="fade" mode="out-in">
       <nuxt-link
-        class="shield"
         v-if="['profile-users-create', 'profile-users-edit'].includes($route.name) || $route.name.includes('profile-users-id')"
+        class="shield"
         :to="'/profile/users'"
-      ></nuxt-link>
+      />
     </transition>
     <nuxt-child @addUser="addUser" @updateUser="updateUser" />
     <AppConfirmationModal
@@ -143,10 +147,10 @@
   </section>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable";
-import AppInput from "@/components/Base/AppInput";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import AppButton from "@/components/Base/AppButton";
+import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppButton from "@/components/Base/AppButton"
 export default {
   transition: {
     name: "fade",
@@ -159,7 +163,7 @@ export default {
     AppButton
   },
 
-  data() {
+  data () {
     return {
       selectedUserId: null,
       modal: false,
@@ -246,46 +250,42 @@ export default {
           class: "text-center"
         }
       ]
-    };
-  },
-  computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
     }
   },
-  mounted() {
-    this.$socket.on("Practice Notification Create User", this.getUsersRealTime);
-    this.$socket.on("Practice Notification Delete User", this.getUsersRealTime);
-    this.$socket.on("Practice Notification Update User", this.getUsersRealTime);
-    // get roles for filter
-    this.$axios.$get(`/api/v1/practice/practice-roles`).then(res => {
-      this.filterUserRoles.push({ label: "All", value: null });
-      res.data.roles.forEach(role => {
-        this.filterUserRoles.push({ label: role.name, value: role.id });
-      });
-    });
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    }
   },
-  async asyncData({ app, redirect, store, error }) {
+
+  watch: {
+    $route (to, from) {
+      if (from.name === "profile-users-id") {
+        this.getUsers(this.params)
+      }
+    }
+  },
+  async asyncData ({ app, redirect, store, error }) {
     if (app.$auth.user.domain === "Practice") {
       let permissions = app.$auth.user.practice_detail.role.permissions.map(
         permission => permission.name
-      );
+      )
 
       if (permissions.includes("View Profile Users")) {
         try {
           const responseCount = await app.$axios.$get(
             `/api/v1/practice/practice-users/count`
-          );
+          )
           const totalUsers =
             responseCount.data && responseCount.data.count
               ? responseCount.data.count
-              : 0;
+              : 0
 
           const responseUsers = await app.$axios.$get(
             `/api/v1/practice/practice-users?limit=5&order_by=created_at:desc`
-          );
+          )
 
-          let users = [];
+          let users = []
 
           if (responseUsers.data && responseUsers.data.users) {
             responseUsers.data.users.forEach(user => {
@@ -298,7 +298,7 @@ export default {
                   fullname: `${user.personal_detail.first_name} ${
                     user.personal_detail.last_name
                   }`
-                });
+                })
               } else {
                 users.push({
                   ...user,
@@ -306,86 +306,90 @@ export default {
                     user.personal_detail.last_name
                   }`,
                   removable: true
-                });
+                })
               }
-            });
+            })
           }
           return {
             totalUsers,
             users
-          };
+          }
         } catch (err) {
           if (err.response && err.response.status === 401) {
-            error(err.response.data);
-            return;
+            error(err.response.data)
+            return
           }
-          throw err;
+          throw err
         }
       } else if (permissions.includes("View Profile Practice")) {
-        redirect("/profile");
+        redirect("/profile")
       } else if (permissions.includes("View Profile Practice Document")) {
-        redirect(`/profile/practice-documents`);
+        redirect(`/profile/practice-documents`)
       } else {
-        error({ statusCode: 401, message: "Your Practice is Not Authorized" });
+        error({ statusCode: 401, message: "Your Practice is Not Authorized" })
       }
     }
   },
-
-  watch: {
-    $route(to, from) {
-      if (from.name === "profile-users-id") {
-        this.getUsers(this.params);
-      }
-    }
+  mounted () {
+    this.$socket.on("Practice Notification Create User", this.getUsersRealTime)
+    this.$socket.on("Practice Notification Delete User", this.getUsersRealTime)
+    this.$socket.on("Practice Notification Update User", this.getUsersRealTime)
+    // get roles for filter
+    this.$axios.$get(`/api/v1/practice/practice-roles`).then(res => {
+      this.filterUserRoles.push({ label: "All", value: null })
+      res.data.roles.forEach(role => {
+        this.filterUserRoles.push({ label: role.name, value: role.id })
+      })
+    })
   },
   methods: {
-    async getUsersRealTime(user) {
+    async getUsersRealTime (user) {
       if (!user) {
-        return;
+        return
       }
-      this.showRefresh = true;
+      this.showRefresh = true
     },
-    async refreshUsers() {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = 10;
-      this.loading = true;
-      await this.getUsersCount(this.params);
-      await this.getUsers(this.params);
-      this.loading = false;
-      this.showRefresh = false;
+    async refreshUsers () {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.limit = 10
+      this.loading = true
+      await this.getUsersCount(this.params)
+      await this.getUsers(this.params)
+      this.loading = false
+      this.showRefresh = false
     },
-    async filterUsers() {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.loading = true;
-      await this.getUsersCount(this.params);
-      await this.getUsers(this.params);
-      this.loading = false;
-      this.filterModal = false;
+    async filterUsers () {
+      this.current_page = 1
+      this.params.offset = 0
+      this.loading = true
+      await this.getUsersCount(this.params)
+      await this.getUsers(this.params)
+      this.loading = false
+      this.filterModal = false
     },
-    getUsersCount(params) {
+    getUsersCount (params) {
       return this.$axios
         .$get(`/api/v1/practice/practice-users/count`, { params })
         .then(res => {
-          return (this.totalUsers = res.data.count);
+          return (this.totalUsers = res.data.count)
         })
         .catch(err => {
-          console.log("err", err.response || err.message);
+          console.log("err", err.response || err.message)
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [err.response.data.message]
-            });
+            })
           }
-        });
+        })
     },
-    getUsers(params) {
+    getUsers (params) {
       return this.$axios
         .$get(`/api/v1/practice/practice-users`, { params })
         .then(res => {
-          this.users = [];
+          this.users = []
           return res.data.users.forEach(user => {
             if (user.practice_detail.role_id == 1) {
               this.users.push({
@@ -393,7 +397,7 @@ export default {
                 fullname: `${user.personal_detail.first_name} ${
                   user.personal_detail.last_name
                 }`
-              });
+              })
             } else {
               this.users.push({
                 ...user,
@@ -401,94 +405,94 @@ export default {
                   user.personal_detail.last_name
                 }`,
                 removable: true
-              });
+              })
             }
-          });
+          })
         })
         .catch(err => {
-          console.log("err", err.response || err.message);
+          console.log("err", err.response || err.message)
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [err.response.data.message]
-            });
+            })
           }
-        });
+        })
     },
-    async sorted(order_by) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.order_by = order_by;
-      this.loading = true;
-      await this.getUsers(this.params);
-      this.loading = false;
+    async sorted (order_by) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.order_by = order_by
+      this.loading = true
+      await this.getUsers(this.params)
+      this.loading = false
     },
-    async pagechanged(page) {
-      this.current_page = page;
-      this.params.offset = this.params.limit * (page - 1);
-      this.loading = true;
-      await this.getUsers(this.params);
-      this.loading = false;
+    async pagechanged (page) {
+      this.current_page = page
+      this.params.offset = this.params.limit * (page - 1)
+      this.loading = true
+      await this.getUsers(this.params)
+      this.loading = false
     },
-    async limitchanged(limit) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = limit;
-      this.loading = true;
-      await this.getUsers(this.params);
-      this.loading = false;
+    async limitchanged (limit) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.limit = limit
+      this.loading = true
+      await this.getUsers(this.params)
+      this.loading = false
     },
-    clearFilters() {
-      this.params.offset = 0;
-      this.params.limit = 5;
-      this.params.order_by = ["created_at:desc"];
-      this.params.search = "";
-      this.params.role_id = null;
-      this.params.practice_role = null;
+    clearFilters () {
+      this.params.offset = 0
+      this.params.limit = 5
+      this.params.order_by = ["created_at:desc"]
+      this.params.search = ""
+      this.params.role_id = null
+      this.params.practice_role = null
     },
-    addUser(user) {
-      this.users.push(user);
+    addUser (user) {
+      this.users.push(user)
     },
-    updateUser(user) {
-      let index = this.users.findIndex(item => item.id === user.id);
+    updateUser (user) {
+      let index = this.users.findIndex(item => item.id === user.id)
       if (index >= 0) {
-        this.users.splice(index, 1, user);
+        this.users.splice(index, 1, user)
       }
     },
-    toggleRemoveConfirmationModal(id) {
-      this.selectedUserId = id;
-      this.modal = true;
+    toggleRemoveConfirmationModal (id) {
+      this.selectedUserId = id
+      this.modal = true
     },
-    remove() {
-      this.loading = true;
+    remove () {
+      this.loading = true
       this.$axios
         .$delete(
           `/api/v1/practice/practice-users/${this.selectedUserId}`,
           this.form
         )
         .then(res => {
-          this.loading = false;
+          this.loading = false
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
-          });
+          })
           let index = this.users.findIndex(
             item => item.id == this.selectedUserId
-          );
+          )
           if (index >= 0) {
-            this.users.splice(index, 1);
+            this.users.splice(index, 1)
           }
-          this.modal = false;
+          this.modal = false
         })
         .catch(err => {
-          this.loading = false;
-          this.modal = false;
-          this.formError = err.response.data.error_messages;
-        });
+          this.loading = false
+          this.modal = false
+          this.formError = err.response.data.error_messages
+        })
     },
-    show(item) {
+    show (item) {
       // if (
       //   (!item.practice_detail.role || item.practice_detail.role.id != 1) &&
       //   this.authPermissions.includes("Show Profile Users")
@@ -496,20 +500,20 @@ export default {
       //   this.$router.push(`/profile/users/${item.id}`);
       // }
     },
-    statusStyle(status) {
+    statusStyle (status) {
       switch (status) {
         case "Active":
-          return "bg-green-500 text-white";
-          break;
+          return "bg-green-500 text-white"
+          break
         case "Disabled":
-          return "bg-gray-300 text-gray-600";
-          break;
+          return "bg-gray-300 text-gray-600"
+          break
         default:
-          return;
+          return
       }
     }
   }
-};
+}
 </script>
 <style scoped>
 .shield {
