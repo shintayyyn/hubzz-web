@@ -1,7 +1,10 @@
 <template>
   <div class="modal-container p-4">
     <div class="my-2">
-      <nuxt-link :to="`/surgery-management/practice-hub/spoke-siblings/${$route.params.id}`" class="cursor-pointer">
+      <nuxt-link
+        :to="`/surgery-management/practice-hub/spoke-siblings/${$route.params.id}`"
+        class="cursor-pointer"
+      >
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
     </div>
@@ -105,7 +108,7 @@
                 v-for="item in user.locum_detail.rates"
                 :key="item.id"
               >
-                <div class="text-sm">{{item.rate_type.name}}: £ {{item.min}} - £ {{item.max}}</div>
+                <div class="text-sm">{{item.rate_type.name}}: £ {{item.min}}</div>
               </div>
             </div>
             <div class="font-bold text-sm sm:text-md">Referees</div>
@@ -209,11 +212,11 @@ export default {
 
 <style scoped>
 .modal-container {
-	z-index: 510;
+  z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 70%;
-	}
+  .modal-container {
+    width: 70%;
+  }
 }
 </style>

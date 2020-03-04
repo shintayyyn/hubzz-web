@@ -9,7 +9,7 @@
           class="ml-4 focus:outline-none"
           @click.prevent.stop="message($route.params.locumId)"
         >
-          <svgicon name="chat" height="32" width="32" color="#6b778b #4a5568 #fff"/>
+          <svgicon name="chat" height="32" width="32" color="#6b778b #4a5568 #fff" />
         </button>
       </div>
       <div class="w-full flex flex-row justify-start overflow-x-auto mt-4">
@@ -28,12 +28,9 @@
       </div>
       <transition name="fade" mode="out-in">
         <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
-          <SendMessageModal
-              :user="user"
-              @close="sendMessageModal=false"
-            />
+          <SendMessageModal :user="user" @close="sendMessageModal=false" />
         </div>
-      </transition>      
+      </transition>
       <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
       <div class="w-full mt-5">
         <nuxt-child />
@@ -48,14 +45,11 @@ export default {
     SendMessageModal
   },
   props: ["locumType"],
-  data(){
+  data() {
     return {
       user: [],
       sendMessageModal: false
-    }
-  },
-  created(){
-    console.log()
+    };
   },
   methods: {
     message(id) {
@@ -63,13 +57,13 @@ export default {
         this.user = res.data.user;
         this.sendMessageModal = true;
       });
-    },
+    }
   }
 };
 </script>
 
 <style>
-.modal-container{
+.modal-container {
   z-index: 60;
 }
 @media screen and (min-width: 1200px) {

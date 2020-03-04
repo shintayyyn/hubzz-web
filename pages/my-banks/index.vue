@@ -1,9 +1,27 @@
 <template>
   <section class="relative">
+    <div class="flex flex-row justify-start overflow-x-auto py-3 mb-3">
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="{ path: '/my-banks', query: { ...$route.query, type: 'gp' }}"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="!$route.query.type || ($route.query.type && $route.query.type.toLowerCase() === 'gp') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >GP</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="{ path: '/my-banks', query: { ...$route.query, type: 'others' }}"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.type && $route.query.type.toLowerCase() === 'others' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Others</nuxt-link>
+      </div>
+    </div>
+
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
         <AppLoading :loading="loading" spinner />
-
         <div class="flex flex-row flex-wrap justify-start">
           <div
             class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
@@ -109,6 +127,10 @@ import AppAvatar from "@/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   components: {
     AppLoading,
     AppAvatar,
@@ -125,6 +147,7 @@ export default {
       ![
         "favorite",
         "completed",
+        "successful",
         "applied",
         "appointed",
         "rejected",
@@ -166,8 +189,15 @@ export default {
     }
   },
   watch: {
-    "$route.query"({ status: newStatus }, { status: oldStatus }) {
-      if (newStatus && newStatus !== null && newStatus !== oldStatus) {
+    "$route.query"(
+      { status: newStatus, type: newType },
+      { status: oldStatus, type: oldType }
+    ) {
+      console.log(newType, oldType);
+      if (
+        (newStatus && newStatus !== null && newStatus !== oldStatus) ||
+        (newType && newType !== null && newType !== oldType)
+      ) {
         this.toggleTable = false;
         this.getLocumsCount();
       }
@@ -184,11 +214,15 @@ export default {
     },
     getLocumsCount() {
       let queryStatus = this.$route.query.status;
+      let queryType = this.$route.query.type;
       this.loading = true;
       this.$axios
-        .$get(
-          `/api/v1/practice/locums/count?practice_locum_type=${queryStatus}`
-        )
+        .$get(`/api/v1/practice/locums/count`, {
+          params: {
+            practice_locum_type: queryStatus,
+            profession_id: !queryType || queryType === "gp" ? 1 : 2
+          }
+        })
         .then(res => {
           this.total = res.data.count;
           this.getLocums(this.current_page);
@@ -199,19 +233,27 @@ export default {
     },
     getLocums(page) {
       let queryStatus = this.$route.query.status;
+      let queryType = this.$route.query.type;
       this.current_page = page;
       this.$axios
-        .$get(
-          `/api/v1/practice/locums?practice_locum_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`,
-          { params: { detailed: true } }
-        )
+        .$get(`/api/v1/practice/locums`, {
+          params: {
+            practice_locum_type: queryStatus,
+            profession_id: !queryType || queryType === "gp" ? 1 : 2,
+            offset: this.offset,
+            limit: this.perPage,
+            detailed: true
+          }
+        })
         .then(res => {
           this.locums = res.data.users;
-          this.toggleTable = true;
-          this.loading = false;
         })
         .catch(err => {
           console.log("err", err);
+        })
+        .finally(() => {
+          this.toggleTable = true;
+          this.loading = false;
         });
     },
     favorite(id) {
