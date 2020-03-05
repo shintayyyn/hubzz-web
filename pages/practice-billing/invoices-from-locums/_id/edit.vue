@@ -34,7 +34,7 @@ export default {
         response.data && response.data.data && response.data.data.locum_invoice
           ? response.data.data.locum_invoice
           : null;
-
+      console.log(invoice);
       return {
         invoice
       };
