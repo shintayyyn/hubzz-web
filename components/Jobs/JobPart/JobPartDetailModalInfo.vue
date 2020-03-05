@@ -2,8 +2,6 @@
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">Practice is OOH</div>
-        <div class="text-xs sm:text-sm mb-8">{{job_part.ooh ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Job part number</div>
         <div class="text-xs sm:text-sm mb-8">{{job_part.job_part_number}}</div>
         <template v-if="job_part.locum_status === 'Cancelled' && job_part.terminated">
@@ -22,12 +20,6 @@
           <div class="font-bold text-sm sm:text-md">Reason for cancellation</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
         </template>
-        <!-- <template
-          v-if="job_part.locum_status === 'Declined' || job_part.locum_status === 'Withdrawn' "
-        >
-          <div class="font-bold text-sm sm:text-md">Declined At</div>
-          <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_at | localDate}}</div>
-        </template>-->
         <div class="font-bold text-sm sm:text-md">Job description</div>
         <div class="text-xs sm:text-sm mb-8">{{job_part.job.description}}</div>
         <div class="font-bold text-sm sm:text-md">Rate</div>
@@ -199,25 +191,106 @@
           <div class="text-xs sm:text-sm mb-8">{{job_part.final_hours}}</div>
         </template>
 
-        <template v-if="job_part.job.variation_terms_file_id">
-          <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
-          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-            <div class="mt-1 cursor-pointer" @click="modal = true">View</div>
-            <transition name="slide" mode="out-in">
-              <div v-if="modal" class="modal-container shadow-lg">
-                <div class="h-full w-full">
-                  <div class="p-4 md:p-8 cursor-pointer">
-                    <svgicon name="left-arrow" height="32" @click="modal = false" />
+        <template v-if="job_part.job.use_variation_terms">
+          <template v-if="job_part.job.variation_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
+            <div class="text-sm sm:text-md">Variation Terms</div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.variation_terms_file.subtype) ? convertDoc(job_part.job.variation_terms_file.url) : job_part.job.variation_terms_file.url"
+                    />
                   </div>
-                  <embed
-                    class="object-contain object-top w-full"
-                    :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="jjob_part.ob.variation_terms_file.subtype === 'tiff' || job_part.job.variation_terms_file.subtype === 'msword' ? convertDoc(job_part.job.variation_terms_file.url) : job_part.job.variation_terms_file.url"
-                  />
                 </div>
-              </div>
-            </transition>
-          </div>
+              </transition>
+            </div>
+          </template>
+          <template v-else-if="job_part.job.standard_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
+            <div class="text-sm sm:text-md">Standard Terms</div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.standard_terms_file.subtype) ? convertDoc(job_part.job.standard_terms_file.url) : job_part.job.standard_terms_file.url"
+                    />
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
+        </template>
+
+        <template v-if="!job_part.job.use_variation_terms">
+          <template v-if="job_part.job.standard_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
+            <div class="text-sm sm:text-md">Standard Terms</div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.standard_terms_file.subtype) ? convertDoc(job_part.job.standard_terms_file.url) : job_part.job.standard_terms_file.url"
+                    />
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
+          <template v-else-if="job_part.job.variation_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
+            <div class="text-sm sm:text-md">Variation Terms</div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.standard_terms_file.subtype) ? convertDoc(job_part.job.standard_terms_file.url) : job_part.job.standard_terms_file.url"
+                    />
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
         </template>
       </div>
     </div>

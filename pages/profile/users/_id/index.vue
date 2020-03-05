@@ -3,39 +3,48 @@
     <AppLoading :loading="loading" spinner />
     <template v-if="user.status === 'Deactivated'">
       <div class="flex flex-col">
-        <div class="flex justify-start">
-          <div class="font-bold text-lg">
+        <div class="flex flex-col">
+          <div class="text-sm">
             Title:
           </div>
           <div class="mx-1" />
-          <div class="text-lg">
+          <div class="font-bold">
             {{ user.title }}
           </div>
         </div>
-        <div class="flex justify-start mt-2">
-          <div class="font-bold text-lg">
+        <div class="flex flex-col mt-4">
+          <div class="text-sm">
             Fullname:
           </div>
           <div class="mx-1" />
-          <div class="text-lg">
+          <div class="font-bold">
             {{ user.first_name }} {{ user.last_name }}
           </div>
         </div>
-        <div class="flex justify-start mt-2">
-          <div class="font-bold text-lg">
+        <div class="flex flex-col mt-4">
+          <div class="text-sm">
+            Suffix:
+          </div>
+          <div class="mx-1" />
+          <div class="font-bold">
+            {{ user.suffix }}
+          </div>
+        </div>
+        <div class="flex flex-col mt-4">
+          <div class="text-sm">
             Status:
           </div>
           <div class="mx-1" />
-          <div class="text-lg">
+          <div class="font-bold">
             {{ user.status }}
           </div>
         </div>
-        <div class="flex justify-start mt-2">
-          <div class="font-bold text-lg">
+        <div class="flex flex-col mt-4">
+          <div class="text-sm">
             Deactivated At:
           </div>
           <div class="mx-1" />
-          <div class="text-lg">
+          <div class="font-bold">
             {{ $moment(user.deactivated_at).format('DD/MM/YYYY') }}
           </div>
         </div>

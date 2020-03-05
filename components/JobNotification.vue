@@ -80,6 +80,17 @@
                         {{ notification.message }}
                       </div>
                       <div
+                        v-if="notification.type === 'Jobs' && notification.platform_job"
+                        class="leading-tight mt-2"
+                      >
+                        <div class="font-bold">
+                          Extra Information:
+                        </div>
+                        <div class="mt-1">
+                          {{ notification.platform_job.extra_information }}
+                        </div>
+                      </div>
+                      <div
                         class="leading-tight text-xs pt-2 text-right text-gray-600"
                       >
                         {{ $moment(notification.updated_at).format('MM-DD-YYYY, hh:mm A') }}

@@ -604,6 +604,7 @@ export default {
                     message = ''
             }
             notifObj = {
+                ...notif,
                 id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
                 locum_status: notif.locum_status,

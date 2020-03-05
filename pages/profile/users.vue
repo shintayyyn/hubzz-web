@@ -87,7 +87,6 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      :customWidth="920"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
@@ -207,12 +206,17 @@ export default {
       columns: [
         {
           name: "Title",
-          dataIndex: "title",
+          dataIndex: "personal_detail.title",
           class: "text-left"
         },
         {
           name: "Name",
           dataIndex: "fullname",
+          class: "text-left"
+        },
+        {
+          name: "Suffix",
+          dataIndex: "personal_detail.suffix",
           class: "text-left"
         },
         {
@@ -228,7 +232,7 @@ export default {
         },
         {
           name: "User Role",
-          dataIndex: "practice_detail.role.name",
+          dataIndex: "user_role",
           class: "text-center"
         },
         {
@@ -297,7 +301,10 @@ export default {
                   ...user,
                   fullname: `${user.personal_detail.first_name} ${
                     user.personal_detail.last_name
-                  }`
+                  }`,
+                  user_role: user.practice_detail.role
+                    ? user.practice_detail.role.name
+                    : null
                 })
               } else {
                 users.push({
@@ -305,6 +312,9 @@ export default {
                   fullname: `${user.personal_detail.first_name} ${
                     user.personal_detail.last_name
                   }`,
+                  user_role: user.practice_detail.role
+                    ? user.practice_detail.role.name
+                    : null,
                   removable: true
                 })
               }

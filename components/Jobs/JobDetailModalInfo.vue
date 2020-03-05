@@ -2,8 +2,6 @@
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">Practice is OOH</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.ooh ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Job number</div>
         <div class="text-xs sm:text-sm mb-8">{{job.job_number}}</div>
         <div class="font-bold text-sm sm:text-md">Job description</div>
