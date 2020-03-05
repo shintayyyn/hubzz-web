@@ -420,7 +420,7 @@
                     :class="formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                     style="text-align:right;'"
                     @blur="CheckEmptyField(form.total_hours,'total_hours')"
-                    @keypress="isNumber($event), handleKeyDownEvent($event, 'total_hours')"
+                    @keypress="isNumber($event), handleKeyDownEventLimit($event, 'total_hours', 8)"
                   />
                   <div
                     v-if="formError.find(item => item.field === 'total_hours')"
@@ -873,8 +873,8 @@ export default {
       });
   },
   methods: {
-    handleKeyDownEvent(e, formField) {
-      if (this.form[formField].length >= 8 && e.key !== "Backspace") {
+    handleKeyDownEventLimit(e, formField, limit) {
+      if (this.form[formField].length >= limit && e.key !== "Backspace") {
         e.preventDefault();
       }
     },

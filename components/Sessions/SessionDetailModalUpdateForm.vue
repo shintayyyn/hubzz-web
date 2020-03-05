@@ -19,11 +19,13 @@
             <div class="w-full">
               <AppInput
                 v-model="form.rate"
-                :type="'text'"
+                :type="'number'"
                 :name="'rate'"
                 :label="'Rate £'"
-                :placeholder="''"
                 :error="formError.find(item => item.field === 'rate')"
+                :in-style="'text-align:right'"
+                :limit="8"
+                @blur="CheckEmptyField(form.rate,'rate')"
               />
             </div>
             <div class="w-full">
@@ -38,14 +40,39 @@
               />
             </div>
           </div>
-          <AppInput
+          <!-- <AppInput
             v-model="form.total_hours"
-            :type="'text'"
+            :type="'number'"
             :name="'total_hours'"
             :label="'Total hours'"
-            :placeholder="''"
             :error="formError.find(item => item.field === 'total_hours')"
-          />
+            :in-style="'text-align:right'"
+            :limit="8"
+            @blur="CheckEmptyField(form.total_hours,'total_hours')"
+          />-->
+          <div class="flex flex-col py-2 mb-3 md:mb-6">
+            <div class="relative flex flex-row flex-no-wrap justify-between">
+              <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
+            </div>
+            <div class="flex flex-row flex-no-wrap justify-start mt-1">
+              <div class="flex flex-col">
+                <input
+                  step="0.5"
+                  v-model="form.total_hours"
+                  type="number"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                  :class="formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
+                  style="text-align:right;'"
+                  @blur="CheckEmptyField(form.total_hours,'total_hours')"
+                  @keypress="isNumber($event), handleKeyDownEventLimit($event, 'total_hours', 8)"
+                />
+                <div
+                  v-if="formError.find(item => item.field === 'total_hours')"
+                  class="text-red-500 p-1 text-xs"
+                >{{ formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ") }}</div>
+              </div>
+            </div>
+          </div>
           <AppInput
             v-model="form.title"
             :type="'text'"
@@ -640,7 +667,6 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == newValue
         );
-        console.log(this.selectedProfession);
         if (this.selectedProfession.profession_category.id == 1) {
           this.compliances = this.gp_compliance_documents_lists;
         } else if (this.selectedProfession.profession_category.id == 2) {
@@ -677,10 +703,10 @@ export default {
       }
       this.getListofDays(days);
     },
-    "form.rate"(oldValue, value) {
+    "form.rate"() {
       this.validateNumber(this.form.rate, "rate");
     },
-    "form.total_hours"(oldValue, value) {
+    "form.total_hours"() {
       this.validateNumber(this.form.total_hours, "total_hours");
     }
   },
@@ -920,6 +946,11 @@ export default {
     }
   },
   methods: {
+    handleKeyDownEventLimit(e, formField, limit) {
+      if (this.form[formField].length >= limit && e.key !== "Backspace") {
+        e.preventDefault();
+      }
+    },
     goToProfile() {
       window.open("/profile", "_blank");
     },
