@@ -167,8 +167,7 @@
               :type="'number'"
               :name="'salary_amount'"
               :label="'Salary Amount (Optional)'"
-              :min="1"
-              :error="formError.find(item => item.field === 'salary_amount')"
+              :min="0"
               :in-style="'text-align:right'"
             />
             <AppInput
@@ -224,7 +223,7 @@ export default {
 				email: "",
 				industry_type: "",
 				work_hours: "",
-        salary_amount: this.salary_amount_final,
+        salary_amount: "",
         parent_practice_id: "",
 				salary_description_2: ""
 			},
@@ -300,9 +299,9 @@ export default {
 		}
   },
   computed: {
-    salary_amount_final:function () {
-      return this.salary_amount_temporary ? this.salary_amount_temporary : 0
-    }
+    // salary_amount_final:function () {
+    //   return this.salary_amount_temporary ? this.salary_amount_temporary : 0
+    // }
   },
 	watch: {
 		// "form.profession_id"(newValue, oldValue) {
@@ -413,7 +412,6 @@ export default {
         this.$auth.user.practice_detail.practice.type === 'Hub') {
           this.form.parent_practice_id = await this.$auth.user.practice_detail.practice.id
       }
-    
 			this.formError = []
 
 			let notRequired = [
@@ -422,7 +420,6 @@ export default {
         'salary_description_2',
         ]
 
-      // this.validateNumber(this.form.salary_amount, "salary_amount")
       
       this.Validate(this.form, notRequired)
 
@@ -431,7 +428,10 @@ export default {
 
 			if (!this.formError.length) {
 				await this.$axios
-					.post(`/api/v1/practice/permanent-jobs`, this.form)
+					.post(`/api/v1/practice/permanent-jobs`, {
+            ...this.form,
+            salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
+          })
 					.then(() => {
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,

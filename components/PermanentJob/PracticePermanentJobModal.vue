@@ -192,10 +192,8 @@
                       :type="'number'"
                       :name="'salary_amount'"
                       :label="'Salary Amount'"
-                      :min="1"
-                      :error="formError.find(item => item.field === 'salary_amount')"
+                      :min="0"
                       :in-style="'text-align:right'"
-                      @blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
                     />
                     <AppInput
                       v-model="form.salary_description_2"
@@ -627,7 +625,8 @@ export default {
 			} else {
 				this.formError.splice(index, 1)
 			}
-		},
+    },
+    
 		async getPermanentJob () {
 			let permJobId = ""
 			if (this.$route.name.includes("hub-surgery-management")) {
@@ -649,13 +648,15 @@ export default {
 						)
 					}
 				})
-		},
+    },
+    
 		getAssignedLocum (userID) {
 			this.$axios.$get(`/api/v1/practice/locums/${userID}`).then(res => {
 				this.assignedLocum = res.data.user
 				console.log("assignedLocum", this.assignedLocum)
 			})
-		},
+    },
+    
 		editJobLabel (edit) {
 			console.log("edit", edit)
 			if (
@@ -677,18 +678,33 @@ export default {
 				console.log("status", this.permanent_job.job_posting_status)
 				return "Cancel"
 			}
-		},
+    },
+    
 		editPermanentJob () {
 			this.formError = []
 
-			let notRequired = ["hired_through", "update_remarks"]
-			this.validateNumber(this.form.salary_amount, "salary_amount")
-			this.Validate(this.form, notRequired)
+			let notRequired = [
+        "parent_practice_id",
+        "salary_amount",
+        "salary_description_2",
+        "hired_through", 
+        "update_remarks",
+        ]
+
+			if(this.form.salary_amount){
+        this.validateNumber(this.form.salary_amount, "salary_amount")
+      }
+
+      this.Validate(this.form, notRequired)
+      console.log("errors", this.formError)
 			if (!this.formError.length) {
 				this.$axios
 					.$put(
 						`/api/v1/practice/permanent-jobs/${this.permanent_job.id}`,
-						this.form
+            {
+              ...this.form,
+              salary_amount : this.form.salary_amount ? this.form.salary_amount : 0
+            }
 					)
 					.then(() => {
 						this.$store.commit("SET_NOTIFICATION", {
@@ -702,7 +718,8 @@ export default {
 						this.formError = err.response.data.error_messages
 					})
 			}
-		},
+    },
+    
 		forceCloseJob () {
 			this.$axios
 				.$put(
@@ -742,16 +759,20 @@ export default {
 						text: ["Successfully Approved / Rejected Job"]
 					})
 				})
-		},
+    },
+    
 		onEditorBlur (editor) {
 			console.log ("editor blur!", editor)
-		},
+    },
+    
 		onEditorFocus (editor) {
 			console.log ("editor focus!", editor)
-		},
+    },
+    
 		onEditorReady (editor) {
 			console.log ("editor ready!", editor)
-		},
+    },
+    
 		statusStyle (jobPostingStatus) {
 			switch (jobPostingStatus) {
 				case "Available":

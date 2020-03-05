@@ -76,6 +76,7 @@
           :permanent_job_application="permanent_job_application"
           :user="user"
           @close="modal=false"
+          @updateApplicants="getApplicantsCount()"
         />
       </div>
     </transition>

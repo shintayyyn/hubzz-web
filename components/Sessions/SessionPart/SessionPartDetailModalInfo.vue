@@ -3,39 +3,11 @@
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">
-          Practice is OOH
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.ooh ? 'Yes' : 'No' }}
-        </div>
-        <div class="font-bold text-sm sm:text-md">
           Job part number
         </div>
         <div class="text-xs sm:text-sm mb-8">
           {{ job_part.job_part_number }}
         </div>
-        <!-- <template v-if="job_part.status === 'Cancelled' && job_part.terminated">
-          <div class="font-bold text-sm sm:text-md">Terminated At</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{job_part.job.platform_job.cancelled_at | localDate}}</div>
-          <div class="font-bold text-sm sm:text-md">Reason for termination</div>
-          <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
-        </template>
-        <template v-if="job_part.status === 'Cancelled' && !job_part.terminated">
-          <div class="font-bold text-sm sm:text-md">Cancelled At</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{job_part.job.platform_job.cancelled_at | localDate}}</div>
-          <div class="font-bold text-sm sm:text-md">Reason for cancellation</div>
-          <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
-				</template>-->
-        <!-- <template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
-          <div class="font-bold text-sm sm:text-md">Withdrawn At</div>
-          <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_at | localDate}}</div>
-          <div class="font-bold text-sm sm:text-md">Reason for withdrawal</div>
-          <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_reason}}</div>
-				</template>-->
         <div class="font-bold text-sm sm:text-md">
           Job description
         </div>
@@ -185,7 +157,9 @@
         <div class="font-bold text-sm sm:text-md">
           Unpaid break
         </div>
-        <div class="text-xs sm:text-sm mb-8">
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >
           {{ job_part.job.platform_job.unpaid_breaks_in_minutes }}
         </div>
 
@@ -248,7 +222,10 @@
           Compliance requirements
         </div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="job_part.job.platform_job.compliance_documents.length === 0" class="mt-1">
+          <div
+            v-if="job_part.job.platform_job.compliance_documents.length === 0"
+            class="mt-1"
+          >
             (none)
           </div>
           <div
@@ -277,7 +254,9 @@
           </div>
         </div>
 
-        <template v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)">
+        <template
+          v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)"
+        >
           <div class="font-bold text-sm sm:text-md">
             Was the locum having any absences?
           </div>
@@ -330,27 +309,130 @@
           </div>
         </template>
 
-        <template v-if="job_part.job.variation_terms_file_id">
-          <div class="font-bold text-sm sm:text-md">
-            Terms & Condition
-          </div>
-          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-            <AppButton :inClass="'py-1'" :label="'View'" @click="modal = true" />
-            <transition name="slide" mode="out-in">
-              <div v-if="modal" class="modal-container shadow-lg">
-                <div class="h-full w-full">
-                  <div class="p-4 md:p-8 cursor-pointer">
-                    <svgicon name="left-arrow" height="32" @click="modal = false" />
-                  </div>
-                  <embed
-                    class="object-contain object-top w-full"
-                    :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="job_part.ob.variation_terms_file.subtype === 'tiff' || job_part.job.variation_terms_file.subtype === 'msword' ? convertDoc(job_part.job.variation_terms_file.url) : job_part.job.variation_terms_file.url"
-                  >
-                </div>
+        <template v-if="job_part.use_variation_terms">
+          <template v-if="job_part.variation_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">
+              Terms & Condition
+            </div>
+            <div class="text-sm sm:text-md">
+              Variation Terms
+            </div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >
+                View
               </div>
-            </transition>
-          </div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.variation_terms_file.subtype) ? convertDoc(job_part.variation_terms_file.url) : job_part.variation_terms_file.url"
+                    >
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
+          <template v-else-if="job_part.standard_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">
+              Terms & Condition
+            </div>
+            <div class="text-sm sm:text-md">
+              Standard Terms
+            </div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >
+                View
+              </div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.standard_terms_file.subtype) ? convertDoc(job_part.standard_terms_file.url) : job_part.standard_terms_file.url"
+                    >
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
+        </template>
+
+        <template v-if="!job_part.use_variation_terms">
+          <template v-if="job_part.standard_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">
+              Terms & Condition
+            </div>
+            <div class="text-sm sm:text-md">
+              Standard Terms
+            </div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >
+                View
+              </div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.standard_terms_file.subtype) ? convertDoc(job_part.standard_terms_file.url) : job_part.standard_terms_file.url"
+                    >
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
+          <template v-else-if="job_part.variation_terms_file_id">
+            <div class="font-bold text-sm sm:text-md">
+              Terms & Condition
+            </div>
+            <div class="text-sm sm:text-md">
+              Variation Terms
+            </div>
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >
+                View
+              </div>
+              <transition name="slide" mode="out-in">
+                <div v-if="modal" class="modal-container shadow-lg">
+                  <div class="h-full w-full">
+                    <div class="p-4 md:p-8 cursor-pointer">
+                      <svgicon name="left-arrow" height="32" @click="modal = false" />
+                    </div>
+                    <embed
+                      class="object-contain object-top w-full"
+                      :class="job_part.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.standard_terms_file.subtype) ? convertDoc(job_part.standard_terms_file.url) : job_part.standard_terms_file.url"
+                    >
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </template>
         </template>
       </div>
     </div>
@@ -362,37 +444,37 @@
 <script>
 import AppButton from "@/components/Base/AppButton"
 export default {
-	components: {
-		AppButton
-	},
-	props: ["job_part"],
-	data () {
-		return {
-			modal: false
-		}
-	},
-	computed: {
-		session_requirements () {
-			return this.job_part.job.platform_job.session_requirements
-				? this.job_part.job.platform_job.session_requirements.split(",")
-				: []
-		}
-	},
-	methods: {
-		convertDoc (document) {
-			return `https://docs.google.com/gview?url=${document}&embedded=true`
-		}
-	}
+  components: {
+    AppButton
+  },
+  props: ["job_part"],
+  data () {
+    return {
+      modal: false
+    }
+  },
+  computed: {
+    session_requirements () {
+      return this.job_part.job.platform_job.session_requirements
+        ? this.job_part.job.platform_job.session_requirements.split(",")
+        : []
+    }
+  },
+  methods: {
+    convertDoc (document) {
+      return `https://docs.google.com/gview?url=${document}&embedded=true`
+    }
+  }
 }
 </script>
 <style scoped>
 .modal-container {
-	z-index: 510;
+  z-index: 510;
 }
 
 @media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 70%;
-	}
+  .modal-container {
+    width: 70%;
+  }
 }
 </style>

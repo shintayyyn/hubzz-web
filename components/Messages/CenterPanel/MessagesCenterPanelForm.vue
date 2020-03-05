@@ -6,7 +6,7 @@
 				class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold text-center"
 			>Message Sent to {{ this.user.personal_detail.name }}</div>
 		</transition>
-		<div v-if="messageSent" class="bg-white h-full w-full absolute opacity-50"></div>
+		<div v-if="messageSent" class="bg-white h-full w-full absolute opacity-50" />
 		<div class="relative message-box border-t w-full p-2">
 			<textarea
 				v-model="message"
@@ -84,9 +84,11 @@ export default {
 		let findConversation = this.conversations.find(
 			item => item.id === parseInt(this.$route.params.slug)
 		);
-		let conversation_members = findConversation.conversation_member_users.map(
-			item => item.user.email !== null
-		);
+		let conversation_members = findConversation
+			? findConversation.conversation_member_users.map(
+					item => item.user.email !== null
+			  )
+			: [];
 		if (conversation_members.includes(false)) {
 			this.hasDeactiveUser = true;
 		} else [(this.hasDeactiveUser = false)];

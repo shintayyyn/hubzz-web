@@ -106,18 +106,25 @@ export default {
 			},
 			loading: false,
 			columns: [
+        {
+          name: "ID",
+          dataIndex: "id",
+          class:"text-center"
+        },
 				{
 					name: "Title",
-					dataIndex: "title"
+          dataIndex: "title",
+          class:"text-center"
 				},
 				{
 					name: "Surgery",
-					dataIndex: "practice.name"
+          dataIndex: "practice.name",
+          class:"text-center"
 				},
 				{
-					name: "Salary",
+					name: "Salary £",
 					dataIndex: "salary_amount",
-					class: "text-center"
+					class: "text-center currency"
 				},
 				{
 					name: "Posted",
@@ -159,18 +166,25 @@ export default {
 			],
 
 			locumColumns: [
+        {
+          name: "ID",
+          dataIndex: "id",
+          class:"text-center"
+        },
 				{
 					name: "Title",
-					dataIndex: "title"
+          dataIndex: "title",
+          class:"text-center"
 				},
 				{
 					name: "Surgery",
-					dataIndex: "practice.name"
+          dataIndex: "practice.name",
+          class:"text-center"
 				},
 				{
-					name: "Salary",
+					name: "Salary £",
 					dataIndex: "salary_amount",
-					class: "text-center"
+					class: "text-center currency"
 				},
 				{
 					name: "Posted",

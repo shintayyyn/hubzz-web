@@ -432,10 +432,8 @@
                     :class="formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                     style="text-align:right;'"
                     @blur="CheckEmptyField(form.total_hours,'total_hours')"
-                    @keyup="handleKeyDownEvent($event, 'total_hours')"
+                    @keyup="handleKeyDownEvent($event, 'total_hours', 8)"
                   >
-                  <!-- @keyup="isNumber($event), handleKeyDownEvent($event,form.total_hours)" -->
-                  <!-- @keypress="isNumber($event)" -->
                   <div
                     v-if="formError.find(item => item.field === 'total_hours')"
                     class="text-red-500 p-1 text-xs"
@@ -656,14 +654,8 @@ export default {
     "form.rate" () {
       this.validateNumber(this.form.rate, "rate")
     },
-    "form.total_hours" (newValue, oldValue) {
+    "form.total_hours" () {
       this.validateNumber(this.form.total_hours, "total_hours")
-      // if (oldValue.includes(".")) {
-      //   if (newValue[newValue.length - 1] !== '5') {
-      //     newValue = oldValue
-      //     console.log(newValue)
-      //   }
-      // }
     },
     "form.time_start" (value) {
       console.log(value)
@@ -895,9 +887,9 @@ export default {
       })
   },
   methods: {
-    handleKeyDownEvent (e, formField) {
+    handleKeyDownEvent (e, formField, limit) {
       if (this.isNumber(e)) {
-        if (this.form[formField].length >= 8 && e.key !== "Backspace") {
+        if (this.form[formField].length >= limit && e.key !== "Backspace") {
           e.preventDefault()
         }else {
           if (this.form[formField].includes('.')) {

@@ -261,11 +261,11 @@
               </div>
             </div>
           </div>
-          <AppButton
+          <!-- <AppButton
             v-if="permanentJobApp.invitation_schedule && permanentJobApp.application_status === 'For Interview'"
             :label="'Appoint to this job'"
             @click="confirmation_modal = true"
-          />
+          /> -->
         </div>
       </div>
     </div>
@@ -391,6 +391,8 @@ export default {
         .then(res => {
           console.log("perm job app", res.data.permanent_job_application)
           this.permanentJobApp = res.data.permanent_job_application
+          this.$emit('close')
+          this.$emit('updateApplicants')
           this.accepted = false
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -416,6 +418,9 @@ export default {
           }/reject-application`
         )
         .then(() => {
+          this.rejectConfirmModal = false
+          this.$emit('close')
+          this.$emit('updateApplicants')
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",

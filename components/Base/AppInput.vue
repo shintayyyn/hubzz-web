@@ -30,7 +30,7 @@
         </div>
         <template v-if="type === 'multi-checkbox'">
           <div v-if="!required" class="flex flex-row justify-start items-center mt-1">
-            <input :id="name" v-model="na" type="checkbox">
+            <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
             <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
           </div>
           <div
@@ -381,7 +381,7 @@ export default {
     }
   },
   methods: {
-    handleKeyDownEvent (e, formField) {
+    handleKeyDownEvent (e) {
       if (
         this.limit &&
         this.value.length >= this.limit &&
@@ -413,6 +413,6 @@ export default {
 <style>
 input::placeholder,
 textarea::placeholder {
-	color: #9ea0af;
+  color: #9ea0af;
 }
 </style>  

@@ -192,18 +192,22 @@ export default {
     }
   },
   mounted () {
-    this.$socket.on("Practice Notification Create Surgery", surgery => {
-      this.getSurgeriesCount(this.params)
-    })
-    this.$socket.on("Practice Notification Update Surgery", surgery => {
-      let index = this.surgeries.findIndex(item => item.id == surgery.id)
-      if (index >= 0) {
-        this.surgeries.splice(index, 1, surgery)
-      }
-    })
-    this.$socket.on("Practice Notification Delete Surgery", surgeryId => {
-      this.getSurgeriesCount(this.params)
-    })
+    this.$socket.on(
+      "Practice Notification Accept Surgery",
+      this.getSurgeriesRealTime
+    )
+    this.$socket.on(
+      "Practice Notification Create Surgery",
+      this.getSurgeriesRealTime
+    )
+    this.$socket.on(
+      "Practice Notification Update Surgery",
+      this.getSurgeriesRealTime
+    )
+    this.$socket.on(
+      "Practice Notification Delete Surgery",
+      this.getSurgeriesRealTime
+    )
   },
   async created () {
     await this.surgeries.map(surgery => {
@@ -211,6 +215,27 @@ export default {
     })
   },
   methods: {
+    getSurgeriesRealTime () {
+      this.getSurgeriesCount(this.params)
+    },
+    removeListener () {
+      this.$socket.removeListener(
+        "Practice Notification Accept Surgery",
+        getSurgeriesRealTime
+      )
+      this.$socket.removeListener(
+        "Practice Notification Create Surgery",
+        getSurgeriesRealTime
+      )
+      this.$socket.removeListener(
+        "Practice Notification Update Surgery",
+        getSurgeriesRealTime
+      )
+      this.$socket.removeListener(
+        "Practice Notification Delete Surgery",
+        getSurgeriesRealTime
+      )
+    },
     getSurgeriesCount (params) {
       this.$axios
         .$get(`/api/v1/practice/me/practice-surgeries/count`, { params })

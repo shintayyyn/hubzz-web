@@ -604,9 +604,10 @@ export default {
                     message = ''
             }
             notifObj = {
+                ...notif,
                 id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
-                locum_status: notif.locum_status,
+                status: notif.locum_status,
                 // === 'Declined' ? 'Withdrawn' : notif.locum_status
                 status_tag: notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
