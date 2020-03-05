@@ -20,9 +20,9 @@
             :placeholder="'GMC / NMC Number'"
             :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
             :info="'For compliance; to be verified by the hubzz team'"
+            required
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
             @keypress="inputNumberOnly($event)"
-            required
           />
 
           <AppInput
@@ -33,9 +33,9 @@
             :placeholder="'MPL / NPL Number'"
             :error="formError.find(item => item.field === 'mpl_or_npl_number')"
             :info="'For compliance; to be verified by the hubzz team'"
+            required
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
             @keypress="inputNumberOnly($event)"
-            required
           />
 
           <AppInput
@@ -53,9 +53,9 @@
             :label="'Profession'"
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'profession_id')"
-            @blur="CheckEmptyField(form.profession_id, 'profession_id')"
             :items="professions"
             required
+            @blur="CheckEmptyField(form.profession_id, 'profession_id')"
           />
 
           <template v-if="form.profession_id">
@@ -68,9 +68,9 @@
               :info="'Choose at least one qualification'"
               :url="'/api/v1/qualifications'"
               :professionCategoryId="selectedProfession ? selectedProfession.profession_category.id.toString() : null"
+              required
               @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
               @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-              required
             />
           </template>
 
@@ -82,9 +82,9 @@
             :error="formError.find(item => item.field === 'clinical_system_id')"
             :info="'Choose at least one IT system'"
             :url="'/api/v1/clinical-systems'"
+            required
             @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
             @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-            required
           />
 
           <AppFilterSearch
@@ -105,7 +105,9 @@
               </label>
               <div
                 class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm"
-              >To match available jobs with</div>
+              >
+                To match available jobs with
+              </div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
@@ -117,8 +119,8 @@
                     :name="'min_rate_per_hour'"
                     :label="'Per Hour £'"
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
-                    @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                     required
+                    @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                   />
                   <!-- <div class="mx-1"></div> -->
                   <!-- <AppInput
@@ -141,8 +143,8 @@
                     :name="'min_rate_per_half_day_session'"
                     :label="'Per Half Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
-                    @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                     required
+                    @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                   />
                   <!-- <div class="mx-1"></div>
                   <AppInput
@@ -165,8 +167,8 @@
                     :name="'min_rate_per_whole_day_session'"
                     :label="'Per Whole Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
-                    @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                     required
+                    @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                   />
                   <!-- <div class="mx-1"></div>
                   <AppInput
@@ -190,9 +192,9 @@
             :label="'What type of practices are you willing to work?'"
             :error="formError.find(item => item.field === 'practice_type_id')"
             :lists="practiceTypes"
+            required
             @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-            required
           />
 
           <AppInput
@@ -214,17 +216,17 @@
         :label="'<<'"
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAddressDetails')"
       />
-      <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
+      <div class="mx-2" />
+      <AppButton :label="'Next'" :inStyle="'padding:6px 16px;'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppFilterSearch from "@/components/Base/AppFilterSearch";
-import AppRate from "@/components/Base/AppRate";
-import { parse } from "cookie";
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppFilterSearch from "@/components/Base/AppFilterSearch"
+import AppRate from "@/components/Base/AppRate"
+import { parse } from "cookie"
 export default {
   components: {
     AppInput,
@@ -232,7 +234,7 @@ export default {
     AppFilterSearch,
     AppRate
   },
-  data() {
+  data () {
     return {
       selectedProfession: null,
       professions_categories: [],
@@ -255,52 +257,69 @@ export default {
         mandatory_training_id: []
       },
       formError: []
-    };
-  },
-  computed: {
-    professions() {
-      return this.$store.getters["sign-up/getProfessions"];
-    },
-    gpQualifications() {
-      return this.$store.getters["sign-up/getGpQualifications"];
-    },
-    othersQualifications() {
-      return this.$store.getters["sign-up/getOthersQualifications"];
-    },
-    clinicalSystems() {
-      return this.$store.getters["sign-up/getClinicalSystems"];
-    },
-    spokenLanguages() {
-      return this.$store.getters["sign-up/getSpokenLanguages"];
-    },
-    practiceTypes() {
-      return this.$store.getters["sign-up/getPracticeTypes"];
-    },
-    mandatoryTrainings() {
-      return this.$store.getters["sign-up/getMandatoryTrainings"];
-    },
-    professionalDetails() {
-      return this.$store.getters["sign-up/professionalDetails"];
-    },
-    professionalFormError() {
-      return this.$store.getters["sign-up/professionalFormError"];
     }
   },
-  async created() {
-    const response = await this.$axios.$get(`/api/v1/professions`);
+  computed: {
+    professions () {
+      return this.$store.getters["sign-up/getProfessions"]
+    },
+    gpQualifications () {
+      return this.$store.getters["sign-up/getGpQualifications"]
+    },
+    othersQualifications () {
+      return this.$store.getters["sign-up/getOthersQualifications"]
+    },
+    clinicalSystems () {
+      return this.$store.getters["sign-up/getClinicalSystems"]
+    },
+    spokenLanguages () {
+      return this.$store.getters["sign-up/getSpokenLanguages"]
+    },
+    practiceTypes () {
+      return this.$store.getters["sign-up/getPracticeTypes"]
+    },
+    mandatoryTrainings () {
+      return this.$store.getters["sign-up/getMandatoryTrainings"]
+    },
+    professionalDetails () {
+      return this.$store.getters["sign-up/professionalDetails"]
+    },
+    professionalFormError () {
+      return this.$store.getters["sign-up/professionalFormError"]
+    }
+  },
+  watch: {
+    "form.profession_id" (newValue, oldValue) {
+      if (newValue) {
+        if (newValue && oldValue) {
+          this.form.qualification_id = []
+        }
+        if (
+          this.professions_categories &&
+          this.professions_categories.length > 0
+        ) {
+          this.selectedProfession = this.professions_categories.find(
+            item => item.id == newValue
+          )
+        }
+      }
+    }
+  },
+  async created () {
+    const response = await this.$axios.$get(`/api/v1/professions`)
     this.professions_categories =
       response.data &&
       response.data.professions &&
       response.data.professions.length > 0
         ? response.data.professions
-        : [];
+        : []
     // console.log(this.professions_categories);
-    this.pratice_types = this.practiceTypes;
+    this.pratice_types = this.practiceTypes
     // console.log(this.pratice_types);
-    this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
-    this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
-    this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
-    this.form.profession_id = this.professionalDetails.profession_id;
+    this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number
+    this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
+    this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
+    this.form.profession_id = this.professionalDetails.profession_id
 
     // if (this.form.profession_id == 1) {
     //   this.professionalDetails.qualification_id.forEach(qualification => {
@@ -317,7 +336,7 @@ export default {
     //     );
     //   });
     // }
-    this.form.qualification_id = [...this.professionalDetails.qualification_id];
+    this.form.qualification_id = [...this.professionalDetails.qualification_id]
 
     // this.professionalDetails.clinical_system_id.forEach(clinical => {
     //   this.form.clinical_system_id.push(
@@ -326,7 +345,7 @@ export default {
     // });
     this.form.clinical_system_id = [
       ...this.professionalDetails.clinical_system_id
-    ];
+    ]
 
     // this.professionalDetails.spoken_language_id.forEach(spoken => {
     //   this.form.spoken_language_id.push(
@@ -335,71 +354,54 @@ export default {
     // });
     this.form.spoken_language_id = [
       ...this.professionalDetails.spoken_language_id
-    ];
+    ]
 
-    this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour;
-    this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour;
-    this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session;
-    this.form.max_rate_per_half_day_session = this.professionalDetails.max_rate_per_half_day_session;
-    this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session;
-    this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session;
+    this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour
+    this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour
+    this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session
+    this.form.max_rate_per_half_day_session = this.professionalDetails.max_rate_per_half_day_session
+    this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session
+    this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session
 
-    this.form.practice_type_id = [];
+    this.form.practice_type_id = []
     this.professionalDetails.practice_type_id.forEach(id => {
-      this.form.practice_type_id.push(id);
-    });
+      this.form.practice_type_id.push(id)
+    })
 
-    this.form.mandatory_training_id = [];
+    this.form.mandatory_training_id = []
     this.professionalDetails.mandatory_training_id.forEach(id => {
-      this.form.mandatory_training_id.push(id);
-    });
+      this.form.mandatory_training_id.push(id)
+    })
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
-        this.formError.push(item);
-      });
-    }
-  },
-  watch: {
-    "form.profession_id"(newValue, oldValue) {
-      if (newValue) {
-        if (newValue && oldValue) {
-          this.form.qualification_id = [];
-        }
-        if (
-          this.professions_categories &&
-          this.professions_categories.length > 0
-        ) {
-          this.selectedProfession = this.professions_categories.find(
-            item => item.id == newValue
-          );
-        }
-      }
+        this.formError.push(item)
+      })
     }
   },
   methods: {
-    next() {
-      this.formError = [];
-      this.form.max_rate_per_hour = 999999999;
-      this.form.max_rate_per_half_day_session = 999999999;
-      this.form.max_rate_per_whole_day_session = 999999999;
+    next () {
+      this.formError = []
+      this.form.max_rate_per_hour = 999999999
+      this.form.max_rate_per_half_day_session = 999999999
+      this.form.max_rate_per_whole_day_session = 999999999
       this.Validate(this.form, [
         "nhs_smart_card_id_number",
         "spoken_language_id",
         "mandatory_training_id"
-      ]);
+      ])
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
           ...this.form,
           profession_category_id: this.selectedProfession.profession_category.id
-        });
-        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", []);
+        })
+        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", [])
 
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumPayrollDetails"
-        );
+        )
       }
     }
   }
-};
+}
 </script>
