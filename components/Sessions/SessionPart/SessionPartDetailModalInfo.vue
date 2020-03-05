@@ -177,8 +177,8 @@
           <div class="text-xs sm:text-sm mb-8">{{ job_part.final_hours }}</div>
         </template>
 
-        <template v-if="job_part.job.use_variation_terms">
-          <template v-if="job_part.job.variation_terms_file_id">
+        <template v-if="job_part.use_variation_terms">
+          <template v-if="job_part.variation_terms_file_id">
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
@@ -194,15 +194,15 @@
                     </div>
                     <embed
                       class="object-contain object-top w-full"
-                      :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.variation_terms_file.subtype) ? convertDoc(job_part.job.variation_terms_file.url) : job_part.job.variation_terms_file.url"
+                      :class="job_part.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.variation_terms_file.subtype) ? convertDoc(job_part.variation_terms_file.url) : job_part.variation_terms_file.url"
                     />
                   </div>
                 </div>
               </transition>
             </div>
           </template>
-          <template v-else-if="job_part.job.standard_terms_file_id">
+          <template v-else-if="job_part.standard_terms_file_id">
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
@@ -218,8 +218,8 @@
                     </div>
                     <embed
                       class="object-contain object-top w-full"
-                      :class="job_part.job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.standard_terms_file.subtype) ? convertDoc(job_part.job.standard_terms_file.url) : job_part.job.standard_terms_file.url"
+                      :class="job_part.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.standard_terms_file.subtype) ? convertDoc(job_part.standard_terms_file.url) : job_part.standard_terms_file.url"
                     />
                   </div>
                 </div>
@@ -228,8 +228,8 @@
           </template>
         </template>
 
-        <template v-if="!job_part.job.use_variation_terms">
-          <template v-if="job_part.job.standard_terms_file_id">
+        <template v-if="!job_part.use_variation_terms">
+          <template v-if="job_part.standard_terms_file_id">
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
@@ -245,15 +245,15 @@
                     </div>
                     <embed
                       class="object-contain object-top w-full"
-                      :class="job_part.job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.standard_terms_file.subtype) ? convertDoc(job_part.job.standard_terms_file.url) : job_part.job.standard_terms_file.url"
+                      :class="job_part.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.standard_terms_file.subtype) ? convertDoc(job_part.standard_terms_file.url) : job_part.standard_terms_file.url"
                     />
                   </div>
                 </div>
               </transition>
             </div>
           </template>
-          <template v-else-if="job_part.job.variation_terms_file_id">
+          <template v-else-if="job_part.variation_terms_file_id">
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
@@ -269,8 +269,8 @@
                     </div>
                     <embed
                       class="object-contain object-top w-full"
-                      :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.job.standard_terms_file.subtype) ? convertDoc(job_part.job.standard_terms_file.url) : job_part.job.standard_terms_file.url"
+                      :class="job_part.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job_part.standard_terms_file.subtype) ? convertDoc(job_part.standard_terms_file.url) : job_part.standard_terms_file.url"
                     />
                   </div>
                 </div>
