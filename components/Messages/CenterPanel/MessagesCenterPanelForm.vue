@@ -6,20 +6,38 @@
 				class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold text-center"
 			>Message Sent to {{ this.user.personal_detail.name }}</div>
 		</transition>
-		<div class="bg-white h-full w-full absolute opacity-50" v-if="messageSent"></div>
-		<textarea
-			v-model="message"
-			class="message-box resize-none w-full p-2 text-sm focus:outline-none border-t"
-			:class="inClass"
-			placeholder="Type your message here"
-			@keydown.enter.exact.prevent
-			@keyup.enter.exact="send"
-			@keydown.enter.shift.exact="newline"
-			:disabled="hasDeactiveUser"
-		></textarea>
+		<div v-if="messageSent" class="bg-white h-full w-full absolute opacity-50"></div>
+		<div class="relative message-box border-t w-full p-2">
+			<textarea
+				v-model="message"
+				class="resize-none w-full text-sm focus:outline-none"
+				:class="inClass"
+				placeholder="Type your message here"
+				@keydown.enter.exact.prevent
+				@keyup.enter.exact="send"
+				@keydown.enter.shift.exact="newline"
+				:disabled="hasDeactiveUser"
+			></textarea>
+			<p
+				class="flex items-center text-xs absolute bottom-0 right-0 mr-4"
+				:class="message.length > 500 ? 'text-red-600 font-bold' : 'text-gray-600'"
+			>
+				<transition name="fade">
+					<svgicon
+						v-if="message.length > 500"
+						name="exclamation-mark"
+						width="12"
+						height="12"
+						class="mr-1"
+						color="red"
+					/>
+				</transition>
+				{{ trimmedMessage(message).length }}/500
+			</p>
+		</div>
 		<button
-			:disabled="trimmedMessage(message) == '' || hasDeactiveUser"
-			:class="trimmedMessage(message) == '' ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-500 hover:bg-blue-600 '"
+			:disabled="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > 500)"
+			:class="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > 500) ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-500 hover:bg-blue-600 '"
 			class="px-8 text-white focus:outline-none"
 			@click="send"
 		>Send</button>
