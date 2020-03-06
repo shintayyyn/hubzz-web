@@ -45,6 +45,7 @@
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{$auth.user.personal_detail.name}}</div>
           <div>{{$auth.user.address_detail.address.line_1}}</div>
+          <div>{{$auth.user.address_detail.address.line_2}}</div>
           <div>{{$auth.user.address_detail.address.line_3}}</div>
           <div>{{$auth.user.address_detail.address.post_code}}</div>
           <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
@@ -445,7 +446,8 @@ export default {
   methods: {
     save(final) {
       this.formError = [];
-      this.Validate(this.form, ["final", "ir35"]);
+      this.Validate(this.form, ["final", "ir35", "total_amount"]);
+      console.log(this.formError);
       if (!this.formError.length) {
         this.saveLoading = true;
         if (this.propJobPart && !this.propInvoice) {

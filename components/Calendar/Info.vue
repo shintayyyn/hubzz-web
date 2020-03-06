@@ -665,7 +665,7 @@ export default {
 @media screen and (min-width: 768px) {
   .info-card {
     height: 100%;
-    max-height: 500px;
+    max-height: 550px;
   }
 }
 ::-webkit-scrollbar {

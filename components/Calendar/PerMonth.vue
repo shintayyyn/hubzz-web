@@ -614,10 +614,11 @@ export default {
               //     job => job.status === "Applied"
               //   )
               // )
-              this.$store.commit("calendar/TOGGLE_LOADING", false)
+              console.log("before finally")
             }
           )
           .finally(() => {
+              console.log("finally")
             this.$store.commit("calendar/TOGGLE_LOADING", false)
           })
       }
@@ -678,8 +679,6 @@ export default {
                   job => job.locum_status === "Applied"
                 )
               )
-
-              console.log("responsePrivat", responsePrivate.data.jobs)
                this.$store.commit(
                 "jobs/SET_LOCUM_PRIVATE_JOBS",
                 responsePrivate.data.jobs
@@ -732,9 +731,11 @@ export default {
               //       unavailable.shifts && unavailable.shifts.length !== 0
               //   )
               // )
+            console.log("before finally")
             }
           )
           .finally(() => {
+            console.log("finally?")
             this.$store.commit("calendar/TOGGLE_LOADING", false)
           })
       }
