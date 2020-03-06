@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col items-center justify-center xl:mx-4 w-full" ref="container">
-    <AppFormError class="w-full mb-4" :formError="formError" v-if="formError.length > 0" />
+  <div ref="container" class="flex flex-col items-center justify-center xl:mx-4 w-full">
+    <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
     <div class="flex w-full justify-center xl:justify-start">
       <div class="flex flex-col w-full p-4 md:p-8 m-1 rounded-lg shadow-lg">
         <form class="w-full">
@@ -12,8 +12,8 @@
             :placeholder="'Select...'"
             :error="this.formError.find(item => item.field === 'type')"
             :items="types"
-            @blur="CheckEmptyField(form.type, 'type')"
             required
+            @blur="CheckEmptyField(form.type, 'type')"
           />
           <AppInput
             v-if="form.type === 'Hub'"
@@ -26,13 +26,17 @@
             :items="hub_types"
             required
           />
-          <div class="m-2 bg-gray-300 rounded-lg" v-if="form.type === 'Hub'">
+          <div v-if="form.type === 'Hub'" class="m-2 bg-gray-300 rounded-lg">
             <div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
-              <p class="font-semibold text-lg">Hub</p>
+              <p class="font-semibold text-lg">
+                Hub
+              </p>
               <p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
             </div>
             <div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
-              <p class="font-semibold text-lg">Hub - Healthboard</p>
+              <p class="font-semibold text-lg">
+                Hub - Healthboard
+              </p>
               <p>Healthboard Hubs can only create jobs for its spokes but not for itself.</p>
             </div>
           </div>
@@ -51,8 +55,8 @@
             :label="'First name'"
             :placeholder="'Your first name'"
             :error="this.formError.find(item => item.field === 'first_name')"
-            @blur="CheckEmptyField(form.first_name,'first_name')"
             required
+            @blur="CheckEmptyField(form.first_name,'first_name')"
           />
           <AppInput
             v-model="form.last_name"
@@ -61,8 +65,8 @@
             :label="'Last name'"
             :placeholder="'Your last name'"
             :error="this.formError.find(item => item.field === 'last_name')"
-            @blur="CheckEmptyField(form.last_name,'last_name')"
             required
+            @blur="CheckEmptyField(form.last_name,'last_name')"
           />
           <AppInput
             v-model="form.suffix"
@@ -77,21 +81,21 @@
             :name="'practice_role'"
             :label="'Role'"
             :error="formError.find(item => item.field === 'practice_role')"
-            @blur="CheckEmptyField(form.practice_role,'practice_role')"
             :placeholder="'Select...'"
             :items="practice_roles"
             required
+            @blur="CheckEmptyField(form.practice_role,'practice_role')"
           />
           <AppInput
             v-model="form.practice_type_id"
             :type="'multi-checkbox'"
-            @checked="checkPracticeType($event)"
-            @unchecked="uncheckPracticeType($event)"
             :name="'practice_type_id'"
             :label="'What type of Practice(s) do you do?'"
             :error="formError.find(item => item.field === 'practice_type_id')"
             :lists="practiceTypes"
             required
+            @checked="checkPracticeType($event)"
+            @unchecked="uncheckPracticeType($event)"
           />
           <AppInput
             v-model="form.vat_registered"
@@ -114,7 +118,9 @@
               :error="formError.find(item => item.field === 'tax_year_end_date')"
             />
           </template>
-          <div class="font-bold text-sm my-4">Bank Details</div>
+          <div class="font-bold text-sm my-4">
+            Bank Details
+          </div>
           <AppInput
             v-model="form.account_name"
             :type="'text'"
@@ -154,8 +160,8 @@
             :label="'Email'"
             :placeholder="'Your email address'"
             :error="this.formError.find(item => item.field === 'email')"
-            @blur="CheckEmptyField(form.email,'email')"
             required
+            @blur="CheckEmptyField(form.email,'email')"
           />
           <AppInput
             v-model="form.password"
@@ -164,8 +170,8 @@
             :label="'Password'"
             :placeholder="'Your password'"
             :error="this.formError.find(item => item.field === 'password')"
-            @blur="CheckEmptyField(form.password,'password')"
             required
+            @blur="CheckEmptyField(form.password,'password')"
           />
           <AppInput
             v-model="form.password_confirmation"
@@ -175,18 +181,18 @@
             :placeholder="'Repeat password'"
             :password="form.password"
             :error="this.formError.find(item => item.field === 'password_confirmation')"
-            @blur="CheckEmptyField(form.password_confirmation,'password_confirmation')"
             required
+            @blur="CheckEmptyField(form.password_confirmation,'password_confirmation')"
           />
 
           <div class="flex flex-col py-2 mb-6">
             <div class="flex flex-row flex-no-wrap justify-between">
               <input
-                v-model="form.privacy_policy"
                 id="privacy_policy"
+                v-model="form.privacy_policy"
                 type="checkbox"
                 class="checkbox mt-1 mr-1"
-              />
+              >
               <label for="privacy_policy" class="text-xs sm:text-sm py-1">
                 I agree with the
                 <span
@@ -198,9 +204,11 @@
             </div>
             <transition name="drop-down">
               <div
-                class="py-1 text-xs text-red-500"
                 v-if="formError.find(item => item.field === 'privacy_policy')"
-              >{{formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ")}}</div>
+                class="py-1 text-xs text-red-500"
+              >
+                {{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}
+              </div>
             </transition>
           </div>
         </form>
@@ -209,20 +217,20 @@
 
     <div class="flex justify-center mt-4">
       <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeSurgeryDetails')" />
-      <div class="mx-2"></div>
+      <div class="mx-2" />
       <AppButton :label="'Next'" @click="signUp" />
     </div>
 
-    <div class="shield" v-if="modal" @click="modal=false"></div>
+    <div v-if="modal" class="shield" @click="modal=false" />
     <transition name="slide" mode="out-in">
-      <div class="py-8 modal-container" v-if="modal">
+      <div v-if="modal" class="py-8 modal-container">
         <div class="px-4 lg:px-10 pb-4">
           <svgicon
             name="left-arrow"
             height="32"
             width="32"
-            @click="modal = false"
             class="cursor-pointer"
+            @click="modal = false"
           />
         </div>
         <TermsAndConditions />
@@ -231,27 +239,27 @@
   </div>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
-import AppButton from "@/components/Base/AppButton";
-import AppFilterSearch from "@/components/Base/AppFilterSearch";
-import AppFormError from "@/components/Base/AppFormError";
-import TermsAndConditions from "@/components/TermsAndConditions";
+import AppInput from "@/components/Base/AppInput"
+import AppDate from "@/components/Base/AppDate"
+import AppButton from "@/components/Base/AppButton"
+import AppFilterSearch from "@/components/Base/AppFilterSearch"
+import AppFormError from "@/components/Base/AppFormError"
+import TermsAndConditions from "@/components/TermsAndConditions"
 
 const types = [
   { value: "Hub", label: "Hub" },
   { value: "Spoke", label: "Spoke" },
   { value: "Stand Alone", label: "Stand Alone" }
-];
+]
 const hub_types = [
   { value: "Type 1", label: "Type 1" },
   { value: "Type 2", label: "Type 2" }
-];
+]
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
   { value: "Practice Staff", label: "Practice Staff" }
-];
+]
 export default {
   components: {
     AppInput,
@@ -261,7 +269,7 @@ export default {
     AppFormError,
     TermsAndConditions
   },
-  data() {
+  data () {
     return {
       types,
       hub_types,
@@ -289,28 +297,21 @@ export default {
       },
       formError: [],
       modal: false
-    };
-  },
-  computed: {
-    practiceTypes() {
-      return this.$store.getters["sign-up/getPracticeTypes"];
-    },
-    practiceAccountDetails() {
-      return this.$store.getters["sign-up/practiceAccountDetails"];
-    },
-    practiceAccountFormError() {
-      return this.$store.getters["sign-up/practiceAccountFormError"];
     }
   },
-  created() {
-    this.practiceAccountDetails.practice_type_id.forEach(id => {
-      this.form.practice_type_id.push(
-        this.practiceTypes.find(item => item.value === id)
-      );
-    });
+  computed: {
+    practiceTypes () {
+      return this.$store.getters["sign-up/getPracticeTypes"]
+    },
+    practiceAccountDetails () {
+      return this.$store.getters["sign-up/practiceAccountDetails"]
+    },
+    practiceAccountFormError () {
+      return this.$store.getters["sign-up/practiceAccountFormError"]
+    }
   },
   watch: {
-    practiceAccountFormError(value) {
+    practiceAccountFormError (value) {
       if (value.length > 0) {
         value.forEach(item => {
           this.formError.push({
@@ -320,12 +321,19 @@ export default {
                 : item.field,
             message: item.message,
             validation: item.validation
-          });
-        });
+          })
+        })
       }
     }
   },
-  mounted() {
+  created () {
+    this.practiceAccountDetails.practice_type_id.forEach(id => {
+      this.form.practice_type_id.push(
+        this.practiceTypes.find(item => item.value === id)
+      )
+    })
+  },
+  mounted () {
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
         this.formError.push({
@@ -335,47 +343,47 @@ export default {
               : item.field,
           message: item.message,
           validation: item.validation
-        });
-      });
+        })
+      })
     }
   },
   methods: {
-    signUp() {
-      this.formError = [];
-      let notRequired = ["title", "suffix", "vat_registered"];
+    signUp () {
+      this.formError = []
+      let notRequired = ["title", "suffix", "vat_registered"]
       if (["Spoke", "Stand Alone"].includes(this.form.type)) {
-        notRequired.push("hub_type");
+        notRequired.push("hub_type")
       }
       if (["false", false].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number", "tax_year_end_date");
+        notRequired.push("vat_number", "tax_year_end_date")
       }
-      this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        let submitForm = {};
+        let submitForm = {}
         submitForm = {
           ...this.form
-        };
-        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm);
+        }
+        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm)
         setTimeout(() => {
-          this.$store.dispatch("sign-up/registeredPractice");
-        }, 1000);
+          this.$store.dispatch("sign-up/registeredPractice")
+        }, 1000)
       }
     },
-    checkPracticeType(value) {
-      let selectedArr = [];
-      selectedArr.push(value);
+    checkPracticeType (value) {
+      let selectedArr = []
+      selectedArr.push(value)
       this.form.practice_type_id = [
         ...this.form.practice_type_id,
         ...selectedArr
-      ];
+      ]
     },
-    uncheckPracticeType(value) {
+    uncheckPracticeType (value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
         id => id != value
-      );
+      )
     }
   }
-};
+}
 </script>
 <style scoped>
 button:active {

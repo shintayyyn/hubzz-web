@@ -33,8 +33,8 @@
             :label="'First name'"
             :placeholder="'Your first name'"
             :error="formError.find(error => error.field === 'first_name')"
-            @blur="CheckEmptyField(form.first_name, 'first_name')"
             required
+            @blur="CheckEmptyField(form.first_name, 'first_name')"
           />
 
           <AppInput
@@ -44,8 +44,8 @@
             :label="'Last name'"
             :placeholder="'Your last name'"
             :error="formError.find(error => error.field === 'last_name')"
-            @blur="CheckEmptyField(form.last_name, 'last_name')"
             required
+            @blur="CheckEmptyField(form.last_name, 'last_name')"
           />
           <AppInput
             v-model="form.suffix"
@@ -61,20 +61,20 @@
             :label="'Gender'"
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'gender')"
-            @blur="CheckEmptyField(form.gender, 'gender')"
             :items="genders"
             required
+            @blur="CheckEmptyField(form.gender, 'gender')"
           />
           <AppDate
             v-model="form.date_of_birth"
             :name="'date_of_birth'"
             :label="'Date of Birth'"
             :error="formError.find(item => item.field === 'date_of_birth')"
-            @blur="CheckEmptyField(form.date_of_birth, 'date_of_birth')"
             isBefore
             :limitYear="100"
             :maxYearBefore="10"
             required
+            @blur="CheckEmptyField(form.date_of_birth, 'date_of_birth')"
           />
           <AppInput
             v-model="form.mobile_number"
@@ -82,10 +82,10 @@
             :name="'mobile_number'"
             :label="'Mobile'"
             :error="formError.find(error => error.field === 'mobile_number')"
-            @blur="CheckEmptyField(form.mobile_number, 'mobile_number')"
             :info="'In case of emergency'"
-            @keypress="inputNumberOnly($event)"
             required
+            @blur="CheckEmptyField(form.mobile_number, 'mobile_number')"
+            @keypress="inputNumberOnly($event)"
           />
 
           <AppInput
@@ -105,25 +105,25 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
+      <AppButton :label="'Next'" :inStyle="'padding:6px 16px;'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppDate from "@/components/Base/AppDate";
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppDate from "@/components/Base/AppDate"
 const genders = [
   { value: "Male", label: "Male" },
   { value: "Female", label: "Female" }
-];
+]
 export default {
   components: {
     AppInput,
     AppButton,
     AppDate
   },
-  data() {
+  data () {
     return {
       genders,
       form: {
@@ -138,57 +138,57 @@ export default {
         date_of_birth: ""
       },
       formError: []
-    };
-  },
-  computed: {
-    accountDetails() {
-      return this.$store.getters["sign-up/accountDetails"];
-    },
-    accountFormError() {
-      return this.$store.getters["sign-up/accountFormError"];
     }
   },
-  mounted() {
-    this.form.title = this.accountDetails.title;
-    this.form.first_name = this.accountDetails.first_name;
-    this.form.last_name = this.accountDetails.last_name;
-    this.form.suffix = this.accountDetails.suffix;
-    this.form.gender = this.accountDetails.gender;
-    this.form.date_of_birth = this.accountDetails.date_of_birth;
-    this.form.mobile_number = this.accountDetails.mobile_number;
-    this.form.home_number = this.accountDetails.home_number;
-    this.form.work_number = this.accountDetails.work_number;
+  computed: {
+    accountDetails () {
+      return this.$store.getters["sign-up/accountDetails"]
+    },
+    accountFormError () {
+      return this.$store.getters["sign-up/accountFormError"]
+    }
+  },
+  mounted () {
+    this.form.title = this.accountDetails.title
+    this.form.first_name = this.accountDetails.first_name
+    this.form.last_name = this.accountDetails.last_name
+    this.form.suffix = this.accountDetails.suffix
+    this.form.gender = this.accountDetails.gender
+    this.form.date_of_birth = this.accountDetails.date_of_birth
+    this.form.mobile_number = this.accountDetails.mobile_number
+    this.form.home_number = this.accountDetails.home_number
+    this.form.work_number = this.accountDetails.work_number
 
     if (this.accountFormError.length > 0) {
       this.accountFormError.forEach(item => {
-        this.formError.push(item);
-      });
+        this.formError.push(item)
+      })
     }
   },
   methods: {
-    next() {
-      this.formError = [];
+    next () {
+      this.formError = []
       this.Validate(this.form, [
         "title",
         "suffix",
         "home_number",
         "work_number"
-      ]);
+      ])
       if (!this.formError.length) {
         // this.form.mobile_number = this.form.mobile_number.toString();
-        this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form);
-        this.$store.commit("sign-up/SET_ACCOUNT_DETAIL_FORM_ERROR", []);
+        this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form)
+        this.$store.commit("sign-up/SET_ACCOUNT_DETAIL_FORM_ERROR", [])
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumAddressDetails"
-        );
+        )
       } else {
-        this.$emit("error");
+        this.$emit("error")
         this.$nextTick(() => {
-          this.$parent.$refs.signUpContainer.scrollTop = 0;
-        });
+          this.$parent.$refs.signUpContainer.scrollTop = 0
+        })
       }
     }
   }
-};
+}
 </script>

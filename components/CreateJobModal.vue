@@ -432,7 +432,7 @@
                     :class="formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                     style="text-align:right;'"
                     @blur="CheckEmptyField(form.total_hours,'total_hours')"
-                    @keypress="isNumber($event), handleKeyDownEventLimit($event, 'total_hours', 8)"
+                    @keyup="handleKeyDownEvent($event, 'total_hours', 8)"
                   >
                   <div
                     v-if="formError.find(item => item.field === 'total_hours')"
@@ -887,10 +887,21 @@ export default {
       })
   },
   methods: {
-    handleKeyDownEventLimit (e, formField, limit) {
-      if (this.form[formField].length >= limit && e.key !== "Backspace") {
-        e.preventDefault()
+    handleKeyDownEvent (e, formField, limit) {
+      if (this.isNumber(e)) {
+        if (this.form[formField].length >= limit && e.key !== "Backspace") {
+          e.preventDefault()
+        }else {
+          if (this.form[formField].includes('.')) {
+            if (this.form[formField][this.form[formField].length - 1] !== '5') {
+              this.form[formField] = parseInt(this.form[formField].substring(0, this.form[formField].length - 1))
+            }
+          }
+        }
       }
+      //  if (this.form[formField].length >= 8 && e.key !== "Backspace") {
+      //   e.preventDefault();
+      // }
     },
     getListofDays (days) {
       if (days.includes(6) && days.length > 1) {
