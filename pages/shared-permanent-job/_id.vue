@@ -18,9 +18,15 @@
     <div class="flex flex-col  md:flex-row">
       <div class="w-full pr-2">
         <div class="bg-white rounded-lg shadow-lg p-4">
-          <p class="font-bold">Practice</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.practice.name : null}}</p>
-          <p class="font-bold">Description</p>
+          <p class="font-bold">
+            Practice
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.practice.name : null }}
+          </p>
+          <p class="font-bold">
+            Description
+          </p>
           <!-- <div class="my-4">
             <span v-html="sharedPermanentJob ? sharedPermanentJob.description : null"></span>
           </div>-->
@@ -31,36 +37,64 @@
                 :options="options"
                 :content="sharedPermanentJob.description"
                 disabled
-              ></quill-editor>
+              />
             </no-ssr>
           </div>
-          <p class="font-bold">Salary</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.salary_amount : null}}</p>
+          <p class="font-bold">
+            Salary
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.salary_amount : null }}
+          </p>
 
-          <p class="font-bold">Salary Description</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.salary_description_2 : null}}</p>
+          <p class="font-bold">
+            Salary Description
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.salary_description_2 : null }}
+          </p>
 
-          <p class="font-bold">Posted</p>
-          <p
-            class="pl-2 pb-3"
-          >{{sharedPermanentJob ? $moment(sharedPermanentJob.date_posted).format('DD/MM/YYYY') : null}}</p>
+          <p class="font-bold">
+            Posted
+          </p>
+          <p class="pl-2 pb-3"> 
+            {{ sharedPermanentJob ? $moment(sharedPermanentJob.date_posted).format('DD/MM/YYYY') : null }}
+          </p>
 
-          <p class="font-bold">Closes</p>
-          <p
-            class="pl-2 pb-3"
-          >{{sharedPermanentJob ? $moment(sharedPermanentJob.date_closing).format('DD/MM/YYYY') : null}}</p>
+          <p class="font-bold">
+            Closes
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? $moment(sharedPermanentJob.date_closing).format('DD/MM/YYYY') : null }}
+          </p>
 
-          <p class="font-bold">Report to</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.report_to : null}}</p>
+          <p class="font-bold">
+            Report to
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.report_to : null }}
+          </p>
 
-          <p class="font-bold">Role</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.professions.name : null}}</p>
+          <p class="font-bold">
+            Role
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.professions.name : null }}
+          </p>
 
-          <p class="font-bold">Hours</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.work_hours : null}}</p>
+          <p class="font-bold">
+            Hours
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.work_hours : null }}
+          </p>
 
-          <p class="font-bold">Industry</p>
-          <p class="pl-2 pb-3">{{sharedPermanentJob ? sharedPermanentJob.industry_type : null}}</p>
+          <p class="font-bold">
+            Industry
+          </p>
+          <p class="pl-2 pb-3">
+            {{ sharedPermanentJob ? sharedPermanentJob.industry_type : null }}
+          </p>
         </div>
       </div>
 
@@ -71,14 +105,14 @@
   </div>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton";
-import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
+import AppButton from "@/components/Base/AppButton"
+import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap"
 export default {
   components: {
 		AppButton,
 		PermanentJobMap
 	},
-  data(){
+  data (){
     return{
       sharedPermanentJob: '',
       options: {
@@ -88,7 +122,7 @@ export default {
 			},
     }
   },
-  async asyncData({ app, route }) {
+  async asyncData ({ app, route }) {
     const response = await app.$axios.$get(`/api/v1/shared-permanent-job/${route.params.id}`)
     const sharedPermanentJob = response.data.permanent_job
     return {
@@ -96,33 +130,27 @@ export default {
     }
   },
   methods: {
-    statusStyle(jobStatus) {
+    statusStyle (jobStatus) {
 			switch (jobStatus) {
 				case "Available":
-					return "font-bold bg-green-500 text-white";
-					break;
+					return "font-bold bg-green-500 text-white"
 				case "Applied":
-					return "font-bold bg-yellow-600 text-white";
-					break;
+					return "font-bold bg-yellow-600 text-white"
 				case "For Interview":
-					return "font-bold bg-green-600 text-white";
-					break;
+					return "font-bold bg-green-600 text-white"
 				case "Accepted":
-					return "font-bold bg-green-700 text-white";
-					break;
+					return "font-bold bg-green-700 text-white"
 				case "Rejected":
-					return "font-bold bg-red-700 text-white";
-					break;
+					return "font-bold bg-red-700 text-white"
 				case "Closed":
-					return "font-bold bg-gray-700 text-white";
-					break;
+					return "font-bold bg-gray-700 text-white"
 				case "Unsuccessful":
-					return "font-bold bg-gray-400";
+					return "font-bold bg-gray-400"
 				default:
-					return "font-bold bg-yellow-400 text-black";
+					return "font-bold bg-yellow-400 text-black"
 			}
     },
-    goRegister(){
+    goRegister (){
       this.$router.push('/sign-up/locum')
     }
   }
