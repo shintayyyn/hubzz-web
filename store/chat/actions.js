@@ -2,7 +2,7 @@ import * as chatApi from "@/api/chat"
 export default {
 	async initializeChatListener ({ state, commit, dispatch }) {
 		this.$socket.on("newMessage", message => {
-			dispatch("setConversation")
+			// dispatch("setConversation")
 			dispatch("fetchTotalUnreadMessages")
 			let findMessage = state.messages.find(
 				item => item.id == message.latest_conversation_message.id
@@ -18,16 +18,16 @@ export default {
 					this.$router.push(`/messages/${message.id}`)
 					commit("SET_ACTIVE_CONVERSATION", message.id)
 				}
-				if (!user) {
-					commit("ADD_TOTAL_UNREAD_MESSAGES")
-				}
+				// if (!user) {
+				// 	commit("ADD_TOTAL_UNREAD_MESSAGES")
+				// }
 				// commit("ADD_UNREAD_MESSAGE", message);
 			} else {
 				if (!user) {
 					if (!findMessage) {
-						if (findConversation.latest_conversation_message.seen_by_receiver) {
-							commit("ADD_TOTAL_UNREAD_MESSAGES")
-						}
+						// if (findConversation.latest_conversation_message.seen_by_receiver) {
+						// 	commit("ADD_TOTAL_UNREAD_MESSAGES")
+						// }
 						commit("ADD_MESSAGE", message)
 					}
 				}
@@ -59,7 +59,7 @@ export default {
 		const response = await chatApi.fetchConversations(
 			this.$axios,
 			payload.offset,
-			10
+			5
 		)
 		commit("GET_CONVERSATIONS", response.data.conversations)
 	},

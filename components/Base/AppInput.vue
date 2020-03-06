@@ -413,6 +413,6 @@ export default {
 <style>
 input::placeholder,
 textarea::placeholder {
-  color: #9ea0af;
+  color: #8d9bad;
 }
 </style>  
