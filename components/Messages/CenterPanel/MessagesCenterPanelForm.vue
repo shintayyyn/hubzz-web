@@ -50,9 +50,9 @@ Send
 <script>
 export default {
 	props: {
-		inClass: ,
-		wrapperClass: ,
-		user: 
+		inClass: String,
+		wrapperClass:String ,
+		user: Object, 
 	},
 	data () {
 		return {
@@ -91,7 +91,7 @@ export default {
 		let conversation_members = findConversation
 			? findConversation.conversation_member_users.map(
 					item => item.user.email !== null
-			  )
+        )
 			: []
 		if (conversation_members.includes(false)) {
 			this.hasDeactiveUser = true
