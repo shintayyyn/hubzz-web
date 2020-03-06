@@ -29,7 +29,7 @@
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
-          :label="'Received payment on'"
+          :label="'Payment made on'"
           :error="formError.find(item => item.field === 'paid_at')"
           isAfter
         />
@@ -149,7 +149,7 @@ export default {
         limit: 5,
         practice_id: practiceSurgery.child_practice_id
       };
-      console.log(practiceSurgery.child_practice_id)
+      console.log(practiceSurgery.child_practice_id);
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count"
       );

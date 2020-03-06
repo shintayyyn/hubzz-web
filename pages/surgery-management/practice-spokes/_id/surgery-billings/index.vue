@@ -60,7 +60,7 @@
             <AppDate
               v-model="form.paid_at"
               :name="'paid_at'"
-              :label="'Received payment on'"
+              :label="'Payment made on'"
               :error="formError.find(item => item.field === 'paid_at')"
               isAfter
             />
@@ -215,8 +215,7 @@ export default {
     noJobPartsToDisplay() {
       let str = "";
       switch (
-        this.$route.query.status &&
-        this.$route.query.status.toLowerCase()
+        this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           str = "This spoke do not have any completed job parts from Locums";
@@ -348,8 +347,7 @@ export default {
       let status = [];
       let invoice_status = [];
       switch (
-        this.$route.query.status &&
-        this.$route.query.status.toLowerCase()
+        this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -423,8 +421,7 @@ export default {
       let status = [];
       let invoice_status = [];
       switch (
-        this.$route.query.status &&
-        this.$route.query.status.toLowerCase()
+        this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];

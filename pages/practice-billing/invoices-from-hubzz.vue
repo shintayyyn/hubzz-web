@@ -24,15 +24,13 @@
         </div>
       </template>
     </AppTable>
-    <div v-if="!invoices.length" class="flex justify-center">
-      No Invoices From Hubzz Found
-    </div>
+    <div v-if="!invoices.length" class="flex justify-center">No Invoices From Hubzz Found</div>
     <!-- <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
-          :label="'Received payment on'"
+          :label="'Payment made on'"
           :error="formError.find(item => item.field === 'paid_at')"
           isAfter
         />
@@ -63,10 +61,10 @@
   </section>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable"
+import AppTable from "@/components/Base/AppTable";
 // import AppButton from "@/components/Base/AppButton"
 // import AppDate from "@/components/Base/AppDate"
-import { mixin as clickaway } from "vue-clickaway"
+import { mixin as clickaway } from "vue-clickaway";
 export default {
   components: {
     AppTable
@@ -78,7 +76,7 @@ export default {
     name: "fade",
     mode: "out-in"
   },
-  data () {
+  data() {
     return {
       totalInvoices: 0,
       invoices: [],
@@ -136,53 +134,53 @@ export default {
         //   class: "text-center"
         // }
       ]
-    }
+    };
   },
-  async asyncData ({ app, error }) {
+  async asyncData({ app, error }) {
     try {
       const params = {
         offset: 0,
         limit: 5
-      }
+      };
 
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count"
-      )
+      );
 
       const totalInvoices =
         responseCount.data &&
         responseCount.data.data &&
         responseCount.data.data.count
           ? responseCount.data.data.count
-          : 0
+          : 0;
 
       const response = await app.$axios.get(
         "/api/v1/practice/practice-invoices",
         {
           params
         }
-      )
+      );
 
       const invoices =
         response.data &&
         response.data.data &&
         response.data.data.practice_invoices
           ? response.data.data.practice_invoices
-          : []
+          : [];
 
       return {
         totalInvoices,
         invoices
-      }
+      };
     } catch (err) {
-      console.log("practice-billing index err", err.response || err)
+      console.log("practice-billing index err", err.response || err);
       error({
         statusCode: err.status || 500,
         message: err.message || "Something went wrong!"
-      })
+      });
     }
   },
-  mounted () {
+  mounted() {
     // this.$socket.on(
     //   "Practice Notification Practice Invoice Paid",
     //   this.getPracticeInvoiceRealTime
@@ -192,9 +190,9 @@ export default {
   //   this.removeListener();
   // },
   methods: {
-    getPracticeInvoiceRealTime ({ id }) {
+    getPracticeInvoiceRealTime({ id }) {
       if (!id) {
-        return
+        return;
       }
       if (this.invoices.map(invoice => invoice.id).includes(id)) {
         // update
@@ -203,11 +201,11 @@ export default {
           .then(res => {
             let index = this.invoices.findIndex(
               invoice => invoice.id == res.data.practice_invoice.id
-            )
+            );
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.practice_invoice)
+              this.invoices.splice(index, 1, res.data.practice_invoice);
             }
-          })
+          });
       }
     },
     // removeListener() {
@@ -216,41 +214,41 @@ export default {
     //     this.getPracticeInvoiceRealTime
     //   );
     // },
-    getInvoicesCount (params) {
+    getInvoicesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/practice-invoices/count`, { params })
         .then(res => {
-          this.totalInvoices = res.data.count
-          this.getInvoices(this.params)
-        })
+          this.totalInvoices = res.data.count;
+          this.getInvoices(this.params);
+        });
     },
-    getInvoices (params) {
-      this.loading = true
+    getInvoices(params) {
+      this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/practice-invoices`, { params })
         .then(res => {
-          this.loading = false
-          this.invoices = []
+          this.loading = false;
+          this.invoices = [];
           res.data.practice_invoices.forEach(invoice => {
-            this.invoices.push(invoice)
-          })
+            this.invoices.push(invoice);
+          });
         })
         .catch(err => {
-          console.log(err)
-          this.loading = false
-        })
+          console.log(err);
+          this.loading = false;
+        });
     },
-    onClick (invoice) {
+    onClick(invoice) {
       if (invoice.paid || invoice.disputed_items_count > 0) {
-        return
+        return;
       }
-      this.selectedInvoiceId = null
-      this.form.paid_at = null
-      this.paymentModal = true
-      this.selectedInvoiceId = invoice.id
+      this.selectedInvoiceId = null;
+      this.form.paid_at = null;
+      this.paymentModal = true;
+      this.selectedInvoiceId = invoice.id;
     },
-    confirmPayment () {
-      this.Validate(this.form)
+    confirmPayment() {
+      this.Validate(this.form);
       if (!this.formError.length) {
         this.$axios
           .$put(
@@ -258,45 +256,45 @@ export default {
             this.form
           )
           .then(res => {
-            console.log(res)
+            console.log(res);
             let index = this.invoices.findIndex(
               invoice => invoice.id == res.data.practice_invoice.id
-            )
+            );
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.practice_invoice)
+              this.invoices.splice(index, 1, res.data.practice_invoice);
             }
 
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            })
-            this.paymentModal = false
-          })
+            });
+            this.paymentModal = false;
+          });
       }
     },
-    closePaymentModal () {
-      this.paymentModal = false
+    closePaymentModal() {
+      this.paymentModal = false;
     },
-    sorted (order_by) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.order_by = order_by
-      this.getInvoices(this.params)
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getInvoices(this.params);
     },
-    pagechanged (page) {
-      this.current_page = page
-      this.params.offset = this.params.limit * (page - 1)
-      this.getInvoices(this.params)
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getInvoices(this.params);
     },
-    limitchanged (limit) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.limit = limit
-      this.getInvoices(this.params)
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getInvoices(this.params);
     }
   }
-}
+};
 </script>
 <style scoped>
 .shield {

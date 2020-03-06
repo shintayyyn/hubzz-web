@@ -358,7 +358,7 @@ export default {
   methods: {
     save(final) {
       this.formError = [];
-      this.Validate(this.form, ["final", "ir35"]);
+      this.Validate(this.form, ["final", "ir35", "total_amount"]);
       if (!this.formError.length) {
         this.saveLoading = true;
         if (this.propJobPart && !this.propInvoice) {

@@ -34,10 +34,16 @@
       <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
       <AppLoading :loading="saveLoading" spinner />
       <!-- pdf header -->
-      <div class="flex flex-col p-4" :ref="'pdf-header'">
+      <div class="flex flex-col" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{propInvoice.locum_user.name}}</div>
+          <div>{{propInvoice.address_line_1}}</div>
+          <div>{{propInvoice.address_line_2}}</div>
+          <div>{{propInvoice.address_line_3}}</div>
+          <div>{{propInvoice.postcode}}</div>
+          <div>Tel {{propInvoice.mobile_number}}</div>
           <div>{{propInvoice.locum_user.email}}</div>
+          <div>{{`UTR ${propInvoice.utr_number}` }}</div>
         </div>
         <div class="flex flex-wrap justify-between my-2">
           <div
@@ -384,7 +390,17 @@ export default {
   watch: {
     isApproved(value) {
       if (value) {
-        this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`;
+        this.form.items[0].description = `Job number ${
+          this.propInvoice.items[0].job_part.job_part_number
+        } ${this.propInvoice.items[0].job_part.job.type} Job at £${
+          this.propInvoice.items[0].job_part.job.rate
+        } ${
+          this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+        } from ${this.propInvoice.items[0].job_part.date_start} to ${
+          this.propInvoice.items[0].job_part.date_end
+        } / ${
+          this.propInvoice.items[0].job_part.job.shift.name
+        } / Total hours of ${this.propInvoice.items[0].final_hours}`;
         this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
         this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
         this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
