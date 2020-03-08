@@ -13,7 +13,7 @@
       >
         <form class="w-full">
           <AppPostCode
-            :urlIndex="'/api/v1/postcode-coordinates'"
+            urlIndex="postcodes-io"
             v-model="form.post_code"
             :name="'post_code'"
             :label="'Post code'"
@@ -110,7 +110,15 @@ export default {
   methods: {
     checkCoordinates(postcode) {
       return this.$axios
-        .$post("/api/v1/postcode-to-coordinates", { postcode })
+        .$get(`${process.env.POSTCODES_IO_URL}/postcodes/${postcode}/validate`)
+        .then(res => {
+          if (!res.result) {
+            this.formError.push({
+              field: "post_code",
+              message: "Invalid post code"
+            });
+          }
+        })
         .catch(err => {
           console.log("err", err.response || err);
           if (
