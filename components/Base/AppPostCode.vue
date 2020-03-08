@@ -91,6 +91,9 @@ export default {
     url() {
       return this.urlIndex ? this.urlIndex : "/api/v1/postcodes";
     },
+    postcodesUrl() {
+      return `${process.env.POSTCODES_IO_URL}/postcodes`;
+    },
     filteredItems() {
       return this.predictions;
     }
@@ -112,35 +115,50 @@ export default {
         limit: 5
       };
       this.predictions = [];
-      this.$axios.$get(this.url, { params }).then(res => {
-        if (this.dataIndex) {
-          if (res.data[this.dataIndex].length > 0) {
-            res.data[this.dataIndex].forEach(item => {
-              this.predictions.push({
-                label: item.name,
-                value: item.id
-              });
+      if (this.url === "postcodes-io") {
+        this.$axios
+          .$get(`${this.postcodesUrl}/${input}/autocomplete`)
+          .then(res => {
+            this.predictions = res.result.map(item => {
+              return {
+                label: item,
+                value: item
+              };
             });
+            console.log(this.predictions);
             this.showLists = true;
-          } else {
-            this.predictions = [];
-            this.showLists = false;
-          }
-        } else if (!this.dataIndex) {
-          if (res.data.postcode_coordinates.length > 0) {
-            res.data.postcode_coordinates.forEach(postCode => {
-              this.predictions.push({
-                label: postCode.postcode,
-                value: postCode.id
+          });
+      } else if (this.url !== "postcodes-io") {
+        this.$axios.$get(this.url, { params }).then(res => {
+          if (this.dataIndex) {
+            if (res.data[this.dataIndex].length > 0) {
+              res.data[this.dataIndex].forEach(item => {
+                this.predictions.push({
+                  label: item.name,
+                  value: item.id
+                });
               });
-            });
-            this.showLists = true;
-          } else {
-            this.predictions = [];
-            this.showLists = false;
+              this.showLists = true;
+            } else {
+              this.predictions = [];
+              this.showLists = false;
+            }
+          } else if (!this.dataIndex) {
+            if (res.data.postcode_coordinates.length > 0) {
+              res.data.postcode_coordinates.forEach(postCode => {
+                this.predictions.push({
+                  label: postCode.postcode,
+                  value: postCode.id
+                });
+              });
+              this.showLists = true;
+            } else {
+              this.predictions = [];
+              this.showLists = false;
+            }
           }
-        }
-      });
+        });
+      }
     }, 250),
     toggledOn() {
       if (this.search.length) {

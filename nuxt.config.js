@@ -9,6 +9,7 @@ export default {
 
   env: {
     API_URL: process.env.API_URL,
+    POSTCODES_IO_URL: process.env.POSTCODES_IO_URL,
     WEB_URL: process.env.WEB_URL,
     ONE_SIGNAL_APP_ID: process.env.ONE_SIGNAL_APP_ID,
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
