@@ -5,30 +5,38 @@
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && (!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >To be Invoiced</nuxt-link>
+      >
+        To be Invoiced
+      </nuxt-link>
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && $route.query.status && $route.query.status.toLowerCase() === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Disputed Invoices</nuxt-link>
+      >
+        Disputed Invoices
+      </nuxt-link>
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && $route.query.status && $route.query.status.toLowerCase() === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Invoiced</nuxt-link>
+      >
+        Invoiced
+      </nuxt-link>
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && $route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Approved Invoices</nuxt-link>
+      >
+        Approved Invoices
+      </nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
       <div v-if="showTable">
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
-          @click="refreshJobParts"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          @click="refreshJobParts"
         />
         <AppTable
           v-if="job_parts.length > 0"
@@ -47,15 +55,19 @@
             <div class="flex flex-wrap justify-center">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                @click="$router.push({ name: `surgery-management-practice-spokes-id-surgery-billings-index-invoiceId`, query: {...$route.query}, params: { id: $route.params.id, invoiceId: slotProps.item.locum_invoice_id } })"
                 class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>
+                @click="$router.push({ name: `surgery-management-practice-spokes-id-surgery-billings-index-invoiceId`, query: {...$route.query}, params: { id: $route.params.id, invoiceId: slotProps.item.locum_invoice_id } })"
+              >
+                View
+              </div>
             </div>
           </template>
         </AppTable>
-        <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
+        <div v-else class="flex justify-center">
+          {{ noJobPartsToDisplay }}
+        </div>
 
-        <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
+        <div v-if="paymentModal" v-on-clickaway="closePaymentModal" class="p-2">
           <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
             <AppDate
               v-model="form.paid_at"
@@ -68,24 +80,24 @@
               <AppButton
                 class="mx-1"
                 :label="'Save'"
-                @click="confirmPayment"
                 :inStyle="'padding:5px 10px'"
+                @click="confirmPayment"
               />
               <AppButton
                 class="mx-1"
                 :label="'Cancel'"
-                @click="paymentModal = false"
                 :inStyle="'padding:5px 10px'"
+                @click="paymentModal = false"
               />
             </div>
           </div>
         </div>
         <transition name="fade" mode="out-in">
           <nuxt-link
-            :to="{ name: 'surgery-management-practice-spokes-id-surgery-billings-index', query: {...$route.query}}"
             v-if="['surgery-management-practice-spokes-id-surgery-billings-index-id'].includes($route.name) || paymentModal"
+            :to="{ name: 'surgery-management-practice-spokes-id-surgery-billings-index', query: {...$route.query}}"
             class="shield"
-          ></nuxt-link>
+          />
         </transition>
         <nuxt-child />
       </div>
@@ -93,23 +105,23 @@
   </section>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable";
-import AppDate from "@/components/Base/AppDate";
-import AppButton from "@/components/Base/AppButton";
-import { mixin as clickaway } from "vue-clickaway";
+import AppTable from "@/components/Base/AppTable"
+import AppDate from "@/components/Base/AppDate"
+import AppButton from "@/components/Base/AppButton"
+import { mixin as clickaway } from "vue-clickaway"
 export default {
-  props: ["childPracticeId"],
-  mixins: [clickaway],
-  transition: {
-    name: "fade",
-    mode: "out-in"
-  },
   components: {
     AppTable,
     AppDate,
     AppButton
   },
-  data() {
+  mixins: [clickaway],
+  props: ["childPracticeId"],
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  data () {
     return {
       showRefresh: false,
       total: 0,
@@ -206,84 +218,84 @@ export default {
         }
       ],
       showTable: false
-    };
+    }
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
-    noJobPartsToDisplay() {
-      let str = "";
+    noJobPartsToDisplay () {
+      let str = ""
       switch (
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
-          str = "This spoke do not have any completed job parts from Locums";
-          break;
+          str = "This spoke do not have any completed job parts from Locums"
+          break
         case "disputed":
-          str = "This spoke do not have any disputed job parts from Locums";
-          break;
+          str = "This spoke do not have any disputed job parts from Locums"
+          break
         case "invoiced":
-          str = "This spoke do not have any invoiced job parts from Locums";
-          break;
+          str = "This spoke do not have any invoiced job parts from Locums"
+          break
         case "approved":
-          str = "This spoke do not have any approved job parts from Locums";
-          break;
+          str = "This spoke do not have any approved job parts from Locums"
+          break
         default:
-          str = "This spoke do not have any completed job parts from Locums";
+          str = "This spoke do not have any completed job parts from Locums"
       }
-      return str;
+      return str
     }
   },
   watch: {
-    "$route.query"(newValue, oldValue) {
-      let newStatus = newValue.status;
-      let oldStatus = oldValue.status;
+    "$route.query" (newValue, oldValue) {
+      let newStatus = newValue.status
+      let oldStatus = oldValue.status
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.current_page = 1;
-        this.showTable = false;
-        this.showRefresh = false;
+        this.current_page = 1
+        this.showTable = false
+        this.showRefresh = false
         setTimeout(async () => {
-          this.$nuxt.$loading.start();
-          await this.getJobPartsPromiseAll();
-          this.$nuxt.$loading.finish();
-          this.showTable = true;
-        }, 200);
+          this.$nuxt.$loading.start()
+          await this.getJobPartsPromiseAll()
+          this.$nuxt.$loading.finish()
+          this.showTable = true
+        }, 200)
       }
     }
   },
-  async asyncData({ app, query, route, error }) {
+  async asyncData ({ app, query, route, error }) {
     try {
       // get child practice id
-      let childPracticeId = null;
+      let childPracticeId = null
       await app.$axios
         .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
         .then(res => {
-          childPracticeId = res.data.practice_surgery.child_practice_id;
-        });
+          childPracticeId = res.data.practice_surgery.child_practice_id
+        })
 
-      let status = [];
-      let invoice_status = [];
+      let status = []
+      let invoice_status = []
       switch (query.status) {
         case "to-be-invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["To Be Invoice"]
+          break
         case "disputed":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["Disputed"]
+          break
         case "invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["Invoiced"]
+          break
         case "approved":
-          status = ["Approved"];
-          invoice_status = [];
-          break;
+          status = ["Approved"]
+          invoice_status = []
+          break
         default:
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          status = ["Completed", "Terminated"]
+          invoice_status = ["To Be Invoice"]
       }
 
       const params = {
@@ -293,81 +305,81 @@ export default {
         invoice_status,
         type: "Platform",
         job_practice_id: [childPracticeId]
-      };
+      }
 
       const [total, job_parts] = await Promise.all([
         app.$axios
           .$get(`/api/v1/practice/job-parts/count`, { params })
           .then(res => {
-            const total = res.data.count;
-            return total;
+            const total = res.data.count
+            return total
           }),
         app.$axios
           .$get(`/api/v1/practice/job-parts?offset=0&limit=5`, { params })
           .then(res => {
-            const job_parts = res.data.job_parts;
-            return job_parts;
+            const job_parts = res.data.job_parts
+            return job_parts
           })
-      ]);
+      ])
 
-      const showTable = true;
+      const showTable = true
 
       return {
         total,
         job_parts,
         showTable
-      };
+      }
     } catch (err) {
-      console.log("practice-billing index err", err.response || err);
+      console.log("practice-billing index err", err.response || err)
       error({
         statusCode: err.status || 500,
         message: err.message || "Something went wrong!"
-      });
+      })
     }
   },
-  mounted() {
+  mounted () {
     this.$socket.on(
       "Practice Notification Locum Invoice Created",
       this.getLocumInvoiceRealTime
-    );
+    )
     this.$socket.on(
       "Practice Notification Locum Invoice Paid",
       this.getLocumInvoiceRealTime
-    );
+    )
     this.$socket.on(
       "Practice Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
-    );
+    )
   },
-  destroyed() {
-    this.removeListener();
+  destroyed () {
+    this.removeListener()
   },
   methods: {
-    getJobPartsPromiseAll() {
-      let status = [];
-      let invoice_status = [];
+    getJobPartsPromiseAll () {
+      let status = []
+      let invoice_status = []
       switch (
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["To Be Invoice"]
+          break
         case "disputed":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["Disputed"]
+          break
         case "issued":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["Invoiced"]
+          break
         case "approved":
-          status = ["Approved"];
-          invoice_status = [];
-          break;
+          status = ["Approved"]
+          invoice_status = []
+          break
         default:
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          status = ["Completed", "Terminated"]
+          invoice_status = ["To Be Invoice"]
       }
 
       const params = {
@@ -377,7 +389,7 @@ export default {
         invoice_status,
         type: "Platform",
         job_practice_id: [this.childPracticeId]
-      };
+      }
 
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/job-parts/count`, { params }),
@@ -386,62 +398,62 @@ export default {
         })
       ])
         .then(([responseTotal, responseJobParts]) => {
-          this.total = responseTotal.data.count;
-          this.job_parts = responseJobParts.data.job_parts;
+          this.total = responseTotal.data.count
+          this.job_parts = responseJobParts.data.job_parts
         })
         .catch(([errTotal, errJobParts]) => {
           console.log(
             "err",
             errTotal.response || errTotal || errJobParts.response || errJobParts
-          );
+          )
           if (errTotal.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${errTotal.response.data.message}`]
-            });
+            })
           }
           if (errJobParts.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${errJobParts.response.data.message}`]
-            });
+            })
           }
-        });
+        })
     },
-    async refreshJobParts() {
-      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
-      this.loading = true;
-      await this.getJobPartsPromiseAll();
-      this.loading = false;
-      this.showRefresh = false;
+    async refreshJobParts () {
+      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION")
+      this.loading = true
+      await this.getJobPartsPromiseAll()
+      this.loading = false
+      this.showRefresh = false
     },
-    getJobParts() {
-      let status = [];
-      let invoice_status = [];
+    getJobParts () {
+      let status = []
+      let invoice_status = []
       switch (
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["To Be Invoice"]
+          break
         case "disputed":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["Disputed"]
+          break
         case "invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
-          break;
+          status = ["Completed", "Terminated"]
+          invoice_status = ["Invoiced"]
+          break
         case "approved":
-          status = ["Approved"];
-          invoice_status = [];
-          break;
+          status = ["Approved"]
+          invoice_status = []
+          break
         default:
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          status = ["Completed", "Terminated"]
+          invoice_status = ["To Be Invoice"]
       }
 
       const params = {
@@ -452,61 +464,61 @@ export default {
         type: "Platform",
         job_practice_id: [this.childPracticeId],
         order_by: this.params.order_by
-      };
+      }
 
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, { params })
         .then(res => {
-          this.job_parts = res.data.job_parts;
+          this.job_parts = res.data.job_parts
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${err.response.data.message}`]
-            });
+            })
           }
-        });
+        })
     },
-    updateInvoice(invoice) {
-      let index = this.job_parts.findIndex(item => item.id == invoice.id);
+    updateInvoice (invoice) {
+      let index = this.job_parts.findIndex(item => item.id == invoice.id)
       if (index >= 0) {
-        this.job_parts.splice(index, 1, invoice);
+        this.job_parts.splice(index, 1, invoice)
       }
     },
-    getLocumInvoiceRealTime({ id }) {
+    getLocumInvoiceRealTime ({ id }) {
       if (!id) {
-        return;
+        return
       }
-      this.showRefresh = true;
+      this.showRefresh = true
     },
-    removeListener() {
+    removeListener () {
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Created",
         this.getLocumInvoiceRealTime
-      );
+      )
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Paid",
         this.getLocumInvoiceRealTime
-      );
+      )
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Updated",
         this.getLocumInvoiceRealTime
-      );
+      )
     },
-    onClick(invoice, index) {
-      this.selectedInvoiceId = null;
-      this.form.paid_at = null;
-      this.paymentModal = true;
-      this.selectedInvoiceId = invoice.id;
+    onClick (invoice, index) {
+      this.selectedInvoiceId = null
+      this.form.paid_at = null
+      this.paymentModal = true
+      this.selectedInvoiceId = invoice.id
     },
-    closePaymentModal() {
-      this.paymentModal = false;
+    closePaymentModal () {
+      this.paymentModal = false
     },
-    confirmPayment() {
-      this.Validate(this.form);
+    confirmPayment () {
+      this.Validate(this.form)
       if (!this.formError.length) {
         this.$axios
           .$put(
@@ -516,45 +528,45 @@ export default {
           .then(res => {
             let index = this.invoices.findIndex(
               invoice => invoice.id == res.data.locum_invoice.id
-            );
+            )
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.locum_invoice);
+              this.invoices.splice(index, 1, res.data.locum_invoice)
             }
 
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            });
-            this.paymentModal = false;
-          });
+            })
+            this.paymentModal = false
+          })
       }
     },
-    async sorted(order_by) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.order_by = order_by;
-      this.loading = true;
-      await this.getJobParts();
-      this.loading = false;
+    async sorted (order_by) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.order_by = order_by
+      this.loading = true
+      await this.getJobParts()
+      this.loading = false
     },
-    async pagechanged(page) {
-      this.current_page = page;
-      this.params.offset = this.params.limit * (page - 1);
-      this.loading = true;
-      await this.getJobParts();
-      this.loading = false;
+    async pagechanged (page) {
+      this.current_page = page
+      this.params.offset = this.params.limit * (page - 1)
+      this.loading = true
+      await this.getJobParts()
+      this.loading = false
     },
-    async limitchanged(limit) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = limit;
-      this.loading = true;
-      await this.getJobParts();
-      this.loading = false;
+    async limitchanged (limit) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.limit = limit
+      this.loading = true
+      await this.getJobParts()
+      this.loading = false
     }
   }
-};
+}
 </script>
 <style scoped>
 .shield {

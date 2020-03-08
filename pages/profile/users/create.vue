@@ -1,13 +1,17 @@
 <template>
-  <div class="modal-container bg-white shadow-lg" ref="modalContainer">
+  <div ref="modalContainer" class="modal-container bg-white shadow-lg">
     <div class="flex flex-col items-start p-4 md:p-8 max-w-3xl">
       <nuxt-link :to="'/profile/users'">
         <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
       </nuxt-link>
-      <div class="font-bold text-lg mt-4">Create User</div>
-      <div class="text-sm">Surgery: {{ $auth.user.practice_detail.practice.surgery.name }}</div>
+      <div class="font-bold text-lg mt-4">
+        Create User
+      </div>
+      <div class="text-sm">
+        Surgery: {{ $auth.user.practice_detail.practice.surgery.name }}
+      </div>
       <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8 my-2">
-        <AppFormError class="w-full mb-4" :formError="formError" v-if="formError.length > 0" />
+        <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
         <AppLoading :loading="loading" spinner />
         <AppInput
           v-model="form.title"
@@ -22,8 +26,8 @@
           :name="'first_name'"
           :label="'First Name'"
           :error="formError.find(item => item.field === 'first_name')"
-          @blur="CheckEmptyField(form.first_name, 'first_name')"
           required
+          @blur="CheckEmptyField(form.first_name, 'first_name')"
         />
         <AppInput
           v-model="form.last_name"
@@ -31,8 +35,8 @@
           :name="'last_name'"
           :label="'Last Name'"
           :error="formError.find(item => item.field === 'last_name')"
-          @blur="CheckEmptyField(form.first_name, 'last_name')"
           required
+          @blur="CheckEmptyField(form.first_name, 'last_name')"
         />
         <AppInput v-model="form.suffix" :type="'text'" :name="'suffix'" :label="'Suffix'" />
         <AppInput
@@ -41,8 +45,8 @@
           :name="'email'"
           :label="'Email'"
           :error="formError.find(item => item.field === 'email')"
-          @blur="CheckEmptyField(form.first_name, 'email')"
           required
+          @blur="CheckEmptyField(form.first_name, 'email')"
         />
         <AppInput
           v-model="form.practice_role"
@@ -52,8 +56,8 @@
           :error="formError.find(item => item.field === 'practice_role')"
           :placeholder="'Select...'"
           :items="practice_roles"
-          @blur="CheckEmptyField(form.first_name, 'practice_role')"
           required
+          @blur="CheckEmptyField(form.first_name, 'practice_role')"
         />
 
         <span v-if="!user_roles.length">
@@ -70,8 +74,8 @@
           :items="user_roles"
           :disabled="!user_roles.length"
           :class="!user_roles.length && 'text-gray-500'"
-          @blur="CheckEmptyField(form.first_name, 'practice_user_role_id')"
           required
+          @blur="CheckEmptyField(form.first_name, 'practice_user_role_id')"
         />
 
         <AppInput
@@ -80,8 +84,8 @@
           :name="'password'"
           :label="'Password'"
           :error="formError.find(item => item.field === 'password')"
-          @blur="CheckEmptyField(form.first_name, 'password')"
           required
+          @blur="CheckEmptyField(form.first_name, 'password')"
         />
         <AppInput
           v-model="form.password_confirmation"
@@ -89,8 +93,8 @@
           :name="'password_confirmation'"
           :label="'Repeat password to confirm'"
           :error="formError.find(item => item.field === 'password_confirmation')"
-          @blur="CheckEmptyField(form.first_name, 'password_confirmation')"
           required
+          @blur="CheckEmptyField(form.first_name, 'password_confirmation')"
         />
         <AppButton :label="'Create'" :disabled="loading" @click="create" />
       </div>
@@ -98,15 +102,15 @@
   </div>
 </template>
 <script>
-import AppFormError from "@/components/Base/AppFormError";
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
+import AppFormError from "@/components/Base/AppFormError"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppLoading from "@/components/Base/AppLoading"
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
   { value: "Practice Staff", label: "Practice Staff" }
-];
+]
 export default {
   components: {
     AppFormError,
@@ -114,7 +118,7 @@ export default {
     AppLoading,
     AppButton
   },
-  data() {
+  data () {
     return {
       loading: false,
       practice_roles,
@@ -131,36 +135,36 @@ export default {
         password_confirmation: ""
       },
       formError: []
-    };
+    }
   },
-  async mounted() {
-    this.loading = true;
-    await this.getUserRoles();
-    this.loading = false;
+  async mounted () {
+    this.loading = true
+    await this.getUserRoles()
+    this.loading = false
   },
   methods: {
-    getUserRoles() {
+    getUserRoles () {
       this.$axios
         .$get(`/api/v1/practice/practice-roles`)
         .then(res => {
           return res.data.roles.forEach(role => {
-            this.user_roles.push({ label: role.name, value: role.id });
-          });
+            this.user_roles.push({ label: role.name, value: role.id })
+          })
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${err.response.data.message}`]
-            });
+            })
           }
-        });
+        })
     },
-    create() {
-      this.formError = [];
-      this.Validate(this.form, ["title", "suffix"]);
+    create () {
+      this.formError = []
+      this.Validate(this.form, ["title", "suffix"])
       if (!this.formError.length) {
         this.$axios
           .$post(`/api/v1/practice/practice-users`, this.form)
@@ -169,12 +173,12 @@ export default {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            });
-            this.$emit("addUser", res.data.user);
-            this.$router.push("/profile/users");
+            })
+            this.$emit("addUser", res.data.user)
+            this.$router.push("/profile/users")
           })
           .catch(err => {
-            console.log("err", err.response || err);
+            console.log("err", err.response || err)
             if (err.response.data.error_messages) {
               err.response.data.error_messages.forEach(error => {
                 this.formError.push({
@@ -185,11 +189,11 @@ export default {
                       : error.field,
                   message: error.message,
                   validation: error.validation
-                });
-              });
+                })
+              })
               this.$nextTick(() => {
-                this.$refs.modalContainer.scrollTop = 0;
-              });
+                this.$refs.modalContainer.scrollTop = 0
+              })
             }
             // if (err.response.data) {
             //   this.$store.commit("SET_NOTIFICATION", {
@@ -198,15 +202,15 @@ export default {
             //     text: [`${err.response.data.message}`]
             //   });
             // }
-          });
+          })
       } else {
         this.$nextTick(() => {
-          this.$refs.modalContainer.scrollTop = 0;
-        });
+          this.$refs.modalContainer.scrollTop = 0
+        })
       }
     }
   }
-};
+}
 </script>
 <style scoped>
 .modal-container {

@@ -57,18 +57,14 @@
           <p class="font-bold">
             Posted
           </p>
-          <p
-            class="pl-2 pb-3"
-          >
+          <p class="pl-2 pb-3"> 
             {{ sharedPermanentJob ? $moment(sharedPermanentJob.date_posted).format('DD/MM/YYYY') : null }}
           </p>
 
           <p class="font-bold">
             Closes
           </p>
-          <p
-            class="pl-2 pb-3"
-          >
+          <p class="pl-2 pb-3">
             {{ sharedPermanentJob ? $moment(sharedPermanentJob.date_closing).format('DD/MM/YYYY') : null }}
           </p>
 
@@ -138,22 +134,16 @@ export default {
 			switch (jobStatus) {
 				case "Available":
 					return "font-bold bg-green-500 text-white"
-					break
 				case "Applied":
 					return "font-bold bg-yellow-600 text-white"
-					break
 				case "For Interview":
 					return "font-bold bg-green-600 text-white"
-					break
 				case "Accepted":
 					return "font-bold bg-green-700 text-white"
-					break
 				case "Rejected":
 					return "font-bold bg-red-700 text-white"
-					break
 				case "Closed":
 					return "font-bold bg-gray-700 text-white"
-					break
 				case "Unsuccessful":
 					return "font-bold bg-gray-400"
 				default:
