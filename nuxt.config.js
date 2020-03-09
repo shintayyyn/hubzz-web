@@ -142,7 +142,7 @@ export default {
 
   build: {
     transpile: [/^vue2-google-maps($|\/)/],
-    extend(config, ctx) {
+    extend (config, ctx) {
     },
     postcss: {
       plugins: {

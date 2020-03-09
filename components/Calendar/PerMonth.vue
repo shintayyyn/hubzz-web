@@ -11,9 +11,7 @@
       <div class="w-2/3 py-1 sm:w-1/3">
         <div
           class="font-bold text-gray-800"
-        >
-          {{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}
-        </div>
+        >{{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}</div>
       </div>
       <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
         <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('previous')">
@@ -37,35 +35,19 @@
       </div>
     </div>
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-gray-500 font-bold">
-        MON
-      </div>
-      <div class="w-full text-center text-gray-500 font-bold">
-        TUE
-      </div>
-      <div class="w-full text-center text-gray-500 font-bold">
-        WED
-      </div>
-      <div class="w-full text-center text-gray-500 font-bold">
-        THU
-      </div>
-      <div class="w-full text-center text-gray-500 font-bold">
-        FRI
-      </div>
-      <div class="w-full text-center text-gray-500 font-bold">
-        SAT
-      </div>
-      <div class="w-full text-center text-gray-500 font-bold">
-        SUN
-      </div>
+      <div class="w-full text-center text-gray-500 font-bold">MON</div>
+      <div class="w-full text-center text-gray-500 font-bold">TUE</div>
+      <div class="w-full text-center text-gray-500 font-bold">WED</div>
+      <div class="w-full text-center text-gray-500 font-bold">THU</div>
+      <div class="w-full text-center text-gray-500 font-bold">FRI</div>
+      <div class="w-full text-center text-gray-500 font-bold">SAT</div>
+      <div class="w-full text-center text-gray-500 font-bold">SUN</div>
     </div>
 
     <div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5">
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -74,18 +56,18 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ (item.date) }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -94,18 +76,18 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ item.date }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -114,18 +96,18 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ (item.date) }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -134,18 +116,18 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ item.date }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -154,18 +136,18 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ (item.date) }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -174,18 +156,18 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ item.date }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full items-center">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
-          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-            &nbsp;
-          </div>
+          <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
@@ -194,10 +176,12 @@
             :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
-            <div class="text-xs md:text-sm z-10 md:pb-2">
-              {{ item.date }}
-            </div>
-            <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" />
+            <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+            <PerMonthInfo
+              :item="item"
+              :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+            />
+            <!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
           </div>
         </div>
       </div>
@@ -206,16 +190,18 @@
   </section>
 </template>
 <script>
-import PerMonthDateStatus from "@/components/Calendar/PerMonthDateStatus"
-import AppLoading from "@/components/Base/AppLoading"
-import AppButton from "@/components/Base/AppButton"
+import PerMonthDateStatus from "@/components/Calendar/PerMonthDateStatus";
+import PerMonthInfo from "@/components/Calendar/PerMonthInfo";
+import AppLoading from "@/components/Base/AppLoading";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppLoading,
     AppButton,
+    PerMonthInfo,
     PerMonthDateStatus
   },
-  data () {
+  data() {
     return {
       showRefresh: false,
       selectedMonth: null,
@@ -224,65 +210,311 @@ export default {
       startOfMonth: null,
       endOfMonth: null,
       hasEvent: []
-    }
+    };
   },
   computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
-    selectedDate () {
-      return this.$store.state.calendar.selected_date
+    selectedDate() {
+      return this.$store.state.calendar.selected_date;
+    },
+    // LOCUM
+    getLocumOngoingJobs() {
+      return this.$store.getters["jobs/getLocumOngoingJobs"];
+    },
+    getLocumAppliedJobs() {
+      return this.$store.getters["jobs/getLocumAppliedJobs"];
+    },
+    getLocumPrivateJobParts() {
+      return this.$store.getters["jobs/getLocumPrivateJobParts"];
+    },
+    // PRACTICE
+    getPracticeOngoingJobs() {
+      return this.$store.getters["jobs/getPracticeOngoingJobs"];
+    },
+    getPracticeWithdrawnJobs() {
+      return this.$store.getters["jobs/getPracticeWithdrawnJobs"];
+    },
+    getPracticeAppliedJobs() {
+      return this.$store.getters["jobs/getPracticeAppliedJobs"];
+    },
+    getPracticeUnfilledJobs() {
+      return this.$store.getters["jobs/getPracticeUnfilledJobs"];
+    },
+    jobsInMonth() {
+      let jobsInMonth = [];
+      if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+        let jobs = [
+          ...this.getPracticeAppliedJobs,
+          ...this.getPracticeUnfilledJobs
+        ];
+        let jobParts = [
+          ...this.getPracticeOngoingJobs,
+          ...this.getPracticeWithdrawnJobs
+        ];
+        this.daysInMonth.forEach((days, daysIndex) => {
+          if (jobs.length > 0) {
+            jobs.forEach(job => {
+              if (
+                this.getDateArray(job.date_start, job.date_end).includes(
+                  days.fullDate
+                ) &&
+                ((job.include_saturday === false && days.day !== 6) ||
+                  job.include_saturday === true) &&
+                ((job.include_sunday === false && days.day !== 0) ||
+                  job.include_sunday === true)
+              ) {
+                if (jobsInMonth.length === 0) {
+                  jobsInMonth.push({
+                    date: days.fullDate,
+                    shifts: [job.shift.name],
+                    status: [job.status],
+                    jobs: [
+                      {
+                        ...job
+                      }
+                    ]
+                  });
+                } else if (jobsInMonth.length > 0) {
+                  if (jobsInMonth.length - 1 < daysIndex) {
+                    jobsInMonth.push({
+                      date: days.fullDate,
+                      shifts: [],
+                      status: [],
+                      jobs: [job]
+                    });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
+                    }
+                    if (!jobsInMonth[daysIndex].status.includes(job.status)) {
+                      jobsInMonth[daysIndex].status.push(job.status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(job);
+                  }
+                }
+              }
+            });
+          }
+          if (jobParts.length > 0) {
+            jobParts.forEach(jobPart => {
+              if (
+                this.getDateArray(
+                  jobPart.date_start,
+                  jobPart.date_end
+                ).includes(days.fullDate) &&
+                ((jobPart.job.include_saturday === false && days.day !== 6) ||
+                  jobPart.job.include_saturday === true) &&
+                ((jobPart.job.include_sunday === false && days.day !== 0) ||
+                  jobPart.job.include_sunday === true)
+              ) {
+                if (jobsInMonth.length === 0) {
+                  jobsInMonth.push({
+                    date: days.fullDate,
+                    shifts: [jobPart.job.shift.name],
+                    status: [jobPart.status],
+                    jobs: [
+                      {
+                        ...jobPart
+                      }
+                    ]
+                  });
+                } else if (jobsInMonth.length > 0) {
+                  if (jobsInMonth.length - 1 < daysIndex) {
+                    jobsInMonth.push({
+                      date: days.fullDate,
+                      shifts: [],
+                      status: [],
+                      jobs: [jobPart]
+                    });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(
+                        jobPart.job.shift.name
+                      )
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(
+                        jobPart.job.shift.name
+                      );
+                    }
+                    if (
+                      !jobsInMonth[daysIndex].status.includes(jobPart.status)
+                    ) {
+                      jobsInMonth[daysIndex].status.push(jobPart.status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(jobPart);
+                  }
+                }
+              }
+            });
+          }
+        });
+      } else if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+        let jobs = [...this.getLocumAppliedJobs];
+        let jobParts = [
+          ...this.getLocumOngoingJobs,
+          ...this.getLocumPrivateJobParts
+        ];
+        this.daysInMonth.forEach((days, daysIndex) => {
+          if (jobs.length > 0) {
+            jobs.forEach(job => {
+              if (
+                this.getDateArray(job.date_start, job.date_end).includes(
+                  days.fullDate
+                ) &&
+                ((job.include_saturday === false && days.day !== 6) ||
+                  job.include_saturday === true) &&
+                ((job.include_sunday === false && days.day !== 0) ||
+                  job.include_sunday === true)
+              ) {
+                if (jobsInMonth.length === 0) {
+                  jobsInMonth.push({
+                    date: days.fullDate,
+                    shifts: [job.shift.name],
+                    status: [job.locum_status],
+                    jobs: [
+                      {
+                        ...job
+                      }
+                    ]
+                  });
+                } else if (jobsInMonth.length > 0) {
+                  if (jobsInMonth.length - 1 < daysIndex) {
+                    jobsInMonth.push({
+                      date: days.fullDate,
+                      shifts: [],
+                      status: [],
+                      jobs: [job]
+                    });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
+                    }
+                    if (
+                      !jobsInMonth[daysIndex].status.includes(job.locum_status)
+                    ) {
+                      jobsInMonth[daysIndex].status.push(job.locum_status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(job);
+                  }
+                }
+              }
+            });
+          }
+          if (jobParts.length > 0) {
+            jobParts.forEach(jobPart => {
+              if (
+                this.getDateArray(
+                  jobPart.date_start,
+                  jobPart.date_end
+                ).includes(days.fullDate) &&
+                ((jobPart.job.include_saturday === false && days.day !== 6) ||
+                  jobPart.job.include_saturday === true) &&
+                ((jobPart.job.include_sunday === false && days.day !== 0) ||
+                  jobPart.job.include_sunday === true)
+              ) {
+                if (jobsInMonth.length === 0) {
+                  jobsInMonth.push({
+                    date: days.fullDate,
+                    shifts: [jobPart.job.shift.name],
+                    status: [jobPart.locum_status],
+                    jobs: [
+                      {
+                        ...jobPart
+                      }
+                    ]
+                  });
+                } else if (jobsInMonth.length > 0) {
+                  if (jobsInMonth.length - 1 < daysIndex) {
+                    jobsInMonth.push({
+                      date: days.fullDate,
+                      shifts: [],
+                      status: [],
+                      jobs: [jobPart]
+                    });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(
+                        jobPart.job.shift.name
+                      )
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(
+                        jobPart.job.shift.name
+                      );
+                    }
+                    if (
+                      !jobsInMonth[daysIndex].status.includes(
+                        jobPart.locum_status
+                      )
+                    ) {
+                      jobsInMonth[daysIndex].status.push(jobPart.locum_status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(jobPart);
+                  }
+                }
+              }
+            });
+          }
+        });
+      }
+      console.log(jobsInMonth);
+      return jobsInMonth;
     }
   },
   watch: {
-    selectedMonth (value) {
-      this.getDaysInMonth(value, this.selectedYear)
+    selectedMonth(value) {
+      this.getDaysInMonth(value, this.selectedYear);
     },
-    selectedDate (newValue, oldValue) {
+    selectedDate(newValue, oldValue) {
       if (newValue && oldValue) {
-        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M")
-        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M")
+        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M");
+        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M");
 
-        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY")
-        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY")
+        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY");
+        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY");
 
         if (newMonth !== oldMonth || newYear !== oldYear) {
           this.startOfMonth = this.$moment(newValue, "YYYY-MM-DD")
             .startOf("month")
-            .format("YYYY-MM-DD")
+            .format("YYYY-MM-DD");
           this.endOfMonth = this.$moment(newValue, "YYYY-MM-DD")
             .endOf("month")
-            .format("YYYY-MM-DD")
+            .format("YYYY-MM-DD");
 
-          let d = new Date(newValue)
-          this.selectedMonth = d.getMonth()
-          this.selectedYear = d.getFullYear()
+          let d = new Date(newValue);
+          this.selectedMonth = d.getMonth();
+          this.selectedYear = d.getFullYear();
 
-          this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-          this.getJobs()
+          this.getDaysInMonth(this.selectedMonth, this.selectedYear);
+          this.getJobs();
         }
       }
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     // this.$store.commit("jobs/CLEAR_JOBS");
   },
-  async created () {
+  async created() {
     this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .startOf("month")
-      .format("YYYY-MM-DD")
+      .format("YYYY-MM-DD");
     this.endOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .endOf("month")
-      .format("YYYY-MM-DD")
+      .format("YYYY-MM-DD");
 
-    let d = new Date(this.selectedDate)
-    this.selectedMonth = d.getMonth()
-    this.selectedYear = d.getFullYear()
+    let d = new Date(this.selectedDate);
+    this.selectedMonth = d.getMonth();
+    this.selectedYear = d.getFullYear();
 
-    this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-    this.getJobs()
+    this.getDaysInMonth(this.selectedMonth, this.selectedYear);
+    this.getJobs();
   },
-  mounted () {
+  mounted() {
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
       // this.$socket.on("Locum Notification Job Available", this.getJobsRealTime)
@@ -291,8 +523,8 @@ export default {
       //   "Locum Notification Job Unsuccessful",
       //   this.getJobsRealTime
       // )
-      this.$socket.on("Locum Notification Job Current", this.getJobsRealTime)
-      this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime)
+      this.$socket.on("Locum Notification Job Current", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime);
       // this.$socket.on(
       //   "Locum Notification Job Part Completed",
       //   this.getJobsRealTime
@@ -301,16 +533,16 @@ export default {
       this.$socket.on(
         "Locum Notification Locum Invoice Updated",
         this.getJobsRealTime
-      )
-      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime)
+      );
+      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
 
-      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime)
-      this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime)
-      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime)
+      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime);
       this.$socket.on(
         "Locum Notification Job Auto Declined",
         this.getJobsRealTime
-      )
+      );
       // this.$socket.on(
       //   "Locum Notification Job Unavailable",
       //   this.getJobsRealTime
@@ -318,7 +550,7 @@ export default {
       this.$socket.on(
         "Locum Notification Job Unqualified",
         this.getJobsRealTime
-      )
+      );
     }
     // practice
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
@@ -329,19 +561,19 @@ export default {
       this.$socket.on(
         "Practice Notification Job Application",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Application Cancelled",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Current",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Ongoing",
         this.getJobsRealTime
-      )
+      );
       // this.$socket.on(
       //   "Practice Notification Job Part Completed",
       //   this.getJobsRealTime
@@ -353,132 +585,132 @@ export default {
       this.$socket.on(
         "Practice Notification Locum Invoice Updated",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Cancelled",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Amended",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Declined",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Auto Declined",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Update Accept",
         this.getJobsRealTime
-      )
+      );
       this.$socket.on(
         "Practice Notification Job Unfilled",
         this.getJobsRealTime
-      )
+      );
     }
   },
-  destroyed () {
-    this.removeListener()
+  destroyed() {
+    this.removeListener();
   },
   methods: {
-    async getJobsRealTime (job) {
+    async getJobsRealTime(job) {
       if (!job) {
-        return
+        return;
       }
-      this.showRefresh = true
+      this.showRefresh = true;
     },
-    async refreshJobs () {
-      this.showRefresh = false
-      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
-      this.getJobs()
+    async refreshJobs() {
+      this.showRefresh = false;
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      this.getJobs();
     },
-    removeListener () {
+    removeListener() {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
         this.$socket.removeListener(
           "Locum Notification Job Available",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Matched",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Unsuccessful",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Current",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Ongoing",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Part Completed",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Completed",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Locum Invoice Updated",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Cancelled",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Amended",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Updated",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Declined",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Auto Declined",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Unavailable",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Locum Notification Job Unqualified",
           this.getJobsRealTime
-        )
+        );
       }
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
         this.$socket.removeListener(
           "Practice Notification Job Available",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Application",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Application Cancelled",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Current",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Ongoing",
           this.getJobsRealTime
-        )
+        );
         // this.$socket.removeListener(
         //   "Practice Notification Job Part Completed",
         //   this.getJobsRealTime
@@ -490,195 +722,188 @@ export default {
         this.$socket.removeListener(
           "Practice Notification Locum Invoice Updated",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Cancelled",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Amended",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Declined",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Auto Declined",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Update Accept",
           this.getJobsRealTime
-        )
+        );
         this.$socket.removeListener(
           "Practice Notification Job Unfilled",
           this.getJobsRealTime
-        )
+        );
       }
     },
-    getJobs () {
+    getJobs() {
       // PRACTICE
       if (
         this.$auth.loggedIn &&
         this.$auth.user.domain === "Practice" &&
         this.authPermissions.includes("View Sessions Job")
       ) {
-        this.$store.commit("calendar/TOGGLE_LOADING", true)
+        this.$store.commit("calendar/TOGGLE_LOADING", true);
         Promise.all([
-          this.$axios.$get("/api/v1/practice/jobs", {
-            params: {
-              status: ["Applied", "Unfilled", "Withdrawn"],
-              calendar_date_start: `${this.startOfMonth}:gte`,
-              calendar_date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          }),
-          this.$axios.$get("/api/v1/practice/job-parts", {
-            params: {
-              status: ["Ongoing"],
-              calendar_date_start: `${this.startOfMonth}:gte`,
-              calendar_date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          }),
+          this.$axios
+            .$get("/api/v1/practice/job-parts", {
+              params: {
+                status: ["Ongoing", "Withdrawn"],
+                calendar_date_start: `${this.startOfMonth}:gte`,
+                calendar_date_end: `${this.endOfMonth}:lte`,
+                limit: 100000000
+              }
+            })
+            .then(res => {
+              return res.data.job_parts;
+            }),
+          this.$axios
+            .$get("/api/v1/practice/jobs", {
+              params: {
+                status: ["Applied", "Unfilled"],
+                calendar_date_start: `${this.startOfMonth}:gte`,
+                calendar_date_end: `${this.endOfMonth}:lte`,
+                limit: 100000000
+              }
+            })
+            .then(res => {
+              return res.data.jobs;
+            })
         ])
-          .then(
-            ([
-              responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
-              responseOngoingAndCompleted,
-            ]) => {
-              this.$store.commit(
-                "jobs/SET_PRACTICE_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Applied"
-                )
+          .then(([ongoingAndWithdrawnJobParts, appliedAndUnfilledJobs]) => {
+            this.$store.commit(
+              "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
+              ongoingAndWithdrawnJobParts.filter(
+                jobPart => jobPart.status === "Ongoing"
               )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_UNFILLED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Unfilled"
-                )
+            );
+            this.$store.commit(
+              "jobs/SET_PRACTICE_WITHDRAWN_JOB_PARTS",
+              ongoingAndWithdrawnJobParts.filter(
+                jobPart => jobPart.status === "Withdrawn"
               )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_DECLINED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Withdrawn"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_AVAILABLE_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Live"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.status === "Ongoing"
-                )
-              )
-            }
-          )
-          .finally(() => {
-            this.$store.commit("calendar/TOGGLE_LOADING", false)
+            );
+            this.$store.commit(
+              "jobs/SET_PRACTICE_APPLIED_JOBS",
+              appliedAndUnfilledJobs.filter(job => job.status === "Applied")
+            );
+            this.$store.commit(
+              "jobs/SET_PRACTICE_UNFILLED_JOBS",
+              appliedAndUnfilledJobs.filter(job => job.status === "Unfilled")
+            );
           })
+          .finally(() => {
+            this.$store.commit("calendar/TOGGLE_LOADING", false);
+          });
       }
       // LOCUM
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-        this.$store.commit("calendar/TOGGLE_LOADING", true)
+        this.$store.commit("calendar/TOGGLE_LOADING", true);
         Promise.all([
-          this.$axios.$get("/api/v1/locum/jobs", {
-            params: {
-              locum_status: ["Applied"],
-              type: ["Platform"],
-              calendar_date_start: `${this.startOfMonth}:gte`,
-              calendar_date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          }),
-          
-          this.$axios.$get("/api/v1/locum/job-parts", {
-            params: {
-              locum_status: ["Ongoing"],
-              type: ["Platform"],
-              calendar_date_start: `${this.startOfMonth}:gte`,
-              calendar_date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          }),
-
-          this.$axios.$get("/api/v1/locum/jobs", {
-            params: {
-              type: ["Private"],
-              calendar_date_start: `${this.startOfMonth}:gte`,
-              calendar_date_end: `${this.endOfMonth}:lte`,
-              limit: 100000000
-            }
-          }),
+          this.$axios
+            .$get("/api/v1/locum/job-parts", {
+              params: {
+                locum_status: ["Ongoing"],
+                job_type: ["Platform"],
+                calendar_date_start: `${this.startOfMonth}:gte`,
+                calendar_date_end: `${this.endOfMonth}:lte`,
+                limit: 100000000
+              }
+            })
+            .then(res => {
+              return res.data.job_parts;
+            }),
+          this.$axios
+            .$get("/api/v1/locum/jobs", {
+              params: {
+                locum_status: ["Applied"],
+                job_type: ["Platform"],
+                calendar_date_start: `${this.startOfMonth}:gte`,
+                calendar_date_end: `${this.endOfMonth}:lte`,
+                limit: 100000000
+              }
+            })
+            .then(res => {
+              return res.data.jobs;
+            }),
+          this.$axios
+            .$get("/api/v1/locum/job-parts", {
+              params: {
+                locum_status: ["Ongoing", "Allocated"],
+                job_type: ["Private"],
+                calendar_date_start: `${this.startOfMonth}:gte`,
+                calendar_date_end: `${this.endOfMonth}:lte`,
+                limit: 100000000
+              }
+            })
+            .then(res => {
+              return res.data.job_parts;
+            })
         ])
-          .then(
-            ([
-              responseAllocatedAndAppliedAndAvailable,
-              responseOngoingAndCompleted,
-              responsePrivate
-              // responseUnavailabilities
-            ]) => {
-              this.$store.commit(
-                "jobs/SET_LOCUM_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Applied"
-                )
-              )
-               this.$store.commit(
-                "jobs/SET_LOCUM_PRIVATE_JOBS",
-                responsePrivate.data.jobs
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.locum_status === "Ongoing"
-                )
-              )
-            }
-          )
-          .finally(() => {
-            this.$store.commit("calendar/TOGGLE_LOADING", false)
+          .then(([ongoingJobParts, appliedJobs, privateJobParts]) => {
+            console.log(privateJobParts);
+            this.$store.commit(
+              "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
+              ongoingJobParts
+            );
+
+            this.$store.commit("jobs/SET_LOCUM_APPLIED_JOBS", appliedJobs);
+
+            this.$store.commit(
+              "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
+              privateJobParts
+            );
           })
+          .finally(() => {
+            this.$store.commit("calendar/TOGGLE_LOADING", false);
+          });
       }
     },
-    getDaysInMonth (month, selectedYear) {
-      let date = new Date(selectedYear, month, 1)
-      let days = []
+    getDaysInMonth(month, selectedYear) {
+      let date = new Date(selectedYear, month, 1);
+      let days = [];
       while (date.getMonth() === month) {
-        days.push(new Date(date))
-        date.setDate(date.getDate() + 1)
+        days.push(new Date(date));
+        date.setDate(date.getDate() + 1);
       }
-      let daysInMonth = []
+      let daysInMonth = [];
       days.forEach(day => {
         daysInMonth.push({
           day: day.getDay(),
           date: day.getDate(),
           fullDate: this.$moment(day).format("YYYY-MM-DD")
-        })
-      })
-      this.daysInMonth = daysInMonth
+        });
+      });
+      this.daysInMonth = daysInMonth;
     },
-    adjustMonth (type) {
+    adjustMonth(type) {
       if (type === "previous") {
         if (this.selectedMonth === 0) {
-          this.selectedMonth = 11
-          this.selectedYear--
+          this.selectedMonth = 11;
+          this.selectedYear--;
         } else {
-          this.selectedMonth--
+          this.selectedMonth--;
         }
       }
       if (type === "next") {
         if (this.selectedMonth === 11) {
-          this.selectedMonth = 0
-          this.selectedYear++
+          this.selectedMonth = 0;
+          this.selectedYear++;
         } else {
-          this.selectedMonth++
+          this.selectedMonth++;
         }
       }
 
@@ -687,14 +912,14 @@ export default {
         "YYYY-MM"
       )
         .startOf("month")
-        .format("YYYY-MM-DD")
+        .format("YYYY-MM-DD");
 
       this.endOfMonth = this.$moment(
         `${this.selectedYear}-${this.selectedMonth + 1}`,
         "YYYY-MM"
       )
         .endOf("month")
-        .format("YYYY-MM-DD")
+        .format("YYYY-MM-DD");
 
       this.$store.commit(
         "calendar/SELECT_DATE",
@@ -702,15 +927,15 @@ export default {
           .set("month", this.selectedMonth)
           .set("year", this.selectedYear)
           .format("YYYY-MM-DD")
-      )
+      );
     },
-    getActivities (date) {
+    getActivities(date) {
       if (!this.hasEvent.includes(date)) {
-        this.hasEvent.push(date)
+        this.hasEvent.push(date);
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -721,8 +946,8 @@ export default {
 
 @media (min-width: 768px) {
   .date {
-  min-height: 4em;
-  min-width: 4em;
-}
+    min-height: 4em;
+    min-width: 4em;
+  }
 }
 </style>

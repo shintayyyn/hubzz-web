@@ -13,14 +13,14 @@
       >
         <form class="w-full">
           <AppPostCode
-            urlIndex="postcodes-io"
             v-model="form.post_code"
+            urlIndex="postcodes-io"
             :name="'post_code'"
             :label="'Post code'"
             :error="formError.find(error => error.field === 'post_code')"
             :inStyle="'background-color:transparent;border-color:white'"
-            @blur="CheckEmptyField(form.post_code, 'post_code')"
             required
+            @blur="CheckEmptyField(form.post_code, 'post_code')"
           />
           <AppInput
             v-model="form.address_line_1"
@@ -29,8 +29,8 @@
             :label="'Address line 1'"
             :error="formError.find(error => error.field === 'address_line_1')"
             :inStyle="'background-color:transparent;border-color:white'"
-            @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
             required
+            @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
           />
 
           <AppInput
@@ -49,8 +49,8 @@
             :label="'City / Town / District'"
             :error="formError.find(error => error.field === 'address_line_3')"
             :inStyle="'background-color:transparent;border-color:white'"
-            @blur="CheckEmptyField(form.address_line_3, 'address_line_3', 'City / Town / District')"
             required
+            @blur="CheckEmptyField(form.address_line_3, 'address_line_3', 'City / Town / District')"
           />
         </form>
       </div>
@@ -61,22 +61,22 @@
         :label="'<<'"
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAccountDetails')"
       />
-      <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
+      <div class="mx-2" />
+      <AppButton :label="'Next'" :inStyle="'padding:6px 16px;'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppPostCode from "@/components/Base/AppPostCode";
-import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput"
+import AppPostCode from "@/components/Base/AppPostCode"
+import AppButton from "@/components/Base/AppButton"
 export default {
   components: {
     AppInput,
     AppPostCode,
     AppButton
   },
-  data() {
+  data () {
     return {
       form: {
         post_code: null,
@@ -85,30 +85,30 @@ export default {
         address_line_3: ""
       },
       formError: []
-    };
-  },
-  computed: {
-    addressDetails() {
-      return this.$store.getters["sign-up/addressDetails"];
-    },
-    addressFormError() {
-      return this.$store.getters["sign-up/addressFormError"];
     }
   },
-  mounted() {
-    this.form.post_code = this.addressDetails.post_code;
-    this.form.address_line_1 = this.addressDetails.address_line_1;
-    this.form.address_line_2 = this.addressDetails.address_line_2;
-    this.form.address_line_3 = this.addressDetails.address_line_3;
+  computed: {
+    addressDetails () {
+      return this.$store.getters["sign-up/addressDetails"]
+    },
+    addressFormError () {
+      return this.$store.getters["sign-up/addressFormError"]
+    }
+  },
+  mounted () {
+    this.form.post_code = this.addressDetails.post_code
+    this.form.address_line_1 = this.addressDetails.address_line_1
+    this.form.address_line_2 = this.addressDetails.address_line_2
+    this.form.address_line_3 = this.addressDetails.address_line_3
 
     if (this.addressFormError.length > 0) {
       this.addressFormError.forEach(item => {
-        this.formError.push(item);
-      });
+        this.formError.push(item)
+      })
     }
   },
   methods: {
-    checkCoordinates(postcode) {
+    checkCoordinates (postcode) {
       return this.$axios
         .$get(`${process.env.POSTCODES_IO_URL}/postcodes/${postcode}/validate`)
         .then(res => {
@@ -116,11 +116,11 @@ export default {
             this.formError.push({
               field: "post_code",
               message: "Invalid post code"
-            });
+            })
           }
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (
             err.response.data.status === 404 &&
             err.response.data.message === "Postcode Coordinate Not Found"
@@ -128,23 +128,23 @@ export default {
             this.formError.push({
               field: "post_code",
               message: "Invalid post code"
-            });
+            })
           }
-        });
+        })
     },
-    async next() {
-      this.formError = [];
-      this.Validate(this.form, ["address_line_2"]);
-      await this.checkCoordinates(this.form.post_code);
+    async next () {
+      this.formError = []
+      this.Validate(this.form, ["address_line_2"])
+      await this.checkCoordinates(this.form.post_code)
       if (!this.formError.length) {
-        this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form);
-        this.$store.commit("sign-up/SET_ADDRESS_DETAIL_FORM_ERROR", []);
+        this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form)
+        this.$store.commit("sign-up/SET_ADDRESS_DETAIL_FORM_ERROR", [])
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumProfessionalDetails"
-        );
+        )
       }
     }
   }
-};
+}
 </script>
