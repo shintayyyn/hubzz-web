@@ -53,7 +53,7 @@
           <div
             v-if="item.day === 1"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
@@ -73,7 +73,7 @@
           <div
             v-if="item.day === 2"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
@@ -93,7 +93,7 @@
           <div
             v-if="item.day === 3"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
@@ -113,7 +113,7 @@
           <div
             v-if="item.day === 4"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
@@ -133,7 +133,7 @@
           <div
             v-if="item.day === 5"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
@@ -153,7 +153,7 @@
           <div
             v-if="item.day === 6"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
@@ -173,7 +173,7 @@
           <div
             v-if="item.day === 0"
             class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-            :class="[hasEvent.includes(item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+            :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
           >
             <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>

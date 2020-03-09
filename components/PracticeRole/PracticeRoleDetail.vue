@@ -30,6 +30,10 @@
 					:error="formError.find(item => item.field === 'description')"
 				/>
 				<div class="rounded-lg shadow-md px-2 py-4 md:px-4">
+					<div
+						class="text-red-500 text-xs"
+						v-if="formError.find(item => item.field === 'permission_id')"
+					>{{formError.find(item => item.field === 'permission_id').message}}</div>
 					<div class="flex flex-wrap justify-start">
 						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
 							<div class="flex flex-col">
@@ -53,6 +57,7 @@
 											:id="permission.id"
 											type="checkbox"
 											:checked="permission.done"
+											@change="hasRelatedRole(permission)"
 										/>
 										<label class="text-sm pl-1" :for="permission.id">{{permission.name}}</label>
 									</div>
@@ -98,6 +103,20 @@ export default {
 		this.getPermissions();
 	},
 	methods: {
+		hasRelatedRole(permission) {
+			let hasRelatedRolesList = ["View Profile Practice"];
+			let roles = this.permissions.find(
+				item => item.category === permission.category
+			);
+			hasRelatedRolesList.forEach(item => {
+				if (permission.name !== item && permission.name.includes(item)) {
+					let findRole = roles.permissions.find(role => role.name === item);
+					if (permission.done === true && findRole.done === false) {
+						findRole.done = true;
+					}
+				}
+			});
+		},
 		getPermissions() {
 			this.$axios.$get(`/api/v1/practice/practice-permissions`).then(res => {
 				res.data.permissions.forEach(permission => {
@@ -153,18 +172,19 @@ export default {
 			});
 		},
 		save() {
-			this.Validate(this.form, ["permission_id"]);
+			this.formError = [];
+			let ids = [];
+			this.permissions.forEach(item => {
+				item.permissions.forEach(permission => {
+					if (permission.done) {
+						ids.push(permission.id);
+					}
+				});
+			});
+			this.form.permission_id = ids;
+			this.Validate(this.form);
 			if (!this.formError.length) {
 				this.loading = true;
-				let ids = [];
-				this.permissions.forEach(item => {
-					item.permissions.forEach(permission => {
-						if (permission.done) {
-							ids.push(permission.id);
-						}
-					});
-				});
-				this.form.permission_id = ids;
 				this.$axios
 					.$put(
 						`/api/v1/practice/practice-roles/${this.$route.params.id}`,
