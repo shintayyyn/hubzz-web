@@ -5,8 +5,8 @@
         v-if="messageSent && !$route.name.includes('messages')"
         class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold text-center"
       >
-Message Sent to {{ this.user.personal_detail.name }}
-</div>
+        Message Sent to {{ this.user.personal_detail.name }}
+      </div>
     </transition>
     <div v-if="messageSent" class="bg-white h-full w-full absolute opacity-50" />
     <div class="relative message-box border-t w-full p-2">
@@ -15,11 +15,11 @@ Message Sent to {{ this.user.personal_detail.name }}
         class="resize-none w-full text-sm focus:outline-none"
         :class="inClass"
         placeholder="Type your message here"
+        :disabled="hasDeactiveUser"
         @keydown.enter.exact.prevent
         @keyup.enter.exact="send"
         @keydown.enter.shift.exact="newline"
-        :disabled="hasDeactiveUser"
-      ></textarea>
+      />
       <p
         class="flex items-center text-xs absolute bottom-0 right-0 mr-4"
         :class="message.length > 500 ? 'text-red-600 font-bold' : 'text-gray-600'"
@@ -43,8 +43,8 @@ Message Sent to {{ this.user.personal_detail.name }}
       class="px-8 text-white focus:outline-none"
       @click="send"
     >
-Send
-</button>
+      Send
+    </button>
   </div>
 </template>
 <script>

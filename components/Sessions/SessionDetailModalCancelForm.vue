@@ -23,7 +23,7 @@
         v-model="has_absences"
         :type="'select'"
         :name="'has_absences'"
-        :label="'Was the locum having any absences?'"
+        :label="'Was the Locum absent for session?'"
         :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
       />
 

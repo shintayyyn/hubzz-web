@@ -86,7 +86,7 @@
                         <div class="font-bold">
                           Extra Information:
                         </div>
-                        <div class="mt-1">
+                        <div class="mt-1 truncate-info">
                           {{ notification.platform_job.extra_information }}
                         </div>
                       </div>
@@ -517,5 +517,14 @@ export default {
 }
 .truncate-title:hover {
   display: block;
+}
+
+.truncate-info {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s linear;
 }
 </style>
