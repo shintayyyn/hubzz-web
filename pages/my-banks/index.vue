@@ -7,9 +7,7 @@
           :to="{ path: '/my-banks', query: { ...$route.query, type: 'gp' }}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="!$route.query.type || ($route.query.type && $route.query.type.toLowerCase() === 'gp') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          GP
-        </nuxt-link>
+        >GP</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -17,9 +15,7 @@
           :to="{ path: '/my-banks', query: { ...$route.query, type: 'others' }}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query.type && $route.query.type.toLowerCase() === 'others' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Others
-        </nuxt-link>
+        >Others</nuxt-link>
       </div>
     </div>
 
@@ -74,19 +70,13 @@
 
                   <div
                     class="w-full font-bold text-sm sm:text-lg leading-tight"
-                  >
-                    {{ locum.personal_detail.name }}
-                  </div>
+                  >{{ locum.personal_detail.name }}</div>
                   <div
                     class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
-                  >
-                    {{ locum.email }}
-                  </div>
+                  >{{ locum.email }}</div>
                   <div
                     class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
-                  >
-                    {{ locum.locum_detail.profession.name }}
-                  </div>
+                  >{{ locum.locum_detail.profession.name }}</div>
                 </div>
               </nuxt-link>
             </div>
@@ -132,10 +122,10 @@
   </section>
 </template>
 <script>
-import AppLoading from "@/components/Base/AppLoading"
-import AppAvatar from "@/components/Base/AppAvatar"
-import AppPagination from "@/components/Base/AppPagination"
-import SendMessageModal from "@/components/Messages/SendMessageModal"
+import AppLoading from "@/components/Base/AppLoading";
+import AppAvatar from "@/components/Base/AppAvatar";
+import AppPagination from "@/components/Base/AppPagination";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   transition: {
     name: "fade",
@@ -147,10 +137,10 @@ export default {
     AppPagination,
     SendMessageModal
   },
-  middleware ({ query, redirect, error }) {
+  middleware({ query, redirect, error }) {
     if (!query.status) {
       // api (Favorite only)
-      redirect(`/my-banks?status=Favorite`)
+      redirect(`/my-banks?status=Favorite`);
     }
     if (
       query.status &&
@@ -167,10 +157,10 @@ export default {
       return error({
         status: 404,
         message: "This MyBanks Status is Invalid"
-      })
+      });
     }
   },
-  data () {
+  data() {
     return {
       locums: [],
       total: 0,
@@ -182,93 +172,93 @@ export default {
       sendMessageModal: false,
       user: [],
       selectedId: null
-    }
+    };
   },
   computed: {
-    offset () {
-      return this.perPage * (this.current_page - 1)
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
-    perPage () {
-      return 8
+    perPage() {
+      return 8;
     },
-    totalPages () {
-      return Math.ceil(this.total / this.perPage)
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
     },
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     }
   },
   watch: {
-    "$route.query" (
+    "$route.query"(
       { status: newStatus, type: newType },
       { status: oldStatus, type: oldType }
     ) {
-      console.log(newType, oldType)
+      console.log(newType, oldType);
       if (
         (newStatus && newStatus !== null && newStatus !== oldStatus) ||
         (newType && newType !== null && newType !== oldType)
       ) {
-        this.toggleTable = false
-        this.getLocumsCount()
+        this.toggleTable = false;
+        this.getLocumsCount();
       }
     }
   },
-  created () {
-    this.getLocumsCount()
+  created() {
+    this.getLocumsCount();
   },
   methods: {
-    message (user) {
-      this.selectedId = user.id
-      this.user = user
-      this.sendMessageModal = true
+    message(user) {
+      this.selectedId = user.id;
+      this.user = user;
+      this.sendMessageModal = true;
     },
-    getLocumsCount () {
-      let queryStatus = this.$route.query.status
-      let queryType = this.$route.query.type
-      this.loading = true
+    getLocumsCount() {
+      let queryStatus = this.$route.query.status;
+      let queryType = this.$route.query.type;
+      this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/locums/count`, {
           params: {
             practice_locum_type: queryStatus,
-            profession_id: !queryType || queryType === "gp" ? 1 : 2
+            profession_category_id: !queryType || queryType === "gp" ? 1 : 2
           }
         })
         .then(res => {
-          this.total = res.data.count
-          this.getLocums(this.current_page)
+          this.total = res.data.count;
+          this.getLocums(this.current_page);
         })
         .catch(err => {
-          console.log("err", err)
-        })
+          console.log("err", err);
+        });
     },
-    getLocums (page) {
-      let queryStatus = this.$route.query.status
-      let queryType = this.$route.query.type
-      this.current_page = page
+    getLocums(page) {
+      let queryStatus = this.$route.query.status;
+      let queryType = this.$route.query.type;
+      this.current_page = page;
       this.$axios
         .$get(`/api/v1/practice/locums`, {
           params: {
             practice_locum_type: queryStatus,
-            profession_id: !queryType || queryType === "gp" ? 1 : 2,
+            profession_category_id: !queryType || queryType === "gp" ? 1 : 2,
             offset: this.offset,
             limit: this.perPage,
             detailed: true
           }
         })
         .then(res => {
-          this.locums = res.data.users
+          this.locums = res.data.users;
         })
         .catch(err => {
-          console.log("err", err)
+          console.log("err", err);
         })
         .finally(() => {
-          this.toggleTable = true
-          this.loading = false
-        })
+          this.toggleTable = true;
+          this.loading = false;
+        });
     },
-    favorite (id) {
-      let queryStatus = this.$route.query.status
-      let locum = this.locums.find(locum => locum.id === id)
+    favorite(id) {
+      let queryStatus = this.$route.query.status;
+      let locum = this.locums.find(locum => locum.id === id);
       if (!locum.is_favorite) {
         this.$axios
           .$post(`/api/v1/practice/locums/${id}/favorite`)
@@ -277,8 +267,8 @@ export default {
               enabled: true,
               status: "success",
               text: ["Added to favourites"]
-            })
-            locum.is_favorite = !locum.is_favorite
+            });
+            locum.is_favorite = !locum.is_favorite;
           })
           .catch(err => {
             if (err.response.data) {
@@ -286,10 +276,10 @@ export default {
                 enabled: true,
                 status: "danger",
                 text: [`${err.response.message}`]
-              })
+              });
             } else if (err.response.data.error_messages) {
             }
-          })
+          });
       } else {
         this.$axios
           .$delete(`/api/v1/practice/locums/${id}/favorite`)
@@ -298,8 +288,8 @@ export default {
               enabled: true,
               status: "success",
               text: ["Remove to favourites"]
-            })
-            locum.is_favorite = !locum.is_favorite
+            });
+            locum.is_favorite = !locum.is_favorite;
           })
           .catch(err => {
             if (err.response.data) {
@@ -307,24 +297,24 @@ export default {
                 enabled: true,
                 status: "danger",
                 text: [`${err.response.message}`]
-              })
+              });
             } else if (err.response.data.error_messages) {
             }
-          })
+          });
         if (queryStatus.toLowerCase() === "favorite") {
           this.locums.splice(
             this.locums.findIndex(locum => locum.id === id),
             1
-          )
+          );
         }
       }
     },
-    pagechanged (e) {
-      this.current_page = e
-      this.getLocums(this.current_page)
+    pagechanged(e) {
+      this.current_page = e;
+      this.getLocums(this.current_page);
     }
   }
-}
+};
 </script>
 <style>
 .chat-svg:hover {

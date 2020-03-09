@@ -8,14 +8,10 @@
           >
             <div
               class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
-            >
-              GMC / NMC Number
-            </div>
+            >GMC / NMC Number</div>
             <div
               class="w-full sm:w-2/3 px-2 md:p-1"
-            >
-              {{ gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered' }}
-            </div>
+            >{{ gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered' }}</div>
             <div
               class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
             >
@@ -32,14 +28,10 @@
           >
             <div
               class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
-            >
-              MPL / NPL Number
-            </div>
+            >MPL / NPL Number</div>
             <div
               class="w-full sm:w-2/3 px-2 md:p-1"
-            >
-              {{ mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered' }}
-            </div>
+            >{{ mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered' }}</div>
             <div
               class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
             >
@@ -52,7 +44,7 @@
         </div>
       </div>
     </div>
-    <div class="mt-10">
+    <!-- <div class="mt-10">
       <div class="font-bold text-xs sm:text-base">
         Key Compliances you need to be approved by Hubzz HQ
         <span class="text-red-500">*</span>
@@ -62,7 +54,7 @@
       >
         (Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)
       </div>
-    </div>
+    </div>-->
 
     <!-- <div class="mt-4 overflow-x-auto">
       <table>
@@ -204,9 +196,7 @@
       </div>
       <div
         class="text-sm font-hairline italic"
-      >
-        (Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)
-      </div>
+      >(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)</div>
     </div>
 
     <div class="mt-4 overflow-x-auto">
@@ -219,24 +209,12 @@
       <table v-else>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
-            <th class="pl-2">
-              Type
-            </th>
-            <th class="pl-2">
-              File
-            </th>
-            <th class="text-center">
-              Date uploaded
-            </th>
-            <th class="text-center">
-              Expiry date
-            </th>
-            <th class="text-center">
-              Status
-            </th>
-            <th class="text-center">
-              Note from hubzz HQ
-            </th>
+            <th class="pl-2">Type</th>
+            <th class="pl-2">File</th>
+            <th class="text-center">Date uploaded</th>
+            <th class="text-center">Expiry date</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Note from hubzz HQ</th>
             <th />
           </tr>
         </thead>
@@ -250,9 +228,7 @@
               <td
                 colspan="7"
                 class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-              >
-                Uploading
-              </td>
+              >Uploading</td>
             </tr>
             <tr
               v-else
@@ -263,9 +239,7 @@
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
                 @click="show(item, 'compliance')"
-              >
-                {{ item.name }}
-              </td>
+              >{{ item.name }}</td>
               <td v-if="item.info && item.info.file" class="hover:underline">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -281,31 +255,23 @@
                 </div>
               </td>
               <td v-else />
-              <td v-if="item.info && item.info.file">
-                {{ item.info.file.created_at | localDate }}
-              </td>
+              <td v-if="item.info && item.info.file">{{ item.info.file.created_at | localDate }}</td>
               <td v-else />
-              <td v-if="item.info && item.info.expired_at">
-                {{ item.info.expired_at | localDate }}
-              </td>
+              <td v-if="item.info && item.info.expired_at">{{ item.info.expired_at | localDate }}</td>
               <td v-else />
               <td v-if="item.info && item.info.status">
                 <div class="flex justify-center max-w-xs">
                   <div
                     class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                     :class="status(item.info.status)"
-                  >
-                    {{ item.info.status }}
-                  </div>
+                  >{{ item.info.status }}</div>
                 </div>
               </td>
               <td v-else />
               <td
                 v-if="item && item.info && item.info.note"
                 class="text-center"
-              >
-                {{ item.info.note | StringMaxLength(15) }}
-              </td>
+              >{{ item.info.note | StringMaxLength(15) }}</td>
               <td v-else />
               <td
                 v-if="!item.info"
@@ -319,7 +285,7 @@
                     class="inputfile hidden"
                     @input="onFileInput($event, item.id)"
                     @click.stop
-                  >
+                  />
                   <svgicon name="cloud-upload" height="24" width="24" />
                   <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
@@ -338,7 +304,7 @@
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index, item.info.id)"
                     @click.stop
-                  >
+                  />
                   <svgicon name="cloud-upload" height="24" width="24" />
                   <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
@@ -350,9 +316,7 @@
     </div>
 
     <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">
-        Other documentation for reference to Practices
-      </div>
+      <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
 
     <div class="mt-4 overflow-x-auto">
@@ -365,15 +329,9 @@
       <table v-else>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
-            <th class="pl-2">
-              Type
-            </th>
-            <th class="pl-2">
-              File
-            </th>
-            <th class="text-center">
-              Date uploaded
-            </th>
+            <th class="pl-2">Type</th>
+            <th class="pl-2">File</th>
+            <th class="text-center">Date uploaded</th>
             <th />
           </tr>
         </thead>
@@ -387,9 +345,7 @@
               <td
                 colspan="7"
                 class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-              >
-                Uploading
-              </td>
+              >Uploading</td>
             </tr>
             <tr
               v-else
@@ -401,9 +357,7 @@
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
                 class="w-1/3"
                 @click="show(item, 'compliance')"
-              >
-                {{ item.name }}
-              </td>
+              >{{ item.name }}</td>
               <td v-if="item.info && item.info.file" class="hover:underline">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -420,9 +374,7 @@
               <td
                 v-if="item.info && item.info.file"
                 class="text-center"
-              >
-                {{ item.info.file.created_at | localDate }}
-              </td>
+              >{{ item.info.file.created_at | localDate }}</td>
               <td v-else />
               <td
                 v-if="!item.info"
@@ -438,7 +390,7 @@
                     class="inputfile hidden"
                     @input="onFileInput($event, item.id, index)"
                     @click.stop
-                  >
+                  />
                   <svgicon name="cloud-upload" height="24" width="24" />
                   <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
@@ -458,7 +410,7 @@
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index, item.id)"
                     @click.stop
-                  >
+                  />
                   <svgicon name="cloud-upload" height="24" width="24" />
                   <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
@@ -470,9 +422,7 @@
     </div>
 
     <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">
-        Mandatory Training
-      </div>
+      <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
     </div>
 
     <div class="mt-4 overflow-x-auto">
@@ -486,15 +436,9 @@
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
-              <th class="pl-2">
-                Type
-              </th>
-              <th class="pl-2">
-                File
-              </th>
-              <th class="text-center">
-                Date uploaded
-              </th>
+              <th class="pl-2">Type</th>
+              <th class="pl-2">File</th>
+              <th class="text-center">Date uploaded</th>
               <th />
             </tr>
           </thead>
@@ -505,9 +449,7 @@
                 :key="item.id"
                 class="text-xs sm:text-sm text-left bg-gray-200"
               >
-                <td colspan="7" class="loader-message text-center text-gray-800">
-                  Uploading
-                </td>
+                <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
               </tr>
               <tr
                 v-else
@@ -519,9 +461,7 @@
                   :class="item && item.file ? 'cursor-pointer' : ''"
                   class="w-1/3"
                   @click="show(item, 'mandatory')"
-                >
-                  {{ item.mandatory_training.name }}
-                </td>
+                >{{ item.mandatory_training.name }}</td>
                 <td v-if="item.file" class="hover:underline">
                   <div class="flex flex-row flex-no-wrap">
                     <svgicon name="cloud-download" height="24" width="24" />
@@ -539,9 +479,7 @@
                 <td
                   v-if="item && item.file"
                   class="text-center"
-                >
-                  {{ item.file.created_at | localDate }}
-                </td>
+                >{{ item.file.created_at | localDate }}</td>
                 <td v-else />
                 <td
                   v-if="!item.file"
@@ -557,7 +495,7 @@
                       class="inputfile hidden"
                       @input="onMandatoryFileInput($event, item.mandatory_training.id, index)"
                       @click.stop
-                    >
+                    />
                     <svgicon name="cloud-upload" height="24" width="24" />
                     <label
                       class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
@@ -578,7 +516,7 @@
                       class="inputfile hidden"
                       @input="onMandatoryFileUpdate($event, item.id, index, item.mandatory_training.id)"
                       @click.stop
-                    >
+                    />
                     <svgicon name="cloud-upload" height="24" width="24" />
                     <label
                       class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
@@ -601,7 +539,7 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       activeLoading: [],
@@ -615,44 +553,44 @@ export default {
       specificMandatoryTraining: null,
       complianceModal: false,
       mandatoryTrainingModal: false
-    }
+    };
   },
   watch: {
-    $route (value) {
+    $route(value) {
       if (
         ["compliance-id", "compliance-mandatory-training-id"].includes(
           value.name
         )
       ) {
-        document.body.style.overflow = "hidden"
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = "auto"
+        document.body.style.overflow = "auto";
       }
     }
   },
-  async asyncData ({ app, store }) {
+  async asyncData({ app, store }) {
     try {
-      let keyCompliances = []
-      const responseUser = await app.$axios.$get(`/api/v1/me`)
+      let keyCompliances = [];
+      const responseUser = await app.$axios.$get(`/api/v1/me`);
       const user =
         responseUser.data && responseUser.data.user
           ? responseUser.data.user
-          : null
-      const gmc_or_nmc_number = user.locum_detail.gmc_or_nmc_number
-      const mpl_or_npl_number = user.locum_detail.mpl_or_npl_number
+          : null;
+      const gmc_or_nmc_number = user.locum_detail.gmc_or_nmc_number;
+      const mpl_or_npl_number = user.locum_detail.mpl_or_npl_number;
 
       const responseProfession = await app.$axios.$get(
         `/api/v1/profession-categories`
-      )
+      );
       const profession = responseProfession.data.profession_categories.find(
         professionCategory =>
           professionCategory.id ===
           user.locum_detail.profession.profession_category.id
-      )
+      );
 
       const responseComplianceDocuments = await app.$axios.$get(
         `/api/v1/locum/locum-detail-compliance-documents`
-      )
+      );
       if (
         responseComplianceDocuments.data &&
         responseComplianceDocuments.data.locum_detail_compliance_documents &&
@@ -667,38 +605,38 @@ export default {
                   userComplianceDocument.compliance_document.id ===
                   mandatoryDocument.id
                 ) {
-                  mandatoryDocument.info = userComplianceDocument
+                  mandatoryDocument.info = userComplianceDocument;
                 }
               }
-            )
+            );
             profession.optional_compliance_documents.forEach(
               optionalDocument => {
                 if (
                   userComplianceDocument.compliance_document.id ===
                   optionalDocument.id
                 ) {
-                  optionalDocument.info = userComplianceDocument
+                  optionalDocument.info = userComplianceDocument;
                 }
               }
-            )
+            );
           }
-        )
+        );
       }
       const mandatory = profession.mandatory_compliance_documents.sort(
         (a, b) => a.id - b.id
-      )
+      );
       const optional = profession.optional_compliance_documents.sort(
         (a, b) => a.id - b.id
-      )
+      );
 
-      keyCompliances = [...mandatory, ...optional]
+      keyCompliances = [...mandatory, ...optional];
 
       const responseMandatoryTrainings = await app.$axios.$get(
         `/api/v1/locum/locum-detail-mandatory-trainings`
-      )
+      );
       const mandatory_trainings = responseMandatoryTrainings.data.locum_detail_mandatory_trainings.sort(
         (a, b) => a.id - b.id
-      )
+      );
 
       return {
         keyCompliances,
@@ -709,169 +647,169 @@ export default {
         mandatory,
         optional,
         mandatory_trainings
-      }
+      };
     } catch (err) {
-      console.log("err", err.response || err)
+      console.log("err", err.response || err);
       if (err.response.data.message) {
         store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
           text: [`${err.response.data.message}`]
-        })
+        });
       }
-      throw err
+      throw err;
     }
   },
-  mounted () {
+  mounted() {
     this.$socket.on(
       "Locum Notification Number Pending",
       this.getNumberPendingRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Number Rejected",
       this.getNumberRejectedRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Number Verified",
       this.getNumberVerifiedRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Approved",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Rejected",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Pending",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Expiring",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Expired",
       this.getComplianceRealTime
-    )
+    );
   },
-  destroyed () {
-    this.removeListener()
+  destroyed() {
+    this.removeListener();
   },
   methods: {
-    async getNumberPendingRealTime (file) {
+    async getNumberPendingRealTime(file) {
       if (!file) {
-        return
+        return;
       }
       if (file && file.type === "GMC/NMC") {
-        this.gmc_or_nmc_number.status = "Pending"
+        this.gmc_or_nmc_number.status = "Pending";
       } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number = "Pending"
+        this.mpl_or_npl_number = "Pending";
       }
     },
-    async getNumberRejectedRealTime (file) {
+    async getNumberRejectedRealTime(file) {
       if (!file) {
-        return
+        return;
       }
       if (file && file.type === "GMC/NMC") {
-        this.gmc_or_nmc_number.status = "Rejected"
+        this.gmc_or_nmc_number.status = "Rejected";
       } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number = "Rejected"
+        this.mpl_or_npl_number = "Rejected";
       }
     },
-    async getNumberVerifiedRealTime (file) {
+    async getNumberVerifiedRealTime(file) {
       if (!file) {
-        return
+        return;
       }
       if (file && file.type === "GMC/NMC") {
-        this.gmc_or_nmc_number.status = "Verified"
+        this.gmc_or_nmc_number.status = "Verified";
       } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number.status = "Verified"
+        this.mpl_or_npl_number.status = "Verified";
       }
     },
-    async getComplianceRealTime (file) {
+    async getComplianceRealTime(file) {
       if (!file) {
-        return
+        return;
       }
       let index = this.mandatory.findIndex(
         item =>
           item.info.compliance_document.name ===
             file.compliance_document.name ||
           item.name === file.compliance_document.name
-      )
+      );
       let updatedFile = this.mandatory.find(
         item =>
           item.info.compliance_document.name ===
             file.compliance_document.name ||
           item.name === file.compliance_document.name
-      )
+      );
       if (index >= 0) {
-        this.mandatory.splice(index, 1, { ...updatedFile, info: file })
+        this.mandatory.splice(index, 1, { ...updatedFile, info: file });
       }
     },
-    removeListener () {
+    removeListener() {
       this.$socket.removeListener(
         "Locum Notification Number Pending",
         this.getNumberPendingRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Number Rejected",
         this.getNumberRejectedRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Number Verified",
         this.getNumberVerifiedRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Approved",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Pending",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Rejected",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Expiring",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Expired",
         this.getComplianceRealTime
-      )
+      );
     },
-    show (item, type) {
+    show(item, type) {
       if ((item.info && item.info.file) || item.file) {
         if (type === "compliance") {
-          this.$router.push(`/compliance/${item.info.id}`)
+          this.$router.push(`/compliance/${item.info.id}`);
         }
         if (type === "mandatory")
-          this.$router.push(`/compliance/mandatory-training/${item.id}`)
+          this.$router.push(`/compliance/mandatory-training/${item.id}`);
       }
     },
-    status (status) {
-      let str
+    status(status) {
+      let str;
       switch (status) {
         case "Pending":
         case "Expiring":
-          str = "bg-orange-500"
-          break
+          str = "bg-orange-500";
+          break;
         case "Verified":
         case "Approved":
-          str = "bg-green-500"
-          break
+          str = "bg-green-500";
+          break;
         default:
-          str = "bg-red-500"
+          str = "bg-red-500";
       }
-      return str
+      return str;
     },
-    onFileInput (e, id) {
+    onFileInput(e, id) {
       if (!e.target.files.length) {
-        return
+        return;
       }
       // vnd.openxmlformats-officedocument.wordprocessingml.document - docx type
       let types = [
@@ -883,24 +821,24 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("compliance_document_id", id)
-      formData.append("locum_detail_id", this.$auth.user.id)
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("compliance_document_id", id);
+      formData.append("locum_detail_id", this.$auth.user.id);
       // post request to API / send file
-      this.loading = true
-      this.activeLoading.push(id)
+      this.loading = true;
+      this.activeLoading.push(id);
 
       this.$axios
         .$post(`/api/v1/locum/locum-detail-compliance-documents`, formData)
@@ -909,10 +847,10 @@ export default {
             document =>
               document.id ===
               res.data.locum_detail_compliance_document.compliance_document.id
-          )
+          );
 
           if (key_compliances_index >= 0) {
-            this.keyCompliances.splice(key_compliances_index, 1)
+            this.keyCompliances.splice(key_compliances_index, 1);
             this.keyCompliances.push({
               id:
                 res.data.locum_detail_compliance_document.compliance_document
@@ -921,18 +859,18 @@ export default {
                 res.data.locum_detail_compliance_document.compliance_document
                   .name,
               info: res.data.locum_detail_compliance_document
-            })
+            });
             this.keyCompliances = this.keyCompliances.sort(
               (a, b) => a.id - b.id
-            )
+            );
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Document uploaded!"]
-            })
-            this.loading = false
+            });
+            this.loading = false;
           }
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
 
           // let mandatory_index = this.mandatory.findIndex(
           //   document =>
@@ -984,7 +922,7 @@ export default {
           // this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
           if (
             err.response.data.message &&
             err.response.data.message.includes("File size too large") &&
@@ -994,21 +932,21 @@ export default {
               enabled: true,
               status: "danger",
               text: ["The maximum file size is 10mb only"]
-            })
+            });
           } else {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${err.response.data.message}`]
-            })
+            });
           }
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        })
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        });
     },
-    onFileUpdate (e, id, index, loadingId) {
+    onFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
-        return
+        return;
       }
       let types = [
         "pdf",
@@ -1019,22 +957,22 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      this.loading = true
-      this.activeLoading.push(loadingId)
+      this.loading = true;
+      this.activeLoading.push(loadingId);
 
-      const formData = new FormData()
-      formData.append("file", file)
+      const formData = new FormData();
+      formData.append("file", file);
       // post request to API / send file
       this.$axios
         .$put(`/api/v1/locum/locum-detail-compliance-documents/${id}`, formData)
@@ -1043,9 +981,9 @@ export default {
             document =>
               document.id ===
               res.data.locum_detail_compliance_document.compliance_document.id
-          )
+          );
           if (key_compliances_index > 0) {
-            this.keyCompliances.splice(index, 1)
+            this.keyCompliances.splice(index, 1);
             this.keyCompliances.push({
               id:
                 res.data.locum_detail_compliance_document.compliance_document
@@ -1054,20 +992,20 @@ export default {
                 res.data.locum_detail_compliance_document.compliance_document
                   .name,
               info: res.data.locum_detail_compliance_document
-            })
+            });
             this.keyCompliances = this.keyCompliances.sort(
               (a, b) => a.id - b.id
-            )
+            );
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Document uploaded!"]
-            })
-            this.loading = false
+            });
+            this.loading = false;
           }
           this.activeLoading = this.activeLoading.filter(
             item => item !== loadingId
-          )
+          );
 
           // let inMandatory = this.mandatory.findIndex(
           //   document =>
@@ -1116,7 +1054,7 @@ export default {
           // );
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
           if (
             err.response.data.message &&
             err.response.data.message.includes("File size too large") &&
@@ -1126,19 +1064,19 @@ export default {
               enabled: true,
               status: "danger",
               text: ["The maximum file size is 10mb only"]
-            })
+            });
           } else {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${err.response.data.message}`]
-            })
+            });
           }
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        })
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        });
     },
-    onMandatoryFileInput (e, id, index) {
+    onMandatoryFileInput(e, id, index) {
       let types = [
         "pdf",
         "jpeg",
@@ -1148,23 +1086,23 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("mandatory_training_id", id)
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mandatory_training_id", id);
       // post request to API / send file
-      this.loading = true
-      this.activeLoading.push(id)
+      this.loading = true;
+      this.activeLoading.push(id);
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
@@ -1172,31 +1110,31 @@ export default {
             index,
             1,
             res.data.locum_detail_mandatory_training
-          )
+          );
           this.mandatory_trainings = this.mandatory_trainings.sort(
             (a, b) => a.id - b.id
-          )
+          );
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Document uploaded!"]
-          })
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          })
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        })
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        });
     },
-    onMandatoryFileUpdate (e, id, index, loadingId) {
+    onMandatoryFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
-        return
+        return;
       }
       let types = [
         "pdf",
@@ -1207,22 +1145,22 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      const formData = new FormData()
-      formData.append("file", file)
+      const formData = new FormData();
+      formData.append("file", file);
       // post request to API / send file
-      this.loading = true
-      this.activeLoading.push(loadingId)
+      this.loading = true;
+      this.activeLoading.push(loadingId);
       this.$axios
         .$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData)
         .then(res => {
@@ -1230,50 +1168,50 @@ export default {
             index,
             1,
             res.data.locum_detail_mandatory_training
-          )
+          );
           this.mandatory_trainings = this.mandatory_trainings.sort(
             (a, b) => a.id - b.id
-          )
+          );
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Document uploaded!"]
-          })
-          this.loading = false
+          });
+          this.loading = false;
           this.activeLoading = this.activeLoading.filter(
             item => item !== loadingId
-          )
+          );
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          })
-          this.loading = false
+          });
+          this.loading = false;
           this.activeLoading = this.activeLoading.filter(
             item => item !== loadingId
-          )
-        })
+          );
+        });
     },
-    downloadItem (fileUrl, fileName) {
-      const axios = require("axios")
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
       axios({
         url: fileUrl,
         method: "GET",
         responseType: "blob" // important
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", fileName)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      })
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
     }
   }
-}
+};
 </script>
 <style scoped>
 .loading {
