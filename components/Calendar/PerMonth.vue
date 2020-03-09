@@ -284,17 +284,16 @@ export default {
                       status: [],
                       jobs: [job]
                     });
-                  } else {
-                    if (
-                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
-                    ) {
-                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
-                    }
-                    if (!jobsInMonth[daysIndex].status.includes(job.status)) {
-                      jobsInMonth[daysIndex].status.push(job.status);
-                    }
-                    jobsInMonth[daysIndex].jobs.push(job);
                   }
+                  // else {
+                  if (!jobsInMonth[daysIndex].shifts.includes(job.shift.name)) {
+                    jobsInMonth[daysIndex].shifts.push(job.shift.name);
+                  }
+                  if (!jobsInMonth[daysIndex].status.includes(job.status)) {
+                    jobsInMonth[daysIndex].status.push(job.status);
+                  }
+                  //     jobsInMonth[daysIndex].jobs.push(job);
+                  //   }
                 }
               }
             });
@@ -330,23 +329,20 @@ export default {
                       status: [],
                       jobs: [jobPart]
                     });
-                  } else {
-                    if (
-                      !jobsInMonth[daysIndex].shifts.includes(
-                        jobPart.job.shift.name
-                      )
-                    ) {
-                      jobsInMonth[daysIndex].shifts.push(
-                        jobPart.job.shift.name
-                      );
-                    }
-                    if (
-                      !jobsInMonth[daysIndex].status.includes(jobPart.status)
-                    ) {
-                      jobsInMonth[daysIndex].status.push(jobPart.status);
-                    }
-                    jobsInMonth[daysIndex].jobs.push(jobPart);
                   }
+                  // else {
+                  if (
+                    !jobsInMonth[daysIndex].shifts.includes(
+                      jobPart.job.shift.name
+                    )
+                  ) {
+                    jobsInMonth[daysIndex].shifts.push(jobPart.job.shift.name);
+                  }
+                  if (!jobsInMonth[daysIndex].status.includes(jobPart.status)) {
+                    jobsInMonth[daysIndex].status.push(jobPart.status);
+                  }
+                  // jobsInMonth[daysIndex].jobs.push(jobPart);
+                  // }
                 }
               }
             });
@@ -389,19 +385,18 @@ export default {
                       status: [],
                       jobs: [job]
                     });
-                  } else {
-                    if (
-                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
-                    ) {
-                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
-                    }
-                    if (
-                      !jobsInMonth[daysIndex].status.includes(job.locum_status)
-                    ) {
-                      jobsInMonth[daysIndex].status.push(job.locum_status);
-                    }
-                    jobsInMonth[daysIndex].jobs.push(job);
                   }
+                  // else {
+                  if (!jobsInMonth[daysIndex].shifts.includes(job.shift.name)) {
+                    jobsInMonth[daysIndex].shifts.push(job.shift.name);
+                  }
+                  if (
+                    !jobsInMonth[daysIndex].status.includes(job.locum_status)
+                  ) {
+                    jobsInMonth[daysIndex].status.push(job.locum_status);
+                  }
+                  //   jobsInMonth[daysIndex].jobs.push(job);
+                  // }
                 }
               }
             });
@@ -437,32 +432,30 @@ export default {
                       status: [],
                       jobs: [jobPart]
                     });
-                  } else {
-                    if (
-                      !jobsInMonth[daysIndex].shifts.includes(
-                        jobPart.job.shift.name
-                      )
-                    ) {
-                      jobsInMonth[daysIndex].shifts.push(
-                        jobPart.job.shift.name
-                      );
-                    }
-                    if (
-                      !jobsInMonth[daysIndex].status.includes(
-                        jobPart.locum_status
-                      )
-                    ) {
-                      jobsInMonth[daysIndex].status.push(jobPart.locum_status);
-                    }
-                    jobsInMonth[daysIndex].jobs.push(jobPart);
                   }
+                  // else {
+                  if (
+                    !jobsInMonth[daysIndex].shifts.includes(
+                      jobPart.job.shift.name
+                    )
+                  ) {
+                    jobsInMonth[daysIndex].shifts.push(jobPart.job.shift.name);
+                  }
+                  if (
+                    !jobsInMonth[daysIndex].status.includes(
+                      jobPart.locum_status
+                    )
+                  ) {
+                    jobsInMonth[daysIndex].status.push(jobPart.locum_status);
+                  }
+                  //   jobsInMonth[daysIndex].jobs.push(jobPart);
+                  // }
                 }
               }
             });
           }
         });
       }
-      console.log(jobsInMonth);
       return jobsInMonth;
     }
   },
@@ -515,6 +508,7 @@ export default {
     this.getJobs();
   },
   mounted() {
+    console.log(this.jobsInMonth);
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
       // this.$socket.on("Locum Notification Job Available", this.getJobsRealTime)
@@ -854,7 +848,6 @@ export default {
             })
         ])
           .then(([ongoingJobParts, appliedJobs, privateJobParts]) => {
-            console.log(privateJobParts);
             this.$store.commit(
               "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
               ongoingJobParts
