@@ -20,13 +20,20 @@
           class="mr-2 py-2 px-4 rounded font-semibold"
           :class="statusStyle(permanent_job.job_posting_status)"
         >{{ permanent_job.job_posting_status }}</span>
+        <span
+          v-if="permanent_job.job_posting_status === 'Closed'"
+          class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
+        >
+          {{ jobClosingTag(permanent_job.hired_through) }}
+        </span>
         <AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
       </div>
       <div
         v-if="permanent_job.job_posting_status === 'Closed'" 
         class="bg-red-300 p-4 rounded-lg my-2"
       >
-        This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }}
+        Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
+        <!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }} -->
       </div>
       <div class="flex flex-col md:flex-row">
         <div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
@@ -312,7 +319,8 @@
                 :resize="false"
                 :rows="4"
               />-->
-              <AppButton :label="'Save Changes'" @click="editPermanentJob()" />
+              <AppButton v-if="permanent_job.job_posting_status === 'Available' || permanent_job.job_posting_status === 'Pending'" :label="'Save Changes'" @click="editPermanentJob()" />
+              <AppButton v-if="permanent_job.job_posting_status === 'Closed' || permanent_job.job_posting_status === 'Unfilled'" :label="'Confirm Repost Job'" @click="repostPermanentJob()" />
             </template>
           </div>
           <PermanentJobMap
@@ -392,18 +400,19 @@ export default {
 			showCancel: false,
 
 			form: {
+        practice_id: "",
+        parent_practice_id: "",
 				title: "",
 				description: "",
 				date_posted: this.$moment().format("YYYY-MM-DD"),
 				date_closing: "",
 				email: "",
-				report_to: "",
+        report_to: "",
+        profession_id: "",
 				industry_type: "",
 				salary_amount: null,
 				salary_description_2: "",
 				work_hours: "",
-				practice_id: "",
-				profession_id: "",
 				hired_through: "",
 				update_remarks: ""
 			},
@@ -459,6 +468,8 @@ export default {
 			if (value === false) {
 				this.getPermanentJob()
 			} else {
+        this.form.practice_id = this.permanent_job.practice_id
+        this.form.parent_practice_id = this.permanent_job.parent_practice_id ? this.permanent_job.parent_practice_id : null
 				this.form.title = this.permanent_job.title
 				this.form.description = this.permanent_job.description
 				this.form.date_posted = this.$moment(
@@ -688,14 +699,17 @@ export default {
         "salary_description_2",
         "hired_through", 
         "update_remarks",
-        ]
+      ]
 
 			if(this.form.salary_amount){
         this.validateNumber(this.form.salary_amount, "salary_amount")
       }
 
       this.Validate(this.form, notRequired)
-      console.log("errors", this.formError)
+
+      console.log("form",this.form)
+      console.log("errors: ",this.formError)
+
 			if (!this.formError.length) {
 				this.$axios
 					.$put(
@@ -716,6 +730,53 @@ export default {
 					.catch(err => {
 						this.formError = err.response.data.error_messages
 					})
+			}
+    },
+
+    async repostPermanentJob () {
+      this.formError = []
+      let notRequired = [
+        'parent_practice_id',
+        'salary_amount',
+        'salary_description_2',
+        'hired_through',
+        'update_remarks',
+      ]
+
+      this.Validate(this.form, notRequired)
+
+      console.log("form",this.form)
+      console.log("errors: ",this.formError)
+
+			if (!this.formError.length) {
+				await this.$axios
+					.post(`/api/v1/practice/permanent-jobs`, {
+            ...this.form,
+            salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
+          })
+					.then(() => {
+						this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "success",
+							text: ["Successfully Created Permanent Job"]
+						})
+						this.$router.push("/permanent-jobs")
+					})
+					.catch(err => {
+						this.formError = err.response.data.error_messages
+						this.$nextTick(() => {
+							// this.$refs.modalContainer.scrollTop = 0
+						})
+						this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "danger",
+							text: [err.response.data.message]
+						})
+					})
+			} else {
+				this.$nextTick(() => {
+					// this.$refs.modalContainer.scrollTop = 0
+				})
 			}
     },
     
@@ -783,7 +844,17 @@ export default {
 				default:
 					return "bg-yellow-400 text-black"
 			}
-		}
+    },
+    jobClosingTag (jobClosingTag) {
+      switch(jobClosingTag) {
+         case "Direct Hiring":
+          return "Hired Directly"
+        case "Through HUBZZ":
+          return "Hired Through Hubzz"
+        default:
+          return "Closed By Practice"
+      }
+    }
 	}
 }
 </script>

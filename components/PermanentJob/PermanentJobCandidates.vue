@@ -25,11 +25,10 @@
         </div>
 
         <div
-          v-if="application.application_status !== 'Applied'"
           class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
           :class="statusStyle(application.application_status)"
         >
-          {{ application.application_status }}
+          {{ application.application_status === 'Applied' ? 'Pending' : application.application_status }}
         </div>
 
         <div class="flex items-center">
@@ -75,6 +74,7 @@
       <div v-if="modal" class="modal-container shadow-lg">
         <PermanentJobShowCandidate
           :permanent_job_application="permanent_job_application"
+          :permanent_job="permanent_job"
           :user="user"
           @close="modal=false"
           @updateApplicants="getApplicantsCount()"

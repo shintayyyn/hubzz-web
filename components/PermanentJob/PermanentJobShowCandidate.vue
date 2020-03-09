@@ -13,7 +13,7 @@
           <svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
         </button>
 
-        <div v-if="permanentJobApp.application_status === 'Applied'">
+        <div v-if="permanentJobApp.application_status === 'Applied' && permanent_job.job_posting_status === 'Available'">
           <AppButton :label="'Accept'" class="mx-1" @click="accepted=!accepted" />
           <AppButton
             class="mx-1"
@@ -310,7 +310,7 @@ export default {
     AppDate,
     AppTime
   },
-  props: ["user", "job", "permanent_job_application"],
+  props: ["user", "permanent_job", "permanent_job_application"],
   data () {
     return {
       permanentJobApp: "",
