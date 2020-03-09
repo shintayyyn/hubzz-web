@@ -24,6 +24,18 @@
             </div>
           </div>
         </template>
+
+        <template
+          v-if="$route.query.status === 'Closed'"
+          v-slot:closing_tag="slotProps">
+          <div class="flex items-center justify-center">
+            <div
+              class="rounded-full px-6 py-1 bg-yellow-400 text-black"
+            >
+              {{ jobClosingTag(slotProps.item.hired_through) }}
+            </div>
+          </div>
+        </template>
       </AppTable>
       <p
         v-else
@@ -74,7 +86,7 @@
   </section>
 </template>
 <script>
-var moment = require("moment")
+// var moment = require("moment")
 import AppTable from "@/components/Base/AppTable"
 export default {
 	components: {
@@ -162,7 +174,14 @@ export default {
 					slotName: "status_slot",
 					dataIndex: "",
 					class: "text-center"
-				}
+        },
+        // {
+				// 	name: "Closing tag",
+				// 	slot: true,
+				// 	slotName: "closing_tag",
+				// 	dataIndex: "",
+				// 	class: "text-center"
+        // },
 			],
 
 			locumColumns: [
@@ -222,7 +241,14 @@ export default {
 					slotName: "status_slot",
 					dataIndex: "",
 					class: "text-center"
-				}
+        },
+        // {
+				// 	name: "Closing tag",
+				// 	slot: true,
+				// 	slotName: "closing_tag",
+				// 	dataIndex: "",
+				// 	class: "text-center"
+        // },
 			],
 
 			permanent_job_count: 0,
@@ -242,10 +268,14 @@ export default {
 	watch: {
 		// eslint-disable-next-line no-unused-vars
 		"$route.query.status" (newStatus, oldStatus) {
-			let params = {}
+      this.params = {}
+      if (!newStatus) {
+        newStatus = "Available"
+      }
 			if (this.$auth.user.domain === "Locum") {
-				params = {
-					job_posting_status: newStatus ? newStatus : "Available",
+        console.log('new status', newStatus)
+				this.params = {
+					job_posting_status: newStatus,
 					profession_id: this.$auth.user.locum_detail.profession.id,
           near_post_code: this.$auth.user.locum_postcode,
           limit: 5,
@@ -253,20 +283,20 @@ export default {
 				this.loading = true
 				setTimeout(async () => {
 					this.loading = true
-					await this.getPermanentJobsForLocum(params)
+					await this.getPermanentJobsForLocum(this.params)
 					this.loading = false
 				})
 				this.loading = false
 			} else if (this.$auth.user.domain === "Practice") {
         console.log('new status', newStatus)
-				params = {
-					job_posting_status: newStatus ? newStatus : "Available",
+				this.params = {
+					job_posting_status: newStatus,
           practice_id: this.$auth.user.practice_id,
           limit: 5,
 				}
 				setTimeout(async () => {
 					this.loading = true
-					await this.getPermanentJobsForPractice(params)
+					await this.getPermanentJobsForPractice(this.params)
 					this.loading = false
 				})
 			}
@@ -438,8 +468,18 @@ export default {
 					return "bg-yellow-400 text-black"
 			}
 		},
-
+    jobClosingTag (jobClosingTag) {
+      switch(jobClosingTag) {
+        case "Direct Hiring":
+          return "Hired Directly"
+        case "Through HUBZZ":
+          return "Hired Through Hubzz"
+        default:
+          return "Closed By Practice"
+      }
+    },
 		getJobs (params) {
+      console.log('params', params)
 			if (this.$auth.user.domain === "Locum") {
 				this.getPermanentJobsForLocum(params)
 			}
@@ -487,26 +527,26 @@ export default {
 						permanent_job_application.permanent_job_id === permanent_job.id
 				)
 
-				if (permanent_job_app_found) {
-					permanent_job.status = permanent_job_app_found.application_status
-				} else {
-					if (permanent_job.date_closing < moment().format()) {
-						permanent_job.status = "Closed"
-					} else {
-						permanent_job.status = "Available"
-					}
-				}
+        if (permanent_job_app_found) {
+          permanent_job.status = permanent_job_app_found.application_status
+        } else {
+          if (permanent_job.job_posting_status === 'Closed') {
+            permanent_job.status = "Closed"
+          } else if (permanent_job.job_posting_status === 'Unfilled' ) {
+            permanent_job.status = "Unfilled"
+          }  else if (permanent_job.job_posting_status === 'Available' ) {
+            permanent_job.status = "Available"
+          }
+        }
 
 				return permanent_job
 			})
 		},
 
 		async getPermanentJobsForPractice (params) {
-      console.log('params', params)
 			await this.$axios
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
-					console.log("permanent", res)
 					this.permanent_jobs_for_practice_count =
 						res.data && res.data.count ? res.data.count : null
 				})
@@ -545,10 +585,10 @@ export default {
 				if (permanent_job_app_found) {
           console.log('query', this.$route.query.status)
           if (this.$route.query.status) {
-              permanent_job.status = permanent_job.job_posting_status
+            permanent_job.status = permanent_job.job_posting_status
           } else {
-            permanent_job.status = permanent_job_app_found.application_status
-          }
+            permanent_job.status = 'Applied'
+          } 
         } else {
           permanent_job.status = permanent_job.job_posting_status
         }

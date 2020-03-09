@@ -23,6 +23,13 @@
           :class="statusStyle(permanent_job.status)"
         >{{ permanent_job.status }}</span>
 
+        <span
+          v-if="permanent_job.job_posting_status === 'Closed'"
+          class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
+        >
+          {{ jobClosingTag(permanent_job.hired_through) }}
+        </span>
+
         <AppButton
           v-if="permanent_job.status == 'Available'"
           class="mx-2"
@@ -66,7 +73,8 @@
         v-if="permanent_job.job_posting_status === 'Closed'" 
         class="bg-red-300 p-4 rounded-lg my-2"
       >
-        This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ?"thru HUBZZ." : "thru Direct Hiring." }}
+        Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
+        <!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ jobClosingTag(permanent_job.hired_through) }} -->
       </div>
       <div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
         <span class="font-bold">Congratulations!</span>
@@ -333,12 +341,13 @@ export default {
 				.$delete(
 					`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/delete-application`
 				)
-				.then(() => {
+				.then((res) => {
+          console.log('res', res)
           this.$router.push('/permanent-jobs')
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
-						text: ["Application is now successfully Cancelled"]
+						text: [res.message]
 					})
 				})
 		},
@@ -362,7 +371,18 @@ export default {
 				default:
 					return "bg-yellow-400 text-black"
 			}
-		}
+    },
+    
+    jobClosingTag (jobClosingTag) {
+      switch(jobClosingTag) {
+        case "Direct Hiring":
+          return "Hired Directly"
+        case "Through HUBZZ":
+          return "Hired Through Hubzz"
+        default:
+          return "Closed By Practice"
+      }
+    }
 	}
 }
 </script>
