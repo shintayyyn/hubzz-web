@@ -104,22 +104,22 @@
                 </div>
                 <button
                   v-if="$route.query.status && $route.query.status === 'issued' && slotProps.item.locum_invoice_id && slotProps.item.locum_status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
                 >
                   Mark as Paid
                 </button>
                 <template v-if="$route.query.status && $route.query.status === 'issued'">
                   <div
-                    v-if="slotProps.item.nhs_claimable && !slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
-                    class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-xs"
+                    v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                    class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                     @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
                   >
                     Generate Form A
                   </div>
                   <div
                     v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
-                    class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-xs"
+                    class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                     @click="select_invoice(slotProps.item.locum_invoice_id, 'generateSoloForm')"
                   >
                     Generate Solo Form
@@ -133,7 +133,7 @@
                   View Solo Form
                 </div>
                 <div
-                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.nhs_claimable && slotProps.item.locum_form_a_id"
+                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.locum_form_a_id"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                 >
@@ -213,7 +213,7 @@
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
-          :label="'Received payment on'"
+          :label="'Payment made on'"
           :error="formError.find(item => item.field === 'paid_at')"
           is-before
         />
@@ -221,8 +221,8 @@
           v-model="form.ni"
           :type="'select'"
           :name="'ni'"
-          :label="'Ni'"
-          :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
+          :label="'NI'"
+          :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
         />
         <AppInput
           v-if="[true, 'true'].includes(form.ni)"
@@ -237,8 +237,8 @@
           v-model="form.paye"
           :type="'select'"
           :name="'paye'"
-          :label="'Paye'"
-          :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
+          :label="'PAYE'"
+          :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
         />
         <AppInput
           v-if="[true, 'true'].includes(form.paye)"
@@ -385,16 +385,6 @@ export default {
           dataIndex: "total_amount",
           class: "text-center currency",
           sortable: true
-        },
-        {
-          name: "OOH",
-          dataIndex: "ooh",
-          class: "text-center"
-        },
-        {
-          name: "NHS Claimable",
-          dataIndex: "nhs_claimable",
-          class: "text-center"
         }
       )
       if (["issued", "pension-form-a"].includes(queryStatus)) {
@@ -568,10 +558,7 @@ export default {
               jobPart.locum_status === "Approved" &&
               jobPart.locum_invoice_item.locum_invoice.paid_at
                 ? "Yes"
-                : "No",
-            nhs_claimable: jobPart.locum_invoice_id
-              ? jobPart.locum_invoices_nhs_claimable
-              : jobPart.locum_details_nhs_claimable
+                : "No"
           }
         })
       } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
@@ -638,13 +625,12 @@ export default {
     },
     createFormB () {
       this.getJobParts()
-      // this.locum_form_bs.push(invoice);
     },
     getJobPartsPromiseAll () {
       let url = `/api/v1/locum/job-parts`
       let locum_status = []
-      let nhs_claimable
-      let ooh
+      let has_solo_form
+      let has_form_a
       let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -656,12 +642,11 @@ export default {
           break
         case "solo-form":
           locum_status = ["Approved"]
-          ooh = true
+          has_solo_form = true
           break
         case "pension-form-a":
           locum_status = ["Approved"]
-          nhs_claimable = true
-          ooh = false
+          has_form_a = true
           break
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`
@@ -669,13 +654,12 @@ export default {
         default:
           locum_status = ["Completed", "Private"]
       }
-
       return Promise.all([
         this.$axios.$get(`${url}/count`, {
           params: {
             locum_status,
-            nhs_claimable,
-            ooh,
+            has_solo_form,
+            has_form_a,
             job_type: "Private",
             type: "Private"
           }
@@ -683,8 +667,8 @@ export default {
         this.$axios.$get(`${url}`, {
           params: {
             locum_status,
-            nhs_claimable,
-            ooh,
+            has_solo_form,
+            has_form_a,
             job_type: "Private",
             type: "Private",
             offset: 0,
@@ -731,10 +715,7 @@ export default {
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at
                     ? "Yes"
-                    : "No",
-                nhs_claimable: jobPart.locum_invoice_id
-                  ? jobPart.locum_invoices_nhs_claimable
-                  : jobPart.locum_details_nhs_claimable
+                    : "No"
               }
             })
           } else if (response.data && response.data.locum_form_bs) {
@@ -842,10 +823,7 @@ export default {
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at
                     ? "Yes"
-                    : "No",
-                nhs_claimable: jobPart.locum_invoice_id
-                  ? jobPart.locum_invoices_nhs_claimable
-                  : jobPart.locum_details_nhs_claimable
+                    : "No"
               }
             })
           } else if (res.data && res.data.locum_form_bs) {
@@ -957,61 +935,9 @@ export default {
     },
     createInvoice () {
       this.getJobParts()
-      // console.log(invoice);
-      // let queryStatus = this.$route.query.status;
-
-      // let job_part = this.job_parts.find(
-      //   item => item.id === invoice.items[0].job_part.id
-      // );
-      // job_part.locum_invoice_id = invoice.id;
-      // job_part.total_amount = invoice.items[0].total;
-
-      // let index = this.job_parts.findIndex(item => item.id === job_part.id);
-      // if (index >= 0) {
-      //   if (
-      //     (!queryStatus || queryStatus === "to-be-invoiced") &&
-      //     invoice.status === "Draft"
-      //   ) {
-      //     this.job_parts.splice(index, 1, job_part);
-      //   } else if (
-      //     (!queryStatus || queryStatus === "to-be-invoiced") &&
-      //     invoice.status !== "Draft"
-      //   ) {
-      //     this.job_parts.splice(index, 1);
-      //   }
-      // }
     },
     updateInvoice () {
       this.getJobParts()
-      // let queryStatus = this.$route.query.status;
-
-      // let job_part = this.job_parts.find(
-      //   item => item.id === invoice.items[0].job_part.id
-      // );
-      // job_part.locum_invoice_id = invoice.id;
-      // job_part.total_amount = invoice.items[0].total;
-
-      // let index = this.job_parts.findIndex(item => item.id === job_part.id);
-      // if (index >= 0) {
-      //   if (
-      //     ((!queryStatus ||
-      //       (queryStatus && queryStatus === "to-be-invoiced")) &&
-      //       invoice.status === "Draft") ||
-      //     (queryStatus &&
-      //       queryStatus === "issued" &&
-      //       invoice.status === "Issued") ||
-      //     (queryStatus &&
-      //       queryStatus === "disputed" &&
-      //       invoice.status === "Disputed") ||
-      //     (queryStatus &&
-      //       queryStatus === "approved" &&
-      //       invoice.status === "Approved")
-      //   ) {
-      //     this.job_parts.splice(index, 1, job_part);
-      //   } else {
-      //     this.job_parts.splice(index, 1);
-      //   }
-      // }
     },
     generateFormA () {
       this.$axios
@@ -1019,14 +945,15 @@ export default {
           locum_invoice_id: this.invoice_id
         })
         .then(res => {
-          let index = this.job_parts.findIndex(
-            item => item.locum_invoice_id === this.invoice_id
-          )
-          if (index >= 0) {
-            let jobPart = this.job_parts[index]
-            jobPart.locum_form_a_id = res.data.locum_invoice_form_a.id
-            this.job_parts.splice(index, 1, jobPart)
-          }
+          // let index = this.job_parts.findIndex(
+          //   item => item.locum_invoice_id === this.invoice_id
+          // );
+          // if (index >= 0) {
+          //   let jobPart = this.job_parts[index];
+          //   jobPart.locum_form_a_id = res.data.locum_invoice_form_a.id;
+          //   this.job_parts.splice(index, 1, jobPart);
+          // }
+          this.getJobParts()
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,

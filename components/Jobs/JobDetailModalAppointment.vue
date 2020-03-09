@@ -158,7 +158,6 @@ import AppDate from "@/components/Base/AppDate"
 import AppTime from "@/components/Base/AppTime"
 import AppButton from "@/components/Base/AppButton"
 import AddSurgeryModal from "@/components/AddSurgeryModal"
-import AppFormError from "@/components/Base/AppFormError"
 import AppLoading from "@/components/Base/AppLoading"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
@@ -169,7 +168,6 @@ export default {
     AppButton,
     AddSurgeryModal,
     AppLoading,
-    AppFormError,
     AppConfirmationModal
   },
   props: ["job"],
@@ -198,18 +196,53 @@ export default {
   computed: {
     practices () {
       return this.$store.getters["getLocumPrivatePractices"]
-    }
+    },
+    // filteredShifts () {}
   },
   watch: {
-    "form.private_practice_id" (value) {
-      this.formError = this.formError.filter(
-        error => error.field !== "private_practice_id"
-      )
-    },
+    // "form.private_practice_id" (value) {
+    //   this.formError = this.formError.filter(
+    //     error => error.field !== "private_practice_id"
+    //   )
+    // },
     "form.date_start" (value) {
       this.formError = this.formError.filter(
         error => error.field !== "date_start"
       )
+      // let amShift = this.shifts.find(item => item.label === "AM")
+      // let pmShift = this.shifts.find(item => item.label === "PM")
+    //   if (this.form.date_start && this.form.date_end && this.form.time_start) {
+    //     let hour = this.form.time_start.split(":")[0]
+    //     if (this.$moment(value).isSame(this.form.date_end)) {
+    //       if (parseInt(hour) > 11) {
+    //         amShift.disabled = true
+    //         pmShift.disabled = false
+    //       } else {
+    //         amShift.disabled = false
+    //         pmShift.disabled = true
+    //       }
+    //     }else {
+    //       amShift.disabled = false
+    //       pmShift.disabled = false
+    //     }
+    //  }
+      let hour = this.form.time_start.split(":")[0]
+      let amShift = this.shifts.find(item => item.label === "AM")
+      let pmShift = this.shifts.find(item => item.label === "PM")
+      if (amShift && pmShift) {
+        if (this.$moment(this.form.date_end).isSame(value) && hour !== "") {
+        if (parseInt(hour) > 11) {
+          amShift.disabled = true
+          pmShift.disabled = false
+        } else {
+          amShift.disabled = false
+          pmShift.disabled = true
+        }
+      } else if (!this.$moment(this.form.date_end).isSame(value)) {
+        amShift.disabled = false
+        pmShift.disabled = false
+      }
+      }
     },
     "form.date_end" (value) {
       let a_year = this.$moment(this.form.date_start).get("year")
@@ -241,7 +274,8 @@ export default {
       let hour = this.form.time_start.split(":")[0]
       let amShift = this.shifts.find(item => item.label === "AM")
       let pmShift = this.shifts.find(item => item.label === "PM")
-      if (this.$moment(value).isSame(this.form.date_start)) {
+      if (amShift && pmShift) {
+      if (this.$moment(value).isSame(this.form.date_start) && hour !== "") {
         if (parseInt(hour) > 11) {
           amShift.disabled = true
           pmShift.disabled = false
@@ -249,15 +283,21 @@ export default {
           amShift.disabled = false
           pmShift.disabled = true
         }
+      } else if (!this.$moment(value).isSame(this.form.date_start)) {
+        amShift.disabled = false
+        pmShift.disabled = false
+      }
       }
     },
     "form.time_start" (value) {
       let hour = value.split(":")[0]
       let amShift = this.shifts.find(item => item.label === "AM")
       let pmShift = this.shifts.find(item => item.label === "PM")
+      if (amShift && pmShift) {
       if (
         this.form.date_start &&
         this.form.date_end &&
+        value &&
         this.$moment(this.form.date_start).isSame(this.form.date_end)
       ) {
         let amShift = this.shifts.find(item => item.label === "AM")
@@ -269,35 +309,39 @@ export default {
           amShift.disabled = false
           pmShift.disabled = true
         }
+      }else {
+        amShift.disabled = false
+        pmShift.disabled = false
+      }
       }
 
-      this.formError = this.formError.filter(
-        error => error.field !== "time_start"
-      )
+      // this.formError = this.formError.filter(
+      //   error => error.field !== "time_start"
+      // )
     },
-    "form.time_end" (value) {
-      this.formError = this.formError.filter(
-        error => error.field !== "time_end"
-      )
-    },
-    "form.shift_id" (value) {
-      this.formError = this.formError.filter(
-        error => error.field !== "shift_id"
-      )
-    },
-    "form.locum_detail_rate_type_id" (value) {
-      this.formError = this.formError.filter(
-        error => error.field !== "locum_detail_rate_type_id"
-      )
-    },
-    "form.rate" (value) {
-      this.formError = this.formError.filter(error => error.field !== "rate")
-    },
-    "form.total_hours" (value) {
-      this.formError = this.formError.filter(
-        error => error.field !== "total_hours"
-      )
-    }
+    // "form.time_end" (value) {
+    //   this.formError = this.formError.filter(
+    //     error => error.field !== "time_end"
+    //   )
+    // },
+    // "form.shift_id" (value) {
+    //   this.formError = this.formError.filter(
+    //     error => error.field !== "shift_id"
+    //   )
+    // },
+    // "form.locum_detail_rate_type_id" (value) {
+    //   this.formError = this.formError.filter(
+    //     error => error.field !== "locum_detail_rate_type_id"
+    //   )
+    // },
+    // "form.rate" (value) {
+    //   this.formError = this.formError.filter(error => error.field !== "rate")
+    // },
+    // "form.total_hours" (value) {
+    //   this.formError = this.formError.filter(
+    //     error => error.field !== "total_hours"
+    //   )
+    // }
   },
   async created () {
     this.loading = true
@@ -372,6 +416,17 @@ export default {
       //   });
       // }
       this.Validate(this.form, ["description"])
+      if (this.form.shift_id) {
+        let selectedShift = this.shifts.find(
+          item => item.value === parseInt(this.form.shift_id)
+        )
+        if (selectedShift.disabled) {
+          this.formError.push({
+            field: "shift_id",
+            message: "Invalid Selected Shift"
+          })
+        }
+      }
       if (!this.formError.length) {
         try {
           this.loading = true

@@ -1,16 +1,16 @@
 <template>
   <section class="flex flex-col items-start w-full">
-    <template v-if="$auth.user.domain ===  'Practice'">
+    <template v-if="$auth.user.domain === 'Practice'">
       <AppTable
         v-if="permanent_jobs_for_practice_count > 0"
         class="w-full"
         :total="permanent_jobs_for_practice_count"
         :items="permanent_jobs_for_practice"
-        :currentPage="current_page"
-        :perPage="params.limit"
+        :current-page="current_page"
+        :per-page="params.limit"
         :columns="columns"
         :loading="loading"
-        :routerLink="'/permanent-jobs'"
+        :router-link="'/permanent-jobs'"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
@@ -33,17 +33,17 @@
       </p>
     </template>
 
-    <template v-if="$auth.user.domain ===  'Locum'">
+    <template v-if="$auth.user.domain === 'Locum'">
       <AppTable
         v-if="permanent_jobs_for_locum_count > 0"
         class="w-full"
         :total="permanent_jobs_for_locum_count"
         :items="permanent_jobs_for_locum"
-        :currentPage="current_page"
-        :perPage="params.limit"
+        :current-page="current_page"
+        :per-page="params.limit"
         :columns="locumColumns"
         :loading="loading"
-        :routerLink="'/permanent-jobs'"
+        :router-link="'/permanent-jobs'"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
@@ -62,7 +62,7 @@
         v-else
         class="text-gray-600 px-3 py-2"
       >
-        No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.
+        No {{ $route.query.status ? $route.query.status : 'Available' }} jobs yet.
       </p>
     </template>
     <div
@@ -106,18 +106,25 @@ export default {
 			},
 			loading: false,
 			columns: [
+        {
+          name: "ID",
+          dataIndex: "id",
+          class:"text-center"
+        },
 				{
 					name: "Title",
-					dataIndex: "title"
+          dataIndex: "title",
+          class:"text-center"
 				},
 				{
 					name: "Surgery",
-					dataIndex: "practice.name"
+          dataIndex: "practice.name",
+          class:"text-center"
 				},
 				{
-					name: "Salary",
+					name: "Salary £",
 					dataIndex: "salary_amount",
-					class: "text-center"
+					class: "text-center currency"
 				},
 				{
 					name: "Posted",
@@ -159,18 +166,25 @@ export default {
 			],
 
 			locumColumns: [
+        {
+          name: "ID",
+          dataIndex: "id",
+          class:"text-center"
+        },
 				{
 					name: "Title",
-					dataIndex: "title"
+          dataIndex: "title",
+          class:"text-center"
 				},
 				{
 					name: "Surgery",
-					dataIndex: "practice.name"
+          dataIndex: "practice.name",
+          class:"text-center"
 				},
 				{
-					name: "Salary",
+					name: "Salary £",
 					dataIndex: "salary_amount",
-					class: "text-center"
+					class: "text-center currency"
 				},
 				{
 					name: "Posted",
@@ -233,7 +247,8 @@ export default {
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
 					profession_id: this.$auth.user.locum_detail.profession.id,
-					near_post_code: this.$auth.user.locum_postcode
+          near_post_code: this.$auth.user.locum_postcode,
+          limit: 5,
 				}
 				this.loading = true
 				setTimeout(async () => {
@@ -246,7 +261,8 @@ export default {
         console.log('new status', newStatus)
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
-					practice_id: this.$auth.user.practice_id
+          practice_id: this.$auth.user.practice_id,
+          limit: 5,
 				}
 				setTimeout(async () => {
 					this.loading = true
@@ -317,11 +333,13 @@ export default {
 					if (permanent_job_app_found) {
 						permanent_job.status = permanent_job_app_found.application_status
 					} else {
-						if (permanent_job.date_closing < moment().format()) {
-							permanent_job.status = "Closed"
-						} else {
-							permanent_job.status = "Available"
-						}
+						if (permanent_job.job_posting_status === 'Closed') {
+              permanent_job.status = "Closed"
+            } else if (permanent_job.job_posting_status === 'Unfilled' ) {
+              permanent_job.status = "Unfilled"
+            }  else if (permanent_job.job_posting_status === 'Available' ) {
+              permanent_job.status = "Available"
+            }
 					}
 					return permanent_job
 				})
@@ -362,16 +380,16 @@ export default {
 
 				permanent_jobs_for_practice = permanent_jobs_for_practice.map(permanent_job => {
 					const permanent_job_app_found = permanent_job_applications.find(
-						permanent_job_application =>
-							permanent_job_application.permanent_job_id === permanent_job.id
+						permanent_job_application => permanent_job_application.permanent_job_id === permanent_job.id
 					)
 					if (permanent_job_app_found) {
             console.log('route name', route.query.status)
-            if (route.query.status) {
-               permanent_job.status = permanent_job.job_posting_status
+            // DIFFERENT STATUSES ONLY IF IN AVAILABLE TAB
+            if (route.query.status === permanent_job.job_posting_status) {
+              permanent_job.status = permanent_job.job_posting_status
             } else {
-              permanent_job.status = permanent_job_app_found.application_status
-            }
+              permanent_job.status = 'Applied'
+            } 
 					} else {
             permanent_job.status = permanent_job.job_posting_status
 					}
@@ -434,14 +452,14 @@ export default {
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/count`, { params })
 				.then(res => {
-					this.permanent_job_count =
+					this.permanent_jobs_for_locum_count =
 						res.data && res.data.count ? res.data.count : null
 				})
 
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs`, { params })
 				.then(res => {
-					this.permanent_jobs =
+					this.permanent_jobs_for_locum =
 						res.data && res.data.permanent_jobs
 							? res.data.permanent_jobs
 							: null
@@ -463,7 +481,7 @@ export default {
 							: null
 				})
 
-			this.permanent_jobs_for_locum = this.permanent_jobs.map(permanent_job => {
+			this.permanent_jobs_for_locum = this.permanent_jobs_for_locum.map(permanent_job => {
 				const permanent_job_app_found = this.permanent_job_applications.find(
 					permanent_job_application =>
 						permanent_job_application.permanent_job_id === permanent_job.id
@@ -489,14 +507,14 @@ export default {
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
 					console.log("permanent", res)
-					this.permanent_job_count =
+					this.permanent_jobs_for_practice_count =
 						res.data && res.data.count ? res.data.count : null
 				})
 
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-jobs`, { params })
 				.then(res => {
-					this.permanent_jobs =
+					this.permanent_jobs_for_practice =
 						res.data && res.data.permanent_jobs
 							? res.data.permanent_jobs
 							: null
@@ -518,7 +536,7 @@ export default {
 							: null
 				})
       
-			this.permanent_jobs_for_practice = this.permanent_jobs.map(permanent_job => {
+			this.permanent_jobs_for_practice = this.permanent_jobs_for_practice.map(permanent_job => {
 				const permanent_job_app_found = this.permanent_job_applications.find(
 					permanent_job_application =>
 						permanent_job_application.permanent_job_id === permanent_job.id
@@ -538,39 +556,37 @@ export default {
         return permanent_job
 			})
 		},
-		async sorted (order_by) {
-			let orderBy = order_by.map(item => {
-				let order = item.split(":")[1]
-				let sorting = item.split(":")[0]
-				switch (sorting) {
-					case "date_time_start":
-						sorting = "date_start"
-						break
-					case "date_time_end":
-						sorting = "date_end"
-						break
-					case "rate_name":
-						sorting = "rate"
-						break
-					default:
-						sorting
-				}
-				return `${sorting}:${order}`
-			})
-			this.current_page = 1
-			this.params.offset = 0
-			this.params.order_by = orderBy
-			this.jobPartParams.offset = 0
-			this.jobPartParams.order_by = orderBy
-			this.loading = true
-			await this.getJobs(this.isJobPart ? this.jobPartParams : this.params)
-			this.loading = false
-		},
+		// async sorted (order_by) {
+		// 	let orderBy = order_by.map(item => {
+		// 		let order = item.split(":")[1]
+		// 		let sorting = item.split(":")[0]
+		// 		switch (sorting) {
+		// 			case "date_time_start":
+		// 				sorting = "date_start"
+		// 				break
+		// 			case "date_time_end":
+		// 				sorting = "date_end"
+		// 				break
+		// 			case "rate_name":
+		// 				sorting = "rate"
+		// 				break
+		// 			default:
+		// 				sorting
+		// 		}
+		// 		return `${sorting}:${order}`
+		// 	})
+		// 	this.current_page = 1
+		// 	this.params.offset = 0
+		// 	this.params.order_by = orderBy
+		// 	this.jobPartParams.offset = 0
+		// 	this.jobPartParams.order_by = orderBy
+		// 	this.loading = true
+		// 	await this.getJobs(this.isJobPart ? this.jobPartParams : this.params)
+		// 	this.loading = false
+		// },
 		async pagechanged (page) {
-      console.log('page', page)
       this.current_page = page
       this.params.offset = this.params.limit * (page - 1)
-      console.log('params.offset', this.params.limit)
 			this.loading = true
 			this.getJobs(this.params)
 			this.loading = false

@@ -143,7 +143,7 @@
             <AppDate
               v-model="form.paid_at"
               :name="'paid_at'"
-              :label="'Received payment on'"
+              :label="'Payment made on'"
               :error="formError.find(item => item.field === 'paid_at')"
               is-before
             />
@@ -292,6 +292,11 @@ export default {
           dataIndex: "total_amount",
           class: "text-center currency",
           sortable: true
+        },
+        {
+          name: "Under IR35",
+          dataIndex: "job_ir35",
+          class: "text-center"
         },
         {
           name: "Under Parent Practice",

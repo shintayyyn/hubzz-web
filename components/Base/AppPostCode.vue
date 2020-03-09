@@ -1,15 +1,15 @@
 <template>
-  <div class="flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
+  <div v-on-clickaway="toggledOff" class="flex flex-col py-2 mb-3 md:mb-6">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">
-        {{label}}
+        {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
     </div>
     <div class="flex flex-col justify-start">
       <input
-        v-model="search"
         ref="search"
+        v-model="search"
         type="text"
         class="border-b-2 focus:border-yellow-400 focus:outline-none p-2 font-bold text-xs sm:text-sm w-full"
         :class="error? 'border-red-500':''"
@@ -18,16 +18,18 @@
         @keydown="handleKeyDownEvent"
         @input="$emit('input', $event.target.value)"
         @blur="$emit('blur')"
-      />
+      >
       <transition name="drop-down">
         <div
           v-if="error"
           class="text-red-500 py-1 text-xs text-white"
-        >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+        >
+          {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+        </div>
       </transition>
     </div>
     <transition name="fade">
-      <div class="relative z-10" v-if="showLists">
+      <div v-if="showLists" class="relative z-10">
         <div class="w-full absolute bg-white shadow-md">
           <div
             v-for="(item, index) in predictions"
@@ -37,7 +39,7 @@
             @mouseover="activeIndex = index"
             @click="add()"
           >
-            <div>{{item.label}}</div>
+            <div>{{ item.label }}</div>
           </div>
         </div>
       </div>
@@ -45,14 +47,14 @@
   </div>
 </template>
 <script>
-import debounce from "lodash.debounce";
-import { mixin as clickaway } from "vue-clickaway";
-import AppLoading from "@/components/Base/AppLoading";
+import debounce from "lodash.debounce"
+import { mixin as clickaway } from "vue-clickaway"
+import AppLoading from "@/components/Base/AppLoading"
 export default {
-  mixins: [clickaway],
   components: {
     AppLoading
   },
+  mixins: [clickaway],
   props: {
     value: [String, Object],
     name: String,
@@ -66,117 +68,135 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       loading: false,
       search: "",
       showLists: false,
       predictions: [],
       activeIndex: 0
-    };
-  },
-  watch: {
-    value(post_code) {
-      this.search = post_code;
-    },
-    search(value) {
-      if (value) {
-        this.getPredictions(value);
-      } else {
-        this.showLists = false;
-      }
     }
   },
   computed: {
-    url() {
-      return this.urlIndex ? this.urlIndex : "/api/v1/postcodes";
+    url () {
+      return this.urlIndex ? this.urlIndex : "/api/v1/postcodes"
     },
-    filteredItems() {
-      return this.predictions;
+    postcodesUrl () {
+      return `${process.env.POSTCODES_IO_URL}/postcodes`
+    },
+    filteredItems () {
+      return this.predictions
     }
   },
-  created() {
-    this.search = this.value;
+  watch: {
+    value (post_code) {
+      this.search = post_code
+    },
+    search (value) {
+      if (value) {
+        this.getPredictions(value)
+      } else {
+        this.showLists = false
+      }
+    }
+  },
+  created () {
+    this.search = this.value
   },
   methods: {
-    add() {
-      let selectedPostCode = this.predictions[this.activeIndex];
-      this.predictions = [];
-      this.showLists = false;
-      this.$emit("input", selectedPostCode.label);
+    add () {
+      let selectedPostCode = this.predictions[this.activeIndex]
+      this.predictions = []
+      this.showLists = false
+      this.$emit("input", selectedPostCode.label)
     },
-    getPredictions: debounce(function(input) {
+    getPredictions: debounce(function (input) {
       const params = {
         search: input,
         offset: 0,
         limit: 5
-      };
-      this.predictions = [];
-      this.$axios.$get(this.url, { params }).then(res => {
-        if (this.dataIndex) {
-          if (res.data[this.dataIndex].length > 0) {
-            res.data[this.dataIndex].forEach(item => {
-              this.predictions.push({
-                label: item.name,
-                value: item.id
-              });
-            });
-            this.showLists = true;
-          } else {
-            this.predictions = [];
-            this.showLists = false;
+      }
+      this.predictions = []
+      if (this.url === "postcodes-io") {
+        this.$axios
+          .$get(`${this.postcodesUrl}/${input}/autocomplete`)
+          .then(res => {
+            this.predictions = res.result.map(item => {
+              return {
+                label: item,
+                value: item
+              }
+            })
+            console.log(this.predictions)
+            this.showLists = true
+          })
+      } else if (this.url !== "postcodes-io") {
+        this.$axios.$get(this.url, { params }).then(res => {
+          if (this.dataIndex) {
+            if (res.data[this.dataIndex].length > 0) {
+              res.data[this.dataIndex].forEach(item => {
+                this.predictions.push({
+                  label: item.name,
+                  value: item.id
+                })
+              })
+              this.showLists = true
+            } else {
+              this.predictions = []
+              this.showLists = false
+            }
+          } else if (!this.dataIndex) {
+            if (res.data.postcode_coordinates.length > 0) {
+              res.data.postcode_coordinates.forEach(postCode => {
+                this.predictions.push({
+                  label: postCode.postcode,
+                  value: postCode.id
+                })
+              })
+              this.showLists = true
+            } else {
+              this.predictions = []
+              this.showLists = false
+            }
           }
-        } else if (!this.dataIndex) {
-          if (res.data.postcode_coordinates.length > 0) {
-            res.data.postcode_coordinates.forEach(postCode => {
-              this.predictions.push({
-                label: postCode.postcode,
-                value: postCode.id
-              });
-            });
-            this.showLists = true;
-          } else {
-            this.predictions = [];
-            this.showLists = false;
-          }
-        }
-      });
+        })
+      }
     }, 250),
-    toggledOn() {
+    toggledOn () {
       if (this.search.length) {
-        this.showLists = true;
+        this.showLists = true
       }
     },
-    toggledOff() {
-      this.showLists = false;
+    toggledOff () {
+      this.showLists = false
     },
-    handleKeyDownEvent(e) {
+    handleKeyDownEvent (e) {
       if (!this.showLists) {
-        return;
+        return
       }
       if (event.key === "ArrowUp") {
         if (this.activeIndex === 0) {
-          this.activeIndex = 4;
+          this.activeIndex = 4
         } else {
-          this.activeIndex--;
+          this.activeIndex--
         }
       }
       if (event.key === "ArrowDown") {
         if (this.activeIndex === 4) {
-          this.activeIndex = 0;
+          this.activeIndex = 0
         } else {
-          this.activeIndex++;
+          this.activeIndex++
         }
       }
       if (event.key === "Enter") {
-        this.add();
+        this.add()
       }
       if (event.key === "Escape" || event.key === "Tab") {
-        this.toggledOff();
+        this.toggledOff()
       }
     }
   }
-};
+}
 </script>
 <style scoped>
 /* .icon {

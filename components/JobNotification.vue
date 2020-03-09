@@ -80,6 +80,17 @@
                         {{ notification.message }}
                       </div>
                       <div
+                        v-if="notification.type === 'Jobs' && notification.platform_job"
+                        class="leading-tight mt-2"
+                      >
+                        <div class="font-bold">
+                          Extra Information:
+                        </div>
+                        <div class="mt-1 truncate-info">
+                          {{ notification.platform_job.extra_information }}
+                        </div>
+                      </div>
+                      <div
                         class="leading-tight text-xs pt-2 text-right text-gray-600"
                       >
                         {{ $moment(notification.updated_at).format('MM-DD-YYYY, hh:mm A') }}
@@ -179,7 +190,6 @@ export default {
       let dateStart = notification.date_start
 
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
-
       // path url
       let url = ""
       if (type === "Jobs") {
@@ -212,7 +222,7 @@ export default {
             : this.$auth.user.domain === "Locum" &&
               notification.notification_billing_type === "Platform"
             ? `/locum-billing/invoices`
-            : this.auth.user.domain === "Locum" &&
+            : this.$auth.user.domain === "Locum" &&
               notification.notification_billing_type === "Private"
             ? `/locum-billing/private-invoices`
             : null
@@ -309,8 +319,10 @@ export default {
           default:
             routeStatus = status
         }
+
         // console.log(url, status, routeStatus, notification);
         // return;
+
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
@@ -505,5 +517,14 @@ export default {
 }
 .truncate-title:hover {
   display: block;
+}
+
+.truncate-info {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s linear;
 }
 </style>
