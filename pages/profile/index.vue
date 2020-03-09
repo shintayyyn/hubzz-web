@@ -555,7 +555,7 @@ export default {
       this.input_file_loading = true;
       await this.save();
       this.$axios
-        .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
+        .$put(`/api/v1/practice/me/practice-variation-term`, formData)
         .then(res => {
           this.practice.variation_terms_file = variation_terms_file;
           this.$store.commit("SET_NOTIFICATION", {
@@ -588,7 +588,7 @@ export default {
       this.input_file_loading = true;
       this.modal = false;
       this.$axios
-        .$delete(`/api/v1/practice/me/practice/variation-terms`)
+        .$delete(`/api/v1/practice/me/practice-variation-term`)
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -637,7 +637,7 @@ export default {
         this.loading = true;
 
         return this.$axios
-          .$put(`/api/v1/practice/me/practice`, this.form)
+          .$put(`/api/v1/practice/me/practice-profile`, this.form)
           .then(res => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
