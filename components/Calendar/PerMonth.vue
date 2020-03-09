@@ -280,20 +280,21 @@ export default {
                   if (jobsInMonth.length - 1 < daysIndex) {
                     jobsInMonth.push({
                       date: days.fullDate,
-                      shifts: [],
-                      status: [],
+                      shifts: [job.shift.name],
+                      status: [job.status],
                       jobs: [job]
                     });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
+                    }
+                    if (!jobsInMonth[daysIndex].status.includes(job.status)) {
+                      jobsInMonth[daysIndex].status.push(job.status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(job);
                   }
-                  // else {
-                  if (!jobsInMonth[daysIndex].shifts.includes(job.shift.name)) {
-                    jobsInMonth[daysIndex].shifts.push(job.shift.name);
-                  }
-                  if (!jobsInMonth[daysIndex].status.includes(job.status)) {
-                    jobsInMonth[daysIndex].status.push(job.status);
-                  }
-                  //     jobsInMonth[daysIndex].jobs.push(job);
-                  //   }
                 }
               }
             });
@@ -325,24 +326,27 @@ export default {
                   if (jobsInMonth.length - 1 < daysIndex) {
                     jobsInMonth.push({
                       date: days.fullDate,
-                      shifts: [],
-                      status: [],
+                      shifts: [jobPart.job.shift.name],
+                      status: [jobPart.status],
                       jobs: [jobPart]
                     });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(
+                        jobPart.job.shift.name
+                      )
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(
+                        jobPart.job.shift.name
+                      );
+                    }
+                    if (
+                      !jobsInMonth[daysIndex].status.includes(jobPart.status)
+                    ) {
+                      jobsInMonth[daysIndex].status.push(jobPart.status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(jobPart);
                   }
-                  // else {
-                  if (
-                    !jobsInMonth[daysIndex].shifts.includes(
-                      jobPart.job.shift.name
-                    )
-                  ) {
-                    jobsInMonth[daysIndex].shifts.push(jobPart.job.shift.name);
-                  }
-                  if (!jobsInMonth[daysIndex].status.includes(jobPart.status)) {
-                    jobsInMonth[daysIndex].status.push(jobPart.status);
-                  }
-                  // jobsInMonth[daysIndex].jobs.push(jobPart);
-                  // }
                 }
               }
             });
@@ -381,22 +385,23 @@ export default {
                   if (jobsInMonth.length - 1 < daysIndex) {
                     jobsInMonth.push({
                       date: days.fullDate,
-                      shifts: [],
-                      status: [],
+                      shifts: [job.shift.name],
+                      status: [job.locum_status],
                       jobs: [job]
                     });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
+                    }
+                    if (
+                      !jobsInMonth[daysIndex].status.includes(job.locum_status)
+                    ) {
+                      jobsInMonth[daysIndex].status.push(job.locum_status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(job);
                   }
-                  // else {
-                  if (!jobsInMonth[daysIndex].shifts.includes(job.shift.name)) {
-                    jobsInMonth[daysIndex].shifts.push(job.shift.name);
-                  }
-                  if (
-                    !jobsInMonth[daysIndex].status.includes(job.locum_status)
-                  ) {
-                    jobsInMonth[daysIndex].status.push(job.locum_status);
-                  }
-                  //   jobsInMonth[daysIndex].jobs.push(job);
-                  // }
                 }
               }
             });
@@ -428,28 +433,29 @@ export default {
                   if (jobsInMonth.length - 1 < daysIndex) {
                     jobsInMonth.push({
                       date: days.fullDate,
-                      shifts: [],
-                      status: [],
+                      shifts: [jobPart.job.shift.name],
+                      status: [jobPart.locum_status],
                       jobs: [jobPart]
                     });
+                  } else {
+                    if (
+                      !jobsInMonth[daysIndex].shifts.includes(
+                        jobPart.job.shift.name
+                      )
+                    ) {
+                      jobsInMonth[daysIndex].shifts.push(
+                        jobPart.job.shift.name
+                      );
+                    }
+                    if (
+                      !jobsInMonth[daysIndex].status.includes(
+                        jobPart.locum_status
+                      )
+                    ) {
+                      jobsInMonth[daysIndex].status.push(jobPart.locum_status);
+                    }
+                    jobsInMonth[daysIndex].jobs.push(jobPart);
                   }
-                  // else {
-                  if (
-                    !jobsInMonth[daysIndex].shifts.includes(
-                      jobPart.job.shift.name
-                    )
-                  ) {
-                    jobsInMonth[daysIndex].shifts.push(jobPart.job.shift.name);
-                  }
-                  if (
-                    !jobsInMonth[daysIndex].status.includes(
-                      jobPart.locum_status
-                    )
-                  ) {
-                    jobsInMonth[daysIndex].status.push(jobPart.locum_status);
-                  }
-                  //   jobsInMonth[daysIndex].jobs.push(jobPart);
-                  // }
                 }
               }
             });
