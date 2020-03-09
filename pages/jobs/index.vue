@@ -404,141 +404,146 @@
 </template>
 
 <script>
-  import AppTable from "@/components/Base/AppTable"
-  import AppInput from "@/components/Base/AppInput"
-  import AppDate from "@/components/Base/AppDate"
-  import AppTime from "@/components/Base/AppTime"
-  import AppPostCode from "@/components/Base/AppPostCode"
-  import AppButton from "@/components/Base/AppButton"
-  import AppLoading from "@/components/Base/AppLoading"
+import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput"
+import AppDate from "@/components/Base/AppDate"
+import AppTime from "@/components/Base/AppTime"
+import AppPostCode from "@/components/Base/AppPostCode"
+import AppButton from "@/components/Base/AppButton"
+import AppLoading from "@/components/Base/AppLoading"
 
-  export default {
-    components: {
-      AppTable,
-      AppInput,
-      AppDate,
-      AppTime,
-      AppPostCode,
-      AppButton,
-      AppLoading
+export default {
+  components: {
+    AppTable,
+    AppInput,
+    AppDate,
+    AppTime,
+    AppPostCode,
+    AppButton,
+    AppLoading
+  },
+
+  props: {
+    invoiceStatusList: {
+      type: Array,
+      default: () => []
+    },
+    practiceTypeList: {
+      type: Array,
+      default: () => []
+    }
+  },
+
+  middleware ({ query, error }) {
+    if (
+      query.status &&
+      ![
+        "allocated",
+        "ongoing",
+        "available",
+        "public",
+        "bank",
+        "applied",
+        "unsuccessful",
+        "withdrawn",
+        "cancelled",
+        "completed",
+        "approved",
+        "private"
+      ].includes(query.status.toLowerCase())
+    ) {
+      return error({ status: 404, message: "This Job Status is Invalid" })
+    }
+  },
+
+  data () {
+    return {
+      practiceLists: [],
+      total: 0,
+      jobs: [],
+      initialLoading: false,
+      loading: false,
+      current_page: 1,
+      // app table params
+      search_practice: null,
+      search_private_practice: null,
+      offset: 0,
+      limit: 5,
+      order_by: [],
+      job_number: "",
+      job_part_number: "",
+      title: "",
+      job_title: "",
+      type: "",
+      job_type: "",
+      practice_id: "",
+      job_practice_id: "",
+      private_practice_id: "",
+      job_private_practice_id: "",
+      shift_id: "",
+      job_shift_id: "",
+      rate: "",
+      job_rate: "",
+      rate_type_id: "",
+      job_rate_type_id: "",
+      near_post_code: "",
+      miles: "",
+      calendar_date_start: "",
+      calendar_date_end: "",
+      time_start: "",
+      time_end: "",
+      invoice_status: "",
+      viewing_locum_user_id: [],
+      title_includes: "",
+      job_title_includes: "",
+      job_number_includes: "",
+      job_part_number_includes: "",
+      shifts: [],
+      rates: [],
+      filterModal: false,
+      isFiltered: false,
+      showRefresh: false
+    }
+  },
+
+  computed: {
+    isJobPart () {
+      const status = this.$route.query.status
+
+      return (
+        status &&
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+          status.toLowerCase()
+        )
+      )
     },
 
-    props: {
-      invoiceStatusList: {
-        type: Array,
-        default: () => []
-      },
-      practiceTypeList: {
-        type: Array,
-        default: () => []
-      }
-    },
-
-    middleware ({ query, error }) {
-      if (
-        query.status &&
-        ![
-          "allocated",
-          "ongoing",
-          "available",
-          "public",
-          "bank",
-          "applied",
-          "unsuccessful",
-          "withdrawn",
-          "cancelled",
-          "completed",
-          "approved",
-          "private"
-        ].includes(query.status.toLowerCase())
-      ) {
-        return error({ status: 404, message: "This Job Status is Invalid" })
-      }
-    },
-
-    data () {
-      return {
-        practiceLists: [],
-        total: 0,
-        jobs: [],
-        initialLoading: false,
-        loading: false,
-        current_page: 1,
-        // app table params
-        search_practice: null,
-        search_private_practice: null,
-        offset: 0,
-        limit: 5,
-        order_by: [],
-        job_number: "",
-        job_part_number: "",
-        title: "",
-        job_title: "",
-        type: "",
-        job_type: "",
-        practice_id: "",
-        job_practice_id: "",
-        private_practice_id: "",
-        job_private_practice_id: "",
-        shift_id: "",
-        job_shift_id: "",
-        rate: "",
-        job_rate: "",
-        rate_type_id: "",
-        job_rate_type_id: "",
-        near_post_code: "",
-        miles: "",
-        calendar_date_start: "",
-        calendar_date_end: "",
-        time_start: "",
-        time_end: "",
-        invoice_status: "",
-        viewing_locum_user_id: [],
-        title_includes: "",
-        job_title_includes: "",
-        job_number_includes: "",
-        job_part_number_includes: "",
-        shifts: [],
-        rates: [],
-        filterModal: false,
-        isFiltered: false,
-        showRefresh: false
-      }
-    },
-
-    computed: {
-      isJobPart () {
-        const status = this.$route.query.status
-
-        return status && ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(status.toLowerCase())
-      },
-
-      noJobsToDisplay () {
-        let queryStatus = this.$route.query.status
-          ? this.$route.query.status.toLowerCase()
-          : ""
-        switch (queryStatus) {
-          case "allocated":
-          case "ongoing":
-          case "declined":
-          case "cancelled":
-          case "withdrawn":
-          case "approved":
-          case "private":
-            return `You do not have any ${queryStatus} jobs`
-          case "available":
-          case "matched":
-            return `There are no ${queryStatus} jobs nearby and suited for you at this time`
-          case "public":
-          case "bank":
-            return `There are no available jobs nearby and suited for you at this time`
-          case "applied":
-          case "unsuccessful":
-            return `You have not yet ${
-              queryStatus === "applied" ? "applied" : "rejected"
-              } for a job`
-          case "completed":
-            return "You have not yet completed any job"
+    noJobsToDisplay () {
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : ""
+      switch (queryStatus) {
+        case "allocated":
+        case "ongoing":
+        case "declined":
+        case "cancelled":
+        case "withdrawn":
+        case "approved":
+        case "private":
+          return `You do not have any ${queryStatus} jobs`
+        case "available":
+        case "matched":
+          return `There are no ${queryStatus} jobs nearby and suited for you at this time`
+        case "public":
+        case "bank":
+          return `There are no available jobs nearby and suited for you at this time`
+        case "applied":
+        case "unsuccessful":
+          return `You have not yet ${
+            queryStatus === "applied" ? "applied" : "rejected"
+          } for a job`
+        case "completed":
+          return "You have not yet completed any job"
 
         default:
           return "You do not have any allocated jobs"
@@ -879,7 +884,7 @@
                     }
                   })
                 : res.data.job_parts
-                  ? res.data.job_parts.map(item => {
+                ? res.data.job_parts.map(item => {
                     return {
                       ...item,
                       tag_status: item.terminated
@@ -893,7 +898,7 @@
                         .format("DD-MM-YYYY")} | ${item.time_end}`
                     }
                   })
-                  : []
+                : []
 
             return jobs
           })

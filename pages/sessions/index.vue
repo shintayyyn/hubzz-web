@@ -254,6 +254,7 @@
           :loading="loading"
           :router-link="'/sessions'"
           :min-height="'70vh'"
+          :customWidth="1400"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -442,6 +443,11 @@ export default {
             sortable: true
           },
           {
+            name: "Profession",
+            dataIndex: "isGp",
+            class: "text-center"
+          },
+          {
             name: "Title",
             dataIndex: "job_title",
             class: "text-center",
@@ -486,6 +492,11 @@ export default {
             dataIndex: "practice_name",
             class: "text-center",
             sortable: true
+          },
+          {
+            name: "Profession",
+            dataIndex: "isGp",
+            class: "text-center"
           },
           {
             name: "Title",
@@ -769,6 +780,10 @@ export default {
                 ? res.data.jobs.map(item => {
                     return {
                       ...item,
+                      isGp:
+                        item.platform_job.profession.name === "GP"
+                          ? "GP"
+                          : "Non-GP",
                       assigned_to: item.platform_job.appointed_to_locum.user
                         ? item.platform_job.appointed_to_locum.user
                             .personal_detail.name
@@ -785,6 +800,7 @@ export default {
                 ? res.data.job_parts.map(item => {
                     return {
                       ...item,
+                      isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
                       tag_status: item.terminated ? "Terminated" : item.status,
                       date_time_start: `${app
                         .$moment(item.date_start)
@@ -997,6 +1013,10 @@ export default {
               ? responseJobs.data.jobs.map(item => {
                   return {
                     ...item,
+                    isGp:
+                      item.platform_job.profession.name === "GP"
+                        ? "GP"
+                        : "Non-GP",
                     assigned_to: item.platform_job.appointed_to_locum.user
                       ? item.platform_job.appointed_to_locum.user
                           .personal_detail.name
@@ -1013,6 +1033,7 @@ export default {
               ? responseJobs.data.job_parts.map(item => {
                   return {
                     ...item,
+                    isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
                     tag_status: item.terminated ? "Terminated" : item.status,
                     date_time_start: `${this.$moment(item.date_start).format(
                       "DD-MM-YYYY"
@@ -1103,6 +1124,10 @@ export default {
               ? res.data.jobs.map(item => {
                   return {
                     ...item,
+                    isGp:
+                      item.platform_job.profession.name === "GP"
+                        ? "GP"
+                        : "Non-GP",
                     assigned_to: item.platform_job.appointed_to_locum.user
                       ? item.platform_job.appointed_to_locum.user
                           .personal_detail.name
@@ -1119,6 +1144,7 @@ export default {
               ? res.data.job_parts.map(item => {
                   return {
                     ...item,
+                    isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
                     tag_status: item.terminated ? "Terminated" : item.status,
                     date_time_start: `${this.$moment(item.date_start).format(
                       "DD-MM-YYYY"

@@ -213,6 +213,7 @@
                     :name="'date_posted'"
                     :label="'Date Posted'"
                     is-after
+                    disabled
                     :error="formError.find(item => item.field === 'date_posted')"
                   />
                   <AppDate
@@ -322,11 +323,9 @@
 
         <div v-if="permanent_job" class="md:mx-2 w-full md:w-2/5 lg:w-1/2">
           <PermanentJobCandidates
-            v-if="permanent_job.job_posting_status !== 'Closed'"
             :permanent_job="permanent_job"
           />
           <PermanentJobMap
-            v-if="permanent_job && permanent_job.job_posting_status !== 'Closed' || !permanent_job.appointed_to_locum_user_id"
             :permanent_job="permanent_job"
           />
 
@@ -395,7 +394,7 @@ export default {
 			form: {
 				title: "",
 				description: "",
-				date_posted: "",
+				date_posted: this.$moment().format("YYYY-MM-DD"),
 				date_closing: "",
 				email: "",
 				report_to: "",

@@ -33,7 +33,7 @@
         </div>
 
         <div class="flex items-center">
-          <button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
+          <button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(application)">
             <svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
           </button>
           <button class="focus:outline-none" @click.prevent="show(application.id)">
@@ -70,6 +70,7 @@
         />
       </div>
     </transition>
+
     <transition name="slide" mode="out-in">
       <div v-if="modal" class="modal-container shadow-lg">
         <PermanentJobShowCandidate
@@ -206,9 +207,15 @@ export default {
 			// 	this.modal = true;
 			// });
 		},
-		message (user) {
-			this.user = user
-			this.sendMessageModal = true
+		async message (application) {
+      await this.$axios
+				.$get(
+					`/api/v1/practice/locums/${application.applicant_locum_user_id}`
+				)
+				.then(res => {
+          this.user = res.data.user
+          this.sendMessageModal = true
+        })			
 		},
 		closeModal () {
 			if (this.modal) {
