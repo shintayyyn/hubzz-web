@@ -733,7 +733,7 @@ export default {
             locum_status = ["Matched"];
             break;
           case "Completed":
-            locum_status = ["Completed", "Terminated"];
+            locum_status = ["Completed"];
             break;
           case "Available":
             locum_status = ["Matched"];
@@ -1018,7 +1018,7 @@ export default {
             locum_status = ["Matched"];
             break;
           case "Completed":
-            locum_status = ["Completed", "Terminated"];
+            locum_status = ["Completed"];
             break;
           case "Available":
             locum_status = ["Matched"];
@@ -1205,7 +1205,7 @@ export default {
             locum_status = ["Matched"];
             break;
           case "Completed":
-            locum_status = ["Completed", "Terminated"];
+            locum_status = ["Completed"];
             break;
           case "Available":
             locum_status = ["Matched"];

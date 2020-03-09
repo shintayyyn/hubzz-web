@@ -473,6 +473,9 @@ export default {
         }
     },
 
+    SET_LOCUM_APPLIED_JOB_PARTS (state, payload) {
+        state.locum_applied_job_parts = payload
+    },
     SET_LOCUM_AVAILABLE_JOBS (state, payload) {
         state.locum_available_jobs = payload
     },
@@ -610,4 +613,7 @@ export default {
     SET_LOCUM_PRIVATE_JOBS_COUNT (state, payload) {
         state.locum_private_jobs_count = payload
     },
+    SET_LOCUM_PRIVATE_JOB_PARTS(state, payload) {
+        state.locum_private_job_parts = payload
+    }
 }
