@@ -19,12 +19,12 @@
         </div>
         <div v-if="viewPracticeJobs && !loading">
           <div v-for="job in foundPracticeJobs" :key="`${job.id}-${job.status}`">
-            <PracticeJobCard :prop-job="job" />
+            <PracticeJobCard :propJob="job" />
           </div>
         </div>
         <div v-if="viewLocumJobs && !loading">
           <div v-for="job in foundLocumJobs" :key="`${job.id}-${job.locum_status}`">
-            <LocumJobCard :prop-job="job" />
+            <LocumJobCard :propJob="job" />
           </div>
         </div>
       </transition>
@@ -511,9 +511,11 @@ export default {
       // PRIVATE
       if (this.getLocumPrivateJobs.length > 0) {
         foundLocumPrivateJobs = this.getLocumPrivateJobs.filter(job =>
+          ["Allocated", "Ongoing"].includes(job.locum_status) &&
           this.getDateArray(job.date_start, job.date_end).includes(date)
         )
       }
+
 
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
@@ -583,6 +585,7 @@ export default {
         foundLocumPrivateJobs = this.getLocumPrivateJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            ["Allocated", "Ongoing"].includes(job.locum_status) &&
             job.shift.name === shift &&
             this.includesWeekends(job, date)
         )
