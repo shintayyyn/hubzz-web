@@ -4,6 +4,9 @@ export default () => ({
     // NOTIF
     practice_job_notifications: [],
     // PARTS
+    practice_applied_job_parts: [],
+    practice_unfilled_job_parts: [],
+
     practice_ongoing_job_parts: [],
     practice_ongoing_job_parts_count: 0,
 
@@ -87,6 +90,9 @@ export default () => ({
     locum_applied_jobs: [],
     locum_applied_jobs_count: 0,
 
+    locum_applied_job_parts: [],
+    locum_applied_job_parts_count: 0,
+
     locum_unsuccessful_jobs: [],
     locum_unsuccessful_jobs_count: 0,
 
@@ -104,4 +110,7 @@ export default () => ({
     // PRIVATE
     locum_private_jobs: [],
     locum_private_jobs_count: 0,
+
+    locum_private_job_parts: [],
+    locum_private_job_parts_count: 0
 })

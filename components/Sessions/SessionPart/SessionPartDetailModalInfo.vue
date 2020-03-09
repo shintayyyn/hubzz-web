@@ -258,7 +258,7 @@
           v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)"
         >
           <div class="font-bold text-sm sm:text-md">
-            Was the locum having any absences?
+            Was the Locum absent for session?
           </div>
           <div class="text-xs sm:text-sm mb-8">
             {{ job_part.absent_days > 0 ? 'Yes' : 'No' }}
