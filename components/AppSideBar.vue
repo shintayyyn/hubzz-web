@@ -53,62 +53,62 @@
   </section>
 </template>
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
   components: {
     AppConfirmationModal
   },
-  data() {
+  data () {
     return {
       signout_modal: false,
       confirmation_modal: false,
       lists: [],
       eligibleToSpoke: false
-    };
+    }
   },
-  async created() {
-    if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+  async created () {
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Practice" && this.$auth.user.practice_detail.practice.type !== 'Hub') {
       console.log('practice', this.$auth.user.practice_detail.practice)
-      this.$axios
+      await this.$axios
         .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
         .then(res => {
           if (res.data.count > 0) {
-            this.eligibleToSpoke = true;
+            this.eligibleToSpoke = true
           }
         })
         .finally(() => {
           console.log('eligible', this.eligibleToSpoke)
-          this.getInit();
+          this.getInit()
 
           this.$socket.on(
             "Practice Notification Update Profile",
             this.updatePermissions
-          );
+          )
           this.$socket.on(
             "Practice Notification Delete Profile",
             this.toggleConfirmationModal
-          );
-        });
+          )
+        })
     }else{
-      this.getInit();
+      this.getInit()
     }
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     }
   },
-  mounted() {
+  mounted () {
     
   },
-  destroyed() {
-    this.removeListener();
+  destroyed () {
+    this.removeListener()
   },
   methods: {
-    toggleConfirmationModal() {
-      this.confirmation_modal = true;
+    toggleConfirmationModal () {
+      this.confirmation_modal = true
     },
-    updatePermissions(user) {
+    updatePermissions (user) {
       if (
         user &&
         user.practice_detail &&
@@ -123,7 +123,7 @@ export default {
         this.$store.commit("SET_PERMISSIONS", []);
       }
     },
-    removeListener() {
+    removeListener () {
       this.$socket.removeListener(
         "Locum Notification Update Profile",
         this.updatePermissions
@@ -133,7 +133,7 @@ export default {
         this.toggleConfirmationModal
       );
     },
-    hasPermissions(permissions) {
+    hasPermissions (permissions) {
       if (permissions && permissions.length) {
         let enable = false;
         for (let i = 0; i < permissions.length; i++) {
@@ -146,7 +146,7 @@ export default {
         return true;
       }
     },
-    getInit() {
+    getInit () {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
       let practiceStatus =
@@ -261,7 +261,7 @@ export default {
 
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
     },
-    logout() {
+    logout () {
       this.$axios
         .post("/api/v1/logout")
         .then(() => {
@@ -298,15 +298,15 @@ export default {
           }
         });
     },
-    async confirm() {
+    async confirm () {
       await this.$auth.logout();
       this.$auth.$storage.setUniversal("_token.local", "");
       this.$router.push("/");
     },
-    isDisabled(routeName) {
+    isDisabled (routeName) {
       return this.$route.path.includes(routeName) ? "" : "click";
     },
-    close() {
+    close () {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
     }
