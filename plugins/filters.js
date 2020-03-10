@@ -6,7 +6,7 @@ Vue.filter('localDate', function (date, dateOnly) {
     return `${moment(date).format('L')}`
   }
   if (date) {
-    return `${moment(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').utc().format('YYYY-MM-DD')} | ${moment(date).utc().format('HH:mm')}`
+    return `${moment(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').utc().format('DD/MM/YYYY')} | ${moment(date).utc().format('HH:mm:ss')}`
   }
 })
 
