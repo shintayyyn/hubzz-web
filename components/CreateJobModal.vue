@@ -424,7 +424,7 @@
                 <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
               </div>
               <div class="flex flex-row flex-wrap justify-start mt-1">
-                <div class="flex items-end mr-2">
+                <div class="flex items-center mr-2">
                   <div class="flex flex-col">
                     <input
                       v-model="form.hours"
@@ -446,7 +446,7 @@
                   </div>
                   <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
                 </div>
-                <div class="flex items-end">
+                <div class="flex items-center">
                   <div class="flex flex-col">
                     <input
                       v-model="form.minutes"
@@ -997,7 +997,8 @@ export default {
         "include_saturday",
         "include_sunday",
         "compliance_document_id",
-        "auto_assign_at"
+        "auto_assign_at",
+        "hours"
       ]
 
       if (!this.hasBanks) {
@@ -1043,10 +1044,14 @@ export default {
         notRequired.push("favorite_only_until")
       }
 
-      this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
-
+      !this.form.hours ? this.form.hours = 0 : this.form.hours
+      if (this.form.minutes && this.form.minutes == 0) {
+        this.formError.push({ field: 'minutes', message: 'Minutes is invalid'})
+      }else {
+        this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
+      }
       this.validateNumber(this.form.rate, "rate")
-      this.validateNumber(this.form.total_hours, "total_hours")
+      // this.validateNumber(this.form.total_hours, "total_hours")
       this.Validate(this.form, notRequired)
       if (!this.formError.length) {
         this.form.profession_id = this.form.role

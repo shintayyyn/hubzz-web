@@ -84,7 +84,7 @@
               <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
             </div>
             <div class="flex flex-row flex-wrap justify-start mt-1">
-              <div class="flex items-end">
+              <div class="flex items-center">
                 <div class="flex flex-col">
                   <input
                     v-model="form.hours"
@@ -106,7 +106,7 @@
                 </div>
                 <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
               </div>
-              <div class="flex items-end">
+              <div class="flex items-center">
                 <div class="flex flex-col">
                   <input
                     v-model="form.minutes"
@@ -638,6 +638,7 @@ export default {
   },
   mixins: [clickaway],
   props: ["job"],
+ 
   data () {
     return {
       banksCount: 0,
@@ -699,7 +700,7 @@ export default {
         extra_information: "",
         rate: "",
         hours: "",
-        minutes: '',
+        minutes: "",
         total_hours: "",
         locum_detail_rate_type_id: 1,
         ir35: false,
@@ -727,6 +728,7 @@ export default {
       show_sunday: false
     }
   },
+  
   computed: {
     hasBanks () {
       return this.banksCount > 0 ? true : false
@@ -793,9 +795,12 @@ export default {
     },
     "form.total_hours" () {
       this.validateNumber(this.form.total_hours, "total_hours")
-    }
+    },
   },
   created () {
+    let totalHours = this.$moment.duration(this.job.total_hours, 'hours')
+    this.form.hours = totalHours._data.hours
+    this.form.minutes = totalHours._data.minutes
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
       this.practice_lists = []
       res.data.practices.forEach(item => {
@@ -1098,7 +1103,8 @@ export default {
         "bank_only",
         "auto_assign_at",
         "session_requirements",
-        "session_structure_information"
+        "session_structure_information",
+        "hours"
       ]
 
       if (!this.hasBanks) {
@@ -1148,11 +1154,17 @@ export default {
         notRequired.push("favorite_only_until")
       }
 
-      this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
+      
 
       this.validateNumber(this.form.rate, "rate")
       this.validateNumber(this.form.total_hours, "total_hours")
       this.Validate(this.form, notRequired)
+      !this.form.hours ? this.form.hours = 0 : this.form.hours
+      if (parseInt(this.form.hours) === 0 && parseInt(this.form.minutes) === 0) {
+        this.formError.push({ field: 'minutes', message: 'Minutes is invalid'})
+      }else {
+        this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
+      }
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id]
         this.form.clinical_system_id = this.form.clinical_system_id.map(
