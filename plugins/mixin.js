@@ -245,7 +245,7 @@ Vue.mixin({
       // numbers only [0-9]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
-      if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
+      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40))) {
         e.preventDefault()
       } else {
         return true

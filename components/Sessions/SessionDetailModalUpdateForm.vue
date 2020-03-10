@@ -54,7 +54,7 @@
             :limit="8"
             @blur="CheckEmptyField(form.total_hours,'total_hours')"
           />-->
-          <div class="flex flex-col py-2 mb-3 md:mb-6">
+          <!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
             <div class="relative flex flex-row flex-no-wrap justify-between">
               <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
             </div>
@@ -76,6 +76,58 @@
                 >
                   {{ formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ") }}
                 </div>
+              </div>
+            </div>
+          </div> -->
+          <div class="flex flex-col py-2 mb-3 md:mb-6">
+            <div class="relative flex flex-row flex-no-wrap justify-between">
+              <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
+            </div>
+            <div class="flex flex-row flex-wrap justify-start mt-1">
+              <div class="flex items-end">
+                <div class="flex flex-col">
+                  <input
+                    v-model="form.hours"
+                    type="number"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+                    style="text-align:right;'"
+                    min="1"
+                    maxlength="8"
+                    @blur="CheckEmptyField(form.hours,'hours')"
+                    @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                  >
+                  <div
+                    v-if="formError.find(item => item.field === 'hours')"
+                    class="text-red-500 p-1 text-xs"
+                  >
+                    {{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}
+                  </div>
+                </div>
+                <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+              </div>
+              <div class="flex items-end">
+                <div class="flex flex-col">
+                  <input
+                    v-model="form.minutes"
+                    type="number"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+                    style="text-align:right;'"
+                    max="60"
+                    min="1"
+                    maxlength="2"
+                    @blur="CheckEmptyField(form.minutes,'minutes')"
+                    @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                  >
+                  <div
+                    v-if="formError.find(item => item.field === 'minutes')"
+                    class="text-red-500 p-1 text-xs"
+                  >
+                    {{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}
+                  </div>
+                </div>
+                <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
               </div>
             </div>
           </div>
@@ -646,6 +698,8 @@ export default {
         session_structure_information: "",
         extra_information: "",
         rate: "",
+        hours: "",
+        minutes: '',
         total_hours: "",
         locum_detail_rate_type_id: 1,
         ir35: false,
@@ -958,10 +1012,11 @@ export default {
     }
   },
   methods: {
-    handleKeyDownEventLimit (e, formField, limit) {
-      if (this.form[formField].length >= limit && e.key !== "Backspace") {
-        e.preventDefault()
-      }
+    handleKeyDownEvent (e, formField, limit) {
+        let acceptedKeys = ["Backspace", "Tab", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]
+        if (this.form[formField].length >= limit && !acceptedKeys.includes(e.key)) {
+          e.preventDefault()
+        }
     },
     goToProfile () {
       window.open("/profile", "_blank")
@@ -1092,6 +1147,8 @@ export default {
       ) {
         notRequired.push("favorite_only_until")
       }
+
+      this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
 
       this.validateNumber(this.form.rate, "rate")
       this.validateNumber(this.form.total_hours, "total_hours")
