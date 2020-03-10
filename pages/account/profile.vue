@@ -336,23 +336,25 @@
             />
           </template>
 
-          <AppInput
-            v-model="form.claim_nhs"
-            :type="'single-checkbox'"
-            :name="'claim_nhs'"
-            :label="'Are you willing to claim NHS Pension contributions?'"
-          />
-
-          <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+          <template v-if="professionCategoryId === 1">
             <AppInput
-              v-model="form.nhs_number"
-              :type="'text'"
-              :name="'nhs_number'"
-              :label="'NHS number'"
-              :error="formError.find(item => item.field === 'nhs_number')"
-              required
-              @keypress="inputNumberOnly($event)"
+              v-model="form.claim_nhs"
+              :type="'single-checkbox'"
+              :name="'claim_nhs'"
+              :label="'Are you willing to claim NHS Pension contributions?'"
             />
+
+            <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+              <AppInput
+                v-model="form.nhs_number"
+                :type="'text'"
+                :name="'nhs_number'"
+                :label="'NHS number'"
+                :error="formError.find(item => item.field === 'nhs_number')"
+                required
+                @keypress="inputNumberOnly($event)"
+              />
+            </template>
           </template>
 
           <AppPostCode
@@ -745,6 +747,10 @@ export default {
         notRequired.push("company_registration_number");
       } else if (this.form.employment_type === "Limited Company") {
         notRequired.push("utr_number");
+      }
+
+      if (this.professionCategoryId === 2) {
+        this.form.claim_nhs = false;
       }
 
       if (["false", false].includes(this.form.claim_nhs)) {

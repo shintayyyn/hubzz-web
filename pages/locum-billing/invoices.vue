@@ -5,51 +5,39 @@
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('locum-billing-invoices') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        To be invoiced
-      </nuxt-link>
+      >To be invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        Disputed Invoices
-      </nuxt-link>
+      >Disputed Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        Invoiced
-      </nuxt-link>
+      >Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        Approved Invoices
-      </nuxt-link>
+      >Approved Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'solo-form' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        Solo Forms
-      </nuxt-link>
+      >Solo Forms</nuxt-link>
       <nuxt-link
+        v-if="hasFormA"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        NHS Pensions Form A
-      </nuxt-link>
+      >NHS Pensions Form A</nuxt-link>
       <nuxt-link
+        v-if="hasFormB"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        NHS Pensions Form B
-      </nuxt-link>
+      >NHS Pensions Form B</nuxt-link>
     </div>
     <div
       v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
@@ -58,9 +46,7 @@
       <nuxt-link
         :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
-      >
-        Generate NHS Form B
-      </nuxt-link>
+      >Generate NHS Form B</nuxt-link>
     </div>
 
     <transition name="fade" mode="out-in">
@@ -136,9 +122,7 @@
                   v-if="!slotProps.item.locum_invoice_id"
                   class="my-1 p-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
-                >
-                  Generate Invoice
-                </div>
+                >Generate Invoice</div>
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
                   class="flex justify-between my-1"
@@ -146,49 +130,35 @@
                   <div
                     class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
-                  >
-                    Edit
-                  </div>
+                  >Edit</div>
                   <button
                     class="mx-1 p-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-                  >
-                    Delete
-                  </button>
+                  >Delete</button>
                 </div>
                 <div
                   v-if="['approved'].includes($route.query.status)"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                >
-                  View
-                </div>
+                >View</div>
                 <div
                   v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.nhs_claimable && slotProps.item.locum_form_a_id"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
-                >
-                  View Form A
-                </div>
+                >View Form A</div>
                 <div
                   v-if="$route.query.status && $route.query.status === 'solo-form' && slotProps.item.ooh && slotProps.item.locum_solo_form_id"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
-                >
-                  View Solo Form
-                </div>
+                >View Solo Form</div>
               </div>
             </template>
           </AppTable>
           <div
             v-if="!job_parts.length && !isFiltered"
             class="flex justify-center"
-          >
-            {{ noJobPartsToDisplay }}
-          </div>
-          <div v-if="!job_parts.length && isFiltered" class="flex justify-center py-4">
-            No Jobs Found
-          </div>
+          >{{ noJobPartsToDisplay }}</div>
+          <div v-if="!job_parts.length && isFiltered" class="flex justify-center py-4">No Jobs Found</div>
         </template>
 
         <template v-if="($route.query.status && $route.query.status === 'pension-form-b')">
@@ -210,18 +180,14 @@
                 <div
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.id, 'form-b')"
-                >
-                  View Form B
-                </div>
+                >View Form B</div>
               </div>
             </template>
           </AppTable>
           <div
             v-if="locum_form_bs.length === 0"
             class="flex justify-center"
-          >
-            {{ noJobPartsToDisplay }}
-          </div>
+          >{{ noJobPartsToDisplay }}</div>
         </template>
       </div>
     </transition>
@@ -260,11 +226,11 @@
 </template>
 
 <script>
-import AppButton from "@/components/Base/AppButton"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppTable from "@/components/Base/AppTable"
-import AppInput from "@/components/Base/AppInput"
-import AppLoading from "@/components/Base/AppLoading"
+import AppButton from "@/components/Base/AppButton";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppTable from "@/components/Base/AppTable";
+import AppInput from "@/components/Base/AppInput";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   transition: {
     name: "fade",
@@ -277,8 +243,11 @@ export default {
     AppConfirmationModal,
     AppTable
   },
-  data () {
+  data() {
     return {
+      hasFormA: false,
+      hasFormB: false,
+
       initialLoading: false,
       loading: false,
       filterModal: false,
@@ -319,14 +288,14 @@ export default {
       delete_invoice_modal: false,
       generate_form_a_modal: false,
       invoice_id: null
-    }
+    };
   },
   computed: {
-    columns () {
-      let columns = []
+    columns() {
+      let columns = [];
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
-        : "to-be-invoiced"
+        : "to-be-invoiced";
 
       columns.push(
         {
@@ -364,126 +333,156 @@ export default {
           dataIndex: "nhs_claimable",
           class: "text-center"
         }
-      )
+      );
       if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",
           dataIndex: "paid",
           class: "text-center"
-        })
+        });
       }
       columns.push({
         name: "Actions",
         dataIndex: "actions",
         class: "text-center"
-      })
-      return columns
+      });
+      return columns;
     },
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
-    noJobPartsToDisplay () {
-      let str = ""
-      let queryStatus = this.$route.query.status
+    noJobPartsToDisplay() {
+      let str = "";
+      let queryStatus = this.$route.query.status;
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          str = "You do not have any completed job parts."
-          break
+          str = "You do not have any completed job parts.";
+          break;
         case "disputed":
-          str = "You do not have any disputed invoices."
-          break
+          str = "You do not have any disputed invoices.";
+          break;
         case "issued":
-          str = "You do not have any invoiced job parts."
-          break
+          str = "You do not have any invoiced job parts.";
+          break;
         case "approved":
-          str = "You do not have any approved job parts."
-          break
+          str = "You do not have any approved job parts.";
+          break;
         case "solo-form":
-          str = "You do not have any solo forms."
-          break
+          str = "You do not have any solo forms.";
+          break;
         case "pension-form-a":
-          str = "You do not have any nhs form a."
-          break
+          str = "You do not have any nhs form a.";
+          break;
         case "pension-form-b":
-          str = "You do not have any nhs form b."
-          break
+          str = "You do not have any nhs form b.";
+          break;
         default:
-          str = "You do not have any completed job parts."
+          str = "You do not have any completed job parts.";
       }
-      return str
+      return str;
     }
   },
   watch: {
-    async "$route.query" (newValue, oldValue) {
-      let newStatus = newValue.status
-      let oldStatus = oldValue.status
+    async "$route.query"(newValue, oldValue) {
+      let newStatus = newValue.status;
+      let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.current_page = 1
-        this.filterModal = false
-        this.showRefresh = false
-        this.total = 0
-        this.job_parts = []
-        this.clearFilters()
-        this.isFiltered = false
-        this.initialLoading = true
-        await this.getJobPartsPromiseAll()
-        this.initialLoading = false
+        this.current_page = 1;
+        this.filterModal = false;
+        this.showRefresh = false;
+        this.total = 0;
+        this.job_parts = [];
+        this.clearFilters();
+        this.isFiltered = false;
+        this.initialLoading = true;
+        await this.getJobPartsPromiseAll();
+        this.initialLoading = false;
       }
     }
   },
-  async asyncData ({ app, query }) {
+  async asyncData({ app, query }) {
     try {
-      let url = `/api/v1/locum/job-parts`
-      let invoice_status = []
-      let locum_status = []
-      let locum_invoiceable
-      let nhs_claimable
-      let ooh
-      let queryStatus = query.status
+      let [hasFormA, hasFormB] = await Promise.all([
+        app.$axios
+          .$get(`/api/v1/locum/job-parts/count`, {
+            params: {
+              invoice_status: ["Invoiced"],
+              locum_status: ["Approved"],
+              locum_invoiceable: true,
+              nhs_claimable: true,
+              ooh: false,
+              viewing_locum_user_id: app.$auth.user.id,
+              job_type: "Platform",
+              type: "Platform"
+            }
+          })
+          .then(res => {
+            return res.data.count > 0 ? true : false;
+          }),
+        app.$axios
+          .$get(`/api/v1/locum/locum-invoices-form-b/count`, {
+            params: {
+              viewing_locum_user_id: app.$auth.user.id,
+              job_type: "Platform",
+              type: "Platform"
+            }
+          })
+          .then(res => {
+            return res.data.count > 0 ? true : false;
+          })
+      ]);
+
+      let url = `/api/v1/locum/job-parts`;
+      let invoice_status = [];
+      let locum_status = [];
+      let locum_invoiceable;
+      let nhs_claimable;
+      let ooh;
+      let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "disputed":
-          invoice_status.push("Disputed")
-          locum_invoiceable = true
-          break
+          invoice_status.push("Disputed");
+          locum_invoiceable = true;
+          break;
         case "issued":
-          invoice_status.push("Invoiced")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "approved":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          break;
         case "solo-form":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          ooh = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
         case "pension-form-a":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          nhs_claimable = true
-          ooh = false
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
+          ooh = false;
+          break;
         case "pension-form-b":
-          url = `/api/v1/locum/locum-invoices-form-b`
-          break
+          url = `/api/v1/locum/locum-invoices-form-b`;
+          break;
         default:
-          invoice_status.push("To Be Invoice")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
+          invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
 
-      let locum_form_bs = []
+      let locum_form_bs = [];
       let [total, job_parts] = await Promise.all([
         app.$axios
           .$get(`${url}/count`, {
@@ -499,8 +498,8 @@ export default {
             }
           })
           .then(res => {
-            let total = res.data.count
-            return total
+            let total = res.data.count;
+            return total;
           }),
         app.$axios
           .$get(`${url}`, {
@@ -519,12 +518,12 @@ export default {
           })
           .then(res => {
             if (res.data && res.data.job_parts) {
-              return res.data.job_parts
+              return res.data.job_parts;
             } else if (res.data && res.data.locum_form_bs) {
-              return res.data.locum_form_bs
+              return res.data.locum_form_bs;
             }
           })
-      ])
+      ]);
 
       if (url === `/api/v1/locum/job-parts`) {
         job_parts = job_parts.map(jobPart => {
@@ -533,7 +532,7 @@ export default {
             : jobPart.job.locum_detail_rate_type.name === "Per Hour"
             ? jobPart.job.rate * jobPart.final_hours
             : (jobPart.job.rate / jobPart.job.total_hours) *
-              jobPart.final_hours
+              jobPart.final_hours;
 
           total =
             jobPart.locum_invoice_item &&
@@ -542,7 +541,7 @@ export default {
               ? total -
                 jobPart.locum_invoice_item.locum_invoice.ni_amount -
                 jobPart.locum_invoice_item.locum_invoice.paye_amount
-              : total
+              : total;
           return {
             ...jobPart,
             practice_name:
@@ -564,8 +563,8 @@ export default {
             nhs_claimable: jobPart.locum_invoice_id
               ? jobPart.locum_invoices_nhs_claimable
               : jobPart.locum_details_nhs_claimable
-          }
-        })
+          };
+        });
       } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
         job_parts.forEach(item => {
           locum_form_bs.push({
@@ -574,47 +573,49 @@ export default {
               .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
               .format("DD-MM-YYYY"),
             practice: item.forms[0].practice_name
-          })
-        })
+          });
+        });
       }
 
       return {
+        hasFormA,
+        hasFormB,
         total,
         job_parts,
         locum_form_bs
-      }
+      };
     } catch (err) {
-      console.log("err", err.response || err)
+      console.log("err", err.response || err);
     }
   },
-  mounted () {
+  mounted() {
     this.$socket.on(
       "Locum Notification Locum Invoice Created",
       this.getLocumInvoiceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Locum Invoice Paid",
       this.getLocumInvoiceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
-    )
+    );
   },
-  destroyed () {
-    this.removeListener()
+  destroyed() {
+    this.removeListener();
   },
   methods: {
-    viewAsPdf (formId, type) {
+    viewAsPdf(formId, type) {
       let url =
         type === "form-a"
           ? `/api/v1/locum-form-a`
           : type === "solo-form"
           ? `/api/v1/locum-solo-form`
-          : `/api/v1/locum-form-b`
-      window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
+          : `/api/v1/locum-form-b`;
+      window.open(`${process.env.API_URL}${url}/${formId}/pdf`);
     },
-    generateFormA () {
+    generateFormA() {
       this.$axios
         .$post(`/api/v1/locum/locum-invoices-form-a`, {
           locum_invoice_id: this.invoice_id
@@ -622,84 +623,84 @@ export default {
         .then(res => {
           let index = this.job_parts.findIndex(
             item => item.locum_invoice_id === this.invoice_id
-          )
+          );
           if (index >= 0) {
-            let jobPart = this.job_parts[index]
-            jobPart.locum_form_a_id = res.data.locum_invoice_form_a.id
-            this.job_parts.splice(index, 1, jobPart)
+            let jobPart = this.job_parts[index];
+            jobPart.locum_form_a_id = res.data.locum_invoice_form_a.id;
+            this.job_parts.splice(index, 1, jobPart);
           }
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
-          })
+          });
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
           if (err.response && err.response.data && err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${err.response.data.message}`]
-            })
+            });
           }
-          throw err
+          throw err;
         })
         .finally(() => {
-          this.generate_form_a_modal = false
-        })
+          this.generate_form_a_modal = false;
+        });
     },
-    getJobPartsPromiseAll () {
-      let url = `/api/v1/locum/job-parts`
-      let invoice_status = []
-      let locum_status = []
-      let locum_invoiceable = null
-      let nhs_claimable = null
-      let ooh = null
-      let queryStatus = this.$route.query.status
+    getJobPartsPromiseAll() {
+      let url = `/api/v1/locum/job-parts`;
+      let invoice_status = [];
+      let locum_status = [];
+      let locum_invoiceable = null;
+      let nhs_claimable = null;
+      let ooh = null;
+      let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "disputed":
-          invoice_status.push("Disputed")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "issued":
-          invoice_status.push("Invoiced")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "approved":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          break;
         case "solo-form":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          ooh = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
         case "pension-form-a":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          nhs_claimable = true
-          ooh = false
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
+          ooh = false;
+          break;
         case "pension-form-b":
-          url = `/api/v1/locum/locum-invoices-form-b`
-          break
+          url = `/api/v1/locum/locum-invoices-form-b`;
+          break;
         default:
-          invoice_status.push("To Be Invoice")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
+          invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
       return Promise.all([
         this.$axios.$get(`${url}/count`, {
@@ -732,9 +733,9 @@ export default {
         })
       ])
         .then(([responseTotal, response]) => {
-          this.total = responseTotal.data.count
+          this.total = responseTotal.data.count;
           if (response.data && response.data.job_parts) {
-            let job_parts = response.data.job_parts
+            let job_parts = response.data.job_parts;
 
             this.job_parts = job_parts.map(jobPart => {
               let total = jobPart.locum_invoice_id
@@ -742,7 +743,7 @@ export default {
                 : jobPart.job.locum_detail_rate_type.name === "Per Hour"
                 ? jobPart.job.rate * jobPart.final_hours
                 : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours
+                  jobPart.final_hours;
 
               total =
                 jobPart.locum_invoice_item &&
@@ -751,7 +752,7 @@ export default {
                   ? total -
                     jobPart.locum_invoice_item.locum_invoice.ni_amount -
                     jobPart.locum_invoice_item.locum_invoice.paye_amount
-                  : total
+                  : total;
               return {
                 ...jobPart,
                 practice_name:
@@ -773,8 +774,8 @@ export default {
                 nhs_claimable: jobPart.locum_invoice_id
                   ? jobPart.locum_invoices_nhs_claimable
                   : jobPart.locum_details_nhs_claimable
-              }
-            })
+              };
+            });
           } else if (response.data && response.data.locum_form_bs) {
             this.locum_form_bs = response.data.locum_form_bs.map(item => {
               return {
@@ -784,78 +785,78 @@ export default {
                   "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
                 ).format("DD-MM-YYYY"),
                 practice: item.forms[0].practice_name
-              }
-            })
+              };
+            });
           }
         })
         .catch(([errTotal, err]) => {
           console.log(
             "err",
             errTotal.response || errTotal || err.response || err
-          )
-          throw err
-        })
+          );
+          throw err;
+        });
     },
-    async filterJobParts () {
-      this.current_page = 1
-      this.offset = 0
-      this.limit = 5
-      this.initialLoading = true
-      this.isFiltered = true
-      await this.getJobPartsPromiseAll()
-      this.initialLoading = false
-      this.filterModal = false
+    async filterJobParts() {
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = 5;
+      this.initialLoading = true;
+      this.isFiltered = true;
+      await this.getJobPartsPromiseAll();
+      this.initialLoading = false;
+      this.filterModal = false;
     },
-    getJobParts () {
-      let url = `/api/v1/locum/job-parts`
-      let invoice_status = []
-      let locum_status = []
-      let locum_invoiceable
-      let nhs_claimable
-      let ooh
-      let queryStatus = this.$route.query.status
+    getJobParts() {
+      let url = `/api/v1/locum/job-parts`;
+      let invoice_status = [];
+      let locum_status = [];
+      let locum_invoiceable;
+      let nhs_claimable;
+      let ooh;
+      let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "disputed":
-          invoice_status.push("Disputed")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "issued":
-          invoice_status.push("Invoiced")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
         case "approved":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          break;
         case "solo-form":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          ooh = true
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
         case "pension-form-a":
-          invoice_status.push("Invoiced")
-          locum_status.push("Approved")
-          locum_invoiceable = true
-          nhs_claimable = true
-          ooh = false
-          break
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
+          ooh = false;
+          break;
         case "pension-form-b":
-          url = `/api/v1/locum/locum-invoices-form-b`
-          break
+          url = `/api/v1/locum/locum-invoices-form-b`;
+          break;
         default:
-          invoice_status.push("To Be Invoice")
-          locum_status = ["Completed", "Declined", "Cancelled"]
-          locum_invoiceable = true
+          invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
       return this.$axios
         .$get(`${url}`, {
@@ -876,7 +877,7 @@ export default {
         })
         .then(res => {
           if (res.data && res.data.job_parts) {
-            let job_parts = res.data.job_parts
+            let job_parts = res.data.job_parts;
 
             this.job_parts = job_parts.map(jobPart => {
               let total = jobPart.locum_invoice_id
@@ -884,7 +885,7 @@ export default {
                 : jobPart.job.locum_detail_rate_type.name === "Per Hour"
                 ? jobPart.job.rate * jobPart.final_hours
                 : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours
+                  jobPart.final_hours;
 
               total =
                 jobPart.locum_invoice_item &&
@@ -893,7 +894,7 @@ export default {
                   ? total -
                     jobPart.locum_invoice_item.locum_invoice.ni_amount -
                     jobPart.locum_invoice_item.locum_invoice.paye_amount
-                  : total
+                  : total;
               return {
                 ...jobPart,
                 practice_name:
@@ -915,8 +916,8 @@ export default {
                 nhs_claimable: jobPart.locum_invoice_id
                   ? jobPart.locum_invoices_nhs_claimable
                   : jobPart.locum_details_nhs_claimable
-              }
-            })
+              };
+            });
           } else if (res.data && res.data.locum_form_bs) {
             this.locum_form_bs = res.data.locum_form_bs.map(item => {
               return {
@@ -926,128 +927,128 @@ export default {
                   "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
                 ).format("DD-MM-YYYY"),
                 practice: item.forms[0].practice_name
-              }
-            })
+              };
+            });
           }
         })
         .catch(err => {
-          console.log("err", err.response || err)
-        })
+          console.log("err", err.response || err);
+        });
     },
-    async refreshInvoices () {
-      this.loading = true
-      this.current_page = 1
-      this.offset = 0
-      this.limit = 5
-      await this.getJobPartsPromiseAll()
-      this.loading = false
-      this.showRefresh = false
+    async refreshInvoices() {
+      this.loading = true;
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = 5;
+      await this.getJobPartsPromiseAll();
+      this.loading = false;
+      this.showRefresh = false;
     },
-    getLocumInvoiceRealTime ({ id }) {
+    getLocumInvoiceRealTime({ id }) {
       if (!id) {
-        return
+        return;
       }
-      this.showRefresh = true
+      this.showRefresh = true;
     },
-    removeListener () {
+    removeListener() {
       this.$socket.removeListener(
         "Locum Notification Locum Invoice Create",
         this.getLocumInvoiceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Locum Invoice Paid",
         this.getLocumInvoiceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Locum Invoice Updated",
         this.getLocumInvoiceRealTime
-      )
+      );
     },
-    select_invoice (id, type) {
-      this.invoice_id = id
+    select_invoice(id, type) {
+      this.invoice_id = id;
       if (type === "deleteInvoice") {
-        this.delete_invoice_modal = true
+        this.delete_invoice_modal = true;
       } else if (type === "generateFormA") {
-        this.generate_form_a_modal = true
+        this.generate_form_a_modal = true;
       }
     },
-    deleteInvoice () {
+    deleteInvoice() {
       this.$axios
         .$delete(`/api/v1/locum/locum-invoices/${this.invoice_id}`)
         .then(res => {
           let job_part = this.job_parts.find(item => {
-            return item.locum_invoice_id === this.invoice_id
-          })
+            return item.locum_invoice_id === this.invoice_id;
+          });
           let index = this.job_parts.findIndex(item => {
-            return item.locum_invoice_id === this.invoice_id
-          })
-          let queryStatus = this.$route.query.status
+            return item.locum_invoice_id === this.invoice_id;
+          });
+          let queryStatus = this.$route.query.status;
 
           if (
             !queryStatus ||
             (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")
           ) {
-            job_part.locum_invoice_id = null
+            job_part.locum_invoice_id = null;
           } else if (
             queryStatus &&
             ["disputed", "issued"].includes(queryStatus.toLowerCase())
           ) {
-            this.job_parts.splice(index, 1)
+            this.job_parts.splice(index, 1);
           }
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`]
-          })
+          });
         })
         .catch(err => {
-          console.log("err", err.response || err)
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${err.response.data.message}`]
-            })
+            });
           }
-          throw err
+          throw err;
         })
         .finally(() => {
-          this.delete_invoice_modal = false
-        })
+          this.delete_invoice_modal = false;
+        });
     },
-    createFormB (invoice) {
-      this.locum_form_bs.push(invoice)
+    createFormB(invoice) {
+      this.locum_form_bs.push(invoice);
     },
-    createInvoice (invoice) {
-      let queryStatus = this.$route.query.status
+    createInvoice(invoice) {
+      let queryStatus = this.$route.query.status;
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
-      )
-      job_part.locum_invoice_id = invoice.id
-      let index = this.job_parts.findIndex(item => item.id === job_part.id)
+      );
+      job_part.locum_invoice_id = invoice.id;
+      let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
         if (
           queryStatus &&
           queryStatus.toLowerCase() === "to-be-invoiced" &&
           invoice.status === "Draft"
         ) {
-          this.job_parts.splice(index, 1, job_part)
+          this.job_parts.splice(index, 1, job_part);
         } else if (invoice.status !== "Draft") {
-          this.job_parts.splice(index, 1)
+          this.job_parts.splice(index, 1);
         }
       }
     },
-    updateInvoice (invoice) {
-      let queryStatus = this.$route.query.status
+    updateInvoice(invoice) {
+      let queryStatus = this.$route.query.status;
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
-      )
-      job_part.locum_invoice_id = invoice.id
+      );
+      job_part.locum_invoice_id = invoice.id;
 
-      let index = this.job_parts.findIndex(item => item.id === job_part.id)
+      let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
         if (
           ((!queryStatus ||
@@ -1063,52 +1064,52 @@ export default {
             queryStatus.toLowerCase() === "approved" &&
             invoice.status === "Approved")
         ) {
-          this.job_parts.splice(index, 1, job_part)
+          this.job_parts.splice(index, 1, job_part);
         } else {
-          this.job_parts.splice(index, 1)
+          this.job_parts.splice(index, 1);
         }
       }
     },
-    async sorted (order_by) {
+    async sorted(order_by) {
       let orderBy = order_by.map(item => {
-        let order = item.split(":")[1]
-        let sorting = item.split(":")[0]
+        let order = item.split(":")[1];
+        let sorting = item.split(":")[0];
         switch (sorting) {
           default:
-            sorting
+            sorting;
         }
-        return `${sorting}:${order}`
-      })
-      this.current_page = 1
-      this.offset = 0
-      this.order_by = orderBy
-      this.loading = true
-      await this.getJobParts()
-      this.loading = false
+        return `${sorting}:${order}`;
+      });
+      this.current_page = 1;
+      this.offset = 0;
+      this.order_by = orderBy;
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
     },
-    async pagechanged (page) {
-      this.current_page = page
-      this.offset = this.limit * (page - 1)
-      this.loading = true
-      await this.getJobParts()
-      this.loading = false
+    async pagechanged(page) {
+      this.current_page = page;
+      this.offset = this.limit * (page - 1);
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
     },
-    async limitchanged (limit) {
-      this.current_page = 1
-      this.offset = 0
-      this.limit = limit
-      this.loading = true
-      await this.getJobParts()
-      this.loading = false
+    async limitchanged(limit) {
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = limit;
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
     },
-    clearFilters () {
-      this.offset = 0
-      this.limit = 5
-      this.order_by = []
-      this.job_ir35 = null
+    clearFilters() {
+      this.offset = 0;
+      this.limit = 5;
+      this.order_by = [];
+      this.job_ir35 = null;
     }
   }
-}
+};
 </script>
 
 <style scoped>
