@@ -201,6 +201,7 @@
                       :label="'Salary Amount'"
                       :min="0"
                       :in-style="'text-align:right'"
+											:limit="8"
                     />
                     <AppInput
                       v-model="form.salary_description_2"
@@ -211,6 +212,7 @@
                       :label="'Salary Description'"
                       :error="formError.find(item => item.field === 'salary_description_2')"
                       :items="salary_description_type_2"
+											:disabled="!form.salary_amount"
                       @blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
                     />
                   </div>

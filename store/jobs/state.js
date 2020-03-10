@@ -104,6 +104,9 @@ export default () => ({
 
     locum_withdrawn_jobs: [],
     locum_withdrawn_jobs_count: 0,
+    // PERMANENT
+    locum_permanent_jobs: [],
+    locum_permanent_jobs_count: 0,
     // UNAVAILABILITIES
     locum_unavailabilities: [],
     // locum_unavailabilities_count: 0,

@@ -66,11 +66,13 @@
                   :checked="value"
                   :readonly="disabled"
                   :min="type === 'number' && 1"
+                  :maxlength="limit"
                   step="any"
                   @input="$emit('input', $event.target.value)"
                   @keypress.enter="$emit('submit')"
                   @blur="$emit('blur')"
-                  @keypress="type === 'number' ? isNumber($event) : $emit('keypress'), handleKeyDownEvent($event, name)"
+                  @keypress="type === 'number' ? isNumber($event) : $emit('keypress')"
+                  @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
                 >
                 <!-- @keypress="type === 'number' ? isNumber($event) : $emit('keypress')" -->
                 <transition name="drop-down">
@@ -182,6 +184,7 @@
                   :limit="limit"
                   @input="$emit('input', $event.target.value)"
                   @blur="$emit('blur', $event)"
+                  @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
                 />
                 <div class="flex items-center justify-between">
                   <transition name="drop-down">
@@ -381,15 +384,6 @@ export default {
     }
   },
   methods: {
-    handleKeyDownEvent (e) {
-      if (
-        this.limit &&
-        this.value.length >= this.limit &&
-        e.key !== "Backspace"
-      ) {
-        e.preventDefault()
-      }
-    },
     // for multi checkbox
     inputMultiCheck (e) {
       if (e.target.checked) {
@@ -404,6 +398,22 @@ export default {
         return "text"
       } else {
         return "password"
+      }
+    },
+    limitInput(e, field) {
+       let acceptedKeys = [
+        "Backspace",
+        "Tab",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight"
+      ];
+      if (
+        field.length >= this.limit &&
+        !acceptedKeys.includes(e.key)
+      ) {
+        e.preventDefault();
       }
     }
   }
