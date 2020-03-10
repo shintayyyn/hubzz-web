@@ -19,11 +19,11 @@
 			/>
 			<p
 				class="flex items-center text-xs absolute bottom-0 right-0 mr-4"
-				:class="message.length > 500 ? 'text-red-600 font-bold' : 'text-gray-600'"
+				:class="message.length > textLimit ? 'text-red-600 font-bold' : 'text-gray-600'"
 			>
 				<transition name="fade">
 					<svgicon
-						v-if="message.length > 500"
+						v-if="message.length > textLimit"
 						name="exclamation-mark"
 						width="12"
 						height="12"
@@ -31,12 +31,12 @@
 						color="red"
 					/>
 				</transition>
-				{{ trimmedMessage(message).length }}/500
+				{{ trimmedMessage(message).length }}/{{ textLimit }}
 			</p>
 		</div>
 		<button
-			:disabled="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > 500)"
-			:class="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > 500) ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-500 hover:bg-blue-600 '"
+			:disabled="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)"
+			:class="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit) ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-500 hover:bg-blue-600 '"
 			class="px-8 text-white focus:outline-none"
 			@click="send"
 		>Send</button>
@@ -52,7 +52,8 @@ export default {
 	data() {
 		return {
 			message: "",
-			hasDeactiveUser: false
+			hasDeactiveUser: false,
+			textLimit: 250
 		};
 	},
 	computed: {
@@ -100,21 +101,23 @@ export default {
 			return message.replace(/^\s*/, "").replace(/\s*$/, "");
 		},
 		send(e) {
-			let user_id = null;
-			if (
-				!this.$route.name.includes("messages") ||
-				!this.$route.name.includes("message")
-			) {
-				user_id = this.user.id;
-			}
-			if (this.trimmedMessage(this.message)) {
-				this.$store.dispatch("chat/sendMessage", {
-					user_id: user_id,
-					message: this.message,
-					type: this.$route.name
-				});
-				this.message = "";
-				e.preventDefault();
+			if (this.trimmedMessage(this.message).length <= this.textLimit) {
+				let user_id = null;
+				if (
+					!this.$route.name.includes("messages") ||
+					!this.$route.name.includes("message")
+				) {
+					user_id = this.user.id;
+				}
+				if (this.trimmedMessage(this.message)) {
+					this.$store.dispatch("chat/sendMessage", {
+						user_id: user_id,
+						message: this.message,
+						type: this.$route.name
+					});
+					this.message = "";
+					e.preventDefault();
+				}
 			}
 		}
 	}
