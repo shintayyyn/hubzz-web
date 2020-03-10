@@ -175,13 +175,7 @@ export default {
 					dataIndex: "",
 					class: "text-center"
         },
-        // {
-				// 	name: "Closing tag",
-				// 	slot: true,
-				// 	slotName: "closing_tag",
-				// 	dataIndex: "",
-				// 	class: "text-center"
-        // },
+
 			],
 
 			locumColumns: [
@@ -242,13 +236,6 @@ export default {
 					dataIndex: "",
 					class: "text-center"
         },
-        // {
-				// 	name: "Closing tag",
-				// 	slot: true,
-				// 	slotName: "closing_tag",
-				// 	dataIndex: "",
-				// 	class: "text-center"
-        // },
 			],
 
 			permanent_job_count: 0,
@@ -271,6 +258,30 @@ export default {
       this.params = {}
       if (!newStatus) {
         newStatus = "Available"
+      }
+      if(newStatus === "Closed"){
+        console.log('hatodg')
+        this.locumColumns.push(
+          {
+            name: "Closing tag",
+            slot: true,
+            slotName: "closing_tag",
+            dataIndex: "",
+            class: "text-center"
+          },
+        )
+        this.columns.push(
+          {
+            name: "Closing tag",
+            slot: true,
+            slotName: "closing_tag",
+            dataIndex: "",
+            class: "text-center"
+          },
+        )
+      } else {
+        this.locumColumns.pop()
+        this.columns.pop()
       }
 			if (this.$auth.user.domain === "Locum") {
         console.log('new status', newStatus)
@@ -302,6 +313,30 @@ export default {
 			}
 		}
 	},
+  created () {
+    if(this.$route.query.status){
+      console.log('hatodg')
+      this.locumColumns.push(
+        {
+					name: "Closing tag",
+					slot: true,
+					slotName: "closing_tag",
+					dataIndex: "",
+					class: "text-center"
+        },
+      )
+      this.columns.push(
+        {
+					name: "Closing tag",
+					slot: true,
+					slotName: "closing_tag",
+					dataIndex: "",
+					class: "text-center"
+        },
+      )
+
+    }
+  },  
 
 	async asyncData ({ app, route, }) {
 		try {
