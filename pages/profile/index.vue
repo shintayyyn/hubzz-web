@@ -553,7 +553,6 @@ export default {
       const formData = new FormData();
       formData.append("file", file);
       this.input_file_loading = true;
-      await this.save();
       this.$axios
         .$put(`/api/v1/practice/me/practice-variation-term`, formData)
         .then(res => {
