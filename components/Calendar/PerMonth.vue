@@ -851,7 +851,18 @@ export default {
             })
             .then(res => {
               return res.data.job_parts;
-            })
+            }),
+            // this.$axios
+            // .$get("/api/v1/locum/permanent-job-applications", {
+            //   params: {
+            //     calendar_date_start: `${this.startOfMonth}:gte`,
+            //     calendar_date_end: `${this.endOfMonth}:lte`,
+            //     limit: 100000000
+            //   }
+            // })
+            // .then(res => {
+            //   return res.data.permanent_job_applications;
+            // })
         ])
           .then(([ongoingJobParts, appliedJobs, privateJobParts]) => {
             this.$store.commit(

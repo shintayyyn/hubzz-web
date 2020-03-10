@@ -1229,6 +1229,24 @@ export default {
         }
         return []
     },
+    getLocumWithdrawnJobs(state) {
+        let jobs = []
+        if (state.locum_permanent_jobs) {
+            state.locum_permanent_jobs.forEach(job => {
+                let date_time_start = ''
+                let date_time_end = ''
+                date_time_start = job.invitation_schedule
+                date_time_end = job.invitation_schedule
+                jobs.push({
+                    ...job,
+                    date_time_start,
+                    date_time_end,
+                })
+            })
+            return jobs
+        }
+        return []
+    },
     // UNAVAILABILITIES
     getLocumUnavailabilities(state) {
         return state.locum_unavailabilities

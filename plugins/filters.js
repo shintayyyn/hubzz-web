@@ -46,4 +46,11 @@ Vue.filter('fileSize', function (fileSize, sizeType) {
   }
 })
 
+Vue.filter('minutes', function (min) {
+  return moment.duration(min, 'hours')._data.minutes ? moment.duration(min, 'hours')._data.minutes + ` minute${moment.duration(min, 'hours')._data.minutes > 1 ? 's' : ''}` : ''
+})
+
+Vue.filter('hours', function (min) {
+  return moment.duration(min, 'hours')._data.hours ? moment.duration(min, 'hours')._data.hours + ` hour${moment.duration(min, 'hours')._data.hours > 1 ? 's' : ''}` : ''
+})
 
