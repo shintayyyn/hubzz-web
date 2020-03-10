@@ -110,7 +110,7 @@ export default {
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status,
                 // === 'Declined' ? 'Withdrawn' : notif.status
-                status_tag: notif.job_terminated ? 'Terminated' : "",
+                status_tag: notif.status === 'Cancelled' && notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -675,7 +675,7 @@ export default {
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.locum_status,
                 // === 'Declined' ? 'Withdrawn' : notif.locum_status
-                status_tag: notif.job_terminated ? 'Terminated' : "",
+                status_tag: notif.locum_status === 'Cancelled' && notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,

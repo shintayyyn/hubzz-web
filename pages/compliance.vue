@@ -843,43 +843,15 @@ export default {
       this.$axios
         .$post(`/api/v1/locum/locum-detail-compliance-documents`, formData)
         .then(res => {
-          let key_compliances_index = this.keyCompliances.findIndex(
-            document =>
-              document.id ===
-              res.data.locum_detail_compliance_document.compliance_document.id
-          );
-
-          if (key_compliances_index >= 0) {
-            this.keyCompliances.splice(key_compliances_index, 1);
-            this.keyCompliances.push({
-              id:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .id,
-              name:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .name,
-              info: res.data.locum_detail_compliance_document
-            });
-            this.keyCompliances = this.keyCompliances.sort(
-              (a, b) => a.id - b.id
-            );
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Document uploaded!"]
-            });
-            this.loading = false;
-          }
-          this.activeLoading = this.activeLoading.filter(item => item !== id);
-
-          // let mandatory_index = this.mandatory.findIndex(
+          // let key_compliances_index = this.keyCompliances.findIndex(
           //   document =>
           //     document.id ===
           //     res.data.locum_detail_compliance_document.compliance_document.id
           // );
-          // if (mandatory_index >= 0) {
-          //   this.mandatory.splice(mandatory_index, 1);
-          //   this.mandatory.push({
+
+          // if (key_compliances_index >= 0) {
+          //   this.keyCompliances.splice(key_compliances_index, 1);
+          //   this.keyCompliances.push({
           //     id:
           //       res.data.locum_detail_compliance_document.compliance_document
           //         .id,
@@ -888,30 +860,9 @@ export default {
           //         .name,
           //     info: res.data.locum_detail_compliance_document
           //   });
-          //   this.mandatory = this.mandatory.sort((a, b) => a.id - b.id);
-          //   this.$store.commit("SET_NOTIFICATION", {
-          //     enabled: true,
-          //     status: "success",
-          //     text: ["Document uploaded!"]
-          //   });
-          //   this.loading = false;
-          // } else {
-          //   let optional_index = this.optional.findIndex(
-          //     document =>
-          //       document.id ===
-          //       res.data.locum_detail_compliance_document.compliance_document.id
+          //   this.keyCompliances = this.keyCompliances.sort(
+          //     (a, b) => a.id - b.id
           //   );
-          //   this.optional.splice(optional_index, 1);
-          //   this.optional.push({
-          //     id:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .id,
-          //     name:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .name,
-          //     info: res.data.locum_detail_compliance_document
-          //   });
-          //   this.optional = this.optional.sort((a, b) => a.id - b.id);
           //   this.$store.commit("SET_NOTIFICATION", {
           //     enabled: true,
           //     status: "success",
@@ -920,6 +871,55 @@ export default {
           //   this.loading = false;
           // }
           // this.activeLoading = this.activeLoading.filter(item => item !== id);
+
+          let mandatory_index = this.mandatory.findIndex(
+            document =>
+              document.id ===
+              res.data.locum_detail_compliance_document.compliance_document.id
+          );
+          if (mandatory_index >= 0) {
+            this.mandatory.splice(mandatory_index, 1);
+            this.mandatory.push({
+              id:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .id,
+              name:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .name,
+              info: res.data.locum_detail_compliance_document
+            });
+            this.mandatory = this.mandatory.sort((a, b) => a.id - b.id);
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Document uploaded!"]
+            });
+            this.loading = false;
+          } else {
+            let optional_index = this.optional.findIndex(
+              document =>
+                document.id ===
+                res.data.locum_detail_compliance_document.compliance_document.id
+            );
+            this.optional.splice(optional_index, 1);
+            this.optional.push({
+              id:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .id,
+              name:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .name,
+              info: res.data.locum_detail_compliance_document
+            });
+            this.optional = this.optional.sort((a, b) => a.id - b.id);
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Document uploaded!"]
+            });
+            this.loading = false;
+          }
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
           console.log("err", err.response || err);
@@ -977,44 +977,14 @@ export default {
       this.$axios
         .$put(`/api/v1/locum/locum-detail-compliance-documents/${id}`, formData)
         .then(res => {
-          let key_compliances_index = this.keyCompliances.findIndex(
-            document =>
-              document.id ===
-              res.data.locum_detail_compliance_document.compliance_document.id
-          );
-          if (key_compliances_index > 0) {
-            this.keyCompliances.splice(index, 1);
-            this.keyCompliances.push({
-              id:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .id,
-              name:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .name,
-              info: res.data.locum_detail_compliance_document
-            });
-            this.keyCompliances = this.keyCompliances.sort(
-              (a, b) => a.id - b.id
-            );
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Document uploaded!"]
-            });
-            this.loading = false;
-          }
-          this.activeLoading = this.activeLoading.filter(
-            item => item !== loadingId
-          );
-
-          // let inMandatory = this.mandatory.findIndex(
+          // let key_compliances_index = this.keyCompliances.findIndex(
           //   document =>
           //     document.id ===
           //     res.data.locum_detail_compliance_document.compliance_document.id
           // );
-          // if (inMandatory > 0) {
-          //   this.mandatory.splice(index, 1);
-          //   this.mandatory.push({
+          // if (key_compliances_index > 0) {
+          //   this.keyCompliances.splice(index, 1);
+          //   this.keyCompliances.push({
           //     id:
           //       res.data.locum_detail_compliance_document.compliance_document
           //         .id,
@@ -1023,25 +993,9 @@ export default {
           //         .name,
           //     info: res.data.locum_detail_compliance_document
           //   });
-          //   this.mandatory = this.mandatory.sort((a, b) => a.id - b.id);
-          //   this.$store.commit("SET_NOTIFICATION", {
-          //     enabled: true,
-          //     status: "success",
-          //     text: ["Document uploaded!"]
-          //   });
-          //   this.loading = false;
-          // } else {
-          //   this.optional.splice(index, 1);
-          //   this.optional.push({
-          //     id:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .id,
-          //     name:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .name,
-          //     info: res.data.locum_detail_compliance_document
-          //   });
-          //   this.optional = this.optional.sort((a, b) => a.id - b.id);
+          //   this.keyCompliances = this.keyCompliances.sort(
+          //     (a, b) => a.id - b.id
+          //   );
           //   this.$store.commit("SET_NOTIFICATION", {
           //     enabled: true,
           //     status: "success",
@@ -1052,6 +1006,52 @@ export default {
           // this.activeLoading = this.activeLoading.filter(
           //   item => item !== loadingId
           // );
+
+          let inMandatory = this.mandatory.findIndex(
+            document =>
+              document.id ===
+              res.data.locum_detail_compliance_document.compliance_document.id
+          );
+          if (inMandatory > 0) {
+            this.mandatory.splice(index, 1);
+            this.mandatory.push({
+              id:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .id,
+              name:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .name,
+              info: res.data.locum_detail_compliance_document
+            });
+            this.mandatory = this.mandatory.sort((a, b) => a.id - b.id);
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Document uploaded!"]
+            });
+            this.loading = false;
+          } else {
+            this.optional.splice(index, 1);
+            this.optional.push({
+              id:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .id,
+              name:
+                res.data.locum_detail_compliance_document.compliance_document
+                  .name,
+              info: res.data.locum_detail_compliance_document
+            });
+            this.optional = this.optional.sort((a, b) => a.id - b.id);
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Document uploaded!"]
+            });
+            this.loading = false;
+          }
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         })
         .catch(err => {
           console.log("err", err.response || err);
