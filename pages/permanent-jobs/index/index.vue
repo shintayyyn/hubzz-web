@@ -1,5 +1,13 @@
 <template>
   <section class="flex flex-col items-start w-full">
+    <div class="w-full">
+      <AppInput
+        v-model="search"
+        :type="'text'"
+        :name="'search'"
+        :placeholder="'ID, Practice Name, Profession Name or keywords'"
+      />
+    </div>
     <template v-if="$auth.user.domain === 'Practice'">
       <AppTable
         v-if="permanent_jobs_for_practice_count > 0"
@@ -87,11 +95,14 @@
 </template>
 <script>
 // var moment = require("moment")
+import debounce from "lodash.debounce"
 import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput"
 export default {
 	components: {
 		// AppButton,
-		AppTable
+    AppTable,
+    AppInput,
 	},
 	// eslint-disable-next-line no-unused-vars
 	middleware ({ query, redirect, error }) {
@@ -108,13 +119,15 @@ export default {
 
 	data () {
 		return {
+      search: '',
 			total: 0,
 			current_page: 1,
 			// app table params
 			params: {
 				job_id: null,
 				limit: 5,
-				offset: 0
+        offset: 0,
+        search: '',
 			},
 			loading: false,
 			columns: [
@@ -311,32 +324,13 @@ export default {
 					this.loading = false
 				})
 			}
-		}
-	},
-  created () {
-    if(this.$route.query.status){
-      console.log('hatodg')
-      this.locumColumns.push(
-        {
-					name: "Closing tag",
-					slot: true,
-					slotName: "closing_tag",
-					dataIndex: "",
-					class: "text-center"
-        },
-      )
-      this.columns.push(
-        {
-					name: "Closing tag",
-					slot: true,
-					slotName: "closing_tag",
-					dataIndex: "",
-					class: "text-center"
-        },
-      )
+    },
 
+    search (value) {
+      this.searchSubmit(value)
     }
-  },  
+    
+	},  
 
 	async asyncData ({ app, route, }) {
 		try {
@@ -480,7 +474,32 @@ export default {
 			}
 			throw err
 		}
-	},
+  },
+  
+  created () {
+    if(this.$route.query.status){
+      console.log('hatodg')
+      this.locumColumns.push(
+        {
+					name: "Closing tag",
+					slot: true,
+					slotName: "closing_tag",
+					dataIndex: "",
+					class: "text-center"
+        },
+      )
+      this.columns.push(
+        {
+					name: "Closing tag",
+					slot: true,
+					slotName: "closing_tag",
+					dataIndex: "",
+					class: "text-center"
+        },
+      )
+
+    }
+  },
 
 	methods: {
 		statusStyle (jobStatus) {
@@ -522,8 +541,23 @@ export default {
 				this.getPermanentJobsForPractice(params)
 			}
 		},
+    searchSubmit: debounce(function (value) {
+      this.params.search = value
+      
+			if (this.$auth.user.domain === "Locum") {
+				this.getPermanentJobsForLocum(this.params)
+			}
+			if (this.$auth.user.domain === "Practice") {
+				this.getPermanentJobsForPractice(this.params)
+      }
+      
+    }, 500),
 
 		async getPermanentJobsForLocum (params) {
+      params = {
+        ...params,
+        search: this.params.search,
+      }
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/count`, { params })
 				.then(res => {
@@ -573,12 +607,15 @@ export default {
             permanent_job.status = "Available"
           }
         }
-
 				return permanent_job
-			})
+      })
 		},
 
 		async getPermanentJobsForPractice (params) {
+      params = {
+        ...params,
+        search: this.params.search,
+      }
 			await this.$axios
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
