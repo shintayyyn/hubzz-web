@@ -991,8 +991,9 @@ export default {
         "include_saturday",
         "include_sunday",
         "compliance_document_id",
-        "auto_assign_at"
-      ];
+        "auto_assign_at",
+        "hours"
+      ]
 
       if (!this.hasBanks) {
         this.bank_only = false;
@@ -1037,12 +1038,15 @@ export default {
         notRequired.push("favorite_only_until");
       }
 
-      this.form.total_hours =
-        this.form.hours * 60 + parseInt(this.form.minutes);
-
-      this.validateNumber(this.form.rate, "rate");
-      this.validateNumber(this.form.total_hours, "total_hours");
-      this.Validate(this.form, notRequired);
+      !this.form.hours ? this.form.hours = 0 : this.form.hours
+      if (this.form.hours == 0 && this.form.minutes && this.form.minutes == 0) {
+        this.formError.push({ field: 'minutes', message: 'Minutes is invalid'})
+      }else {
+        this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
+      }
+      this.validateNumber(this.form.rate, "rate")
+      // this.validateNumber(this.form.total_hours, "total_hours")
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;
         this.form.shift_id = this.form.shift;
