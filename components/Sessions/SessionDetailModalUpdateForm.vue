@@ -1160,7 +1160,7 @@ export default {
       this.validateNumber(this.form.total_hours, "total_hours")
       this.Validate(this.form, notRequired)
       !this.form.hours ? this.form.hours = 0 : this.form.hours
-      if (parseInt(this.form.hours) === 0 && parseInt(this.form.minutes) === 0) {
+      if (parseInt(this.form.hours) === 0 && this.form.minutes && parseInt(this.form.minutes) === 0) {
         this.formError.push({ field: 'minutes', message: 'Minutes is invalid'})
       }else {
         this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
