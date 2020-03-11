@@ -56,7 +56,11 @@
 						/>
 					</no-ssr>
 				</div>
-				<AppButton class="mx-2" :label="'Send Application'" @click="apply()" />
+				<AppButton :label="'Send Application'" :disabled="!canApply" @click="apply()" />
+				<p v-if="!canApply" class="text-sm pt-1 text-red-500">
+					CV is not uploaded yet. Upload
+					<nuxt-link to="/compliance" class="underline text-red-500">here</nuxt-link>.
+				</p>
 			</div>
 			<div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
 				Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
