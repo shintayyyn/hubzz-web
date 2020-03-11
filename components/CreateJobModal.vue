@@ -422,7 +422,6 @@
                       style="text-align:right;'"
                       min="1"
                       maxlength="8"
-                      @blur="CheckEmptyField(form.hours,'hours')"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
                     />
                     <div
@@ -443,7 +442,6 @@
                       max="60"
                       min="1"
                       maxlength="2"
-                      @blur="CheckEmptyField(form.minutes,'minutes')"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
                     />
                     <div
@@ -553,6 +551,7 @@ export default {
         date: null,
         time: null
       },
+
       selectedQualification: [],
       selectedClinicalSystem: [],
       selectedSpokenLanguage: [],
@@ -571,8 +570,8 @@ export default {
         session_structure_information: "",
         extra_information: "",
         rate: "",
-        hours: "",
-        minutes: "",
+        hours: 0,
+        minutes: 0,
         total_hours: "",
         locum_detail_rate_type_id: 1,
         ir35: false,
@@ -992,8 +991,9 @@ export default {
         "include_sunday",
         "compliance_document_id",
         "auto_assign_at",
-        "hours"
-      ]
+        "hours",
+        "minutes"
+      ];
 
       if (!this.hasBanks) {
         this.bank_only = false;
@@ -1038,15 +1038,25 @@ export default {
         notRequired.push("favorite_only_until");
       }
 
-      !this.form.hours ? this.form.hours = 0 : this.form.hours
-      if (this.form.hours == 0 && this.form.minutes && this.form.minutes == 0) {
-        this.formError.push({ field: 'minutes', message: 'Minutes is invalid'})
-      }else {
-        this.form.total_hours = (this.form.hours*60) + parseInt(this.form.minutes)
+      if (
+        [0, "0"].includes(this.form.hours) &&
+        [0, "0"].includes(this.form.minutes)
+      ) {
+        this.formError.push({
+          field: "minutes",
+          message: "Minutes is required"
+        });
+        this.formError.push({
+          field: "hours",
+          message: "Hours is required"
+        });
+      } else {
+        this.form.total_hours =
+          this.form.hours * 60 + parseInt(this.form.minutes);
       }
-      this.validateNumber(this.form.rate, "rate")
-      // this.validateNumber(this.form.total_hours, "total_hours")
-      this.Validate(this.form, notRequired)
+
+      this.validateNumber(this.form.rate, "rate");
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;
         this.form.shift_id = this.form.shift;
