@@ -353,7 +353,7 @@ export default {
 		async cancelApplication () {
 			await this.$axios
 				.$delete(
-					`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/delete-application`
+					`/api/v1/locum/permanent-job-applications/${this.permanent_job_application.id}/delete-application`
 				)
 				.then(res => {
 					console.log("res", res)
