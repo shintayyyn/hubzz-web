@@ -76,7 +76,7 @@
                       </div>
                       <div
                         class="leading-tight text-xs pt-2 text-right text-gray-600"
-                      >{{$moment(notification.updated_at, 'MM-DD-YYYY H:mm A').utc().format('DD/MM/YYYY, HH:mm:ss')}}</div>
+                      >{{notification.notif_date}}</div>
                     </div>
                   </div>
                 </div>
@@ -143,12 +143,24 @@ export default {
     },
     notifications(value) {
       value.forEach(item => {
-        if (!item.updated_at) {
-          item.updated_at = this.$moment().format("MM-DD-YYYY h:mm a");
-        }
+        item.notif_date = this.$moment()
+          .utc()
+          .format("DD/MM/YYYY, HH:mm:ss");
+        // if (!item.updated_at) {
+        //   item.updated_at = this.$moment()
+        //     .utc()
+        //     .format("MM-DD-YYYY h:mm a");
+        // } else if (item.updated_at) {
+        //   item.updated_at = this.$moment(
+        //     item.updated_at,
+        //     "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
+        //   )
+        //     .utc()
+        //     .format("MM-DD-YYYY h:mm a");
+        // }
       });
       this.notifications.sort(
-        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+        (a, b) => new Date(b.notif_date) - new Date(a.notif_date)
       );
     }
   },
@@ -254,7 +266,7 @@ export default {
             routeStatus = status;
         }
 
-        // console.log(url, status, routeStatus, notification.practice_surgery_id);
+        // console.log(url, status, routeStatus, notification);
         // return;
 
         if (url === null) {
