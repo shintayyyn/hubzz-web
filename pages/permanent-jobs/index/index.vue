@@ -35,7 +35,8 @@
 
         <template
           v-if="$route.query.status === 'Closed'"
-          v-slot:closing_tag="slotProps">
+          v-slot:closing_tag="slotProps"
+        >
           <div class="flex items-center justify-center">
             <div
               class="rounded-full px-6 py-1 bg-yellow-400 text-black"

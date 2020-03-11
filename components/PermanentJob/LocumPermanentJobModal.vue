@@ -34,12 +34,12 @@
           :label="toApply ? 'Cancel':'Apply'"
           @click="toApply = !toApply"
         />
-        <AppButton
+        <!-- <AppButton
           v-if="permanent_job.status == 'Applied'"
           class="mx-2"
           :label="'Cancel Application'"
           @click="cancelApplication()"
-        />
+        /> -->
       </div>
 
       <div v-if="toApply === true" class="md:w-1/2 px-2 my-6">
