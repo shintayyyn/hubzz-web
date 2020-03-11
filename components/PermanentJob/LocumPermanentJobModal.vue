@@ -28,7 +28,6 @@
 					class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
 				>{{ jobClosingTag(permanent_job.hired_through) }}</span>
 
-<<<<<<< HEAD
         <AppButton
           v-if="permanent_job.status == 'Available'"
           class="mx-2"
@@ -42,21 +41,6 @@
           @click="cancelApplication()"
         /> -->
       </div>
-=======
-				<AppButton
-					v-if="permanent_job.status == 'Available'"
-					class="mx-2"
-					:label="toApply ? 'Cancel':'Apply'"
-					@click="toApply = !toApply"
-				/>
-				<AppButton
-					v-if="permanent_job.status == 'Applied'"
-					class="mx-2"
-					:label="'Cancel Application'"
-					@click="cancelApplication()"
-				/>
-			</div>
->>>>>>> 360bdc0a984916e160a575dc9ca0709399046279
 
 			<div v-if="toApply === true" class="md:w-1/2 px-2 my-6">
 				<p class="text-sm">Please write a short pitch to apply for this Permanent Job (Optional)</p>
