@@ -571,7 +571,8 @@ export default {
             ...item,
             date_created: app
               .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
-              .format("DD-MM-YYYY"),
+              .utc()
+              .format("DD/MM/YYYY HH:mm:ss"),
             practice: item.forms[0].practice_name
           });
         });
@@ -783,7 +784,9 @@ export default {
                 date_created: this.$moment(
                   item.date_created,
                   "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-                ).format("DD-MM-YYYY"),
+                )
+                  .utc()
+                  .format("DD/MM/YYYY HH:mm:ss"),
                 practice: item.forms[0].practice_name
               };
             });
@@ -925,7 +928,9 @@ export default {
                 date_created: this.$moment(
                   item.date_created,
                   "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-                ).format("DD-MM-YYYY"),
+                )
+                  .utc()
+                  .format("DD/MM/YYYY HH:mm:ss"),
                 practice: item.forms[0].practice_name
               };
             });
@@ -1017,58 +1022,83 @@ export default {
           this.delete_invoice_modal = false;
         });
     },
-    createFormB(invoice) {
-      this.locum_form_bs.push(invoice);
+    async createFormB(invoice) {
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+      // this.locum_form_bs.push({
+      //   ...invoice,
+      //   date_created: app
+      //     .$moment(invoice.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
+      //     .format("DD-MM-YYYY"),
+      //   practice: invoice.forms[0].practice_name
+      // });
+
+      // job_parts.forEach(item => {
+      //   locum_form_bs.push({
+      //     ...item,
+      //     date_created: app
+      //       .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
+      //       .format("DD-MM-YYYY"),
+      //     practice: item.forms[0].practice_name
+      //   });
+      // });
     },
-    createInvoice(invoice) {
-      let queryStatus = this.$route.query.status;
+    async createInvoice(invoice) {
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+      // let queryStatus = this.$route.query.status;
 
-      let job_part = this.job_parts.find(
-        item => item.id === invoice.items[0].job_part.id
-      );
-      job_part.locum_invoice_id = invoice.id;
-      let index = this.job_parts.findIndex(item => item.id === job_part.id);
-      if (index >= 0) {
-        if (
-          queryStatus &&
-          queryStatus.toLowerCase() === "to-be-invoiced" &&
-          invoice.status === "Draft"
-        ) {
-          this.job_parts.splice(index, 1, job_part);
-        } else if (invoice.status !== "Draft") {
-          this.job_parts.splice(index, 1);
-        }
-      }
+      // let job_part = this.job_parts.find(
+      //   item => item.id === invoice.items[0].job_part.id
+      // );
+      // job_part.locum_invoice_id = invoice.id;
+      // let index = this.job_parts.findIndex(item => item.id === job_part.id);
+      // if (index >= 0) {
+      //   if (
+      //     queryStatus &&
+      //     queryStatus.toLowerCase() === "to-be-invoiced" &&
+      //     invoice.status === "Draft"
+      //   ) {
+      //     this.job_parts.splice(index, 1, job_part);
+      //   } else if (invoice.status !== "Draft") {
+      //     this.job_parts.splice(index, 1);
+      //   }
+      // }
     },
-    updateInvoice(invoice) {
-      let queryStatus = this.$route.query.status;
+    async updateInvoice(invoice) {
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+      // let queryStatus = this.$route.query.status;
 
-      let job_part = this.job_parts.find(
-        item => item.id === invoice.items[0].job_part.id
-      );
-      job_part.locum_invoice_id = invoice.id;
+      // let job_part = this.job_parts.find(
+      //   item => item.id === invoice.items[0].job_part.id
+      // );
+      // job_part.locum_invoice_id = invoice.id;
 
-      let index = this.job_parts.findIndex(item => item.id === job_part.id);
-      if (index >= 0) {
-        if (
-          ((!queryStatus ||
-            (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")) &&
-            invoice.status === "Draft") ||
-          (queryStatus &&
-            queryStatus.toLowerCase() === "issued" &&
-            invoice.status === "Issued") ||
-          (queryStatus &&
-            queryStatus.toLowerCase() === "disputed" &&
-            invoice.status === "Disputed") ||
-          (queryStatus &&
-            queryStatus.toLowerCase() === "approved" &&
-            invoice.status === "Approved")
-        ) {
-          this.job_parts.splice(index, 1, job_part);
-        } else {
-          this.job_parts.splice(index, 1);
-        }
-      }
+      // let index = this.job_parts.findIndex(item => item.id === job_part.id);
+      // if (index >= 0) {
+      //   if (
+      //     ((!queryStatus ||
+      //       (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")) &&
+      //       invoice.status === "Draft") ||
+      //     (queryStatus &&
+      //       queryStatus.toLowerCase() === "issued" &&
+      //       invoice.status === "Issued") ||
+      //     (queryStatus &&
+      //       queryStatus.toLowerCase() === "disputed" &&
+      //       invoice.status === "Disputed") ||
+      //     (queryStatus &&
+      //       queryStatus.toLowerCase() === "approved" &&
+      //       invoice.status === "Approved")
+      //   ) {
+      //     this.job_parts.splice(index, 1, job_part);
+      //   } else {
+      //     this.job_parts.splice(index, 1);
+      //   }
+      // }
     },
     async sorted(order_by) {
       let orderBy = order_by.map(item => {

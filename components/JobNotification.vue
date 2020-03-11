@@ -76,7 +76,7 @@
                       </div>
                       <div
                         class="leading-tight text-xs pt-2 text-right text-gray-600"
-                      >{{$moment(notification.updated_at, 'MM-DD-YYYY H:mm A').uct().format('DD/MM/YYYY, HH:mm:ss')}}</div>
+                      >{{$moment(notification.updated_at, 'MM-DD-YYYY H:mm A').utc().format('DD/MM/YYYY, HH:mm:ss')}}</div>
                     </div>
                   </div>
                 </div>
