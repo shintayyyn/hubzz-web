@@ -255,6 +255,7 @@ export default {
 		copyToClipboard(text) {
 			// 1) Add the text to the DOM (usually achieved with a hidden input field)
 			const input = document.createElement("input");
+			input.setAttribute("id", "copiedText");
 			document.body.appendChild(input);
 			input.value = text;
 
@@ -274,6 +275,8 @@ export default {
 					status: "success",
 					text: [`Copied to Clipboard`]
 				});
+				let copiedText = document.getElementById("copiedText");
+				copiedText.parentNode.removeChild(copiedText);
 			}
 		},
 
