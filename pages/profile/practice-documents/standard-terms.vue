@@ -16,7 +16,7 @@
             <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
             <p
               class="mt-2 text-base"
-            >{{$moment(variation_terms.created_at).format('DD/MM/YYYY HH:mm:ss')}}</p>
+            >{{$moment(variation_terms.created_at).utc().format('DD/MM/YYYY HH:mm:ss')}}</p>
           </div>
           <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
             <embed

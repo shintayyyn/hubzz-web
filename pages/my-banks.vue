@@ -32,13 +32,16 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
-        <!-- <nuxt-link
+        <nuxt-link
+          to="/my-banks?status=Lates"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'lates' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Lates</nuxt-link>
+        <nuxt-link
           :to="{ name: 'my-banks-reports'}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.name === 'my-banks-reports' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Reports
-        </nuxt-link>-->
+        >Reports</nuxt-link>
       </div>
       <div class="flex mt-2 md:mt-0">
         <nuxt-link
