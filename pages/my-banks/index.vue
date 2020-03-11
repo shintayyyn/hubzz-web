@@ -151,7 +151,8 @@ export default {
         "applied",
         "appointed",
         "rejected",
-        "withdrawn"
+        "withdrawn",
+        "lates"
       ].includes(query.status.toLowerCase())
     ) {
       return error({
