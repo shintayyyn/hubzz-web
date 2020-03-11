@@ -58,7 +58,8 @@ export default {
 }
 
 .disabled-button:hover {
-	background: linear-gradient(to top, #bbbbbb, #cccccc);
+	transform: translate(0, 0);
+	background: linear-gradient(to top, #ccc, #ddd);
 }
 </style>
 

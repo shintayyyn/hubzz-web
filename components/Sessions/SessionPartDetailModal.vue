@@ -53,7 +53,7 @@
                     Reason for Withdrawal
                   </p>
                   <p
-                    class="text-xs sm:text-sm"
+                    class="text-xs sm:text-sm break-words"
                   >
                     {{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}
                   </p>
