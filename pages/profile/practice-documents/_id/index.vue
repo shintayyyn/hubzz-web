@@ -37,7 +37,7 @@
             <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
             <p
               class="mt-2 text-base"
-            >{{practice_document.file ? $moment(practice_document.file.created_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+            >{{practice_document.file ? $moment(practice_document.file.created_at).utc().format('DD/MM/YYYY HH:mm:ss') : null}}</p>
             <!-- <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
             <p
               class="mt-2 text-base"
