@@ -54,3 +54,11 @@ Vue.filter('hours', function (min) {
   return moment.duration(min, 'hours')._data.hours ? moment.duration(min, 'hours')._data.hours + ` hour${moment.duration(min, 'hours')._data.hours > 1 ? 's' : ''}` : ''
 })
 
+Vue.filter('hoursMinutes', function (num) {
+  let hours = Math.floor(num / 60)
+  let minutes = num % 60
+  let hrDisplay = `${hours > 0 ? `${hours} Hour${hours > 1 ? 's' : ''}` : ''}`
+  let minDisplay = `${minutes > 0 ? `${minutes} Minute${minutes > 1 ? 's' : ""}` : ''}`
+  return `${hrDisplay} ${minDisplay}`
+})
+
