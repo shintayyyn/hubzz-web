@@ -145,8 +145,8 @@
             <p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : null }}</p>
           </div>
           <AppButton 
-            v-if="permanent_job.job_posting_status === 'Available' 
-              && permanent_job_application.application_status !== 'Rejected' ? true : false" 
+            v-if="(permanent_job.job_posting_status === 'Available' && permanent_job_application === '' )
+              || (permanent_job_application && permanent_job_application.application_status !== 'Rejected' ? true : false) "
             class="my-2" label="Share" 
             @click="toShowLink = !toShowLink" />
           <div v-if="toShowLink" class="rounded-lg p-4 shadow-lg">
