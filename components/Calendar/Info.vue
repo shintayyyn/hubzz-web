@@ -89,6 +89,9 @@ export default {
 		},
 		getLocumPrivateJobParts() {
 			return this.$store.getters["jobs/getLocumPrivateJobParts"];
+		},
+		getLocumPermanentJobs() {
+			return this.$store.getters["jobs/getLocumPermanentJobs"];
 		}
 	},
 	watch: {
@@ -278,6 +281,7 @@ export default {
 			let foundLocumOngoingJobs = [];
 			let foundLocumAppliedJobs = [];
 			let foundLocumPrivateJobs = [];
+			let foundPermanentJobs = [];
 
 			if (this.getLocumOngoingJobs.length > 0) {
 				foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
@@ -301,11 +305,19 @@ export default {
 					)
 				);
 			}
+			if (this.getLocumPermanentJobs.length > 0) {
+				foundPermanentJobs = this.getLocumPermanentJobs.filter(job =>
+					this.getDateArray(job.date_time_start, job.date_time_end).includes(
+						date
+					)
+				);
+			}
 
 			this.foundLocumJobs = [
 				...foundLocumOngoingJobs,
 				...foundLocumAppliedJobs,
-				...foundLocumPrivateJobs
+				...foundLocumPrivateJobs,
+				...foundPermanentJobs
 			];
 			if (this.foundLocumJobs.length > 0) {
 				setTimeout(() => {
@@ -322,6 +334,7 @@ export default {
 			let foundLocumOngoingJobs = [];
 			let foundLocumAppliedJobs = [];
 			let foundLocumPrivateJobs = [];
+			let foundPermanentJobs = [];
 
 			if (this.getLocumOngoingJobs.length > 0) {
 				foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
@@ -351,10 +364,19 @@ export default {
 						this.includesWeekends(job_part.job, date)
 				);
 			}
+			if (this.getLocumPermanentJobs.length > 0) {
+				foundPermanentJobs = this.getLocumPermanentJobs.filter(job =>
+					this.getDateArray(job.date_time_start, job.date_time_end).includes(
+						date
+					)
+				);
+			}
+
 			this.foundLocumJobs = [
 				...foundLocumOngoingJobs,
 				...foundLocumAppliedJobs,
-				...foundLocumPrivateJobs
+				...foundLocumPrivateJobs,
+				...foundPermanentJobs
 			];
 			if (this.foundLocumJobs.length > 0) {
 				setTimeout(() => {
