@@ -151,7 +151,11 @@ export default {
 			}
     },
     goRegister (){
-      this.$router.push('/sign-up/locum')
+      if(this.$auth.user) {
+        this.$router.push(`/permanent-jobs/${this.$route.params.id}`)
+      } else {
+        this.$router.push('/sign-up/locum')
+      }
     }
   }
 }
