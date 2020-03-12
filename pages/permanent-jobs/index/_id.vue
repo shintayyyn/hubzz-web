@@ -18,11 +18,11 @@ export default {
 		LocumPermanentJobModal,
 		PracticePermanentJobModal
 	},
-	data() {
+	data () {
 		return {
 			permanent_job: "",
 			permanent_job_applications: []
-		};
+		}
 	},
 	async asyncData({ app, route, store }) {
 		try {

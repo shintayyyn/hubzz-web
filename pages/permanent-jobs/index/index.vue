@@ -16,7 +16,7 @@
         :items="permanent_jobs_for_practice"
         :current-page="current_page"
         :per-page="params.limit"
-        :columns="columns"
+        :columns="practiceColumns"
         :loading="loading"
         :router-link="'/permanent-jobs'"
         @pagechanged="pagechanged"
@@ -35,12 +35,13 @@
 
         <template
           v-if="$route.query.status === 'Closed'"
-          v-slot:closing_tag="slotProps">
+          v-slot:closing_tag="slotProps"
+        >
           <div class="flex items-center justify-center">
             <div
               class="rounded-full px-6 py-1 bg-yellow-400 text-black"
             >
-              {{ jobClosingTag(slotProps.item.hired_through) }}
+              {{ jobClosingTag(slotProps.item) }}
             </div>
           </div>
         </template>
@@ -74,6 +75,19 @@
               :class="statusStyle(slotProps.item.status)"
             >
               {{ slotProps.item.status }}
+            </div>
+          </div>
+        </template>
+
+        <template
+          v-if="$route.query.status === 'Closed'"
+          v-slot:closing_tag="slotProps"
+        >
+          <div class="flex items-center justify-center">
+            <div
+              class="rounded-full px-6 py-1 bg-yellow-400 text-black"
+            >
+              {{ jobClosingTag(slotProps.item) }}
             </div>
           </div>
         </template>
@@ -130,7 +144,7 @@ export default {
         search: '',
 			},
 			loading: false,
-			columns: [
+			defaultColumns: [
         {
           name: "ID",
           dataIndex: "id",
@@ -191,65 +205,8 @@ export default {
 
 			],
 
-			locumColumns: [
-        {
-          name: "ID",
-          dataIndex: "id",
-          class:"text-center"
-        },
-				{
-					name: "Title",
-          dataIndex: "title",
-          class:"text-center"
-				},
-				{
-					name: "Surgery",
-          dataIndex: "practice.name",
-          class:"text-center"
-				},
-				{
-					name: "Salary £",
-					dataIndex: "salary_amount",
-					class: "text-center currency"
-				},
-				{
-					name: "Posted",
-					dataIndex: "date_posted",
-					class: "text-center localDate"
-				},
-				{
-					name: "Closes",
-					dataIndex: "date_closing",
-					class: "text-center localDate"
-				},
-				// {
-				// 	name: "Role",
-				// 	dataIndex: "role",
-				// 	class: "text-center"
-				// },
-				{
-					name: "Work Hours",
-					dataIndex: "work_hours",
-					class: "text-center"
-				},
-				{
-					name: "Profession",
-					dataIndex: "professions.name",
-					class: "text-center"
-				},
-				{
-					name: "Industry",
-					dataIndex: "industry_type",
-					class: "text-center"
-				},
-				{
-					name: "Status",
-					slot: true,
-					slotName: "status_slot",
-					dataIndex: "",
-					class: "text-center"
-        },
-			],
+			locumColumns: [],
+      practiceColumns: [],
 
 			permanent_job_count: 0,
       permanent_jobs: [],
@@ -269,61 +226,93 @@ export default {
 		// eslint-disable-next-line no-unused-vars
 		"$route.query.status" (newStatus, oldStatus) {
       this.params = {}
-      if (!newStatus) {
-        newStatus = "Available"
-      }
-      if(newStatus === "Closed"){
-        console.log('hatodg')
-        this.locumColumns.push(
-          {
-            name: "Closing tag",
-            slot: true,
-            slotName: "closing_tag",
-            dataIndex: "",
-            class: "text-center"
-          },
-        )
-        this.columns.push(
-          {
-            name: "Closing tag",
-            slot: true,
-            slotName: "closing_tag",
-            dataIndex: "",
-            class: "text-center"
-          },
-        )
-      } else {
-        this.locumColumns.pop()
-        this.columns.pop()
-      }
-			if (this.$auth.user.domain === "Locum") {
-        console.log('new status', newStatus)
-				this.params = {
-					job_posting_status: newStatus,
-					profession_id: this.$auth.user.locum_detail.profession.id,
-          near_post_code: this.$auth.user.locum_postcode,
-          limit: 5,
-				}
-				this.loading = true
-				setTimeout(async () => {
-					this.loading = true
-					await this.getPermanentJobsForLocum(this.params)
-					this.loading = false
-				})
-				this.loading = false
-			} else if (this.$auth.user.domain === "Practice") {
-        console.log('new status', newStatus)
-				this.params = {
-					job_posting_status: newStatus,
-          practice_id: this.$auth.user.practice_id,
-          limit: 5,
-				}
-				setTimeout(async () => {
-					this.loading = true
-					await this.getPermanentJobsForPractice(this.params)
-					this.loading = false
-				})
-			}
+      this.current_page = 1
+      
+      Promise.all([
+        this.locumColumns = [],
+        this.practiceColumns = [],
+      ]).then(() => {
+        if(this.$auth.user.domain === "Locum") {
+          this.locumColumns = this.defaultColumns
+        } else if (this.$auth.user.domain === "Practice") {
+          this.practiceColumns = this.defaultColumns
+        }
+        if (!newStatus) {
+          newStatus = "Available"
+          if(this.$auth.user.domain === "Locum") {
+            this.locumColumns = this.defaultColumns
+          } else if (this.$auth.user.domain === "Practice") {
+            this.practiceColumns = this.defaultColumns
+          }
+        } else if (newStatus === "Closed") {
+          if(this.$auth.user.domain === "Locum") {
+            this.locumColumns = [
+              ...this.defaultColumns,
+              {
+                name: "Closed At",
+                dataIndex: "closed_at",
+                class: "text-center localDate"
+              },
+              {
+                name: "Closing tag",
+                slot: true,
+                slotName: "closing_tag",
+                dataIndex: "",
+                class: "text-center"
+              },
+            ]
+          
+          } else if (this.$auth.user.domain === "Practice") {
+            this.practiceColumns = [
+              ...this.defaultColumns,
+              {
+                name: "Closed At",
+                dataIndex: "closed_at",
+                class: "text-center localDate"
+              },
+              {
+                name: "Closing tag",
+                slot: true,
+                slotName: "closing_tag",
+                dataIndex: "",
+                class: "text-center"
+              },
+            ]
+          }
+        }
+        if (this.$auth.user.domain === "Locum") {
+          console.log('get for locum in watch')
+          this.params = {
+            job_posting_status: newStatus ? newStatus : 'Available',
+            locum_user_id: this.$auth.user.id,
+            profession_id: this.$auth.user.locum_detail.profession.id,
+            near_post_code: this.$auth.user.locum_postcode,
+            limit: 5,
+          }
+          this.loading = true
+          setTimeout(async () => {
+            this.loading = true
+            await this.getPermanentJobsForLocum(this.params)
+            this.loading = false
+          })
+          this.loading = false
+        } else if (this.$auth.user.domain === "Practice") {
+          console.log('get for practice in watch')
+          this.params = {
+            job_posting_status: newStatus,
+            practice_id: this.$auth.user.practice_id,
+            limit: 5,
+          }
+          setTimeout(async () => {
+            this.loading = true
+            await this.getPermanentJobsForPractice(this.params)
+            this.loading = false
+          })
+        } 
+      })
+
+      
+			
     },
 
     search (value) {
@@ -344,17 +333,17 @@ export default {
 			let permanent_jobs_for_locum_count = ""
       let params = {}
       
+      // ------------------FOR LOCUM---------------
 			if (app.$auth.user.domain === "Locum") {
 				params = {
 					job_posting_status: route.query.status
 						? route.query.status
-						: "Available",
+            : "Available",
+          locum_user_id: app.$auth.user.id,
 					profession_id: app.$auth.user.locum_detail.profession.id,
           near_post_code: app.$auth.user.locum_postcode,
          limit: 5,
         }
-        console.log('user', app.$auth.user)
-        console.log('locum params', params)
 				let response = await app.$axios.$get(
 					`/api/v1/locum/permanent-jobs/count`,
 					{ params }
@@ -390,21 +379,23 @@ export default {
 							permanent_job_application.permanent_job_id === permanent_job.id
 					)
 					if (permanent_job_app_found) {
-						permanent_job.status = permanent_job_app_found.application_status
+            if(permanent_job_app_found.application_status === 'Rejected') {
+              permanent_job.status = 'Closed'
+            } else {
+              permanent_job.status = permanent_job_app_found.application_status
+            }
 					} else {
 						if (permanent_job.job_posting_status === 'Closed') {
               permanent_job.status = "Closed"
             } else if (permanent_job.job_posting_status === 'Unfilled' ) {
               permanent_job.status = "Unfilled"
-            }  else if (permanent_job.job_posting_status === 'Available' ) {
+            } else if (permanent_job.job_posting_status === 'Available' ) {
               permanent_job.status = "Available"
             }
 					}
 					return permanent_job
-				})
-
-        // permanent_jobs_for_locum_count = permanent_jobs_for_locum.length
-        
+        }) 
+         // ------------------FOR PRACTICE---------------
 			} else if (app.$auth.user.domain === "Practice") {
 				params = {
 					job_posting_status: route.query.status
@@ -442,7 +433,6 @@ export default {
 						permanent_job_application => permanent_job_application.permanent_job_id === permanent_job.id
 					)
 					if (permanent_job_app_found) {
-            console.log('route name', route.query.status)
             // DIFFERENT STATUSES ONLY IF IN AVAILABLE TAB
             if (route.query.status === permanent_job.job_posting_status) {
               permanent_job.status = permanent_job.job_posting_status
@@ -459,11 +449,11 @@ export default {
 			}
 			return {
 				permanent_jobs_for_practice_count,
-				permanent_jobs_for_practice,
+        permanent_jobs_for_practice,
+        permanent_jobs_for_locum_count,
+				permanent_jobs_for_locum,
 				permanent_job_applications_count,
 				permanent_job_applications,
-				permanent_jobs_for_locum_count,
-				permanent_jobs_for_locum,
 				params
 			}
 		} catch (err) {
@@ -477,27 +467,45 @@ export default {
   },
   
   created () {
-    if(this.$route.query.status){
-      console.log('hatodg')
-      this.locumColumns.push(
-        {
-					name: "Closing tag",
-					slot: true,
-					slotName: "closing_tag",
-					dataIndex: "",
-					class: "text-center"
-        },
-      )
-      this.columns.push(
-        {
-					name: "Closing tag",
-					slot: true,
-					slotName: "closing_tag",
-					dataIndex: "",
-					class: "text-center"
-        },
-      )
-
+    
+    if(this.$auth.user.domain === "Locum") {
+      this.locumColumns = this.defaultColumns
+      if(this.$route.query.status){
+        this.locumColumns = [
+          ...this.defaultColumns,
+          {
+            name: "Closed At",
+            dataIndex: "closed_at",
+            class: "text-center localDate"
+          },
+          {
+            name: "Closing Tag",
+            slot: true,
+            slotName: "closing_tag",
+            dataIndex: "",
+            class: "text-center"
+          },
+        ]
+      }
+    }else if (this.$auth.user.domain === "Practice") {
+      this.practiceColumns = this.defaultColumns
+       if(this.$route.query.status){
+        this.practiceColumns = [
+          ...this.defaultColumns,
+          {
+            name: "Closed At",
+            dataIndex: "closed_at",
+            class: "text-center localDate"
+          },
+          {
+            name: "Closing Tag",
+            slot: true,
+            slotName: "closing_tag",
+            dataIndex: "",
+            class: "text-center"
+          },
+        ]
+      }
     }
   },
 
@@ -522,26 +530,46 @@ export default {
 					return "bg-yellow-400 text-black"
 			}
 		},
-    jobClosingTag (jobClosingTag) {
-      switch(jobClosingTag) {
+    jobClosingTag (item) {
+      let closingTag = ''
+      console.log('item', item)
+      if(this.$auth.user.domain === 'Locum') {
+        const permJobApp = item.permanent_job_applications.find(permJobApp => 
+          permJobApp.applicant_locum_user_id === this.$auth.user.id
+        )
+        if(permJobApp && permJobApp.application_status === 'Rejected') {
+          closingTag = 'Rejected'
+        } else {
+          closingTag = item.hired_through
+        }
+      } else {
+        closingTag = item.hired_through
+      }
+      
+      switch(closingTag) {
         case "Direct Hiring":
           return "Hired Directly"
         case "Through HUBZZ":
           return "Hired Through Hubzz"
+        case "Rejected":
+          return "Rejected"
         default:
           return "Closed By Practice"
       }
     },
 		getJobs (params) {
-      console.log('params', params)
 			if (this.$auth.user.domain === "Locum") {
+        console.log('get for locum in pagechanged')
 				this.getPermanentJobsForLocum(params)
 			}
 			if (this.$auth.user.domain === "Practice") {
+        console.log('get for practice in page changed')
 				this.getPermanentJobsForPractice(params)
 			}
-		},
+    },
+    
     searchSubmit: debounce(function (value) {
+      console.log('get for locum in search')
       this.params.search = value
       
 			if (this.$auth.user.domain === "Locum") {
@@ -554,10 +582,11 @@ export default {
     }, 500),
 
 		async getPermanentJobsForLocum (params) {
-      params = {
-        ...params,
-        search: this.params.search,
-      }
+      // params = {
+      //   ...params,
+      //   search: this.params.search,
+      // }
+      
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/count`, { params })
 				.then(res => {
@@ -588,16 +617,21 @@ export default {
 						res.data && res.data.permanent_job_applications
 							? res.data.permanent_job_applications
 							: null
-				})
+        })
+      console.log('get for locum in function', this.permanent_jobs_for_locum)
 
-			this.permanent_jobs_for_locum = this.permanent_jobs_for_locum.map(permanent_job => {
+			this.permanent_jobs_for_locum = await this.permanent_jobs_for_locum.map(permanent_job => {
 				const permanent_job_app_found = this.permanent_job_applications.find(
 					permanent_job_application =>
 						permanent_job_application.permanent_job_id === permanent_job.id
 				)
 
         if (permanent_job_app_found) {
-          permanent_job.status = permanent_job_app_found.application_status
+          if(permanent_job_app_found.application_status === 'Rejected') {
+            permanent_job.status = 'Closed'
+          } else {
+            permanent_job.status = permanent_job_app_found.application_status
+          }
         } else {
           if (permanent_job.job_posting_status === 'Closed') {
             permanent_job.status = "Closed"
@@ -646,16 +680,17 @@ export default {
 						res.data && res.data.permanent_job_applications
 							? res.data.permanent_job_applications
 							: null
-				})
-      
-			this.permanent_jobs_for_practice = this.permanent_jobs_for_practice.map(permanent_job => {
+        })
+
+      console.log('get for practice in function', this.permanent_jobs_for_practice)
+
+			this.permanent_jobs_for_practice = await this.permanent_jobs_for_practice.map(permanent_job => {
 				const permanent_job_app_found = this.permanent_job_applications.find(
 					permanent_job_application =>
 						permanent_job_application.permanent_job_id === permanent_job.id
 				)
          
 				if (permanent_job_app_found) {
-          console.log('query', this.$route.query.status)
           if (this.$route.query.status) {
             permanent_job.status = permanent_job.job_posting_status
           } else {

@@ -30,7 +30,7 @@
 						: 'text-gray-600'
 					"
 				>Closed</nuxt-link>
-        <nuxt-link
+        <!-- <nuxt-link
           v-if="$auth.user.domain === 'Practice'"
 					to="/permanent-jobs?status=Unfilled"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -39,7 +39,7 @@
 						? 'border rounded-lg border-yellow-500 bg-yellow-500'
 						: 'text-gray-600'
 					"
-				>Unfilled</nuxt-link>
+				>Unfilled</nuxt-link> -->
 			</div>
 			<AppButton
 				v-if="$auth.user.domain === 'Practice'"
