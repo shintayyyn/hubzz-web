@@ -12,9 +12,9 @@
 			:label="'Please state here your reason.'"
 			:error="this.formError.find(item => item.field === 'declined_reason')"
 			@blur="CheckEmptyField(form.declined_reason,'declined_reason')"
+			:limit="255"
 			:resize="false"
 		/>
-		<div class="flex justify-end">{{ trimmedMessage(form.declined_reason).length }}/255</div>
 		<AppButton :label="'Unassign from this job'" @click="unassign" :disabled="loading" />
 		<AppLoading :loading="loading" spinner />
 	</div>
@@ -40,10 +40,15 @@ export default {
 		};
 	},
 	methods: {
-		trimmedMessage(message) {
-			return message.replace(/^\s*/, "").replace(/\s*$/, "");
+		trimmedMessage(value) {
+			return value.replace(/^\s*/, "").replace(/\s*$/, "");
 		},
 		unassign() {
+			this.form.declined_reason = this.trimmedMessage(
+				this.form.declined_reason
+			);
+			console.log(this.form.declined_reason);
+			return;
 			this.formError = [];
 			this.Validate(this.form);
 			if (!this.formError.length) {
