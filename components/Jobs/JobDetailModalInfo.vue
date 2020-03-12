@@ -24,7 +24,7 @@
           Total hours
         </div>
         <div class="text-xs sm:text-sm mb-4">
-          {{ job.total_hours | hours }} {{ job.total_hours | minutes }}
+          {{ job.total_hours | hoursMinutes }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Extra information
