@@ -22,6 +22,14 @@
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
+
+        <template v-slot:salary_slot="slotProps">
+          <template v-if="slotProps.item.salary_amount !== 0">
+            {{ slotProps.item.salary_amount | currency }}
+          </template>
+          <template v-else>N/A</template>
+        </template>
+
         <template v-slot:status_slot="slotProps">
           <div class="flex items-center justify-center">
             <div
@@ -163,8 +171,9 @@ export default {
 				},
 				{
 					name: "Salary £",
-					dataIndex: "salary_amount",
-					class: "text-center currency"
+					slotName: "salary_slot",
+					dataIndex: "",
+					class: "text-center"
 				},
 				{
 					name: "Posted",

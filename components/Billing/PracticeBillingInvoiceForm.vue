@@ -75,7 +75,7 @@
         <div class="items-table">
           <!-- thead / items header -->
           <div :ref="'items-header'" class="flex justify-start">
-            <div
+            <!-- <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >
               Description
@@ -84,6 +84,11 @@
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
             >
               Total
+            </div> -->
+            <div
+              class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+            >
+              Description
             </div>
           </div>
           <!-- items / selected invoice -->
@@ -94,7 +99,7 @@
             class="flex flex-col border-b-2 pb-2"
           >
             <!-- item description / total / dispute checkbox -->
-            <div class="relative flex justify-start mt-2">
+            <!-- <div class="relative flex justify-start mt-2">
               <div class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300">
                 {{ description }}
               </div>
@@ -103,7 +108,12 @@
               >
                 {{ total | currency }}
               </div>
-              <div
+              -->
+            <div class="relative flex justify-start mt-2">
+              <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">
+                {{ description }}
+              </div>
+             <div
                 v-if="(propInvoice && propInvoice.status !== 'Approved')"
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
               >
