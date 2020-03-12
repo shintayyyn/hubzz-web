@@ -1229,16 +1229,19 @@ export default {
         }
         return []
     },
-    getLocumWithdrawnJobs(state) {
+    getLocumPermanentJobs(state) {
         let jobs = []
         if (state.locum_permanent_jobs) {
             state.locum_permanent_jobs.forEach(job => {
                 let date_time_start = ''
                 let date_time_end = ''
+                let locum_status = ''
                 date_time_start = job.invitation_schedule
                 date_time_end = job.invitation_schedule
+                locum_status = 'Permanent'
                 jobs.push({
                     ...job,
+                    locum_status,
                     date_time_start,
                     date_time_end,
                 })

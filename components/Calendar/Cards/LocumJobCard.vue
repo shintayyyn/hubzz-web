@@ -1,12 +1,14 @@
 <template>
 	<nuxt-link
-		:to="{ path: hasPermissionToShow ? job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : `/availability/${job.date}` : '/dashboard', query: {...$route.query}}"
+		:to="link"
 		class="flex flex-col items-start pl-2 rounded-lg mb-2 job-card transition-hover"
-		:class="[bgStatus, hasPermissionToShow ? 'show' : 'cursor-default']"
+		:class="bgStatus"
 	>
 		<template>
 			<div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
-				<div class="text-gray-600 text-sm xl:text-sm">Job ID: {{ jobNumber }}</div>
+				<div
+					class="text-gray-600 text-sm xl:text-sm"
+				>{{ propJob.locum_status !== 'Permanent' ? `Job ID: ${jobNumber}` : 'Permanent / Salaried Role' }}</div>
 				<div class="text-gray-800 my-1 font-bold">{{ jobTitle }}</div>
 				<div
 					class="my-2 text-sm px-1 text-white rounded w-1/2 sm:w-1/4 lg:w-1/2 text-center"
@@ -15,37 +17,21 @@
 				<div class="text-gray-600 mt-2 text-sm sm:text-md">{{ jobSurgeryName }}</div>
 				<div class="text-gray-600 mb-2 text-sm sm:text-md">{{ jobSurgeryCode }}</div>
 				<div class="text-gray-600 text-xs xl:text-sm font-bold text-center">
-					{{ $moment(dateStart).format('DD / MM / YYYY') }}
-					<span class="font-normal px-1">to</span>
-					{{ $moment(dateEnd).format('DD / MM / YYYY') }}
+					<template v-if="propJob.locum_status === 'Permanent'">{{interviewDate}}</template>
+					<template v-else>
+						{{ $moment(dateStart).format('DD/MM/YYYY') }}
+						<span class="font-normal px-1">to</span>
+						{{ $moment(dateEnd).format('DD/MM/YYYY') }}
+					</template>
 				</div>
 			</div>
 		</template>
-		<!-- <template v-if="!isNotUnavailable">
-      <div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
-        <div class="my-2 font-bold text-sm sm:text-md">
-          Unavailable
-        </div>
-        <div
-          v-if="$store.state.calendar.view_type === 'per_month'"
-          class="my-2 text-xs xl:text-sm"
-        >
-          Shifts: {{ unavailableShift }}
-        </div>
-        <div
-          v-if="$store.state.calendar.view_type === 'per_week'"
-          class="my-2 text-xs xl:text-sm"
-        >
-          Shift: {{ unavailableShift }}
-        </div>
-      </div>
-		</template>-->
 		<p class="text-center text-white py-1 text-sm w-full font-bold">Click to view Details</p>
 	</nuxt-link>
 </template>
 <script>
 export default {
-	props: ["propJob", "hasPermissionToShow"],
+	props: ["propJob"],
 	computed: {
 		job() {
 			return this.isJobPart ? this.propJob.job : this.propJob;
@@ -64,6 +50,18 @@ export default {
 					this.propJob.locum_status.toLowerCase()
 				)
 			);
+		},
+		link() {
+			if (this.propJob.locum_status !== "Permanent") {
+				return {
+					path: this.job.type
+						? `/dashboard/${this.propJob.id}?status=${this.propJob.status}`
+						: `/availability/${this.job.date}`,
+					query: { ...this.$route.query }
+				};
+			} else {
+				return `/permanent-jobs/${this.propJob.permanent_job_id}`;
+			}
 		},
 		// isNotUnavailable () {
 		// 	if (this.isJobPart) {
@@ -100,6 +98,9 @@ export default {
 				case "Ongoing":
 					return `bg-job-active`;
 					break;
+				case "Permanent":
+					return `bg-blue-500`;
+					break;
 				default:
 					return `bg-gray-500`;
 			}
@@ -110,29 +111,12 @@ export default {
 		dateEnd() {
 			return this.propJob.date_end;
 		},
-		// unavailableShift() {
-		// 	// if (this.propJob.type === "Platform") {
-		// 	let shifts = this.propJob.shifts;
-		// 	if (this.$store.state.calendar.view_type === "per_month") {
-		// 		return shifts.map(shift => shift.name).join();
-		// 	}
-
-		// 	if (this.$store.state.calendar.view_type === "per_week") {
-		// 		let filteredShifts = shifts.filter(
-		// 			shift =>
-		// 				shift.name === this.$store.state.calendar.selected_date_shift.shift
-		// 		);
-
-		// 		if (filteredShifts && filteredShifts.length > 0) {
-		// 			return filteredShifts[0].name;
-		// 		} else {
-		// 			return this.propJob.shifts[0].name;
-		// 		}
-		// 	}
-		// 	// } else if (this.propJob.type === "Private") {
-		// 	//   return this.propJob.shift.name;
-		// 	// }
-		// },
+		interviewDate() {
+			return this.$moment(
+				this.propJob.invitation_schedule,
+				"YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
+			).format("DD/MM/YYYY, h:mm A");
+		},
 		jobNumber() {
 			return this.isJobPart
 				? this.propJob.job_part_number
@@ -140,23 +124,31 @@ export default {
 		},
 		jobTitle() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			return job.type === "Platform" ? job.title : "Private appointment";
+			return job.locum_status === "Permanent"
+				? job.permanent_job.title
+				: job.type === "Platform"
+				? job.title
+				: "Private appointment";
 		},
 		jobSurgeryName() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			return job.type === "Platform"
+			return job.locum_status === "Permanent"
+				? job.permanent_job.practice.name
+				: job.type === "Platform"
 				? job.platform_job.practice.name
 				: job.private_job.private_practice.name;
 		},
 		jobSurgeryCode() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			return job.type === "Platform"
+			return job.locum_status === "Permanent"
+				? job.permanent_job.practice.code
+				: job.type === "Platform"
 				? job.platform_job.practice.code
 				: job.private_job.private_practice.code;
 		},
 		jobShift() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			return job.shift.name;
+			return job.locum_status === "Permanent" ? "Interview" : job.shift.name;
 		},
 		jobDescription() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
@@ -165,24 +157,27 @@ export default {
 	},
 	methods: {
 		shiftStyle(shift) {
-			switch (shift) {
-				case "PM":
-					return "bg-shift-pm";
-					break;
-				case "AM":
-					return "bg-shift-am";
-					break;
+			if (this.propJob.locum_status === "Permanent") {
+				return "bg-blue-500";
+			} else {
+				switch (shift) {
+					case "PM":
+						return "bg-shift-pm";
+						break;
+					case "AM":
+						return "bg-shift-am";
+						break;
 
-				case "Whole Day":
-					return "bg-shift-whole-day";
-					break;
+					case "Whole Day":
+						return "bg-shift-whole-day";
+						break;
 
-				case "OOH":
-					return "bg-shift-ooh";
-					break;
-
-				default:
-					break;
+					case "OOH":
+						return "bg-shift-ooh";
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
@@ -213,13 +208,7 @@ export default {
 .bg-shift-ooh {
 	background-color: #947ffe;
 }
-/* .job-card {
-	background-color: #45e577;
-}
-.job-card:hover {
-	background-color: #35cc65;
-} */
-.job-card.show:hover > div {
+.job-card:hover > div {
 	background-color: #f0f0f0;
 }
 </style>

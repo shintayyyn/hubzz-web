@@ -67,6 +67,7 @@
                   :readonly="disabled"
                   :min="type === 'number' && 1"
                   :maxlength="limit"
+                  :max="maxInput"
                   step="any"
                   @input="$emit('input', $event.target.value)"
                   @keypress.enter="$emit('submit')"
@@ -184,7 +185,7 @@
                   :limit="limit"
                   @input="$emit('input', $event.target.value)"
                   @blur="$emit('blur', $event)"
-                  @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
+                  @keydown="limit ? ($emit('keydown'), limitInput($event, trimmedMessage(value))) : $emit('keydown')"
                 />
                 <div class="flex items-center justify-between">
                   <transition name="drop-down">
@@ -198,11 +199,11 @@
                   <p
                     v-if="limit"
                     class="flex items-center text-xs ml-auto py-1 text-gray-500 transition-hover"
-                    :class="value.length > limit ? 'text-red-600' : ''"
+                    :class="trimmedMessage(value).length > limit ? 'text-red-600' : ''"
                   >
                     <transition name="fade">
                       <svgicon
-                        v-if="value.length > limit"
+                        v-if="trimmedMessage(value).length > limit"
                         name="exclamation-mark"
                         width="12"
                         height="12"
@@ -210,7 +211,7 @@
                         color="red"
                       />
                     </transition>
-                    {{ value.length }}/{{ limit }}
+                    {{ trimmedMessage(value).length }}/{{ limit }}
                   </p>
                 </div>
               </div>
@@ -339,6 +340,7 @@ export default {
       type: Boolean,
       default: false
     },
+    maxInput: Number,
     // for select
     items: Array,
     // for textarea
@@ -400,7 +402,10 @@ export default {
         return "password"
       }
     },
-    limitInput(e, field) {
+    trimmedMessage(value) {
+			return value.replace(/^\s*/, "").replace(/\s*$/, "");
+		},
+    limitInput(e, value) {
        let acceptedKeys = [
         "Backspace",
         "Tab",
@@ -410,7 +415,7 @@ export default {
         "ArrowRight"
       ];
       if (
-        field.length >= this.limit &&
+        value.length >= this.limit &&
         !acceptedKeys.includes(e.key)
       ) {
         e.preventDefault();

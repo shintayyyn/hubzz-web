@@ -26,7 +26,7 @@
         >
           {{ jobClosingTag(permanent_job.hired_through) }}
         </span>
-        <AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
+        <AppButton v-if="permanent_job.job_posting_status !== 'Unfilled'" :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
       </div>
       <div
         v-if="permanent_job.job_posting_status === 'Closed'" 
@@ -164,7 +164,19 @@
             </template>
             <!-- EDIT PERMANENT JOB -->
             <template v-if="edit === true">
-              <div class="w-full flex flex-col md:flex-row">
+              <AppDate
+                v-if="permanent_job.job_posting_status !== 'Closed'"
+                v-model="form.date_closing"
+                :name="'date_closing'"
+                :label="'Date Closing'"
+                is-after
+                :start-date="form.date_posted"
+                :error="formError.find(item => item.field === 'date_closing')"
+              />
+              <div
+                v-else
+                class="w-full flex flex-col md:flex-row">
+                <!-- LEFT -->
                 <div class="w-full md:flex-w-1/2 pr-2">
                   <p class="font-bold">
                     Title
@@ -225,6 +237,7 @@
                     disabled
                     :error="formError.find(item => item.field === 'date_posted')"
                   />
+
                   <AppDate
                     v-model="form.date_closing"
                     :name="'date_closing'"
@@ -234,7 +247,7 @@
                     :error="formError.find(item => item.field === 'date_closing')"
                   />
                 </div>
-
+                <!-- RIGHT -->
                 <div class="w-full md:flex-w-1/2 pl-2">
                   <p class="font-bold">
                     E-Mail
@@ -297,21 +310,25 @@
                   />
                 </div>
               </div>
-
-              <p class="font-bold">
-                Description
-              </p>
-              <no-ssr placeholder="Loading...">
-                <quill-editor
-                  ref="myTextEditor"
-                  v-model="form.description"
-                  class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
-                  :options="editorOption"
-                  @blur="CheckEmptyField(form.description, 'description')"
-                  @focus="onEditorFocus($event)"
-                  @ready="onEditorReady($event)"
-                />
-              </no-ssr>
+              <!-- DESCRIPTION BOX -->
+              <div 
+                v-if="permanent_job.job_posting_status === 'Closed'"
+                class="w-full">
+                <p class="font-bold">
+                  Description
+                </p>
+                <no-ssr placeholder="Loading...">
+                  <quill-editor
+                    ref="myTextEditor"
+                    v-model="form.description"
+                    class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
+                    :options="editorOption"
+                    @blur="CheckEmptyField(form.description, 'description')"
+                    @focus="onEditorFocus($event)"
+                    @ready="onEditorReady($event)"
+                  />
+                </no-ssr>
+              </div>
               <!-- <p class="font-bold">Update Remarks</p>
               <AppInput
                 v-model="form.update_remarks"
@@ -677,7 +694,7 @@ export default {
 				this.permanent_job.job_posting_status == "Pending"
 			) {
 				console.log("status", this.permanent_job.job_posting_status)
-				return "Edit Job"
+				return "Edit Closing Date"
 			}
 			if (
 				(edit === false && this.permanent_job.job_posting_status == "Closed") ||

@@ -168,7 +168,7 @@
 							:label="'Salary Description (Optional)'"
 							:error="formError.find(item => item.field === 'salary_description_2')"
 							:items="salary_description_type_2"
-							:disabled="!form.salary_amount"
+							:disabled="!form.salary_amount || form.salary_amount == 0"
 							@blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
 						/>
 						<!-- <AppInput
@@ -414,10 +414,10 @@ export default {
 
 			this.Validate(this.form, notRequired);
 
-			console.log("form", this.form);
-			console.log("errors: ", this.formError);
-
 			if (!this.formError.length) {
+				if (!this.form.salary_amount || this.form.salary_amount) {
+					this.form.salary_description_2 = "";
+				}
 				await this.$axios
 					.post(`/api/v1/practice/permanent-jobs`, {
 						...this.form,

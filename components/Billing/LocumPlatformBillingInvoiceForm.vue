@@ -1,34 +1,9 @@
 <template>
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
-      <!-- save buttons -->
-      <div class="flex flex-wrap items-center">
-        <AppButton
-          v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
-          class="m-1"
-          :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(false)"
-        />
-        <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
-          class="m-1"
-          :label="'Save as final'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(true)"
-        />
-        <AppButton
-          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
-          class="m-1"
-          :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          @click="viewAsPdf(propInvoice.id)"
-        />
-      </div>
+      
       <!-- invoice type -->
-      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+      <div class="flex justify-end items-center w-full my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
@@ -38,7 +13,7 @@
       </div>
     </div>
 
-    <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md" :class="exportLoading ? 'mb-32' : ''">
       <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
       <AppLoading :loading="saveLoading" spinner />
 
@@ -104,7 +79,8 @@
         <div class="items-table">
           <!-- items header -->
           <div :ref="'items-header'" class="flex justify-start">
-            <div
+            <!-- old -->
+            <!-- <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >
               Description
@@ -113,10 +89,18 @@
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
             >
               Total
+            </div> -->
+            <!-- revise -->
+            <div
+              class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+            >
+              Description
             </div>
           </div>
 
-          <!-- items / selected invoice -->
+
+
+          <!-- revise -->
           <div
             v-if="form.items && form.items.length > 0"
             :id="`invoice-item`"
@@ -125,6 +109,103 @@
           >
             <!-- item description / total / dispute checkbox -->
             <div class="relative flex justify-start mt-2">
+              <div
+                class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300"
+              >
+                {{ form.items[0].description }}
+              </div>
+              <div
+                v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
+                class="flex items-center align-middle sticky right-0 bg-white shadow-md"
+              >
+                <div class="px-2 flex-col">
+                  <AppInput
+                    v-model="form.items[0].dispute"
+                    :disabled="(propInvoice && propInvoice.items[0].approved) || (propInvoice && waitingForPracticeReply(propInvoice.items[0]))"
+                    :type="'single-checkbox'"
+                    :name="'disputed'"
+                    :label="'Disputed'"
+                  />
+                  <AppInput
+                    v-if="propInvoice && propInvoice.status !== 'Draft'"
+                    v-model="propInvoice.items[0].approved"
+                    disabled
+                    :type="'single-checkbox'"
+                    :name="'approved'"
+                    :label="'Approved'"
+                  />
+                  <div v-if="(propInvoice && waitingForPracticeReply(propInvoice.items[0]))">
+                    <div>Waiting for Practice Reply</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- dispute invoice attendance forms -->
+            <div
+              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              class="flex justify-start mt-2 px-2"
+            >
+              <div class="w-1/3 flex flex-col px-2">
+                <label class="text-xs sm:text-sm" for="absent_days">Days of absent</label>
+                <input
+                  v-model="form.items[0].absent_days"
+                  type="number"
+                  min="0"
+                  name="absent_days"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
+                >
+              </div>
+              <div class="w-1/3 flex flex-col px-2">
+                <label class="text-xs sm:text-sm" for="late_hours">Hours of late</label>
+                <input
+                  v-model="form.items[0].late_hours"
+                  type="number"
+                  min="0"
+                  name="late_hours"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
+                >
+              </div>
+              <div class="w-1/3 flex flex-col px-2">
+                <label class="text-xs sm:text-sm" for="final_hours">Final hours</label>
+                <input
+                  v-model="form.items[0].final_hours"
+                  type="number"
+                  min="0"
+                  name="final_hours"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
+                >
+              </div>
+            </div> 
+            <!-- disputed invoice update form -->
+            <div
+              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              class="flex justify-start mt-2 px-2"
+            >
+              <div class="flex flex-col w-full px-2">
+                <label class="text-xs sm:text-sm" for="remarks">Update remarks</label>
+                <textarea
+                  v-model="form.items[0].remarks"
+                  rows="3"
+                  name="remarks"
+                  class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- OLD -->
+          <!-- items / selected invoice -->
+          <!-- <div
+            v-if="form.items && form.items.length > 0"
+            :id="`invoice-item`"
+            :ref="`invoice-item`"
+            class=" flex flex-col border-b-2 pb-2"
+          > -->
+            <!-- item description / total / dispute checkbox -->
+            <!-- <div class="relative flex justify-start mt-2">
               <div
                 class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300"
               >
@@ -160,9 +241,9 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <!-- dispute invoice attendance forms -->
-            <div
+            <!-- <div
               v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
@@ -199,9 +280,9 @@
                   @keypress="isNumber($event)"
                 >
               </div>
-            </div>
+            </div> -->
             <!-- disputed invoice update form -->
-            <div
+            <!-- <div
               v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
@@ -215,7 +296,7 @@
                 />
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -224,7 +305,7 @@
         <div
           v-if="propInvoice"
           :ref="'items-sub-total'"
-          class="flex justify-between md:m-2 text-lg px-3"
+          class="flex justify-between md:m-2 text-lg px-3 pt-3"
         >
           <span class="w-3/4 font-bold">Subtotal</span>
           <div class="w-1/4 flex justify-between">
@@ -239,14 +320,14 @@
         <div
           v-if="propInvoice"
           :ref="'items-ni-total'"
-          class="flex justify-between md:m-2 text-lg px-3"
+          class="flex justify-between md:mx-2 text-lg px-3"
         >
           <span class="w-3/4 pl-2 text-sm">NI amount</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
+            <div class="w-full text-right text-sm">
               £
             </div>
-            <div class="w-full text-right">
+            <div class="w-full text-right text-sm">
               {{ propInvoice.ni_amount | currency }}
             </div>
           </div>
@@ -254,20 +335,20 @@
         <div
           v-if="propInvoice"
           :ref="'items-paye-total'"
-          class="flex justify-between md:m-2 text-lg px-3"
+          class="flex justify-between md:mx-2 text-lg px-3"
         >
           <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
+            <div class="w-full text-right text-sm">
               £
             </div>
-            <div class="w-full text-right">
+            <div class="w-full text-right text-sm">
               {{ propInvoice.paye_amount | currency }}
             </div>
           </div>
         </div>
         <!-- ITEMS TOTAL -->
-        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3 py-2">
           <span class="w-3/4 font-bold">Total</span>
           <div class="w-1/4 flex justify-between">
             <div class="w-full text-right">
@@ -350,6 +431,34 @@
         </div>
       </div>
     </div>
+    <div>
+      <!-- save buttons -->
+      <div class="flex flex-wrap items-center mb-6">
+        <AppButton
+          v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
+          class="m-1"
+          :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading"
+          @click="save(false)"
+        />
+        <AppButton
+          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
+          class="m-1"
+          :label="'Save as final'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading"
+          @click="save(true)"
+        />
+        <AppButton
+          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
+          class="m-1"
+          :label="'View as PDF'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          @click="viewAsPdf(propInvoice.id)"
+        />
+      </div>
+    </div>
   </section>
 </template>
 <script>
@@ -387,7 +496,8 @@ export default {
         final: false,
         ir35: false
       },
-      formError: []
+      formError: [],
+      disputed: false
     }
   },
   computed: {
@@ -805,6 +915,6 @@ export default {
 </script>
 <style scoped>
 .items-table {
-  width: 733px;
+  /* width: 733px; */
 }
 </style>

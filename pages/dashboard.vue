@@ -14,6 +14,7 @@
 						:inStyle="'padding-top: 6px; padding-bottom: 6px;'"
 					/>
 					<AppButton
+						v-if="$auth.user.view_permanent_jobs"
 						:label="'Expenses'"
 						@click="expense_modal = true"
 						class="hidden md:block mr-2"
@@ -23,7 +24,10 @@
 			</div>
 			<Calendar />
 		</div>
-		<div v-if="userIsAuthorized" class="statistics-section">
+		<div
+			v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_permanent_jobs))"
+			class="statistics-section"
+		>
 			<div class="text-sm sm:text-base font-bold pt-4">Quick Statistics</div>
 			<Statistics />
 		</div>
