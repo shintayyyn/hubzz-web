@@ -19,9 +19,9 @@
 				<div class="text-gray-600 text-xs xl:text-sm font-bold text-center">
 					<template v-if="propJob.locum_status === 'Permanent'">{{interviewDate}}</template>
 					<template v-else>
-						{{ $moment(dateStart).format('DD / MM / YYYY') }}
+						{{ $moment(dateStart).format('DD/MM/YYYY') }}
 						<span class="font-normal px-1">to</span>
-						{{ $moment(dateEnd).format('DD / MM / YYYY') }}
+						{{ $moment(dateEnd).format('DD/MM/YYYY') }}
 					</template>
 				</div>
 			</div>
@@ -112,9 +112,10 @@ export default {
 			return this.propJob.date_end;
 		},
 		interviewDate() {
-			return this.$moment(this.propJob.invitation_schedule).format(
-				"DD / MM / YYYY | hh:mm A"
-			);
+			return this.$moment(
+				this.propJob.invitation_schedule,
+				"YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
+			).format("DD/MM/YYYY, h:mm A");
 		},
 		jobNumber() {
 			return this.isJobPart
@@ -132,7 +133,7 @@ export default {
 		jobSurgeryName() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			return job.locum_status === "Permanent"
-				? "surgery"
+				? job.permanent_job.practice.name
 				: job.type === "Platform"
 				? job.platform_job.practice.name
 				: job.private_job.private_practice.name;
@@ -140,7 +141,7 @@ export default {
 		jobSurgeryCode() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			return job.locum_status === "Permanent"
-				? "surgery"
+				? job.permanent_job.practice.code
 				: job.type === "Platform"
 				? job.platform_job.practice.code
 				: job.private_job.private_practice.code;
