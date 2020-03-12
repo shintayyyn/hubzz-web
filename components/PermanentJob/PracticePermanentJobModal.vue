@@ -694,7 +694,7 @@ export default {
 				this.permanent_job.job_posting_status == "Pending"
 			) {
 				console.log("status", this.permanent_job.job_posting_status)
-				return "Edit Job"
+				return "Edit Closing Date"
 			}
 			if (
 				(edit === false && this.permanent_job.job_posting_status == "Closed") ||
