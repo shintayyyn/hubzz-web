@@ -12,7 +12,6 @@
           height="32"
           width="32"
           class="cursor-pointer"
-          @click="$router.go(-1)"
         />
       </nuxt-link>
       
@@ -51,7 +50,9 @@
       </div>
 
       <div v-if="toApply === true" class="md:w-1/2 px-2 my-6">
-        <p class="text-sm">Please write a short pitch to apply for this Permanent Job (Optional)</p>
+        <p class="text-sm">
+          Please write a short pitch to apply for this Permanent Job (Optional)
+        </p>
         <div class="mb-3 md:mb-6">
           <no-ssr placeholder="Loading..." class>
             <quill-editor
@@ -67,7 +68,9 @@
         <AppButton :label="'Send Application'" :disabled="!canApply" @click="apply()" />
         <p v-if="!canApply" class="text-sm pt-1 text-red-500">
           CV is not uploaded yet. Upload
-          <nuxt-link to="/compliance" class="underline text-red-500">here</nuxt-link>.
+          <nuxt-link to="/compliance" class="underline text-red-500">
+            here
+          </nuxt-link>.
         </p>
       </div>
       <div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
@@ -107,54 +110,70 @@
             <p class="font-bold">
               Salary
             </p>
-            <p class="pl-2 pb-3">{{ permanent_job ? '£ ' + permanent_job.salary_amount : 'N/A' }}</p>
+            <p class="pl-2 pb-3">
+              {{ permanent_job ? '£ ' + permanent_job.salary_amount : 'N/A' }}
+            </p>
             <p class="font-bold">
               Salary Description
             </p>
             <p
               class="pl-2 pb-3"
-            >{{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}</p>
+            >
+              {{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}
+            </p>
             <p class="font-bold">
               Posted
             </p>
             <p
               class="pl-2 pb-3"
-            >{{ permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : null }}</p>
+            >
+              {{ permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : null }}
+            </p>
             <p class="font-bold">
               Closes
             </p>
             <p
               class="pl-2 pb-3"
-            >{{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : null }}</p>
+            >
+              {{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : null }}
+            </p>
             <p class="font-bold">
               Report to
             </p>
-            <p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : null }}</p>
+            <p class="pl-2 pb-3">
+              {{ permanent_job ? permanent_job.report_to : null }}
+            </p>
             <p class="font-bold">
               Role
             </p>
-            <p class="pl-2 pb-3">{{ permanent_job ? permanent_job.professions.name : null }}</p>
+            <p class="pl-2 pb-3">
+              {{ permanent_job ? permanent_job.professions.name : null }}
+            </p>
             <p class="font-bold">
               Hours
             </p>
-            <p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : null }}</p>
+            <p class="pl-2 pb-3">
+              {{ permanent_job ? permanent_job.work_hours : null }}
+            </p>
 
             <p class="font-bold">
               Industry
             </p>
-            <p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : null }}</p>
+            <p class="pl-2 pb-3">
+              {{ permanent_job ? permanent_job.industry_type : null }}
+            </p>
           </div>
           <AppButton 
-            v-if="(permanent_job.job_posting_status === 'Available' && permanent_job_application === '' )
-              || (permanent_job_application && permanent_job_application.application_status !== 'Rejected' ? true : false) "
+            v-if="(permanent_job.job_posting_status === 'Available' && !permanent_job_application )
+              || (permanent_job_application && permanent_job_application.application_status !== 'Rejected') "
             class="my-2" label="Share" 
-            @click="toShowLink = !toShowLink" />
+            @click="toShowLink = !toShowLink"
+          />
           <div v-if="toShowLink" class="rounded-lg p-4 shadow-lg">
             <div class="font-semibold flex items-center">
-              <!-- <div>Copy the link:</div> -->
-              <div
-                class="mx-2"
-              >{{ `${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}` }}</div>
+              <div class="mx-2">
+                {{ `${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}` }}
+              </div>
               <AppButton
                 :label="'Copy Link'"
                 @click="copyToClipboard(`${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}`)"

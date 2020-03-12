@@ -85,7 +85,8 @@
         >
           <div class="flex items-center justify-center">
             <div
-              class="rounded-full px-6 py-1 bg-yellow-400 text-black"
+              class="rounded-full px-6 py-1 text-black"
+              :class="jobClosingTag(slotProps.item) === 'Rejected' ? 'bg-red-500 text-white' : 'bg-yellow-400'"
             >
               {{ jobClosingTag(slotProps.item) }}
             </div>
@@ -467,7 +468,6 @@ export default {
   },
   
   created () {
-    
     if(this.$auth.user.domain === "Locum") {
       this.locumColumns = this.defaultColumns
       if(this.$route.query.status){
@@ -532,7 +532,7 @@ export default {
 		},
     jobClosingTag (item) {
       let closingTag = ''
-      console.log('item', item)
+      console.log('item', item.hired_through)
       if(this.$auth.user.domain === 'Locum') {
         const permJobApp = item.permanent_job_applications.find(permJobApp => 
           permJobApp.applicant_locum_user_id === this.$auth.user.id
@@ -553,6 +553,8 @@ export default {
           return "Hired Through Hubzz"
         case "Rejected":
           return "Rejected"
+        case "Unfilled":
+          return "Unfilled"
         default:
           return "Closed By Practice"
       }
