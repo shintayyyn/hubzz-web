@@ -205,14 +205,6 @@ export default {
 					dataIndex: "industry_type",
 					class: "text-center"
         },
-        {
-					name: "Status",
-					slot: true,
-					slotName: "status_slot",
-					dataIndex: "",
-					class: "text-center"
-        },
-
 			],
 
 			locumColumns: [],
@@ -250,9 +242,27 @@ export default {
         if (!newStatus) {
           newStatus = "Available"
           if(this.$auth.user.domain === "Locum") {
-            this.locumColumns = this.defaultColumns
+            this.locumColumns = [
+              ...this.defaultColumns,
+              {
+                name: "Status",
+                slot: true,
+                slotName: "status_slot",
+                dataIndex: "",
+                class: "text-center"
+              },
+            ]
           } else if (this.$auth.user.domain === "Practice") {
-            this.practiceColumns = this.defaultColumns
+            this.practiceColumns = [
+              ...this.defaultColumns,
+              {
+                name: "Status",
+                slot: true,
+                slotName: "status_slot",
+                dataIndex: "",
+                class: "text-center"
+              },
+            ]
           }
         } else if (newStatus === "Closed") {
           if(this.$auth.user.domain === "Locum") {
@@ -262,6 +272,13 @@ export default {
                 name: "Closed At",
                 dataIndex: "closed_at",
                 class: "text-center localDate"
+              },
+               {
+                name: "Status",
+                slot: true,
+                slotName: "status_slot",
+                dataIndex: "",
+                class: "text-center"
               },
               {
                 name: "Closing tag",
@@ -279,6 +296,13 @@ export default {
                 name: "Closed At",
                 dataIndex: "closed_at",
                 class: "text-center localDate"
+              },
+              {
+                name: "Status",
+                slot: true,
+                slotName: "status_slot",
+                dataIndex: "",
+                class: "text-center"
               },
               {
                 name: "Closing tag",
@@ -320,9 +344,6 @@ export default {
           })
         } 
       })
-
-      
-			
     },
 
     search (value) {
@@ -477,8 +498,19 @@ export default {
   },
   
   created () {
+    
     if(this.$auth.user.domain === "Locum") {
-      this.locumColumns = this.defaultColumns
+      this.locumColumns = [
+        ...this.defaultColumns,
+        {
+          name: "Status",
+          slot: true,
+          slotName: "status_slot",
+          dataIndex: "",
+          class: "text-center"
+        },
+      ]
+
       if(this.$route.query.status){
         this.locumColumns = [
           ...this.defaultColumns,
@@ -486,6 +518,13 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate"
+          },
+          {
+            name: "Status",
+            slot: true,
+            slotName: "status_slot",
+            dataIndex: "",
+            class: "text-center"
           },
           {
             name: "Closing Tag",
@@ -497,7 +536,16 @@ export default {
         ]
       }
     }else if (this.$auth.user.domain === "Practice") {
-      this.practiceColumns = this.defaultColumns
+      this.practiceColumns =[
+        ...this.defaultColumns,
+        {
+          name: "Status",
+          slot: true,
+          slotName: "status_slot",
+          dataIndex: "",
+          class: "text-center"
+        },
+        ]
        if(this.$route.query.status){
         this.practiceColumns = [
           ...this.defaultColumns,
@@ -505,6 +553,13 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate"
+          },
+          {
+            name: "Status",
+            slot: true,
+            slotName: "status_slot",
+            dataIndex: "",
+            class: "text-center"
           },
           {
             name: "Closing Tag",

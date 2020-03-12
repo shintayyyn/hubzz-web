@@ -26,7 +26,7 @@
         >
           {{ jobClosingTag(permanent_job.hired_through) }}
         </span>
-        <AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
+        <AppButton v-if="permanent_job.job_posting_status !== 'Unfilled'" :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
       </div>
       <div
         v-if="permanent_job.job_posting_status === 'Closed'" 
