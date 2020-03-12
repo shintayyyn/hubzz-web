@@ -31,9 +31,9 @@
         >{{ permanent_job.status }}</span>
 
         <span
-          v-if="permanent_job.job_posting_status === 'Closed'"
+          v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) || permanent_job_application.application_status !== 'Rejected'"
           class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
-        >{{ jobClosingTag(permanent_job.hired_through) }}</span>
+        >{{ jobClosingTag(permanent_job) }}</span>
 
         <AppButton
           v-if="permanent_job.status == 'Available'"
@@ -165,7 +165,9 @@
           </div>
           <AppButton 
             v-if="(permanent_job.job_posting_status === 'Available' && !permanent_job_application )
-              || (permanent_job_application && permanent_job_application.application_status !== 'Rejected') "
+              || (permanent_job.job_posting_status === 'Available' 
+              && permanent_job_application 
+              && permanent_job_application.application_status !== 'Rejected')"
             class="my-2" label="Share" 
             @click="toShowLink = !toShowLink"
           />
@@ -415,15 +417,26 @@ export default {
 			}
 		},
 
-		jobClosingTag (jobClosingTag) {
-			switch (jobClosingTag) {
-				case "Direct Hiring":
-					return "Hired Directly"
-				case "Through HUBZZ":
-					return "Hired Through Hubzz"
-				default:
-					return "Closed By Practice"
-			}
+		jobClosingTag (item) {
+			let closingTag = ''
+      console.log('item', item.hired_through)
+
+      if(this.permanent_job_application && this.permanent_job_application.application_status === 'Rejected') {
+        closingTag = 'Rejected'
+      } else {
+        closingTag = item.hired_through
+      }
+      
+      switch(closingTag) {
+        case "Direct Hiring":
+          return "Hired Directly"
+        case "Through HUBZZ":
+          return "Hired Through Hubzz"
+        case "Unfilled":
+          return "Unfilled"
+        default:
+          return "Closed By Practice"
+      }
 		}
 	}
 }
