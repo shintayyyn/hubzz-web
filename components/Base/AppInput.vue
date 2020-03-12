@@ -67,6 +67,7 @@
                   :readonly="disabled"
                   :min="type === 'number' && 1"
                   :maxlength="limit"
+                  :max="maxInput"
                   step="any"
                   @input="$emit('input', $event.target.value)"
                   @keypress.enter="$emit('submit')"
@@ -339,6 +340,7 @@ export default {
       type: Boolean,
       default: false
     },
+    maxInput: Number,
     // for select
     items: Array,
     // for textarea
