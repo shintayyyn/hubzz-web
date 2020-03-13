@@ -821,9 +821,9 @@ export default {
 
 		async acceptRejectSpokePermanentJob (approveReject) {
 			if (approveReject == "Approved") {
-				this.approve_or_reject.approved_or_rejected = "Approved"
+				this.approve_or_reject.approved_or_rejected = "approved"
 			} else if (approveReject == "Rejected") {
-				this.approve_or_reject.approved_or_rejected = "Rejected"
+				this.approve_or_reject.approved_or_rejected = "rejected"
 			}
 
 			await this.$axios
@@ -835,8 +835,8 @@ export default {
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
-						text: ["Successfully Approved / Rejected Job"]
-					})
+						text: [`Job  has successfully ${this.approve_or_reject.approved_or_rejected}`]
+          })
 				})
     },
     
