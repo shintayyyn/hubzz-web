@@ -22,7 +22,6 @@
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
       >
-
         <template v-slot:salary_slot="slotProps">
           <template v-if="slotProps.item.salary_amount !== 0">
             {{ slotProps.item.salary_amount | currency }}
@@ -239,8 +238,10 @@ export default {
         } else if (this.$auth.user.domain === "Practice") {
           this.practiceColumns = this.defaultColumns
         }
-        if (!newStatus) {
-          newStatus = "Available"
+        if (!newStatus || newStatus !== "Closed") {
+          if(!newStatus) {
+            newStatus = "Available"
+          } 
           if(this.$auth.user.domain === "Locum") {
             this.locumColumns = [
               ...this.defaultColumns,
@@ -323,7 +324,6 @@ export default {
             near_post_code: this.$auth.user.locum_postcode,
             limit: 5,
           }
-          this.loading = true
           setTimeout(async () => {
             this.loading = true
             await this.getPermanentJobsForLocum(this.params)
@@ -331,12 +331,13 @@ export default {
           })
           this.loading = false
         } else if (this.$auth.user.domain === "Practice") {
-          console.log('get for practice in watch')
           this.params = {
-            job_posting_status: newStatus,
+            job_posting_status: newStatus ? newStatus : 'Available',
             practice_id: this.$auth.user.practice_id,
             limit: 5,
           }
+          console.log('get for practice in watch', this.params)
+
           setTimeout(async () => {
             this.loading = true
             await this.getPermanentJobsForPractice(this.params)
@@ -498,7 +499,6 @@ export default {
   },
   
   created () {
-    
     if(this.$auth.user.domain === "Locum") {
       this.locumColumns = [
         ...this.defaultColumns,

@@ -76,12 +76,13 @@ export default {
 	},
 	created () {
     if(this.$auth.user.domain === 'Practice') {
+      console.log('test')
       if(this.$auth.user.practice_detail.practice.type == 'Spoke' &&
         this.$auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false) {
         this.spokeIsNotAllowed = true
+        console.log('allowed', this.spokeIsNotAllowed)
       }
     }
-    
   },
 
 }
