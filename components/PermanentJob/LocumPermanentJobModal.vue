@@ -61,12 +61,30 @@
 									@ready="onEditorReady($event)"
 								/>
 							</no-ssr>
+
+							<p
+								class="text-sm w-full flex items-center justify-end mt-1"
+								:class="job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000 ? 'text-red-500' : 'text-gray-600'"
+							>
+								<svgicon
+									v-if="job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000"
+									name="exclamation-mark"
+									width="12"
+									height="12"
+									class="fill-current mr-1"
+								/>
+								{{job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, "").length}}/2000
+							</p>
 						</div>
 					</div>
 					<div class="flex justify-between w-full">
-						<AppButton :label="'Send Application'" :disabled="!canApply" @click="apply()" />
+						<AppButton
+							:label="'Send Application'"
+							:disabled="!canApply || job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000"
+							@click="apply()"
+						/>
 						<label
-							class="leading-loose cursor-pointer text-black flex items-center hover:bg-yellow-500 px-4 py-2 rounded-lg"
+							class="leading-loose cursor-pointer text-black flex items-center hover:bg-yellow-500 px-4 py-2 rounded-lg transition-hover"
 						>
 							<input
 								id="coverEmail"
@@ -455,6 +473,10 @@ export default {
 <style scoped>
 .modal-container {
 	z-index: 510;
+}
+.ql-container {
+	max-height: 350px;
+	overflow-y: auto;
 }
 @media screen and (min-width: 1200px) {
 	.modal-container {
