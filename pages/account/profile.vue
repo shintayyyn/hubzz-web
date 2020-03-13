@@ -737,11 +737,14 @@ export default {
         "paid_under_payroll",
         "mandatory_training_id",
         "ir35",
-        "claim_nhs"
+        "claim_nhs",
+        "max_rate_per_hour",
+        "max_rate_per_half_day_session",
+        "max_rate_per_whole_day_session"
       ];
-      this.max_rate_per_hour = 999999999;
-      this.max_rate_per_half_day_session = 999999999;
-      this.max_rate_per_whole_day_session = 999999999;
+      this.form.max_rate_per_hour = 999999999;
+      this.form.max_rate_per_half_day_session = 999999999;
+      this.form.max_rate_per_whole_day_session = 999999999;
 
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
