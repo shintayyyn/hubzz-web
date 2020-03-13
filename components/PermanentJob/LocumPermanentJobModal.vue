@@ -31,7 +31,8 @@
         >{{ permanent_job.status }}</span>
 
         <span
-          v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) || permanent_job_application.application_status !== 'Rejected'"
+          v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) 
+            || (permanent_job_application && permanent_job_application.application_status !== 'Rejected')"
           class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
         >{{ jobClosingTag(permanent_job) }}</span>
 
@@ -49,23 +50,45 @@
         /> -->
       </div>
 
-      <div v-if="toApply === true" class="md:w-1/2 px-2 my-6">
-        <p class="text-sm">
-          Please write a short pitch to apply for this Permanent Job (Optional)
-        </p>
-        <div class="mb-3 md:mb-6">
-          <no-ssr placeholder="Loading..." class>
-            <quill-editor
-              ref="myTextEditor"
-              v-model="job_application.job_application_pitch"
-              class="bg-white text-black border-b-2"
-              :options="editorOption"
-              @focus="onEditorFocus($event)"
-              @ready="onEditorReady($event)"
-            />
-          </no-ssr>
+      <div v-if="toApply === true" class="w-full md:w-1/2 px-2 my-6">
+        <div class="m-4">
+          <div class="w-full">
+            <p class="text-sm">
+              Please write a short pitch to apply for this Permanent Job (Optional)
+            </p>
+            <div class="mb-3 md:mb-6">
+              <no-ssr placeholder="Loading..." class>
+                <quill-editor
+                  ref="myTextEditor"
+                  v-model="job_application.job_application_pitch"
+                  class="bg-white text-black border-b-2"
+                  :options="editorOption"
+                  @focus="onEditorFocus($event)"
+                  @ready="onEditorReady($event)"
+                />
+              </no-ssr>
+            </div>
+          </div>
+          <div class="flex w-full">
+            <div class="flex justify-center text-white text-sm">
+              <label for="coverEmail" class="text-white">
+                <!-- File -->
+                Upload A File
+              </label>
+              <input
+                id="coverEmail"
+                type="file"
+                name="coverEmail"
+                accept="image/png, image/jpeg"
+                @input="uploadFile($event)"
+              >
+            </div>
+          </div>
+          <div class="w-full">
+            <AppButton :label="'Send Application'" :disabled="!canApply" @click="apply()" />
+          </div>
         </div>
-        <AppButton :label="'Send Application'" :disabled="!canApply" @click="apply()" />
+
         <p v-if="!canApply" class="text-sm pt-1 text-red-500">
           CV is not uploaded yet. Upload
           <nuxt-link to="/compliance" class="underline text-red-500">
@@ -214,10 +237,13 @@ export default {
 				modules: {
 					toolbar: null
 				}
-			},
+      },
+      file: "",
 			permanent_job: "",
 			permanent_job_applications: "",
 			permanent_job_application: "",
+
+      uploadedFile: "",
 
 			canApply: false,
 
@@ -349,7 +375,37 @@ export default {
 
 		onEditorReady (editor) {
 			console.log("editor ready!", editor)
-		},
+    },
+    
+    uploadFile (e) {
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ]
+      let file = e.target.files[0]
+      this.file
+      let fileType = file.type.split("/")[1]
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format"]
+        })
+        return
+      }
+
+      // const fileReader = new FileReader()
+
+      // fileReader.readAsDataUrl(file)
+      console.log('file', file)
+      this.file = file
+    },
 
 		async apply () {
 			if (this.canApply === false) {
@@ -364,7 +420,8 @@ export default {
 						`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
 						{
 							locum_user_id: this.$auth.user.id,
-							job_application_pitch: this.job_application.job_application_pitch
+              job_application_pitch: this.job_application.job_application_pitch,
+              file: this.file,
 						}
 					)
 					.then(() => {
