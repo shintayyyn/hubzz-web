@@ -276,7 +276,7 @@ export default {
         {
           name: "Date Created",
           dataIndex: "date_created",
-          class: "text-center localDate"
+          class: "text-center"
         },
         {
           name: "Actions",
