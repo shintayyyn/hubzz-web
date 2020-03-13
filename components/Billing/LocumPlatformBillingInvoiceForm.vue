@@ -1,34 +1,9 @@
 <template>
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
-      <!-- save buttons -->
-      <div class="flex flex-wrap items-center">
-        <AppButton
-          v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
-          class="m-1"
-          :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(false)"
-        />
-        <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
-          class="m-1"
-          :label="'Save as final'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(true)"
-        />
-        <AppButton
-          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
-          class="m-1"
-          :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          @click="viewAsPdf(propInvoice.id)"
-        />
-      </div>
+      
       <!-- invoice type -->
-      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+      <div class="flex justify-end items-center w-full my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
@@ -38,7 +13,7 @@
       </div>
     </div>
 
-    <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md" :class="exportLoading ? 'mb-32' : ''">
       <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
       <AppLoading :loading="saveLoading" spinner />
 
@@ -454,6 +429,34 @@
           <div>Sort code: {{ propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx' }}</div>
           <div>Account number: {{ propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR' }}</div>
         </div>
+      </div>
+    </div>
+    <div>
+      <!-- save buttons -->
+      <div class="flex flex-wrap items-center mb-6">
+        <AppButton
+          v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
+          class="m-1"
+          :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading"
+          @click="save(false)"
+        />
+        <AppButton
+          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
+          class="m-1"
+          :label="'Save as final'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading"
+          @click="save(true)"
+        />
+        <AppButton
+          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
+          class="m-1"
+          :label="'View as PDF'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          @click="viewAsPdf(propInvoice.id)"
+        />
       </div>
     </div>
   </section>

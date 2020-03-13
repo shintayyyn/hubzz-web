@@ -120,7 +120,7 @@
               <div class="flex flex-wrap justify-center">
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="my-1 p-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                 >Generate Invoice</div>
                 <div
@@ -128,27 +128,27 @@
                   class="flex justify-between my-1"
                 >
                   <div
-                    class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                    class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                   >Edit</div>
                   <button
-                    class="mx-1 p-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
+                    class="mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
                   >Delete</button>
                 </div>
                 <div
                   v-if="['approved'].includes($route.query.status)"
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 >View</div>
                 <div
                   v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.nhs_claimable && slotProps.item.locum_form_a_id"
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                 >View Form A</div>
                 <div
                   v-if="$route.query.status && $route.query.status === 'solo-form' && slotProps.item.ooh && slotProps.item.locum_solo_form_id"
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
                 >View Solo Form</div>
               </div>
@@ -276,7 +276,7 @@ export default {
         {
           name: "Date Created",
           dataIndex: "date_created",
-          class: "text-center localDate"
+          class: "text-center"
         },
         {
           name: "Actions",

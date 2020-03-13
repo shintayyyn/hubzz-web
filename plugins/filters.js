@@ -47,11 +47,11 @@ Vue.filter('fileSize', function (fileSize, sizeType) {
 })
 
 Vue.filter('minutes', function (min) {
-  return moment.duration(min, 'minutes')._data.minutes ? moment.duration(min, 'minutes')._data.minutes + ` minute${moment.duration(min, 'minutes')._data.minutes > 1 ? 's' : ''}` : ''
+  return min % 60 ? min % 60 + ` minute${min % 60 > 1 ? 's' : ''}` : ''
 })
 
 Vue.filter('hours', function (min) {
-  return moment.duration(min, 'minutes')._data.hours ? moment.duration(min, 'minutes')._data.hours + ` hour${moment.duration(min, 'minutes')._data.hours > 1 ? 's' : ''}` : ''
+  return Math.floor(min / 60) ? Math.floor(min / 60) + ` hour${Math.floor(min / 60) > 1 ? 's' : ''}` : ''
 })
 
 Vue.filter('hoursMinutes', function (num) {

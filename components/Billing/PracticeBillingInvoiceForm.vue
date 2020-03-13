@@ -1,32 +1,12 @@
 <template>
   <section class="relative max-w-3xl">
-    <div class="flex flex-wrap justify-between pt-2">
-      <div class="flex justify-start items-center">
-        <AppButton
-          v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
-          class="m-1"
-          :label="'Save changes'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(false)"
-        />
-        <AppButton
-          v-if="propInvoice && propInvoice.status !== 'Draft'"
-          class="m-1"
-          :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          @click="viewAsPdf(propInvoice.id)"
-        />
-      </div>
-
-      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+    <div class="flex items-center justify-end py-2">
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
         >
           Platform
         </div>
-      </div>
     </div>
     <!-- pdf form -->
     <div
@@ -257,6 +237,24 @@
         </div>
       </div>
     </div>
+
+    <div class="flex justify-start items-center mb-6">
+        <AppButton
+          v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
+          class="m-1"
+          :label="'Save changes'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading"
+          @click="save(false)"
+        />
+        <AppButton
+          v-if="propInvoice && propInvoice.status !== 'Draft'"
+          class="m-1"
+          :label="'View as PDF'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          @click="viewAsPdf(propInvoice.id)"
+        />
+      </div>
   </section>
 </template>
 <script>
