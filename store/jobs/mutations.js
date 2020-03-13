@@ -436,6 +436,13 @@ export default {
         state.practice_withdrawn_job_parts = payload
     },
 
+    SET_PRACTICE_HUB_SPOKE_JOB_COUNT(state, payload) {
+        state.practice_hub_spoke_jobs_count = payload
+    },
+    SET_PRACTICE_HUB_SPOKE_JOB(state, payload) {
+        state.practice_hub_spoke_jobs = payload
+    },
+
     // WHOLE
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
         state.locum_allocated_jobs = payload

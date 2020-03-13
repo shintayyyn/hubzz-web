@@ -20,7 +20,7 @@
               class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
             >
               <span
-                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
+                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1 md:mx-2"
                 :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
               >{{ gmc_or_nmc_number ? gmc_or_nmc_number.status : '' }}</span>
             </div>
@@ -44,7 +44,7 @@
               class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
             >
               <span
-                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
+                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1 md:mx-2"
                 :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
               >{{ mpl_or_npl_number ? mpl_or_npl_number.status : '' }}</span>
             </div>

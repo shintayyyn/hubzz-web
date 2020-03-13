@@ -52,10 +52,17 @@ export default {
 			);
 		},
 		link() {
+			console.log(this.propJob);
 			if (this.propJob.locum_status !== "Permanent") {
+				let status =
+					this.propJob.job.type === "Private" ? "Private" : this.propJob.status;
+				let id =
+					this.propJob.job.type === "Private"
+						? this.propJob.job.id
+						: this.propJob.id;
 				return {
 					path: this.job.type
-						? `/dashboard/${this.propJob.id}?status=${this.propJob.status}`
+						? `/dashboard/${id}?status=${status}`
 						: `/availability/${this.job.date}`,
 					query: { ...this.$route.query }
 				};
