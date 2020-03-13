@@ -73,6 +73,8 @@ export default () => ({
         address_line_3: ''
     },
     professional_details: {
+        view_locum_jobs: '',
+        view_permanent_jobs: '',
         gmc_or_nmc_number: '',
         mpl_or_npl_number: '',
         nhs_smart_card_id_number: '',
