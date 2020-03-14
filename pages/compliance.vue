@@ -28,6 +28,11 @@
         <div class="font-bold text-xs sm:text-base">
           Documents you need to be approved by Hubzz HQ
           <span class="text-red-500">*</span>
+          <span class="block">test size xs</span>
+          <span class="hidden sm:block">test size small</span>
+          <span class="hidden md:block">test size medium</span>
+          <span class="hidden lg:block">test size large</span>
+          <span class="hidden xl:block">test size xl</span>
         </div>
         <div
           class="text-sm font-hairline italic"
@@ -40,180 +45,186 @@
             colspan="7"
           >This section is empty. Update your profile to fill this area.</span>
         </template>
-        <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm">
-          <div class="w-40 p-2">Type</div>
-          <div class="w-40 p-2">File / Reference</div>
-          <div class="w-40 p-2">Date uploaded</div>
-          <div class="w-40 p-2">Expiry date</div>
-          <div class="w-40 p-2">Status</div>
-          <div class="w-40 p-2">Note</div>
-          <div class="w-40 p-2" />
-        </div>
-
-        <div
-          v-for="(item, index) in mandatoryComplianceDocuments"
-          :key="item.compliance_document_id"
-          class="flex flex-col"
-        >
-          <div
-            v-if="activeLoading.includes(item.compliance_document_id)"
-            class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
-          >
-            <span
-              class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-            >Uploading</span>
+        <div class="hidden lg:block">
+          <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm">
+            <div class="w-1/6 p-2">Type</div>
+            <div class="w-1/6 p-2">File</div>
+            <div class="w-1/6 p-2">Date uploaded</div>
+            <div class="w-1/6 p-2">Expiry date</div>
+            <div class="w-1/6 p-2">Status</div>
+            <div class="w-1/6 p-2">Note</div>
+            <div class="w-1/6 p-2" />
           </div>
           <div
-            v-else
-            class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white"
-            :class="!item.file ? 'text-gray-600' : 'hover'"
+            v-for="(item, index) in mandatoryComplianceDocuments"
+            :key="item.compliance_document_id"
           >
-            <div class="w-40">{{ item.compliance_document_name | StringMaxLength(15) }}</div>
-            <div class="w-40" v-if="(item.file || item.reference)">
-              <div class="flex flex-row flex-no-wrap items-center">
-                <svgicon name="cloud-download" height="24" width="24" />
-                <div class="mx-2">
-                  <a
-                    :href="item.file.url"
-                    :download="item.file.filename"
-                    target="_blank"
-                    class="whitespace-no-wrap"
-                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-                  >{{ item.file.filename | StringMaxLength(15) }}</a>
-                </div>
-              </div>
-              <div class="flex flex-row flex-no-wrap items-center">{{ item.reference }}</div>
-            </div>
-            <div class="w-40" v-else />
             <div
-              v-if="item.file && item.file.created_at"
-              class="w-40"
-            >{{ item.file.created_at | localDate }}</div>
-            <div class="w-40" v-else />
-            <div class="w-40" v-if="item && item.expired_at">{{ item.expired_at | localDate }}</div>
-            <div class="w-40" v-else />
-            <div class="w-40" v-if="item && item.status">
-              <div class="flex justify-start max-w-xs">
-                <div
-                  class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                  :class="status(item.status)"
-                >{{ item.status }}</div>
-              </div>
-            </div>
-            <div class="w-40" v-else />
-            <div class="w-40" v-if="item && item.note">{{ item.note | StringMaxLength(15) }}</div>
-            <div class="w-40" v-else />
-            <div class="w-40" v-if="item.compliance_document_type_name.includes('Upload')">
-              <div
-                v-if="!item.file"
-                class="hover:underline"
-                @click.stop="$refs[`${item.compliance_document_id}_file_mandatory_compliance`][0].click()"
-              >
-                <div class="flex flex-row flex-no-wrap">
-                  <input
-                    :ref="`${item.compliance_document_id}_file_mandatory_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileInput($event, item.compliance_document_id)"
-                    @click.stop
-                  />
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
-                </div>
-              </div>
-              <div
-                v-else-if="item.file"
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
-              >
-                <div
-                  class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                >
-                  <input
-                    :ref="`${item.id}_file_mandatory_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileUpdate($event, item.id, index, item.compliance_document_id)"
-                    @click.stop
-                  />
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-if="item.compliance_document_type_name === 'Safeguarding'">
-            <div
-              v-for="(childItem, index) in item.child_locum_compliance_documents"
-              :key="childItem.compliance_document_id"
-              class="flex flex-col"
+              v-if="activeLoading.includes(item.compliance_document_id)"
+              class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
             >
-              <div
-                v-if="activeLoading.includes(childItem.compliance_document_id)"
-                class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
-              >
-                <span
-                  class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-                >Uploading</span>
-              </div>
-              <div
-                v-else
-                class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
-                :class="!childItem.file ? 'text-gray-600' : 'hover'"
-              >
-                <div class="w-60">{{ childItem.compliance_document_name | StringMaxLength(20) }}</div>
-                <div class="w-60" v-if="(childItem.file || childItem.reference)">
-                  <div class="flex flex-row flex-no-wrap items-center">
-                    <svgicon name="cloud-download" height="24" width="24" />
-                    <div class="mx-2">
-                      <a
-                        :href="childItem.file.url"
-                        :download="childItem.file.filename"
-                        target="_blank"
-                        class="whitespace-no-wrap"
-                        @click.stop.prevent="downloadItem(childItem.file.url, childItem.file.filename)"
-                      >{{ childItem.file.filename | StringMaxLength(15) }}</a>
-                    </div>
+              <span
+                class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+              >Uploading</span>
+            </div>
+            <div
+              v-else
+              class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white"
+              :class="!item.file ? 'text-gray-600' : 'hover'"
+            >
+              <div class="w-1/6">{{ item.compliance_document_name | StringMaxLength(30) }}</div>
+              <div class="w-1/6" v-if="(item.file || item.reference)">
+                <div class="flex flex-row flex-no-wrap items-center">
+                  <svgicon name="cloud-download" height="24" width="24" />
+                  <div class="mx-2">
+                    <a
+                      :href="item.file.url"
+                      :download="item.file.filename"
+                      target="_blank"
+                      class="whitespace-no-wrap"
+                      @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                    >{{ item.file.filename | StringMaxLength(15) }}</a>
                   </div>
-                  <div class="flex flex-row flex-no-wrap items-center">{{ childItem.reference }}</div>
                 </div>
-                <div class="w-60" v-if="childItem.compliance_document_type_name.includes('Upload')">
+                <div class="flex flex-row flex-no-wrap items-center">{{ item.reference }}</div>
+              </div>
+              <div class="w-1/6" v-else />
+              <div
+                class="w-1/6"
+                v-if="item.file && item.file.created_at"
+              >{{ item.file.created_at | localDate }}</div>
+              <div class="w-1/6" v-else />
+              <div class="w-1/6" v-if="item && item.expired_at">{{ item.expired_at | localDate }}</div>
+              <div class="w-1/6" v-else />
+              <div class="w-1/6" v-if="item && item.status">
+                <div class="flex justify-start max-w-xs">
                   <div
-                    v-if="!childItem.file"
-                    class="hover:underline"
-                    @click.stop="$refs[`${childItem.compliance_document_id}_file_mandatory_compliance`][0].click()"
+                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
+                    :class="status(item.status)"
+                  >{{ item.status }}</div>
+                </div>
+              </div>
+              <div class="w-1/6" v-else />
+              <div class="w-1/6" v-if="item && item.note">{{ item.note | StringMaxLength(15) }}</div>
+              <div class="w-1/6" v-else />
+              <div class="w-1/6" v-if="item.compliance_document_type_name.includes('Upload')">
+                <div
+                  v-if="!item.file"
+                  class="hover:underline"
+                  @click.stop="$refs[`${item.compliance_document_id}_file_mandatory_compliance`][0].click()"
+                >
+                  <div class="flex flex-row flex-no-wrap">
+                    <input
+                      :ref="`${item.compliance_document_id}_file_mandatory_compliance`"
+                      type="file"
+                      class="inputfile hidden"
+                      @input="onFileInput($event, item.compliance_document_id)"
+                      @click.stop
+                    />
+                    <svgicon name="cloud-upload" height="24" width="24" />
+                    <label
+                      class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
+                    >Upload</label>
+                  </div>
+                </div>
+                <div
+                  v-else-if="item.file"
+                  class="hover:underline"
+                  @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
+                >
+                  <div
+                    class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
                   >
-                    <div class="flex flex-row flex-no-wrap">
-                      <input
-                        :ref="`${childItem.compliance_document_id}_file_mandatory_compliance`"
-                        type="file"
-                        class="inputfile hidden"
-                        @input="onFileInput($event, childItem.compliance_document_id, 'child')"
-                        @click.stop
-                      />
-                      <svgicon name="cloud-upload" height="24" width="24" />
-                      <label
-                        class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
-                      >Upload</label>
+                    <input
+                      :ref="`${item.id}_file_mandatory_compliance`"
+                      type="file"
+                      class="inputfile hidden"
+                      @input="onFileUpdate($event, item.id, index, item.compliance_document_id)"
+                      @click.stop
+                    />
+                    <svgicon name="cloud-upload" height="24" width="24" />
+                    <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
+                  </div>
+                </div>
+              </div>
+              <div class="w-1/6" v-else />
+            </div>
+            <div v-if="item.compliance_document_type_name === 'Safeguarding'">
+              <div
+                v-for="(childItem, index) in item.child_locum_compliance_documents"
+                :key="childItem.compliance_document_id"
+                class="flex flex-col"
+              >
+                <div
+                  v-if="activeLoading.includes(childItem.compliance_document_id)"
+                  class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
+                >
+                  <span
+                    class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                  >Uploading</span>
+                </div>
+                <div
+                  v-else
+                  class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
+                  :class="!childItem.file ? 'text-gray-600' : 'hover'"
+                >
+                  <div class="w-60">{{ childItem.compliance_document_name | StringMaxLength(20) }}</div>
+                  <div class="w-60" v-if="(childItem.file || childItem.reference)">
+                    <div class="flex flex-row flex-no-wrap items-center">
+                      <svgicon name="cloud-download" height="24" width="24" />
+                      <div class="mx-2">
+                        <a
+                          :href="childItem.file.url"
+                          :download="childItem.file.filename"
+                          target="_blank"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(childItem.file.url, childItem.file.filename)"
+                        >{{ childItem.file.filename | StringMaxLength(15) }}</a>
+                      </div>
                     </div>
+                    <div class="flex flex-row flex-no-wrap items-center">{{ childItem.reference }}</div>
                   </div>
                   <div
-                    v-else-if="childItem.file"
-                    class="hover:underline"
-                    @click.stop="$refs[`${childItem.id}_file_mandatory_compliance`][0].click()"
+                    class="w-60"
+                    v-if="childItem.compliance_document_type_name.includes('Upload')"
                   >
                     <div
-                      class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                      v-if="!childItem.file"
+                      class="hover:underline"
+                      @click.stop="$refs[`${childItem.compliance_document_id}_file_mandatory_compliance`][0].click()"
                     >
-                      <input
-                        :ref="`${childItem.id}_file_mandatory_compliance`"
-                        type="file"
-                        class="inputfile hidden"
-                        @input="onFileUpdate($event, childItem.id, index, childItem.compliance_document_id, 'child')"
-                        @click.stop
-                      />
-                      <svgicon name="cloud-upload" height="24" width="24" />
-                      <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
+                      <div class="flex flex-row flex-no-wrap">
+                        <input
+                          :ref="`${childItem.compliance_document_id}_file_mandatory_compliance`"
+                          type="file"
+                          class="inputfile hidden"
+                          @input="onFileInput($event, childItem.compliance_document_id, 'child')"
+                          @click.stop
+                        />
+                        <svgicon name="cloud-upload" height="24" width="24" />
+                        <label
+                          class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
+                        >Upload</label>
+                      </div>
+                    </div>
+                    <div
+                      v-else-if="childItem.file"
+                      class="hover:underline"
+                      @click.stop="$refs[`${childItem.id}_file_mandatory_compliance`][0].click()"
+                    >
+                      <div
+                        class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                      >
+                        <input
+                          :ref="`${childItem.id}_file_mandatory_compliance`"
+                          type="file"
+                          class="inputfile hidden"
+                          @input="onFileUpdate($event, childItem.id, index, childItem.compliance_document_id, 'child')"
+                          @click.stop
+                        />
+                        <svgicon name="cloud-upload" height="24" width="24" />
+                        <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
+                      </div>
                     </div>
                   </div>
                 </div>
