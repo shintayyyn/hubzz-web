@@ -184,7 +184,8 @@
               />
               <div
                 v-else
-                class="w-full flex flex-col md:flex-row">
+                class="w-full flex flex-col md:flex-row"
+              >
                 <!-- LEFT -->
                 <div class="w-full md:flex-w-1/2 pr-2">
                   <p class="font-bold">
@@ -222,7 +223,7 @@
                       :label="'Salary Amount'"
                       :min="0"
                       :in-style="'text-align:right'"
-											:limit="8"
+                      :limit="8"
                     />
                     <AppInput
                       v-model="form.salary_description_2"
@@ -233,7 +234,7 @@
                       :label="'Salary Description'"
                       :error="formError.find(item => item.field === 'salary_description_2')"
                       :items="salary_description_type_2"
-											:disabled="!form.salary_amount"
+                      :disabled="!form.salary_amount"
                       @blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
                     />
                   </div>
@@ -322,7 +323,8 @@
               <!-- DESCRIPTION BOX -->
               <div 
                 v-if="permanent_job.job_posting_status === 'Closed'"
-                class="w-full">
+                class="w-full"
+              >
                 <p class="font-bold">
                   Description
                 </p>
@@ -833,12 +835,7 @@ export default {
 		},
 
 		async acceptRejectSpokePermanentJob (approveReject) {
-			if (approveReject == "Approved") {
-				this.approve_or_reject.approved_or_rejected = "approved"
-			} else if (approveReject == "Rejected") {
-				this.approve_or_reject.approved_or_rejected = "rejected"
-			}
-
+      this.approve_or_reject.approved_or_rejected = approveReject
 			await this.$axios
 				.$put(
 					`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/approve-or-reject`,
