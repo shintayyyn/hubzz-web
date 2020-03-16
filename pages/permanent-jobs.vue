@@ -3,7 +3,9 @@
     <div class="flex flex-wrap items-center justify-between w-full">
       <div class="my-1 flex overflow-x-auto items-center">
         <nuxt-link
-          v-if="spokeIsNotAllowed && $auth.user.domain === 'Practice'"
+          v-if="$auth.user.domain === 'Practice' 
+          && $auth.user.practice_detail.practice.type === 'Spoke' 
+          && $auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false"
           to="/permanent-jobs?status=Pending"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
@@ -76,7 +78,7 @@ export default {
 	},
 	created () {
     if(this.$auth.user.domain === 'Practice') {
-      console.log('test')
+      console.log('test', this.$auth.user)
       if(this.$auth.user.practice_detail.practice.type == 'Spoke' &&
         this.$auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false) {
         this.spokeIsNotAllowed = true
