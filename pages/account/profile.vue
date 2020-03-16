@@ -613,8 +613,14 @@ export default {
     this.profile.avatar = this.user.avatar;
     this.profile.name = this.user.personal_detail.name;
     this.profile.email = this.user.email;
-    this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
-    this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
+    this.form.gmc_or_nmc_number =
+      this.user.locum_detail && this.user.locum_detail.gmc_or_nmc_number
+        ? this.user.locum_detail.gmc_or_nmc_number.number
+        : null;
+    this.form.mpl_or_npl_number =
+      this.user.locum_detail && this.user.locum_detail.mpl_or_npl_number
+        ? this.user.locum_detail.mpl_or_npl_number.number
+        : null;
     if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
       this.formError.push({
         field: "gmc_or_nmc_number",

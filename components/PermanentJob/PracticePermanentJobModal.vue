@@ -32,7 +32,16 @@
         v-if="permanent_job.job_posting_status === 'Closed'" 
         class="bg-red-300 p-4 rounded-lg my-2"
       >
-        Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
+        <div>
+          Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
+        </div>
+        <div 
+          v-if="$auth.user.domain === 'Practice'
+            && $auth.user.practice_detail.practice.type === 'Spoke'"
+          class="m-2"
+        >
+          Closed By Hub for the reason : {{ permanent_job && permanent_job.cancelled_reason ? permanent_job.cancelled_reason : null }}
+        </div>
         <!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }} -->
       </div>
       <div class="flex flex-col md:flex-row">
@@ -539,6 +548,7 @@ export default {
 		}
 	},
 	created () {
+    console.log('practice',this.$auth.user.practice_detail.practice.type)
 		this.loading = true
 		this.getPermanentJob()
 		Promise.all([
@@ -774,17 +784,22 @@ export default {
             salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
           })
 					.then(() => {
+            let goToRoute = this.$route.name.includes("hub-surgery-management") 
+              ? `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs`
+              :`/permanent-jobs`
+
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,
 							status: "success",
 							text: ["Successfully Created Permanent Job"]
 						})
-						this.$router.push("/permanent-jobs")
+						this.$router.push(goToRoute)
 					})
 					.catch(err => {
-						this.formError = err.response.data.error_messages
+            this.formError = err.response.data.error_messages
+            console.log('eror', err)
 						this.$nextTick(() => {
-							// this.$refs.modalContainer.scrollTop = 0
+							this.$refs.modalContainer.scrollTop = 0
 						})
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,
@@ -799,8 +814,8 @@ export default {
 			}
     },
     
-		forceCloseJob () {
-			this.$axios
+		async forceCloseJob () {
+			await this.$axios
 				.$put(
 					`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
 					{
@@ -813,9 +828,7 @@ export default {
 						status: "success",
 						text: ["Successfully Closed Job"]
 					})
-				})
-				.finally(() => {
-					this.$router.go(-1)
+          this.$router.go(-1)
 				})
 		},
 
@@ -837,6 +850,7 @@ export default {
 						status: "success",
 						text: [`Job  has successfully ${this.approve_or_reject.approved_or_rejected}`]
           })
+          this.$router.go(-1)
 				})
     },
     
