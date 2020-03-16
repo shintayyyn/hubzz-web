@@ -436,6 +436,13 @@ export default {
         state.practice_withdrawn_job_parts = payload
     },
 
+    SET_PRACTICE_HUB_SPOKE_JOB_COUNT(state, payload) {
+        state.practice_hub_spoke_jobs_count = payload
+    },
+    SET_PRACTICE_HUB_SPOKE_JOB(state, payload) {
+        state.practice_hub_spoke_jobs = payload
+    },
+
     // WHOLE
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
         state.locum_allocated_jobs = payload
@@ -623,5 +630,11 @@ export default {
     },
     SET_LOCUM_PRIVATE_JOB_PARTS(state, payload) {
         state.locum_private_job_parts = payload
+    },
+    ADD_LOCUM_PRIVATE_JOB_PARTS(state, payload) {
+        payload.forEach(jobParts => {
+            state.locum_private_job_parts.push(jobParts)
+            state.locum_private_jobs_count = state.locum_private_jobs_count + 1
+        })
     }
 }

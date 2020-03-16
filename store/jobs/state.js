@@ -43,6 +43,9 @@ export default () => ({
     practice_declined_jobs: [],
     practice_declined_jobs_count: 0,
 
+    practice_practice_hub_spoke_jobs: [],
+    practice_practice_hub_spoke_jobs_count: 0,
+
     // practice_cancelled_jobs: [],
     // practice_cancelled_jobs_count: 0,
 
