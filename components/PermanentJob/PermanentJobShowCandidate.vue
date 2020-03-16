@@ -142,6 +142,13 @@
 								/>
 							</no-ssr>
 						</div>
+						<div class="flex items-center cursor-pointer hover:underline">
+							<span>
+								<svgicon name="cloud-download" height="24" width="24" />
+							</span>
+							<a class="px-2 text-sm leading-tight" target="_blank">FILE UPLOADED.docx</a>
+							<!-- add :href, :download, @click event same with compliance below -->
+						</div>
 					</div>
 					<div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
 						<div class="font-bold text-sm sm:text-md">Compliance documents</div>
@@ -295,6 +302,7 @@ export default {
 		console.log("permanent job app", this.permanent_job_application);
 
 		console.log("referees", this.user.locum_detail.referees);
+		console.log("permanentJobApp", this.permanentJobApp);
 	},
 
 	methods: {

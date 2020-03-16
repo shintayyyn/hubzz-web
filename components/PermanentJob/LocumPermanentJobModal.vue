@@ -8,24 +8,24 @@
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
-			<div class="flex flex-row flex-no-wrap justify-start items-center mt-4 md:mt-8">
-				<h4 class="text-lg md:text-xl font-bold flex items-center">
+			<div class="flex flex-row flex-wrap justify-start items-center mt-4 md:mt-8">
+				<h4 class="text-lg md:text-xl font-bold flex items-center my-1">
 					<span>{{ permanent_job.title }}</span>
 				</h4>
 				<span
 					v-if="permanent_job_application"
-					class="ml-2 py-2 rounded font-semibold"
+					class="ml-2 py-2 rounded my-1 font-semibold"
 					:class="statusStyle(permanent_job_application.application_status === 'Rejected' ? null :permanent_job.job_posting_status)"
 				>{{ permanent_job_application.application_status === 'Rejected' ? null :permanent_job.job_posting_status }}</span>
 
 				<span
-					class="mx-2 py-2 px-4 rounded font-semibold"
+					class="mx-2 py-2 px-4 rounded my-1 font-semibold"
 					:class="statusStyle(permanent_job.status)"
 				>{{ permanent_job.status }}</span>
 
 				<span
 					v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) 
-            || (permanent_job.job_posting_status === 'Closed' &&permanent_job_application && permanent_job_application.application_status !== 'Rejected')"
+            || (permanent_job.job_posting_status === 'Closed' && permanent_job_application && permanent_job_application.application_status !== 'Rejected')"
 					class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
 				>{{ jobClosingTag(permanent_job) }}</span>
 

@@ -437,7 +437,8 @@ export default {
           {
             name: "Profession",
             dataIndex: "isGp",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Title",
@@ -488,7 +489,8 @@ export default {
           {
             name: "Profession",
             dataIndex: "isGp",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Title",
@@ -1419,6 +1421,8 @@ export default {
           case "job.locum_detail_rate_type.name":
             sorting = "job_rate_type_name";
             break;
+          case "isGp":
+            sorting = "profession_name";
           default:
             sorting;
         }

@@ -17,12 +17,12 @@
           <span>{{ permanent_job.title }}</span>
         </h4>
         <span
-          class="mr-2 py-2 px-4 rounded font-semibold"
+          class="mr-2 py-2 px-4 rounded my-1 font-semibold"
           :class="statusStyle(permanent_job.job_posting_status)"
         >{{ permanent_job.job_posting_status }}</span>
         <span
           v-if="permanent_job.job_posting_status === 'Closed'"
-          class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
+          class="mr-2 py-2 px-4 rounded my-1 font-semibold bg-yellow-500"
         >
           {{ jobClosingTag(permanent_job.hired_through) }}
         </span>
