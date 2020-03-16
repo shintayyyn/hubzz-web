@@ -477,9 +477,7 @@ export default {
             }
 
             if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
-              console.log(job)
               const privateResponse = await this.getJobParts(job.id)
-              console.log("privateResponse", privateResponse)
               const privateJobParts =
                 privateResponse.data &&
                 privateResponse.data.job_parts &&

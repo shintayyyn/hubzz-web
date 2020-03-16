@@ -1,7 +1,13 @@
 <template>
 	<div class="p-4 md:p-8">
-		<div class="cursor-pointer" @click="$emit('close')">
-			<svgicon name="left-arrow" height="32" width="32" />
+		<div>
+			<svgicon
+				name="left-arrow"
+				height="32"
+				width="32"
+				class="cursor-pointer"
+				@click="$emit('close')"
+			/>
 		</div>
 
 		<div class="flex flex-row justify-start mt-4">
