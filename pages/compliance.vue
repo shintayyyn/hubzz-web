@@ -61,7 +61,9 @@
               class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white"
               :class="!item.file ? 'text-gray-600' : 'hover'"
             >
-              <div class="w-1/6">{{ item.compliance_document_name | StringMaxLength(30) }}</div>
+              <div
+                class="w-1/6"
+              >{{ item.compliance_document_name | StringMaxLength(30) }} {{item.compliance_document_type_name === 'Passport' && item.country_name ? `${item.country_name} VISA? ${hasVisa ? 'Yes' : 'No'}` : ''}}</div>
               <div class="w-1/6" v-if="(item.file || item.reference)">
                 <div class="flex flex-row flex-no-wrap items-center" v-if="item.file">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -458,6 +460,13 @@ export default {
         });
       }
       throw err;
+    }
+  },
+  computed: {
+    hasVisa() {
+      return this.mandatoryComplianceDocuments.find(
+        item => item.compliance_document_type_name === "Visa"
+      );
     }
   },
   mounted() {
