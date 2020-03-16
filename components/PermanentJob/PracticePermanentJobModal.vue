@@ -835,11 +835,6 @@ export default {
 		},
 
 		async acceptRejectSpokePermanentJob (approveReject) {
-			// if (approveReject == "Approved") {
-			// 	this.approve_or_reject.approved_or_rejected = "Approved"
-			// } else if (approveReject == "Rejected") {
-			// 	this.approve_or_reject.approved_or_rejected = "Reje"
-			// }
       this.approve_or_reject.approved_or_rejected = approveReject
 			await this.$axios
 				.$put(
