@@ -595,7 +595,7 @@ export default {
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
       // this.$socket.on("Locum Notification Job Available", this.getJobsRealTime)
-      // this.$socket.on("Locum Notification Job Matched", this.getJobsRealTime)
+      // this.$socket.on("Locum Notificatipagon Job Matched", this.getJobsRealTime)
       // this.$socket.on(
       //   "Locum Notification Job Unsuccessful",
       //   this.getJobsRealTime
@@ -950,6 +950,7 @@ export default {
 
             this.$store.commit("jobs/SET_LOCUM_APPLIED_JOBS", appliedJobs);
 
+            console.log("privateJobParts", privateJobParts)
             this.$store.commit(
               "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
               privateJobParts

@@ -630,5 +630,11 @@ export default {
     },
     SET_LOCUM_PRIVATE_JOB_PARTS(state, payload) {
         state.locum_private_job_parts = payload
+    },
+    ADD_LOCUM_PRIVATE_JOB_PARTS(state, payload) {
+        payload.forEach(jobParts => {
+            state.locum_private_job_parts.push(jobParts)
+            state.locum_private_jobs_count = state.locum_private_jobs_count + 1
+        })
     }
 }
