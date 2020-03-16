@@ -53,14 +53,8 @@
               class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
             >
               <span
-<<<<<<< HEAD
-                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1 md:mx-2"
-                :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
-              >{{ mpl_or_npl_number ? mpl_or_npl_number.status : '' }}</span>
-=======
                 class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
               >Uploading</span>
->>>>>>> 42e885e6cd705736b7431eb24d4379d3021c766d
             </div>
             <div
               v-else
@@ -433,7 +427,9 @@ export default {
         response.data.user.optional_locum_compliance_documents;
       console.log(optionalComplianceDocuments);
 
-      const responseCountries = await app.$axios.$get(`/api/v1/countries`);
+      const responseCountries = await app.$axios.$get(
+        `/api/v1/countries?limit=10000`
+      );
       const countries =
         responseCountries &&
         responseCountries.data &&
