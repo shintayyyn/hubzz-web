@@ -423,6 +423,7 @@
                       min="1"
                       maxlength="8"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                      @focus="hasValue(form.hours, 'hours')"
                     />
                     <div
                       v-if="formError.find(item => item.field === 'hours')"
@@ -443,6 +444,7 @@
                       min="1"
                       maxlength="2"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                      @focus="hasValue(form.minutes, 'minutes')"
                     />
                     <div
                       v-if="formError.find(item => item.field === 'minutes')"
@@ -902,6 +904,11 @@ export default {
       });
   },
   methods: {
+    hasValue(value, field) {
+      if (value == 0) {
+        this.form[field] = ""
+      }
+    },
     handleKeyDownEvent(e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
@@ -1051,6 +1058,8 @@ export default {
           message: "Hours is required"
         });
       } else {
+        this.form.hours = !this.form.hours ? 0 : this.form.hours 
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
         this.form.total_hours =
           this.form.hours * 60 + parseInt(this.form.minutes);
       }

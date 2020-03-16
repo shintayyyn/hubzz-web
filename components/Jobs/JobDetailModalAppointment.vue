@@ -39,6 +39,7 @@
               :name="'date_start'"
               :label="'From'"
               :error="this.formError.find(item => item.field === 'date_start')"
+              isAfter
             />
             <!-- isAfter -->
           </div>
@@ -57,6 +58,7 @@
               :label="'To'"
               :start-date="form.date_start"
               :error="this.formError.find(item => item.field === 'date_end')"
+              isAfter
             />
             <!-- isAfter -->
           </div>
