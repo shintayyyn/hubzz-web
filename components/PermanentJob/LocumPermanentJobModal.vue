@@ -25,7 +25,7 @@
 
 				<span
 					v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) 
-            || (permanent_job_application && permanent_job_application.application_status !== 'Rejected')"
+            || (permanent_job.job_posting_status === 'Closed' &&permanent_job_application && permanent_job_application.application_status !== 'Rejected')"
 					class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
 				>{{ jobClosingTag(permanent_job) }}</span>
 

@@ -26,7 +26,8 @@
         >
           {{ jobClosingTag(permanent_job.hired_through) }}
         </span>
-        <AppButton v-if="permanent_job.job_posting_status !== 'Unfilled'" :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
+        <!-- v-if="permanent_job.job_posting_status !== 'Unfilled'" -->
+        <AppButton  :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
       </div>
       <div
         v-if="permanent_job.job_posting_status === 'Closed'" 
@@ -174,7 +175,7 @@
             <!-- EDIT PERMANENT JOB -->
             <template v-if="edit === true">
               <AppDate
-                v-if="permanent_job.job_posting_status !== 'Closed'"
+                v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
                 v-model="form.date_closing"
                 :name="'date_closing'"
                 :label="'Date Closing'"
