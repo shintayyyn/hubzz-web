@@ -38,7 +38,8 @@
         </div>
         <div 
           v-if="$auth.user.domain === 'Practice'
-            && $auth.user.practice_detail.practice.type === 'Spoke'"
+            && permanent_job 
+            && permanent_job.cancelled_reason"
           class="m-2"
         >
           Closed By Hub for the reason : {{ permanent_job && permanent_job.cancelled_reason ? permanent_job.cancelled_reason : null }}
@@ -646,6 +647,10 @@ export default {
 			{
 				label: "Direct Hiring",
 				value: "Direct Hiring"
+      },
+      {
+				label: "Closed by Practice",
+				value: "Closed by Practice"
 			}
 		]
 	},
@@ -822,7 +827,7 @@ export default {
 				.$put(
 					`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
 					{
-						hired_through: this.form.hired_through
+						hired_through: this.form.hired_through === 'Closed by Practice' ? null : this.form.hired_through 
 					}
 				)
 				.then(() => {
