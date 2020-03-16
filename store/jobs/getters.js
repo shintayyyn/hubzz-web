@@ -591,6 +591,38 @@ export default {
         return state.practice_applied_jobs_reminder
     },
 
+    getPracticeHubSpokeJobs(state) {
+        let jobs = []
+        if (state.practice_hub_spoke_jobs) {
+            state.practice_hub_spoke_jobs.forEach(job => {
+                console.log(job)
+                // let surgery_name = ''
+                // let date_time_start = ''
+                // let date_time_end = ''
+                // let rate_name = ''
+                // let rate_type_name = ''
+                // let shift_name = ''
+                // surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                // date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+                // date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+                // rate_name = job.rate
+                // rate_type_name = job.locum_detail_rate_type.name
+                // shift_name = job.shift.name
+                // jobs.push({
+                //     ...job,
+                //     surgery_name,
+                //     date_time_start,
+                //     date_time_end,
+                //     rate_name,
+                //     rate_type_name,
+                //     shift_name,
+                // })
+            })
+            return jobs
+        }
+        return []
+    },
+
     // locum
     // NOTIF
     getLocumJobNotifications(state) {

@@ -1,7 +1,7 @@
 import Vue from "vue"
 Vue.mixin({
   methods: {
-    async CheckIfUserIsDeactivated () {
+    async CheckIfUserIsDeactivated() {
       if (this.$auth.loggedIn) {
         await this.$auth.fetchUser()
         if (this.$auth.user.status === 'Deactivated') {
@@ -9,7 +9,7 @@ Vue.mixin({
         }
       }
     },
-    async CheckUserVerification () {
+    async CheckUserVerification() {
       if (this.$auth.user.domain === 'Locum') {
         let oldStatus = this.$auth.user.status
         const response = await this.$axios.$get(`/api/v1/me`)
@@ -37,10 +37,10 @@ Vue.mixin({
         }
       }
     },
-    scrollToTop () {
+    scrollToTop() {
       window.scrollTo(0, 0)
     },
-    getDateArray (start, end) {
+    getDateArray(start, end) {
       let arr = new Array()
       let dt = new Date(start)
       while (dt <= new Date(end)) {
@@ -49,7 +49,7 @@ Vue.mixin({
       }
       return arr
     },
-    CheckEmptyField (inputField, fieldName, preferredDisplayName) {
+    CheckEmptyField(inputField, fieldName, preferredDisplayName) {
       let trimmedFieldName = fieldName
       let displayFieldName = null
       if (!preferredDisplayName) {
@@ -103,7 +103,7 @@ Vue.mixin({
         // }
       }
     },
-    Validate (form, lists, preferredDisplayName) {
+    Validate(form, lists, preferredDisplayName) {
       let items = Object.entries(form)
       for (const [key, value] of items) {
         let trimmedFieldName = key
@@ -157,7 +157,7 @@ Vue.mixin({
         }
       }
     },
-    CheckPermissions (permissions) {
+    CheckPermissions(permissions) {
       let hasPermission = true
       switch (this.$route.name) {
         case "profile-practice":
@@ -220,7 +220,7 @@ Vue.mixin({
         hasPermission
       }
     },
-    changeDateFormat (form, dates, oldFormat, newFormat) {
+    changeDateFormat(form, dates, oldFormat, newFormat) {
       let submitForm = { ...form }
       let items = Object.entries(form)
       for (const [key, value] of items) {
@@ -231,7 +231,7 @@ Vue.mixin({
       }
       return submitForm
     },
-    isNumber (e) {
+    isNumber(e) {
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
       let charCode = (e.which) ? e.which : e.keyCode
@@ -241,7 +241,7 @@ Vue.mixin({
         return true
       }
     },
-    inputNumberOnly (e) {
+    inputNumberOnly(e) {
       // numbers only [0-9]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
@@ -251,12 +251,23 @@ Vue.mixin({
         return true
       }
     },
-    inputTelephone (e) {
+    inputTelephone(e) {
       // [0-9,+,-,#]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
       if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 35 && charCode !== 43 && charCode !== 45) {
         e.preventDefault()
+      } else {
+        return true
+      }
+    },
+
+    limitInput(e, value, limit) {
+      console.log(value.length)
+      if (value.length >= limit) {
+        console.log(e)
+        // e.quill.emitter._events.preventDefault()
+        // e.preventDefault();
       } else {
         return true
       }
