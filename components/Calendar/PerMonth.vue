@@ -949,8 +949,6 @@ export default {
             );
 
             this.$store.commit("jobs/SET_LOCUM_APPLIED_JOBS", appliedJobs);
-
-            console.log("privateJobParts", privateJobParts)
             this.$store.commit(
               "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
               privateJobParts

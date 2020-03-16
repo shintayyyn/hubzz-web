@@ -124,7 +124,7 @@
               v-if="form.items[0].dispute && isApproved === false"
               class="flex justify-start mt-2 px-2"
             >
-              <div class="w-1/3 flex flex-col px-2">
+              <div class="w-1/4 flex flex-col px-2">
                 <label for="absent_days">Days of absent</label>
                 <input
                   v-model="form.items[0].absent_days"
@@ -135,7 +135,7 @@
                   @keypress="isNumber($event)"
                 >
               </div>
-              <div class="w-1/3 flex flex-col px-2">
+              <div class="w-1/4 flex flex-col px-2">
                 <label for="late_hours">Hours of late</label>
                 <input
                   v-model="form.items[0].late_hours"
@@ -146,8 +146,9 @@
                   @keypress="isNumber($event)"
                 >
               </div>
-              <div class="w-1/3 flex flex-col px-2">
-                <label for="final_hours">Final hours</label>
+              <div class="w-2/4 flex flex-col">
+                  <label for="final_hours">Final hours</label>
+                <!-- <label for="final_hours">Final hours</label>
                 <input
                   v-model="form.items[0].final_hours"
                   type="number"
@@ -155,7 +156,40 @@
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                >
+                > -->
+                <div class="flex">
+                  <div class="flex items-center px-2">
+                    <input
+                      v-model="form.hours"
+                      type="number"
+                      min="0"
+                      name="hours"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                      :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
+                      @keypress="isNumber($event)"
+                      @focus="hasValue(form.hours, 'hours')"
+                      @blur="!form.hours ? form.hours = 0 : form.hours"
+                    >
+                    <label for="hours" class="text-xs md:text-sm">hours</label>
+                  </div>
+                  <div class="flex items-center px-2">
+                    <input
+                      v-model="form.minutes"
+                      type="number"
+                      min="0"
+                      name="minutes"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                      maxlength="2"
+                      max="60"
+                      :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
+                      @keypress="isNumber($event)"
+                      @focus="hasValue(form.minutes, 'minutes')"
+                      @blur="!form.minutes ? form.minutes = 0 : form.minutes"
+                    >
+                    <label for="minutes" class="text-xs md:text-sm">minutes</label>
+                  </div>
+                </div>
+                <p class="text-xs mx-2 text-red-500" v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')">Final hours is required</p>
               </div>
             </div>
             <!-- disputed invoice update form -->
@@ -289,7 +323,9 @@ export default {
         items: [],
         total_amount: 0,
         date_start: null,
-        date_end: null
+        date_end: null,
+        minutes: 0,
+        hours: 0
       },
       formError: [],
 
@@ -449,11 +485,36 @@ export default {
         this.allowToBill = true
       }
     }
+    this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
+    this.form.minutes = this.form.items[0].final_hours % 60;
   },
   methods: {
+    hasValue(value, field) {
+      if (value == 0) {
+        this.form[field] = ""
+      }
+    },
     save (final) {
       this.formError = []
-      this.Validate(this.form, ["total_amount"])
+      if (
+        [0, "0"].includes(this.form.hours) &&
+        [0, "0"].includes(this.form.minutes)
+      ) {
+        this.formError.push({
+          field: "minutes",
+          message: "Minutes is required"
+        });
+        this.formError.push({
+          field: "hours",
+          message: "Hours is required"
+        });
+      } else {
+        this.form.hours = !this.form.hours ? 0 : this.form.hours 
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
+        this.form.items[0].final_hours =
+          this.form.hours * 60 + parseInt(this.form.minutes);
+      }
+      this.Validate(this.form, ["total_amount, hours, minutes"])
       if (!this.formError.length) {
         this.form.items[0].description = this.description
         this.form.items[0].total = this.total
