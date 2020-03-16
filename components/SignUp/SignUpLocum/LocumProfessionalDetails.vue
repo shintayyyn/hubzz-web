@@ -269,8 +269,8 @@ export default {
         max_rate_per_whole_day_session: 0,
         practice_type_id: [],
         mandatory_training_id: [],
-        view_locum_jobs,
-        view_permanent_jobs
+        view_locum_jobs: false,
+        view_permanent_jobs: false
       },
       formError: []
     };
@@ -405,8 +405,11 @@ export default {
       this.Validate(this.form, [
         "nhs_smart_card_id_number",
         "spoken_language_id",
-        "mandatory_training_id"
+        "mandatory_training_id",
+        "view_locum_jobs",
+        "view_permanent_jobs"
       ]);
+      console.log(this.formError.length);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
           ...this.form,
