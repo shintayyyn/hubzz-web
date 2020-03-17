@@ -627,9 +627,6 @@ export default {
         };
       }
     );
-    console.log(
-      this.form.practice_profession_compliance_category_compliance_documents
-    );
   },
   methods: {
     async onFileInput(e) {
