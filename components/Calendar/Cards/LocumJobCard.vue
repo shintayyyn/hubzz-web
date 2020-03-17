@@ -52,14 +52,10 @@ export default {
 			);
 		},
 		link() {
-			console.log(this.propJob);
-			if (this.propJob.locum_status !== "Permanent") {
-				let status =
-					this.propJob.job.type === "Private" ? "Private" : this.propJob.status;
-				let id =
-					this.propJob.job.type === "Private"
-						? this.propJob.job.id
-						: this.propJob.id;
+			let job = this.isJobPart ? this.propJob.job : this.propJob;
+			if (job.locum_status !== "Permanent") {
+				let status = job.type === "Private" ? "Private" : job.status;
+				let id = job.id;
 				return {
 					path: this.job.type
 						? `/dashboard/${id}?status=${status}`
