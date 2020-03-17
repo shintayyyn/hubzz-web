@@ -1,6 +1,6 @@
 <template>
   <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
-    <template v-if="true && isReadyToApply">
+    <template v-if="true || isReadyToApply">
       <div class="text-sm sm:text-base mb-4">
         This job is still open
       </div>
