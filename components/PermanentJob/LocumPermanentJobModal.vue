@@ -49,6 +49,7 @@
 			>
 				<div class="mx-4 mt-4">
 					<div class="w-full">
+						<p class="font-bold text-sm">Must submit atleast one (Pitch/Cover Email)</p>
 						<p class="text-sm">Please write a short pitch to apply for this Permanent Job (Optional)</p>
 						<div class="mb-3 md:mb-6">
 							<no-ssr placeholder="Loading..." class>
@@ -80,11 +81,12 @@
 					<div class="flex justify-between w-full">
 						<AppButton
 							:label="'Send Application'"
-							:disabled="!canApply || job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000"
+							:disabled="(!canApply || job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000) || (!job_application.job_application_pitch && !job_application.file)"
 							@click="apply()"
 						/>
 						<label
-							class="leading-loose cursor-pointer text-black flex items-center hover:bg-yellow-500 px-4 py-2 rounded-lg transition-hover"
+							class="leading-loose cursor-pointer text-black flex items-center py-2 rounded-lg transition-hover"
+							:class="uploadedFile ? '' : 'hover:bg-yellow-500 px-4 '"
 						>
 							<input
 								id="coverEmail"
@@ -98,6 +100,11 @@
 							{{ uploadedFile ? uploadedFile : 'Upload File' | StringMaxLength(15)}}
 						</label>
 					</div>
+					<p
+						v-if="uploadedFile"
+						class="text-xs text-right cursor-pointer hover:underline"
+						@click="uploadedFile = '', job_application.file = ''"
+					>Remove File</p>
 				</div>
 
 				<p v-if="!canApply" class="text-sm px-4 text-red-500">
@@ -385,33 +392,37 @@ export default {
 				});
 			} else {
 				this.job_application.locum_user_id = this.$auth.user.id;
-				console.log(this.job_application);
-				const formData = new FormData();
-				formData.append("locum_user_id", this.$auth.user.id);
-				if (this.job_application.job_application_pitch) {
-					formData.append(
-						"job_application_pitch",
-						this.job_application.job_application_pitch
-					);
-				}
-				if (this.job_application.file) {
-					formData.append("file", this.job_application.file);
-				}
-				await this.$axios
-					.$put(
-						`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
-						formData
-					)
-					.then(() => {
-						this.job.applied = true;
-						this.toApply = false;
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: ["You have successfully Applied to this job"]
+				if (
+					this.job_application.job_application_pitch ||
+					this.job_application.file
+				) {
+					const formData = new FormData();
+					formData.append("locum_user_id", this.$auth.user.id);
+					if (this.job_application.job_application_pitch) {
+						formData.append(
+							"job_application_pitch",
+							this.job_application.job_application_pitch
+						);
+					}
+					if (this.job_application.file) {
+						formData.append("file", this.job_application.file);
+					}
+					await this.$axios
+						.$put(
+							`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
+							formData
+						)
+						.then(() => {
+							this.job.applied = true;
+							this.toApply = false;
+							this.$store.commit("SET_NOTIFICATION", {
+								enabled: true,
+								status: "success",
+								text: ["You have successfully Applied to this job"]
+							});
+							this.getJob();
 						});
-						this.getJob();
-					});
+				}
 			}
 		},
 
