@@ -15,7 +15,7 @@
             @submit="save"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
             @keypress="inputNumberOnly($event)"
-            required
+            requiredf
           />
           <AppInput
             v-model="form.mpl_or_npl_number"
@@ -826,6 +826,7 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
+            this.CheckUserVerification();
           })
           .catch(err => {
             console.log("err", err.response || err);
