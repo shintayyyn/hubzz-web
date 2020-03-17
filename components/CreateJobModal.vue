@@ -531,7 +531,9 @@ export default {
       mandatory_training_lists: [],
 
       gp_compliance_documents_lists: [],
-      others_compliance_documents_lists: [],
+      nurse_compliance_documents_lists: [],
+      paramedics_compliance_documents_lists: [],
+      pharmacists_compliance_documents_lists: [],
 
       professions_categories: [],
       selectedProfession: {
@@ -628,13 +630,21 @@ export default {
         });
         this.banksCount =
           response.data && response.data.count ? response.data.count : 0;
-
-        if (this.selectedProfession.profession_category.id == 1) {
+        console.log(this.selectedProfession);
+        if (this.selectedProfession.profession_compliance_category.id === 1) {
           this.compliances = this.gp_compliance_documents_lists;
           return;
         }
-        if (this.selectedProfession.profession_category.id == 2) {
-          this.compliances = this.others_compliance_documents_lists;
+        if (this.selectedProfession.profession_compliance_category.id === 2) {
+          this.compliances = this.nurse_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_compliance_category.id === 3) {
+          this.compliances = this.paramedics_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_compliance_category.id === 4) {
+          this.compliances = this.pharmacists_compliance_documents_lists;
           return;
         }
       }
@@ -690,7 +700,7 @@ export default {
       this.$axios.$get("/api/v1/locum-detail-rate-types"),
       this.$axios.$get("/api/v1/shifts"),
       this.$axios.$get("/api/v1/professions"),
-      this.$axios.$get("/api/v1/me")
+      this.$axios.$get("/api/v1/practice/me/practice-profile")
     ])
       .then(
         ([
@@ -698,7 +708,7 @@ export default {
           responseRateLists,
           responseShifts,
           responseProfessions,
-          responseMe
+          responseProfile
         ]) => {
           this.practice_lists = [];
           responsePracticeLists.data.practices.forEach(item => {
@@ -720,36 +730,60 @@ export default {
             this.professions.push({ label: item.name, value: item.id });
             this.professions_categories.push(item);
           });
-          this.form.report_to =
-            responseMe.data.user.practice_detail.practice.report_to;
-          this.form.email = responseMe.data.user.practice_detail.practice.email;
-          responseMe.data.user.practice_detail.practice.mandatory_trainings.forEach(
-            item => {
-              this.mandatory_training_lists.push({
-                label: item.name,
-                value: item.id
-              });
-            }
-          );
-          responseMe.data.user.practice_detail.practice.gp_compliance_documents.forEach(
-            item => {
-              this.gp_compliance_documents_lists.push({
-                label: item.name,
-                value: item.id
-              });
-            }
-          );
-          responseMe.data.user.practice_detail.practice.others_compliance_documents.forEach(
-            item => {
-              this.others_compliance_documents_lists.push({
-                label: item.name,
-                value: item.id
-              });
-            }
-          );
+
+          this.form.report_to = responseProfile.data.practice.report_to;
+          this.form.email = responseProfile.data.practice.email;
+
+          responseProfile.data.practice.mandatory_trainings.forEach(item => {
+            this.mandatory_training_lists.push({
+              label: item.name,
+              value: item.id
+            });
+          });
 
           this.form.extra_information =
-            responseMe.data.user.practice_detail.practice.extra_information;
+            responseProfile.data.practice.extra_information;
+
+          responseProfile.data.practice.practice_profession_compliance_category_compliance_documents.forEach(
+            complianceCategoryDocument => {
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                1
+              ) {
+                this.gp_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                2
+              ) {
+                this.nurse_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                3
+              ) {
+                this.paramedics_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                4
+              ) {
+                this.pharmacists_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+            }
+          );
 
           if (this.repostJob) {
             this.form.practice_id = this.repostJob.platform_job.practice.id;
@@ -906,7 +940,7 @@ export default {
   methods: {
     hasValue(value, field) {
       if (value == 0) {
-        this.form[field] = ""
+        this.form[field] = "";
       }
     },
     handleKeyDownEvent(e, formField, limit) {
@@ -1058,8 +1092,8 @@ export default {
           message: "Hours is required"
         });
       } else {
-        this.form.hours = !this.form.hours ? 0 : this.form.hours 
-        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
+        this.form.hours = !this.form.hours ? 0 : this.form.hours;
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
         this.form.total_hours =
           this.form.hours * 60 + parseInt(this.form.minutes);
       }
