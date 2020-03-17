@@ -112,7 +112,7 @@
               <div
                 class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300"
               >
-                {{ form.items[0].description }}
+                {{ description }}
               </div>
               <div
                 v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
@@ -230,7 +230,7 @@
             </div>
           </div>
 
-          <!-- OLD -->
+        <!-- OLD -->
           <!-- items / selected invoice -->
           <!-- <div
             v-if="form.items && form.items.length > 0"
@@ -553,7 +553,30 @@ export default {
         return total
       }
       return 0
-    }
+    },
+    description () {
+      if (this.propInvoice) {
+        let hours = Math.floor(this.form.items[0].final_hours / 60);
+      let minutes = Math.floor(this.form.items[0].final_hours % 60);
+      let hour = hours > 0 ? `${hours > 0 ? hours : ''} ${hours > 1 ? 'hours' : 'hour'}` :  ''
+      let minute = minutes > 0 ? `${minutes > 0 ? minutes : ''} ${minutes > 1 ? 'minutes' : 'minute'}` :  ''
+      let totalHours = `${hour} ${minute}` ;
+      return `Job number ${
+        this.propInvoice.items[0].job_part.job_part_number
+      } ${this.propInvoice.items[0].job_part.job.type}
+        Job at £${this.propInvoice.items[0].job_part.job.rate} ${
+        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+      }
+        from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
+        / ${
+          this.propInvoice.items[0].job_part.job.shift.name
+        } / Total hours of  ${
+        this.form.items.length > 0 ? totalHours : 0
+      }`
+      }else {
+        return this.form.items[0].description
+      }
+    },
   },
   mounted () {
     if (this.propJobPart && !this.propInvoice) {

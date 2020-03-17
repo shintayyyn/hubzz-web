@@ -356,6 +356,11 @@ export default {
       return total
     },
     description () {
+      let hours = Math.floor(this.form.items[0].final_hours / 60);
+      let minutes = Math.floor(this.form.items[0].final_hours % 60);
+      let hour = hours > 0 ? `${hours > 0 ? hours : ''} ${hours > 1 ? 'hours' : 'hour'}` :  ''
+      let minute = minutes > 0 ? `${minutes > 0 ? minutes : ''} ${minutes > 1 ? 'minutes' : 'minute'}` :  ''
+      let totalHours = `${hour} ${minute}` ;
       return `Job number ${
         this.propInvoice.items[0].job_part.job_part_number
       } ${this.propInvoice.items[0].job_part.job.type}
@@ -365,8 +370,8 @@ export default {
         from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
         / ${
           this.propInvoice.items[0].job_part.job.shift.name
-        } / Total hours of ${
-        this.form.items.length > 0 ? this.form.items[0].final_hours : 0
+        } / Total hours of  ${
+        this.form.items.length > 0 ? totalHours : 0
       }`
     },
     total () {
