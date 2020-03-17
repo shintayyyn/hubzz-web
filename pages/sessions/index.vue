@@ -85,6 +85,16 @@
           <div class="flex flex-col md:flex-row h-full w-full items-end">
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppInput
+                v-model="profession_id"
+                :type="'select'"
+                :name="'profession_id'"
+                :label="'Roles'"
+                :placeholder="'Select...'"
+                :items="professions"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
                 v-model="shift_id"
                 class="px-1"
                 :type="'select'"
@@ -110,6 +120,7 @@
               />
             </div>
           </div>
+          
 
           <div class="md:px-1 h-full flex w-full">
             <AppButton
@@ -178,6 +189,16 @@
           </div>
 
           <div class="flex flex-col md:flex-row g-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                v-model="profession_id"
+                :type="'select'"
+                :name="'profession_id'"
+                :label="'Roles'"
+                :placeholder="'Select...'"
+                :items="professions"
+              />
+            </div>
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 v-model="job_shift_id"
@@ -338,6 +359,7 @@ export default {
       practice_id: "",
       job_practice_id: "",
       shift_id: "",
+      profession_id: "",
       job_shift_id: "",
       rate: "",
       job_rate: "",
@@ -357,6 +379,7 @@ export default {
       job_part_number_includes: "",
       shifts: [],
       rates: [],
+      professions: [],
       filterModal: false,
       isFiltered: false,
       showRefresh: false
@@ -436,7 +459,7 @@ export default {
           },
           {
             name: "Profession",
-            dataIndex: "isGp",
+            dataIndex: "profession_name",
             class: "text-center",
             sortable: true
           },
@@ -488,7 +511,7 @@ export default {
           },
           {
             name: "Profession",
-            dataIndex: "isGp",
+            dataIndex: "profession_name",
             class: "text-center",
             sortable: true
           },
@@ -655,7 +678,15 @@ export default {
       let job_number_includes = "";
       let job_part_number_includes = "";
 
-      const [shifts, rates, total, jobs] = await Promise.all([
+      const [professions, shifts, rates, total, jobs] = await Promise.all([
+        app.$axios.$get(`/api/v1/professions`).then(res => {
+          const professions = [];
+          professions.push({ label: "All", value: "" });
+          res.data.professions.forEach(item => {
+            professions.push({ label: item.name, value: item.id });
+          });
+          return professions;
+        }),
         app.$axios.$get(`/api/v1/shifts`).then(res => {
           const shifts = [];
           shifts.push({ label: "All", value: "" });
@@ -774,10 +805,11 @@ export default {
                 ? res.data.jobs.map(item => {
                     return {
                       ...item,
-                      isGp:
-                        item.platform_job.profession.name === "GP"
-                          ? "GP"
-                          : "Non-GP",
+                      // isGp:
+                      //   item.platform_job.profession.name === "GP"
+                      //     ? "GP"
+                      //     : "Non-GP",
+                      profession_name: item.platform_job.profession.name,
                       assigned_to: item.platform_job.appointed_to_locum.user
                         ? item.platform_job.appointed_to_locum.user
                             .personal_detail.name
@@ -794,7 +826,8 @@ export default {
                 ? res.data.job_parts.map(item => {
                     return {
                       ...item,
-                      isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
+                      // isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
+                      profession_name: item.profession.name,
                       tag_status: item.terminated ? "Terminated" : item.status,
                       date_time_start: `${app
                         .$moment(item.date_start)
@@ -810,6 +843,7 @@ export default {
       ]);
 
       return {
+        professions,
         shifts,
         rates,
         total,
@@ -948,7 +982,8 @@ export default {
                   : queryStatus === "Applied" &&
                     (bankStatus === "false" || !bankStatus)
                   ? false
-                  : null
+                  : null,
+              profession_id: this.profession_id
             }
           }
         ),
@@ -996,7 +1031,8 @@ export default {
                   : queryStatus === "Applied" &&
                     (bankStatus === "false" || !bankStatus)
                   ? false
-                  : null
+                  : null,
+              profession_id: this.profession_id
             }
           }
         )
@@ -1007,10 +1043,11 @@ export default {
               ? responseJobs.data.jobs.map(item => {
                   return {
                     ...item,
-                    isGp:
-                      item.platform_job.profession.name === "GP"
-                        ? "GP"
-                        : "Non-GP",
+                    // isGp:
+                    //   item.platform_job.profession.name === "GP"
+                    //     ? "GP"
+                    //     : "Non-GP",
+                    profession_name: item.platform_job.profession.name,
                     assigned_to: item.platform_job.appointed_to_locum.user
                       ? item.platform_job.appointed_to_locum.user
                           .personal_detail.name
@@ -1027,7 +1064,8 @@ export default {
               ? responseJobs.data.job_parts.map(item => {
                   return {
                     ...item,
-                    isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
+                    profession_name: item.profession.name ,
+                    // isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
                     tag_status: item.terminated ? "Terminated" : item.status,
                     date_time_start: `${this.$moment(item.date_start).format(
                       "DD-MM-YYYY"
@@ -1122,6 +1160,7 @@ export default {
                       item.platform_job.profession.name === "GP"
                         ? "GP"
                         : "Non-GP",
+                    profession_name: item.platform_job.profession.name,
                     assigned_to: item.platform_job.appointed_to_locum.user
                       ? item.platform_job.appointed_to_locum.user
                           .personal_detail.name
@@ -1138,6 +1177,7 @@ export default {
               ? res.data.job_parts.map(item => {
                   return {
                     ...item,
+                    profession_name: item.profession.name,
                     isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
                     tag_status: item.terminated ? "Terminated" : item.status,
                     date_time_start: `${this.$moment(item.date_start).format(
@@ -1489,6 +1529,7 @@ export default {
       this.job_title_includes = "";
       this.job_number_includes = "";
       this.job_part_number_includes = "";
+      this.profession_id = "";
     }
   }
 };
