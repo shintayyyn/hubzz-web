@@ -90,7 +90,10 @@
               <div class="w-1/6" v-else />
               <div class="w-1/6" v-if="item && item.expired_at">{{ item.expired_at | localDate }}</div>
               <div class="w-1/6" v-else />
-              <div class="w-1/6" v-if="item && item.status">
+              <div
+                class="w-1/6"
+                v-if="item && item.status && item.compliance_document_type_name !== 'Safeguarding'"
+              >
                 <div class="flex justify-start max-w-xs">
                   <div
                     class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -172,7 +175,7 @@
                   <div class="w-1/6" v-else />
                   <div
                     class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                    @click="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, 'optional-child')"
+                    @click="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, 'mandatory-child')"
                   >Upload</div>
                 </div>
               </div>
@@ -290,6 +293,116 @@
           </div>
         </div>
       </div>
+
+      <!-- TRAININGS -->
+      <div class="mt-10">
+        <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
+      </div>
+
+      <div class="mt-4 overflow-x-auto">
+        <template v-if="!mandatory_trainings.length">
+          <span
+            class="text-center font-bold text-gray-500 text-xs md:text-sm"
+            colspan="7"
+          >This section is empty. Update your profile to fill this area.</span>
+        </template>
+        <template v-else>
+          <table>
+            <thead>
+              <tr class="text-xs sm:text-sm text-left">
+                <th class="pl-2">Type</th>
+                <th class="pl-2">File</th>
+                <th class="text-center">Date uploaded</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              <template v-for="(item, index) in mandatory_trainings">
+                <tr
+                  v-if="activeLoading.includes(item.mandatory_training.id)"
+                  :key="item.id"
+                  class="text-xs sm:text-sm text-left bg-gray-200"
+                >
+                  <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+                </tr>
+                <tr
+                  v-else
+                  :key="item.id"
+                  class="text-xs sm:text-sm text-left"
+                  :class="!item.info ? 'text-gray-600' : 'hover:bg-white'"
+                >
+                  <td
+                    :class="item && item.file ? 'cursor-pointer' : ''"
+                    class="w-1/3"
+                    @click="show(item, 'mandatory')"
+                  >{{ item.mandatory_training.name }}</td>
+                  <td v-if="item.file" class="hover:underline">
+                    <div class="flex flex-row flex-no-wrap">
+                      <svgicon name="cloud-download" height="24" width="24" />
+                      <div class="leading-loose mx-2">
+                        <a
+                          target="_blank"
+                          :href="item.file.url"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td v-else />
+                  <td
+                    v-if="item && item.file"
+                    class="text-center"
+                  >{{ item.file.created_at | localDate }}</td>
+                  <td v-else />
+                  <td
+                    v-if="!item.file"
+                    class="hover:underline"
+                    @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                  >
+                    <div
+                      class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer"
+                    >
+                      <input
+                        :ref="`${item.id}_file_mandatory_training`"
+                        type="file"
+                        class="inputfile hidden"
+                        @input="onMandatoryFileInput($event, item.mandatory_training.id, index)"
+                        @click.stop
+                      />
+                      <svgicon name="cloud-upload" height="24" width="24" />
+                      <label
+                        class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
+                      >Upload</label>
+                    </div>
+                  </td>
+                  <td
+                    v-else
+                    class="hover:underline"
+                    @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                  >
+                    <div
+                      class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 mx-auto p-2 rounded cursor-pointer"
+                    >
+                      <input
+                        :ref="`${item.id}_file_mandatory_training`"
+                        type="file"
+                        class="inputfile hidden"
+                        @input="onMandatoryFileUpdate($event, item.id, index, item.mandatory_training.id)"
+                        @click.stop
+                      />
+                      <svgicon name="cloud-upload" height="24" width="24" />
+                      <label
+                        class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
+                      >Update</label>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+      </div>
     </div>
     <div>
       <transition name="fade" mode="out-in">
@@ -387,6 +500,7 @@ export default {
       referenceComplianceDocuments: [],
       mandatoryComplianceDocuments: [],
       optionalComplianceDocuments: [],
+      mandatory_trainings: [],
       modal: false,
       type: null,
       selectedComplianceTypeName: null,
@@ -424,10 +538,15 @@ export default {
         response.data.user.reference_locum_compliance_documents;
       const mandatoryComplianceDocuments =
         response.data.user.mandatory_locum_compliance_documents;
-      console.log(mandatoryComplianceDocuments);
       const optionalComplianceDocuments =
         response.data.user.optional_locum_compliance_documents;
-      console.log(optionalComplianceDocuments);
+
+      const responseMandatoryTrainings = await app.$axios.$get(
+        `/api/v1/locum/locum-detail-mandatory-trainings`
+      );
+      const mandatory_trainings = responseMandatoryTrainings.data.locum_detail_mandatory_trainings.sort(
+        (a, b) => a.id - b.id
+      );
 
       const responseCountries = await app.$axios.$get(
         `/api/v1/countries?limit=10000`
@@ -448,7 +567,8 @@ export default {
         countries,
         referenceComplianceDocuments,
         mandatoryComplianceDocuments,
-        optionalComplianceDocuments
+        optionalComplianceDocuments,
+        mandatory_trainings
       };
     } catch (err) {
       console.log("err", err.response || err);
@@ -819,6 +939,124 @@ export default {
       // this.file = file;
       this.form.file = file;
     },
+    onMandatoryFileInput(e, id, index) {
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format"]
+        });
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mandatory_training_id", id);
+      // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(id);
+      this.$axios
+        .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
+        .then(res => {
+          this.mandatory_trainings.splice(
+            index,
+            1,
+            res.data.locum_detail_mandatory_training
+          );
+          this.mandatory_trainings = this.mandatory_trainings.sort(
+            (a, b) => a.id - b.id
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Document uploaded!"]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        })
+        .catch(err => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        });
+    },
+    onMandatoryFileUpdate(e, id, index, loadingId) {
+      if (!e.target.files.length) {
+        return;
+      }
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format"]
+        });
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(loadingId);
+      this.$axios
+        .$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData)
+        .then(res => {
+          this.mandatory_trainings.splice(
+            index,
+            1,
+            res.data.locum_detail_mandatory_training
+          );
+          this.mandatory_trainings = this.mandatory_trainings.sort(
+            (a, b) => a.id - b.id
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Document uploaded!"]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
+        })
+        .catch(err => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
+        });
+    },
     downloadItem(fileUrl, fileName) {
       const axios = require("axios");
       axios({
@@ -845,6 +1083,23 @@ export default {
 a {
   text-decoration: none;
   color: black;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  padding: 0 5px;
+}
+.hover:hover td {
+  background-color: #eff3f8;
+}
+table tbody td:last-child,
+table thead th:last-child {
+  position: sticky;
+  background-color: #fff;
+  right: 0;
+}
+table tbody td {
+  padding: 15px 8px;
 }
 .shield {
   z-index: 511;
