@@ -60,6 +60,7 @@
               v-else
               class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white"
               :class="!item.file ? 'text-gray-600' : 'hover'"
+              @click="show(item, 'compliance')"
             >
               <div
                 class="w-1/6"
@@ -107,7 +108,7 @@
               <div
                 v-if="item.compliance_document_type_name !== 'Safeguarding'"
                 class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                @click="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, 'mandatory')"
+                @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'mandatory')"
               >Upload</div>
             </div>
             <div v-if="item.compliance_document_type_name === 'Safeguarding'">
@@ -128,6 +129,7 @@
                   v-else
                   class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
                   :class="!childItem.file ? 'text-gray-600' : 'hover'"
+                  @click="show(childItem, 'compliance')"
                 >
                   <div class="w-1/6">{{ childItem.compliance_document_name | StringMaxLength(20) }}</div>
                   <div class="w-1/6" v-if="(childItem.file || childItem.reference)">
@@ -175,7 +177,7 @@
                   <div class="w-1/6" v-else />
                   <div
                     class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                    @click="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, 'mandatory-child')"
+                    @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'mandatory-child')"
                   >Upload</div>
                 </div>
               </div>
@@ -217,6 +219,7 @@
               v-else
               class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white"
               :class="!item.file ? 'text-gray-600' : 'hover'"
+              @click="show(item, 'compliance')"
             >
               <div class="w-1/3">{{ item.compliance_document_name | StringMaxLength(30) }}</div>
               <div class="w-1/3" v-if="(item.file || item.reference)">
@@ -241,7 +244,7 @@
               <div
                 v-if="item.compliance_document_type_name !== 'Safeguarding'"
                 class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                @click="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, 'optional')"
+                @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'optional')"
               >Upload</div>
             </div>
             <div v-if="item.compliance_document_type_name === 'Safeguarding'">
@@ -262,6 +265,7 @@
                   v-else
                   class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
                   :class="!childItem.file ? 'text-gray-600' : 'hover'"
+                  @click="show(childItem, 'compliance')"
                 >
                   <div class="w-1/3">{{ childItem.compliance_document_name | StringMaxLength(20) }}</div>
                   <div class="w-1/3" v-if="(childItem.file || childItem.reference)">
@@ -285,7 +289,7 @@
                   <div class="w-1/3" v-else />
                   <div
                     class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                    @click="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, 'optional-child')"
+                    @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'optional-child')"
                   >Upload</div>
                 </div>
               </div>
@@ -404,6 +408,14 @@
         </template>
       </div>
     </div>
+    <transition name="fade" mode="out-in">
+      <div
+        v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
+        class="shield"
+        @click="$router.push('/compliance')"
+      />
+    </transition>
+    <nuxt-child />
     <div>
       <transition name="fade" mode="out-in">
         <div class="shield" v-if="modal"></div>
@@ -634,20 +646,22 @@ export default {
       file,
       hasReference,
       reference,
+      countryId,
       type
     ) {
       let country_id;
-      if (typeName === "Passport") {
-        let response = await this.$axios.$get(
-          `api/v1/locum/locum-compliance-documents/${id}`
-        );
-        country_id =
-          response.data &&
-          response.data.locum_compliance_document &&
-          response.data.locum_compliance_document.country
-            ? response.data.locum_compliance_document.country.id
-            : null;
-      }
+      // if (typeName === "Passport") {
+      //   console.log(id);
+      //   let response = await this.$axios.$get(
+      //     `api/v1/locum/locum-compliance-documents/${id}`
+      //   );
+      //   country_id =
+      //     response.data &&
+      //     response.data.locum_compliance_document &&
+      //     response.data.locum_compliance_document.country
+      //       ? response.data.locum_compliance_document.country.id
+      //       : null;
+      // }
       this.selectedId = id;
       this.modal = true;
       this.type = type;
@@ -662,7 +676,7 @@ export default {
         ? false
         : true;
       this.form.reference = reference !== "null" ? reference : "";
-      this.form.country_id = country_id;
+      this.form.country_id = countryId;
     },
     async submit() {
       try {
@@ -708,7 +722,7 @@ export default {
               formData
             );
           } else if (this.file) {
-            response = await this.$axios.$put(
+            response = await this.$axios.$patch(
               `/api/v1/locum/locum-compliance-documents/${this.selectedId}`,
               formData
             );
@@ -887,9 +901,9 @@ export default {
       );
     },
     show(item, type) {
-      if ((item.info && item.info.file) || item.file) {
+      if (item.file) {
         if (type === "compliance") {
-          this.$router.push(`/compliance/${item.info.id}`);
+          this.$router.push(`/compliance/${item.id}`);
         }
         if (type === "mandatory")
           this.$router.push(`/compliance/mandatory-training/${item.id}`);
@@ -1102,7 +1116,7 @@ table tbody td {
   padding: 15px 8px;
 }
 .shield {
-  z-index: 511;
+  z-index: 509;
 }
 .upload-modal {
   position: fixed;
