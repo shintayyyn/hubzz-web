@@ -199,7 +199,9 @@ export default {
 			toShowLink: false,
 			site: "",
 			job_application: {
-				job_application_pitch: ""
+				locum_user_id: "",
+				job_application_pitch: "",
+				file: ""
 			},
 			job: {
 				description: "",
@@ -210,7 +212,6 @@ export default {
 					toolbar: null
 				}
 			},
-			file: "",
 			permanent_job: "",
 			permanent_job_applications: "",
 			permanent_job_application: "",
@@ -371,7 +372,7 @@ export default {
 				return;
 			}
 			console.log(file);
-			this.file = file;
+			this.job_application.file = file;
 			this.uploadedFile = file.name;
 		},
 
@@ -383,14 +384,23 @@ export default {
 					text: ["Please Upload your CV first in Compliance Documents Page"]
 				});
 			} else {
+				this.job_application.locum_user_id = this.$auth.user.id;
+				console.log(this.job_application);
+				const formData = new FormData();
+				formData.append("locum_user_id", this.$auth.user.id);
+				if (this.job_application.job_application_pitch) {
+					formData.append(
+						"job_application_pitch",
+						this.job_application.job_application_pitch
+					);
+				}
+				if (this.job_application.file) {
+					formData.append("file", this.job_application.file);
+				}
 				await this.$axios
 					.$put(
 						`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
-						{
-							locum_user_id: this.$auth.user.id,
-							job_application_pitch: this.job_application.job_application_pitch,
-							file: this.file
-						}
+						formData
 					)
 					.then(() => {
 						this.job.applied = true;

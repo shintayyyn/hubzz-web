@@ -142,12 +142,20 @@
 								/>
 							</no-ssr>
 						</div>
-						<div class="flex items-center cursor-pointer hover:underline">
+						<div
+							class="flex items-center cursor-pointer hover:underline"
+							v-if="permanentJobApp && permanentJobApp.cover_email_file"
+						>
 							<span>
 								<svgicon name="cloud-download" height="24" width="24" />
 							</span>
-							<a class="px-2 text-sm leading-tight" target="_blank">FILE UPLOADED.docx</a>
-							<!-- add :href, :download, @click event same with compliance below -->
+							<a
+								class="px-2 text-sm leading-tight"
+								:href="permanentJobApp.cover_email_file.url"
+								:download="permanentJobApp.cover_email_file.filename"
+								target="_blank"
+								@click.prevent="downloadItem(permanentJobApp.cover_email_file.url, permanentJobApp.cover_email_file.filename)"
+							>{{ permanentJobApp.cover_email_file.filename }}</a>
 						</div>
 					</div>
 					<div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
