@@ -59,7 +59,7 @@
             <div
               v-else
               class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white cursor-pointer"
-              :class="!item.file ? 'text-gray-600' : 'hover'"
+              :class="!item.file && item.compliance_document_type_name !== 'Safeguarding' ? 'text-gray-600' : 'hover'"
               @click="show(item, 'compliance')"
             >
               <div class="w-1/6 flex flex-col">
@@ -92,10 +92,7 @@
               <div class="w-1/6" v-else />
               <div class="w-1/6" v-if="item && item.expired_at">{{ item.expired_at | localDate }}</div>
               <div class="w-1/6" v-else />
-              <div
-                class="w-1/6"
-                v-if="item && item.status && item.compliance_document_type_name !== 'Safeguarding'"
-              >
+              <div class="w-1/6" v-if="item && item.status ">
                 <div class="flex justify-start max-w-xs">
                   <div
                     class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -112,6 +109,7 @@
                 style="position:sticky;right:0"
                 @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'mandatory')"
               >Upload</div>
+              <div class="w-1/6" v-else></div>
             </div>
             <div v-if="item.compliance_document_type_name === 'Safeguarding'">
               <div
@@ -250,6 +248,7 @@
                 style="position:sticky;right:0"
                 @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'optional')"
               >Upload</div>
+              <div class="w-1/6" v-else></div>
             </div>
             <div v-if="item.compliance_document_type_name === 'Safeguarding'">
               <div

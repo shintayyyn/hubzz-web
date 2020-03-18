@@ -630,7 +630,6 @@ export default {
         });
         this.banksCount =
           response.data && response.data.count ? response.data.count : 0;
-        console.log(this.selectedProfession);
         if (this.selectedProfession.profession_compliance_category.id === 1) {
           this.compliances = this.gp_compliance_documents_lists;
           return;

@@ -1,19 +1,20 @@
 <template>
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
-      
       <!-- invoice type -->
       <div class="flex justify-end items-center w-full my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
-        >
-          Platform
-        </div>
+        >Platform</div>
       </div>
     </div>
 
-    <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md" :class="exportLoading ? 'mb-32' : ''">
+    <div
+      id="htmlpdf"
+      class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md"
+      :class="exportLoading ? 'mb-32' : ''"
+    >
       <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
       <AppLoading :loading="saveLoading" spinner />
 
@@ -38,9 +39,7 @@
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="font-bold text-lg mt-2">
-                  {{ propInvoice.practice.name }}
-                </div>
+                <div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
               </div>
             </section>
             <div class="text-xs sm:text-sm">
@@ -60,9 +59,7 @@
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="font-bold text-lg mt-2">
-                  {{ propJobPart.practice_name }}
-                </div>
+                <div class="font-bold text-lg mt-2">{{ propJobPart.practice_name }}</div>
               </div>
             </section>
             <div class="text-xs sm:text-sm">
@@ -89,16 +86,12 @@
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
             >
               Total
-            </div> -->
+            </div>-->
             <!-- revise -->
             <div
               class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-            >
-              Description
-            </div>
+            >Description</div>
           </div>
-
-
 
           <!-- revise -->
           <div
@@ -109,11 +102,7 @@
           >
             <!-- item description / total / dispute checkbox -->
             <div class="relative flex justify-start mt-2">
-              <div
-                class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300"
-              >
-                {{ description }}
-              </div>
+              <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">{{ description }}</div>
               <div
                 v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
@@ -154,7 +143,7 @@
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                >
+                />
               </div>
               <div class="w-1/4 flex flex-col px-2">
                 <label class="text-xs sm:text-sm" for="late_hours">Hours of late</label>
@@ -165,10 +154,10 @@
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                >
+                />
               </div>
               <div class="w-2/4 flex flex-col">
-                  <label for="final_hours">Final hours</label>
+                <label for="final_hours">Final hours</label>
                 <!-- <label for="final_hours">Final hours</label>
                 <input
                   v-model="form.items[0].final_hours"
@@ -177,7 +166,7 @@
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                > -->
+                >-->
                 <div class="flex">
                   <div class="flex items-center px-2">
                     <input
@@ -190,7 +179,7 @@
                       @keypress="isNumber($event)"
                       @focus="hasValue(form.hours, 'hours')"
                       @blur="!form.hours ? form.hours = 0 : form.hours"
-                    >
+                    />
                     <label for="hours" class="text-xs md:text-sm">hours</label>
                   </div>
                   <div class="flex items-center px-2">
@@ -206,13 +195,16 @@
                       @keypress="isNumber($event)"
                       @focus="hasValue(form.minutes, 'minutes')"
                       @blur="!form.minutes ? form.minutes = 0 : form.minutes"
-                    >
+                    />
                     <label for="minutes" class="text-xs md:text-sm">minutes</label>
                   </div>
                 </div>
-                <p class="text-xs mx-2 text-red-500" v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')">Final hours is required</p>
+                <p
+                  class="text-xs mx-2 text-red-500"
+                  v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')"
+                >Final hours is required</p>
               </div>
-            </div> 
+            </div>
             <!-- disputed invoice update form -->
             <div
               v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
@@ -230,16 +222,16 @@
             </div>
           </div>
 
-        <!-- OLD -->
+          <!-- OLD -->
           <!-- items / selected invoice -->
           <!-- <div
             v-if="form.items && form.items.length > 0"
             :id="`invoice-item`"
             :ref="`invoice-item`"
             class=" flex flex-col border-b-2 pb-2"
-          > -->
-            <!-- item description / total / dispute checkbox -->
-            <!-- <div class="relative flex justify-start mt-2">
+          >-->
+          <!-- item description / total / dispute checkbox -->
+          <!-- <div class="relative flex justify-start mt-2">
               <div
                 class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300"
               >
@@ -275,9 +267,9 @@
                   </div>
                 </div>
               </div>
-            </div> -->
-            <!-- dispute invoice attendance forms -->
-            <!-- <div
+          </div>-->
+          <!-- dispute invoice attendance forms -->
+          <!-- <div
               v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
@@ -314,9 +306,9 @@
                   @keypress="isNumber($event)"
                 >
               </div>
-            </div> -->
-            <!-- disputed invoice update form -->
-            <!-- <div
+          </div>-->
+          <!-- disputed invoice update form -->
+          <!-- <div
               v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
@@ -330,67 +322,51 @@
                 />
               </div>
             </div>
-          </div> -->
+          </div>-->
         </div>
       </div>
 
       <!-- SUB TOTAL -->
       <div class="flex flex-col">
         <div
-          v-if="propInvoice"
+          v-if="propInvoice && propInvoice.ir35"
           :ref="'items-sub-total'"
           class="flex justify-between md:m-2 text-lg px-3 pt-3"
         >
           <span class="w-3/4 font-bold">Subtotal</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
-              £
-            </div>
-            <div class="w-full text-right">
-              {{ subTotal | currency }}
-            </div>
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{ subTotal | currency }}</div>
           </div>
         </div>
         <div
-          v-if="propInvoice"
+          v-if="propInvoice && propInvoice.ir35"
           :ref="'items-ni-total'"
           class="flex justify-between md:mx-2 text-lg px-3"
         >
           <span class="w-3/4 pl-2 text-sm">NI amount</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right text-sm">
-              £
-            </div>
-            <div class="w-full text-right text-sm">
-              {{ propInvoice.ni_amount | currency }}
-            </div>
+            <div class="w-full text-right text-sm">£</div>
+            <div class="w-full text-right text-sm">{{ propInvoice.ni_amount | currency }}</div>
           </div>
         </div>
         <div
-          v-if="propInvoice"
+          v-if="propInvoice && propInvoice.ir35"
           :ref="'items-paye-total'"
           class="flex justify-between md:mx-2 text-lg px-3"
         >
           <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right text-sm">
-              £
-            </div>
-            <div class="w-full text-right text-sm">
-              {{ propInvoice.paye_amount | currency }}
-            </div>
+            <div class="w-full text-right text-sm">£</div>
+            <div class="w-full text-right text-sm">{{ propInvoice.paye_amount | currency }}</div>
           </div>
         </div>
         <!-- ITEMS TOTAL -->
         <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3 py-2">
           <span class="w-3/4 font-bold">Total</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
-              £
-            </div>
-            <div class="w-full text-right">
-              {{ totalAmount | currency }}
-            </div>
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{ totalAmount | currency }}</div>
           </div>
         </div>
       </div>
@@ -496,10 +472,10 @@
   </section>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput"
-import AppButton from "@/components/Base/AppButton"
-import AppLoading from "@/components/Base/AppLoading"
-import AppDate from "@/components/Base/AppDate"
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
+import AppDate from "@/components/Base/AppDate";
 export default {
   components: {
     AppInput,
@@ -518,7 +494,7 @@ export default {
       type: Object
     }
   },
-  data () {
+  data() {
     return {
       exportLoading: false,
       saveLoading: false,
@@ -534,62 +510,68 @@ export default {
       },
       formError: [],
       disputed: false
-    }
+    };
   },
   computed: {
-    subTotal () {
+    subTotal() {
       return this.form.items && this.form.items.length > 0
         ? this.form.items[0].total
-        : 0
+        : 0;
     },
-    totalAmount () {
-      let total
+    totalAmount() {
+      let total;
       if (this.form.items && this.form.items.length > 0) {
-        total = this.form.items[0].total
+        total = this.form.items[0].total;
         if (this.propInvoice) {
           total =
-            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
         }
-        return total
+        return total;
       }
-      return 0
+      return 0;
     },
-    description () {
-      if (this.propInvoice) {
-        let hours = Math.floor(this.form.items[0].final_hours / 60);
-      let minutes = Math.floor(this.form.items[0].final_hours % 60);
-      let hour = hours > 0 ? `${hours > 0 ? hours : ''} ${hours > 1 ? 'hours' : 'hour'}` :  ''
-      let minute = minutes > 0 ? `${minutes > 0 ? minutes : ''} ${minutes > 1 ? 'minutes' : 'minute'}` :  ''
-      let totalHours = `${hour} ${minute}` ;
-      return `Job number ${
-        this.propInvoice.items[0].job_part.job_part_number
-      } ${this.propInvoice.items[0].job_part.job.type}
-        Job at £${this.propInvoice.items[0].job_part.job.rate} ${
-        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
-      }
-        from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
-        / ${
-          this.propInvoice.items[0].job_part.job.shift.name
-        } / Total hours of  ${
-        this.form.items.length > 0 ? totalHours : 0
-      }`
-      }else {
-        return this.form.items[0].description
-      }
-    },
+    description() {
+      // if (this.propInvoice) {
+      //   let hours = Math.floor(this.form.items[0].final_hours / 60);
+      //   let minutes = Math.floor(this.form.items[0].final_hours % 60);
+      //   let hour =
+      //     hours > 0
+      //       ? `${hours > 0 ? hours : ""} ${hours > 1 ? "hours" : "hour"}`
+      //       : "";
+      //   let minute =
+      //     minutes > 0
+      //       ? `${minutes > 0 ? minutes : ""} ${
+      //           minutes > 1 ? "minutes" : "minute"
+      //         }`
+      //       : "";
+      //   let totalHours = `${hour} ${minute}`;
+      //   return `Job number ${
+      //     this.propInvoice.items[0].job_part.job_part_number
+      //   } ${this.propInvoice.items[0].job_part.job.type}
+      //   Job at £${this.propInvoice.items[0].job_part.job.rate} ${
+      //     this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+      //   }
+      //   from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
+      //   / ${
+      //     this.propInvoice.items[0].job_part.job.shift.name
+      //   } / Total hours of  ${this.form.items.length > 0 ? totalHours : 0}`;
+      // } else {
+      return this.form.items[0].description;
+      // }
+    }
   },
-  mounted () {
+  mounted() {
     if (this.propJobPart && !this.propInvoice) {
-      this.form.type = this.propJobPart.job.type
-      this.form.practice_id = this.propJobPart.job.practice_id
-      this.form.date_start = this.propJobPart.date_start
-      this.form.date_end = this.propJobPart.date_end
+      this.form.type = this.propJobPart.job.type;
+      this.form.practice_id = this.propJobPart.job.practice_id;
+      this.form.date_start = this.propJobPart.date_start;
+      this.form.date_end = this.propJobPart.date_end;
 
       let total =
         this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
           ? this.propJobPart.job.rate * this.propJobPart.final_hours
           : (this.propJobPart.job.rate / this.propJobPart.job.total_hours) *
-            this.propJobPart.final_hours
+            this.propJobPart.final_hours;
 
       this.form.items = [
         {
@@ -601,9 +583,17 @@ export default {
             this.propJobPart.job.locum_detail_rate_type.name
           } from ${this.propJobPart.date_start} to ${
             this.propJobPart.date_end
-          } / ${
-            this.propJobPart.job.shift.name
-          } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
+          } / ${this.propJobPart.job.shift.name} / 
+          Total of ${Math.floor(this.propJobPart.final_hours / 60)} hour${
+            Math.floor(this.propJobPart.final_hours / 60) > 1 ? "s" : ""
+          } ${
+            this.propJobPart.final_hours % 60 > 0
+              ? `and ${this.propJobPart.final_hours % 60} minute${
+                  this.propJobPart.final_hours % 60 > 1 ? "s" : ""
+                }`
+              : ""
+          }`,
+          // Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
           total: total,
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
@@ -611,17 +601,17 @@ export default {
           late_hours: this.propJobPart.late_hours,
           remarks: ""
         }
-      ]
+      ];
 
-      this.form.total_amount = total
-      this.form.final = false
-      this.form.ir35 = false
+      this.form.total_amount = total;
+      this.form.final = false;
+      this.form.ir35 = this.propJobPart.job_ir35;
     }
 
     if (this.propInvoice && !this.propJobPart) {
-      this.form.locum_invoice_id = this.propInvoice.id
-      this.form.date_start = this.propInvoice.date_start
-      this.form.date_end = this.propInvoice.date_end
+      this.form.locum_invoice_id = this.propInvoice.id;
+      this.form.date_start = this.propInvoice.date_start;
+      this.form.date_end = this.propInvoice.date_end;
 
       this.form.items = [
         {
@@ -636,10 +626,10 @@ export default {
           late_hours: this.propInvoice.items[0].late_hours,
           remarks: this.propInvoice.items[0].remarks
         }
-      ]
-      this.form.total_amount = this.propInvoice.total_amount
-      this.form.final = false
-      this.form.ir35 = this.propInvoice.ir35
+      ];
+      this.form.total_amount = this.propInvoice.total_amount;
+      this.form.final = false;
+      this.form.ir35 = this.propInvoice.ir35;
     }
 
     this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
@@ -648,11 +638,11 @@ export default {
   methods: {
     hasValue(value, field) {
       if (value == 0) {
-        this.form[field] = ""
+        this.form[field] = "";
       }
     },
-    save (final) {
-      this.formError = []
+    save(final) {
+      this.formError = [];
       if (
         [0, "0"].includes(this.form.hours) &&
         [0, "0"].includes(this.form.minutes)
@@ -666,29 +656,34 @@ export default {
           message: "Hours is required"
         });
       } else {
-        this.form.hours = !this.form.hours ? 0 : this.form.hours 
-        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
+        this.form.hours = !this.form.hours ? 0 : this.form.hours;
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
         this.form.items[0].final_hours =
           this.form.hours * 60 + parseInt(this.form.minutes);
       }
-      this.Validate(this.form, ["final", "ir35", "total_amount"])
-      console.log(this.formError)
+      this.Validate(this.form, [
+        "final",
+        "ir35",
+        "total_amount",
+        "hours",
+        "minutes"
+      ]);
       if (!this.formError.length) {
-        this.saveLoading = true
+        this.saveLoading = true;
         if (this.propJobPart && !this.propInvoice) {
           if (
             this.form.items &&
             this.form.items.length > 0 &&
             this.form.items[0].dispute === false
           ) {
-            this.form.items[0].absent_days = this.propJobPart.absent_days
-            this.form.items[0].late_hours = this.propJobPart.late_hours
+            this.form.items[0].absent_days = this.propJobPart.absent_days;
+            this.form.items[0].late_hours = this.propJobPart.late_hours;
             this.form.items[0].final_hours = this.propJobPart.final_hours.toFixed(
               2
-            )
-            this.form.items[0].remarks = ""
+            );
+            this.form.items[0].remarks = "";
           }
-          this.form.final = final
+          this.form.final = final;
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -696,41 +691,41 @@ export default {
                 enabled: true,
                 status: "success",
                 text: [`${res.message}`]
-              })
-              this.$emit("createInvoice", res.data.locum_invoice)
+              });
+              this.$emit("createInvoice", res.data.locum_invoice);
             })
             .catch(err => {
-              console.log("err", err.response || err)
+              console.log("err", err.response || err);
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "success",
                   text: [`${err.response.data.message}`]
-                })
+                });
               } else if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error)
-                })
+                  this.formError.push(error);
+                });
               } else {
-                this.formError.push(err.response.data)
+                this.formError.push(err.response.data);
               }
-              throw err
+              throw err;
             })
             .finally(() => {
-              this.saveLoading = false
-            })
+              this.saveLoading = false;
+            });
         } else if (this.propInvoice && !this.propJobPart) {
           if (
             this.form.items &&
             this.form.items.length > 0 &&
             this.form.items[0].dispute === false
           ) {
-            this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-            this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-            this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-            this.form.items[0].remarks = ""
+            this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+            this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+            this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
+            this.form.items[0].remarks = "";
           }
-          this.form.final = final
+          this.form.final = final;
           // return;
           this.$axios
             .$put(
@@ -742,75 +737,75 @@ export default {
                 enabled: true,
                 status: "success",
                 text: [`${res.message}`]
-              })
-              this.$emit("updateInvoice", res.data.locum_invoice)
+              });
+              this.$emit("updateInvoice", res.data.locum_invoice);
             })
             .catch(err => {
-              console.log("err", err.response || err)
+              console.log("err", err.response || err);
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "success",
                   text: [`${err.response.data.message}`]
-                })
+                });
               } else if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error)
-                })
+                  this.formError.push(error);
+                });
               } else {
-                this.formError.push(err.response.data)
+                this.formError.push(err.response.data);
               }
-              throw err
+              throw err;
             })
             .finally(() => {
-              this.saveLoading = false
-            })
+              this.saveLoading = false;
+            });
         }
       }
     },
-    waitingForPracticeReply (item) {
+    waitingForPracticeReply(item) {
       let count = this.$moment(item.disputed_by_practice_at).diff(
         item.disputed_by_locum_at,
         "seconds"
-      )
+      );
       if (count < 0) {
-        return true
+        return true;
       }
-      return false
+      return false;
     },
-    viewAsPdf (invoiceId) {
+    viewAsPdf(invoiceId) {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      )
+      );
       // this.$axios
       //   .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
       //   .then(res => console.log(res));
     },
-    async exportToPdf () {
-      console.log(this.propInvoice)
+    async exportToPdf() {
+      console.log(this.propInvoice);
       // this.$router.push(
       //   `${process.env.API_URL}/api/v1/locum-invoices/${this.propInvoice.id}/html`
       // );
       // this.$axios.$get(`/api/v1/locum-invoices/${this.propInvoice.id}/html`);
-      return
+      return;
 
-      this.exportLoading = true
+      this.exportLoading = true;
       if (process.client) {
-        document.body.style.cursor = "wait"
+        document.body.style.cursor = "wait";
       }
 
-      let doc = this.$jspdf("p", "mm")
-      let pageHeight = 1020
-      let yPosition = 0
+      let doc = this.$jspdf("p", "mm");
+      let pageHeight = 1020;
+      let yPosition = 0;
 
       // PDF HEADER
-      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"])
-      const imgWidthPdfHeader = 210
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
+      const imgWidthPdfHeader = 210;
       const imgHeightPdfHeader =
-        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width
-      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png")
+        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
 
-      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
 
       doc.addImage(
         imgDataPdfHeader,
@@ -819,21 +814,21 @@ export default {
         yPosition,
         imgWidthPdfHeader,
         imgHeightPdfHeader
-      )
+      );
 
-      yPosition = yPosition + imgHeightPdfHeader
+      yPosition = yPosition + imgHeightPdfHeader;
 
       // ITEMS HEADER
       const canvasItemsHeader = await this.$html2canvas(
         this.$refs["items-header"]
-      )
-      const imgWidthItemsHeader = 210
+      );
+      const imgWidthItemsHeader = 210;
       const imgHeightItemsHeader =
         (canvasItemsHeader.height * imgWidthItemsHeader) /
-        canvasItemsHeader.width
-      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png")
+        canvasItemsHeader.width;
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
 
-      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
 
       doc.addImage(
         imgDataItemsHeader,
@@ -842,19 +837,19 @@ export default {
         yPosition,
         imgWidthItemsHeader,
         imgHeightItemsHeader
-      )
+      );
 
-      yPosition = yPosition + imgHeightItemsHeader
+      yPosition = yPosition + imgHeightItemsHeader;
 
       // ITEMS
-      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"])
+      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
 
-      const imgWidthItems = 210
+      const imgWidthItems = 210;
       const imgHeightItems =
-        (canvasItems.height * imgWidthItems) / canvasItems.width
-      const imgDataItems = canvasItems.toDataURL("image/png")
+        (canvasItems.height * imgWidthItems) / canvasItems.width;
+      const imgDataItems = canvasItems.toDataURL("image/png");
 
-      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight
+      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
 
       doc.addImage(
         imgDataItems,
@@ -863,9 +858,9 @@ export default {
         yPosition,
         imgWidthItems,
         imgHeightItems
-      )
+      );
 
-      yPosition = yPosition + imgHeightItems
+      yPosition = yPosition + imgHeightItems;
 
       // let totalSelectedJobParts = this.selectedJobParts.length;
 
@@ -914,47 +909,47 @@ export default {
       // }
 
       // sum up their offsetHeight
-      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight
-      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight
-      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
 
       let totalOffsetHeight =
-        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight
+        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
 
-      pageHeight = pageHeight - totalOffsetHeight
+      pageHeight = pageHeight - totalOffsetHeight;
 
       // DAYS WORKED
       const canvasDaysWorked = await this.$html2canvas(
         this.$refs["days-worked"]
-      )
-      const imgWidthDaysWorked = 210
+      );
+      const imgWidthDaysWorked = 210;
       const imgHeightDaysWorked =
-        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width
-      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png")
+        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
 
       // ITEMS TOTAL
       const canvasItemsTotal = await this.$html2canvas(
         this.$refs["items-total"]
-      )
-      const imgWidthItemsTotal = 210
+      );
+      const imgWidthItemsTotal = 210;
       const imgHeightItemsTotal =
-        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width
-      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png")
+        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
 
       // PDF FOOTER
-      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"])
-      const imgWidthPdfFooter = 210
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
+      const imgWidthPdfFooter = 210;
       const imgHeightPdfFooter =
-        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width
-      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png")
+        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
 
       if (pageHeight < 0) {
-        pageHeight = 1020
-        doc.addPage()
+        pageHeight = 1020;
+        doc.addPage();
       }
 
       yPosition =
-        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter)
+        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
 
       doc.addImage(
         imgDataDaysWorked,
@@ -963,9 +958,9 @@ export default {
         yPosition,
         imgWidthDaysWorked,
         imgHeightDaysWorked
-      )
+      );
 
-      yPosition = yPosition + imgHeightDaysWorked
+      yPosition = yPosition + imgHeightDaysWorked;
 
       doc.addImage(
         imgDataItemsTotal,
@@ -974,9 +969,9 @@ export default {
         yPosition,
         imgWidthItemsTotal,
         imgHeightItemsTotal
-      )
+      );
 
-      yPosition = yPosition + imgHeightItemsTotal
+      yPosition = yPosition + imgHeightItemsTotal;
 
       doc.addImage(
         imgDataPdfFooter,
@@ -985,18 +980,18 @@ export default {
         yPosition,
         imgWidthPdfFooter,
         imgHeightPdfFooter
-      )
+      );
 
-      yPosition = yPosition + imgHeightPdfFooter
+      yPosition = yPosition + imgHeightPdfFooter;
 
-      doc.save("test.pdf")
-      this.exportLoading = false
+      doc.save("test.pdf");
+      this.exportLoading = false;
       if (process.client) {
-        document.body.style.cursor = "auto"
+        document.body.style.cursor = "auto";
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .items-table {
