@@ -336,7 +336,14 @@
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
-        ></AppTable>
+        >
+        <template v-slot:slot_date_start="slotProps">
+            {{ slotProps.item.date_start }} | {{ slotProps.item.time_start }} 
+        </template>
+         <template v-slot:slot_date_end="slotProps">
+            {{ slotProps.item.date_end }}  | {{ slotProps.item.time_end }} 
+        </template>
+        </AppTable>
         <!-- <div
           class="relative flex w-full"
           v-if="jobs.length === 0 && loading"
@@ -614,13 +621,17 @@ export default {
       columns.push(
         {
           name: "From",
-          dataIndex: "date_time_start",
+          dataIndex: "",
+          slotName: "slot_date_start",
+          // dataIndex: "date_start",
           sortable: true,
           class: "text-center"
         },
         {
           name: "To",
-          dataIndex: "date_time_end",
+          dataIndex: "",
+          slotName: "slot_date_end",
+          // dataIndex: "date_end",
           sortable: true,
           class: "text-center"
         }
