@@ -69,6 +69,7 @@
                   :maxlength="limit"
                   :max="maxInput"
                   step="any"
+                  @focus="$emit('focus', $event.target.value)"
                   @input="$emit('input', $event.target.value)"
                   @keypress.enter="$emit('submit')"
                   @blur="$emit('blur')"
