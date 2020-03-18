@@ -38,7 +38,7 @@
 						v-if="formError.find(item => item.field === 'permission_id')"
 					>{{formError.find(item => item.field === 'permission_id').message}}</div>
 					<div class="flex flex-wrap justify-start">
-						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
+						<!-- <div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
 							<div class="flex flex-col">
 								<div class="w-full flex flex-row items-center pb-1">
 									<input
@@ -69,6 +69,45 @@
 									</div>
 								</div>
 							</div>
+						</div>-->
+						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in hierarchyPermissions" :key="index">
+							<div class="flex flex-col">
+								<div class="w-full flex flex-row items-center pb-1">
+									<input
+										type="checkbox"
+										:id="role.permissions"
+										:checked="isChecked(role.permissions)"
+										@change="checkAll(index, $event.target.checked)"
+									/>
+									<label
+										class="font-bold md:text-xl pl-1 leading-none flex items-center"
+										:for="role.permissions"
+									>{{role.category}} Management</label>
+								</div>
+								<div>
+									<div
+										class="flex flex-col px-1"
+										v-for="permission in role.permissions"
+										:key="permission.id"
+									>
+										<p>{{permission.subcategory}}</p>
+										<div
+											class="w-full flex flex-row items-center"
+											v-for="(permission, index) in permission.permissions"
+											:key="index"
+										>
+											<!-- <input
+												v-model="permission.done"
+												type="checkbox"
+												:id="permission.id"
+												:checked="permission.done"
+												@change="hasRelatedRole(permission)"
+											/>
+											<label :for="permission.id" class="text-sm pl-1">{{permission.name}}</label>-->
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -90,6 +129,7 @@ export default {
 	data() {
 		return {
 			permissions: [],
+			hierarchyPermissions: [],
 			form: {
 				name: "",
 				description: "",
@@ -158,26 +198,79 @@ export default {
 			});
 			this.setPermissions(categories);
 		},
-		setHierarchy(permission) {
-			console.log("permission", permission);
+		setSubcategories(permission) {
 			let subCategories = [];
 			permission.forEach(item => {
 				item.permissions.forEach(item => {
-					let foundCategory = subCategories.find(
-						categ => categ.subcategory === item.subcategory
-					);
-					if (!foundCategory) {
+					if (subCategories.length === 0) {
 						subCategories.push({
 							category: item.category,
 							subcategory: item.subcategory,
-							permissions: [item]
+							permissions: []
 						});
 					} else {
-						console.log("foundCategory", foundCategory);
+						let foundCategory = subCategories.find(
+							categ => categ.subcategory === item.subcategory
+						);
+						if (!foundCategory) {
+							subCategories.push({
+								category: item.category,
+								subcategory: item.subcategory,
+								permissions: []
+							});
+						}
 					}
 				});
 			});
-			console.log(subCategories);
+			this.setHierarchy(subCategories);
+		},
+		setHierarchy(subCategories) {
+			this.permissions.forEach(item => {
+				item.permissions.forEach(permission => {
+					let findSub = subCategories.find(
+						sub =>
+							sub.category === permission.category &&
+							sub.subcategory === permission.subcategory
+					);
+					findSub.permissions.push(permission);
+				});
+			});
+			this.hierarchyPermissions = subCategories;
+
+			let categories = [];
+			this.hierarchyPermissions.forEach(permission => {
+				if (categories.length === 0) {
+					categories.push({
+						category: permission.category,
+						permissions: []
+					});
+				} else {
+					let hasSameCategory = categories.find(
+						item => item.category === permission.category
+					);
+					if (!hasSameCategory) {
+						categories.push({
+							category: permission.category,
+							permissions: []
+						});
+					}
+				}
+			});
+			categories.forEach(permission => {
+				this.hierarchyPermissions.forEach(item => {
+					let foundCategory = categories.find(
+						item =>
+							item.category === permission.category &&
+							item.subcategory === permission.subcategory
+					);
+
+					if (foundCategory) foundCategory.permissions.push(item);
+					// let find = item
+					// foundCategory.permissions.push(item);
+				});
+				console.log(foundCategory);
+			});
+			this.hierarchyPermissions = categories;
 		},
 		setPermissions(categories) {
 			this.permissions.forEach(permission => {
@@ -187,7 +280,7 @@ export default {
 				foundCategory.permissions.push(permission);
 			});
 			this.permissions = categories;
-			this.setHierarchy(categories);
+			this.setSubcategories(categories);
 		},
 		isChecked(permissions) {
 			return !permissions.map(item => item.done).includes(false);
