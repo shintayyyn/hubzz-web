@@ -88,7 +88,7 @@
 									<template v-if="role.category === item.category">
 										<div class="w-full md:w-1/2 p-2">
 											<div class="flex flex-col">
-												<div>
+												<div class="pl-4">
 													<div
 														class="flex flex-col px-1"
 														v-for="(permission, index) in item.permissions"
@@ -104,8 +104,8 @@
 														<label
 															:for="permission.id"
 															class="text-sm pl-1"
-															:class="index === 0 && item.permissions.length > 1  ? '' : 'ml-8'"
-														>{{permission.name}}</label>
+															:class="index === 0  ? '' : item.permissions.length > 1 ? 'ml-8' : ''"
+														>{{permission.name}} {{ index === 0 && item.permissions.length > 1 }}</label>
 													</div>
 												</div>
 											</div>
