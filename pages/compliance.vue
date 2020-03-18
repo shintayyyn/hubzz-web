@@ -931,7 +931,6 @@ export default {
       }
     },
     status(status) {
-      console.log(status)
       let str;
       switch (status) {
         case "Pending":
