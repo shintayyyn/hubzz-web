@@ -287,6 +287,8 @@ export default {
 			});
 			this.form.permission_id = ids;
 			this.Validate(this.form);
+			console.log('errors', this.formError)
+			console.log('form', this.form)
 			if (!this.formError.length) {
 				if (this.form.permission_id.length > 0) {
 					this.$axios

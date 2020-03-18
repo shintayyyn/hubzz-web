@@ -382,7 +382,7 @@ export default {
     
 	},  
 
-	async asyncData ({ app, route, }) {
+	async asyncData ({ app, route, error}) {
 		try {
       // FOR PRACTICE ONLY
       let permanent_jobs_for_practice = ""
@@ -520,7 +520,7 @@ export default {
 		} catch (err) {
 			if (err.response && err.response.status === 401) {
         console.log('something went wrong')
-				// error(err.response.data)
+				error(err.response.data)
 				return
 			}
 			throw err

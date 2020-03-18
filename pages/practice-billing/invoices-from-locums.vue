@@ -479,11 +479,18 @@ export default {
         job_parts
       };
     } catch (err) {
-      console.log("err", err.response || err);
-      error({
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
-      });
+      if (err.response && err.response.status === 401) {
+        console.log('something went wrong')
+				error(err.response.data)
+				return
+			} else {
+        console.log("practice-billing index err", err.response || err)
+        error({
+          statusCode: err.status || 500,
+          message: err.message || "Something went wrong!"
+        })
+      }
+      throw err
     }
   },
   created() {
