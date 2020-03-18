@@ -31,6 +31,14 @@
           </template>
         </template>
 
+         <template v-slot:date_posted="slotProps">
+          {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
+        </template>
+
+         <template v-slot:date_closing="slotProps">
+          {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
+        </template>
+
         <template v-slot:status_slot="slotProps">
           <div class="flex items-center justify-center">
             <div
@@ -95,6 +103,14 @@
               {{ slotProps.item.status }}
             </div>
           </div>
+        </template>
+
+         <template v-slot:date_posted="slotProps">
+            {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
+        </template>
+
+         <template v-slot:date_closing="slotProps">
+            {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
         </template>
 
         <template
@@ -187,13 +203,15 @@ export default {
 				},
 				{
 					name: "Posted",
-					dataIndex: "date_posted",
-					class: "text-center localDate"
+          dataIndex: "",
+					slotName: "date_posted",
+					class: "text-center"
 				},
 				{
 					name: "Closes",
-					dataIndex: "date_closing",
-					class: "text-center localDate"
+          dataIndex: "",
+					slotName: "date_closing",
+					class: "text-center"
 				},
 				// {
 				// 	name: "Role",
@@ -249,7 +267,7 @@ export default {
         } else if (this.$auth.user.domain === "Practice") {
           this.practiceColumns = this.defaultColumns
         }
-        if (!newStatus || newStatus !== "Closed") {
+        if (!newStatus || newStatus !== "Closed" || newStatus === "Pending") {
           if(!newStatus) {
             newStatus = "Available"
           } 
@@ -607,7 +625,6 @@ export default {
 		},
     jobClosingTag (item) {
       let closingTag = ''
-      console.log('item', item.hired_through)
       if(this.$auth.user.domain === 'Locum') {
         const permJobApp = item.permanent_job_applications.find(permJobApp => 
           permJobApp.applicant_locum_user_id === this.$auth.user.id

@@ -310,6 +310,10 @@ export default {
 			this.$axios
 				.post("/api/v1/logout")
 				.then(() => {
+					this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
+					this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
+					this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+					this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
 					console.log("Socket Logged Out");
 					console.log("One Signal Logged Out");
 				})

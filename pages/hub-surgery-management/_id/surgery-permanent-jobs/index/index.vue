@@ -18,7 +18,9 @@
           <template v-if="slotProps.item.salary_amount !== 0">
             {{ slotProps.item.salary_amount | currency }}
           </template>
-          <template v-else>N/A</template>
+          <template v-else>
+            N/A
+          </template>
         </template>
 
         <template v-slot:status_slot="slotProps">
@@ -152,7 +154,7 @@ export default {
       Promise.all([
         this.columns = []
       ]).then(() => {
-        if (!newStatus || newStatus !== "Closed") {
+        if (!newStatus || newStatus !== "Closed" || newStatus === "Pending") {
           if(!newStatus) {
             newStatus = "Available"
           } 
@@ -405,7 +407,6 @@ export default {
     },
     jobClosingTag (item) {
       let closingTag = ''
-      console.log('item', item.hired_through)
       if(this.$auth.user.domain === 'Locum') {
         const permJobApp = item.permanent_job_applications.find(permJobApp => 
           permJobApp.applicant_locum_user_id === this.$auth.user.id

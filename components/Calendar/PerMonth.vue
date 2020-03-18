@@ -338,24 +338,24 @@ export default {
                     status: [job.status],
                     jobs: [job]
                   });
-                } else if (jobsInMonth.length > 0) {
-                  if (jobsInMonth.length - 1 < daysIndex) {
+                } else {
+                  let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
+                  if (dateExist) {
+                    let findDate = jobsInMonth.find(item => item.date === days.fullDate)
+                    if (!findDate.shifts.includes(job.shift.name)) {
+                      findDate.shifts.push(job.shift.name)
+                    }
+                    if (!findDate.status.includes(job.status)) {
+                      findDate.status.push(job.status)
+                    }
+                    findDate.jobs.push(job)
+                  }else {
                     jobsInMonth.push({
                       date: days.fullDate,
                       shifts: [job.shift.name],
                       status: [job.status],
                       jobs: [job]
                     });
-                  } else {
-                    if (
-                      !jobsInMonth[daysIndex].shifts.includes(job.shift.name)
-                    ) {
-                      jobsInMonth[daysIndex].shifts.push(job.shift.name);
-                    }
-                    if (!jobsInMonth[daysIndex].status.includes(job.status)) {
-                      jobsInMonth[daysIndex].status.push(job.status);
-                    }
-                    jobsInMonth[daysIndex].jobs.push(job);
                   }
                 }
               }
@@ -378,36 +378,26 @@ export default {
                     date: days.fullDate,
                     shifts: [jobPart.job.shift.name],
                     status: [jobPart.status],
-                    jobs: [
-                      {
-                        ...jobPart
-                      }
-                    ]
+                    jobs: [jobPart]
                   });
-                } else if (jobsInMonth.length > 0) {
-                  if (jobsInMonth.length - 1 < daysIndex) {
+                } else {
+                  let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
+                  if (dateExist) {
+                    let findDate = jobsInMonth.find(item => item.date === days.fullDate)
+                    if (!findDate.shifts.includes(jobPart.job.shift.name)) {
+                      findDate.shifts.push(jobPart.job.shift.name)
+                    }
+                    if (!findDate.status.includes(jobPart.status)) {
+                      findDate.status.push(jobPart.status)
+                    }
+                    findDate.jobs.push(jobPart)
+                  }else {
                     jobsInMonth.push({
                       date: days.fullDate,
                       shifts: [jobPart.job.shift.name],
                       status: [jobPart.status],
                       jobs: [jobPart]
                     });
-                  } else {
-                    if (
-                      !jobsInMonth[daysIndex].shifts.includes(
-                        jobPart.job.shift.name
-                      )
-                    ) {
-                      jobsInMonth[daysIndex].shifts.push(
-                        jobPart.job.shift.name
-                      );
-                    }
-                    if (
-                      !jobsInMonth[daysIndex].status.includes(jobPart.status)
-                    ) {
-                      jobsInMonth[daysIndex].status.push(jobPart.status);
-                    }
-                    jobsInMonth[daysIndex].jobs.push(jobPart);
                   }
                 }
               }
@@ -591,7 +581,6 @@ export default {
     this.getJobs();
   },
   mounted() {
-    console.log(this.jobsInMonth);
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
       // this.$socket.on("Locum Notification Job Available", this.getJobsRealTime)
@@ -688,6 +677,8 @@ export default {
         this.getJobsRealTime
       );
     }
+
+    console.log("jobsInMonth", this.jobsInMonth);
   },
   destroyed() {
     this.removeListener();

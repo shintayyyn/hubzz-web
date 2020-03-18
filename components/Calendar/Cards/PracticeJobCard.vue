@@ -1,6 +1,6 @@
 <template>
 	<nuxt-link
-		:to="{ path: hasPermissionToShow ? `/dashboard/${propJob.id}?status=${propJob.status}` : '/dashboard', query: {...$route.query}}"
+		:to="link"
 		class="flex flex-col items-start pl-2 rounded-lg mb-2 job-card transition-hover"
 		:class="[bgStatus, hasPermissionToShow ? 'show' : 'cursor-default']"
 	>
@@ -37,7 +37,16 @@ export default {
 				)
 			);
 		},
-
+		link() {
+			let job = this.isJobPart ? this.propJob.job : this.propJob;
+			let id = this.propJob.status === "Ongoing" ? this.propJob.id : job.id;
+			return {
+				path: this.hasPermissionToShow
+					? `/dashboard/${id}?status=${this.propJob.status}`
+					: "/dashboard",
+				query: { ...this.$route.query }
+			};
+		},
 		bgStatus() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			switch (job.status) {

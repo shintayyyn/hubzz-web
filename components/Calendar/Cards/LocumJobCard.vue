@@ -46,16 +46,18 @@ export default {
 			}
 			return (
 				this.propJob.locum_status &&
-				["ongoing", "completed", "approved"].includes(
-					this.propJob.locum_status.toLowerCase()
-				)
+				["ongoing"].includes(this.propJob.locum_status.toLowerCase())
 			);
 		},
 		link() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			if (job.locum_status !== "Permanent") {
 				let status = job.type === "Private" ? "Private" : job.status;
-				let id = job.id;
+				let id =
+					["Ongoing"].includes(this.propJob.status) &&
+					this.propJob.job.type === "Platform"
+						? this.propJob.id
+						: job.id;
 				return {
 					path: this.job.type
 						? `/dashboard/${id}?status=${status}`

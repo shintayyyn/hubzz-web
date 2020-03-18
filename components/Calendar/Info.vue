@@ -120,17 +120,21 @@ export default {
 			}
 		},
 		selected_date(value) {
+			// console.log("IH?", this.$auth.user.domain);
 			this.date_info = value;
 			if (this.$auth.user.domain === "Practice") {
 				this.findPerMonthPractice(value);
+				console.log("selected_date", value);
 				return;
 			}
 			if (this.$auth.user.domain === "Locum") {
 				this.findPerMonthLocum(value);
+				console.log("selected_date", value);
 				return;
 			}
 		},
 		selected_date_shift(value) {
+			// console.log("OH?");
 			// this.date_info_week = value.date
 			if (this.$auth.user.domain === "Practice") {
 				this.findPerWeekPractice(value);
@@ -141,6 +145,7 @@ export default {
 		}
 	},
 	created() {
+		// console.log("EH?");
 		if (this.$auth.user.domain === "Practice") {
 			this.findPerMonthPractice(this.selected_date);
 			return;
@@ -282,7 +287,7 @@ export default {
 			let foundLocumAppliedJobs = [];
 			let foundLocumPrivateJobs = [];
 			let foundPermanentJobs = [];
-
+			console.log(this.getLocumOngoingJobs.length > 0);
 			if (this.getLocumOngoingJobs.length > 0) {
 				foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
 					job_part =>
@@ -291,6 +296,7 @@ export default {
 						) && this.includesWeekends(job_part.job, date)
 				);
 			}
+			console.log(this.getLocumAppliedJobs.length > 0);
 			if (this.getLocumAppliedJobs.length > 0) {
 				foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(
 					job =>
@@ -298,6 +304,7 @@ export default {
 						this.includesWeekends(job, date)
 				);
 			}
+			console.log(this.getLocumPrivateJobParts.length > 0);
 			if (this.getLocumPrivateJobParts.length > 0) {
 				foundLocumPrivateJobs = this.getLocumPrivateJobParts.filter(job_part =>
 					this.getDateArray(job_part.date_start, job_part.date_end).includes(
@@ -305,6 +312,7 @@ export default {
 					)
 				);
 			}
+			console.log(this.getLocumPermanentJobs.length > 0);
 			if (this.getLocumPermanentJobs.length > 0) {
 				foundPermanentJobs = this.getLocumPermanentJobs.filter(job =>
 					this.getDateArray(job.date_time_start, job.date_time_end).includes(

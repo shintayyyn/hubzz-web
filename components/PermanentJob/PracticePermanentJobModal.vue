@@ -27,7 +27,7 @@
           {{ jobClosingTag(permanent_job.hired_through) }}
         </span>
         <!-- v-if="permanent_job.job_posting_status !== 'Unfilled'" -->
-        <AppButton  :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
+        <AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
       </div>
       <div
         v-if="permanent_job.job_posting_status === 'Closed'" 
@@ -175,6 +175,7 @@
             </template>
             <!-- EDIT PERMANENT JOB -->
             <template v-if="edit === true">
+              <!-- IF JOB IS NOT YET CLOSED -->
               <AppDate
                 v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
                 v-model="form.date_closing"
@@ -184,6 +185,7 @@
                 :start-date="form.date_posted"
                 :error="formError.find(item => item.field === 'date_closing')"
               />
+              <!-- IF JOB IS NOW CLOSED -->
               <div
                 v-else
                 class="w-full flex flex-col md:flex-row"
@@ -476,8 +478,6 @@ export default {
 						[{ header: 1 }, { header: 2 }],
 						[{ list: "ordered" }, { list: "bullet" }],
 						[{ script: "sub" }, { script: "super" }],
-						[{ indent: "-1" }, { indent: "+1" }],
-						[{ direction: "rtl" }],
 						[{ size: ["small", false, "large", "huge"] }],
 						[{ header: [1, 2, 3, 4, 5, 6, false] }],
 						[{ font: [] }],
@@ -491,7 +491,7 @@ export default {
 			// displayOption: {
 			// 	modules: {
 			// 		toolbar: null
-			// 	}
+			// 	}date_posted
 			// }
 		}
 	},
@@ -504,9 +504,7 @@ export default {
         this.form.parent_practice_id = this.permanent_job.parent_practice_id ? this.permanent_job.parent_practice_id : null
 				this.form.title = this.permanent_job.title
 				this.form.description = this.permanent_job.description
-				this.form.date_posted = this.$moment(
-					this.permanent_job.date_posted
-				).format("YYYY-MM-DD")
+				this.form.date_posted = this.$moment().format("YYYY-MM-DD"),
 				this.form.date_closing = this.$moment(
 					this.permanent_job.date_closing
 				).format("YYYY-MM-DD")
@@ -554,8 +552,9 @@ export default {
 	created () {
     console.log('practice',this.$auth.user.practice_detail.practice.type)
 		this.loading = true
-		this.getPermanentJob()
+
 		Promise.all([
+      this.getPermanentJob(),
 			this.$axios.$get("/api/v1/practice/me/practice-practices"),
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
