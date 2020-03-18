@@ -31,6 +31,14 @@
           </template>
         </template>
 
+         <template v-slot:date_posted="slotProps">
+          {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
+        </template>
+
+         <template v-slot:date_closing="slotProps">
+          {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
+        </template>
+
         <template v-slot:status_slot="slotProps">
           <div class="flex items-center justify-center">
             <div
@@ -95,6 +103,14 @@
               {{ slotProps.item.status }}
             </div>
           </div>
+        </template>
+
+         <template v-slot:date_posted="slotProps">
+            {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
+        </template>
+
+         <template v-slot:date_closing="slotProps">
+            {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
         </template>
 
         <template
@@ -187,13 +203,15 @@ export default {
 				},
 				{
 					name: "Posted",
-					dataIndex: "date_posted",
-					class: "text-center localDate"
+          dataIndex: "",
+					slotName: "date_posted",
+					class: "text-center"
 				},
 				{
 					name: "Closes",
-					dataIndex: "date_closing",
-					class: "text-center localDate"
+          dataIndex: "",
+					slotName: "date_closing",
+					class: "text-center"
 				},
 				// {
 				// 	name: "Role",
@@ -364,7 +382,7 @@ export default {
     
 	},  
 
-	async asyncData ({ app, route, }) {
+	async asyncData ({ app, route, error}) {
 		try {
       // FOR PRACTICE ONLY
       let permanent_jobs_for_practice = ""
@@ -502,7 +520,7 @@ export default {
 		} catch (err) {
 			if (err.response && err.response.status === 401) {
         console.log('something went wrong')
-				// error(err.response.data)
+				error(err.response.data)
 				return
 			}
 			throw err

@@ -27,13 +27,13 @@
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Solo Forms</nuxt-link>
       <nuxt-link
-        v-if="hasFormA"
+        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormA"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >NHS Pensions Form A</nuxt-link>
       <nuxt-link
-        v-if="hasFormB"
+        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormB"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -316,6 +316,10 @@ export default {
         {
           name: "Job Number",
           dataIndex: "job_part_number"
+        },
+        {
+          name: "Job Title",
+          dataIndex: "job_title"
         },
         {
           name: "£ Amount",

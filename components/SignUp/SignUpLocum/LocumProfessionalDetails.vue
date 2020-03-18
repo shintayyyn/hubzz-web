@@ -104,6 +104,7 @@
             :type="'single-checkbox'"
             :name="'view_locum_jobs'"
             :label="'Permanent / Salaried Roles'"
+            :error="formError.find(item => item.field === 'view_locum_jobs')"
           />
 
           <AppInput
@@ -111,6 +112,7 @@
             :type="'single-checkbox'"
             :name="'view_permanent_jobs'"
             :label="'Hubzz Jobs'"
+            :error="formError.find(item => item.field === 'view_permanent_jobs')"
           />
 
           <div class="flex flex-col my-8">
@@ -402,14 +404,20 @@ export default {
       this.form.max_rate_per_hour = 999999999;
       this.form.max_rate_per_half_day_session = 999999999;
       this.form.max_rate_per_whole_day_session = 999999999;
-      this.Validate(this.form, [
+      let notRequired = [
         "nhs_smart_card_id_number",
         "spoken_language_id",
         "mandatory_training_id",
         "view_locum_jobs",
         "view_permanent_jobs"
-      ]);
-      console.log(this.formError.length);
+      ];
+      if (
+        ["true", true].includes(this.form.view_locum_jobs) ||
+        ["true", true].includes(this.form.view_permanent_jobs)
+      ) {
+        notRequired.push("view_locum_jobs", "view_permanent_jobs");
+      }
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
           ...this.form,

@@ -106,6 +106,25 @@
             :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
           />
+
+          <div>Select which jobs to view:</div>
+
+          <AppInput
+            v-model="form.view_locum_jobs"
+            :type="'single-checkbox'"
+            :name="'view_locum_jobs'"
+            :label="'Permanent / Salaried Roles'"
+            :error="formError.find(item => item.field === 'view_locum_jobs')"
+          />
+
+          <AppInput
+            v-model="form.view_permanent_jobs"
+            :type="'single-checkbox'"
+            :name="'view_permanent_jobs'"
+            :label="'Hubzz Jobs'"
+            :error="formError.find(item => item.field === 'view_permanent_jobs')"
+          />
+
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row flex-wrap justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
@@ -490,6 +509,8 @@ export default {
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
+        view_locum_jobs: false,
+        view_permanent_jobs: false,
         min_rate_per_hour: "",
         max_rate_per_hour: "",
         min_rate_per_half_day_session: "",
@@ -655,6 +676,8 @@ export default {
         return { label: spokenLanguage.name, value: spokenLanguage.id };
       }
     );
+    this.form.view_locum_jobs = this.user.view_locum_jobs;
+    this.form.view_permanent_jobs = this.user.view_permanent_jobs;
     this.form.min_rate_per_hour = this.user.locum_detail.rates.find(
       rate => rate.rate_type.name === "Per Hour"
     ).min;
@@ -791,6 +814,13 @@ export default {
           "sort_code",
           "account_number"
         );
+      }
+
+      if (
+        ["true", true].includes(this.form.view_locum_jobs) ||
+        ["true", true].includes(this.form.view_permanent_jobs)
+      ) {
+        notRequired.push("view_locum_jobs", "view_permanent_jobs");
       }
 
       this.formError = [];

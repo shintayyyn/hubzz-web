@@ -158,6 +158,7 @@ export default {
 					: null;
 
 			let hubType = "";
+			// ============PRACTICE LIST====================
 			if (domain === "Practice") {
 				if (this.$auth.user.practice_detail.practice.type === "Hub") {
 					hubType = this.$auth.user.practice_detail.practice.hub_type;
@@ -198,6 +199,7 @@ export default {
 						addedLists.push({
 							name: "Surgery Management",
 							route: "/hub-surgery-management",
+							permissions:["View Surgery Management"],
 							order: 4
 						});
 					}
@@ -206,6 +208,7 @@ export default {
 						addedLists.push({
 							name: "Surgery Management",
 							route: "/spoke-surgery-management",
+							permissions:["View Surgery Management"],
 							order: 4
 						});
 					} else if (
@@ -216,6 +219,7 @@ export default {
 						addedLists.push({
 							name: "Surgery Management",
 							route: "/spoke-surgery-management",
+							permissions:["View Surgery Management"],
 							order: 4
 						});
 					}
@@ -232,6 +236,7 @@ export default {
 					addedLists.push({
 						name: "Permanent Jobs",
 						route: "/permanent-jobs",
+						permissions: ["View Permanent Job"],
 						order: 7
 					});
 
@@ -246,6 +251,7 @@ export default {
 						addedLists.push({
 							name: "Billing",
 							route: "/practice-billing",
+							permissions: ["View Billings"],
 							order: 8
 						});
 					}
@@ -258,6 +264,7 @@ export default {
 					});
 				}
 			}
+			// ============ LOCUMS LIST ================
 			if (domain === "Locum") {
 				if (
 					this.$auth.user.view_locum_jobs ||
@@ -310,6 +317,10 @@ export default {
 			this.$axios
 				.post("/api/v1/logout")
 				.then(() => {
+					this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
+					this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
+					this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+					this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
 					console.log("Socket Logged Out");
 					console.log("One Signal Logged Out");
 				})

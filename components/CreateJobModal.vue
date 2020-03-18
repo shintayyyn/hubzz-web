@@ -78,7 +78,7 @@
                       :type="'multi-checkbox'"
                       :error="formError.find(item => item.field === 'compliance_document_id')"
                       :name="'compliance_document_id'"
-                      :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
+                      :label="`${complianceListLabel}`"
                       :lists="compliances"
                       @checked="form.compliance_document_id.push(parseInt($event))"
                       @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
@@ -609,6 +609,9 @@ export default {
     },
     hasBanks() {
       return this.banksCount > 0 ? true : false;
+    },
+    complianceListLabel() {
+      return `For ${this.selectedProfession.profession_compliance_category_name}:`;
     }
   },
   watch: {
@@ -630,7 +633,6 @@ export default {
         });
         this.banksCount =
           response.data && response.data.count ? response.data.count : 0;
-        console.log(this.selectedProfession);
         if (this.selectedProfession.profession_compliance_category.id === 1) {
           this.compliances = this.gp_compliance_documents_lists;
           return;

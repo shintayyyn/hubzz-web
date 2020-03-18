@@ -73,6 +73,8 @@
 						:min="1"
 						:limit="8"
 						@keydown="inputNumberOnly($event)"
+						@focus="hasValue(form.final_hours_hour, 'final_hours_hour')"
+						@blur="!form.final_hours_hour ? form.final_hours_hour = 0 : form.final_hours_hour"
 					/>
 					<p class="mx-2">hours</p>
 				</div>
@@ -87,6 +89,8 @@
 						:maxInput="60"
 						:limit="2"
 						@keydown="inputNumberOnly($event)"
+						@focus="hasValue(form.final_hours_minute, 'final_hours_minute')"
+						@blur="!form.final_hours_minute ? form.final_hours_minute = 0 : form.final_hours_minute"
 					/>
 					<p class="mx-2">minutes</p>
 				</div>
@@ -161,6 +165,11 @@ export default {
 		this.form.final_hours = this.job_part.final_hours.toFixed(2);
 	},
 	methods: {
+		hasValue(value, field) {
+			if (value == 0) {
+				this.form[field] = "";
+			}
+		},
 		handleKeyDownEvent(e, formField, limit) {
 			let acceptedKeys = [
 				"Backspace",
