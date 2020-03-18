@@ -35,7 +35,7 @@
 						v-if="formError.find(item => item.field === 'permission_id')"
 					>{{formError.find(item => item.field === 'permission_id').message}}</div>
 					<div class="flex flex-wrap justify-start">
-						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
+						<!-- <div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
 							<div class="flex flex-col">
 								<div class="w-full flex flex-row items-center">
 									<input
@@ -61,6 +61,50 @@
 										/>
 										<label class="text-sm pl-1" :for="permission.id">{{permission.name}}</label>
 									</div>
+								</div>
+							</div>
+						</div>-->
+						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
+							<div class="flex flex-col">
+								<div class="w-full flex flex-row items-center pb-1">
+									<input
+										type="checkbox"
+										:id="role.permissions"
+										:checked="isChecked(role.permissions)"
+										@change="checkAll(index, $event.target.checked)"
+									/>
+									<label
+										class="font-bold md:text-xl pl-1 leading-none flex items-center"
+										:for="role.permissions"
+									>{{role.category}} Management</label>
+								</div>
+								<div v-for="(item, index) in hierarchyPermissions" :key="index">
+									<template v-if="role.category === item.category">
+										<div class="w-full md:w-1/2 p-2">
+											<div class="flex flex-col">
+												<div>
+													<div
+														class="flex flex-col px-1"
+														v-for="(permission, index) in item.permissions"
+														:key="permission.id"
+													>
+														<input
+															v-model="permission.done"
+															type="checkbox"
+															:id="permission.id"
+															:checked="permission.done"
+															@change="onChangeCategory(index, item.permissions, $event.target.checked)"
+														/>
+														<label
+															:for="permission.id"
+															class="text-sm pl-1"
+															:class="index === 0 && item.permissions.length > 1  ? '' : 'ml-8'"
+														>{{permission.name}}</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</template>
 								</div>
 							</div>
 						</div>
@@ -89,6 +133,7 @@ export default {
 			loading: false,
 			remove_modal: false,
 			permissions: [],
+			hierarchyPermissions: [],
 			form: {
 				name: "",
 				description: "",
@@ -162,6 +207,61 @@ export default {
 				foundCategory.permissions.push(permission);
 			});
 			this.permissions = categories;
+			this.setSubcategories(categories);
+		},
+		setSubcategories(permission) {
+			let subCategories = [];
+			permission.forEach(item => {
+				item.permissions.forEach(item => {
+					if (subCategories.length === 0) {
+						subCategories.push({
+							category: item.category,
+							subcategory: item.subcategory,
+							permissions: []
+						});
+					} else {
+						let foundCategory = subCategories.find(
+							categ => categ.subcategory === item.subcategory
+						);
+						if (!foundCategory) {
+							subCategories.push({
+								category: item.category,
+								subcategory: item.subcategory,
+								permissions: []
+							});
+						}
+					}
+				});
+			});
+			this.setHierarchy(subCategories);
+		},
+		setHierarchy(subCategories) {
+			this.permissions.forEach(item => {
+				item.permissions.forEach(permission => {
+					let findSub = subCategories.find(
+						sub =>
+							sub.category === permission.category &&
+							sub.subcategory === permission.subcategory
+					);
+					findSub.permissions.push(permission);
+				});
+			});
+			this.hierarchyPermissions = subCategories;
+		},
+		onChangeCategory(index, permissions, e) {
+			if (index === 0) {
+				permissions.forEach(item => {
+					item.done = e;
+				});
+			} else {
+				let findParent = permissions.find((item, index) => index === 0);
+				let hasCheck = [];
+				permissions.forEach((item, index) => {
+					if (index > 0) hasCheck.push(item.done);
+				});
+				if (findParent && hasCheck.includes(true)) findParent.done = true;
+				else findParent.done = false;
+			}
 		},
 		isChecked(permissions) {
 			return !permissions.map(item => item.done).includes(false);

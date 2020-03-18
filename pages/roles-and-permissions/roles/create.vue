@@ -70,7 +70,7 @@
 								</div>
 							</div>
 						</div>-->
-						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in hierarchyPermissions" :key="index">
+						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
 							<div class="flex flex-col">
 								<div class="w-full flex flex-row items-center pb-1">
 									<input
@@ -84,28 +84,33 @@
 										:for="role.permissions"
 									>{{role.category}} Management</label>
 								</div>
-								<div>
-									<div
-										class="flex flex-col px-1"
-										v-for="permission in role.permissions"
-										:key="permission.id"
-									>
-										<p>{{permission.subcategory}}</p>
-										<div
-											class="w-full flex flex-row items-center"
-											v-for="(permission, index) in permission.permissions"
-											:key="index"
-										>
-											<!-- <input
-												v-model="permission.done"
-												type="checkbox"
-												:id="permission.id"
-												:checked="permission.done"
-												@change="hasRelatedRole(permission)"
-											/>
-											<label :for="permission.id" class="text-sm pl-1">{{permission.name}}</label>-->
+								<div v-for="(item, index) in hierarchyPermissions" :key="index">
+									<template v-if="role.category === item.category">
+										<div class="w-full md:w-1/2 p-2">
+											<div class="flex flex-col">
+												<div>
+													<div
+														class="flex flex-col px-1"
+														v-for="(permission, index) in item.permissions"
+														:key="permission.id"
+													>
+														<input
+															v-model="permission.done"
+															type="checkbox"
+															:id="permission.id"
+															:checked="permission.done"
+															@change="onChangeCategory(index, item.permissions, $event.target.checked)"
+														/>
+														<label
+															:for="permission.id"
+															class="text-sm pl-1"
+															:class="index === 0 && item.permissions.length > 1  ? '' : 'ml-8'"
+														>{{permission.name}}</label>
+													</div>
+												</div>
+											</div>
 										</div>
-									</div>
+									</template>
 								</div>
 							</div>
 						</div>
@@ -176,28 +181,6 @@ export default {
 				this.setCategory();
 			});
 		},
-		setCategory() {
-			let categories = [];
-			this.permissions.forEach(permission => {
-				if (categories.length === 0) {
-					categories.push({
-						category: permission.category,
-						permissions: []
-					});
-				} else {
-					let hasSameCategory = categories.find(
-						item => item.category === permission.category
-					);
-					if (!hasSameCategory) {
-						categories.push({
-							category: permission.category,
-							permissions: []
-						});
-					}
-				}
-			});
-			this.setPermissions(categories);
-		},
 		setSubcategories(permission) {
 			let subCategories = [];
 			permission.forEach(item => {
@@ -236,9 +219,25 @@ export default {
 				});
 			});
 			this.hierarchyPermissions = subCategories;
-
+		},
+		onChangeCategory(index, permissions, e) {
+			if (index === 0) {
+				permissions.forEach(item => {
+					item.done = e;
+				});
+			} else {
+				let findParent = permissions.find((item, index) => index === 0);
+				let hasCheck = [];
+				permissions.forEach((item, index) => {
+					if (index > 0) hasCheck.push(item.done);
+				});
+				if (findParent && hasCheck.includes(true)) findParent.done = true;
+				else findParent.done = false;
+			}
+		},
+		setCategory() {
 			let categories = [];
-			this.hierarchyPermissions.forEach(permission => {
+			this.permissions.forEach(permission => {
 				if (categories.length === 0) {
 					categories.push({
 						category: permission.category,
@@ -256,21 +255,7 @@ export default {
 					}
 				}
 			});
-			categories.forEach(permission => {
-				this.hierarchyPermissions.forEach(item => {
-					let foundCategory = categories.find(
-						item =>
-							item.category === permission.category &&
-							item.subcategory === permission.subcategory
-					);
-
-					if (foundCategory) foundCategory.permissions.push(item);
-					// let find = item
-					// foundCategory.permissions.push(item);
-				});
-				console.log(foundCategory);
-			});
-			this.hierarchyPermissions = categories;
+			this.setPermissions(categories);
 		},
 		setPermissions(categories) {
 			this.permissions.forEach(permission => {
@@ -303,7 +288,7 @@ export default {
 			this.form.permission_id = ids;
 			this.Validate(this.form);
 			if (!this.formError.length) {
-				if (this.form.permission_id > 0) {
+				if (this.form.permission_id.length > 0) {
 					this.$axios
 						.$post(`/api/v1/practice/practice-roles`, this.form)
 						.then(res => {
