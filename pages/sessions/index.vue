@@ -120,6 +120,21 @@
               />
             </div>
           </div>
+
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <template v-if="this.$route.query.status === 'Live'">
+              <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+                <AppInput
+                  v-model="favorite_only"
+                  :type="'select'"
+                  :name="'favorite_only'"
+                  :label="'Favorite Only'"
+                  :placeholder="'Select...'"
+                  :items="[{label: 'All', value: ''}, {label: 'Yes', value: true}, {label: 'No', value: false}]"
+                />
+              </div>
+            </template>
+          </div>
           
 
           <div class="md:px-1 h-full flex w-full">
@@ -360,6 +375,7 @@ export default {
       job_practice_id: "",
       shift_id: "",
       profession_id: "",
+      favorite_only: "",
       job_shift_id: "",
       rate: "",
       job_rate: "",
@@ -560,6 +576,14 @@ export default {
           name: "Assigned",
           dataIndex: "assigned_to",
           class: "text-center"
+        });
+      }
+      if (queryStatus === "live") {
+        columns.push({
+          name: "Favorite only",
+          dataIndex: "favorite_only",
+          class: "text-center",
+          sortable: true
         });
       }
       if (queryStatus === "withdrawn") {
@@ -983,7 +1007,8 @@ export default {
                     (bankStatus === "false" || !bankStatus)
                   ? false
                   : null,
-              profession_id: this.profession_id
+              profession_id: this.profession_id,
+              favorite_only: this.favorite_only
             }
           }
         ),
@@ -1032,7 +1057,8 @@ export default {
                     (bankStatus === "false" || !bankStatus)
                   ? false
                   : null,
-              profession_id: this.profession_id
+              profession_id: this.profession_id,
+              favorite_only: this.favorite_only
             }
           }
         )
@@ -1530,6 +1556,7 @@ export default {
       this.job_number_includes = "";
       this.job_part_number_includes = "";
       this.profession_id = "";
+      this.favorite_only = ""
     }
   }
 };

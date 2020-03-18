@@ -120,7 +120,6 @@ export default {
 			}
 		},
 		selected_date(value) {
-			// console.log("IH?", this.$auth.user.domain);
 			this.date_info = value;
 			if (this.$auth.user.domain === "Practice") {
 				this.findPerMonthPractice(value);
@@ -134,7 +133,6 @@ export default {
 			}
 		},
 		selected_date_shift(value) {
-			// console.log("OH?");
 			// this.date_info_week = value.date
 			if (this.$auth.user.domain === "Practice") {
 				this.findPerWeekPractice(value);
@@ -145,7 +143,6 @@ export default {
 		}
 	},
 	created() {
-		// console.log("EH?");
 		if (this.$auth.user.domain === "Practice") {
 			this.findPerMonthPractice(this.selected_date);
 			return;
