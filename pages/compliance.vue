@@ -138,10 +138,10 @@
                 <div
                   v-else
                   class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
-                  :class="!childItem.file ? 'text-gray-600' : 'hover'"
+                  :class="!childItem.file ? 'text-gray-600' : 'hover cursor-pointer'"
                   @click="show(childItem, 'compliance')"
                 >
-                  <div class="item w-1/6">{{ childItem.compliance_document_name | StringMaxLength(55) }}</div>
+                  <div class="item w-1/6 pr-2">{{ childItem.compliance_document_name | StringMaxLength(55) }}</div>
                   <div class="item w-1/6" v-if="(childItem.file || childItem.reference)">
                     <div class="flex flex-row flex-no-wrap items-center" v-if="childItem.file">
                       <svgicon name="cloud-download" height="24" width="24" />
@@ -174,7 +174,7 @@
                   <div class="item w-1/6" v-if="childItem && childItem.status">
                     <div class="flex justify-start max-w-xs">
                       <div
-                        class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
+                        class="text-xs sm:text-sm text-center font-bold rounded-full px-4 py-1"
                         :class="status(childItem.status)"
                       >{{ childItem.status }}</div>
                     </div>
@@ -931,18 +931,22 @@ export default {
       }
     },
     status(status) {
+      console.log(status)
       let str;
       switch (status) {
         case "Pending":
         case "Expiring":
-          str = "bg-orange-500";
+          str = "bg-orange-500 text-white ";
           break;
         case "Verified":
         case "Approved":
-          str = "bg-green-500";
+          str = "bg-green-500 text-white ";
+          break;
+        case "Empty":
+          str = "border-2 border-gray-500 text-gray-600"
           break;
         default:
-          str = "bg-red-500";
+          str = "bg-red-500 text-white ";
       }
       return str;
     },
