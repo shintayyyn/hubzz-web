@@ -1,12 +1,10 @@
 <template>
   <section class="relative max-w-3xl">
     <div class="flex items-center justify-end py-2">
-        <label class="mx-1">Type:</label>
-        <div
-          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
-        >
-          Platform
-        </div>
+      <label class="mx-1">Type:</label>
+      <div
+        class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
+      >Platform</div>
     </div>
     <!-- pdf form -->
     <div
@@ -36,9 +34,7 @@
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="font-bold text-lg mt-2">
-                  {{ propInvoice.practice.name }}
-                </div>
+                <div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
               </div>
             </section>
             <div class="text-xs sm:text-sm">
@@ -64,12 +60,10 @@
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
             >
               Total
-            </div> -->
+            </div>-->
             <div
               class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-            >
-              Description
-            </div>
+            >Description</div>
           </div>
           <!-- items / selected invoice -->
           <div
@@ -88,13 +82,11 @@
               >
                 {{ total | currency }}
               </div>
-              -->
+            -->
             <div class="relative flex justify-start mt-2">
-              <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">
-                {{ description }}
-              </div>
-             <div
-                v-if="(propInvoice && propInvoice.status !== 'Approved')"
+              <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">{{ description }}</div>
+              <div
+                v-if="(propInvoice && !['Paid','Approved'].includes(propInvoice.status))"
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
               >
                 <div class="px-2 flex-col">
@@ -133,7 +125,7 @@
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                >
+                />
               </div>
               <div class="w-1/5 flex flex-col pr-2">
                 <label for="late_hours">Hours of late</label>
@@ -144,10 +136,10 @@
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                >
+                />
               </div>
               <div class="w-3/5 flex flex-col">
-                  <label for="final_hours">Final hours</label>
+                <label for="final_hours">Final hours</label>
                 <!-- <label for="final_hours">Final hours</label>
                 <input
                   v-model="form.items[0].final_hours"
@@ -156,9 +148,9 @@
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                > -->
+                >-->
                 <div class="flex">
-                  <div class="flex items-center mr-2 ">
+                  <div class="flex items-center mr-2">
                     <input
                       v-model="form.hours"
                       type="number"
@@ -170,10 +162,10 @@
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
                       @focus="hasValue(form.hours, 'hours')"
                       @blur="!form.hours ? form.hours = 0 : form.hours"
-                    >
+                    />
                     <label for="hours" class="text-xs md:text-sm">hours</label>
                   </div>
-                  <div class="flex items-center ">
+                  <div class="flex items-center">
                     <input
                       v-model="form.minutes"
                       type="number"
@@ -186,11 +178,14 @@
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
                       @focus="hasValue(form.minutes, 'minutes')"
                       @blur="!form.minutes ? form.minutes = 0 : form.minutes"
-                    >
+                    />
                     <label for="minutes" class="text-xs md:text-sm">minutes</label>
                   </div>
                 </div>
-                <p class="text-xs mx-2 text-red-500" v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')">Final hours is required</p>
+                <p
+                  class="text-xs mx-2 text-red-500"
+                  v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')"
+                >Final hours is required</p>
               </div>
             </div>
             <!-- disputed invoice update form -->
@@ -240,9 +235,7 @@
             <div
               v-if="formError.find(item => item.field === 'total_amount')"
               class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-            >
-              {{ formError.find(item => item.field === 'total_amount').message }}
-            </div>
+            >{{ formError.find(item => item.field === 'total_amount').message }}</div>
           </div>
           <!-- £ {{form.total_amount | currency}} -->
           £ {{ total_amount | currency }}
@@ -274,32 +267,32 @@
     </div>
 
     <div class="flex justify-start items-center mb-6">
-        <AppButton
-          v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
-          class="m-1"
-          :label="'Save changes'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(false)"
-        />
-        <AppButton
-          v-if="propInvoice && propInvoice.status !== 'Draft'"
-          class="m-1"
-          :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          @click="viewAsPdf(propInvoice.id)"
-        />
-      </div>
+      <AppButton
+        v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
+        class="m-1"
+        :label="'Save changes'"
+        :inStyle="'padding:5px 14px;font-size:1em'"
+        :disabled="saveLoading"
+        @click="save(false)"
+      />
+      <AppButton
+        v-if="propInvoice && propInvoice.status !== 'Draft'"
+        class="m-1"
+        :label="'View as PDF'"
+        :inStyle="'padding:5px 14px;font-size:1em'"
+        @click="viewAsPdf(propInvoice.id)"
+      />
+    </div>
   </section>
 </template>
 <script>
-import AppLoading from "@/components/Base/AppLoading"
-import AppButton from "@/components/Base/AppButton"
-import AppDate from "@/components/Base/AppDate"
-import AppInput from "@/components/Base/AppInput"
-import AppFilterSearch from "@/components/Base/AppFilterSearch"
-import AppFormError from "@/components/Base/AppFormError"
-import { mixin as clickaway } from "vue-clickaway"
+import AppLoading from "@/components/Base/AppLoading";
+import AppButton from "@/components/Base/AppButton";
+import AppDate from "@/components/Base/AppDate";
+import AppInput from "@/components/Base/AppInput";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppFormError from "@/components/Base/AppFormError";
+import { mixin as clickaway } from "vue-clickaway";
 export default {
   components: {
     AppLoading,
@@ -316,7 +309,7 @@ export default {
     },
     propId: null
   },
-  data () {
+  data() {
     return {
       exportLoading: false,
       saveLoading: false,
@@ -332,36 +325,63 @@ export default {
 
       isApproved: false,
       allowToBill: false
-    }
+    };
   },
   computed: {
-    total_amount () {
+    subTotal() {
+      return this.form.items && this.form.items.length > 0
+        ? this.form.items[0].total
+        : 0;
+    },
+    totalAmount() {
+      let total;
+      if (this.form.items && this.form.items.length > 0) {
+        total = this.form.items[0].total;
+        if (this.propInvoice) {
+          total =
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+        }
+        return total;
+      }
+      return 0;
+    },
+    total_amount() {
       let hours =
-        this.form.items.length > 0 ? this.form.items[0].final_hours : 0
+        this.form.items.length > 0 ? this.form.items[0].final_hours : 0;
 
       let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-        .name
-      let total = 0
+        .name;
+      let total = 0;
       switch (type) {
         case "Per Hour":
-          total = this.propInvoice.items[0].job_part.job.rate * hours
-          break
+          total = this.propInvoice.items[0].job_part.job.rate * hours;
+          break;
         case "Per Half Day Session":
         case "Per Whole Day Session":
           total =
             (this.propInvoice.items[0].job_part.job.rate /
               this.propInvoice.items[0].job_part.job.total_hours) *
-            hours
-          break
+            hours;
+          break;
       }
-      return total
+      return total;
     },
-    description () {
-      let hours = Math.floor(this.form.items[0].final_hours / 60);
-      let minutes = Math.floor(this.form.items[0].final_hours % 60);
-      let hour = hours > 0 ? `${hours > 0 ? hours : ''} ${hours > 1 ? 'hours' : 'hour'}` :  ''
-      let minute = minutes > 0 ? `${minutes > 0 ? minutes : ''} ${minutes > 1 ? 'minutes' : 'minute'}` :  ''
-      let totalHours = `${hour} ${minute}` ;
+    description() {
+      // let hours = Math.floor(this.form.items[0].final_hours / 60);
+      // let minutes = Math.floor(this.form.items[0].final_hours % 60);
+      let hours = this.form.hours;
+      let minutes = this.form.minutes;
+      let hour =
+        hours > 0
+          ? `${hours > 0 ? hours : ""} ${hours > 1 ? "hours" : "hour"}`
+          : "";
+      let minute =
+        minutes > 0
+          ? `${minutes > 0 ? minutes : ""} ${
+              minutes > 1 ? "minutes" : "minute"
+            }`
+          : "";
+      let totalHours = `${hour} ${minute}`;
       return `Job number ${
         this.propInvoice.items[0].job_part.job_part_number
       } ${this.propInvoice.items[0].job_part.job.type}
@@ -371,77 +391,65 @@ export default {
         from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
         / ${
           this.propInvoice.items[0].job_part.job.shift.name
-        } / Total hours of  ${
-        this.form.items.length > 0 ? totalHours : 0
-      }`
+        } / Total hours of  ${this.form.items.length > 0 ? totalHours : 0}`;
     },
-    total () {
+    total() {
       let hours =
-        this.form.items.length > 0 ? this.form.items[0].final_hours : 0
+        this.form.items.length > 0 ? this.form.items[0].final_hours : 0;
 
       let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-        .name
-      let total = 0
+        .name;
+      let total = 0;
       switch (type) {
         case "Per Hour":
-          total = this.propInvoice.items[0].job_part.job.rate * hours
-          break
+          total = this.propInvoice.items[0].job_part.job.rate * hours;
+          break;
         case "Per Half Day Session":
         case "Per Whole Day Session":
           total =
             (this.propInvoice.items[0].job_part.job.rate /
               this.propInvoice.items[0].job_part.job.total_hours) *
-            hours
-          break
+            hours;
+          break;
       }
-      return total
+      return total;
     }
   },
   watch: {
-    isApproved (value) {
+    isApproved(value) {
       if (value) {
-        this.form.items[0].description = `Job number ${
-          this.propInvoice.items[0].job_part.job_part_number
-        } ${this.propInvoice.items[0].job_part.job.type} Job at £${
-          this.propInvoice.items[0].job_part.job.rate
-        } ${
-          this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
-        } from ${this.propInvoice.items[0].job_part.date_start} to ${
-          this.propInvoice.items[0].job_part.date_end
-        } / ${
-          this.propInvoice.items[0].job_part.job.shift.name
-        } / Total hours of ${this.propInvoice.items[0].final_hours}`
-        this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-        this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-        this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-        this.form.items[0].remarks = this.propInvoice.items[0].remarks
+        this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`;
+        this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+        this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+        this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
+        this.form.items[0].remarks = this.propInvoice.items[0].remarks;
         this.form.items[0].total =
           this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
           "Per Hour"
             ? this.propInvoice.items[0].job_part.job.rate *
               this.propInvoice.items[0].final_hours
-            : this.propInvoice.items[0].job_part.job.rate
+            : this.propInvoice.items[0].job_part.job.rate;
         this.form.total_amount =
           this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
           "Per Hour"
             ? this.propInvoice.items[0].job_part.job.rate *
               this.propInvoice.items[0].final_hours
-            : this.propInvoice.items[0].job_part.job.rate
+            : this.propInvoice.items[0].job_part.job.rate;
       } else if (value === false) {
-        this.form.items[0].description = this.propInvoice.items[0].description
-        this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-        this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-        this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-        this.form.items[0].remarks = this.propInvoice.items[0].remarks
-        this.form.items[0].total = this.propInvoice.items[0].total
+        this.form.items[0].description = this.propInvoice.items[0].description;
+        this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+        this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+        this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
+        this.form.items[0].remarks = this.propInvoice.items[0].remarks;
+        this.form.items[0].total = this.propInvoice.items[0].total;
       }
-      this.form.items[0].approve = value
+      this.form.items[0].approve = value;
     }
   },
-  mounted () {
+  mounted() {
     if (this.propInvoice) {
-      this.form.date_start = this.propInvoice.date_start
-      this.form.date_end = this.propInvoice.date_end
+      this.form.date_start = this.propInvoice.date_start;
+      this.form.date_end = this.propInvoice.date_end;
 
       let total =
         this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
@@ -450,7 +458,7 @@ export default {
             this.propInvoice.items[0].job_part.final_hours
           : (this.propInvoice.items[0].job_part.job.rate /
               this.propInvoice.items[0].job_part.job.total_hours) *
-            this.propInvoice.items[0].job_part.final_hours
+            this.propInvoice.items[0].job_part.final_hours;
 
       this.form.items = [
         {
@@ -465,30 +473,30 @@ export default {
           late_hours: this.propInvoice.items[0].late_hours,
           remarks: this.propInvoice.items[0].remarks
         }
-      ]
+      ];
 
       this.form.total_amount = total
         .toFixed(2)
-        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
-      this.isApproved = this.propInvoice.items[0].approved
+      this.isApproved = this.propInvoice.items[0].approved;
 
       if (
         this.$auth.user.practice_detail &&
         this.$auth.user.practice_detail.practice.type !== "Spoke"
       ) {
-        this.allowToBill = true
+        this.allowToBill = true;
       } else if (
         this.$auth.user.practice_detail.practice.type === "Spoke" &&
         !this.$auth.user.practice_detail.practice.parent_practice_id
       ) {
-        this.allowToBill = true
+        this.allowToBill = true;
       } else if (
         this.$auth.user.practice_detail.practice.parent_practice_id &&
         this.$auth.user.practice_detail.practice.allow_surgery_bill_locum ===
           true
       ) {
-        this.allowToBill = true
+        this.allowToBill = true;
       }
     }
     this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
@@ -513,11 +521,11 @@ export default {
     },
     hasValue(value, field) {
       if (value == 0) {
-        this.form[field] = ""
+        this.form[field] = "";
       }
     },
-    save (final) {
-      this.formError = []
+    save(final) {
+      this.formError = [];
       if (
         [0, "0"].includes(this.form.hours) &&
         [0, "0"].includes(this.form.minutes)
@@ -531,18 +539,18 @@ export default {
           message: "Hours is required"
         });
       } else {
-        this.form.hours = !this.form.hours ? 0 : this.form.hours 
-        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
+        this.form.hours = !this.form.hours ? 0 : this.form.hours;
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
         this.form.items[0].final_hours =
           this.form.hours * 60 + parseInt(this.form.minutes);
       }
-      this.Validate(this.form, ["total_amount, hours, minutes"])
+      this.Validate(this.form, ["total_amount", "hours", "minutes"]);
       if (!this.formError.length) {
-        this.form.items[0].description = this.description
-        this.form.items[0].total = this.total
-        this.form.total_amount = this.total_amount
+        this.form.items[0].description = this.description;
+        this.form.items[0].total = this.total;
+        this.form.total_amount = this.total_amount;
         // return;
-        this.saveLoading = true
+        this.saveLoading = true;
         this.$axios
           .$put(
             `/api/v1/practice/locum-invoices/${
@@ -555,41 +563,41 @@ export default {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            })
-            this.$emit("updateInvoice", res.data.locum_invoice)
+            });
+            this.$emit("updateInvoice", res.data.locum_invoice);
           })
           .catch(err => {
-            console.log("err", err.response || err)
+            console.log("err", err.response || err);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
                 text: [`${err.response.data.message}`]
-              })
+              });
             } else if (err.response.data.error_messages) {
               err.response.data.error_messages.forEach(error => {
-                this.formError.push(error)
-              })
+                this.formError.push(error);
+              });
             } else {
-              this.formError.push(err.response.data)
+              this.formError.push(err.response.data);
             }
           })
           .finally(() => {
-            this.saveLoading = false
-          })
+            this.saveLoading = false;
+          });
       }
     },
-    waitingForLocumReply (item) {
+    waitingForLocumReply(item) {
       let count = this.$moment(item.disputed_by_locum_at).diff(
         item.disputed_by_practice_at,
         "seconds"
-      )
+      );
       if (count < 0) {
-        return true
+        return true;
       }
-      return false
+      return false;
     },
-    viewAsPdf (invoiceId) {
+    viewAsPdf(invoiceId) {
       // this.$axios
       //   .$post(`/api/v1/locum/locum-invoice-forms`, {
       //     locum_invoice_id: invoiceId
@@ -599,26 +607,26 @@ export default {
       //   });
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      )
+      );
     },
-    async exportToPdf () {
-      this.exportLoading = true
+    async exportToPdf() {
+      this.exportLoading = true;
       if (process.client) {
-        document.body.style.cursor = "wait"
+        document.body.style.cursor = "wait";
       }
 
-      let doc = this.$jspdf("p", "mm")
-      let pageHeight = 1020
-      let yPosition = 0
+      let doc = this.$jspdf("p", "mm");
+      let pageHeight = 1020;
+      let yPosition = 0;
 
       // PDF HEADER
-      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"])
-      const imgWidthPdfHeader = 210
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
+      const imgWidthPdfHeader = 210;
       const imgHeightPdfHeader =
-        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width
-      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png")
+        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
 
-      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
 
       doc.addImage(
         imgDataPdfHeader,
@@ -627,21 +635,21 @@ export default {
         yPosition,
         imgWidthPdfHeader,
         imgHeightPdfHeader
-      )
+      );
 
-      yPosition = yPosition + imgHeightPdfHeader
+      yPosition = yPosition + imgHeightPdfHeader;
 
       // ITEMS HEADER
       const canvasItemsHeader = await this.$html2canvas(
         this.$refs["items-header"]
-      )
-      const imgWidthItemsHeader = 210
+      );
+      const imgWidthItemsHeader = 210;
       const imgHeightItemsHeader =
         (canvasItemsHeader.height * imgWidthItemsHeader) /
-        canvasItemsHeader.width
-      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png")
+        canvasItemsHeader.width;
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
 
-      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
 
       doc.addImage(
         imgDataItemsHeader,
@@ -650,19 +658,19 @@ export default {
         yPosition,
         imgWidthItemsHeader,
         imgHeightItemsHeader
-      )
+      );
 
-      yPosition = yPosition + imgHeightItemsHeader
+      yPosition = yPosition + imgHeightItemsHeader;
 
       // ITEMS
-      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"])
+      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
 
-      const imgWidthItems = 210
+      const imgWidthItems = 210;
       const imgHeightItems =
-        (canvasItems.height * imgWidthItems) / canvasItems.width
-      const imgDataItems = canvasItems.toDataURL("image/png")
+        (canvasItems.height * imgWidthItems) / canvasItems.width;
+      const imgDataItems = canvasItems.toDataURL("image/png");
 
-      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight
+      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
 
       doc.addImage(
         imgDataItems,
@@ -671,9 +679,9 @@ export default {
         yPosition,
         imgWidthItems,
         imgHeightItems
-      )
+      );
 
-      yPosition = yPosition + imgHeightItems
+      yPosition = yPosition + imgHeightItems;
 
       // let totalSelectedJobParts = this.selectedJobParts.length;
 
@@ -722,47 +730,47 @@ export default {
       // }
 
       // sum up their offsetHeight
-      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight
-      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight
-      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
 
       let totalOffsetHeight =
-        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight
+        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
 
-      pageHeight = pageHeight - totalOffsetHeight
+      pageHeight = pageHeight - totalOffsetHeight;
 
       // DAYS WORKED
       const canvasDaysWorked = await this.$html2canvas(
         this.$refs["days-worked"]
-      )
-      const imgWidthDaysWorked = 210
+      );
+      const imgWidthDaysWorked = 210;
       const imgHeightDaysWorked =
-        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width
-      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png")
+        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
 
       // ITEMS TOTAL
       const canvasItemsTotal = await this.$html2canvas(
         this.$refs["items-total"]
-      )
-      const imgWidthItemsTotal = 210
+      );
+      const imgWidthItemsTotal = 210;
       const imgHeightItemsTotal =
-        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width
-      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png")
+        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
 
       // PDF FOOTER
-      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"])
-      const imgWidthPdfFooter = 210
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
+      const imgWidthPdfFooter = 210;
       const imgHeightPdfFooter =
-        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width
-      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png")
+        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
 
       if (pageHeight < 0) {
-        pageHeight = 1020
-        doc.addPage()
+        pageHeight = 1020;
+        doc.addPage();
       }
 
       yPosition =
-        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter)
+        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
 
       doc.addImage(
         imgDataDaysWorked,
@@ -771,9 +779,9 @@ export default {
         yPosition,
         imgWidthDaysWorked,
         imgHeightDaysWorked
-      )
+      );
 
-      yPosition = yPosition + imgHeightDaysWorked
+      yPosition = yPosition + imgHeightDaysWorked;
 
       doc.addImage(
         imgDataItemsTotal,
@@ -782,9 +790,9 @@ export default {
         yPosition,
         imgWidthItemsTotal,
         imgHeightItemsTotal
-      )
+      );
 
-      yPosition = yPosition + imgHeightItemsTotal
+      yPosition = yPosition + imgHeightItemsTotal;
 
       doc.addImage(
         imgDataPdfFooter,
@@ -793,18 +801,18 @@ export default {
         yPosition,
         imgWidthPdfFooter,
         imgHeightPdfFooter
-      )
+      );
 
-      yPosition = yPosition + imgHeightPdfFooter
+      yPosition = yPosition + imgHeightPdfFooter;
 
-      doc.save("test.pdf")
-      this.exportLoading = false
+      doc.save("test.pdf");
+      this.exportLoading = false;
       if (process.client) {
-        document.body.style.cursor = "auto"
+        document.body.style.cursor = "auto";
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .items-table {
