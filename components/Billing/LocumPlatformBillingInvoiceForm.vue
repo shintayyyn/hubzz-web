@@ -1,7 +1,6 @@
 <template>
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
-      <!-- invoice type -->
       <div class="flex justify-end items-center w-full my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
@@ -19,7 +18,6 @@
       <AppLoading :loading="saveLoading" spinner />
 
       <div :ref="'pdf-header'" class="flex flex-col">
-        <!-- locum details -->
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{ $auth.user.personal_detail.name }}</div>
           <div>{{ $auth.user.address_detail.address.line_1 }}</div>
@@ -74,35 +72,20 @@
 
       <div class="overflow-auto">
         <div class="items-table">
-          <!-- items header -->
           <div :ref="'items-header'" class="flex justify-start">
-            <!-- old -->
-            <!-- <div
-              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-            >
-              Description
-            </div>
-            <div
-              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
-            >
-              Total
-            </div>-->
-            <!-- revise -->
             <div
               class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >Description</div>
           </div>
 
-          <!-- revise -->
           <div
             v-if="form.items && form.items.length > 0"
             :id="`invoice-item`"
             :ref="`invoice-item`"
             class="flex flex-col border-b-2 pb-2"
           >
-            <!-- item description / total / dispute checkbox -->
             <div class="relative flex justify-start mt-2">
-              <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">{{ description }}</div>
+              <div class="w-full text-xs sm:text-sm px-4 py-1">{{ form.items[0].description }}</div>
               <div
                 v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
@@ -129,9 +112,8 @@
                 </div>
               </div>
             </div>
-            <!-- dispute invoice attendance forms -->
             <div
-              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
               <div class="w-1/4 flex flex-col px-2">
@@ -158,15 +140,6 @@
               </div>
               <div class="w-2/4 flex flex-col">
                 <label for="final_hours">Final hours</label>
-                <!-- <label for="final_hours">Final hours</label>
-                <input
-                  v-model="form.items[0].final_hours"
-                  type="number"
-                  min="0"
-                  name="final_hours"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                >-->
                 <div class="flex">
                   <div class="flex items-center px-2">
                     <input
@@ -205,9 +178,8 @@
                 >Final hours is required</p>
               </div>
             </div>
-            <!-- disputed invoice update form -->
             <div
-              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
               <div class="flex flex-col w-full px-2">
@@ -221,115 +193,13 @@
               </div>
             </div>
           </div>
-
-          <!-- OLD -->
-          <!-- items / selected invoice -->
-          <!-- <div
-            v-if="form.items && form.items.length > 0"
-            :id="`invoice-item`"
-            :ref="`invoice-item`"
-            class=" flex flex-col border-b-2 pb-2"
-          >-->
-          <!-- item description / total / dispute checkbox -->
-          <!-- <div class="relative flex justify-start mt-2">
-              <div
-                class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300"
-              >
-                {{ form.items[0].description }}
-              </div>
-              <div
-                class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
-              >
-                {{ form.items[0].total | currency }}
-              </div>
-              <div
-                v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
-                class="flex items-center align-middle sticky right-0 bg-white shadow-md"
-              >
-                <div class="px-2 flex-col">
-                  <AppInput
-                    v-model="form.items[0].dispute"
-                    :disabled="(propInvoice && propInvoice.items[0].approved) || (propInvoice && waitingForPracticeReply(propInvoice.items[0]))"
-                    :type="'single-checkbox'"
-                    :name="'disputed'"
-                    :label="'Disputed'"
-                  />
-                  <AppInput
-                    v-if="propInvoice && propInvoice.status !== 'Draft'"
-                    v-model="propInvoice.items[0].approved"
-                    disabled
-                    :type="'single-checkbox'"
-                    :name="'approved'"
-                    :label="'Approved'"
-                  />
-                  <div v-if="(propInvoice && waitingForPracticeReply(propInvoice.items[0]))">
-                    <div>Waiting for Practice Reply</div>
-                  </div>
-                </div>
-              </div>
-          </div>-->
-          <!-- dispute invoice attendance forms -->
-          <!-- <div
-              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
-              class="flex justify-start mt-2 px-2"
-            >
-              <div class="w-1/3 flex flex-col px-2">
-                <label for="absent_days">Days of absent</label>
-                <input
-                  v-model="form.items[0].absent_days"
-                  type="number"
-                  min="0"
-                  name="absent_days"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                >
-              </div>
-              <div class="w-1/3 flex flex-col px-2">
-                <label for="late_hours">Hours of late</label>
-                <input
-                  v-model="form.items[0].late_hours"
-                  type="number"
-                  min="0"
-                  name="late_hours"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                >
-              </div>
-              <div class="w-1/3 flex flex-col px-2">
-                <label for="final_hours">Final hours</label>
-                <input
-                  v-model="form.items[0].final_hours"
-                  type="number"
-                  min="0"
-                  name="final_hours"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                >
-              </div>
-          </div>-->
-          <!-- disputed invoice update form -->
-          <!-- <div
-              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
-              class="flex justify-start mt-2 px-2"
-            >
-              <div class="flex flex-col w-full px-2">
-                <label for="remarks">Update remarks</label>
-                <textarea
-                  v-model="form.items[0].remarks"
-                  rows="3"
-                  name="remarks"
-                  class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
-                />
-              </div>
-            </div>
-          </div>-->
         </div>
       </div>
 
       <!-- SUB TOTAL -->
       <div class="flex flex-col">
         <div
-          v-if="propInvoice && propInvoice.ir35"
+          v-if="propInvoice && propInvoice.ir35 && propInvoice.paid"
           :ref="'items-sub-total'"
           class="flex justify-between md:m-2 text-lg px-3 pt-3"
         >
@@ -340,7 +210,7 @@
           </div>
         </div>
         <div
-          v-if="propInvoice && propInvoice.ir35"
+          v-if="propInvoice && propInvoice.ir35 && propInvoice.paid"
           :ref="'items-ni-total'"
           class="flex justify-between md:mx-2 text-lg px-3"
         >
@@ -351,7 +221,7 @@
           </div>
         </div>
         <div
-          v-if="propInvoice && propInvoice.ir35"
+          v-if="propInvoice && propInvoice.ir35 && propInvoice.paid"
           :ref="'items-paye-total'"
           class="flex justify-between md:mx-2 text-lg px-3"
         >
@@ -530,7 +400,7 @@ export default {
       }
       return 0;
     },
-    description() {
+    disputedDescription() {
       // if (this.propInvoice) {
       //   let hours = Math.floor(this.form.items[0].final_hours / 60);
       //   let minutes = Math.floor(this.form.items[0].final_hours % 60);
@@ -545,19 +415,20 @@ export default {
       //         }`
       //       : "";
       //   let totalHours = `${hour} ${minute}`;
-      //   return `Job number ${
-      //     this.propInvoice.items[0].job_part.job_part_number
-      //   } ${this.propInvoice.items[0].job_part.job.type}
-      //   Job at £${this.propInvoice.items[0].job_part.job.rate} ${
-      //     this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
-      //   }
-      //   from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
-      //   / ${
-      //     this.propInvoice.items[0].job_part.job.shift.name
-      //   } / Total hours of  ${this.form.items.length > 0 ? totalHours : 0}`;
-      // } else {
-      return this.form.items[0].description;
-      // }
+      return `Job number ${this.propJobPart.job_part_number} ${
+        this.propJobPart.job.type
+      } Job at £${this.propJobPart.job.rate} ${
+        this.propJobPart.job.locum_detail_rate_type.name
+      } from ${this.propJobPart.date_start} to ${this.propJobPart.date_end} / ${
+        this.propJobPart.job.shift.name
+      } / 
+          Total of ${this.form.hours} hour${
+        this.form.late_hours > 1 ? "s" : ""
+      } ${
+        this.form.minutes > 0
+          ? `and ${this.form.minutes} minute${this.form.minutes > 1 ? "s" : ""}`
+          : ""
+      }`;
     }
   },
   mounted() {
@@ -567,11 +438,15 @@ export default {
       this.form.date_start = this.propJobPart.date_start;
       this.form.date_end = this.propJobPart.date_end;
 
+      // Per Hour = (Final Hours + (Final Minutes / 60)) * Rate
+      // Per Session = (Total Hours + (Total Minutes / 60)) / Rate * (Final Hours + (Final Minutes / 60))
+
       let total =
         this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
-          ? this.propJobPart.job.rate * this.propJobPart.final_hours
-          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours) *
-            this.propJobPart.final_hours;
+          ? this.propJobPart.job.rate * (this.propJobPart.final_hours / 60)
+          : (this.propJobPart.job.rate /
+              (this.propJobPart.job.total_hours / 60)) *
+            (this.propJobPart.final_hours / 60);
 
       this.form.items = [
         {
@@ -593,7 +468,6 @@ export default {
                 }`
               : ""
           }`,
-          // Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
           total: total,
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
