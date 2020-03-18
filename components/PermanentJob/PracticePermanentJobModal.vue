@@ -156,13 +156,14 @@
                 />
                 <div v-if="showCancel === true">
                   <p class="font-bold">
-                    Reason for Rejection (optional)
+                    Reason for Rejection 
                   </p>
                   <AppInput
                     v-if="showCancel === true"
                     v-model="approve_or_reject.cancelled_reason"
                     :type="'text'"
                     :name="'cancelled_reason'"
+                    :error="formError.find(item => item.field === 'cancelled_reason')"
                   />
                   <AppButton
                     class="font-semibold"
@@ -840,20 +841,31 @@ export default {
 		},
 
 		async acceptRejectSpokePermanentJob (approveReject) {
+      this.formError = []
+      let notRequired = []
+
       this.approve_or_reject.approved_or_rejected = approveReject
-			await this.$axios
-				.$put(
-					`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/approve-or-reject`,
-					this.approve_or_reject
-				)
-				.then(() => {
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: [`Job  has successfully ${this.approve_or_reject.approved_or_rejected}`]
+      if(approveReject === "Approved"){
+        notRequired.push("cancelled_reason")
+      }
+      this.Validate(this.approve_or_reject, notRequired)
+
+      if (!this.formError.length) {
+        await this.$axios
+          .$put(
+            `/api/v1/practice/permanent-jobs/${this.permanent_job.id}/approve-or-reject`,
+            this.approve_or_reject
+          )
+          .then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`Job  has successfully ${this.approve_or_reject.approved_or_rejected}`]
+            })
+            this.$router.go(-1)
           })
-          this.$router.go(-1)
-				})
+      }
+			
     },
     
 		onEditorBlur (editor) {
