@@ -249,7 +249,7 @@ export default {
         } else if (this.$auth.user.domain === "Practice") {
           this.practiceColumns = this.defaultColumns
         }
-        if (!newStatus || newStatus !== "Closed") {
+        if (!newStatus || newStatus !== "Closed" || newStatus === "Pending") {
           if(!newStatus) {
             newStatus = "Available"
           } 
@@ -607,7 +607,6 @@ export default {
 		},
     jobClosingTag (item) {
       let closingTag = ''
-      console.log('item', item.hired_through)
       if(this.$auth.user.domain === 'Locum') {
         const permJobApp = item.permanent_job_applications.find(permJobApp => 
           permJobApp.applicant_locum_user_id === this.$auth.user.id
