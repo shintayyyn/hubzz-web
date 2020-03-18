@@ -169,6 +169,7 @@
               :label="'Salary Amount (Optional)'"
               :min="0"
               :in-style="'text-align:right'"
+              :limit="8"
             />
             <AppInput
               v-model="form.salary_description_2"
@@ -179,6 +180,7 @@
               :label="'Salary Description (Optional)'"
               :error="formError.find(item => item.field === 'salary_description_2')"
               :items="salary_description_type_2"
+              :disabled="!form.salary_amount || form.salary_amount == 0"
               @blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
             />
             <!-- <AppInput
@@ -210,8 +212,8 @@ export default {
 	},
 	data () {
 		return {
-      practice: "",
-      salary_amount_temporary: 0,
+			practice: "",
+			salary_amount_temporary: 0,
 			form: {
 				practice_id: "",
 				profession_id: "",
@@ -223,8 +225,8 @@ export default {
 				email: "",
 				industry_type: "",
 				work_hours: "",
-        salary_amount: "",
-        parent_practice_id: "",
+				salary_amount: "",
+				parent_practice_id: "",
 				salary_description_2: ""
 			},
 			practice_lists: [],
@@ -297,12 +299,12 @@ export default {
 				}
 			}
 		}
-  },
-  computed: {
-    // salary_amount_final:function () {
-    //   return this.salary_amount_temporary ? this.salary_amount_temporary : 0
-    // }
-  },
+	},
+	computed: {
+		// salary_amount_final:function () {
+		//   return this.salary_amount_temporary ? this.salary_amount_temporary : 0
+		// }
+	},
 	watch: {
 		// "form.profession_id"(newValue, oldValue) {
 		// 	// this.CheckEmptyField(newValue, "profession_id");
@@ -334,20 +336,20 @@ export default {
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
-      (this.practice = this.$auth.user.practice_detail.practice)
+			(this.practice = this.$auth.user.practice_detail.practice)
 		])
 			.then(
 				([
 					responsePracticeLists,
 					responseRateLists,
 					responseShifts,
-					responseProfessions,
+					responseProfessions
 				]) => {
 					this.practice_lists = []
 					console.log(
 						"practice job practices",
 						responsePracticeLists.data.practices
-          )
+					)
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
@@ -370,12 +372,11 @@ export default {
 				}
 			)
 			.finally(() => {
-        this.form.parent_practice_id = 
-          this.practice.type === 'Spoke' 
-          && this.practice.parent_practice_id 
-            ? this.practice.parent_practice_id 
-            : null
-            
+				this.form.parent_practice_id =
+					this.practice.type === "Spoke" && this.practice.parent_practice_id
+						? this.practice.parent_practice_id
+						: null
+
 				this.loading = false
 			})
 	},
@@ -399,39 +400,40 @@ export default {
 			}
 		},
 		onEditorBlur (editor) {
-			console.log ("editor blur!", editor)
+			console.log("editor blur!", editor)
 		},
 		onEditorFocus (editor) {
-			console.log ("editor focus!", editor)
+			console.log("editor focus!", editor)
 		},
 		onEditorReady (editor) {
-			console.log ("editor ready!", editor)
+			console.log("editor ready!", editor)
 		},
 		async createPermanentJob () {
-      if (this.form.practice_id !== this.$auth.user.practice_detail.practice.id &&
-        this.$auth.user.practice_detail.practice.type === 'Hub') {
-          this.form.parent_practice_id = await this.$auth.user.practice_detail.practice.id
-      }
+			if (
+				this.form.practice_id !== this.$auth.user.practice_detail.practice.id &&
+				this.$auth.user.practice_detail.practice.type === "Hub"
+			) {
+				this.form.parent_practice_id = await this.$auth.user.practice_detail
+					.practice.id
+			}
 			this.formError = []
 
 			let notRequired = [
-        'parent_practice_id',
-        'salary_amount',
-        'salary_description_2',
-        ]
+				"parent_practice_id",
+				"salary_amount",
+				"salary_description_2"
+			]
 
-      
-      this.Validate(this.form, notRequired)
-
-      console.log("form",this.form)
-      console.log("errors: ",this.formError)
-
+			this.Validate(this.form, notRequired)
 			if (!this.formError.length) {
+				if (!this.form.salary_amount || this.form.salary_amount) {
+					this.form.salary_description_2 = ""
+				}
 				await this.$axios
 					.post(`/api/v1/practice/permanent-jobs`, {
-            ...this.form,
-            salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
-          })
+						...this.form,
+						salary_amount: this.form.salary_amount ? this.form.salary_amount : 0
+					})
 					.then(() => {
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,

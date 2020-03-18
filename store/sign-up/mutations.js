@@ -164,6 +164,8 @@ export default {
         state.address_details.address_line_3 = payload.address_line_3
     },
     SET_PROFESSIONAL_DETAILS(state, payload) {
+        state.professional_details.view_locum_jobs = payload.view_locum_jobs
+        state.professional_details.view_permanent_jobs = payload.view_permanent_jobs
         state.professional_details.gmc_or_nmc_number = payload.gmc_or_nmc_number
         state.professional_details.mpl_or_npl_number = payload.mpl_or_npl_number
         state.professional_details.nhs_smart_card_id_number = payload.nhs_smart_card_id_number

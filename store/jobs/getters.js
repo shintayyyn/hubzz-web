@@ -110,7 +110,7 @@ export default {
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status,
                 // === 'Declined' ? 'Withdrawn' : notif.status
-                status_tag: notif.job_terminated ? 'Terminated' : "",
+                status_tag: notif.status === 'Cancelled' && notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -591,6 +591,38 @@ export default {
         return state.practice_applied_jobs_reminder
     },
 
+    getPracticeHubSpokeJobs(state) {
+        let jobs = []
+        if (state.practice_hub_spoke_jobs) {
+            state.practice_hub_spoke_jobs.forEach(job => {
+                console.log(job)
+                // let surgery_name = ''
+                // let date_time_start = ''
+                // let date_time_end = ''
+                // let rate_name = ''
+                // let rate_type_name = ''
+                // let shift_name = ''
+                // surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                // date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+                // date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+                // rate_name = job.rate
+                // rate_type_name = job.locum_detail_rate_type.name
+                // shift_name = job.shift.name
+                // jobs.push({
+                //     ...job,
+                //     surgery_name,
+                //     date_time_start,
+                //     date_time_end,
+                //     rate_name,
+                //     rate_type_name,
+                //     shift_name,
+                // })
+            })
+            return jobs
+        }
+        return []
+    },
+
     // locum
     // NOTIF
     getLocumJobNotifications(state) {
@@ -675,7 +707,7 @@ export default {
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.locum_status,
                 // === 'Declined' ? 'Withdrawn' : notif.locum_status
-                status_tag: notif.job_terminated ? 'Terminated' : "",
+                status_tag: notif.locum_status === 'Cancelled' && notif.job_terminated ? 'Terminated' : "",
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -1223,6 +1255,27 @@ export default {
                     rate_name,
                     rate_type_name,
                     shift_name
+                })
+            })
+            return jobs
+        }
+        return []
+    },
+    getLocumPermanentJobs(state) {
+        let jobs = []
+        if (state.locum_permanent_jobs) {
+            state.locum_permanent_jobs.forEach(job => {
+                let date_time_start = ''
+                let date_time_end = ''
+                let locum_status = ''
+                date_time_start = job.invitation_schedule
+                date_time_end = job.invitation_schedule
+                locum_status = 'Permanent'
+                jobs.push({
+                    ...job,
+                    locum_status,
+                    date_time_start,
+                    date_time_end,
                 })
             })
             return jobs

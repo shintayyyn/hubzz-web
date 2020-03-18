@@ -11,7 +11,7 @@
         <div class="font-bold text-sm sm:text-md">
           Job description
         </div>
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-8 break-all">
           {{ job.description }}
         </div>
         <div class="font-bold text-sm sm:text-md">
@@ -24,7 +24,7 @@
           Total hours
         </div>
         <div class="text-xs sm:text-sm mb-4">
-          {{ job.total_hours }}
+          {{ job.total_hours | hoursMinutes }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Extra information

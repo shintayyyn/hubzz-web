@@ -411,23 +411,48 @@
               <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
               </div>
-              <div class="flex flex-row flex-no-wrap justify-start mt-1">
-                <div class="flex flex-col">
-                  <input
-                    v-model="form.total_hours"
-                    type="number"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                    :class="formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
-                    style="text-align:right;'"
-                    @blur="CheckEmptyField(form.total_hours,'total_hours')"
-                    @keyup="handleKeyDownEvent($event, 'total_hours', 8)"
-                  />
-                  <div
-                    v-if="formError.find(item => item.field === 'total_hours')"
-                    class="text-red-500 p-1 text-xs"
-                  >{{ formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ") }}</div>
+              <div class="flex flex-row flex-wrap justify-start mt-1">
+                <div class="flex items-center mr-2">
+                  <div class="flex flex-col">
+                    <input
+                      v-model="form.hours"
+                      type="number"
+                      class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                      :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+                      style="text-align:right;'"
+                      min="1"
+                      maxlength="8"
+                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                      @focus="hasValue(form.hours, 'hours')"
+                    />
+                    <div
+                      v-if="formError.find(item => item.field === 'hours')"
+                      class="text-red-500 p-1 text-xs"
+                    >{{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}</div>
+                  </div>
+                  <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
                 </div>
-                <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
+                <div class="flex items-center">
+                  <div class="flex flex-col">
+                    <input
+                      v-model="form.minutes"
+                      type="number"
+                      class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                      :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+                      style="text-align:right;'"
+                      max="60"
+                      min="1"
+                      maxlength="2"
+                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                      @focus="hasValue(form.minutes, 'minutes')"
+                    />
+                    <div
+                      v-if="formError.find(item => item.field === 'minutes')"
+                      class="text-red-500 p-1 text-xs"
+                    >{{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}</div>
+                  </div>
+                  <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
+                </div>
               </div>
             </div>
             <template v-if="selectedProfession.profession_category.id === 1">
@@ -506,7 +531,9 @@ export default {
       mandatory_training_lists: [],
 
       gp_compliance_documents_lists: [],
-      others_compliance_documents_lists: [],
+      nurse_compliance_documents_lists: [],
+      paramedics_compliance_documents_lists: [],
+      pharmacists_compliance_documents_lists: [],
 
       professions_categories: [],
       selectedProfession: {
@@ -528,6 +555,7 @@ export default {
         date: null,
         time: null
       },
+
       selectedQualification: [],
       selectedClinicalSystem: [],
       selectedSpokenLanguage: [],
@@ -546,6 +574,8 @@ export default {
         session_structure_information: "",
         extra_information: "",
         rate: "",
+        hours: 0,
+        minutes: 0,
         total_hours: "",
         locum_detail_rate_type_id: 1,
         ir35: false,
@@ -600,13 +630,21 @@ export default {
         });
         this.banksCount =
           response.data && response.data.count ? response.data.count : 0;
-
-        if (this.selectedProfession.profession_category.id == 1) {
+        console.log(this.selectedProfession);
+        if (this.selectedProfession.profession_compliance_category.id === 1) {
           this.compliances = this.gp_compliance_documents_lists;
           return;
         }
-        if (this.selectedProfession.profession_category.id == 2) {
-          this.compliances = this.others_compliance_documents_lists;
+        if (this.selectedProfession.profession_compliance_category.id === 2) {
+          this.compliances = this.nurse_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_compliance_category.id === 3) {
+          this.compliances = this.paramedics_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_compliance_category.id === 4) {
+          this.compliances = this.pharmacists_compliance_documents_lists;
           return;
         }
       }
@@ -662,7 +700,7 @@ export default {
       this.$axios.$get("/api/v1/locum-detail-rate-types"),
       this.$axios.$get("/api/v1/shifts"),
       this.$axios.$get("/api/v1/professions"),
-      this.$axios.$get("/api/v1/me")
+      this.$axios.$get("/api/v1/practice/me/practice-profile")
     ])
       .then(
         ([
@@ -670,7 +708,7 @@ export default {
           responseRateLists,
           responseShifts,
           responseProfessions,
-          responseMe
+          responseProfile
         ]) => {
           this.practice_lists = [];
           responsePracticeLists.data.practices.forEach(item => {
@@ -692,36 +730,60 @@ export default {
             this.professions.push({ label: item.name, value: item.id });
             this.professions_categories.push(item);
           });
-          this.form.report_to =
-            responseMe.data.user.practice_detail.practice.report_to;
-          this.form.email = responseMe.data.user.practice_detail.practice.email;
-          responseMe.data.user.practice_detail.practice.mandatory_trainings.forEach(
-            item => {
-              this.mandatory_training_lists.push({
-                label: item.name,
-                value: item.id
-              });
-            }
-          );
-          responseMe.data.user.practice_detail.practice.gp_compliance_documents.forEach(
-            item => {
-              this.gp_compliance_documents_lists.push({
-                label: item.name,
-                value: item.id
-              });
-            }
-          );
-          responseMe.data.user.practice_detail.practice.others_compliance_documents.forEach(
-            item => {
-              this.others_compliance_documents_lists.push({
-                label: item.name,
-                value: item.id
-              });
-            }
-          );
+
+          this.form.report_to = responseProfile.data.practice.report_to;
+          this.form.email = responseProfile.data.practice.email;
+
+          responseProfile.data.practice.mandatory_trainings.forEach(item => {
+            this.mandatory_training_lists.push({
+              label: item.name,
+              value: item.id
+            });
+          });
 
           this.form.extra_information =
-            responseMe.data.user.practice_detail.practice.extra_information;
+            responseProfile.data.practice.extra_information;
+
+          responseProfile.data.practice.practice_profession_compliance_category_compliance_documents.forEach(
+            complianceCategoryDocument => {
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                1
+              ) {
+                this.gp_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                2
+              ) {
+                this.nurse_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                3
+              ) {
+                this.paramedics_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+              if (
+                complianceCategoryDocument.profession_compliance_category_id ===
+                4
+              ) {
+                this.pharmacists_compliance_documents_lists.push({
+                  label: complianceCategoryDocument.compliance_document_name,
+                  value: complianceCategoryDocument.compliance_document_id
+                });
+              }
+            }
+          );
 
           if (this.repostJob) {
             this.form.practice_id = this.repostJob.platform_job.practice.id;
@@ -876,26 +938,26 @@ export default {
       });
   },
   methods: {
-    handleKeyDownEvent(e, formField, limit) {
-      if (this.isNumber(e)) {
-        if (this.form[formField].length >= limit && e.key !== "Backspace") {
-          e.preventDefault();
-        } else {
-          if (this.form[formField].includes(".")) {
-            if (this.form[formField][this.form[formField].length - 1] !== "5") {
-              this.form[formField] = parseInt(
-                this.form[formField].substring(
-                  0,
-                  this.form[formField].length - 1
-                )
-              );
-            }
-          }
-        }
+    hasValue(value, field) {
+      if (value == 0) {
+        this.form[field] = "";
       }
-      //  if (this.form[formField].length >= 8 && e.key !== "Backspace") {
-      //   e.preventDefault();
-      // }
+    },
+    handleKeyDownEvent(e, formField, limit) {
+      let acceptedKeys = [
+        "Backspace",
+        "Tab",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight"
+      ];
+      if (
+        this.form[formField].length >= limit &&
+        !acceptedKeys.includes(e.key)
+      ) {
+        e.preventDefault();
+      }
     },
     getListofDays(days) {
       if (days.includes(6) && days.length > 1) {
@@ -969,7 +1031,9 @@ export default {
         "include_saturday",
         "include_sunday",
         "compliance_document_id",
-        "auto_assign_at"
+        "auto_assign_at",
+        "hours",
+        "minutes"
       ];
 
       if (!this.hasBanks) {
@@ -1014,8 +1078,27 @@ export default {
       ) {
         notRequired.push("favorite_only_until");
       }
+
+      if (
+        [0, "0"].includes(this.form.hours) &&
+        [0, "0"].includes(this.form.minutes)
+      ) {
+        this.formError.push({
+          field: "minutes",
+          message: "Minutes is required"
+        });
+        this.formError.push({
+          field: "hours",
+          message: "Hours is required"
+        });
+      } else {
+        this.form.hours = !this.form.hours ? 0 : this.form.hours;
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
+        this.form.total_hours =
+          this.form.hours * 60 + parseInt(this.form.minutes);
+      }
+
       this.validateNumber(this.form.rate, "rate");
-      this.validateNumber(this.form.total_hours, "total_hours");
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;

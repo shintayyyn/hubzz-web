@@ -1,21 +1,21 @@
 <template>
   <div class="modal-container">
-    <PracticePermanentJobModal/>
+    <PracticePermanentJobModal />
   </div>
 </template>
 
 <script>
-import PracticePermanentJobModal from "@/components/PermanentJob/PracticePermanentJobModal";
+import PracticePermanentJobModal from "@/components/PermanentJob/PracticePermanentJobModal"
 export default {
   components: {
 		PracticePermanentJobModal
   },
-  data(){
+  data () {
     return{
 
     }
   },
-  created(){
+  created () {
     console.log('route name', this.$route.name)
   }
 }

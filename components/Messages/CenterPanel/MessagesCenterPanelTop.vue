@@ -113,7 +113,7 @@ export default {
 <style>
 @media screen and (min-width: 768px) {
 	.panel-top {
-		min-height: 82px;
+		min-height: 78px;
 	}
 }
 </style>

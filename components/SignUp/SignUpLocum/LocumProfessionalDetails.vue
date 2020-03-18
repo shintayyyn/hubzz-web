@@ -22,7 +22,7 @@
             :info="'For compliance; to be verified by the hubzz team'"
             required
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
-            @keypress="inputNumberOnly($event)"
+            @keydown="inputNumberOnly($event)"
           />
 
           <AppInput
@@ -35,7 +35,7 @@
             :info="'For compliance; to be verified by the hubzz team'"
             required
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
-            @keypress="inputNumberOnly($event)"
+            @keydown="inputNumberOnly($event)"
           />
 
           <AppInput
@@ -44,7 +44,7 @@
             :name="'nhs_smart_card_id_number'"
             :label="'Your NHS Smart Card ID number'"
             :placeholder="'NHS Smart Card ID number'"
-            @keypress="inputNumberOnly($event)"
+            @keydown="inputNumberOnly($event)"
           />
           <AppInput
             v-model="form.profession_id"
@@ -97,6 +97,22 @@
             :defaultItem="'English'"
           />
 
+          <div>Select which jobs to view:</div>
+
+          <AppInput
+            v-model="form.view_locum_jobs"
+            :type="'single-checkbox'"
+            :name="'view_locum_jobs'"
+            :label="'Permanent / Salaried Roles'"
+          />
+
+          <AppInput
+            v-model="form.view_permanent_jobs"
+            :type="'single-checkbox'"
+            :name="'view_permanent_jobs'"
+            :label="'Hubzz Jobs'"
+          />
+
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
@@ -105,9 +121,7 @@
               </label>
               <div
                 class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm"
-              >
-                To match available jobs with
-              </div>
+              >To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
@@ -222,11 +236,11 @@
   </div>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput"
-import AppButton from "@/components/Base/AppButton"
-import AppFilterSearch from "@/components/Base/AppFilterSearch"
-import AppRate from "@/components/Base/AppRate"
-import { parse } from "cookie"
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppRate from "@/components/Base/AppRate";
+import { parse } from "cookie";
 export default {
   components: {
     AppInput,
@@ -234,7 +248,7 @@ export default {
     AppFilterSearch,
     AppRate
   },
-  data () {
+  data() {
     return {
       selectedProfession: null,
       professions_categories: [],
@@ -254,45 +268,47 @@ export default {
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
         practice_type_id: [],
-        mandatory_training_id: []
+        mandatory_training_id: [],
+        view_locum_jobs: false,
+        view_permanent_jobs: false
       },
       formError: []
-    }
+    };
   },
   computed: {
-    professions () {
-      return this.$store.getters["sign-up/getProfessions"]
+    professions() {
+      return this.$store.getters["sign-up/getProfessions"];
     },
-    gpQualifications () {
-      return this.$store.getters["sign-up/getGpQualifications"]
+    gpQualifications() {
+      return this.$store.getters["sign-up/getGpQualifications"];
     },
-    othersQualifications () {
-      return this.$store.getters["sign-up/getOthersQualifications"]
+    othersQualifications() {
+      return this.$store.getters["sign-up/getOthersQualifications"];
     },
-    clinicalSystems () {
-      return this.$store.getters["sign-up/getClinicalSystems"]
+    clinicalSystems() {
+      return this.$store.getters["sign-up/getClinicalSystems"];
     },
-    spokenLanguages () {
-      return this.$store.getters["sign-up/getSpokenLanguages"]
+    spokenLanguages() {
+      return this.$store.getters["sign-up/getSpokenLanguages"];
     },
-    practiceTypes () {
-      return this.$store.getters["sign-up/getPracticeTypes"]
+    practiceTypes() {
+      return this.$store.getters["sign-up/getPracticeTypes"];
     },
-    mandatoryTrainings () {
-      return this.$store.getters["sign-up/getMandatoryTrainings"]
+    mandatoryTrainings() {
+      return this.$store.getters["sign-up/getMandatoryTrainings"];
     },
-    professionalDetails () {
-      return this.$store.getters["sign-up/professionalDetails"]
+    professionalDetails() {
+      return this.$store.getters["sign-up/professionalDetails"];
     },
-    professionalFormError () {
-      return this.$store.getters["sign-up/professionalFormError"]
+    professionalFormError() {
+      return this.$store.getters["sign-up/professionalFormError"];
     }
   },
   watch: {
-    "form.profession_id" (newValue, oldValue) {
+    "form.profession_id"(newValue, oldValue) {
       if (newValue) {
         if (newValue && oldValue) {
-          this.form.qualification_id = []
+          this.form.qualification_id = [];
         }
         if (
           this.professions_categories &&
@@ -300,26 +316,28 @@ export default {
         ) {
           this.selectedProfession = this.professions_categories.find(
             item => item.id == newValue
-          )
+          );
         }
       }
     }
   },
-  async created () {
-    const response = await this.$axios.$get(`/api/v1/professions`)
+  async created() {
+    const response = await this.$axios.$get(`/api/v1/professions`);
     this.professions_categories =
       response.data &&
       response.data.professions &&
       response.data.professions.length > 0
         ? response.data.professions
-        : []
+        : [];
     // console.log(this.professions_categories);
-    this.pratice_types = this.practiceTypes
+    this.pratice_types = this.practiceTypes;
     // console.log(this.pratice_types);
-    this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number
-    this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
-    this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
-    this.form.profession_id = this.professionalDetails.profession_id
+    this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
+    this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
+    this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
+    this.form.profession_id = this.professionalDetails.profession_id;
+    this.form.view_locum_jobs = this.professionalDetails.view_locum_jobs;
+    this.form.view_permanent_jobs = this.professionalDetails.view_permanent_jobs;
 
     // if (this.form.profession_id == 1) {
     //   this.professionalDetails.qualification_id.forEach(qualification => {
@@ -336,7 +354,7 @@ export default {
     //     );
     //   });
     // }
-    this.form.qualification_id = [...this.professionalDetails.qualification_id]
+    this.form.qualification_id = [...this.professionalDetails.qualification_id];
 
     // this.professionalDetails.clinical_system_id.forEach(clinical => {
     //   this.form.clinical_system_id.push(
@@ -345,7 +363,7 @@ export default {
     // });
     this.form.clinical_system_id = [
       ...this.professionalDetails.clinical_system_id
-    ]
+    ];
 
     // this.professionalDetails.spoken_language_id.forEach(spoken => {
     //   this.form.spoken_language_id.push(
@@ -354,54 +372,57 @@ export default {
     // });
     this.form.spoken_language_id = [
       ...this.professionalDetails.spoken_language_id
-    ]
+    ];
 
-    this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour
-    this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour
-    this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session
-    this.form.max_rate_per_half_day_session = this.professionalDetails.max_rate_per_half_day_session
-    this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session
-    this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session
+    this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour;
+    this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour;
+    this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session;
+    this.form.max_rate_per_half_day_session = this.professionalDetails.max_rate_per_half_day_session;
+    this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session;
+    this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session;
 
-    this.form.practice_type_id = []
+    this.form.practice_type_id = [];
     this.professionalDetails.practice_type_id.forEach(id => {
-      this.form.practice_type_id.push(id)
-    })
+      this.form.practice_type_id.push(id);
+    });
 
-    this.form.mandatory_training_id = []
+    this.form.mandatory_training_id = [];
     this.professionalDetails.mandatory_training_id.forEach(id => {
-      this.form.mandatory_training_id.push(id)
-    })
+      this.form.mandatory_training_id.push(id);
+    });
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
-        this.formError.push(item)
-      })
+        this.formError.push(item);
+      });
     }
   },
   methods: {
-    next () {
-      this.formError = []
-      this.form.max_rate_per_hour = 999999999
-      this.form.max_rate_per_half_day_session = 999999999
-      this.form.max_rate_per_whole_day_session = 999999999
+    next() {
+      this.formError = [];
+      this.form.max_rate_per_hour = 999999999;
+      this.form.max_rate_per_half_day_session = 999999999;
+      this.form.max_rate_per_whole_day_session = 999999999;
       this.Validate(this.form, [
         "nhs_smart_card_id_number",
         "spoken_language_id",
-        "mandatory_training_id"
-      ])
+        "mandatory_training_id",
+        "view_locum_jobs",
+        "view_permanent_jobs"
+      ]);
+      console.log(this.formError.length);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
           ...this.form,
           profession_category_id: this.selectedProfession.profession_category.id
-        })
-        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", [])
+        });
+        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", []);
 
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumPayrollDetails"
-        )
+        );
       }
     }
   }
-}
+};
 </script>

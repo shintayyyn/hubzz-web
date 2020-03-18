@@ -6,7 +6,7 @@ Vue.filter('localDate', function (date, dateOnly) {
     return `${moment(date).format('L')}`
   }
   if (date) {
-    return `${moment(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').utc().format('YYYY-MM-DD')} | ${moment(date).utc().format('HH:mm')}`
+    return `${moment(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').utc().format('DD/MM/YYYY')} | ${moment(date).utc().format('HH:mm:ss')}`
   }
 })
 
@@ -46,4 +46,23 @@ Vue.filter('fileSize', function (fileSize, sizeType) {
   }
 })
 
+Vue.filter('minutes', function (min) {
+  return min % 60 ? min % 60 + ` minute${min % 60 > 1 ? 's' : ''}` : ''
+})
+
+Vue.filter('hours', function (min) {
+  return Math.floor(min / 60) ? Math.floor(min / 60) + ` hour${Math.floor(min / 60) > 1 ? 's' : ''}` : ''
+})
+
+Vue.filter('hoursMinutes', function (num) {
+  let hours = Math.floor(num / 60)
+  let minutes = num % 60
+  let hrDisplay = `${hours > 0 ? `${hours} Hour${hours > 1 ? 's' : ''}` : ''}`
+  let minDisplay = `${minutes > 0 ? `${minutes} Minute${minutes > 1 ? 's' : ""}` : ''}`
+  return `${hrDisplay} ${minDisplay}`
+})
+
+Vue.filter('trim', function (text) {
+  return text.replace(/^\s*/, "").replace(/\s*$/, "");
+})
 

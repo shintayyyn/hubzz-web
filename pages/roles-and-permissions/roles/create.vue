@@ -33,6 +33,10 @@
 					/>
 				</div>
 				<div class="rounded-lg shadow-md p-2 md:p-4">
+					<div
+						class="text-red-500 text-xs"
+						v-if="formError.find(item => item.field === 'permission_id')"
+					>{{formError.find(item => item.field === 'permission_id').message}}</div>
 					<div class="flex flex-wrap justify-start">
 						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
 							<div class="flex flex-col">
@@ -59,6 +63,7 @@
 											type="checkbox"
 											:id="permission.id"
 											:checked="permission.done"
+											@change="hasRelatedRole(permission)"
 										/>
 										<label :for="permission.id" class="text-sm pl-1">{{permission.name}}</label>
 									</div>
@@ -172,38 +177,60 @@ export default {
 		},
 		create() {
 			this.formError = [];
-			this.Validate(this.form, ["permission_id"]);
-			if (!this.formError.length) {
-				let ids = [];
-				this.permissions.forEach(item => {
-					item.permissions.forEach(permission => {
-						if (permission.done) {
-							ids.push(permission.id);
-						}
-					});
+			let ids = [];
+			this.permissions.forEach(item => {
+				item.permissions.forEach(permission => {
+					if (permission.done) {
+						ids.push(permission.id);
+					}
 				});
-				this.form.permission_id = ids;
-				this.$axios
-					.$post(`/api/v1/practice/practice-roles`, this.form)
-					.then(res => {
-						this.$emit("addRole", res.data.role);
-						this.$router.push(`/roles-and-permissions/roles`);
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: [`${res.message}`]
+			});
+			this.form.permission_id = ids;
+			this.Validate(this.form);
+			if (!this.formError.length) {
+				if (this.form.permission_id > 0) {
+					this.$axios
+						.$post(`/api/v1/practice/practice-roles`, this.form)
+						.then(res => {
+							this.$emit("addRole", res.data.role);
+							this.$router.push(`/roles-and-permissions/roles`);
+							this.$store.commit("SET_NOTIFICATION", {
+								enabled: true,
+								status: "success",
+								text: [`${res.message}`]
+							});
+						})
+						.catch(err => {
+							this.$nextTick(() => {
+								this.$refs.modalContainer.scrollTop = 0;
+							});
 						});
-					})
-					.catch(err => {
-						this.$nextTick(() => {
-							this.$refs.modalContainer.scrollTop = 0;
-						});
-					});
+				}
 			} else {
 				this.$nextTick(() => {
 					this.$refs.modalContainer.scrollTop = 0;
 				});
 			}
+		},
+		hasRelatedRole(permission) {
+			let errIndex = this.formError.findIndex(
+				item => item.field === "permission_id"
+			);
+			if (errIndex > -1) {
+				this.formError.splice(errIndex, 1);
+			}
+			let hasRelatedRolesList = ["View Profile Practice"];
+			let roles = this.permissions.find(
+				item => item.category === permission.category
+			);
+			hasRelatedRolesList.forEach(item => {
+				if (permission.name !== item && permission.name.includes(item)) {
+					let findRole = roles.permissions.find(role => role.name === item);
+					if (permission.done === true && findRole.done === false) {
+						findRole.done = true;
+					}
+				}
+			});
 		}
 	}
 };

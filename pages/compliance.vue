@@ -2,876 +2,936 @@
   <section class="compliance-section">
     <div class="overflow-x-auto">
       <div class="mt-5 px-1">
-        <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
+        <div
+          v-for="item in referenceComplianceDocuments"
+          :key="item.id"
+          class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0"
+        >
           <div
             class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm"
           >
             <div
-              class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
-            >
-              GMC / NMC Number
-            </div>
-            <div
-              class="w-full sm:w-2/3 px-2 md:p-1"
-            >
-              {{ gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered' }}
-            </div>
-            <div
-              class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
-            >
-              <span
+              class="w-1/2 px-2 md:p-1 font-bold md:font-normal text-left"
+            >{{ item.compliance_document_name }}</div>
+            <div class="w-1/2 px-2 md:p-1 flex flex-no-wrap justify-between items-center">
+              <div>{{ item.reference }}</div>
+              <div
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
-              >{{ gmc_or_nmc_number ? gmc_or_nmc_number.status : '' }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
-          <div
-            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm"
-          >
-            <div
-              class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
-            >
-              MPL / NPL Number
-            </div>
-            <div
-              class="w-full sm:w-2/3 px-2 md:p-1"
-            >
-              {{ mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered' }}
-            </div>
-            <div
-              class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
-            >
-              <span
-                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
-              >{{ mpl_or_npl_number ? mpl_or_npl_number.status : '' }}</span>
+                :class="status(item ? item.status : '')"
+              >{{ item ? item.status : '' }}</div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">
-        Key Compliances you need to be approved by Hubzz HQ
-        <span class="text-red-500">*</span>
+      <!-- MANDATORY -->
+      <div class="mt-10">
+        <div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ</div>
+        <div
+          class="text-sm font-hairline italic"
+        >(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)</div>
       </div>
-      <div
-        class="text-sm font-hairline italic"
-      >
-        (Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)
-      </div>
-    </div>
-
-    <!-- <div class="mt-4 overflow-x-auto">
-      <table>
-        <thead>
-          <tr class="text-xs sm:text-sm text-left">
-            <th class="pl-2">
-              Type
-            </th>
-            <th class="pl-2">
-              File
-            </th>
-            <th class="text-center">
-              Date uploaded
-            </th>
-            <th class="text-center">
-              Expiry date
-            </th>
-            <th class="text-center">
-              Status
-            </th>
-            <th class="text-center">
-              Note from hubzz HQ
-            </th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in keyCompliances">
-            <tr
-              v-if="activeLoading.includes(item.info && item.info.id ? item.info.id : item.id)"
-              :key="item.id"
-              class="text-xs sm:text-sm text-left bg-gray-200"
+      <div class="mt-4 overflow-x-auto">
+        <template v-if="!mandatoryComplianceDocuments.length">
+          <span
+            class="text-center font-bold text-gray-500 text-xs md:text-sm"
+            colspan="7"
+          >This section is empty. Update your profile to fill this area.</span>
+        </template>
+        <div class="table" style="min-width:72rem;max-width:100%">
+          <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm">
+            <div class="w-1/6 p-2">Type</div>
+            <div class="w-1/6 p-2">File</div>
+            <div class="w-1/6 p-2">Date uploaded</div>
+            <div class="w-1/6 p-2">Expiry date</div>
+            <div class="w-1/6 p-2">Status</div>
+            <div class="w-1/6 p-2">Note</div>
+            <div class="w-1/6 p-2" />
+          </div>
+          <div v-for="item in mandatoryComplianceDocuments" :key="item.compliance_document_id">
+            <div
+              v-if="activeLoading.includes(item.compliance_document_id)"
+              class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
             >
-              <td
-                colspan="7"
-                class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-              >
-                Uploading
-              </td>
-            </tr>
-            <tr
+              <span
+                class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+              >Uploading</span>
+            </div>
+            <div
               v-else
-              :key="item.id"
-              class="text-xs sm:text-sm text-left"
-              :class="!item.info ? 'text-gray-600' : 'hover'"
+              class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white cursor-pointer"
+              :class="!item.file ? 'text-gray-600' : 'hover'"
+              @click="show(item, 'compliance')"
             >
-              <td
-                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
-                @click="show(item, 'compliance')"
-              >
-                {{ item.name }}
-              </td>
-              <td v-if="item.info && item.info.file" class="hover:underline">
-                <div class="flex flex-row flex-no-wrap items-center">
+              <div class="w-1/6 flex flex-col">
+                {{ item.compliance_document_name | StringMaxLength(30) }}
+                <span>{{item.compliance_document_type_name === 'Passport' && item.country_name ? `${item.country_name} VISA? ${hasVisa ? 'Yes' : 'No'}` : ''}}</span>
+              </div>
+              <div class="w-1/6" v-if="(item.file || item.reference)">
+                <div class="flex flex-row flex-no-wrap items-center" v-if="item.file">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
                     <a
-                      :href="item.info.file.url"
-                      :download="item.info.file.filename"
+                      :href="item.file.url"
+                      :download="item.file.filename"
                       target="_blank"
                       class="whitespace-no-wrap"
-                      @click.stop.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
-                    >{{ item.info.file.filename | StringMaxLength(15) }}</a>
+                      @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                    >{{ item.file.filename | StringMaxLength(15) }}</a>
                   </div>
                 </div>
-              </td>
-              <td v-else />
-              <td v-if="item.info && item.info.file">
-                {{ item.info.file.created_at | localDate }}
-              </td>
-              <td v-else />
-              <td v-if="item.info && item.info.expired_at">
-                {{ item.info.expired_at | localDate }}
-              </td>
-              <td v-else />
-              <td v-if="item.info && item.info.status">
-                <div class="flex justify-center max-w-xs">
+                <div
+                  class="flex flex-row flex-no-wrap items-center"
+                  v-if="item.reference && item.reference !== 'null'"
+                >{{ item.reference }}</div>
+              </div>
+              <div class="w-1/6" v-else />
+              <div
+                class="w-1/6"
+                v-if="item.file && item.file.created_at"
+              >{{ item.file.created_at | localDate }}</div>
+              <div class="w-1/6" v-else />
+              <div class="w-1/6" v-if="item && item.expired_at">{{ item.expired_at | localDate }}</div>
+              <div class="w-1/6" v-else />
+              <div
+                class="w-1/6"
+                v-if="item && item.status && item.compliance_document_type_name !== 'Safeguarding'"
+              >
+                <div class="flex justify-start max-w-xs">
                   <div
                     class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                    :class="status(item.info.status)"
-                  >
-                    {{ item.info.status }}
-                  </div>
+                    :class="status(item.status)"
+                  >{{ item.status }}</div>
                 </div>
-              </td>
-              <td v-else />
-              <td
-                v-if="item && item.info && item.info.note"
-                class="text-center"
-              >
-                {{ item.info.note | StringMaxLength(15) }}
-              </td>
-              <td v-else />
-              <td
-                v-if="!item.info"
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
-              >
-                <div class="flex flex-row flex-no-wrap">
-                  <input
-                    :ref="`${item.id}_file_mandatory_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileInput($event, item.id)"
-                    @click.stop
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
-                </div>
-              </td>
-              <td
-                v-else
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
+              </div>
+              <div class="w-1/6" v-else />
+              <div class="w-1/6" v-if="item && item.note">{{ item.note | StringMaxLength(15) }}</div>
+              <div class="w-1/6" v-else />
+              <div
+                v-if="item.compliance_document_type_name !== 'Safeguarding'"
+                class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                style="position:sticky;right:0"
+                @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'mandatory')"
+              >Upload</div>
+            </div>
+            <div v-if="item.compliance_document_type_name === 'Safeguarding'">
+              <div
+                v-for="childItem in item.child_locum_compliance_documents"
+                :key="childItem.compliance_document_id"
+                class="flex flex-col"
               >
                 <div
-                  class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                  v-if="activeLoading.includes(childItem.compliance_document_id)"
+                  class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-gray-200"
                 >
-                  <input
-                    :ref="`${item.id}_file_mandatory_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileUpdate($event, item.info.id, index, item.info.id)"
-                    @click.stop
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
+                  <span
+                    class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                  >Uploading</span>
                 </div>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>-->
-    <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">
-        Documents you need to be approved by Hubzz HQ
-        <span class="text-red-500">*</span>
-      </div>
-      <div
-        class="text-sm font-hairline italic"
-      >
-        (Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)
-      </div>
-    </div>
-
-    <div class="mt-4 overflow-x-auto">
-      <template v-if="!mandatory.length">
-        <span
-          class="text-center font-bold text-gray-500 text-xs md:text-sm"
-          colspan="7"
-        >This section is empty. Update your profile to fill this area.</span>
-      </template>
-      <table v-else>
-        <thead>
-          <tr class="text-xs sm:text-sm text-left">
-            <th class="pl-2">
-              Type
-            </th>
-            <th class="pl-2">
-              File
-            </th>
-            <th class="text-center">
-              Date uploaded
-            </th>
-            <th class="text-center">
-              Expiry date
-            </th>
-            <th class="text-center">
-              Status
-            </th>
-            <th class="text-center">
-              Note from hubzz HQ
-            </th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in mandatory">
-            <tr
-              v-if="activeLoading.includes(item.info && item.info.id ? item.info.id : item.id)"
-              :key="item.id"
-              class="text-xs sm:text-sm text-left bg-gray-200"
-            >
-              <td
-                colspan="7"
-                class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-              >
-                Uploading
-              </td>
-            </tr>
-            <tr
-              v-else
-              :key="item.id"
-              class="text-xs sm:text-sm text-left"
-              :class="!item.info ? 'text-gray-600' : 'hover'"
-            >
-              <td
-                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
-                @click="show(item, 'compliance')"
-              >
-                {{ item.name }}
-              </td>
-              <td v-if="item.info && item.info.file" class="hover:underline">
-                <div class="flex flex-row flex-no-wrap items-center">
-                  <svgicon name="cloud-download" height="24" width="24" />
-                  <div class="mx-2">
-                    <a
-                      :href="item.info.file.url"
-                      :download="item.info.file.filename"
-                      target="_blank"
-                      class="whitespace-no-wrap"
-                      @click.stop.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
-                    >{{ item.info.file.filename | StringMaxLength(15) }}</a>
+                <div
+                  v-else
+                  class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
+                  :class="!childItem.file ? 'text-gray-600' : 'hover'"
+                  @click="show(childItem, 'compliance')"
+                >
+                  <div class="w-1/6">{{ childItem.compliance_document_name | StringMaxLength(20) }}</div>
+                  <div class="w-1/6" v-if="(childItem.file || childItem.reference)">
+                    <div class="flex flex-row flex-no-wrap items-center" v-if="childItem.file">
+                      <svgicon name="cloud-download" height="24" width="24" />
+                      <div class="mx-2">
+                        <a
+                          :href="childItem.file.url"
+                          :download="childItem.file.filename"
+                          target="_blank"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(childItem.file.url, childItem.file.filename)"
+                        >{{ childItem.file.filename | StringMaxLength(15) }}</a>
+                      </div>
+                    </div>
+                    <div
+                      class="flex flex-row flex-no-wrap items-center"
+                      v-if="childItem.reference && childItem.reference !== 'null'"
+                    >{{ childItem.reference }}</div>
                   </div>
-                </div>
-              </td>
-              <td v-else />
-              <td v-if="item.info && item.info.file">
-                {{ item.info.file.created_at | localDate }}
-              </td>
-              <td v-else />
-              <td v-if="item.info && item.info.expired_at">
-                {{ item.info.expired_at | localDate }}
-              </td>
-              <td v-else />
-              <td v-if="item.info && item.info.status">
-                <div class="flex justify-center max-w-xs">
+                  <div class="w-1/6" v-else />
                   <div
-                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                    :class="status(item.info.status)"
-                  >
-                    {{ item.info.status }}
-                  </div>
-                </div>
-              </td>
-              <td v-else />
-              <td
-                v-if="item && item.info && item.info.note"
-                class="text-center"
-              >
-                {{ item.info.note | StringMaxLength(15) }}
-              </td>
-              <td v-else />
-              <td
-                v-if="!item.info"
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
-              >
-                <div class="flex flex-row flex-no-wrap">
-                  <input
-                    :ref="`${item.id}_file_mandatory_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileInput($event, item.id)"
-                    @click.stop
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
-                </div>
-              </td>
-              <td
-                v-else
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
-              >
-                <div
-                  class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                >
-                  <input
-                    :ref="`${item.id}_file_mandatory_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileUpdate($event, item.info.id, index, item.info.id)"
-                    @click.stop
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
-                </div>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">
-        Other documentation for reference to Practices
-      </div>
-    </div>
-
-    <div class="mt-4 overflow-x-auto">
-      <template v-if="!optional.length">
-        <span
-          class="text-center font-bold text-gray-500 text-xs md:text-sm"
-          colspan="7"
-        >This section is empty. Update your profile to fill this area.</span>
-      </template>
-      <table v-else>
-        <thead>
-          <tr class="text-xs sm:text-sm text-left">
-            <th class="pl-2">
-              Type
-            </th>
-            <th class="pl-2">
-              File
-            </th>
-            <th class="text-center">
-              Date uploaded
-            </th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in optional">
-            <tr
-              v-if="activeLoading.includes(item.id)"
-              :key="item.id"
-              class="text-xs sm:text-sm text-left bg-gray-200"
-            >
-              <td
-                colspan="7"
-                class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
-              >
-                Uploading
-              </td>
-            </tr>
-            <tr
-              v-else
-              :key="item.id"
-              class="text-xs sm:text-sm text-left"
-              :class="!item.info ? 'text-gray-600' : 'hover'"
-            >
-              <td
-                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
-                class="w-1/3"
-                @click="show(item, 'compliance')"
-              >
-                {{ item.name }}
-              </td>
-              <td v-if="item.info && item.info.file" class="hover:underline">
-                <div class="flex flex-row flex-no-wrap">
-                  <svgicon name="cloud-download" height="24" width="24" />
-                  <div class="leading-loose mx-2">
-                    <a
-                      target="_blank"
-                      :href="item.info.file.url"
-                      @click.stop.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
-                    >{{ item.info.file.filename | StringMaxLength(15) }}</a>
-                  </div>
-                </div>
-              </td>
-              <td v-else />
-              <td
-                v-if="item.info && item.info.file"
-                class="text-center"
-              >
-                {{ item.info.file.created_at | localDate }}
-              </td>
-              <td v-else />
-              <td
-                v-if="!item.info"
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
-              >
-                <div
-                  class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer"
-                >
-                  <input
-                    :ref="`${item.id}_file_optional_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileInput($event, item.id, index)"
-                    @click.stop
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
-                </div>
-              </td>
-
-              <td
-                v-else
-                class="hover:underline"
-                @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
-              >
-                <div
-                  class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 mx-auto p-2 rounded cursor-pointer"
-                >
-                  <input
-                    :ref="`${item.id}_file_optional_compliance`"
-                    type="file"
-                    class="inputfile hidden"
-                    @input="onFileUpdate($event, item.info.id, index, item.id)"
-                    @click.stop
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
-                </div>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">
-        Mandatory Training
-      </div>
-    </div>
-
-    <div class="mt-4 overflow-x-auto">
-      <template v-if="!mandatory_trainings.length">
-        <span
-          class="text-center font-bold text-gray-500 text-xs md:text-sm"
-          colspan="7"
-        >This section is empty. Update your profile to fill this area.</span>
-      </template>
-      <template v-else>
-        <table>
-          <thead>
-            <tr class="text-xs sm:text-sm text-left">
-              <th class="pl-2">
-                Type
-              </th>
-              <th class="pl-2">
-                File
-              </th>
-              <th class="text-center">
-                Date uploaded
-              </th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in mandatory_trainings">
-              <tr
-                v-if="activeLoading.includes(item.mandatory_training.id)"
-                :key="item.id"
-                class="text-xs sm:text-sm text-left bg-gray-200"
-              >
-                <td colspan="7" class="loader-message text-center text-gray-800">
-                  Uploading
-                </td>
-              </tr>
-              <tr
-                v-else
-                :key="item.id"
-                class="text-xs sm:text-sm text-left"
-                :class="!item.info ? 'text-gray-600' : 'hover:bg-white'"
-              >
-                <td
-                  :class="item && item.file ? 'cursor-pointer' : ''"
-                  class="w-1/3"
-                  @click="show(item, 'mandatory')"
-                >
-                  {{ item.mandatory_training.name }}
-                </td>
-                <td v-if="item.file" class="hover:underline">
-                  <div class="flex flex-row flex-no-wrap">
-                    <svgicon name="cloud-download" height="24" width="24" />
-                    <div class="leading-loose mx-2">
-                      <a
-                        target="_blank"
-                        :href="item.file.url"
-                        class="whitespace-no-wrap"
-                        @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-                      >{{ item.file.filename | StringMaxLength(15) }}</a>
+                    class="w-1/6"
+                    v-if="childItem.file && childItem.file.created_at"
+                  >{{ childItem.file.created_at | localDate }}</div>
+                  <div class="w-1/6" v-else />
+                  <div
+                    class="w-1/6"
+                    v-if="childItem && childItem.expired_at"
+                  >{{ childItem.expired_at | localDate }}</div>
+                  <div class="w-1/6" v-else />
+                  <div class="w-1/6" v-if="childItem && childItem.status">
+                    <div class="flex justify-start max-w-xs">
+                      <div
+                        class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
+                        :class="status(childItem.status)"
+                      >{{ childItem.status }}</div>
                     </div>
                   </div>
-                </td>
-                <td v-else />
-                <td
-                  v-if="item && item.file"
-                  class="text-center"
-                >
-                  {{ item.file.created_at | localDate }}
-                </td>
-                <td v-else />
-                <td
-                  v-if="!item.file"
-                  class="hover:underline"
-                  @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
-                >
+                  <div class="w-1/6" v-else />
                   <div
-                    class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer"
-                  >
-                    <input
-                      :ref="`${item.id}_file_mandatory_training`"
-                      type="file"
-                      class="inputfile hidden"
-                      @input="onMandatoryFileInput($event, item.mandatory_training.id, index)"
-                      @click.stop
-                    >
-                    <svgicon name="cloud-upload" height="24" width="24" />
-                    <label
-                      class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
-                    >Upload</label>
+                    class="w-1/6"
+                    v-if="childItem && childItem.note"
+                  >{{ childItem.note | StringMaxLength(15) }}</div>
+                  <div class="w-1/6" v-else />
+                  <div
+                    class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                    style="position:sticky;right:0"
+                    @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'mandatory-child')"
+                  >Upload</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTIONAL -->
+      <div class="mt-10">
+        <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
+        <div
+          class="text-sm font-hairline italic"
+        >(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)</div>
+      </div>
+      <div class="mt-4 overflow-x-auto">
+        <template v-if="!optionalComplianceDocuments.length">
+          <span
+            class="text-center font-bold text-gray-500 text-xs md:text-sm"
+            colspan="7"
+          >This section is empty. Update your profile to fill this area.</span>
+        </template>
+        <div class="table" style="min-width:72rem;max-width:100%">
+          <div class="flex flex-no-wrap justify-between font-bold leading-none text-sm">
+            <div class="w-1/3 p-2">Type</div>
+            <div class="w-1/3 p-2">File</div>
+            <div class="w-1/6 p-2" />
+          </div>
+          <div v-for="item in optionalComplianceDocuments" :key="item.compliance_document_id">
+            <div
+              v-if="activeLoading.includes(item.compliance_document_id)"
+              class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
+            >
+              <span
+                class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+              >Uploading</span>
+            </div>
+            <div
+              v-else
+              class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-white cursor-pointer"
+              :class="!item.file ? 'text-gray-600' : 'hover'"
+              @click="show(item, 'compliance')"
+            >
+              <div class="w-1/3">{{ item.compliance_document_name | StringMaxLength(30) }}</div>
+              <div class="w-1/3" v-if="(item.file || item.reference)">
+                <div class="flex flex-row flex-no-wrap items-center" v-if="item.file">
+                  <svgicon name="cloud-download" height="24" width="24" />
+                  <div class="mx-2">
+                    <a
+                      :href="item.file.url"
+                      :download="item.file.filename"
+                      target="_blank"
+                      class="whitespace-no-wrap"
+                      @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                    >{{ item.file.filename | StringMaxLength(15) }}</a>
                   </div>
-                </td>
-                <td
+                </div>
+                <div
+                  class="flex flex-row flex-no-wrap items-center"
+                  v-if="item.reference && item.reference !== 'null'"
+                >{{ item.reference }}</div>
+              </div>
+              <div class="w-1/3" v-else />
+              <div
+                v-if="item.compliance_document_type_name !== 'Safeguarding'"
+                class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                style="position:sticky;right:0"
+                @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'optional')"
+              >Upload</div>
+            </div>
+            <div v-if="item.compliance_document_type_name === 'Safeguarding'">
+              <div
+                v-for="childItem in item.child_locum_compliance_documents"
+                :key="childItem.compliance_document_id"
+                class="flex flex-col"
+              >
+                <div
+                  v-if="activeLoading.includes(childItem.compliance_document_id)"
+                  class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-gray-200"
+                >
+                  <span
+                    class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                  >Uploading</span>
+                </div>
+                <div
                   v-else
-                  class="hover:underline"
-                  @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                  class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
+                  :class="!childItem.file ? 'text-gray-600' : 'hover'"
+                  @click="show(childItem, 'compliance')"
                 >
-                  <div
-                    class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 mx-auto p-2 rounded cursor-pointer"
-                  >
-                    <input
-                      :ref="`${item.id}_file_mandatory_training`"
-                      type="file"
-                      class="inputfile hidden"
-                      @input="onMandatoryFileUpdate($event, item.id, index, item.mandatory_training.id)"
-                      @click.stop
-                    >
-                    <svgicon name="cloud-upload" height="24" width="24" />
-                    <label
-                      class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
-                    >Update</label>
+                  <div class="w-1/3">{{ childItem.compliance_document_name | StringMaxLength(20) }}</div>
+                  <div class="w-1/3" v-if="(childItem.file || childItem.reference)">
+                    <div class="flex flex-row flex-no-wrap items-center" v-if="childItem.file">
+                      <svgicon name="cloud-download" height="24" width="24" />
+                      <div class="mx-2">
+                        <a
+                          :href="childItem.file.url"
+                          :download="childItem.file.filename"
+                          target="_blank"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(childItem.file.url, childItem.file.filename)"
+                        >{{ childItem.file.filename | StringMaxLength(15) }}</a>
+                      </div>
+                    </div>
+                    <div
+                      class="flex flex-row flex-no-wrap items-center"
+                      v-if="childItem.reference && childItem.reference !== 'null'"
+                    >{{ childItem.reference }}</div>
                   </div>
-                </td>
+                  <div class="w-1/3" v-else />
+                  <div
+                    class="w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                    style="position:sticky;right:0"
+                    @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'optional-child')"
+                  >Upload</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRAININGS -->
+      <div class="mt-10">
+        <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
+      </div>
+      <div class="mt-4 overflow-x-auto">
+        <template v-if="!mandatory_trainings.length">
+          <span
+            class="text-center font-bold text-gray-500 text-xs md:text-sm"
+            colspan="7"
+          >This section is empty. Update your profile to fill this area.</span>
+        </template>
+        <template v-else>
+          <table>
+            <thead>
+              <tr class="text-xs sm:text-sm text-left">
+                <th class="pl-2">Type</th>
+                <th class="pl-2">File</th>
+                <th class="text-center">Date uploaded</th>
+                <th />
               </tr>
-            </template>
-          </tbody>
-        </table>
-      </template>
+            </thead>
+            <tbody>
+              <template v-for="(item, index) in mandatory_trainings">
+                <tr
+                  v-if="activeLoading.includes(item.mandatory_training.id)"
+                  :key="item.id"
+                  class="text-xs sm:text-sm text-left bg-gray-200"
+                >
+                  <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+                </tr>
+                <tr
+                  v-else
+                  :key="item.id"
+                  class="text-xs sm:text-sm text-left"
+                  :class="!item.info ? 'text-gray-600' : 'hover:bg-white'"
+                >
+                  <td
+                    :class="item && item.file ? 'cursor-pointer' : ''"
+                    class="w-1/3"
+                    @click="show(item, 'mandatory')"
+                  >{{ item.mandatory_training.name }}</td>
+                  <td v-if="item.file" class="hover:underline">
+                    <div class="flex flex-row flex-no-wrap">
+                      <svgicon name="cloud-download" height="24" width="24" />
+                      <div class="leading-loose mx-2">
+                        <a
+                          target="_blank"
+                          :href="item.file.url"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td v-else />
+                  <td
+                    v-if="item && item.file"
+                    class="text-center"
+                  >{{ item.file.created_at | localDate }}</td>
+                  <td v-else />
+                  <td
+                    v-if="!item.file"
+                    class="hover:underline"
+                    @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                  >
+                    <div
+                      class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer"
+                    >
+                      <input
+                        :ref="`${item.id}_file_mandatory_training`"
+                        type="file"
+                        class="inputfile hidden"
+                        @input="onMandatoryFileInput($event, item.mandatory_training.id, index)"
+                        @click.stop
+                      />
+                      <svgicon name="cloud-upload" height="24" width="24" />
+                      <label
+                        class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
+                      >Upload</label>
+                    </div>
+                  </td>
+                  <td
+                    v-else
+                    class="hover:underline"
+                    @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                  >
+                    <div
+                      class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 mx-auto p-2 rounded cursor-pointer"
+                    >
+                      <input
+                        :ref="`${item.id}_file_mandatory_training`"
+                        type="file"
+                        class="inputfile hidden"
+                        @input="onMandatoryFileUpdate($event, item.id, index, item.mandatory_training.id)"
+                        @click.stop
+                      />
+                      <svgicon name="cloud-upload" height="24" width="24" />
+                      <label
+                        class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
+                      >Update</label>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+      </div>
     </div>
-    <div
-      v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
-      class="shield"
-      @click="$router.push('/compliance')"
-    />
+    <transition name="fade" mode="out-in">
+      <div
+        v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
+        class="shield"
+        @click="$router.push('/compliance')"
+      />
+    </transition>
     <nuxt-child />
+    <div>
+      <transition name="fade" mode="out-in">
+        <div class="shield" v-if="modal"></div>
+      </transition>
+      <transition name="fade" mode="out-in">
+        <div class="flex justify-center upload-modal" v-if="modal">
+          <div class="relative border-solid rounded-lg bg-white p-4 shadow-lg" style="width:25%">
+            <AppLoading :loading="activeLoading.length > 0" spinner />
+            <div class="flex flex-col justify-center">
+              <div class="flex justify-end font-bold cursor-pointer" @click="modal = false">X</div>
+              <template v-if="selectedComplianceTypeName === 'Passport'">
+                <AppInput
+                  v-model="form.country_id"
+                  :type="'select'"
+                  :name="'country_id'"
+                  :label="'Country'"
+                  :placeholder="'Select...'"
+                  :error="formError.find(item => item.field === 'country_id')"
+                  :items="countries"
+                />
+              </template>
+              <template v-if="selectedComplianceTypeName === 'DBS'">
+                <AppInput
+                  v-model="form.has_reference"
+                  :type="'single-checkbox'"
+                  :name="'has_reference'"
+                  :label="'Has Reference'"
+                  :error="formError.find(item => item.field === 'has_reference')"
+                />
+              </template>
+              <template v-if="selectedComplianceTypeName === 'Reference' || form.has_reference">
+                <AppInput
+                  v-model="form.reference"
+                  :type="'text'"
+                  :name="'reference'"
+                  :label="'Reference'"
+                  :error="formError.find(item => item.field === 'reference')"
+                />
+              </template>
+              <div
+                class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 mt-2 rounded cursor-pointer"
+              >
+                <input
+                  type="file"
+                  name="file"
+                  id="file"
+                  class="inputfile hidden"
+                  @input="onFileInput($event, form.compliance_document_id)"
+                  @click.stop
+                />
+                <svgicon name="cloud-upload" height="24" width="24" />
+                <label for="file" class="hidden md:block leading-loose mx-2 cursor-pointer">Upload</label>
+              </div>
+              <div class="w-full text-center" v-if="form.file">
+                <small>Uploaded file: {{form.file.name}}</small>
+              </div>
+              <div class="w-full text-center" v-else-if="file">
+                <small>file: {{file.filename}}</small>
+              </div>
+              <transition name="drop-down">
+                <div
+                  v-if="formError.find(item => item.field === 'file')"
+                  class="text-red-500 py-1 text-xs text-white"
+                >{{ formError.find(item => item.field === 'file').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'file').message.slice(1).replace(/_/g, " ") }}</div>
+              </transition>
+              <AppButton
+                class="mt-8"
+                :label="'Submit'"
+                @click="submit"
+                :inStyle="'padding:5px 14px;'"
+              />
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
   </section>
 </template>
 <script>
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
-  data () {
+  components: {
+    AppInput,
+    AppButton,
+    AppLoading
+  },
+  data() {
     return {
+      dataTypeUploading: null,
       loading: false,
       activeLoading: [],
-      gmc_or_nmc_number: {},
-      mpl_or_npl_number: {},
-      profession: {},
-      mandatory: [],
-      optional: [],
+      referenceComplianceDocuments: [],
+      mandatoryComplianceDocuments: [],
+      optionalComplianceDocuments: [],
       mandatory_trainings: [],
-      specificComplianceDoc: null,
-      specificMandatoryTraining: null,
-      complianceModal: false,
-      mandatoryTrainingModal: false
-    }
+      modal: false,
+      type: null,
+      selectedComplianceTypeName: null,
+
+      file: null,
+      selectedId: null,
+      form: {
+        compliance_document_id: null,
+        file: null,
+        has_reference: false,
+        reference: null,
+        country_id: null
+      },
+      formError: []
+    };
   },
   watch: {
-    $route (value) {
+    $route(value) {
       if (
         ["compliance-id", "compliance-mandatory-training-id"].includes(
           value.name
         )
       ) {
-        document.body.style.overflow = "hidden"
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = "auto"
+        document.body.style.overflow = "auto";
       }
     }
   },
-  async asyncData ({ app, store }) {
+  async asyncData({ app, store }) {
     try {
-      let keyCompliances = []
-      const responseUser = await app.$axios.$get(`/api/v1/me`)
-      const user =
-        responseUser.data && responseUser.data.user
-          ? responseUser.data.user
-          : null
-      const gmc_or_nmc_number = user.locum_detail.gmc_or_nmc_number
-      const mpl_or_npl_number = user.locum_detail.mpl_or_npl_number
+      const response = await app.$axios.$get(`/api/v1/locum/me/compliance`);
 
-      const responseProfession = await app.$axios.$get(
-        `/api/v1/profession-categories`
-      )
-      const profession = responseProfession.data.profession_categories.find(
-        professionCategory =>
-          professionCategory.id ===
-          user.locum_detail.profession.profession_category.id
-      )
-
-      const responseComplianceDocuments = await app.$axios.$get(
-        `/api/v1/locum/locum-detail-compliance-documents`
-      )
-      if (
-        responseComplianceDocuments.data &&
-        responseComplianceDocuments.data.locum_detail_compliance_documents &&
-        responseComplianceDocuments.data.locum_detail_compliance_documents
-          .length > 0
-      ) {
-        responseComplianceDocuments.data.locum_detail_compliance_documents.forEach(
-          userComplianceDocument => {
-            profession.mandatory_compliance_documents.forEach(
-              mandatoryDocument => {
-                if (
-                  userComplianceDocument.compliance_document.id ===
-                  mandatoryDocument.id
-                ) {
-                  mandatoryDocument.info = userComplianceDocument
-                }
-              }
-            )
-            profession.optional_compliance_documents.forEach(
-              optionalDocument => {
-                if (
-                  userComplianceDocument.compliance_document.id ===
-                  optionalDocument.id
-                ) {
-                  optionalDocument.info = userComplianceDocument
-                }
-              }
-            )
-          }
-        )
-      }
-      const mandatory = profession.mandatory_compliance_documents.sort(
-        (a, b) => a.id - b.id
-      )
-      const optional = profession.optional_compliance_documents.sort(
-        (a, b) => a.id - b.id
-      )
-
-      keyCompliances = [...mandatory, ...optional]
+      const referenceComplianceDocuments =
+        response.data.user.reference_locum_compliance_documents;
+      const mandatoryComplianceDocuments =
+        response.data.user.mandatory_locum_compliance_documents;
+      const optionalComplianceDocuments =
+        response.data.user.optional_locum_compliance_documents;
 
       const responseMandatoryTrainings = await app.$axios.$get(
         `/api/v1/locum/locum-detail-mandatory-trainings`
-      )
+      );
       const mandatory_trainings = responseMandatoryTrainings.data.locum_detail_mandatory_trainings.sort(
         (a, b) => a.id - b.id
-      )
+      );
+
+      const responseCountries = await app.$axios.$get(
+        `/api/v1/countries?limit=10000`
+      );
+      const countries =
+        responseCountries &&
+        responseCountries.data &&
+        responseCountries.data.countries
+          ? responseCountries.data.countries.map(item => {
+              return {
+                label: item.name,
+                value: item.id
+              };
+            })
+          : [];
 
       return {
-        keyCompliances,
-        user,
-        gmc_or_nmc_number,
-        mpl_or_npl_number,
-        profession,
-        mandatory,
-        optional,
+        countries,
+        referenceComplianceDocuments,
+        mandatoryComplianceDocuments,
+        optionalComplianceDocuments,
         mandatory_trainings
-      }
+      };
     } catch (err) {
-      console.log("err", err.response || err)
+      console.log("err", err.response || err);
       if (err.response.data.message) {
         store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
           text: [`${err.response.data.message}`]
-        })
+        });
       }
-      throw err
+      throw err;
     }
   },
-  mounted () {
+  computed: {
+    hasVisa() {
+      return this.mandatoryComplianceDocuments.find(
+        item => item.compliance_document_type_name === "Visa"
+      );
+    }
+  },
+  mounted() {
     this.$socket.on(
       "Locum Notification Number Pending",
-      this.getNumberPendingRealTime
-    )
+      this.getComplianceRealTime
+    );
     this.$socket.on(
       "Locum Notification Number Rejected",
-      this.getNumberRejectedRealTime
-    )
+      this.getComplianceRealTime
+    );
     this.$socket.on(
       "Locum Notification Number Verified",
-      this.getNumberVerifiedRealTime
-    )
+      this.getComplianceRealTime
+    );
     this.$socket.on(
       "Locum Notification Compliance Approved",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Rejected",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Pending",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Expiring",
       this.getComplianceRealTime
-    )
+    );
     this.$socket.on(
       "Locum Notification Compliance Expired",
       this.getComplianceRealTime
-    )
+    );
   },
-  destroyed () {
-    this.removeListener()
+  destroyed() {
+    this.removeListener();
   },
   methods: {
-    async getNumberPendingRealTime (file) {
-      if (!file) {
-        return
-      }
-      if (file && file.type === "GMC/NMC") {
-        this.gmc_or_nmc_number.status = "Pending"
-      } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number = "Pending"
-      }
-    },
-    async getNumberRejectedRealTime (file) {
-      if (!file) {
-        return
-      }
-      if (file && file.type === "GMC/NMC") {
-        this.gmc_or_nmc_number.status = "Rejected"
-      } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number = "Rejected"
-      }
-    },
-    async getNumberVerifiedRealTime (file) {
-      if (!file) {
-        return
-      }
-      if (file && file.type === "GMC/NMC") {
-        this.gmc_or_nmc_number.status = "Verified"
-      } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number.status = "Verified"
-      }
-    },
-    async getComplianceRealTime (file) {
-      if (!file) {
-        return
-      }
-      let index = this.mandatory.findIndex(
-        item =>
-          item.info.compliance_document.name ===
-            file.compliance_document.name ||
-          item.name === file.compliance_document.name
+    async uploadCompliance(
+      id,
+      complianceDocumentId,
+      typeName,
+      file,
+      hasReference,
+      reference,
+      countryId,
+      type
+    ) {
+      let country_id;
+      // if (typeName === "Passport") {
+      //   console.log(id);
+      //   let response = await this.$axios.$get(
+      //     `api/v1/locum/locum-compliance-documents/${id}`
+      //   );
+      //   country_id =
+      //     response.data &&
+      //     response.data.locum_compliance_document &&
+      //     response.data.locum_compliance_document.country
+      //       ? response.data.locum_compliance_document.country.id
+      //       : null;
+      // }
+      this.selectedId = id;
+      this.modal = true;
+      this.type = type;
+      this.formError = [];
+      this.file = file;
+      this.selectedComplianceTypeName = typeName;
+      this.form.compliance_document_id = complianceDocumentId;
+      this.form.file = null;
+      this.form.has_reference = ["false", false, "0", 0, null].includes(
+        hasReference
       )
-      let updatedFile = this.mandatory.find(
-        item =>
-          item.info.compliance_document.name ===
-            file.compliance_document.name ||
-          item.name === file.compliance_document.name
-      )
-      if (index >= 0) {
-        this.mandatory.splice(index, 1, { ...updatedFile, info: file })
+        ? false
+        : true;
+      this.form.reference = reference !== "null" ? reference : "";
+      this.form.country_id = countryId;
+    },
+    async submit() {
+      try {
+        this.formError = [];
+        let notRequired = ["has_reference"];
+        if (this.file) {
+          notRequired.push("file");
+        }
+        if (this.selectedComplianceTypeName !== "Passport") {
+          notRequired.push("country_id");
+        }
+        if (
+          !["Reference", "DBS"].includes(this.selectedComplianceTypeName) ||
+          ["false", false, "0", 0].includes(this.form.has_reference)
+        ) {
+          notRequired.push("reference");
+        }
+        if (["false", false].includes(this.form.has_reference)) {
+          this.form.reference = null;
+        }
+        this.Validate(this.form, notRequired);
+        if (!this.formError.length) {
+          const formData = new FormData();
+          formData.append("user_id", this.$auth.user.id);
+          formData.append(
+            "compliance_document_id",
+            this.form.compliance_document_id
+          );
+          if (this.form.file) {
+            formData.append("file", this.form.file);
+          }
+          formData.append("has_reference", this.form.has_reference);
+          formData.append("reference", this.form.reference);
+          if (this.selectedComplianceTypeName === "Passport") {
+            formData.append("country_id", this.form.country_id);
+          }
+          this.activeLoading.push(this.form.compliance_document_id);
+
+          let response;
+          if (!this.file) {
+            response = await this.$axios.$post(
+              `/api/v1/locum/locum-compliance-documents`,
+              formData
+            );
+          } else if (this.file) {
+            response = await this.$axios.$patch(
+              `/api/v1/locum/locum-compliance-documents/${this.selectedId}`,
+              formData
+            );
+          }
+          if (this.type === "mandatory") {
+            let updatedMandatoryComplianceIndex = this.mandatoryComplianceDocuments.findIndex(
+              item =>
+                item.compliance_document_id === this.form.compliance_document_id
+            );
+            if (updatedMandatoryComplianceIndex >= 0) {
+              this.mandatoryComplianceDocuments.splice(
+                updatedMandatoryComplianceIndex,
+                1,
+                this.getUpdatedObject(response)
+              );
+            }
+          }
+          if (this.type === "mandatory-child") {
+            let updatedMandatoryComplianceChildrenIndex = this.mandatoryComplianceDocuments
+              .find(
+                item => item.compliance_document_type_name === "Safeguarding"
+              )
+              .child_locum_compliance_documents.findIndex(
+                childIndex =>
+                  childIndex.compliance_document_id ===
+                  this.form.compliance_document_id
+              );
+            if (updatedMandatoryComplianceChildrenIndex >= 0) {
+              this.mandatoryComplianceDocuments
+                .find(
+                  item => item.compliance_document_type_name === "Safeguarding"
+                )
+                .child_locum_compliance_documents.splice(
+                  updatedMandatoryComplianceChildrenIndex,
+                  1,
+                  this.getUpdatedObject(response)
+                );
+            }
+          }
+          if (this.type === "optional") {
+            let updatedOptionalComplianceIndex = this.optionalComplianceDocuments.findIndex(
+              item =>
+                item.compliance_document_id === this.form.compliance_document_id
+            );
+            if (updatedOptionalComplianceIndex >= 0) {
+              this.optionalComplianceDocuments.splice(
+                updatedOptionalComplianceIndex,
+                1,
+                this.getUpdatedObject(response)
+              );
+            }
+          }
+          if (this.type === "optional-child") {
+            let updatedOptionalComplianceChildrenIndex = this.optionalComplianceDocuments
+              .find(
+                item => item.compliance_document_type_name === "Safeguarding"
+              )
+              .child_locum_compliance_documents.findIndex(
+                childIndex =>
+                  childIndex.compliance_document_id ===
+                  this.form.compliance_document_id
+              );
+            if (updatedOptionalComplianceChildrenIndex >= 0) {
+              this.optionalComplianceDocuments
+                .find(
+                  item => item.compliance_document_type_name === "Safeguarding"
+                )
+                .child_locum_compliance_documents.splice(
+                  updatedOptionalComplianceChildrenIndex,
+                  1,
+                  this.getUpdatedObject(response)
+                );
+            }
+          }
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Compliance Updated"]
+          });
+          this.activeLoading = this.activeLoading.filter(
+            id => id !== this.form.compliance_document_id
+          );
+          this.modal = false;
+        }
+      } catch (err) {
+        console.log("err", err.response || err);
+        if (err.response.data.message === "File Is Required") {
+          this.formError.push({
+            field: "file",
+            message: "File Is Required"
+          });
+        }
+        this.activeLoading = this.activeLoading.filter(
+          id => id !== this.form.compliance_document_id
+        );
       }
     },
-    removeListener () {
+    getUpdatedObject(responseObject) {
+      return {
+        type: responseObject.data.locum_compliance_document.type,
+        id: responseObject.data.locum_compliance_document.id,
+        has_reference:
+          responseObject.data.locum_compliance_document.has_reference,
+        reference: responseObject.data.locum_compliance_document.reference,
+        // expired_at: responseObject.data.locum_compliance_document.expired_at,
+        verified_at: responseObject.data.locum_compliance_document.verified_at,
+        rejected_at: responseObject.data.locum_compliance_document.rejected_at,
+        note: responseObject.data.locum_compliance_document.note,
+        status: responseObject.data.locum_compliance_document.status,
+        compliance_document_id:
+          responseObject.data.locum_compliance_document.compliance_document.id,
+        compliance_document_name:
+          responseObject.data.locum_compliance_document.compliance_document
+            .name,
+        compliance_document_type_id:
+          responseObject.data.locum_compliance_document.compliance_document
+            .compliance_document_type.id,
+        compliance_document_type_name:
+          responseObject.data.locum_compliance_document.compliance_document
+            .compliance_document_type.name,
+        // compliance_document_parent_type_id: responseObject.data.locum_compliance_document,
+        // compliance_document_parent_type_name: responseObject.data.locum_compliance_document,
+        // parent_compliance_document_id: responseObject.data.locum_compliance_document,
+        // parent_compliance_document_name: responseObject.data.locum_compliance_document,
+        file: responseObject.data.locum_compliance_document.file
+      };
+    },
+    getAllCompliances() {
+      this.$axios.$get(`/api/v1/locum/me/compliance`).then(res => {
+        this.referenceComplianceDocuments =
+          res.data.user.reference_locum_compliance_documents;
+        this.mandatoryComplianceDocuments =
+          res.data.user.mandatory_locum_compliance_documents;
+        this.optionalComplianceDocuments =
+          res.data.user.optional_locum_compliance_documents;
+      });
+    },
+    async getComplianceRealTime(file) {
+      if (!file) {
+        return;
+      }
+      this.getAllCompliances();
+    },
+    removeListener() {
       this.$socket.removeListener(
         "Locum Notification Number Pending",
-        this.getNumberPendingRealTime
-      )
+        this.getComplianceRealTime
+      );
       this.$socket.removeListener(
         "Locum Notification Number Rejected",
-        this.getNumberRejectedRealTime
-      )
+        this.getComplianceRealTime
+      );
       this.$socket.removeListener(
         "Locum Notification Number Verified",
-        this.getNumberVerifiedRealTime
-      )
+        this.getComplianceRealTime
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Approved",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Pending",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Rejected",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Expiring",
         this.getComplianceRealTime
-      )
+      );
       this.$socket.removeListener(
         "Locum Notification Compliance Expired",
         this.getComplianceRealTime
-      )
+      );
     },
-    show (item, type) {
-      if ((item.info && item.info.file) || item.file) {
+    show(item, type) {
+      if (item.file) {
         if (type === "compliance") {
-          this.$router.push(`/compliance/${item.info.id}`)
+          this.$router.push(`/compliance/${item.id}`);
         }
         if (type === "mandatory")
-          this.$router.push(`/compliance/mandatory-training/${item.id}`)
+          this.$router.push(`/compliance/mandatory-training/${item.id}`);
       }
     },
-    status (status) {
-      let str
+    status(status) {
+      let str;
       switch (status) {
         case "Pending":
         case "Expiring":
-          str = "bg-orange-500"
-          break
+          str = "bg-orange-500";
+          break;
         case "Verified":
         case "Approved":
-          str = "bg-green-500"
-          break
+          str = "bg-green-500";
+          break;
         default:
-          str = "bg-red-500"
+          str = "bg-red-500";
       }
-      return str
+      return str;
     },
-    onFileInput (e, id) {
+    onFileInput(e, id, dataTypeUploading) {
       if (!e.target.files.length) {
-        return
+        return;
       }
       // vnd.openxmlformats-officedocument.wordprocessingml.document - docx type
       let types = [
@@ -883,133 +943,21 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("compliance_document_id", id)
-      formData.append("locum_detail_id", this.$auth.user.id)
-      // post request to API / send file
-      this.loading = true
-      this.activeLoading.push(id)
-
-      this.$axios
-        .$post(`/api/v1/locum/locum-detail-compliance-documents`, formData)
-        .then(res => {
-          let key_compliances_index = this.keyCompliances.findIndex(
-            document =>
-              document.id ===
-              res.data.locum_detail_compliance_document.compliance_document.id
-          )
-
-          if (key_compliances_index >= 0) {
-            this.keyCompliances.splice(key_compliances_index, 1)
-            this.keyCompliances.push({
-              id:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .id,
-              name:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .name,
-              info: res.data.locum_detail_compliance_document
-            })
-            this.keyCompliances = this.keyCompliances.sort(
-              (a, b) => a.id - b.id
-            )
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Document uploaded!"]
-            })
-            this.loading = false
-          }
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-
-          // let mandatory_index = this.mandatory.findIndex(
-          //   document =>
-          //     document.id ===
-          //     res.data.locum_detail_compliance_document.compliance_document.id
-          // );
-          // if (mandatory_index >= 0) {
-          //   this.mandatory.splice(mandatory_index, 1);
-          //   this.mandatory.push({
-          //     id:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .id,
-          //     name:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .name,
-          //     info: res.data.locum_detail_compliance_document
-          //   });
-          //   this.mandatory = this.mandatory.sort((a, b) => a.id - b.id);
-          //   this.$store.commit("SET_NOTIFICATION", {
-          //     enabled: true,
-          //     status: "success",
-          //     text: ["Document uploaded!"]
-          //   });
-          //   this.loading = false;
-          // } else {
-          //   let optional_index = this.optional.findIndex(
-          //     document =>
-          //       document.id ===
-          //       res.data.locum_detail_compliance_document.compliance_document.id
-          //   );
-          //   this.optional.splice(optional_index, 1);
-          //   this.optional.push({
-          //     id:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .id,
-          //     name:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .name,
-          //     info: res.data.locum_detail_compliance_document
-          //   });
-          //   this.optional = this.optional.sort((a, b) => a.id - b.id);
-          //   this.$store.commit("SET_NOTIFICATION", {
-          //     enabled: true,
-          //     status: "success",
-          //     text: ["Document uploaded!"]
-          //   });
-          //   this.loading = false;
-          // }
-          // this.activeLoading = this.activeLoading.filter(item => item !== id);
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          if (
-            err.response.data.message &&
-            err.response.data.message.includes("File size too large") &&
-            err.response.data.status === 500
-          ) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: ["The maximum file size is 10mb only"]
-            })
-          } else {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            })
-          }
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        })
+      // this.file = file;
+      this.form.file = file;
     },
-    onFileUpdate (e, id, index, loadingId) {
-      if (!e.target.files.length) {
-        return
-      }
+    onMandatoryFileInput(e, id, index) {
       let types = [
         "pdf",
         "jpeg",
@@ -1019,152 +967,23 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      this.loading = true
-      this.activeLoading.push(loadingId)
-
-      const formData = new FormData()
-      formData.append("file", file)
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mandatory_training_id", id);
       // post request to API / send file
-      this.$axios
-        .$put(`/api/v1/locum/locum-detail-compliance-documents/${id}`, formData)
-        .then(res => {
-          let key_compliances_index = this.keyCompliances.findIndex(
-            document =>
-              document.id ===
-              res.data.locum_detail_compliance_document.compliance_document.id
-          )
-          if (key_compliances_index > 0) {
-            this.keyCompliances.splice(index, 1)
-            this.keyCompliances.push({
-              id:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .id,
-              name:
-                res.data.locum_detail_compliance_document.compliance_document
-                  .name,
-              info: res.data.locum_detail_compliance_document
-            })
-            this.keyCompliances = this.keyCompliances.sort(
-              (a, b) => a.id - b.id
-            )
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Document uploaded!"]
-            })
-            this.loading = false
-          }
-          this.activeLoading = this.activeLoading.filter(
-            item => item !== loadingId
-          )
-
-          // let inMandatory = this.mandatory.findIndex(
-          //   document =>
-          //     document.id ===
-          //     res.data.locum_detail_compliance_document.compliance_document.id
-          // );
-          // if (inMandatory > 0) {
-          //   this.mandatory.splice(index, 1);
-          //   this.mandatory.push({
-          //     id:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .id,
-          //     name:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .name,
-          //     info: res.data.locum_detail_compliance_document
-          //   });
-          //   this.mandatory = this.mandatory.sort((a, b) => a.id - b.id);
-          //   this.$store.commit("SET_NOTIFICATION", {
-          //     enabled: true,
-          //     status: "success",
-          //     text: ["Document uploaded!"]
-          //   });
-          //   this.loading = false;
-          // } else {
-          //   this.optional.splice(index, 1);
-          //   this.optional.push({
-          //     id:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .id,
-          //     name:
-          //       res.data.locum_detail_compliance_document.compliance_document
-          //         .name,
-          //     info: res.data.locum_detail_compliance_document
-          //   });
-          //   this.optional = this.optional.sort((a, b) => a.id - b.id);
-          //   this.$store.commit("SET_NOTIFICATION", {
-          //     enabled: true,
-          //     status: "success",
-          //     text: ["Document uploaded!"]
-          //   });
-          //   this.loading = false;
-          // }
-          // this.activeLoading = this.activeLoading.filter(
-          //   item => item !== loadingId
-          // );
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          if (
-            err.response.data.message &&
-            err.response.data.message.includes("File size too large") &&
-            err.response.data.status === 500
-          ) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: ["The maximum file size is 10mb only"]
-            })
-          } else {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            })
-          }
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        })
-    },
-    onMandatoryFileInput (e, id, index) {
-      let types = [
-        "pdf",
-        "jpeg",
-        "msword",
-        "tiff",
-        "vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "vnd.openxmlformats-officedocument.wordprocessingml.template",
-        "vnd.ms-word.document.macroEnabled.12",
-        "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
-      if (!types.includes(fileType)) {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "alert",
-          text: ["Invalid File Format"]
-        })
-        return
-      }
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("mandatory_training_id", id)
-      // post request to API / send file
-      this.loading = true
-      this.activeLoading.push(id)
+      this.loading = true;
+      this.activeLoading.push(id);
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
@@ -1172,31 +991,31 @@ export default {
             index,
             1,
             res.data.locum_detail_mandatory_training
-          )
+          );
           this.mandatory_trainings = this.mandatory_trainings.sort(
             (a, b) => a.id - b.id
-          )
+          );
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Document uploaded!"]
-          })
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          })
-          this.loading = false
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        })
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        });
     },
-    onMandatoryFileUpdate (e, id, index, loadingId) {
+    onMandatoryFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
-        return
+        return;
       }
       let types = [
         "pdf",
@@ -1207,22 +1026,22 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
         "vnd.ms-word.template.macroEnabled.12"
-      ]
-      let file = e.target.files[0]
-      let fileType = file.type.split("/")[1]
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
           text: ["Invalid File Format"]
-        })
-        return
+        });
+        return;
       }
-      const formData = new FormData()
-      formData.append("file", file)
+      const formData = new FormData();
+      formData.append("file", file);
       // post request to API / send file
-      this.loading = true
-      this.activeLoading.push(loadingId)
+      this.loading = true;
+      this.activeLoading.push(loadingId);
       this.$axios
         .$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData)
         .then(res => {
@@ -1230,50 +1049,50 @@ export default {
             index,
             1,
             res.data.locum_detail_mandatory_training
-          )
+          );
           this.mandatory_trainings = this.mandatory_trainings.sort(
             (a, b) => a.id - b.id
-          )
+          );
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Document uploaded!"]
-          })
-          this.loading = false
+          });
+          this.loading = false;
           this.activeLoading = this.activeLoading.filter(
             item => item !== loadingId
-          )
+          );
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: [`${err.response.data.message}`]
-          })
-          this.loading = false
+          });
+          this.loading = false;
           this.activeLoading = this.activeLoading.filter(
             item => item !== loadingId
-          )
-        })
+          );
+        });
     },
-    downloadItem (fileUrl, fileName) {
-      const axios = require("axios")
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
       axios({
         url: fileUrl,
         method: "GET",
         responseType: "blob" // important
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement("a")
-        link.href = url
-        link.setAttribute("download", fileName)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      })
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
     }
   }
-}
+};
 </script>
 <style scoped>
 .loading {
@@ -1302,6 +1121,14 @@ table tbody td {
 }
 .shield {
   z-index: 509;
+}
+.upload-modal {
+  position: fixed;
+  top: 25%;
+  left: 0;
+  right: 0;
+  height: auto;
+  z-index: 601;
 }
 .mandatoryTrainingModal {
   position: fixed;

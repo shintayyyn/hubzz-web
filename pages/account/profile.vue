@@ -15,7 +15,7 @@
             @submit="save"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
             @keypress="inputNumberOnly($event)"
-            required
+            requiredf
           />
           <AppInput
             v-model="form.mpl_or_npl_number"
@@ -336,23 +336,25 @@
             />
           </template>
 
-          <AppInput
-            v-model="form.claim_nhs"
-            :type="'single-checkbox'"
-            :name="'claim_nhs'"
-            :label="'Are you willing to claim NHS Pension contributions?'"
-          />
-
-          <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+          <template v-if="professionCategoryId === 1">
             <AppInput
-              v-model="form.nhs_number"
-              :type="'text'"
-              :name="'nhs_number'"
-              :label="'NHS number'"
-              :error="formError.find(item => item.field === 'nhs_number')"
-              required
-              @keypress="inputNumberOnly($event)"
+              v-model="form.claim_nhs"
+              :type="'single-checkbox'"
+              :name="'claim_nhs'"
+              :label="'Are you willing to claim NHS Pension contributions?'"
             />
+
+            <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+              <AppInput
+                v-model="form.nhs_number"
+                :type="'text'"
+                :name="'nhs_number'"
+                :label="'NHS number'"
+                :error="formError.find(item => item.field === 'nhs_number')"
+                required
+                @keypress="inputNumberOnly($event)"
+              />
+            </template>
           </template>
 
           <AppPostCode
@@ -611,8 +613,14 @@ export default {
     this.profile.avatar = this.user.avatar;
     this.profile.name = this.user.personal_detail.name;
     this.profile.email = this.user.email;
-    this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
-    this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
+    this.form.gmc_or_nmc_number =
+      this.user.locum_detail && this.user.locum_detail.gmc_or_nmc_number
+        ? this.user.locum_detail.gmc_or_nmc_number.number
+        : null;
+    this.form.mpl_or_npl_number =
+      this.user.locum_detail && this.user.locum_detail.mpl_or_npl_number
+        ? this.user.locum_detail.mpl_or_npl_number.number
+        : null;
     if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
       this.formError.push({
         field: "gmc_or_nmc_number",
@@ -735,16 +743,23 @@ export default {
         "paid_under_payroll",
         "mandatory_training_id",
         "ir35",
-        "claim_nhs"
+        "claim_nhs",
+        "max_rate_per_hour",
+        "max_rate_per_half_day_session",
+        "max_rate_per_whole_day_session"
       ];
-      this.max_rate_per_hour = 999999999;
-      this.max_rate_per_half_day_session = 999999999;
-      this.max_rate_per_whole_day_session = 999999999;
+      this.form.max_rate_per_hour = 999999999;
+      this.form.max_rate_per_half_day_session = 999999999;
+      this.form.max_rate_per_whole_day_session = 999999999;
 
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
       } else if (this.form.employment_type === "Limited Company") {
         notRequired.push("utr_number");
+      }
+
+      if (this.professionCategoryId === 2) {
+        this.form.claim_nhs = false;
       }
 
       if (["false", false].includes(this.form.claim_nhs)) {
@@ -811,6 +826,7 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
+            this.CheckUserVerification();
           })
           .catch(err => {
             console.log("err", err.response || err);

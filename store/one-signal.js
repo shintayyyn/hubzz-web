@@ -8,7 +8,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async setOneSignalUser() {
+  async setOneSignalUser () {
     console.log('setOneSignalUser')
 
     const OneSignal = window.OneSignal || []
@@ -25,19 +25,19 @@ export const actions = {
       console.log('loggedIn', this.$auth.loggedIn)
 
       if (oneSignalId) {
-        // if (this.$auth.loggedIn) {
-        //   await this.$axios.post('/api/v1/one-signal/login', {
-        //     one_signal_id: oneSignalId
-        //   })
+        if (!oneSignalId && this.$auth.loggedIn) {
+          await this.$axios.post('/api/v1/one-signal/login', {
+            one_signal_id: oneSignalId
+          })
 
-        //   console.log('One Signal Logged In')
-        // } else {
-        await this.$axios.post('/api/v1/one-signal/logout', {
-          one_signal_id: oneSignalId
-        })
+          console.log('One Signal Logged In')
+        } else {
+          await this.$axios.post('/api/v1/one-signal/logout', {
+            one_signal_id: oneSignalId
+          })
 
-        console.log('One Signal Logged Out')
-        // }
+          console.log('One Signal Logged Out')
+        }
       }
 
       return

@@ -1,32 +1,12 @@
 <template>
   <section class="relative max-w-3xl">
-    <div class="flex flex-wrap justify-between pt-2">
-      <div class="flex justify-start items-center">
-        <AppButton
-          v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
-          class="m-1"
-          :label="'Save changes'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="save(false)"
-        />
-        <AppButton
-          v-if="propInvoice && propInvoice.status !== 'Draft'"
-          class="m-1"
-          :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          @click="viewAsPdf(propInvoice.id)"
-        />
-      </div>
-
-      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+    <div class="flex items-center justify-end py-2">
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
         >
           Platform
         </div>
-      </div>
     </div>
     <!-- pdf form -->
     <div
@@ -75,7 +55,7 @@
         <div class="items-table">
           <!-- thead / items header -->
           <div :ref="'items-header'" class="flex justify-start">
-            <div
+            <!-- <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >
               Description
@@ -84,6 +64,11 @@
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
             >
               Total
+            </div> -->
+            <div
+              class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+            >
+              Description
             </div>
           </div>
           <!-- items / selected invoice -->
@@ -94,7 +79,7 @@
             class="flex flex-col border-b-2 pb-2"
           >
             <!-- item description / total / dispute checkbox -->
-            <div class="relative flex justify-start mt-2">
+            <!-- <div class="relative flex justify-start mt-2">
               <div class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300">
                 {{ description }}
               </div>
@@ -103,7 +88,12 @@
               >
                 {{ total | currency }}
               </div>
-              <div
+              -->
+            <div class="relative flex justify-start mt-2">
+              <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">
+                {{ description }}
+              </div>
+             <div
                 v-if="(propInvoice && propInvoice.status !== 'Approved')"
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
               >
@@ -134,7 +124,7 @@
               v-if="form.items[0].dispute && isApproved === false"
               class="flex justify-start mt-2 px-2"
             >
-              <div class="w-1/3 flex flex-col px-2">
+              <div class="w-1/5 flex flex-col pr-2">
                 <label for="absent_days">Days of absent</label>
                 <input
                   v-model="form.items[0].absent_days"
@@ -145,7 +135,7 @@
                   @keypress="isNumber($event)"
                 >
               </div>
-              <div class="w-1/3 flex flex-col px-2">
+              <div class="w-1/5 flex flex-col pr-2">
                 <label for="late_hours">Hours of late</label>
                 <input
                   v-model="form.items[0].late_hours"
@@ -156,8 +146,9 @@
                   @keypress="isNumber($event)"
                 >
               </div>
-              <div class="w-1/3 flex flex-col px-2">
-                <label for="final_hours">Final hours</label>
+              <div class="w-3/5 flex flex-col">
+                  <label for="final_hours">Final hours</label>
+                <!-- <label for="final_hours">Final hours</label>
                 <input
                   v-model="form.items[0].final_hours"
                   type="number"
@@ -165,7 +156,41 @@
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                   @keypress="isNumber($event)"
-                >
+                > -->
+                <div class="flex">
+                  <div class="flex items-center mr-2 ">
+                    <input
+                      v-model="form.hours"
+                      type="number"
+                      min="0"
+                      maxlength="8"
+                      name="hours"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
+                      :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
+                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                      @focus="hasValue(form.hours, 'hours')"
+                      @blur="!form.hours ? form.hours = 0 : form.hours"
+                    >
+                    <label for="hours" class="text-xs md:text-sm">hours</label>
+                  </div>
+                  <div class="flex items-center ">
+                    <input
+                      v-model="form.minutes"
+                      type="number"
+                      min="0"
+                      name="minutes"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
+                      maxlength="2"
+                      max="60"
+                      :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
+                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                      @focus="hasValue(form.minutes, 'minutes')"
+                      @blur="!form.minutes ? form.minutes = 0 : form.minutes"
+                    >
+                    <label for="minutes" class="text-xs md:text-sm">minutes</label>
+                  </div>
+                </div>
+                <p class="text-xs mx-2 text-red-500" v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')">Final hours is required</p>
               </div>
             </div>
             <!-- disputed invoice update form -->
@@ -247,6 +272,24 @@
         </div>
       </div>
     </div>
+
+    <div class="flex justify-start items-center mb-6">
+        <AppButton
+          v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
+          class="m-1"
+          :label="'Save changes'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading"
+          @click="save(false)"
+        />
+        <AppButton
+          v-if="propInvoice && propInvoice.status !== 'Draft'"
+          class="m-1"
+          :label="'View as PDF'"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          @click="viewAsPdf(propInvoice.id)"
+        />
+      </div>
   </section>
 </template>
 <script>
@@ -281,7 +324,9 @@ export default {
         items: [],
         total_amount: 0,
         date_start: null,
-        date_end: null
+        date_end: null,
+        minutes: 0,
+        hours: 0
       },
       formError: [],
 
@@ -312,6 +357,11 @@ export default {
       return total
     },
     description () {
+      let hours = Math.floor(this.form.items[0].final_hours / 60);
+      let minutes = Math.floor(this.form.items[0].final_hours % 60);
+      let hour = hours > 0 ? `${hours > 0 ? hours : ''} ${hours > 1 ? 'hours' : 'hour'}` :  ''
+      let minute = minutes > 0 ? `${minutes > 0 ? minutes : ''} ${minutes > 1 ? 'minutes' : 'minute'}` :  ''
+      let totalHours = `${hour} ${minute}` ;
       return `Job number ${
         this.propInvoice.items[0].job_part.job_part_number
       } ${this.propInvoice.items[0].job_part.job.type}
@@ -321,8 +371,8 @@ export default {
         from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
         / ${
           this.propInvoice.items[0].job_part.job.shift.name
-        } / Total hours of ${
-        this.form.items.length > 0 ? this.form.items[0].final_hours : 0
+        } / Total hours of  ${
+        this.form.items.length > 0 ? totalHours : 0
       }`
     },
     total () {
@@ -441,11 +491,52 @@ export default {
         this.allowToBill = true
       }
     }
+    this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
+    this.form.minutes = this.form.items[0].final_hours % 60;
   },
   methods: {
+    handleKeyDownEvent(e, formField, limit) {
+      let acceptedKeys = [
+        "Backspace",
+        "Tab",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight"
+      ];
+      if (
+        this.form[formField].length >= limit &&
+        !acceptedKeys.includes(e.key)
+      ) {
+        e.preventDefault();
+      }
+    },
+    hasValue(value, field) {
+      if (value == 0) {
+        this.form[field] = ""
+      }
+    },
     save (final) {
       this.formError = []
-      this.Validate(this.form, ["total_amount"])
+      if (
+        [0, "0"].includes(this.form.hours) &&
+        [0, "0"].includes(this.form.minutes)
+      ) {
+        this.formError.push({
+          field: "minutes",
+          message: "Minutes is required"
+        });
+        this.formError.push({
+          field: "hours",
+          message: "Hours is required"
+        });
+      } else {
+        this.form.hours = !this.form.hours ? 0 : this.form.hours 
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
+        this.form.items[0].final_hours =
+          this.form.hours * 60 + parseInt(this.form.minutes);
+      }
+      this.Validate(this.form, ["total_amount, hours, minutes"])
       if (!this.formError.length) {
         this.form.items[0].description = this.description
         this.form.items[0].total = this.total

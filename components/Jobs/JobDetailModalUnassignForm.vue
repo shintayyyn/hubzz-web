@@ -11,6 +11,8 @@
 			:name="'declined_reason'"
 			:label="'Please state here your reason.'"
 			:error="this.formError.find(item => item.field === 'declined_reason')"
+			@blur="CheckEmptyField(form.declined_reason,'declined_reason')"
+			:limit="255"
 			:resize="false"
 		/>
 		<AppButton :label="'Unassign from this job'" @click="unassign" :disabled="loading" />
@@ -38,7 +40,15 @@ export default {
 		};
 	},
 	methods: {
+		trimmedMessage(value) {
+			return value.replace(/^\s*/, "").replace(/\s*$/, "");
+		},
 		unassign() {
+			this.form.declined_reason = this.trimmedMessage(
+				this.form.declined_reason
+			);
+			console.log(this.form.declined_reason);
+			return;
 			this.formError = [];
 			this.Validate(this.form);
 			if (!this.formError.length) {

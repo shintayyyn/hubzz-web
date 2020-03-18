@@ -4,12 +4,8 @@
     <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <div class="flex flex-row flex-wrap">
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
-          <div class="font-bold text-sm sm:text-md">
-            Job number
-          </div>
-          <div class="text-xs sm:text-sm mb-4">
-            {{ job.job_number }}
-          </div>
+          <div class="font-bold text-sm sm:text-md">Job number</div>
+          <div class="text-xs sm:text-sm mb-4">{{ job.job_number }}</div>
           <AppInput
             v-model="form.practice_id"
             :type="'select'"
@@ -54,7 +50,7 @@
             :limit="8"
             @blur="CheckEmptyField(form.total_hours,'total_hours')"
           />-->
-          <div class="flex flex-col py-2 mb-3 md:mb-6">
+          <!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
             <div class="relative flex flex-row flex-no-wrap justify-between">
               <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
             </div>
@@ -76,6 +72,54 @@
                 >
                   {{ formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ") }}
                 </div>
+              </div>
+            </div>
+          </div>-->
+          <div class="flex flex-col py-2 mb-3 md:mb-6">
+            <div class="relative flex flex-row flex-no-wrap justify-between">
+              <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
+            </div>
+            <div class="flex flex-row flex-wrap justify-start mt-1">
+              <div class="flex items-center">
+                <div class="flex flex-col">
+                  <input
+                    v-model="form.hours"
+                    type="number"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+                    style="text-align:right;'"
+                    min="1"
+                    maxlength="8"
+                    @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                    @focus="hasValue(form.hours, 'hours')"
+                  />
+                  <div
+                    v-if="formError.find(item => item.field === 'hours')"
+                    class="text-red-500 p-1 text-xs"
+                  >{{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}</div>
+                </div>
+                <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+              </div>
+              <div class="flex items-center">
+                <div class="flex flex-col">
+                  <input
+                    v-model="form.minutes"
+                    type="number"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+                    style="text-align:right;'"
+                    max="60"
+                    min="1"
+                    maxlength="2"
+                    @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                    @focus="hasValue(form.minutes, 'minutes')"
+                  />
+                  <div
+                    v-if="formError.find(item => item.field === 'minutes')"
+                    class="text-red-500 p-1 text-xs"
+                  >{{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}</div>
+                </div>
+                <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
               </div>
             </div>
           </div>
@@ -235,9 +279,7 @@
           </template>
         </div>
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pl-4">
-          <div class="font-bold text-sm sm:text-md">
-            Duration
-          </div>
+          <div class="font-bold text-sm sm:text-md">Duration</div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="px-1 w-full md:w-1/2">
               <AppDate
@@ -480,9 +522,7 @@
             :disabled="job.status === 'Allocated'"
           />
 
-          <div class="font-bold text-sm sm:text-md">
-            Compliance requirements
-          </div>
+          <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
           <AppInput
             v-model="form.compliance_document_id"
             :type="'multi-checkbox'"
@@ -494,9 +534,7 @@
             @checked="job.status === 'Allocated' ? '' : form.compliance_document_id.push($event)"
             @unchecked="job.status === 'Allocated' ? '' : form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
           />
-          <div class="font-bold text-sm sm:text-md">
-            Mandatory trainings
-          </div>
+          <div class="font-bold text-sm sm:text-md">Mandatory trainings</div>
           <AppInput
             v-model="form.mandatory_training_id"
             :type="'multi-checkbox'"
@@ -538,20 +576,20 @@
   </div>
 </template>
 <script>
-import { gmapApi } from "vue2-google-maps"
-import { mixin as clickaway } from "vue-clickaway"
-import AppInput from "@/components/Base/AppInput"
-import AppDate from "@/components/Base/AppDate"
-import AppTime from "@/components/Base/AppTime"
-import AppButton from "@/components/Base/AppButton"
-import AppFilterSearch from "@/components/Base/AppFilterSearch"
-import AppFormError from "@/components/Base/AppFormError"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import { gmapApi } from "vue2-google-maps";
+import { mixin as clickaway } from "vue-clickaway";
+import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
+import AppTime from "@/components/Base/AppTime";
+import AppButton from "@/components/Base/AppButton";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppFormError from "@/components/Base/AppFormError";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 const session_requirements_lists = [
   { label: "Practice admin", value: "Practice admin" },
   { label: "Telephone triage", value: "Telephone triage" },
   { label: "Home visits", value: "Home visits" }
-]
+];
 const session_amendment_list = [
   {
     label: "Change job rate",
@@ -573,7 +611,7 @@ const session_amendment_list = [
     label: "Other",
     value: "other"
   }
-]
+];
 export default {
   components: {
     AppInput,
@@ -586,7 +624,8 @@ export default {
   },
   mixins: [clickaway],
   props: ["job"],
-  data () {
+
+  data() {
     return {
       banksCount: 0,
       loading: false,
@@ -646,6 +685,8 @@ export default {
         session_structure_information: "",
         extra_information: "",
         rate: "",
+        hours: "",
+        minutes: "",
         total_hours: "",
         locum_detail_rate_type_id: 1,
         ir35: false,
@@ -671,106 +712,107 @@ export default {
       formError: [],
       show_saturday: false,
       show_sunday: false
-    }
+    };
   },
+
   computed: {
-    hasBanks () {
-      return this.banksCount > 0 ? true : false
+    hasBanks() {
+      return this.banksCount > 0 ? true : false;
     },
-    authPermissions () {
-      return this.$store.getters["permissions"]
+    authPermissions() {
+      return this.$store.getters["permissions"];
     },
     google: gmapApi,
-    latLang () {
-      return this.job.platform_job.practice.surgery.address.coordinates
+    latLang() {
+      return this.job.platform_job.practice.surgery.address.coordinates;
     },
-    selectedProfessionCategoryId () {
+    selectedProfessionCategoryId() {
       return this.selectedProfession &&
         this.selectedProfession.profession_category &&
         this.selectedProfession.profession_category.id
         ? this.selectedProfession.profession_category.id.toString()
-        : null
+        : null;
     }
   },
   watch: {
-    "form.profession_id" (newValue, oldValue) {
+    "form.profession_id"(newValue, oldValue) {
       if (newValue && this.professions_categories.length > 0) {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == newValue
-        )
+        );
         if (this.selectedProfession.profession_category.id == 1) {
-          this.compliances = this.gp_compliance_documents_lists
+          this.compliances = this.gp_compliance_documents_lists;
         } else if (this.selectedProfession.profession_category.id == 2) {
-          this.compliances = this.others_compliance_documents_lists
+          this.compliances = this.others_compliance_documents_lists;
         }
       }
       if (newValue && oldValue) {
-        this.form.compliance_document_id = []
-        this.form.qualification_id = []
+        this.form.compliance_document_id = [];
+        this.form.qualification_id = [];
       }
     },
-    "form.date_end" (value) {
-      let end = this.$moment(value, "YYYY-MM-DD")
-      let days = []
-      let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
+    "form.date_end"(value) {
+      let end = this.$moment(value, "YYYY-MM-DD");
+      let days = [];
+      let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD");
       while (startDay <= end) {
-        days.push(startDay.day())
-        startDay = startDay.clone().add(1, "d")
+        days.push(startDay.day());
+        startDay = startDay.clone().add(1, "d");
       }
-      this.getListofDays(days)
+      this.getListofDays(days);
     },
-    session_amendment (value) {
+    session_amendment(value) {
       if (value !== "other") {
-        this.form.update_remarks = value
+        this.form.update_remarks = value;
       }
     },
-    "form.date_start" (value) {
-      let start = this.$moment(value, "YYYY-MM-DD")
-      let days = []
-      let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
+    "form.date_start"(value) {
+      let start = this.$moment(value, "YYYY-MM-DD");
+      let days = [];
+      let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD");
       while (endDay >= start) {
-        days.push(endDay.day())
-        endDay = endDay.clone().subtract(1, "d")
+        days.push(endDay.day());
+        endDay = endDay.clone().subtract(1, "d");
       }
-      this.getListofDays(days)
+      this.getListofDays(days);
     },
-    "form.rate" () {
-      this.validateNumber(this.form.rate, "rate")
+    "form.rate"() {
+      this.validateNumber(this.form.rate, "rate");
     },
-    "form.total_hours" () {
-      this.validateNumber(this.form.total_hours, "total_hours")
+    "form.total_hours"() {
+      this.validateNumber(this.form.total_hours, "total_hours");
     }
   },
-  created () {
+  created() {
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
-      this.practice_lists = []
+      this.practice_lists = [];
       res.data.practices.forEach(item => {
-        this.practice_lists.push({ label: item.surgery.name, value: item.id })
-      })
-    })
+        this.practice_lists.push({ label: item.surgery.name, value: item.id });
+      });
+    });
     this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-      this.rate_lists = []
+      this.rate_lists = [];
       res.data.locum_detail_rate_types.forEach(item => {
-        this.rate_lists.push({ label: item.name, value: item.id })
-      })
-    })
+        this.rate_lists.push({ label: item.name, value: item.id });
+      });
+    });
     this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = []
+      this.shifts = [];
       res.data.shifts.forEach(item => {
-        this.shifts.push({ label: item.name, value: item.id })
-      })
-    })
+        this.shifts.push({ label: item.name, value: item.id });
+      });
+    });
 
     this.$axios.$get(`/api/v1/professions`).then(res => {
-      this.professions = []
+      this.professions = [];
       res.data.professions.forEach(item => {
-        this.professions.push({ label: item.name, value: item.id })
-        this.professions_categories.push(item)
-      })
+        this.professions.push({ label: item.name, value: item.id });
+        this.professions_categories.push(item);
+      });
 
       this.selectedProfession = this.professions_categories.find(
         item => item.id == this.job.platform_job.profession.id
-      )
+      );
       this.$axios
         .$get(`/api/v1/practice/locums/count`, {
           params: {
@@ -780,9 +822,9 @@ export default {
           }
         })
         .then(res => {
-          this.banksCount = res.data.count
-        })
-    })
+          this.banksCount = res.data.count;
+        });
+    });
 
     this.$axios.$get(`/api/v1/me`).then(res => {
       res.data.user.practice_detail.practice.mandatory_trainings.forEach(
@@ -790,84 +832,88 @@ export default {
           this.mandatory_training_lists.push({
             label: item.name,
             value: item.id
-          })
+          });
         }
-      )
+      );
       res.data.user.practice_detail.practice.gp_compliance_documents.forEach(
         item => {
           this.gp_compliance_documents_lists.push({
             label: item.name,
             value: item.id
-          })
+          });
         }
-      )
+      );
       res.data.user.practice_detail.practice.others_compliance_documents.forEach(
         item => {
           this.others_compliance_documents_lists.push({
             label: item.name,
             value: item.id
-          })
+          });
         }
-      )
-    })
-    this.form.practice_id = this.job.platform_job.practice.id
-    this.form.title = this.job.title
-    this.form.description = this.job.description
-    this.form.report_to = this.job.platform_job.report_to
-    this.form.email = this.job.platform_job.email
-    this.form.phone_number = this.job.platform_job.practice.phone_number
-    this.form.extra_information = this.job.platform_job.extra_information
-    this.form.is_another_doctor = this.job.platform_job.is_another_doctor
-    this.form.is_nurse_available = this.job.platform_job.is_nurse_available
-    this.form.number_of_patients = this.job.platform_job.number_of_patients
-    this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment
-    this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots
-    this.form.session_structure_information = this.job.platform_job.session_structure_information
-    this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
-    this.form.rate = this.job.rate
-    this.form.total_hours = this.job.total_hours
+      );
+    });
+    this.form.practice_id = this.job.platform_job.practice.id;
+    this.form.title = this.job.title;
+    this.form.description = this.job.description;
+    this.form.report_to = this.job.platform_job.report_to;
+    this.form.email = this.job.platform_job.email;
+    this.form.phone_number = this.job.platform_job.practice.phone_number;
+    this.form.extra_information = this.job.platform_job.extra_information;
+    this.form.is_another_doctor = this.job.platform_job.is_another_doctor;
+    this.form.is_nurse_available = this.job.platform_job.is_nurse_available;
+    this.form.number_of_patients = this.job.platform_job.number_of_patients;
+    this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment;
+    this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots;
+    this.form.session_structure_information = this.job.platform_job.session_structure_information;
+    this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id;
+    this.form.rate = this.job.rate;
+    this.form.total_hours = this.job.total_hours;
+
+    this.form.hours = Math.floor(this.form.total_hours / 60);
+    this.form.minutes = this.form.total_hours % 60;
+
     if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
-      this.unpaid_breaks = false
+      this.unpaid_breaks = false;
     } else if (
       ![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)
     ) {
-      this.unpaid_breaks = "other"
-      this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes
+      this.unpaid_breaks = "other";
+      this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes;
     } else {
-      this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes
+      this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes;
     }
 
-    this.form.ir35 = this.job.platform_job.ir35
+    this.form.ir35 = this.job.platform_job.ir35;
     this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(
       item => item.id
-    )
+    );
     this.form.compliance_document_id = this.job.platform_job.compliance_documents.map(
       item => item.id
-    )
-    this.form.date_start = this.job.date_start
-    this.form.date_end = this.job.date_end
-    this.form.time_start = this.job.time_start
-    this.form.time_end = this.job.time_end
-    this.form.shift_id = this.job.shift.id
+    );
+    this.form.date_start = this.job.date_start;
+    this.form.date_end = this.job.date_end;
+    this.form.time_start = this.job.time_start;
+    this.form.time_end = this.job.time_end;
+    this.form.shift_id = this.job.shift.id;
 
-    this.form.include_saturday = this.job.include_saturday
-    this.form.include_sunday = this.job.include_sunday
+    this.form.include_saturday = this.job.include_saturday;
+    this.form.include_sunday = this.job.include_sunday;
 
-    this.form.auto_assign_at = this.job.platform_job.auto_assign_at
+    this.form.auto_assign_at = this.job.platform_job.auto_assign_at;
     if (this.form.auto_assign_at) {
-      this.auto_assign_job = true
+      this.auto_assign_job = true;
     }
 
     if (this.job.selection_date) {
       this.selection_date.date = this.$moment(
         this.job.selection_date,
         "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-      ).format("YYYY-MM-DD")
+      ).format("YYYY-MM-DD");
       this.selection_date.time = this.$moment(
         this.job.selection_date,
         "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-      ).format("HH:mm")
-      this.selection_notification = true
+      ).format("HH:mm");
+      this.selection_notification = true;
     }
 
     if (
@@ -876,134 +922,150 @@ export default {
         "seconds"
       ) > 0
     ) {
-      this.bank_first = true
+      this.bank_first = true;
       this.favorite_only_until.date = this.$moment(
         this.job.platform_job.favorite_only_until,
         "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-      ).format("YYYY-MM-DD")
+      ).format("YYYY-MM-DD");
       this.favorite_only_until.time = this.$moment(
         this.job.platform_job.favorite_only_until,
         "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-      ).format("HH:mm")
+      ).format("HH:mm");
     } else if (
       this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
         this.job.platform_job.favorite_only_until,
         "seconds"
       ) <= 0
     ) {
-      this.bank_only = true
+      this.bank_only = true;
     }
 
-    this.form.update_remarks = this.job.update_remarks
+    this.form.update_remarks = this.job.update_remarks;
     if (
       this.session_amendment_list
         .map(items => items.value)
         .includes(this.job.update_remarks)
     ) {
-      this.session_amendment = this.job.update_remarks
+      this.session_amendment = this.job.update_remarks;
     } else if (
       !this.session_amendment_list
         .map(items => items.value)
         .includes(this.job.update_remarks)
     ) {
-      this.session_amendment = "other"
+      this.session_amendment = "other";
     }
 
     if (this.job.platform_job.session_requirements === "") {
-      this.form.session_requirements = []
+      this.form.session_requirements = [];
     } else {
       this.form.session_requirements = this.job.platform_job
         .session_requirements
         ? this.job.platform_job.session_requirements.split(",")
-        : []
+        : [];
     }
 
     this.job.platform_job.qualifications.forEach(qualication => {
       this.form.qualification_id.push({
         label: qualication.name,
         value: qualication.id
-      })
-    })
+      });
+    });
 
     this.job.platform_job.clinical_systems.forEach(clinicalSystem => {
       this.form.clinical_system_id.push({
         label: clinicalSystem.name,
         value: clinicalSystem.id
-      })
-    })
+      });
+    });
 
     this.job.platform_job.spoken_languages.forEach(spokenLanguage => {
       this.form.spoken_language_id.push({
         label: spokenLanguage.name,
         value: spokenLanguage.id
-      })
-    })
+      });
+    });
 
-    this.form.profession_id = this.job.platform_job.profession.id
+    this.form.profession_id = this.job.platform_job.profession.id;
     if (this.job.type === "Platform") {
       if (this.job.platform_job.profession.name === "GP") {
-        this.compliances = this.gp_compliance_documents_lists
+        this.compliances = this.gp_compliance_documents_lists;
       }
       if (this.job.platform_job.profession.name !== "GP") {
-        this.compliances = this.others_compliance_documents_lists
+        this.compliances = this.others_compliance_documents_lists;
       }
     }
     if (this.job.type === "Private") {
       if (this.job.private_job.profession.name === "GP") {
-        this.compliances = this.gp_compliance_documents_lists
+        this.compliances = this.gp_compliance_documents_lists;
       }
       if (this.job.private_job.profession.name !== "GP") {
-        this.compliances = this.others_compliance_documents_lists
+        this.compliances = this.others_compliance_documents_lists;
       }
     }
   },
   methods: {
-    handleKeyDownEventLimit (e, formField, limit) {
-      if (this.form[formField].length >= limit && e.key !== "Backspace") {
-        e.preventDefault()
+    hasValue(value, field) {
+      if (value == 0) {
+        this.form[field] = ""
       }
     },
-    goToProfile () {
-      window.open("/profile", "_blank")
+    handleKeyDownEvent(e, formField, limit) {
+      let acceptedKeys = [
+        "Backspace",
+        "Tab",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight"
+      ];
+      if (
+        this.form[formField].length >= limit &&
+        !acceptedKeys.includes(e.key)
+      ) {
+        e.preventDefault();
+      }
     },
-    getListofDays (days) {
+    goToProfile() {
+      window.open("/profile", "_blank");
+    },
+    getListofDays(days) {
       if (days.includes(6) && days.length > 1) {
-        this.show_saturday = true
-        this.form.include_saturday = true
+        this.show_saturday = true;
+        this.form.include_saturday = true;
       } else if (days.includes(6) && days.length === 1) {
-        this.show_saturday = false
-        this.form.include_saturday = true
+        this.show_saturday = false;
+        this.form.include_saturday = true;
       } else if (!days.includes(6)) {
-        this.show_saturday = false
-        this.form.include_saturday = false
+        this.show_saturday = false;
+        this.form.include_saturday = false;
       }
       if (days.includes(0) && days.length > 1) {
-        this.show_sunday = true
-        this.form.include_sunday = true
+        this.show_sunday = true;
+        this.form.include_sunday = true;
       } else if (days.includes(0) && days.length === 1) {
-        this.show_sunday = false
-        this.form.include_sunday = true
+        this.show_sunday = false;
+        this.form.include_sunday = true;
       } else if (!days.includes(0)) {
-        this.show_sunday = false
-        this.form.include_sunday = false
+        this.show_sunday = false;
+        this.form.include_sunday = false;
       }
       if (days.length === 2 && days.includes(0) && days.includes(6)) {
-        this.show_saturday = false
-        this.show_sunday = false
-        this.form.include_saturday = true
-        this.form.include_sunday = true
+        this.show_saturday = false;
+        this.show_sunday = false;
+        this.form.include_saturday = true;
+        this.form.include_sunday = true;
       }
     },
-    uncheckMandatory (value) {
+    uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
-      )
+      );
     },
-    validateNumber (value, fieldName) {
+    validateNumber(value, fieldName) {
       let displayFieldName =
         fieldName.charAt(0).toUpperCase() +
-        fieldName.slice(1).replace(/_/g, " ")
-      let index = this.formError.findIndex(item => item.field === fieldName)
+        fieldName.slice(1).replace(/_/g, " ");
+      let index = this.formError.findIndex(item => item.field === fieldName);
       if (
         parseInt(value) < 1 ||
         value.toString().includes("e") ||
@@ -1012,22 +1074,22 @@ export default {
         this.formError.push({
           field: fieldName,
           message: `${displayFieldName} is invalid`
-        })
+        });
       } else {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
     },
-    validateUpdate () {
+    validateUpdate() {
       if (this.job.status === "Applied") {
-        this.modal = true
+        this.modal = true;
       } else if (this.job.status !== "Applied") {
-        this.save()
+        this.save();
       }
     },
-    save () {
-      this.modal = false
+    save() {
+      this.modal = false;
 
-      this.formError = []
+      this.formError = [];
 
       let notRequired = [
         "extra_information",
@@ -1043,18 +1105,20 @@ export default {
         "bank_only",
         "auto_assign_at",
         "session_requirements",
-        "session_structure_information"
-      ]
+        "session_structure_information",
+        "hours",
+        "minutes"
+      ];
 
       if (!this.hasBanks) {
-        this.bank_only = false
-        this.bank_first = false
-        this.favorite_only_until.date = null
-        this.favorite_only_until.time = null
+        this.bank_only = false;
+        this.bank_first = false;
+        this.favorite_only_until.date = null;
+        this.favorite_only_until.time = null;
       }
 
       if (!["Allocated", "Applied"].includes(this.job.status)) {
-        notRequired.push("update_accepted_until")
+        notRequired.push("update_accepted_until");
       }
 
       if (
@@ -1062,94 +1126,126 @@ export default {
           this.unpaid_breaks
         )
       ) {
-        notRequired.push("unpaid_breaks_in_minutes")
+        notRequired.push("unpaid_breaks_in_minutes");
       }
 
       if (["true", true].includes(this.auto_assign_job)) {
-        this.selection_notification = false
+        this.selection_notification = false;
       }
 
       if (["false", false].includes(this.selection_notification)) {
-        notRequired.push("selection_date")
+        notRequired.push("selection_date");
       } else if (
         ["true", true].includes(this.selection_notification) &&
         this.selection_date.date &&
         this.selection_date.time
       ) {
-        notRequired.push("selection_date")
+        notRequired.push("selection_date");
       }
 
       if (["true", true].includes(this.bank_only)) {
-        this.bank_first = false
+        this.bank_first = false;
       }
 
       if (["false", false].includes(this.bank_first)) {
-        notRequired.push("favorite_only_until")
+        notRequired.push("favorite_only_until");
       } else if (
         ["true", true].includes(this.bank_first) &&
         this.favorite_only_until.date &&
         this.favorite_only_until.time
       ) {
-        notRequired.push("favorite_only_until")
+        notRequired.push("favorite_only_until");
       }
 
-      this.validateNumber(this.form.rate, "rate")
-      this.validateNumber(this.form.total_hours, "total_hours")
-      this.Validate(this.form, notRequired)
+      if (
+        [0, "0"].includes(this.form.hours) &&
+        [0, "0"].includes(this.form.minutes)
+      ) {
+        this.formError.push({
+          field: "minutes",
+          message: "Minutes is required"
+        });
+        this.formError.push({
+          field: "hours",
+          message: "Hours is required"
+        });
+      } else {
+        this.form.hours = !this.form.hours ? 0 : this.form.hours 
+        this.form.minutes = !this.form.minutes ? 0 : this.form.minutes 
+        this.form.total_hours =
+          this.form.hours * 60 + parseInt(this.form.minutes);
+      }
+
+      this.validateNumber(this.form.rate, "rate");
+      this.Validate(this.form, notRequired);
+      !this.form.hours ? (this.form.hours = 0) : this.form.hours;
+      if (
+        parseInt(this.form.hours) === 0 &&
+        this.form.minutes &&
+        parseInt(this.form.minutes) === 0
+      ) {
+        this.formError.push({
+          field: "minutes",
+          message: "Minutes is invalid"
+        });
+      } else {
+        this.form.total_hours =
+          this.form.hours * 60 + parseInt(this.form.minutes);
+      }
       if (!this.formError.length) {
-        this.selectedClinicalSystem = [...this.form.clinical_system_id]
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
-        )
-        this.selectedQualification = [...this.form.qualification_id]
+        );
+        this.selectedQualification = [...this.form.qualification_id];
         this.form.qualification_id = this.form.qualification_id.map(
           item => item.value
-        )
-        this.selectedSpokenLanguage = [...this.form.spoken_language_id]
+        );
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
-        )
+        );
 
         this.form.date_start = this.$moment(
           this.form.date_start,
           "YYYY-MM-DD"
-        ).format("YYYY-MM-DD")
+        ).format("YYYY-MM-DD");
         this.form.date_end = this.$moment(
           this.form.date_end,
           "YYYY-MM-DD"
-        ).format("YYYY-MM-DD")
+        ).format("YYYY-MM-DD");
 
         if (Array.isArray(this.form.session_requirements)) {
           if (this.form.session_requirements.length === 1) {
-            this.form.session_requirements = this.form.session_requirements[0]
+            this.form.session_requirements = this.form.session_requirements[0];
           } else if (this.form.session_requirements.length > 0) {
-            this.form.session_requirements = this.form.session_requirements.join()
+            this.form.session_requirements = this.form.session_requirements.join();
           } else if (this.form.session_requirements.length === 0) {
-            this.form.session_requirements = ""
+            this.form.session_requirements = "";
           }
         }
 
-        this.form.auto_assign_at = null
+        this.form.auto_assign_at = null;
         if (["true", true].includes(this.auto_assign_job)) {
-          this.form.auto_assign_at = "1970-01-01 00:00"
+          this.form.auto_assign_at = "1970-01-01 00:00";
         }
 
-        this.form.selection_date = null
+        this.form.selection_date = null;
         if (["false", false].includes(this.auto_assign_job)) {
           if (["true", true].includes(this.selection_notification)) {
             this.form.selection_date = `${this.$moment(
               this.selection_date.date,
               "YYYY-MM-DD"
-            ).format("YYYY-MM-DD")} ${this.selection_date.time}`
+            ).format("YYYY-MM-DD")} ${this.selection_date.time}`;
           }
         }
 
-        this.form.favorite_only_until = null
+        this.form.favorite_only_until = null;
         if (["true", true].includes(this.bank_first)) {
           this.form.favorite_only_until = `${this.$moment(
             this.favorite_only_until.date,
             "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
+          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
         }
         if (["true", true].includes(this.bank_only)) {
           this.form.favorite_only_until = `${this.$moment(
@@ -1157,23 +1253,23 @@ export default {
             "YYYY-MM-DD"
           )
             .add(1, "days")
-            .format("YYYY-MM-DD HH:mm")}`
+            .format("YYYY-MM-DD HH:mm")}`;
         }
 
         if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
-          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
+          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
         }
         if (this.unpaid_breaks === "other") {
-          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
+          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
         }
         if (["false", false].includes(this.unpaid_breaks)) {
-          this.form.unpaid_breaks_in_minutes = ""
+          this.form.unpaid_breaks_in_minutes = "";
         }
         this.form.ir35 =
           this.selectedProfession.profession_category.id === 1
             ? this.form.ir35
-            : false
-        this.loading = true
+            : false;
+        this.loading = true;
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
@@ -1181,48 +1277,48 @@ export default {
               enabled: true,
               status: "success",
               text: ["Successfully updated job"]
-            })
+            });
             this.$emit("updateJob", {
               newJob: res.data.new_job,
               oldJob: res.data.job
-            })
+            });
           })
           .catch(err => {
-            console.log("err", err.response || err)
-            this.form.clinical_system_id = this.selectedClinicalSystem
-            this.form.qualification_id = this.selectedQualification
-            this.form.spoken_language_id = this.selectedSpokenLanguage
+            console.log("err", err.response || err);
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
 
             this.form.session_requirements = this.form.session_requirements
               ? this.form.session_requirements.split(",")
-              : []
+              : [];
 
             if (err.response.status === 500) {
               this.formError.push({
                 field: err.response.statusText,
                 message: "Please check your inputs"
-              })
+              });
             } else if (err.response.status === 400) {
               this.formError.push({
                 field: "date_start",
                 message: err.response.data.message
-              })
+              });
               this.formError.push({
                 field: "date_end",
                 message: err.response.data.message
-              })
+              });
             } else {
-              this.formError = err.response.data.error_messages
+              this.formError = err.response.data.error_messages;
             }
-            throw err
+            throw err;
           })
           .finally(() => {
-            this.loading = false
-          })
+            this.loading = false;
+          });
       } else {
-        this.$emit("scrollToTop")
+        this.$emit("scrollToTop");
       }
     }
   }
-}
+};
 </script>

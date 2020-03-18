@@ -39,6 +39,7 @@
               :name="'date_start'"
               :label="'From'"
               :error="this.formError.find(item => item.field === 'date_start')"
+              isAfter
             />
             <!-- isAfter -->
           </div>
@@ -57,6 +58,7 @@
               :label="'To'"
               :start-date="form.date_start"
               :error="this.formError.find(item => item.field === 'date_end')"
+              isAfter
             />
             <!-- isAfter -->
           </div>
@@ -453,9 +455,9 @@ export default {
                 jobPartsResponse.data.job_parts.length > 0
                   ? jobPartsResponse.data.job_parts
                   : []
-
               if (jobParts && jobParts.length > 0) {
                 jobParts.forEach(jobPart => {
+                  
                   if (jobPart.locum_status === "Ongoing") {
                     this.$store.commit(
                       "jobs/ADD_LOCUM_ONGOING_JOB_PART",
@@ -475,8 +477,18 @@ export default {
             if (job.locum_status === "Allocated") {
               this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", job)
             }
-          }
 
+            if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
+              const privateResponse = await this.getJobParts(job.id)
+              const privateJobParts =
+                privateResponse.data &&
+                privateResponse.data.job_parts &&
+                privateResponse.data.job_parts.length > 0
+                  ? privateResponse.data.job_parts
+                  : []
+              this.$store.commit("jobs/ADD_LOCUM_PRIVATE_JOB_PARTS", privateJobParts)
+            }
+          }
           this.$emit("close")
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
