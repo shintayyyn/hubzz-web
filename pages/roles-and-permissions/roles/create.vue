@@ -158,6 +158,27 @@ export default {
 			});
 			this.setPermissions(categories);
 		},
+		setHierarchy(permission) {
+			console.log("permission", permission);
+			let subCategories = [];
+			permission.forEach(item => {
+				item.permissions.forEach(item => {
+					let foundCategory = subCategories.find(
+						categ => categ.subcategory === item.subcategory
+					);
+					if (!foundCategory) {
+						subCategories.push({
+							category: item.category,
+							subcategory: item.subcategory,
+							permissions: [item]
+						});
+					} else {
+						console.log("foundCategory", foundCategory);
+					}
+				});
+			});
+			console.log(subCategories);
+		},
 		setPermissions(categories) {
 			this.permissions.forEach(permission => {
 				let foundCategory = categories.find(
@@ -166,6 +187,7 @@ export default {
 				foundCategory.permissions.push(permission);
 			});
 			this.permissions = categories;
+			this.setHierarchy(categories);
 		},
 		isChecked(permissions) {
 			return !permissions.map(item => item.done).includes(false);

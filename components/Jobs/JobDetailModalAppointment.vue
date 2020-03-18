@@ -10,7 +10,7 @@
     />
     <div class="flex flex-col items-start p-4 md:p-8 w-full">
       <nuxt-link
-        :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name)? '/dashboard' : '/jobs', query: {...$route.query}}"
+        :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ?  '' : {...$route.query}}"
         class="cursor-pointer"
       >
         <svgicon name="left-arrow" height="32" width="32" />
