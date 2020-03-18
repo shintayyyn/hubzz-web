@@ -318,6 +318,10 @@ export default {
           dataIndex: "job_part_number"
         },
         {
+          name: "Job Title",
+          dataIndex: "job_title"
+        },
+        {
           name: "£ Amount",
           dataIndex: "total_amount",
           class: "text-center currency",

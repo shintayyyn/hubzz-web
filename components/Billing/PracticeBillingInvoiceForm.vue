@@ -160,7 +160,6 @@
                       class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
                       :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
-                      @focus="hasValue(form.hours, 'hours')"
                       @blur="!form.hours ? form.hours = 0 : form.hours"
                     />
                     <label for="hours" class="text-xs md:text-sm">hours</label>
@@ -176,7 +175,6 @@
                       max="60"
                       :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
-                      @focus="hasValue(form.minutes, 'minutes')"
                       @blur="!form.minutes ? form.minutes = 0 : form.minutes"
                     />
                     <label for="minutes" class="text-xs md:text-sm">minutes</label>
@@ -207,6 +205,51 @@
         </div>
       </div>
 
+      <!-- SUB TOTAL -->
+      <div class="flex flex-col">
+        <div
+          v-if="propInvoice && propInvoice.ir35 && propInvoice.paid"
+          :ref="'items-sub-total'"
+          class="flex justify-between md:m-2 text-lg px-3 pt-3"
+        >
+          <span class="w-3/4 font-bold">Subtotal</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{ subTotal | currency }}</div>
+          </div>
+        </div>
+        <div
+          v-if="propInvoice && propInvoice.ir35 && propInvoice.paid"
+          :ref="'items-ni-total'"
+          class="flex justify-between md:mx-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">NI amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right text-sm">£</div>
+            <div class="w-full text-right text-sm">{{ propInvoice.ni_amount | currency }}</div>
+          </div>
+        </div>
+        <div
+          v-if="propInvoice && propInvoice.ir35 && propInvoice.paid"
+          :ref="'items-paye-total'"
+          class="flex justify-between md:mx-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right text-sm">£</div>
+            <div class="w-full text-right text-sm">{{ propInvoice.paye_amount | currency }}</div>
+          </div>
+        </div>
+        <!-- ITEMS TOTAL -->
+        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3 py-2">
+          <span class="w-3/4 font-bold">Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{ total_amount | currency }}</div>
+          </div>
+        </div>
+      </div>
+
       <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
         <div class="w-full md:w-1/2 pr-1">
           <AppDate
@@ -228,7 +271,7 @@
         </div>
       </div>
 
-      <div :ref="'items-total'" class="flex justify-between m-2 px-2">
+      <!-- <div :ref="'items-total'" class="flex justify-between m-2 px-2">
         <span class="font-bold">Total</span>
         <div>
           <div class="flex justify-end">
@@ -237,10 +280,9 @@
               class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
             >{{ formError.find(item => item.field === 'total_amount').message }}</div>
           </div>
-          <!-- £ {{form.total_amount | currency}} -->
           £ {{ total_amount | currency }}
         </div>
-      </div>
+      </div>-->
 
       <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div
@@ -329,25 +371,7 @@ export default {
   },
   computed: {
     subTotal() {
-      return this.form.items && this.form.items.length > 0
-        ? this.form.items[0].total
-        : 0;
-    },
-    totalAmount() {
-      let total;
-      if (this.form.items && this.form.items.length > 0) {
-        total = this.form.items[0].total;
-        if (this.propInvoice) {
-          total =
-            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
-        }
-        return total;
-      }
-      return 0;
-    },
-    total_amount() {
-      let hours =
-        this.form.items.length > 0 ? this.form.items[0].final_hours : 0;
+      let hours = this.form.hours * 60 + this.form.minutes;
 
       let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
         .name;
@@ -366,22 +390,60 @@ export default {
       }
       return total;
     },
+    totalAmount() {
+      let total;
+      if (this.form.items && this.form.items.length > 0) {
+        total = this.form.items[0].total;
+        if (this.propInvoice) {
+          total =
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+        }
+        return total;
+      }
+      return 0;
+    },
+    total_amount() {
+      // let hours =
+      //   this.form.items.length > 0 ? this.form.items[0].final_hours : 0;
+
+      let hours = this.form.hours * 60 + this.form.minutes;
+
+      let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+        .name;
+      let total = 0;
+      switch (type) {
+        case "Per Hour":
+          total = this.propInvoice.items[0].job_part.job.rate * hours;
+          break;
+        case "Per Half Day Session":
+        case "Per Whole Day Session":
+          total =
+            (this.propInvoice.items[0].job_part.job.rate /
+              this.propInvoice.items[0].job_part.job.total_hours) *
+            hours;
+          break;
+      }
+      if (this.propInvoice.status === "Paid") {
+        total =
+          total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+      }
+      return total;
+    },
     description() {
-      // let hours = Math.floor(this.form.items[0].final_hours / 60);
-      // let minutes = Math.floor(this.form.items[0].final_hours % 60);
-      let hours = this.form.hours;
-      let minutes = this.form.minutes;
+      console.log(this.form.hours);
       let hour =
-        hours > 0
-          ? `${hours > 0 ? hours : ""} ${hours > 1 ? "hours" : "hour"}`
-          : "";
+        parseInt(this.form.hours) === 0 || this.form.hours === ""
+          ? ""
+          : parseInt(this.form.hours) > 1
+          ? "hours"
+          : "hour";
       let minute =
-        minutes > 0
-          ? `${minutes > 0 ? minutes : ""} ${
-              minutes > 1 ? "minutes" : "minute"
-            }`
-          : "";
-      let totalHours = `${hour} ${minute}`;
+        parseInt(this.form.minutes) === 0 || this.form.minutes === ""
+          ? ""
+          : this.form.minutes > 1
+          ? "minutes"
+          : "minute";
+      let hasAnd = hour > 0 ? true : false;
       return `Job number ${
         this.propInvoice.items[0].job_part.job_part_number
       } ${this.propInvoice.items[0].job_part.job.type}
@@ -389,9 +451,11 @@ export default {
         this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
       }
         from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
-        / ${
-          this.propInvoice.items[0].job_part.job.shift.name
-        } / Total hours of  ${this.form.items.length > 0 ? totalHours : 0}`;
+        / ${this.propInvoice.items[0].job_part.job.shift.name} / Total of ${
+        this.form.hours > 0 ? this.form.hours : ""
+      } ${hour} ${hasAnd ? "and" : ""} ${
+        this.form.minutes > 0 ? this.form.minutes : ""
+      } ${minute}`;
     },
     total() {
       let hours =
@@ -451,21 +515,24 @@ export default {
       this.form.date_start = this.propInvoice.date_start;
       this.form.date_end = this.propInvoice.date_end;
 
+      // Per Hour = (Final Hours + (Final Minutes / 60)) * Rate
+      // Per Session = (Total Hours + (Total Minutes / 60)) / Rate * (Final Hours + (Final Minutes / 60))
+
       let total =
         this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
         "Per Hour"
           ? this.propInvoice.items[0].job_part.job.rate *
-            this.propInvoice.items[0].job_part.final_hours
+            (this.propInvoice.items[0].job_part.final_hours / 60)
           : (this.propInvoice.items[0].job_part.job.rate /
-              this.propInvoice.items[0].job_part.job.total_hours) *
-            this.propInvoice.items[0].job_part.final_hours;
+              (this.propInvoice.items[0].job_part.job.total_hours / 60)) *
+            (this.propInvoice.items[0].job_part.final_hours / 60);
 
       this.form.items = [
         {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          total: total,
           dispute: this.propInvoice.items[0].disputed,
           approve: this.propInvoice.items[0].approved,
           absent_days: this.propInvoice.items[0].absent_days,

@@ -42,7 +42,7 @@ export default {
 
       const job_part =
         response.data && response.data.job_part ? response.data.job_part : null;
-
+      console.log(job_part);
       return {
         invoice_detail,
         job_part
