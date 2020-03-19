@@ -851,12 +851,14 @@ export default {
             this.form.clinical_system_id = this.selectedClinicalSystem;
             this.form.qualification_id = this.selectedQualification;
             this.form.spoken_language_id = this.selectedSpokenLanguage;
-            window.location.reload()
+            // window.location.reload()
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
             });
+            this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
+            this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
             this.CheckUserVerification();
           })
           .catch(err => {
