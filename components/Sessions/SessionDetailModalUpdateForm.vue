@@ -527,7 +527,7 @@
             v-model="form.compliance_document_id"
             :type="'multi-checkbox'"
             :name="'compliance_document_id'"
-            :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
+            :label="`${complianceListLabel}`"
             :placeholder="''"
             :lists="compliances"
             :disabled="job.status === 'Allocated'"
@@ -723,6 +723,9 @@ export default {
     },
     authPermissions() {
       return this.$store.getters["permissions"];
+    },
+    complianceListLabel() {
+      return `For ${this.selectedProfession.profession_compliance_category_name}:`;
     },
     google: gmapApi,
     latLang() {

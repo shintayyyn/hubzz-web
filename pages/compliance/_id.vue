@@ -41,14 +41,14 @@
               <p class="mt-5 font-bold text-lg">Date uploaded</p>
               <p
                 class="mt-2 text-sm md:text-base"
-              >{{compliance_document.file ? $moment(compliance_document.file.created_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+              >{{compliance_document.file ? $moment(compliance_document.file.created_at).utc().format('DD/MM/YYYY HH:mm:ss') : null}}</p>
               <p class="mt-5 font-bold text-lg">Status</p>
               <p class="mt-2 text-sm md:text-base">{{compliance_document.status}}</p>
               <div v-if="compliance_document.status === 'Approved'">
                 <p class="mt-5 font-bold text-lg">Expiration Date</p>
                 <p
                   class="mt-2 text-sm md:text-base"
-                >{{compliance_document.expired_at ? $moment(compliance_document.expired_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+                >{{compliance_document.expired_at ? $moment(compliance_document.expired_at).utc().format('DD/MM/YYYY HH:mm:ss') : null}}</p>
               </div>
               <div v-if="compliance_document.status === 'Rejected'">
                 <p class="mt-5 font-bold text-lg">Rejected At</p>

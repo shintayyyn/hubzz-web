@@ -113,7 +113,7 @@
               </div>
             </div>
             <div
-              v-if="(form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
               <div class="w-1/4 flex flex-col px-2">
@@ -179,7 +179,7 @@
               </div>
             </div>
             <div
-              v-if="(form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
               <div class="flex flex-col w-full px-2">

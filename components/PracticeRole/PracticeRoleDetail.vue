@@ -80,7 +80,7 @@
 								</div>
 								<div v-for="(item, index) in hierarchyPermissions" :key="index">
 									<template v-if="role.category === item.category">
-										<div class="w-full md:w-1/2 p-2">
+										<div class="w-full p-2">
 											<div class="flex flex-col">
 												<div class="pl-4">
 													<div

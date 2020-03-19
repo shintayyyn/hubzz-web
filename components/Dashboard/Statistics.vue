@@ -88,7 +88,6 @@ export default {
 			this.$axios
 				.$get(`/api/v1/practice/me/practice-statistics`)
 				.then(res => {
-					console.log(res.data)
 					this.statistics.push({
 						label: "My Banks",
 						value: res.data.practice_statistics.favorite_locum_count,

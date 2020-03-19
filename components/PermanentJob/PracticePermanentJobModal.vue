@@ -141,6 +141,7 @@
                   $route.name.includes('hub-surgery-management') && 
                     $auth.user.practice_detail.practice.type === 'Hub' &&
                     permanent_job.job_posting_status === 'Pending'"
+                    class="w-full"
               >
                 <AppButton
                   class="font-semibold"
@@ -152,24 +153,28 @@
                   class="font-semibold"
                   :label="'Reject'"
                   :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
-                  @click="showCancel = !showCancel"
+                  @click="showCancel = true"
                 />
-                <div v-if="showCancel === true">
-                  <p class="font-bold">
-                    Reason for Rejection 
-                  </p>
+                <div class="mt-2 w-full" v-if="showCancel === true">
                   <AppInput
                     v-if="showCancel === true"
-                    v-model="approve_or_reject.cancelled_reason"
-                    :type="'text'"
-                    :name="'cancelled_reason'"
-                    :error="formError.find(item => item.field === 'cancelled_reason')"
+                    v-model="approve_or_reject.rejection_reason"
+                    :type="'textarea'"
+                    :label="'Reason for Rejection'"
+                    :name="'rejection_reason'"
+                    :rows="3"
+                    :error="formError.find(item => item.field === 'rejection_reason')"
+                    :resize="false"
                   />
                   <AppButton
-                    class="font-semibold"
-                    :label="'Reject'"
-                    :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
+                    class="font-semibold -mt-8"
+                    :label="'Submit'"
                     @click="acceptRejectSpokePermanentJob('Rejected')"
+                  />
+                  <AppButton
+                    class="font-semibold -mt-8"
+                    :label="'Cancel'"
+                    @click="showCancel = false, formError=[]"
                   />
                 </div>
               </div>
@@ -430,7 +435,7 @@ export default {
 
 			approve_or_reject: {
 				approved_or_rejected: "",
-				cancelled_reason: ""
+				rejection_reason: ""
 			},
 			showCancel: false,
 
@@ -848,7 +853,7 @@ export default {
 
       this.approve_or_reject.approved_or_rejected = approveReject
       if(approveReject === "Approved"){
-        notRequired.push("cancelled_reason")
+        notRequired.push("rejection_reason")
       }
       this.Validate(this.approve_or_reject, notRequired)
 
