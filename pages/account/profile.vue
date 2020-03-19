@@ -113,7 +113,7 @@
             v-model="form.view_locum_jobs"
             :type="'single-checkbox'"
             :name="'view_locum_jobs'"
-            :label="'Permanent / Salaried Roles'"
+            :label="'Hubzz Jobs'"
             :error="formError.find(item => item.field === 'view_locum_jobs')"
           />
 
@@ -121,7 +121,7 @@
             v-model="form.view_permanent_jobs"
             :type="'single-checkbox'"
             :name="'view_permanent_jobs'"
-            :label="'Hubzz Jobs'"
+            :label="'Permanent / Salaried Roles'"
             :error="formError.find(item => item.field === 'view_permanent_jobs')"
           />
 
