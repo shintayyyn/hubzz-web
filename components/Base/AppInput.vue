@@ -17,20 +17,16 @@
             <div
               v-if="info"
               class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm"
-            >
-              {{ info }}
-            </div>
+            >{{ info }}</div>
             <div
               v-if="error && type.includes('checkbox')"
               class="text-red-500 text-xs px-2"
-            >
-              {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-            </div>
+            >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
           </div>
         </div>
         <template v-if="type === 'multi-checkbox'">
           <div v-if="!required" class="flex flex-row justify-start items-center mt-1">
-            <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
+            <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0" />
             <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
           </div>
           <div
@@ -45,7 +41,7 @@
               :checked="Array.isArray(value) ? value.includes(item.value) : value"
               :disabled="disabled"
               @input="inputMultiCheck"
-            >
+            />
             <label
               :for="`${name}-${index}`"
               class="text-xs sm:text-sm flex items-center"
@@ -75,15 +71,13 @@
                   @blur="$emit('blur')"
                   @keypress="type === 'number' ? isNumber($event) : $emit('keypress')"
                   @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
-                >
+                />
                 <!-- @keypress="type === 'number' ? isNumber($event) : $emit('keypress')" -->
                 <transition name="drop-down">
                   <div
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
-                  >
-                    {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-                  </div>
+                  >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
                 </transition>
               </div>
             </template>
@@ -102,7 +96,7 @@
                     @keypress.enter="$emit('submit')"
                     @blur="$emit('blur')"
                     @focus="showPasswordFocus = true"
-                  >
+                  />
                   <span
                     class="absolute top-0 right-0 h-full focus:outline-none cursor-pointer flex items-center"
                     tabindex="-1"
@@ -121,9 +115,7 @@
                   <div
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
-                  >
-                    {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-                  </div>
+                  >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
                 </transition>
               </div>
             </template>
@@ -141,18 +133,14 @@
                     @change="$emit('change', $event.target.value)"
                     @blur="$emit('blur')"
                   >
-                    <option v-if="placeholder" value disabled selected>
-                      {{ placeholder }}
-                    </option>
+                    <option v-if="placeholder" value disabled selected>{{ placeholder }}</option>
                     <option
                       v-for="(item, index) in items"
                       :key="index"
                       :value="item.value"
                       :selected="value === item.value"
                       :disabled="item.disabled"
-                    >
-                      {{ item.label }}
-                    </option>
+                    >{{ item.label }}</option>
                   </select>
                   <span class="absolute right-0 h-full" :class="disabled ? 'text-gray-500' : ''">
                     <svgicon
@@ -166,9 +154,7 @@
                   <div
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
-                  >
-                    {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-                  </div>
+                  >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
                 </transition>
               </div>
             </template>
@@ -193,9 +179,7 @@
                     <div
                       v-if="error"
                       class="text-red-500 py-1 text-xs text-white"
-                    >
-                      {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-                    </div>
+                    >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
                   </transition>
                   <p
                     v-if="limit"
@@ -238,16 +222,14 @@
             :checked="value"
             :disabled="disabled"
             @change="$emit('input', $event.target.checked)"
-          >
+          />
           <label :for="name" class="text-xs sm:text-sm py-1 flex items-center">{{ label }}</label>
         </div>
         <transition name="drop-down">
           <div
             v-if="error"
             class="py-1 text-xs text-red-500"
-          >
-            {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-          </div>
+          >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
         </transition>
       </div>
     </template>
@@ -264,9 +246,7 @@
             <div
               v-if="error"
               class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
-            >
-              {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-            </div>
+            >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
           </transition>
         </div>
         <div class="flex flex-row justify-start mt-1">
@@ -277,7 +257,7 @@
             class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
             :class="error ? 'border-red-500':''"
             @input="$emit('input', $event.target.value)"
-          >
+          />
         </div>
       </div>
     </template>
@@ -288,16 +268,12 @@
         <div v-if="label" class="relative flex flex-row flex-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{ label }}</label>
           <div class="flex">
-            <div v-if="info" class="bg-gray-300 rounded px-4 py-1 text-xs sm:text-sm">
-              {{ info }}
-            </div>
+            <div v-if="info" class="bg-gray-300 rounded px-4 py-1 text-xs sm:text-sm">{{ info }}</div>
             <transition name="fade">
               <div
                 v-if="error"
                 class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
-              >
-                {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-              </div>
+              >{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</div>
             </transition>
           </div>
         </div>
@@ -315,7 +291,7 @@
             @input="$emit('input', $event.target.value)"
             @keypress.enter="$emit('submit')"
             @blur="$emit('blur')"
-          >
+          />
           <span class="absolute right-0 px-2 py-2 bg-white">
             <svgicon name="search" height="21" width="21" class="text-gray-500 fill-current" />
           </span>
@@ -365,49 +341,49 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       passwordValue: "",
       // show/hide password
       passwordToggle: false
-    }
+    };
   },
   computed: {
     na: {
-      get () {
-        return this.value.length === 0 ? true : false
+      get() {
+        return this.value.length === 0 ? true : false;
       },
-      set (naValue) {
+      set(naValue) {
         if (naValue) {
-          return this.$emit("uncheckAll")
+          return this.$emit("uncheckAll");
         } else if (!naValue) {
-          return this.value.length > 0 ? false : true
+          return this.value.length > 0 ? false : true;
         }
       }
     }
   },
   methods: {
     // for multi checkbox
-    inputMultiCheck (e) {
+    inputMultiCheck(e) {
       if (e.target.checked) {
-        this.$emit("checked", e.target.value)
+        this.$emit("checked", e.target.value);
       } else {
-        this.$emit("unchecked", e.target.value)
+        this.$emit("unchecked", e.target.value);
       }
     },
     // for password
-    togglePassword () {
+    togglePassword() {
       if (this.passwordToggle) {
-        return "text"
+        return "text";
       } else {
-        return "password"
+        return "password";
       }
     },
     trimmedMessage(value) {
-			return value.replace(/^\s*/, "").replace(/\s*$/, "");
-		},
+      return value.replace(/^\s*/, "").replace(/\s*$/, "");
+    },
     limitInput(e, value) {
-       let acceptedKeys = [
+      let acceptedKeys = [
         "Backspace",
         "Tab",
         "ArrowUp",
@@ -416,14 +392,14 @@ export default {
         "ArrowRight"
       ];
       if (
-        value.length >= this.limit &&
+        e.target.value.length >= this.limit &&
         !acceptedKeys.includes(e.key)
       ) {
         e.preventDefault();
       }
     }
   }
-}
+};
 </script>
 
 <style>

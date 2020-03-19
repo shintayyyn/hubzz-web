@@ -142,6 +142,7 @@
                 :name="'ni_amount'"
                 :label="'NI Amount'"
                 :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+                :limit="8"
                 :error="formError.find(item => item.field === 'ni_amount')"
               />
               <AppInput
@@ -158,6 +159,7 @@
                 :name="'paye_amount'"
                 :label="'PAYE Amount'"
                 :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+                :limit="8"
                 :error="formError.find(item => item.field === 'paye_amount')"
               />
             </template>
