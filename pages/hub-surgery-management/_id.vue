@@ -12,18 +12,18 @@
       </div>
       <div class="flex overflow-x-auto">
         <nuxt-link
-          :to="{ path: `/hub-surgery-management/${$route.params.id}` }"
+          :to="{ path: `/hub-surgery-management/${$route.params.id}`}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Surgery Profile</nuxt-link>
         <nuxt-link
-          v-if="relationshipIsActive == 'Active' "
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Sessions Job')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions` }"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-sessions' || $route.name.includes('hub-surgery-management-id-surgery-sessions-index') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Surgery Sessions</nuxt-link>
         <nuxt-link
-          v-if="relationshipIsActive == 'Active'"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Sessions Job') && authPermissions.includes('View Billings')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-billings' || $route.name.includes('hub-surgery-management-id-surgery-billings') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -35,7 +35,7 @@
           :class="$route.name === 'hub-surgery-management-id-surgery-banks' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
         >Surgery Banks</nuxt-link>
         <nuxt-link
-          v-if="relationshipIsActive == 'Active'"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Permanent Job')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
@@ -60,6 +60,9 @@ export default {
       practice_surgery: ""
     };
   },
+  created(){
+    console.log('permissions', this.authPermissions)
+  },
   async asyncData({ app, route, store, params, error }) {
     try {
       const practice_surgery_id = params.id;
@@ -77,6 +80,9 @@ export default {
     }
   },
   computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
     relationshipIsActive: function() {
       let result = "";
       if (

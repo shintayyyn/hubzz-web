@@ -14,7 +14,9 @@ export const state = () => ({
 		modal: false,
 		status: ''
 	},
-	user_deactivated_modal: false
+	user_deactivated_modal: false,
+	view_locum_jobs: false,
+	view_permanent_jobs: false
 });
 
 export const mutations = {
@@ -48,6 +50,12 @@ export const mutations = {
 	},
 	SET_USER_DEACTIVATED(state, payload) {
 		state.user_deactivated_modal = payload
+	},
+	SET_VIEW_LOCUM_JOBS(state, payload) {
+		state.view_locum_jobs = payload
+	},
+	SET_VIEW_PERMANENT_JOBS(state, payload) {
+		state.view_permanent_jobs = payload
 	}
 };
 
@@ -67,7 +75,16 @@ export const actions = {
 		//   socket_id: payload.socket_id,
 		//   room_name: payload.room_name
 		// })
-	}
+	},
+	async getViewJobsPermissions({ state, commit }, payload) {
+		await this.$axios.$get(`/api/v1/me`).then(
+			res => {
+				commit("SET_VIEW_LOCUM_JOBS", res.data.user.view_locum_jobs)
+				commit("SET_VIEW_PERMANENT_JOBS", res.data.user.view_permanent_jobs)
+			}
+		)
+
+	},
 };
 
 export const getters = {
@@ -78,6 +95,12 @@ export const getters = {
 				label: item.surgery.name
 			};
 		});
+	},
+	getViewLocumJobs(state) {
+		return state.view_locum_jobs
+	},
+	getViewPermanentJobs(state) {
+		return state.view_permanent_jobs
 	},
 	permissions(state) {
 		return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []

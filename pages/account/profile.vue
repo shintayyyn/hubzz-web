@@ -15,7 +15,7 @@
             @submit="save"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
             @keypress="inputNumberOnly($event)"
-            requiredf
+            required
           />
           <AppInput
             v-model="form.mpl_or_npl_number"
@@ -23,11 +23,9 @@
             :name="'mpl_or_npl_number'"
             :label="'MPL / NPL Number'"
             :error="formError.find(item => item.field === 'mpl_or_npl_number')"
-            :info="'For compliance; to be verified by the hubzz team'"
             @submit="save"
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
             @keypress="inputNumberOnly($event)"
-            required
           />
           <AppInput
             v-model="form.nhs_smart_card_id_number"
@@ -113,7 +111,7 @@
             v-model="form.view_locum_jobs"
             :type="'single-checkbox'"
             :name="'view_locum_jobs'"
-            :label="'Permanent / Salaried Roles'"
+            :label="'Hubzz Jobs'"
             :error="formError.find(item => item.field === 'view_locum_jobs')"
           />
 
@@ -121,7 +119,7 @@
             v-model="form.view_permanent_jobs"
             :type="'single-checkbox'"
             :name="'view_permanent_jobs'"
-            :label="'Hubzz Jobs'"
+            :label="'Permanent / Salaried Roles'"
             :error="formError.find(item => item.field === 'view_permanent_jobs')"
           />
 
@@ -769,7 +767,8 @@ export default {
         "claim_nhs",
         "max_rate_per_hour",
         "max_rate_per_half_day_session",
-        "max_rate_per_whole_day_session"
+        "max_rate_per_whole_day_session",
+        "mpl_or_npl_number"
       ];
       this.form.max_rate_per_hour = 999999999;
       this.form.max_rate_per_half_day_session = 999999999;
@@ -856,6 +855,8 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
+            this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
+            this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
             this.CheckUserVerification();
           })
           .catch(err => {

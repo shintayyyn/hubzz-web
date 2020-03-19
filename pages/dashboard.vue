@@ -25,7 +25,7 @@
 			<Calendar />
 		</div>
 		<div
-			v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_permanent_jobs))"
+			v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_locum_jobs))"
 			class="statistics-section"
 		>
 			<div class="text-sm sm:text-base font-bold pt-4">Quick Statistics</div>

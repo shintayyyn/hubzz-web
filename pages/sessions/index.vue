@@ -874,9 +874,14 @@ export default {
         jobs
       };
     } catch (err) {
-      console.log(err || err.response);
-      return error({ status: 404 });
-      // throw err;
+      if (err.response && err.response.status === 401) {
+        error(err.response.data)
+        return
+      } else {
+        console.log(err || err.response);
+        return error({ status: 404 });
+      } 
+      throw err
     }
   },
   mounted() {

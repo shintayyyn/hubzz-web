@@ -1602,6 +1602,9 @@ export default {
         let order = item.split(":")[1];
         let sorting = item.split(":")[0];
         switch (sorting) {
+          case "practice_name":
+            sorting = this.isJobPart ? "job_surgery" : "surgery"
+            break
           case "date_time_start":
             sorting = "date_start";
             break;

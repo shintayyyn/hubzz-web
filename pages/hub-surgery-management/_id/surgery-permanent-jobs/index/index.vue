@@ -219,7 +219,7 @@ export default {
 		}
   },
   
-  async asyncData ({ app, route }) {
+  async asyncData ({ app, route, error }) {
 		try {
       let response = await app.$axios.$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
 
@@ -292,13 +292,17 @@ export default {
 				params
 			}
 		} catch (err) {
-			if (err.response && err.response.status === 401) {
-        console.log('something went wrong')
-				return
-			}
-			throw err
+			 if (err.response && err.response.status === 401) {
+        error(err.response.data)
+        return
+      } else {
+        console.log(err || err.response);
+        return error({ status: 404 });
+      } 
+      throw err
 		}
   },
+  
   created (){
     this.columns =[
       ...this.defaultColumns,
@@ -359,61 +363,73 @@ export default {
 		},
     async getSurgeryPermanentJobs (params) {
       console.log('params', params)
-      await this.$axios
-        .$get("/api/v1/practice/permanent-jobs/count", { params })
-        .then(res => {
-          console.log("permanent", res)
-          this.permanent_job_count =
-            res.data && res.data.count ? res.data.count : null
-          console.log('permanent job count', res.data.count)
-        })
+      try {
+          await this.$axios
+            .$get("/api/v1/practice/permanent-jobs/count", { params })
+            .then(res => {
+              console.log("permanent", res)
+              this.permanent_job_count =
+                res.data && res.data.count ? res.data.count : null
+              console.log('permanent job count', res.data.count)
+            })
 
-      await this.$axios
-        .$get(`/api/v1/practice/permanent-jobs`, { params })
-        .then(res => {
-          this.permanent_jobs =
-            res.data && res.data.permanent_jobs
-              ? res.data.permanent_jobs
-              : null
-          console.log('permanent jobs', res.data.permanent_jobs)
-        })
-      
-      await this.$axios
-        .$get(`/api/v1/practice/permanent-job-applications/count`)
-        .then(res => {
-          this.permanent_job_applications_count =
-            res.data && res.data.count ? res.data.count : null
-          console.log('permanent applications count', res.data.count)
-        })
+          await this.$axios
+            .$get(`/api/v1/practice/permanent-jobs`, { params })
+            .then(res => {
+              this.permanent_jobs =
+                res.data && res.data.permanent_jobs
+                  ? res.data.permanent_jobs
+                  : null
+              console.log('permanent jobs', res.data.permanent_jobs)
+            })
+        
+          await this.$axios
+            .$get(`/api/v1/practice/permanent-job-applications/count`)
+            .then(res => {
+              this.permanent_job_applications_count =
+                res.data && res.data.count ? res.data.count : null
+              console.log('permanent applications count', res.data.count)
+            })
 
-      await this.$axios
-      .$get(`/api/v1/practice/permanent-job-applications`)
-      .then(res => {
-        this.permanent_job_applications =
-          res.data && res.data.permanent_job_applications
-            ? res.data.permanent_job_applications
-            : null
-        console.log('permanent applications', res.data.permanent_job_applications)
-      })
+          await this.$axios
+            .$get(`/api/v1/practice/permanent-job-applications`)
+            .then(res => {
+              this.permanent_job_applications =
+                res.data && res.data.permanent_job_applications
+                  ? res.data.permanent_job_applications
+                  : null
+              console.log('permanent applications', res.data.permanent_job_applications)
+            })
 
-      this.permanent_jobs = await this.permanent_jobs.map(permanent_job => {
-        const permanent_job_app_found = this.permanent_job_applications.find(
-          permanent_job_application =>
-            permanent_job_application.permanent_job_id === permanent_job.id
-        )
-          
-        if (permanent_job_app_found) {
-          if (this.$route.query.status) {
-            permanent_job.status = permanent_job.job_posting_status
-          } else {
-            permanent_job.status = 'Applied'
-          } 
+          this.permanent_jobs = await this.permanent_jobs.map(permanent_job => {
+            const permanent_job_app_found = this.permanent_job_applications.find(
+              permanent_job_application =>
+                permanent_job_application.permanent_job_id === permanent_job.id
+            )
+              
+            if (permanent_job_app_found) {
+              if (this.$route.query.status) {
+                permanent_job.status = permanent_job.job_posting_status
+              } else {
+                permanent_job.status = 'Applied'
+              } 
+            } else {
+              permanent_job.status = permanent_job.job_posting_status
+            }
+            console.log('permanent_job', permanent_job)
+            return permanent_job
+          })
+      } catch (err) {
+        if (err.response && err.response.status === 401) {
+          error(err.response.data)
+          return
         } else {
-          permanent_job.status = permanent_job.job_posting_status
-        }
-        console.log('permanent_job', permanent_job)
-        return permanent_job
-			})
+          console.log(err || err.response);
+          return error({ status: 404 });
+        } 
+        throw err
+      }
+      
     },
     jobClosingTag (item) {
       let closingTag = ''
