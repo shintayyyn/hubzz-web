@@ -55,6 +55,7 @@ export default {
         state.practice_account_details.vat_registered = payload.vat_registered
         state.practice_account_details.vat_number = payload.vat_number
         state.practice_account_details.tax_year_end_date = payload.tax_year_end_date
+        state.practice_account_details.referral_code = payload.referral_code
     },
     CLEAR_REGISTER_PRACTICE_FORM(state) {
         state.search_results = []
@@ -204,6 +205,7 @@ export default {
         state.credential_details.email = payload.email
         state.credential_details.password = payload.password
         state.credential_details.password_confirmation = payload.password_confirmation
+        state.credential_details.referral_code = payload.referral_code
     },
     CLEAR_FORM_ERROR_DETAILS(state) {
         state.account_detail_form_error = []

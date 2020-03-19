@@ -40,7 +40,7 @@ export default {
         }
 
         this.$axios
-            .$post(`/api/v1/register/practice?referral_code=${this.$router.app._route.query.referral_code}`, form)
+            .$post(`/api/v1/register/practice?referral_code=${state.practice_account_details.referral_code ? state.practice_account_details.referral_code.toUpperCase() : this.$router.app._route.query.referral_code}`, form)
             .then(() => {
                 commit('CLEAR_REGISTER_PRACTICE_FORM')
                 commit('CLEAR_PRACTICE_FORM_ERROR')
@@ -116,7 +116,7 @@ export default {
             spoken_language_id: state.professional_details.spoken_language_id.map(item => item.value)
         }
         this.$axios
-            .$post(`/api/v1/register/locum?referral_code=${this.$router.app._route.query.referral_code}`, form)
+            .$post(`/api/v1/register/locum?referral_code=${state.credential_details.referral_code ? state.credential_details.referral_code.toUpperCase() : this.$router.app._route.query.referral_code}`, form)
             .then(() => {
                 commit('CLEAR_FORM_ERROR_DETAILS')
                 this.$router.push('/sign-up/success')
