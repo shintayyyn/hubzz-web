@@ -113,7 +113,7 @@
               </div>
             </div>
             <div
-              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && !['Approved', 'Paid'].includes(propInvoice.items[0].status)) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
               <div class="w-1/5 flex flex-col px-2">
@@ -187,7 +187,7 @@
               </div>
             </div>
             <div
-              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && propInvoice.items[0].status !== 'Approved') || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && !['Approved', 'Paid'].includes(propInvoice.items[0].status)) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
             >
               <div class="flex flex-col w-full px-2">
@@ -407,36 +407,6 @@ export default {
         return total;
       }
       return 0;
-    },
-    disputedDescription() {
-      // if (this.propInvoice) {
-      //   let hours = Math.floor(this.form.items[0].final_hours / 60);
-      //   let minutes = Math.floor(this.form.items[0].final_hours % 60);
-      //   let hour =
-      //     hours > 0
-      //       ? `${hours > 0 ? hours : ""} ${hours > 1 ? "hours" : "hour"}`
-      //       : "";
-      //   let minute =
-      //     minutes > 0
-      //       ? `${minutes > 0 ? minutes : ""} ${
-      //           minutes > 1 ? "minutes" : "minute"
-      //         }`
-      //       : "";
-      //   let totalHours = `${hour} ${minute}`;
-      return `Job number ${this.propJobPart.job_part_number} ${
-        this.propJobPart.job.type
-      } Job at £${this.propJobPart.job.rate} ${
-        this.propJobPart.job.locum_detail_rate_type.name
-      } from ${this.propJobPart.date_start} to ${this.propJobPart.date_end} / ${
-        this.propJobPart.job.shift.name
-      } / 
-          Total of ${this.form.hours} hour${
-        this.form.late_hours > 1 ? "s" : ""
-      } ${
-        this.form.minutes > 0
-          ? `and ${this.form.minutes} minute${this.form.minutes > 1 ? "s" : ""}`
-          : ""
-      }`;
     }
   },
   mounted() {
@@ -446,15 +416,22 @@ export default {
       this.form.date_start = this.propJobPart.date_start;
       this.form.date_end = this.propJobPart.date_end;
 
-      // Per Hour = (Final Hours + (Final Minutes / 60)) * Rate
-      // Per Session = (Total Hours + (Total Minutes / 60)) / Rate * (Final Hours + (Final Minutes / 60))
+      // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
+      // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
-      let total =
-        this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
-          ? this.propJobPart.job.rate * (this.propJobPart.final_hours / 60)
-          : (this.propJobPart.job.rate /
-              (this.propJobPart.job.total_hours / 60)) *
-            (this.propJobPart.final_hours / 60);
+      let type = this.propJobPart.job.locum_detail_rate_type.name;
+      let finalHours = this.propJobPart.final_hours / 60;
+      let totalHours = this.propJobPart.job.total_hours / 60;
+      let total = 0;
+
+      switch (type) {
+        case "Per Hour":
+          total = finalHours * this.propJobPart.job.rate;
+          break;
+        default:
+          total = finalHours * (this.propJobPart.job.rate / totalHours);
+          break;
+      }
 
       this.form.items = [
         {
@@ -470,9 +447,9 @@ export default {
           Total of ${Math.floor(this.propJobPart.final_hours / 60)} hour${
             Math.floor(this.propJobPart.final_hours / 60) > 1 ? "s" : ""
           } ${
-            this.propJobPart.final_hours % 60 > 0
-              ? `and ${this.propJobPart.final_hours % 60} minute${
-                  this.propJobPart.final_hours % 60 > 1 ? "s" : ""
+            Math.floor(this.propJobPart.final_hours % 60) > 0
+              ? `and ${Math.floor(this.propJobPart.final_hours % 60)} minute${
+                  Math.floor(this.propJobPart.final_hours % 60) > 1 ? "s" : ""
                 }`
               : ""
           }`,
@@ -515,7 +492,7 @@ export default {
     }
 
     this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
-    this.form.minutes = this.form.items[0].final_hours % 60;
+    this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
   },
   methods: {
     handleKeyDownEvent(e, formField, limit) {
@@ -675,218 +652,6 @@ export default {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
       );
-      // this.$axios
-      //   .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
-      //   .then(res => console.log(res));
-    },
-    async exportToPdf() {
-      console.log(this.propInvoice);
-      // this.$router.push(
-      //   `${process.env.API_URL}/api/v1/locum-invoices/${this.propInvoice.id}/html`
-      // );
-      // this.$axios.$get(`/api/v1/locum-invoices/${this.propInvoice.id}/html`);
-      return;
-
-      this.exportLoading = true;
-      if (process.client) {
-        document.body.style.cursor = "wait";
-      }
-
-      let doc = this.$jspdf("p", "mm");
-      let pageHeight = 1020;
-      let yPosition = 0;
-
-      // PDF HEADER
-      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
-      const imgWidthPdfHeader = 210;
-      const imgHeightPdfHeader =
-        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
-      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
-
-      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
-
-      doc.addImage(
-        imgDataPdfHeader,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthPdfHeader,
-        imgHeightPdfHeader
-      );
-
-      yPosition = yPosition + imgHeightPdfHeader;
-
-      // ITEMS HEADER
-      const canvasItemsHeader = await this.$html2canvas(
-        this.$refs["items-header"]
-      );
-      const imgWidthItemsHeader = 210;
-      const imgHeightItemsHeader =
-        (canvasItemsHeader.height * imgWidthItemsHeader) /
-        canvasItemsHeader.width;
-      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
-
-      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
-
-      doc.addImage(
-        imgDataItemsHeader,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthItemsHeader,
-        imgHeightItemsHeader
-      );
-
-      yPosition = yPosition + imgHeightItemsHeader;
-
-      // ITEMS
-      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
-
-      const imgWidthItems = 210;
-      const imgHeightItems =
-        (canvasItems.height * imgWidthItems) / canvasItems.width;
-      const imgDataItems = canvasItems.toDataURL("image/png");
-
-      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
-
-      doc.addImage(
-        imgDataItems,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthItems,
-        imgHeightItems
-      );
-
-      yPosition = yPosition + imgHeightItems;
-
-      // let totalSelectedJobParts = this.selectedJobParts.length;
-
-      // for (let i = 0; i < totalSelectedJobParts; i++) {
-      //   // minus the current item invoice height to the pageHeight
-      //   pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
-      //   // if all pageHeight is used, add page
-      //   if (pageHeight < 0) {
-      //     pageHeight = 1020;
-      //     yPosition = 0;
-      //     doc.addPage();
-      //     // add header to every new page, also subtract its height to page height
-      //     doc.addImage(
-      //       imgDataItemsHeader,
-      //       "PNG",
-      //       0,
-      //       yPosition,
-      //       imgWidthItemsHeader,
-      //       imgHeightItemsHeader
-      //     );
-
-      //     yPosition = yPosition + imgHeightItemsHeader;
-
-      //     pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
-      //     pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
-      //   }
-
-      //   // draw canvas
-      //   let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
-      //   let imgWidthItem = 210;
-      //   let imgHeightItem =
-      //     (canvasItem.height * imgWidthItem) / canvasItem.width;
-      //   let imgDataItem = canvasItem.toDataURL("image/png");
-
-      //   // add image
-      //   doc.addImage(
-      //     imgDataItem,
-      //     "PNG",
-      //     0,
-      //     yPosition,
-      //     imgWidthItem,
-      //     imgHeightItem
-      //   );
-
-      //   yPosition = yPosition + imgHeightItem;
-      // }
-
-      // sum up their offsetHeight
-      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
-      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
-      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
-
-      let totalOffsetHeight =
-        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
-
-      pageHeight = pageHeight - totalOffsetHeight;
-
-      // DAYS WORKED
-      const canvasDaysWorked = await this.$html2canvas(
-        this.$refs["days-worked"]
-      );
-      const imgWidthDaysWorked = 210;
-      const imgHeightDaysWorked =
-        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
-      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
-
-      // ITEMS TOTAL
-      const canvasItemsTotal = await this.$html2canvas(
-        this.$refs["items-total"]
-      );
-      const imgWidthItemsTotal = 210;
-      const imgHeightItemsTotal =
-        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
-      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
-
-      // PDF FOOTER
-      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
-      const imgWidthPdfFooter = 210;
-      const imgHeightPdfFooter =
-        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
-      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
-
-      if (pageHeight < 0) {
-        pageHeight = 1020;
-        doc.addPage();
-      }
-
-      yPosition =
-        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
-
-      doc.addImage(
-        imgDataDaysWorked,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthDaysWorked,
-        imgHeightDaysWorked
-      );
-
-      yPosition = yPosition + imgHeightDaysWorked;
-
-      doc.addImage(
-        imgDataItemsTotal,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthItemsTotal,
-        imgHeightItemsTotal
-      );
-
-      yPosition = yPosition + imgHeightItemsTotal;
-
-      doc.addImage(
-        imgDataPdfFooter,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthPdfFooter,
-        imgHeightPdfFooter
-      );
-
-      yPosition = yPosition + imgHeightPdfFooter;
-
-      doc.save("test.pdf");
-      this.exportLoading = false;
-      if (process.client) {
-        document.body.style.cursor = "auto";
-      }
     }
   }
 };

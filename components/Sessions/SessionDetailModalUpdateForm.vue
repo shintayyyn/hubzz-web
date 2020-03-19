@@ -904,7 +904,7 @@ export default {
     this.form.total_hours = this.job.total_hours;
 
     this.form.hours = Math.floor(this.form.total_hours / 60);
-    this.form.minutes = this.form.total_hours % 60;
+    this.form.minutes = Math.floor(this.form.total_hours % 60);
 
     if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
       this.unpaid_breaks = false;
