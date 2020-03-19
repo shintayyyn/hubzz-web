@@ -16,7 +16,7 @@
       <div class="-mt-6 mb-4" v-if="email_verifiedAt">
         <span
           class="text-xs"
-        >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
+        >E-mail is Verified on {{$moment(email_verifiedAt).utc().format('MMM DD, YYYY | hh:mm A')}}</span>
       </div>
       <div class="-mt-6 mb-4" v-if="!email_verifiedAt">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
@@ -87,7 +87,7 @@
         <template v-if="email_verifiedAt">
           <span
             class="text-xs"
-          >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
+          >E-mail is Verified on {{$moment(email_verifiedAt).utc().format('MMM DD, YYYY | hh:mm A')}}</span>
         </template>
         <template v-else>
           <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
