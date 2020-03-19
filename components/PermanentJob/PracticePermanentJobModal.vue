@@ -501,6 +501,7 @@ export default {
 			if (value === false) {
 				this.getPermanentJob()
 			} else {
+        console.log(this.permanent_job)
         this.form.practice_id = this.permanent_job.practice_id
         this.form.parent_practice_id = this.permanent_job.parent_practice_id ? this.permanent_job.parent_practice_id : null
 				this.form.title = this.permanent_job.title
@@ -556,19 +557,20 @@ export default {
 
 		Promise.all([
       this.getPermanentJob(),
-			this.$axios.$get("/api/v1/practice/me/practice-practices"),
+			this.$axios.$get("api/v1/practice/me/practice-job-practices"),
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions")
 		])
 			.then(
 				([
+          getPermanentJob,
 					responsePracticeLists,
 					responseRateLists,
 					responseShifts,
 					responseProfessions
 				]) => {
-					this.practice_lists = []
+          this.practice_lists = []
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
