@@ -299,7 +299,7 @@ export default {
       if (queryStatus === "allocated") {
         columns.push({
           name: "Assigned",
-          dataIndex: "assigned_to",
+          dataIndex: "platform_job.appointed_to_locum.user.personal_detail.name",
           class: "text-center"
         });
       }
