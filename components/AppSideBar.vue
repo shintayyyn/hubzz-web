@@ -185,9 +185,6 @@ export default {
 						route: "/profile",
 						permissions: [
 							"View Profile Practice",
-							"View Surgery Management",
-							"View Profile Users",
-							"View Profile Practice Document"
 						],
 						order: 3
 					}
@@ -244,7 +241,11 @@ export default {
 					})
 
 					if (hubType !== "Type 2") {
-						addedLists.push({ name: "My Banks", route: "/my-banks", order: 5 })
+						addedLists.push({ 
+							name: "My Banks", 
+							route: "/my-banks", 
+							order: 5 
+						})
 						addedLists.push({
 							name: "Sessions",
 							route: "/sessions",
@@ -254,7 +255,7 @@ export default {
 						addedLists.push({
 							name: "Billing",
 							route: "/practice-billing",
-							permissions: ["View Billings"],
+							permissions: ["View Sessions Job",],
 							order: 8
 						})
 					}

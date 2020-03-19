@@ -539,7 +539,14 @@ export default {
         jobs
       };
     } catch (err) {
-      throw err;
+       if (err.response && err.response.status === 401) {
+        error(err.response.data)
+        return
+      } else {
+        console.log(err || err.response);
+        return error({ status: 404 });
+      } 
+      throw err
     }
   },
   methods: {
@@ -712,7 +719,7 @@ export default {
             time_start: this.isJobPart ? this.time_start : "",
             time_end: this.isJobPart ? this.time_end : "",
             invoice_status: this.isJobPart ? this.invoice_status : "",
-            viewing_locum_user_id: this.viewing_locum_user_id,
+            viewing_locum_user_id: this.viewing_lresponseocum_user_id,
             title_includes: this.title_includes,
             job_title_includes: this.job_title_includes,
             job_number_includes: this.job_number_includes,
@@ -734,8 +741,14 @@ export default {
               : [];
         })
         .catch(err => {
-          console.log("err", err.response || err);
-          throw err;
+          if (err.response && err.response.status === 401) {
+            error(err.response.data)
+            return
+          } else {
+            console.log(err || err.response);
+            return error({ status: 404 });
+          } 
+          throw err
         });
     },
     async refreshJobs() {
