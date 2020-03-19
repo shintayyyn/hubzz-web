@@ -851,6 +851,7 @@ export default {
             this.form.clinical_system_id = this.selectedClinicalSystem;
             this.form.qualification_id = this.selectedQualification;
             this.form.spoken_language_id = this.selectedSpokenLanguage;
+            window.location.reload()
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
