@@ -15,7 +15,7 @@
             @submit="save"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
             @keypress="inputNumberOnly($event)"
-            requiredf
+            required
           />
           <AppInput
             v-model="form.mpl_or_npl_number"
@@ -23,11 +23,9 @@
             :name="'mpl_or_npl_number'"
             :label="'MPL / NPL Number'"
             :error="formError.find(item => item.field === 'mpl_or_npl_number')"
-            :info="'For compliance; to be verified by the hubzz team'"
             @submit="save"
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
             @keypress="inputNumberOnly($event)"
-            required
           />
           <AppInput
             v-model="form.nhs_smart_card_id_number"
@@ -769,7 +767,8 @@ export default {
         "claim_nhs",
         "max_rate_per_hour",
         "max_rate_per_half_day_session",
-        "max_rate_per_whole_day_session"
+        "max_rate_per_whole_day_session",
+        "mpl_or_npl_number"
       ];
       this.form.max_rate_per_hour = 999999999;
       this.form.max_rate_per_half_day_session = 999999999;
