@@ -131,7 +131,7 @@
         />
 
         <AppButton
-          v-if="authPermissions.includes('Update Profile Users') && user.status !== 'Deactivated'"
+          v-if="authPermissions.includes('Deactivate Profile Users') && user.status !== 'Deactivated'"
           :label="'Deactivate User'"
           :disabled="loading"
           :custom-theme="'bg-red-500 hover:bg-red-600 font-bold md:text-lg text-white'"

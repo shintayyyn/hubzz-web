@@ -1,41 +1,56 @@
 <template>
-	<section>
-		<div class="flex flex-row flex-wrap justify-start lg:max-w-6xl">
-			<div
-				v-for="(item, index) in statistics"
-				:key="index"
-				class="sm:px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
-				:class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
-			>
-				<nuxt-link :to="item.route">
-					<div class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300">
-						<div class="flex flex-col">
-							<div class="text-sm sm:text-md">{{ item.label }}</div>
-							<div class="font-bold text-5xl">{{ item.value }}</div>
-						</div>
-					</div>
-				</nuxt-link>
-			</div>
-		</div>
-	</section>
+  <section>
+    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl">
+      <div
+        v-for="(item, index) in statistics" :key="index"
+        class="sm:px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
+        :class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
+      >
+        <nuxt-link 
+          :event="($auth.user.domain === 'Practice' && authPermissions.includes('View Sessions Job')) || $auth.user.domain === 'Locum' ? 'click' : disabled"
+          :to="item.route"
+        >
+          <div 
+            class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white "
+            :class="($auth.user.domain === 'Practice' && authPermissions.includes('View Sessions Job')) || $auth.user.domain === 'Locum'? 'hover:bg-gray-300' : ''"
+          >
+            <div class="flex flex-col">
+              <div class="text-sm sm:text-md">
+                {{ item.label }}
+              </div>
+              <div class="font-bold text-5xl">
+                {{ item.value }}
+              </div>
+            </div>
+          </div>
+        </nuxt-link>
+      </div>
+    </div>
+  </section>
 </template>
 <script>
 export default {
-	data() {
+	data () {
 		return {
-			statistics: []
-		};
+			statistics: [],
+			disabled: 'true',
+		}
 	},
-	created() {
-		this.statistics = [];
+	computed: {
+		authPermissions () {
+			return this.$store.getters["permissions"]
+		}
+	},
+	created () {
+		this.statistics = []
 		if (this.$auth.user.domain === "Locum") {
-			this.getLocumStats();
+			this.getLocumStats()
 		} else if (this.$auth.user.domain === "Practice") {
-			this.getPracticeStats();
+			this.getPracticeStats()
 		}
 	},
 	methods: {
-		getLocumStats() {
+		getLocumStats () {
 			this.$axios
 				.$get(`/api/v1/locum/me/statistics`)
 				.then(res => {
@@ -58,18 +73,18 @@ export default {
 							label: "Ongoing Job Parts",
 							value: res.data.locum_user_statistics.ongoing_job_part_count,
 							route: "/jobs?status=Ongoing"
-						});
+						})
 					this.statistics.push({
 						label: "Completed Job Parts",
 						value: res.data.locum_user_statistics.completed_job_part_count,
 						route: "/jobs?status=Completed"
-					});
+					})
 				})
 				.catch(err => {
-					console.log("err", err.response || err);
-				});
+					console.log("err", err.response || err)
+				})
 		},
-		getPracticeStats() {
+		getPracticeStats () {
 			this.$axios
 				.$get(`/api/v1/practice/me/practice-statistics`)
 				.then(res => {
@@ -77,7 +92,7 @@ export default {
 						label: "My Banks",
 						value: res.data.practice_statistics.favorite_locum_count,
 						route: "/my-banks?status=Favorite"
-					});
+					})
 					this.statistics.push({
 						label: "Applied Jobs",
 						value: res.data.practice_statistics.applied_job_count,
@@ -92,31 +107,31 @@ export default {
 							label: "Live Jobs",
 							value: res.data.practice_statistics.live_job_count,
 							route: "/sessions?status=Live"
-						});
+						})
 					this.statistics.push({
 						label: "Completed Job Parts",
 						value: res.data.practice_statistics.completed_job_part_count,
 						route: "/sessions?status=Completed"
-					});
+					})
 					this.statistics.push({
 						label: "Unfilled Jobs",
 						value: res.data.practice_statistics.unfilled_job_count,
 						route: "/sessions?status=Unfilled"
-					});
+					})
 					this.statistics.push({
 						label: "To Complete Ongoing Job Parts",
 						value:
 							res.data.practice_statistics
 								.to_be_completed_ongoing_job_part_count,
 						route: "/sessions?status=Ongoing"
-					});
+					})
 				})
 				.catch(err => {
-					console.log("err", err.response || err);
-				});
+					console.log("err", err.response || err)
+				})
 		}
 	}
-};
+}
 </script>
 
 <style scoped>
