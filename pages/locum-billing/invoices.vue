@@ -531,21 +531,39 @@ export default {
 
       if (url === `/api/v1/locum/job-parts`) {
         job_parts = job_parts.map(jobPart => {
-          let total = jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.total
-            : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-            ? jobPart.job.rate * jobPart.final_hours
-            : (jobPart.job.rate / jobPart.job.total_hours) *
-              jobPart.final_hours;
+          // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
+          // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
-          total =
-            jobPart.locum_invoice_item &&
-            jobPart.locum_invoice_item.locum_invoice &&
-            jobPart.locum_invoice_item.locum_invoice.paid_at
-              ? total -
+          let type;
+          let finalHours;
+          let totalHours;
+          let total;
+
+          if (jobPart.locum_invoice_item) {
+            total = jobPart.locum_invoice_item.locum_invoice.total_amount;
+
+            if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+              total =
+                total -
                 jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                jobPart.locum_invoice_item.locum_invoice.paye_amount
-              : total;
+                jobPart.locum_invoice_item.locum_invoice.paye_amount;
+            }
+          } else if (!jobPart.locum_invoice_item) {
+            type = jobPart.job.locum_detail_rate_type.name;
+            finalHours = jobPart.final_hours / 60;
+            totalHours = jobPart.job.total_hours / 60;
+            total = 0;
+
+            switch (type) {
+              case "Per Hour":
+                total = finalHours * jobPart.job.rate;
+                break;
+              default:
+                total = finalHours * (jobPart.job.rate / totalHours);
+                break;
+            }
+          }
+
           return {
             ...jobPart,
             practice_name:
@@ -743,21 +761,36 @@ export default {
             let job_parts = response.data.job_parts;
 
             this.job_parts = job_parts.map(jobPart => {
-              let total = jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.total
-                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                ? jobPart.job.rate * jobPart.final_hours
-                : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours;
+              let type;
+              let finalHours;
+              let totalHours;
+              let total;
 
-              total =
-                jobPart.locum_invoice_item &&
-                jobPart.locum_invoice_item.locum_invoice &&
-                jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? total -
+              if (jobPart.locum_invoice_item) {
+                total = jobPart.locum_invoice_item.locum_invoice.total_amount;
+
+                if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                  total =
+                    total -
                     jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                    jobPart.locum_invoice_item.locum_invoice.paye_amount
-                  : total;
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount;
+                }
+              } else if (!jobPart.locum_invoice_item) {
+                type = jobPart.job.locum_detail_rate_type.name;
+                finalHours = jobPart.final_hours / 60;
+                totalHours = jobPart.job.total_hours / 60;
+                total = 0;
+
+                switch (type) {
+                  case "Per Hour":
+                    total = finalHours * jobPart.job.rate;
+                    break;
+                  default:
+                    total = finalHours * (jobPart.job.rate / totalHours);
+                    break;
+                }
+              }
+
               return {
                 ...jobPart,
                 practice_name:
@@ -887,21 +920,36 @@ export default {
             let job_parts = res.data.job_parts;
 
             this.job_parts = job_parts.map(jobPart => {
-              let total = jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.total
-                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                ? jobPart.job.rate * jobPart.final_hours
-                : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours;
+              let type;
+              let finalHours;
+              let totalHours;
+              let total;
 
-              total =
-                jobPart.locum_invoice_item &&
-                jobPart.locum_invoice_item.locum_invoice &&
-                jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? total -
+              if (jobPart.locum_invoice_item) {
+                total = jobPart.locum_invoice_item.locum_invoice.total_amount;
+
+                if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                  total =
+                    total -
                     jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                    jobPart.locum_invoice_item.locum_invoice.paye_amount
-                  : total;
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount;
+                }
+              } else if (!jobPart.locum_invoice_item) {
+                type = jobPart.job.locum_detail_rate_type.name;
+                finalHours = jobPart.final_hours / 60;
+                totalHours = jobPart.job.total_hours / 60;
+                total = 0;
+
+                switch (type) {
+                  case "Per Hour":
+                    total = finalHours * jobPart.job.rate;
+                    break;
+                  default:
+                    total = finalHours * (jobPart.job.rate / totalHours);
+                    break;
+                }
+              }
+
               return {
                 ...jobPart,
                 practice_name:
