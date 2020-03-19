@@ -279,6 +279,9 @@ export default {
     authPermissions() {
       return this.$store.getters["permissions"];
     },
+    view_permanent_jobs() {
+      return this.$store.getters["getViewPermanentJobs"]
+    },
     selectedDate() {
       return this.$store.state.calendar.selected_date;
     },
@@ -559,6 +562,11 @@ export default {
           this.getDaysInMonth(this.selectedMonth, this.selectedYear);
           this.getJobs();
         }
+      }
+    },
+    view_permanent_jobs(){
+      if (this.$auth.user.domain === "Locum") {
+          this.getJobs();
       }
     }
   },
@@ -930,7 +938,11 @@ export default {
               }
             })
             .then(res => {
-              return res.data.permanent_job_applications;
+              if (this.$auth.user.view_permanent_jobs) {
+                return res.data.permanent_job_applications
+              }else {
+                return []
+              };
             })
         ])
           .then(([ongoingJobParts, appliedJobs, privateJobParts, permanent_jobs_invites]) => {
@@ -944,10 +956,10 @@ export default {
               "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
               privateJobParts
             );
-            this.$store.commit(
-              "jobs/SET_LOCUM_PERMANENT_JOBS",
-              permanent_jobs_invites
-            );
+              this.$store.commit(
+                "jobs/SET_LOCUM_PERMANENT_JOBS",
+                permanent_jobs_invites
+              );
           })
           .finally(() => {
             this.$store.commit("calendar/TOGGLE_LOADING", false);

@@ -69,11 +69,17 @@ export default {
 		}
 	},
 	computed: {
-		authPermissions () {
-			return this.$store.getters["permissions"]
+		authPermissions() {
+			return this.$store.getters["permissions"];
+		},
+		view_locum_jobs() {
+			return this.$store.getters["getViewLocumJobs"];
+		},
+		view_permanent_jobs() {
+			return this.$store.getters["getViewPermanentJobs"];
 		}
 	},
-	async created () {
+	async created() {
 		if (
 			this.$auth.loggedIn &&
 			this.$auth.user.domain === "Practice" &&
@@ -102,12 +108,23 @@ export default {
 					)
 				)
 		} else {
-			this.getInit()
+			this.getInit();
+			this.$store.dispatch("getViewJobsPermissions");
+			console.log(this.view_locum_jobs);
+			console.log(this.view_permanent_jobs);
 		}
 	},
-	mounted () {},
-	destroyed () {
-		this.removeListener()
+	mounted() {},
+	destroyed() {
+		this.removeListener();
+	},
+	watch: {
+		view_locum_jobs(value) {
+			this.getInit();
+		},
+		view_permanent_jobs(value) {
+			this.getInit();
+		}
 	},
 	methods: {
 		toggleConfirmationModal () {
@@ -168,9 +185,11 @@ export default {
 					console.log("hub type", hubType)
 				}
 			}
-
-			let addedLists = []
-			let defaultLists = [{ name: "Account", route: "/account", order: 2 }]
+			let addedLists = [];
+			let defaultLists = [
+				{ name: "Dashboard", route: "/dashboard", order: 1 },
+				{ name: "Account", route: "/account", order: 2 }
+			];
 			let otherLists = [
 				{ name: "FAQ", route: "/faq" },
 				{ name: "Terms and Conditions", route: "/terms-and-conditions" },
@@ -179,7 +198,6 @@ export default {
 			let canViewLocumJobs = []
 			if (domain === "Practice") {
 				addedLists = [
-					{ name: "Dashboard", route: "/dashboard", order: 1 },
 					{
 						name: "Profile",
 						route: "/profile",
@@ -199,7 +217,7 @@ export default {
 						addedLists.push({
 							name: "Surgery Management",
 							route: "/hub-surgery-management",
-							permissions:["View Surgery Management"],
+							permissions: ["View Surgery Management"],
 							order: 4
 						})
 					}
@@ -208,7 +226,7 @@ export default {
 						addedLists.push({
 							name: "Surgery Management",
 							route: "/spoke-surgery-management",
-							permissions:["View Surgery Management"],
+							permissions: ["View Surgery Management"],
 							order: 4
 						})
 					} else if (
@@ -219,7 +237,7 @@ export default {
 						addedLists.push({
 							name: "Surgery Management",
 							route: "/spoke-surgery-management",
-							permissions:["View Surgery Management"],
+							permissions: ["View Surgery Management"],
 							order: 4
 						})
 					}
@@ -270,13 +288,7 @@ export default {
 			}
 			// ============ LOCUMS LIST ================
 			if (domain === "Locum") {
-				if (
-					this.$auth.user.view_locum_jobs ||
-					this.$auth.user.view_permanent_jobs
-				) {
-					addedLists.push({ name: "Dashboard", route: "/dashboard", order: 1 })
-				}
-				if (this.$auth.user.view_locum_jobs) {
+				if (this.view_locum_jobs) {
 					addedLists.push({
 						name: "Compliance",
 						route: "/compliance",
@@ -290,7 +302,7 @@ export default {
 				}
 
 				if (["Active", "Dormant"].includes(accountStatus)) {
-					if (this.$auth.user.view_locum_jobs) {
+					if (this.view_locum_jobs) {
 						addedLists.push({
 							name: "My Practice",
 							route: "/my-practice",
@@ -303,7 +315,7 @@ export default {
 							order: 8
 						})
 					}
-					if (this.$auth.user.view_permanent_jobs) {
+					if (this.view_permanent_jobs) {
 						addedLists.push({
 							name: "Permanent Jobs",
 							route: "/permanent-jobs",
