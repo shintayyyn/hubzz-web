@@ -470,9 +470,9 @@ export default {
           Total of ${Math.floor(this.propJobPart.final_hours / 60)} hour${
             Math.floor(this.propJobPart.final_hours / 60) > 1 ? "s" : ""
           } ${
-            this.propJobPart.final_hours % 60 > 0
-              ? `and ${this.propJobPart.final_hours % 60} minute${
-                  this.propJobPart.final_hours % 60 > 1 ? "s" : ""
+            Math.floor(this.propJobPart.final_hours % 60) > 0
+              ? `and ${Math.floor(this.propJobPart.final_hours % 60)} minute${
+                  Math.floor(this.propJobPart.final_hours % 60) > 1 ? "s" : ""
                 }`
               : ""
           }`,
@@ -515,7 +515,7 @@ export default {
     }
 
     this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
-    this.form.minutes = this.form.items[0].final_hours % 60;
+    this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
   },
   methods: {
     handleKeyDownEvent(e, formField, limit) {
