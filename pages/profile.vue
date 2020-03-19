@@ -2,23 +2,29 @@
   <section class="profile-section">
     <div class="flex items-center overflow-x-auto whitespace-no-wrap">
       <nuxt-link
+        v-if="authPermissions.includes('View Profile Practice')"
         to="/profile"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="['profile', 'profile-practice'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        v-if="authPermissions.includes('View Profile Practice')"
-      >Practice</nuxt-link>
+      >
+        Practice
+      </nuxt-link>
       <nuxt-link
+        v-if="authPermissions.includes('View Profile Users')"
         to="/profile/users"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('profile-users')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        v-if="authPermissions.includes('View Profile Users')"
-      >Users</nuxt-link>
+        :class="$route.name.includes('profile-users') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >
+        Users
+      </nuxt-link>
       <nuxt-link
+        v-if="authPermissions.includes('View Profile Practice Document')"
         to="/profile/practice-documents"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="['profile-practice-documents', 'profile-standard-terms-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        v-if="authPermissions.includes('View Profile Practice Document')"
-      >Practice Documents</nuxt-link>
+      >
+        Practice Documents
+      </nuxt-link>
     </div>
     <div class="mt-2">
       <nuxt-child />
@@ -32,20 +38,20 @@
   </section>
 </template>
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
   components: {
     AppConfirmationModal
   },
-  data() {
+  data () {
     return {
       modal: false
       // type: null
-    };
+    }
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     }
   },
   // async asyncData({ app, store, error }) {
@@ -68,18 +74,18 @@ export default {
   //   }
   // },
   watch: {
-    authPermissions(value) {
+    authPermissions (value) {
       if (!this.CheckPermissions(value).hasPermission) {
-        this.modal = true;
+        this.modal = true
       }
     }
   },
-  mounted() {
+  mounted () {
     // if (this.$route.name === "profile") {
     //   if (this.authPermissions.includes("View Profile Practice")) {
     //     this.$router.push("/profile/practice");
     //   } else if (
-    //     this.authPermissions.includes("View Profile Surgeries") &&
+    //     this.authPermissions.includes("View Surgery Management") &&
     //     this.type != "Stand Alone"
     //   ) {
     //     this.$router.push("/profile/practice-spokes");
@@ -93,12 +99,12 @@ export default {
     // }
   },
   methods: {
-    goTo() {
-      this.modal = false;
+    goTo () {
+      this.modal = false
       setTimeout(() => {
-        this.$router.push("/");
-      }, 500);
+        this.$router.push("/")
+      }, 500)
     }
   }
-};
+}
 </script>

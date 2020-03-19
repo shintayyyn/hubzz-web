@@ -298,7 +298,7 @@ export default {
     },
     async remove () {
       this.loading = true
-      if (!this.authPermissions.includes("Delete Profile Surgeries")) {
+      if (!this.authPermissions.includes("Invitation Processes Surgery Management")) {
         return
       }
       console.log(this.selectedSurgeryId, this.practice.type)
@@ -331,7 +331,7 @@ export default {
       }
     },
     show (item) {
-      if (this.authPermissions.includes("Show Profile Surgeries")) {
+      if (this.authPermissions.includes("Invitation Processes Surgery Management")) {
         if (this.practice.type === "Hub") {
           this.$router.push(`/profile/practice-spokes/${item.id}`)
         } else if (this.practice.type === "Spoke") {
