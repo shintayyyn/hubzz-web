@@ -2,76 +2,93 @@
   <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
     <AppLoading :loading="loading" spinner />
     <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
+    <!-- =========PRACTICE========= -->
     <template v-if="$auth.user.domain === 'Practice'">
-      <AppInput
-        v-model="practiceForm.email"
-        :type="'email'"
-        :name="'email'"
-        :label="'Email address'"
-        :error="formError.find(item => item.field === 'email')"
-        @submit="save"
-        @blur="CheckEmptyField(practiceForm.email, 'email')"
-        required
-      />
-      <div class="-mt-6 mb-4" v-if="email_verifiedAt">
-        <span
-          class="text-xs"
-        >E-mail is Verified on {{$moment(email_verifiedAt).utc().format('MMM DD, YYYY | hh:mm A')}}</span>
+      <div class="flex flex-wrap">
+        <div class="w-full">
+          <AppInput
+            v-model="practiceForm.email"
+            :type="'email'"
+            :name="'email'"
+            :label="'Email address'"
+            :error="formError.find(item => item.field === 'email')"
+            @submit="save"
+            @blur="CheckEmptyField(practiceForm.email, 'email')"
+            required
+          />
+          <div class="-mt-6 mb-4" v-if="email_verifiedAt">
+            <span
+              class="text-xs"
+            >E-mail is Verified on {{$moment(email_verifiedAt).utc().format('MMM DD, YYYY | hh:mm A')}}</span>
+          </div>
+          <div class="-mt-6 mb-4" v-if="!email_verifiedAt">
+            <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
+            <span
+              class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
+              @click="resendEmailVerification()"
+            >Click here to re-send</span>
+          </div>
+          <AppInput
+            v-model="practiceForm.title"
+            :type="'text'"
+            :name="'title'"
+            :label="'Title'"
+            @submit="save"
+          />
+          <AppInput
+            v-model="practiceForm.first_name"
+            :type="'text'"
+            :name="'first_name'"
+            :label="'First name'"
+            :error="formError.find(item => item.field === 'first_name')"
+            @submit="save"
+            @blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
+            required
+          />
+          <AppInput
+            v-model="practiceForm.last_name"
+            :type="'text'"
+            :name="'last_name'"
+            :label="'Last name'"
+            :error="formError.find(item => item.field === 'last_name')"
+            @submit="save"
+            @blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
+            required
+          />
+          <AppInput
+            v-model="practiceForm.suffix"
+            :type="'text'"
+            :name="'suffix'"
+            :label="'Suffix'"
+            @submit="save"
+          />
+          <AppInput
+            v-model="practiceForm.practice_role"
+            :type="'select'"
+            :name="'practice_role'"
+            :label="'Role'"
+            :placeholder="'Role...'"
+            :items="roles"
+            required
+          />
+          <div class="text-left mt-5">
+            <AppButton :label="'Save changes'" @click="save('practice')" />
+          </div>
+        </div>
+        
+        <!-- <div class="md:w-1/2 w-full">
+          Permissions
+          <div
+            v-for="(item,index) in authPermissions"
+            :key="index"
+          >
+          {{item}}
+          </div>
+        </div> -->
       </div>
-      <div class="-mt-6 mb-4" v-if="!email_verifiedAt">
-        <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
-        <span
-          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
-          @click="resendEmailVerification()"
-        >Click here to re-send</span>
-      </div>
-      <AppInput
-        v-model="practiceForm.title"
-        :type="'text'"
-        :name="'title'"
-        :label="'Title'"
-        @submit="save"
-      />
-      <AppInput
-        v-model="practiceForm.first_name"
-        :type="'text'"
-        :name="'first_name'"
-        :label="'First name'"
-        :error="formError.find(item => item.field === 'first_name')"
-        @submit="save"
-        @blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
-        required
-      />
-      <AppInput
-        v-model="practiceForm.last_name"
-        :type="'text'"
-        :name="'last_name'"
-        :label="'Last name'"
-        :error="formError.find(item => item.field === 'last_name')"
-        @submit="save"
-        @blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
-        required
-      />
-      <AppInput
-        v-model="practiceForm.suffix"
-        :type="'text'"
-        :name="'suffix'"
-        :label="'Suffix'"
-        @submit="save"
-      />
-      <AppInput
-        v-model="practiceForm.practice_role"
-        :type="'select'"
-        :name="'practice_role'"
-        :label="'Role'"
-        :placeholder="'Role...'"
-        :items="roles"
-        required
-      />
-      <div class="text-left mt-5">
-        <AppButton :label="'Save changes'" @click="save('practice')" />
-      </div>
+      
     </template>
+    <!-- ==========LOCUM=========== -->
     <template v-if="$auth.user.domain === 'Locum'">
       <AppInput
         v-model="locumForm.email"
@@ -265,7 +282,8 @@ export default {
         suffix: "",
         practice_role: ""
       },
-
+      practiceRole: null,
+      practicePermissions: {},
       locumForm: {
         email: "",
         title: "",
@@ -283,6 +301,16 @@ export default {
       }
     };
   },
+  created() {
+    console.log('authpermissions', this.authPermissions)
+    console.log('')
+
+  },  
+  computed: {
+    authPermissions() {
+			return this.$store.getters["permissions"];
+		},
+  },
   async asyncData({ app, error }) {
     try {
       const response = await app.$axios.$get("/api/v1/me");
@@ -292,6 +320,8 @@ export default {
           : null;
 
       let practiceForm = {};
+      let practiceRole = ""
+
       let locumForm = {};
       let email_verifiedAt = "";
 
@@ -303,11 +333,12 @@ export default {
         practiceForm.suffix = user.personal_detail.suffix;
         practiceForm.practice_role = user.practice_detail.practice_role;
         email_verifiedAt = user.email_verified_at;
-
+        practiceRole = user.practice_detail.role
         return {
           user,
           practiceForm,
-          email_verifiedAt
+          email_verifiedAt,
+          practiceRole,
         };
       }
       if (user.domain === "Locum") {
@@ -485,6 +516,17 @@ export default {
           this.scrollToTop();
         }
       }
+    },
+    async processPracticePermission() {
+      
+      await this.practiceRole.permissions.forEach((permission) => {
+        let category = {
+          name: '',
+          permissions: []
+        }
+        if(permission.name){}
+          
+      })
     }
   }
 };
