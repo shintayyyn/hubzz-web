@@ -264,7 +264,7 @@
               </div>
               <div class="flex items-center">
                 <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Applied Jobs{{ $auth.user.domain === 'Locum' && ', Allocated Private Jobs'  }}</p>
+                <p class="ml-2">Applied Jobs{{ $auth.user.domain === 'Locum' ? ', Allocated Private Jobs' : ''  }}</p>
               </div>
               <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
                 <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
