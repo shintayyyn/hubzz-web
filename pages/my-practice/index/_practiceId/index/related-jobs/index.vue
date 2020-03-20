@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div
+    <!-- <div
       class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
       v-if="$route.query.jobStatus && ['available', 'public', 'bank'].includes($route.query.jobStatus.toLowerCase())"
     >
@@ -20,7 +20,7 @@
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Public</nuxt-link>
       </div>
-    </div>
+    </div>-->
     <transition name="fade" mode="out-in">
       <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -337,12 +337,12 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
-        <template v-slot:slot_date_start="slotProps">
-            {{ slotProps.item.date_start }} | {{ slotProps.item.time_start }} 
-        </template>
-         <template v-slot:slot_date_end="slotProps">
-            {{ slotProps.item.date_end }}  | {{ slotProps.item.time_end }} 
-        </template>
+          <template
+            v-slot:slot_date_start="slotProps"
+          >{{ slotProps.item.date_start }} | {{ slotProps.item.time_start }}</template>
+          <template
+            v-slot:slot_date_end="slotProps"
+          >{{ slotProps.item.date_end }} | {{ slotProps.item.time_end }}</template>
         </AppTable>
         <!-- <div
           class="relative flex w-full"
@@ -713,8 +713,11 @@ export default {
         locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Bank":
-            locum_status = ["Available"];
+          // case "Bank":
+          //   locum_status = ["Available"];
+          //   break;
+          case "Available":
+            locum_status = ["Matched", "Available"];
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
@@ -815,8 +818,8 @@ export default {
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              type: queryStatus === "Private" ? "Private" : "Platform"
+              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           })
           .then(res => {
@@ -859,8 +862,8 @@ export default {
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              type: queryStatus === "Private" ? "Private" : "Platform"
+              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           })
           .then(res => {
@@ -900,7 +903,6 @@ export default {
             value: item.id
           };
         });
-        console.log(res);
       });
     this.$socket.on(
       "Locum Notification Job Available",
@@ -989,8 +991,11 @@ export default {
 
       if (queryStatus) {
         switch (queryStatus) {
-          case "Bank":
-            locum_status = ["Available"];
+          // case "Bank":
+          //   locum_status = ["Available"];
+          //   break;
+          case "Available":
+            locum_status = ["Matched", "Available"];
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
@@ -1041,8 +1046,8 @@ export default {
               job_part_number_includes: this.isJobPart
                 ? this.job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              type: queryStatus === "Private" ? "Private" : "Platform"
+              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
         ),
@@ -1086,8 +1091,8 @@ export default {
               job_part_number_includes: this.isJobPart
                 ? this.job_part_number_includes
                 : "",
-              type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              type: queryStatus === "Private" ? "Private" : "Platform"
+              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
         )
@@ -1114,8 +1119,11 @@ export default {
         locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Bank":
-            locum_status = ["Available"];
+          // case "Bank":
+          //   locum_status = ["Available"];
+          //   break;
+          case "Available":
+            locum_status = ["Matched", "Available"];
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
@@ -1165,8 +1173,8 @@ export default {
             job_part_number_includes: this.isJobPart
               ? this.job_part_number_includes
               : "",
-            type: queryStatus === "Private" ? "Private" : "Platform",
-            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+            type: queryStatus === "Private" ? "Private" : "Platform"
+            // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
           }
         })
         .then(res => {
