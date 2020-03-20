@@ -260,21 +260,7 @@
               :name="'update_accepted_until'"
               :label="'Set deadline for appointed Locum to accept these changes (per hour)'"
               :error="formError.find(item => item.field === 'update_accepted_until')"
-              :items="[
-                { label: '12', value: 12 * 60 },
-                { label: '13', value: 13 * 60 },
-                { label: '14', value: 14 * 60 },
-                { label: '15', value: 15 * 60 },
-                { label: '16', value: 16 * 60 },
-                { label: '17', value: 17 * 60 },
-                { label: '18', value: 18 * 60 },
-                { label: '19', value: 19 * 60 },
-                { label: '20', value: 20 * 60 },
-                { label: '21', value: 21 * 60 },
-                { label: '22', value: 22 * 60 },
-                { label: '23', value: 23 * 60 },
-                { label: '24', value: 24 * 60 },
-              ]"
+              :items="setDeadlines"
             />
           </template>
         </div>
@@ -718,6 +704,16 @@ export default {
   },
 
   computed: {
+    setDeadlines() {
+      let inputArray = [];
+      for (let i = 1; i <= 24; i++) {
+        inputArray.push({
+          label: i.toString(),
+          value: i * 60
+        });
+      }
+      return inputArray;
+    },
     hasBanks() {
       return this.banksCount > 0 ? true : false;
     },
