@@ -652,7 +652,7 @@ export default {
     try {
       let status = [];
       let queryStatus = query.status;
-      let bankStatus = query.bank;
+      // let bankStatus = query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
