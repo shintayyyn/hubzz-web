@@ -86,11 +86,11 @@
 								</div>
 								<div v-for="(item, index) in hierarchyPermissions" :key="index">
 									<template v-if="role.category === item.category">
-										<div class="w-full md:w-1/2 p-2">
-											<div class="flex flex-col">
-												<div class="pl-4">
+										<div class="w-full p-2">
+											<div class="flex flex-col w-full">
+												<div class="pl-4 w-full">
 													<div
-														class="flex flex-col px-1"
+														class="flex flex-col px-1 w-full"
 														v-for="(permission, index) in item.permissions"
 														:key="permission.id"
 													>
@@ -105,7 +105,7 @@
 															:for="permission.id"
 															class="text-sm pl-1"
 															:class="index === 0  ? '' : item.permissions.length > 1 ? 'ml-8' : ''"
-														>{{permission.name}} {{ index === 0 && item.permissions.length > 1 }}</label>
+														>{{permission.name}}</label>
 													</div>
 												</div>
 											</div>
@@ -287,8 +287,8 @@ export default {
 			});
 			this.form.permission_id = ids;
 			this.Validate(this.form);
-			console.log('errors', this.formError)
-			console.log('form', this.form)
+			console.log("errors", this.formError);
+			console.log("form", this.form);
 			if (!this.formError.length) {
 				if (this.form.permission_id.length > 0) {
 					this.$axios

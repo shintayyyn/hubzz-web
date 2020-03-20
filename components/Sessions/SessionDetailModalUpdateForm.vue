@@ -260,21 +260,7 @@
               :name="'update_accepted_until'"
               :label="'Set deadline for appointed Locum to accept these changes (per hour)'"
               :error="formError.find(item => item.field === 'update_accepted_until')"
-              :items="[
-                { label: '12', value: 12 * 60 },
-                { label: '13', value: 13 * 60 },
-                { label: '14', value: 14 * 60 },
-                { label: '15', value: 15 * 60 },
-                { label: '16', value: 16 * 60 },
-                { label: '17', value: 17 * 60 },
-                { label: '18', value: 18 * 60 },
-                { label: '19', value: 19 * 60 },
-                { label: '20', value: 20 * 60 },
-                { label: '21', value: 21 * 60 },
-                { label: '22', value: 22 * 60 },
-                { label: '23', value: 23 * 60 },
-                { label: '24', value: 24 * 60 },
-              ]"
+              :items="setDeadlines"
             />
           </template>
         </div>
@@ -527,7 +513,7 @@
             v-model="form.compliance_document_id"
             :type="'multi-checkbox'"
             :name="'compliance_document_id'"
-            :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
+            :label="`${complianceListLabel}`"
             :placeholder="''"
             :lists="compliances"
             :disabled="job.status === 'Allocated'"
@@ -718,11 +704,24 @@ export default {
   },
 
   computed: {
+    setDeadlines() {
+      let inputArray = [];
+      for (let i = 1; i <= 24; i++) {
+        inputArray.push({
+          label: i.toString(),
+          value: i * 60
+        });
+      }
+      return inputArray;
+    },
     hasBanks() {
       return this.banksCount > 0 ? true : false;
     },
     authPermissions() {
       return this.$store.getters["permissions"];
+    },
+    complianceListLabel() {
+      return `For ${this.selectedProfession.profession_compliance_category_name}:`;
     },
     google: gmapApi,
     latLang() {
@@ -901,7 +900,7 @@ export default {
     this.form.total_hours = this.job.total_hours;
 
     this.form.hours = Math.floor(this.form.total_hours / 60);
-    this.form.minutes = this.form.total_hours % 60;
+    this.form.minutes = Math.floor(this.form.total_hours % 60);
 
     if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
       this.unpaid_breaks = false;

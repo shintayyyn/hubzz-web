@@ -41,7 +41,8 @@ export default () => ({
         practice_type_id: [],
         email: '',
         password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        referral_code: null
     },
     practice_detail_form_error: [],
     practice_surgery_detail_form_error: [],
@@ -112,7 +113,8 @@ export default () => ({
     credential_details: {
         email: '',
         password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        referral_code: null
     },
     account_detail_form_error: [],
     address_detail_form_error: [],

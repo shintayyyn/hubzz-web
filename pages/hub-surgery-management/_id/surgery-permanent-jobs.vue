@@ -48,12 +48,12 @@
 <script>
 export default {
 	components: {
-	},
+  },
 	data () {
 		return {
       spokeIsNotAllowed: false,
     }
-	},
+  },
 	created () {
     console.log('route name', this.$route.name)
   },

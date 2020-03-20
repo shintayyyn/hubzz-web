@@ -50,6 +50,24 @@
             required
           />
 
+          <AppInput
+            v-model="has_referral"
+            :type="'single-checkbox'"
+            :name="'has_referral'"
+            :label="'Do you have any referral code with you?'"
+          />
+
+          <template v-if="has_referral">
+            <AppInput
+              v-model="form.referral_code"
+              :type="'text'"
+              :name="'referral_code'"
+              :label="'Referral Code'"
+              :error="formError.find(item => item.field === 'referral_code')"
+              required
+            />
+          </template>
+
           <div class="flex flex-col py-2 mb-6">
             <div class="flex flex-row flex-no-wrap justify-between">
               <input
@@ -128,8 +146,10 @@ export default {
         email: "",
         password: "",
         password_confirmation: "",
-        privacy_policy: false
+        privacy_policy: false,
+        referral_code: null
       },
+      has_referral: false,
       formError: [],
       modal: false
     };
@@ -180,6 +200,7 @@ export default {
     this.form.email = this.credentialDetails.email;
     this.form.password = this.credentialDetails.password;
     this.form.password_confirmation = this.credentialDetails.password_confirmation;
+    this.form.referral_code = this.credentialDetails.referral_code;
     this.form.privacy_policy = false;
     if (this.credentialFormError.length > 0) {
       this.credentialFormError.forEach(item => {
@@ -198,7 +219,12 @@ export default {
   methods: {
     next() {
       this.formError = [];
-      this.Validate(this.form);
+      let notRequired = [];
+      if ([false, "false"].includes(this.has_referral)) {
+        notRequired.push("referral_code");
+        this.form.referral_code = null;
+      }
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_CREDENTIAL_DETAILS", this.form);
         this.$store.commit("sign-up/SET_CREDENTIAL_DETAIL_FORM_ERROR", []);

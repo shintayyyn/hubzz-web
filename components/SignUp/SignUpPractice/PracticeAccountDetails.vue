@@ -28,15 +28,11 @@
           />
           <div v-if="form.type === 'Hub'" class="m-2 bg-gray-300 rounded-lg">
             <div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
-              <p class="font-semibold text-lg">
-                Hub
-              </p>
+              <p class="font-semibold text-lg">Hub</p>
               <p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
             </div>
             <div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
-              <p class="font-semibold text-lg">
-                Hub - Healthboard
-              </p>
+              <p class="font-semibold text-lg">Hub - Healthboard</p>
               <p>Healthboard Hubs can only create jobs for its spokes but not for itself.</p>
             </div>
           </div>
@@ -118,9 +114,7 @@
               :error="formError.find(item => item.field === 'tax_year_end_date')"
             />
           </template>
-          <div class="font-bold text-sm my-4">
-            Bank Details
-          </div>
+          <div class="font-bold text-sm my-4">Bank Details</div>
           <AppInput
             v-model="form.account_name"
             :type="'text'"
@@ -185,6 +179,24 @@
             @blur="CheckEmptyField(form.password_confirmation,'password_confirmation')"
           />
 
+          <AppInput
+            v-model="has_referral"
+            :type="'single-checkbox'"
+            :name="'has_referral'"
+            :label="'Do you have any referral code with you?'"
+          />
+
+          <template v-if="has_referral">
+            <AppInput
+              v-model="form.referral_code"
+              :type="'text'"
+              :name="'referral_code'"
+              :label="'Referral Code'"
+              :error="formError.find(item => item.field === 'referral_code')"
+              required
+            />
+          </template>
+
           <div class="flex flex-col py-2 mb-6">
             <div class="flex flex-row flex-no-wrap justify-between">
               <input
@@ -192,7 +204,7 @@
                 v-model="form.privacy_policy"
                 type="checkbox"
                 class="checkbox mt-1 mr-1"
-              >
+              />
               <label for="privacy_policy" class="text-xs sm:text-sm py-1">
                 I agree with the
                 <span
@@ -206,9 +218,7 @@
               <div
                 v-if="formError.find(item => item.field === 'privacy_policy')"
                 class="py-1 text-xs text-red-500"
-              >
-                {{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}
-              </div>
+              >{{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}</div>
             </transition>
           </div>
         </form>
@@ -239,27 +249,27 @@
   </div>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput"
-import AppDate from "@/components/Base/AppDate"
-import AppButton from "@/components/Base/AppButton"
-import AppFilterSearch from "@/components/Base/AppFilterSearch"
-import AppFormError from "@/components/Base/AppFormError"
-import TermsAndConditions from "@/components/TermsAndConditions"
+import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppFormError from "@/components/Base/AppFormError";
+import TermsAndConditions from "@/components/TermsAndConditions";
 
 const types = [
   { value: "Hub", label: "Hub" },
   { value: "Spoke", label: "Spoke" },
   { value: "Stand Alone", label: "Stand Alone" }
-]
+];
 const hub_types = [
   { value: "Type 1", label: "Type 1" },
   { value: "Type 2", label: "Type 2" }
-]
+];
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
   { value: "Practice Staff", label: "Practice Staff" }
-]
+];
 export default {
   components: {
     AppInput,
@@ -269,7 +279,7 @@ export default {
     AppFormError,
     TermsAndConditions
   },
-  data () {
+  data() {
     return {
       types,
       hub_types,
@@ -293,25 +303,27 @@ export default {
         account_name: "",
         bank_name: "",
         sort_code: "",
-        account_number: ""
+        account_number: "",
+        referral_code: null
       },
+      has_referral: false,
       formError: [],
       modal: false
-    }
+    };
   },
   computed: {
-    practiceTypes () {
-      return this.$store.getters["sign-up/getPracticeTypes"]
+    practiceTypes() {
+      return this.$store.getters["sign-up/getPracticeTypes"];
     },
-    practiceAccountDetails () {
-      return this.$store.getters["sign-up/practiceAccountDetails"]
+    practiceAccountDetails() {
+      return this.$store.getters["sign-up/practiceAccountDetails"];
     },
-    practiceAccountFormError () {
-      return this.$store.getters["sign-up/practiceAccountFormError"]
+    practiceAccountFormError() {
+      return this.$store.getters["sign-up/practiceAccountFormError"];
     }
   },
   watch: {
-    practiceAccountFormError (value) {
+    practiceAccountFormError(value) {
       if (value.length > 0) {
         value.forEach(item => {
           this.formError.push({
@@ -321,19 +333,19 @@ export default {
                 : item.field,
             message: item.message,
             validation: item.validation
-          })
-        })
+          });
+        });
       }
     }
   },
-  created () {
+  created() {
     this.practiceAccountDetails.practice_type_id.forEach(id => {
       this.form.practice_type_id.push(
         this.practiceTypes.find(item => item.value === id)
-      )
-    })
+      );
+    });
   },
-  mounted () {
+  mounted() {
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
         this.formError.push({
@@ -343,47 +355,51 @@ export default {
               : item.field,
           message: item.message,
           validation: item.validation
-        })
-      })
+        });
+      });
     }
   },
   methods: {
-    signUp () {
-      this.formError = []
-      let notRequired = ["title", "suffix", "vat_registered"]
+    signUp() {
+      this.formError = [];
+      let notRequired = ["title", "suffix", "vat_registered"];
       if (["Spoke", "Stand Alone"].includes(this.form.type)) {
-        notRequired.push("hub_type")
+        notRequired.push("hub_type");
       }
       if (["false", false].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number", "tax_year_end_date")
+        notRequired.push("vat_number", "tax_year_end_date");
       }
-      this.Validate(this.form, notRequired)
+      if ([false, "false"].includes(this.has_referral)) {
+        notRequired.push("referral_code");
+        this.form.referral_code = null;
+      }
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
-        let submitForm = {}
+        let submitForm = {};
         submitForm = {
           ...this.form
-        }
-        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm)
+        };
+        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm);
         setTimeout(() => {
-          this.$store.dispatch("sign-up/registeredPractice")
-        }, 1000)
+          this.$store.dispatch("sign-up/registeredPractice");
+        }, 1000);
       }
     },
-    checkPracticeType (value) {
-      let selectedArr = []
-      selectedArr.push(value)
+    checkPracticeType(value) {
+      let selectedArr = [];
+      selectedArr.push(value);
       this.form.practice_type_id = [
         ...this.form.practice_type_id,
         ...selectedArr
-      ]
+      ];
     },
-    uncheckPracticeType (value) {
+    uncheckPracticeType(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
         id => id != value
-      )
+      );
     }
   }
-}
+};
 </script>
 <style scoped>
 button:active {
