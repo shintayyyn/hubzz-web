@@ -56,7 +56,7 @@ Vue.filter('hours', function (min) {
 
 Vue.filter('hoursMinutes', function (num) {
   let hours = Math.floor(num / 60)
-  let minutes = num % 60
+  let minutes = Math.floor(num % 60)
   let hrDisplay = `${hours > 0 ? `${hours} Hour${hours > 1 ? 's' : ''}` : ''}`
   let minDisplay = `${minutes > 0 ? `${minutes} Minute${minutes > 1 ? 's' : ""}` : ''}`
   return `${hrDisplay} ${minDisplay}`

@@ -21,30 +21,22 @@
 						@blur="CheckEmptyField(form.profession_id, 'profession_id')"
 					/>
 					<template v-if="form.profession_id">
-						<AppInput
-							v-model="form.gmc_or_nmc_number"
-							:type="'text'"
-							:name="'gmc_or_nmc_number'"
-							:label="'Your GMC / NMC Number'"
-							:placeholder="'GMC / NMC Number'"
-							:error="formError.find(item => item.field === 'gmc_or_nmc_number')"
-							:info="'For compliance; to be verified by the hubzz team'"
-							required
-							@blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
-							@keydown="inputNumberOnly($event)"
-						/>
-
-						<AppInput
-							v-model="form.mpl_or_npl_number"
-							:type="'text'"
-							:name="'mpl_or_npl_number'"
-							:label="'Your MPL / NPL Number'"
-							:placeholder="'MPL / NPL Number'"
-							:error="formError.find(item => item.field === 'mpl_or_npl_number')"
-							:info="'For compliance; to be verified by the hubzz team'"
-							@blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
-							@keydown="inputNumberOnly($event)"
-						/>
+						<div
+							v-for="item in reference_locum_compliance_documents_list"
+							:key="item.compliance_document_id"
+						>
+							<AppInput
+								v-model="form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()]"
+								:type="'text'"
+								:name="item.compliance_document_name.replace(/ /g, '_').toLowerCase()"
+								:label="item.compliance_document_name"
+								:error="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+								:info="'For compliance; to be verified by the hubzz team'"
+								required
+								@blur="CheckEmptyField(form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()], item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+								@keydown="inputNumberOnly($event)"
+							/>
+						</div>
 
 						<AppInput
 							v-model="form.nhs_smart_card_id_number"
@@ -98,7 +90,7 @@
 						v-model="form.view_locum_jobs"
 						:type="'single-checkbox'"
 						:name="'view_locum_jobs'"
-						:label="'Permanent / Salaried Roles'"
+						:label="'Hubzz Jobs'"
 						:error="formError.find(item => item.field === 'view_locum_jobs')"
 					/>
 
@@ -106,7 +98,7 @@
 						v-model="form.view_permanent_jobs"
 						:type="'single-checkbox'"
 						:name="'view_permanent_jobs'"
-						:label="'Hubzz Jobs'"
+						:label="'Permanent / Salaried Roles'"
 						:error="formError.find(item => item.field === 'view_permanent_jobs')"
 					/>
 
@@ -248,9 +240,9 @@ export default {
 			selectedProfession: null,
 			professions_categories: [],
 			pratice_types: [],
+			reference_locum_compliance_documents_list: [],
 			form: {
-				gmc_or_nmc_number: "",
-				mpl_or_npl_number: "",
+				reference_locum_compliance_documents: [],
 				nhs_smart_card_id_number: "",
 				profession_id: "",
 				qualification_id: [],
@@ -264,8 +256,8 @@ export default {
 				max_rate_per_whole_day_session: 0,
 				practice_type_id: [],
 				mandatory_training_id: [],
-				view_locum_jobs: false,
-				view_permanent_jobs: false
+				view_permanent_jobs: false,
+				view_locum_jobs: false
 			},
 			formError: []
 		};
@@ -314,6 +306,12 @@ export default {
 					);
 				}
 			}
+			let profession = this.professions_categories.find(
+				item => item.id === parseInt(newValue)
+			);
+			console.log(profession);
+			this.reference_locum_compliance_documents_list =
+				profession.profession_compliance_category.reference_compliance_documents;
 		}
 	},
 	async created() {
@@ -327,8 +325,8 @@ export default {
 		// console.log(this.professions_categories);
 		this.pratice_types = this.practiceTypes;
 		// console.log(this.pratice_types);
-		this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
-		this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
+		// this.form.reference_locum_compliance_documents = this.professionalDetails.reference_locum_compliance_documents;
+		// this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
 		this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
 		this.form.profession_id = this.professionalDetails.profession_id;
 		this.form.view_locum_jobs = this.professionalDetails.view_locum_jobs;
@@ -400,10 +398,7 @@ export default {
 			let notRequired = [
 				"nhs_smart_card_id_number",
 				"spoken_language_id",
-				"mandatory_training_id",
-				"view_locum_jobs",
-				"view_permanent_jobs",
-				"mpl_or_npl_number"
+				"mandatory_training_id"
 			];
 			if (
 				["true", true].includes(this.form.view_locum_jobs) ||
@@ -411,6 +406,48 @@ export default {
 			) {
 				notRequired.push("view_locum_jobs", "view_permanent_jobs");
 			}
+			this.form.view_locum_jobs =
+				this.form.view_locum_jobs === "" ? false : this.form.view_locum_jobs;
+
+			this.form.view_permanent_jobs =
+				this.form.view_permanent_jobs === ""
+					? false
+					: this.form.view_permanent_jobs;
+			if (this.form.profession_id) {
+				let profession = this.professions_categories.find(
+					item => item.id === parseInt(this.form.profession_id)
+				);
+				profession.profession_compliance_category.reference_compliance_documents.forEach(
+					item => {
+						if (
+							this.form[
+								item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+							]
+						) {
+							this.form.reference_locum_compliance_documents.push({
+								compliance_document_id: item.compliance_document_id,
+								reference: this.form[
+									item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+								]
+							});
+						} else {
+							console.log(
+								item.compliance_document_name.replace(/ /g, "_").toLowerCase(),
+								this.form[
+									item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+								]
+							);
+							this.formError.push({
+								field: item.compliance_document_name
+									.replace(/ /g, "_")
+									.toLowerCase(),
+								message: `${item.compliance_document_name} is required`
+							});
+						}
+					}
+				);
+			}
+			console.log(this.formError);
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
 				this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {

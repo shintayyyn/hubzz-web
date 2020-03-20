@@ -163,6 +163,8 @@ export default {
 	},
 	mounted() {
 		this.form.final_hours = this.job_part.final_hours.toFixed(2);
+		this.form.final_hours_hour = Math.floor(this.job_part.final_hours / 60);
+		this.form.final_hours_minute = Math.floor(this.job_part.final_hours % 60);
 	},
 	methods: {
 		hasValue(value, field) {

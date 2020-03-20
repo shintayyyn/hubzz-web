@@ -43,8 +43,7 @@
 			<div class="w-full text-center text-gray-500 font-bold">SAT</div>
 			<div class="w-full text-center text-gray-500 font-bold">SUN</div>
 		</div>
-
-		<div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5">
+		<div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5 md:mb-4">
 			<div class="flex flex-col w-full items-center">
 				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
 					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
@@ -249,6 +248,64 @@
 				</div>
 			</div>
 		</div>
+    <span class="mt-4">
+      <svgicon @click="legendsModal=true" name="info" width="16" height="16" class="fill-current cursor-pointer hover:text-gray-700"/>
+    </span>
+    <transition name="fade">
+      <div class="message-modal" v-if="legendsModal">
+        <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
+          <p class="flex items-center justify-between flex-no-wrap font-bold">Legends <span @click="legendsModal=false" class="cursor-pointer hover:text-gray-600"><svgicon name="cancel" width="12" height="12" class="fill-current"/></span></p>
+          <div class="mt-2 flex flex-col md:flex-row">
+            <div class="md:w-3/5">
+              <p>Job Status</p>
+              <div class="flex items-center">
+                <span class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">Ongoing Jobs</p>
+              </div>
+              <div class="flex items-center">
+                <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">Applied Jobs{{ $auth.user.domain === 'Locum' && ', Allocated Private Jobs'  }}</p>
+              </div>
+              <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
+                <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">Unfilled, Withdrawn</p>
+              </div>
+              <div class="flex items-center" v-if="$auth.user.domain === 'Locum'">
+                <span>
+                  <svgicon
+                    name="pushpin"
+                    width="17"
+                    height="17"
+                    class="fill-current text-blue-500"
+                  />
+                </span>
+                <p class="ml-2">For Interview Permanent Jobs</p>
+              </div>
+            </div>
+            <div class="md:w-2/5">
+              <p>Shifts</p>
+              <div class="flex items-center">
+                <span class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">Whole Day</p>
+              </div>
+              <div class="flex items-center">
+                <span class="bg-shift-am w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">AM</p>
+              </div>
+              <div class="flex items-center">
+                <span class="bg-shift-pm w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">PM</p>
+              </div>
+              <div class="flex items-center">
+                <span class="bg-shift-ooh w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">OOH</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <div class="shield" v-if="legendsModal" @click="legendsModal=false"></div>
 		<AppLoading :loading="$store.state.calendar.loading" spinner />
 	</section>
 </template>
@@ -272,7 +329,8 @@ export default {
       daysInMonth: [],
       startOfMonth: null,
       endOfMonth: null,
-      hasEvent: []
+      hasEvent: [],
+      legendsModal: false
     };
   },
   computed: {
@@ -1039,6 +1097,9 @@ export default {
 }
 
 @media (min-width: 768px) {
+  .message-modal {
+    min-width: 550px;
+  }
 	.date {
 		min-height: 4em;
 		min-width: 4em;

@@ -11,7 +11,7 @@
         <div class="font-bold text-sm sm:text-md">
           Job description
         </div>
-        <div class="text-xs sm:text-sm mb-8 break-all">
+        <div class="text-xs sm:text-sm mb-8 break-words">
           {{ job_part.job.description }}
         </div>
         <div class="font-bold text-sm sm:text-md">
