@@ -518,8 +518,8 @@ export default {
       reference_locum_compliance_documents_list: [],
       form: {
 				reference_locum_compliance_documents: [],
-        gmc_or_nmc_number: "",
-        mpl_or_npl_number: "",
+        // gmc_or_nmc_number: "",
+        // mpl_or_npl_number: "",
         nhs_smart_card_id_number: "",
         headline: "",
         short_biography: "",
@@ -713,7 +713,7 @@ export default {
     this.form.mandatory_training_id = this.user.mandatory_trainings.map(
       mandatoryTraining => mandatoryTraining.mandatory_training.id
     );
-    this.form.post_code = this.user.locum_post_code;
+    this.form.post_code = this.user.locum_postcode;
     this.form.miles = this.user.miles;
 
 
@@ -847,6 +847,35 @@ export default {
       ) {
         notRequired.push("view_locum_jobs", "view_permanent_jobs");
       }
+
+      if (this.form.profession_id) {
+				let profession = this.professions.find(
+					item => item.value === parseInt(this.form.profession_id)
+				);
+				profession.reference_compliance_documents.forEach(
+					item => {
+						if (
+							this.form[
+								item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+							]
+						) {
+							this.form.reference_locum_compliance_documents.push({
+								compliance_document_id: item.compliance_document_id,
+								reference: this.form[
+									item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+								]
+							});
+						} else {
+							this.formError.push({
+								field: item.compliance_document_name
+									.replace(/ /g, "_")
+									.toLowerCase(),
+								message: `${item.compliance_document_name} is required`
+							});
+						}
+					}
+				);
+			}
 
       this.formError = [];
 
