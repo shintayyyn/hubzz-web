@@ -5,7 +5,7 @@
 				<div class="font-bold text-sm sm:text-md">Job number</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job.job_number }}</div>
 				<div class="font-bold text-sm sm:text-md">Job description</div>
-				<div class="text-xs sm:text-sm mb-8 break-all">{{ job.description }}</div>
+				<div class="text-xs sm:text-sm mb-8 break-words">{{ job.description }}</div>
 				<div class="font-bold text-sm sm:text-md">Rate</div>
 				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>
 				<div class="font-bold text-sm sm:text-md">Total Hours</div>
