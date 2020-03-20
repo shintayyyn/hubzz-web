@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div
+    <!-- <div
       class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
       v-if="$route.query.jobStatus && ['available', 'public', 'bank'].includes($route.query.jobStatus.toLowerCase())"
     >
@@ -20,7 +20,7 @@
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Public</nuxt-link>
       </div>
-    </div>
+    </div>-->
     <transition name="fade" mode="out-in">
       <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -594,7 +594,7 @@ export default {
     try {
       let locum_status = [];
       let queryStatus = query.jobStatus;
-      let bankStatus = query.bank;
+      // let bankStatus = query.bank;
 
       if (!queryStatus) {
         locum_status = ["Allocated"];
@@ -705,14 +705,14 @@ export default {
                 title_includes: "",
                 job_title_includes: "",
                 job_number_includes: "",
-                job_part_number_includes: "",
-                has_favorite_applicants:
-                  queryStatus === "Applied" && bankStatus === "true"
-                    ? true
-                    : queryStatus === "Applied" &&
-                      (bankStatus === "false" || !bankStatus)
-                    ? false
-                    : null
+                job_part_number_includes: ""
+                // has_favorite_applicants:
+                //   queryStatus === "Applied" && bankStatus === "true"
+                //     ? true
+                //     : queryStatus === "Applied" &&
+                //       (bankStatus === "false" || !bankStatus)
+                //     ? false
+                //     : null
               }
             }
           )
@@ -760,14 +760,14 @@ export default {
                 title_includes: "",
                 job_title_includes: "",
                 job_number_includes: "",
-                job_part_number_includes: "",
-                has_favorite_applicants:
-                  queryStatus === "Applied" && bankStatus === "true"
-                    ? true
-                    : queryStatus === "Applied" &&
-                      (bankStatus === "false" || !bankStatus)
-                    ? false
-                    : null
+                job_part_number_includes: ""
+                // has_favorite_applicants:
+                //   queryStatus === "Applied" && bankStatus === "true"
+                //     ? true
+                //     : queryStatus === "Applied" &&
+                //       (bankStatus === "false" || !bankStatus)
+                //     ? false
+                //     : null
               }
             }
           )
@@ -870,7 +870,7 @@ export default {
     getJobsPromiseAll() {
       let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
-      let bankStatus = this.$route.query.bank;
+      // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
         locum_status = ["Allocated"];
@@ -923,14 +923,14 @@ export default {
               invoice_status: this.isJobPart ? this.invoice_status : "",
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              job_number_includes: this.job_number_includes
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           }
         ),
@@ -974,15 +974,15 @@ export default {
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
               job_number_includes: this.job_number_includes,
-              job_part_number_includes: this.job_part_number_includes,
+              job_part_number_includes: this.job_part_number_includes
 
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           }
         )
@@ -1012,7 +1012,7 @@ export default {
     getJobs() {
       let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
-      let bankStatus = this.$route.query.bank;
+      // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
         locum_status = ["Allocated"];
@@ -1067,14 +1067,14 @@ export default {
               invoice_status: this.isJobPart ? this.invoice_status : "",
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              job_number_includes: this.job_number_includes
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           }
         )

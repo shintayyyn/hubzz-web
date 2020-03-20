@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div
+    <!-- <div
       v-if="$route.query.status && $route.query.status.toLowerCase() === 'applied'"
       class="flex flex-row justify-start overflow-x-auto pb-3"
     >
@@ -16,7 +16,7 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
         :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >My Bank</nuxt-link>
-    </div>
+    </div>-->
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -135,7 +135,6 @@
               </div>
             </template>
           </div>
-          
 
           <div class="md:px-1 h-full flex w-full">
             <AppButton
@@ -628,11 +627,13 @@ export default {
     async "$route.query"(newValue, oldValue) {
       let newStatus = newValue.status;
       let oldStatus = oldValue.status;
-      let newBank = newValue.bank;
-      let oldBank = oldValue.bank;
+      // let newBank = newValue.bank;
+      // let oldBank = oldValue.bank;
       if (
-        (newStatus && newStatus !== null && newStatus !== oldStatus) ||
-        (newBank && newBank !== null && newBank !== oldBank)
+        newStatus &&
+        newStatus !== null &&
+        newStatus !== oldStatus
+        // || (newBank && newBank !== null && newBank !== oldBank)
       ) {
         this.current_page = 1;
         this.filterModal = false;
@@ -651,7 +652,7 @@ export default {
     try {
       let status = [];
       let queryStatus = query.status;
-      let bankStatus = query.bank;
+      // let bankStatus = query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
@@ -759,14 +760,14 @@ export default {
               job_number_includes: !isJobPart ? job_number_includes : "",
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
-                : "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+                : ""
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           })
           .then(res => {
@@ -812,14 +813,14 @@ export default {
               job_number_includes: !isJobPart ? job_number_includes : "",
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
-                : "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+                : ""
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           })
           .then(res => {
@@ -875,13 +876,13 @@ export default {
       };
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        error(err.response.data)
-        return
+        error(err.response.data);
+        return;
       } else {
         console.log(err || err.response);
         return error({ status: 404 });
-      } 
-      throw err
+      }
+      throw err;
     }
   },
   mounted() {
@@ -953,7 +954,7 @@ export default {
     getJobsPromiseAll() {
       let status = [];
       let queryStatus = this.$route.query.status;
-      let bankStatus = this.$route.query.bank;
+      // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
@@ -1005,13 +1006,13 @@ export default {
               job_part_number_includes: this.isJobPart
                 ? this.job_part_number_includes
                 : "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null,
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null,
               profession_id: this.profession_id,
               favorite_only: this.favorite_only
             }
@@ -1055,13 +1056,13 @@ export default {
               job_part_number_includes: this.isJobPart
                 ? this.job_part_number_includes
                 : "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null,
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null,
               profession_id: this.profession_id,
               favorite_only: this.favorite_only
             }
@@ -1095,7 +1096,7 @@ export default {
               ? responseJobs.data.job_parts.map(item => {
                   return {
                     ...item,
-                    profession_name: item.profession.name ,
+                    profession_name: item.profession.name,
                     // isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
                     tag_status: item.terminated ? "Terminated" : item.status,
                     date_time_start: `${this.$moment(item.date_start).format(
@@ -1120,7 +1121,7 @@ export default {
     getJobs() {
       let status = [];
       let queryStatus = this.$route.query.status;
-      let bankStatus = this.$route.query.bank;
+      // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
@@ -1171,14 +1172,14 @@ export default {
               : "",
             job_part_number_includes: this.isJobPart
               ? this.job_part_number_includes
-              : "",
-            has_favorite_applicants:
-              queryStatus === "Applied" && bankStatus === "true"
-                ? true
-                : queryStatus === "Applied" &&
-                  (bankStatus === "false" || !bankStatus)
-                ? false
-                : null
+              : ""
+            // has_favorite_applicants:
+            //   queryStatus === "Applied" && bankStatus === "true"
+            //     ? true
+            //     : queryStatus === "Applied" &&
+            //       (bankStatus === "false" || !bankStatus)
+            //     ? false
+            //     : null
           }
         })
         .then(res => {
@@ -1561,7 +1562,7 @@ export default {
       this.job_number_includes = "";
       this.job_part_number_includes = "";
       this.profession_id = "";
-      this.favorite_only = ""
+      this.favorite_only = "";
     }
   }
 };

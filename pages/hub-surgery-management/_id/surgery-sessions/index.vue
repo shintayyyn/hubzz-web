@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div
+    <!-- <div
       class="flex flex-row justify-start overflow-x-auto pb-3"
       v-if="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'"
     >
@@ -16,7 +16,7 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
         :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Child Bank</nuxt-link>
-    </div>
+    </div>-->
     <transition name="fade" mode="out-in">
       <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -299,7 +299,8 @@ export default {
       if (queryStatus === "allocated") {
         columns.push({
           name: "Assigned",
-          dataIndex: "assigned_to",
+          dataIndex:
+            "platform_job.appointed_to_locum.user.personal_detail.name",
           class: "text-center"
         });
       }
@@ -343,11 +344,13 @@ export default {
     async "$route.query"(newValue, oldValue) {
       let newStatus = newValue.jobStatus;
       let oldStatus = oldValue.jobStatus;
-      let newBank = newValue.bank;
-      let oldBank = oldValue.bank;
+      // let newBank = newValue.bank;
+      // let oldBank = oldValue.bank;
       if (
-        (newStatus && newStatus !== null && newStatus !== oldStatus) ||
-        (newBank && newBank !== null && newBank !== oldBank)
+        newStatus &&
+        newStatus !== null &&
+        newStatus !== oldStatus
+        // || (newBank && newBank !== null && newBank !== oldBank)
       ) {
         this.current_page = 1;
         this.filterModal = false;
@@ -365,7 +368,7 @@ export default {
     try {
       let status = [];
       let queryStatus = query.jobStatus;
-      let bankStatus = query.bank;
+      // let bankStatus = query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
@@ -465,14 +468,14 @@ export default {
               title_includes: "",
               job_title_includes: "",
               job_number_includes: "",
-              job_part_number_includes: "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              job_part_number_includes: ""
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           })
           .then(res => {
@@ -512,14 +515,14 @@ export default {
               title_includes: "",
               job_title_includes: "",
               job_number_includes: "",
-              job_part_number_includes: "",
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              job_part_number_includes: ""
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           })
           .then(res => {
@@ -539,21 +542,21 @@ export default {
         jobs
       };
     } catch (err) {
-       if (err.response && err.response.status === 401) {
-        error(err.response.data)
-        return
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
       } else {
         console.log(err || err.response);
         return error({ status: 404 });
-      } 
-      throw err
+      }
+      throw err;
     }
   },
   methods: {
     getJobsPromiseAll() {
       let status = [];
       let queryStatus = this.$route.query.jobStatus;
-      let bankStatus = this.$route.query.bank;
+      // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
@@ -600,14 +603,14 @@ export default {
               viewing_locum_user_id: this.viewing_locum_user_id,
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              job_number_includes: this.job_number_includes
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           }
         ),
@@ -646,15 +649,15 @@ export default {
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
               job_number_includes: this.job_number_includes,
-              job_part_number_includes: this.job_part_number_includes,
+              job_part_number_includes: this.job_part_number_includes
 
-              has_favorite_applicants:
-                queryStatus === "Applied" && bankStatus === "true"
-                  ? true
-                  : queryStatus === "Applied" &&
-                    (bankStatus === "false" || !bankStatus)
-                  ? false
-                  : null
+              // has_favorite_applicants:
+              //   queryStatus === "Applied" && bankStatus === "true"
+              //     ? true
+              //     : queryStatus === "Applied" &&
+              //       (bankStatus === "false" || !bankStatus)
+              //     ? false
+              //     : null
             }
           }
         )
@@ -676,7 +679,7 @@ export default {
     getJobs() {
       let status = [];
       let queryStatus = this.$route.query.jobStatus;
-      let bankStatus = this.$route.query.bank;
+      // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
         status = ["Allocated"];
@@ -722,14 +725,14 @@ export default {
             viewing_locum_user_id: this.viewing_lresponseocum_user_id,
             title_includes: this.title_includes,
             job_title_includes: this.job_title_includes,
-            job_number_includes: this.job_number_includes,
-            has_favorite_applicants:
-              queryStatus === "Applied" && bankStatus === "true"
-                ? true
-                : queryStatus === "Applied" &&
-                  (bankStatus === "false" || !bankStatus)
-                ? false
-                : null
+            job_number_includes: this.job_number_includes
+            // has_favorite_applicants:
+            //   queryStatus === "Applied" && bankStatus === "true"
+            //     ? true
+            //     : queryStatus === "Applied" &&
+            //       (bankStatus === "false" || !bankStatus)
+            //     ? false
+            //     : null
           }
         })
         .then(res => {
@@ -742,13 +745,13 @@ export default {
         })
         .catch(err => {
           if (err.response && err.response.status === 401) {
-            error(err.response.data)
-            return
+            error(err.response.data);
+            return;
           } else {
             console.log(err || err.response);
             return error({ status: 404 });
-          } 
-          throw err
+          }
+          throw err;
         });
     },
     async refreshJobs() {

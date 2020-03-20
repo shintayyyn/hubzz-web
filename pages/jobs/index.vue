@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div
+    <!-- <div
       v-if="$route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase())"
       class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
     >
@@ -28,7 +28,7 @@
           :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'bank' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Bank</nuxt-link>
       </div>
-    </div>
+    </div>-->
 
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
@@ -729,18 +729,18 @@ export default {
         locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Bank":
-            locum_status = ["Matched"];
-            break;
+          // case "Bank":
+          //   locum_status = ["Matched"];
+          //   break;
           case "Completed":
             locum_status = ["Completed"];
             break;
           case "Available":
-            locum_status = ["Matched"];
+            locum_status = ["Matched", "Available"];
             break;
-          case "Public":
-            locum_status = ["Available"];
-            break;
+          // case "Public":
+          //   locum_status = ["Available"];
+          //   break;
           case "Private":
             locum_status = [];
             break;
@@ -816,8 +816,8 @@ export default {
         job_number_includes: !isJobPart ? job_number_includes : "",
         job_part_number_includes: isJobPart ? job_part_number_includes : "",
         type: !isJobPart ? type : "",
-        job_type: isJobPart ? job_type : "",
-        practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+        job_type: isJobPart ? job_type : ""
+        // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
       };
 
       const [shifts, rates, total, jobs] = await Promise.all([
@@ -920,7 +920,6 @@ export default {
             value: item.id
           };
         });
-        console.log(res);
       });
     this.$socket.on(
       "Locum Notification Job Available",
@@ -1014,18 +1013,18 @@ export default {
 
       if (queryStatus) {
         switch (queryStatus) {
-          case "Bank":
-            locum_status = ["Matched"];
-            break;
+          // case "Bank":
+          //   locum_status = ["Matched"];
+          //   break;
           case "Completed":
             locum_status = ["Completed"];
             break;
           case "Available":
-            locum_status = ["Matched"];
+            locum_status = ["Matched", "Available"];
             break;
-          case "Public":
-            locum_status = ["Available"];
-            break;
+          // case "Public":
+          //   locum_status = ["Available"];
+          //   break;
           case "Private":
             locum_status = [];
             break;
@@ -1090,8 +1089,8 @@ export default {
                 ? queryStatus === "Private"
                   ? "Private"
                   : "Platform"
-                : "",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+                : ""
+              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
         ),
@@ -1150,8 +1149,8 @@ export default {
                 ? queryStatus === "Private"
                   ? "Private"
                   : "Platform"
-                : "",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+                : ""
+              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
             }
           }
         )
@@ -1201,18 +1200,18 @@ export default {
         locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Bank":
-            locum_status = ["Matched"];
-            break;
+          // case "Bank":
+          //   locum_status = ["Matched"];
+          //   break;
           case "Completed":
             locum_status = ["Completed"];
             break;
           case "Available":
-            locum_status = ["Matched"];
+            locum_status = ["Matched", "Available"];
             break;
-          case "Public":
-            locum_status = ["Available"];
-            break;
+          // case "Public":
+          //   locum_status = ["Available"];
+          //   break;
           case "Private":
             locum_status = [];
             break;
@@ -1276,8 +1275,8 @@ export default {
               ? queryStatus === "Private"
                 ? "Private"
                 : "Platform"
-              : "",
-            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              : ""
+            // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
           }
         })
         .then(res => {
@@ -1603,8 +1602,8 @@ export default {
         let sorting = item.split(":")[0];
         switch (sorting) {
           case "practice_name":
-            sorting = this.isJobPart ? "job_surgery" : "surgery"
-            break
+            sorting = this.isJobPart ? "job_surgery" : "surgery";
+            break;
           case "date_time_start":
             sorting = "date_start";
             break;
