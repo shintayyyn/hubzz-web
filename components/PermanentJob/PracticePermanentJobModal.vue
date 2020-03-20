@@ -128,7 +128,7 @@
               <div>
                 <no-ssr>
                   <quill-editor
-                    class="border-none"
+                    class="border-none break-all"
                     :options="options"
                     :content="permanent_job.description"
                     disabled

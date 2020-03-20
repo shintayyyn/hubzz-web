@@ -14,7 +14,7 @@
 						:inStyle="'padding-top: 6px; padding-bottom: 6px;'"
 					/>
 					<AppButton
-						v-if="$auth.user.view_permanent_jobs"
+						v-if="!$auth.user.view_permanent_jobs"
 						:label="'Expenses'"
 						@click="expense_modal = true"
 						class="hidden md:block mr-2"

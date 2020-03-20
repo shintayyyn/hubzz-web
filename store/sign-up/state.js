@@ -74,10 +74,11 @@ export default () => ({
         address_line_3: ''
     },
     professional_details: {
-        view_locum_jobs: '',
-        view_permanent_jobs: '',
-        gmc_or_nmc_number: '',
-        mpl_or_npl_number: '',
+        view_locum_jobs: false,
+        view_permanent_jobs: false,
+        reference_locum_compliance_documents: [],
+        // gmc_or_nmc_number: '',
+        // mpl_or_npl_number: '',
         nhs_smart_card_id_number: '',
         profession_id: '',
         qualification_id: [],
