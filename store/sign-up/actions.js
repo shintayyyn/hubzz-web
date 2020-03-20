@@ -158,8 +158,8 @@ export default {
                         return (
                             errorMessage.field === 'view_locum_jobs' ||
                             errorMessage.field === 'view_permanent_jobs' ||
-                            errorMessage.field === 'gmc_or_nmc_number' ||
-                            errorMessage.field === 'mpl_or_npl_number' ||
+                            errorMessage.field === 'reference_locum_compliance_documents' ||
+                            // errorMessage.field === 'mpl_or_npl_number' ||
                             errorMessage.field === 'nhs_smart_card_id_number' ||
                             errorMessage.field === 'profession_id' ||
                             errorMessage.field === 'qualification_id' ||
