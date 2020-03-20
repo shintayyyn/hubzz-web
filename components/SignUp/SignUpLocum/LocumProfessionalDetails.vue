@@ -431,12 +431,6 @@ export default {
 								]
 							});
 						} else {
-							console.log(
-								item.compliance_document_name.replace(/ /g, "_").toLowerCase(),
-								this.form[
-									item.compliance_document_name.replace(/ /g, "_").toLowerCase()
-								]
-							);
 							this.formError.push({
 								field: item.compliance_document_name
 									.replace(/ /g, "_")
@@ -447,7 +441,6 @@ export default {
 					}
 				);
 			}
-			console.log(this.formError);
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
 				this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
