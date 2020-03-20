@@ -114,77 +114,102 @@
             <!-- dispute invoice attendance forms -->
             <div
               v-if="form.items[0].dispute && isApproved === false"
-              class="flex justify-start mt-2 px-2"
+              class="flex flex-col justify-start mt-2 px-2"
             >
-              <div class="w-1/5 flex flex-col pr-2">
-                <label for="absent_days">Days of absent</label>
-                <input
-                  v-model="form.items[0].absent_days"
-                  type="number"
-                  min="0"
-                  name="absent_days"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                />
-              </div>
-              <div class="w-1/5 flex flex-col pr-2">
-                <label for="late_hours">Hours of late</label>
-                <input
-                  v-model="form.items[0].late_hours"
-                  type="number"
-                  min="0"
-                  name="late_hours"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                />
-              </div>
-              <div class="w-3/5 flex flex-col">
-                <label for="final_hours">Final hours</label>
-                <!-- <label for="final_hours">Final hours</label>
-                <input
-                  v-model="form.items[0].final_hours"
-                  type="number"
-                  min="0"
-                  name="final_hours"
-                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  @keypress="isNumber($event)"
-                >-->
-                <div class="flex">
-                  <div class="flex items-center mr-2">
-                    <input
-                      v-model="form.hours"
-                      type="number"
-                      min="0"
-                      maxlength="8"
-                      name="hours"
-                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
-                      :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
-                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
-                      @blur="!form.hours ? form.hours = 0 : form.hours"
-                    />
-                    <label for="hours" class="text-xs md:text-sm">hours</label>
-                  </div>
-                  <div class="flex items-center">
-                    <input
-                      v-model="form.minutes"
-                      type="number"
-                      min="0"
-                      name="minutes"
-                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
-                      maxlength="2"
-                      max="60"
-                      :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
-                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
-                      @blur="!form.minutes ? form.minutes = 0 : form.minutes"
-                    />
-                    <label for="minutes" class="text-xs md:text-sm">minutes</label>
+              <div class="flex">
+                <div class="w-1/5 flex flex-col pr-2">
+                  <label for="absent_days">Days of absent</label>
+                  <input
+                    v-model="form.items[0].absent_days"
+                    type="number"
+                    min="0"
+                    name="absent_days"
+                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                    @keypress="isNumber($event)"
+                  />
+                </div>
+                <div class="w-2/5 flex flex-col pr-2">
+                  <label for="late_hours">Hours of late</label>
+                  <!-- <input
+                    v-model="form.items[0].late_hours"
+                    type="number"
+                    min="0"
+                    name="late_hours"
+                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                    @keypress="isNumber($event)"
+                  /> -->
+                  <div class="flex">
+                    <div class="flex items-center mr-2">
+                      <input
+                        v-model="form.late_hours"
+                        type="number"
+                        min="0"
+                        maxlength="8"
+                        name="late_hours"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
+                        @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'late_hours', 8)"
+                        @blur="!form.late_hours ? form.late_hours = 0 : form.late_hours"
+                      />
+                      <label for="late_hours" class="text-xs md:text-sm">hours</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        v-model="form.late_minutes"
+                        type="number"
+                        min="0"
+                        name="late_minutes"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
+                        maxlength="2"
+                        max="60"
+                        @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'late_minutes', 2)"
+                        @blur="!form.late_minutes ? form.late_minutes = 0 : form.late_minutes"
+                      />
+                      <label for="late_minutes" class="text-xs md:text-sm">minutes</label>
+                    </div>
                   </div>
                 </div>
-                <p
-                  class="text-xs mx-2 text-red-500"
-                  v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')"
-                >Final hours is required</p>
               </div>
+              <div class="flex pt-2">
+                <div class="w-2/5 flex flex-col">
+                  <label for="final_hours">Final hours</label>
+                  <div class="flex">
+                    <div class="flex items-center mr-2">
+                      <input
+                        v-model="form.hours"
+                        type="number"
+                        min="0"
+                        maxlength="8"
+                        name="hours"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
+                        :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
+                        @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                        @blur="!form.hours ? form.hours = 0 : form.hours"
+                      />
+                      <label for="hours" class="text-xs md:text-sm">hours</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        v-model="form.minutes"
+                        type="number"
+                        min="0"
+                        name="minutes"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
+                        maxlength="2"
+                        max="60"
+                        :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
+                        @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                        @blur="!form.minutes ? form.minutes = 0 : form.minutes"
+                      />
+                      <label for="minutes" class="text-xs md:text-sm">minutes</label>
+                    </div>
+                  </div>
+                  <p
+                    class="text-xs mx-2 text-red-500"
+                    v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')"
+                  >Final hours is required</p>
+                </div>
+              </div>
+              
             </div>
             <!-- disputed invoice update form -->
             <div
@@ -361,7 +386,9 @@ export default {
         date_start: null,
         date_end: null,
         minutes: 0,
-        hours: 0
+        hours: 0,
+        late_minutes: 0,
+        late_hours: 0
       },
       formError: [],
 
@@ -519,6 +546,8 @@ export default {
 
     this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
     this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
+    this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
+    this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
   },
   methods: {
     handleKeyDownEvent(e, formField, limit) {
@@ -560,10 +589,11 @@ export default {
           message: "Hours is required"
         });
       }
-      this.Validate(this.form, ["total_amount", "hours", "minutes"]);
+      this.Validate(this.form, ["total_amount", "hours", "minutes", "late_hours", "late_minutes"]);
       if (!this.formError.length) {
         this.form.items[0].final_hours =
           parseInt(this.form.hours) * 60 + parseInt(this.form.minutes);
+        this.form.items[0].late_hours = parseInt(this.form.late_hours) * 60 + parseInt(this.form.late_minutes);
         this.form.items[0].description = this.description;
         this.form.items[0].total = this.totalAmount;
         this.form.total_amount = this.totalAmount;
