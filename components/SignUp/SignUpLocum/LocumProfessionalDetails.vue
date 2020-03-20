@@ -401,8 +401,6 @@ export default {
 				"nhs_smart_card_id_number",
 				"spoken_language_id",
 				"mandatory_training_id",
-				"view_locum_jobs",
-				"view_permanent_jobs",
 				"mpl_or_npl_number"
 			];
 			if (
