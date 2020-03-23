@@ -60,7 +60,7 @@
 			<div
 				v-if="waitingForApproval"
 				class="mt-4"
-			>Waiting for locum's approval until {{ $moment(updateDeadline).format("h:mm a, MMMM D, YYYY") }}</div>
+			>Waiting for locum's approval until {{ $moment(updateDeadline).format("h:mm a, MMMM D, YYYY") }}.</div>
 		</template>
 
 		<div class="flex flex-col mt-4">
