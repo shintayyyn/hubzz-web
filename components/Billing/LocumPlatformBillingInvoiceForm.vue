@@ -476,8 +476,8 @@ export default {
             this.propJobPart.job.type
           } Job at £${this.propJobPart.job.rate} ${
             this.propJobPart.job.locum_detail_rate_type.name
-          } from ${this.propJobPart.date_start} to ${
-            this.propJobPart.date_end
+          } from ${this.$moment(this.propJobPart.date_start).format('DD/MM/YYYY')} 
+            to ${this.$moment(this.propJobPart.date_end).format('DD/MM/YYYY')
           } / ${this.propJobPart.job.shift.name} / 
           Total of ${Math.floor(this.propJobPart.final_hours / 60)} hour${
             Math.floor(this.propJobPart.final_hours / 60) > 1 ? "s" : ""
