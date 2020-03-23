@@ -39,9 +39,13 @@
 						<div class="font-bold text-sm sm:text-md">Biography</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.short_biography }}</div>
 						<div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.gmc_or_nmc_number.number }}</div>
+						<div
+							class="text-xs sm:text-sm mb-4 md:mb-8"
+						>{{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number.number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}</div>
 						<div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.mpl_or_npl_number.number }}</div>
+						<div
+							class="text-xs sm:text-sm mb-4 md:mb-8"
+						>{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number.number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>
 						<div class="font-bold text-sm sm:text-md">Specialty</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div
@@ -206,6 +210,7 @@ export default {
 			this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
 				this.mandatory = this.user.locum_detail.compliance_documents.filter(
 					compliance_document => {
+						console.log(this.user);
 						return res.data.profession_category.mandatory_compliance_documents.some(
 							mandatory_compliance_document =>
 								mandatory_compliance_document.id ===
