@@ -57,7 +57,10 @@
 		</div>
 
 		<template v-if="['Allocated','Live','Applied'].includes(job.status)">
-			<div v-if="waitingForApproval" class="mt-4">Waiting for Locum's approval...</div>
+			<div
+				v-if="waitingForApproval"
+				class="mt-4"
+			>Waiting for locum's approval until {{ $moment(updateDeadline).format("h:mm a, MMMM D, YYYY") }}</div>
 		</template>
 
 		<div class="flex flex-col mt-4">
@@ -153,11 +156,25 @@ export default {
 		},
 		waitingForApproval() {
 			return (
-				this.job.status === "Allocated" &&
-				this.job.update_accepted === false &&
-				this.job.original === false &&
-				this.job.update_accepted_until
+				(this.job.status === "Allocated" &&
+					this.job.update_accepted_until &&
+					this.job.update_accepted === false) ||
+				(this.job.status === "Applied" &&
+					this.job.applied_update_accepted_until &&
+					this.job.applied_update_accepted === false)
+				// 		&&
+				// this.job.original === false &&
+				// this.job.update_accepted_until
 			);
+		},
+		updateDeadline() {
+			if (this.job.status === "Allocated") {
+				return this.job.update_accepted_until;
+			} else if (this.job.status === "Applied") {
+				return this.job.applied_update_accepted_until;
+			} else {
+				return null;
+			}
 		}
 	},
 	created() {
