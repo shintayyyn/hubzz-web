@@ -92,6 +92,10 @@ export default {
       src: '@/plugins/html2canvas.js',
       mode: 'client',
     },
+    {
+      src: '@/plugins/vuex-shared-mutations.js',
+      mode: 'client',
+    },
   ],
 
   modules: [
@@ -142,7 +146,7 @@ export default {
 
   build: {
     transpile: [/^vue2-google-maps($|\/)/],
-    extend (config, ctx) {
+    extend () {
     },
     postcss: {
       plugins: {
