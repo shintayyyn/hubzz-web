@@ -4,8 +4,8 @@
     <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
     <!-- =========PRACTICE========= -->
     <template v-if="$auth.user.domain === 'Practice'">
-      <div class="flex flex-wrap">
-        <div class="w-full">
+      <div class="flex flex-wrap ">
+        <div class="md:w-1/2 w-full">
           <AppInput
             v-model="practiceForm.email"
             :type="'email'"
@@ -76,15 +76,15 @@
           </div>
         </div>
         
-        <!-- <div class="md:w-1/2 w-full">
-          Permissions
-          <div
-            v-for="(item,index) in authPermissions"
-            :key="index"
-          >
-          {{item}}
-          </div>
-        </div> -->
+        <div class="md:w-1/2 w-full">
+            Your Account has the following Permissions
+            <div
+              v-for="(item,index) in authPermissions"
+              :key="index"
+            >
+            {{'• ' + item}}
+            </div>
+        </div>
       </div>
       
     </template>
