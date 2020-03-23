@@ -242,7 +242,7 @@ img {
 }
 @media screen and (min-width: 1200px) {
 	.modal-container {
-		width: 70%;
+		width: 60%;
 	}
 }
 .message-shield {

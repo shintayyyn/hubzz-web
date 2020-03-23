@@ -35,13 +35,16 @@
 					class="text-xs sm:text-sm mb-8"
 				>{{ job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}</div>
 				<div class="font-bold text-sm sm:text-md">Session requirements:</div>
-				<div
-					v-for="(item, index) in session_requirements"
-					:key="`${item}-${index}`"
-					class="flex flex-col"
-				>
-					<div class="text-xs sm:text-sm w-full">{{ item }}</div>
-				</div>
+				<div v-if="!session_requirements.length" class="text-xs sm:text-sm">(none)</div>
+				<template v-else>
+					<div
+						v-for="(item, index) in session_requirements"
+						:key="`${item}-${index}`"
+						class="flex flex-col"
+					>
+						<div class="text-xs sm:text-sm w-full">{{ item }}</div>
+					</div>
+				</template>
 				<div class="text-xs sm:text-sm mb-8" />
 				<div class="font-bold text-sm sm:text-md">Session structure information</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.session_structure_information }}</div>

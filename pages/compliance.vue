@@ -74,15 +74,21 @@
               <template v-if="item.compliance_document_type_name !== 'Safeguarding'">
                 <div class="item w-1/6" v-if="(item.file || item.reference)">
                   <div class="flex flex-row flex-no-wrap items-center" v-if="item.file">
-                    <svgicon name="cloud-download" height="24" width="24" />
+                    <span>
+                      <svgicon name="cloud-download" height="24" width="24" />
+                    </span>
                     <div class="mx-2">
                       <a
                         :href="item.file.url"
                         :download="item.file.filename"
                         target="_blank"
-                        class="whitespace-no-wrap"
+                        class="truncate"
                         @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-                      >{{ item.file.filename | StringMaxLength(15) }}</a>
+                      >
+                      <span class="block md:hidden">{{ item.file.filename | StringMaxLength(15) }}</span>
+                      <span class="hidden xl:block">{{ item.file.filename | StringMaxLength(12) }}</span>
+                      <span class="hidden md:block xl:hidden">{{ item.file.filename | StringMaxLength(10) }}</span>
+                      </a>
                     </div>
                   </div>
                   <div
@@ -470,14 +476,18 @@
               <template v-if="selectedComplianceTypeName === 'Reference' || form.has_reference">
                 <AppInput
                   v-model="form.reference"
-                  :type="'text'"
+                  :type="'textarea'"
                   :name="'reference'"
                   :label="'Reference'"
                   :error="formError.find(item => item.field === 'reference')"
+                  :limit="255"
+                  :resize="false"
+                  :rows="3"
                 />
               </template>
               <div
-                class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 mt-2 rounded cursor-pointer"
+                class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                :class="form.has_reference ? '-mt-6' : 'mt-2'"
               >
                 <input
                   type="file"
@@ -717,6 +727,10 @@ export default {
         }
         if (["false", false].includes(this.form.has_reference)) {
           this.form.reference = null;
+        }if (this.form.has_reference) {
+          if (this.form.reference.length && this.form.reference.length > 255) {
+            this.formError.push({field: 'reference', message: 'Reference is too long.'})
+          }
         }
         this.Validate(this.form, notRequired);
         if (!this.formError.length) {
