@@ -75,7 +75,6 @@
             <AppButton :label="'Save changes'" @click="save('practice')" />
           </div>
         </div>
-        
         <div class="md:w-1/2 w-full">
             Your Account has the following Permissions
             <div

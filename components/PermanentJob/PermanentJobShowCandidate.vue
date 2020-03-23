@@ -98,9 +98,13 @@
 						<div class="font-bold text-sm sm:text-md">Biography</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.short_biography }}</div>
 						<div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.gmc_or_nmc_number.number }}</div>
+						<div
+							class="text-xs sm:text-sm mb-4 md:mb-8"
+						>{{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number.number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}</div>
 						<div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{ user.locum_detail.mpl_or_npl_number.number }}</div>
+						<div
+							class="text-xs sm:text-sm mb-4 md:mb-8"
+						>{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number.number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>
 						<div class="font-bold text-sm sm:text-md">Specialty</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div

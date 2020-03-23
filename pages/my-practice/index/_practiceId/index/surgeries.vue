@@ -1,34 +1,62 @@
 <template>
-  <div class="list-section flex flex-col mt-4 pb-32" v-if="surgeries.length > 0">
-    <div class="flex flex-row px-2 flex-no-wrap justify-between font-bold">
-      <div class="text-xs sm:text-sm w-full px-1">Surgery</div>
-      <div class="text-xs sm:text-sm w-full px-1 text-center">Practice code</div>
-      <div class="text-xs sm:text-sm w-full px-1 text-center">CCG</div>
-    </div>
-    <div
-      class="rounded-lg shadow-md px-2 py-3 mt-4"
-      v-for="surgery in surgeries"
-      :key="surgery.id"
-    >
-      <div class="relative flex flex-row flex-no-wrap">
-        <div class="text-xs sm:text-sm w-full px-1">{{surgery.name}}</div>
-        <div class="text-xs sm:text-sm w-full px-1 text-center">{{surgery.code}}</div>
-        <div class="text-xs sm:text-sm w-full px-1 text-center">{{surgery.clinical_commissioning_group.name}}</div>
-      </div>
-    </div>
-  </div>
+	<AppTable
+		v-if="surgeries.length > 0"
+		:total="surgeries.length"
+		:items="surgeries"
+		:currentPage="current_page"
+		:perPage="limit"
+		:columns="columns"
+		:orderBy="order_by"
+		:loading="loading"
+		@pagechanged="pagechanged"
+		@limitchanged="limitchanged"
+	></AppTable>
 </template>
 <script>
+import AppTable from "@/components/Base/AppTable";
 export default {
-  transition: {
-    name: "fade",
-    mode: "out-in"
-  },
-  props: ["practice"],
-  computed: {
-    surgeries() {
-      return this.practice ? [this.practice.surgery] : [];
-    }
-  }
+	transition: {
+		name: "fade",
+		mode: "out-in"
+	},
+	components: {
+		AppTable
+	},
+	props: ["practice"],
+	computed: {
+		surgeries() {
+			return this.practice ? [this.practice.surgery] : [];
+		}
+	},
+	data() {
+		return {
+			columns: [
+				{
+					name: "Surgery",
+					dataIndex: "name",
+					class: ""
+				},
+				{
+					name: "Practice code",
+					dataIndex: "code",
+					class: "text-center"
+				},
+				{
+					name: "CCG",
+					dataIndex: "clinical_commissioning_group.name",
+					class: ""
+				}
+			],
+			loading: false,
+			offset: 0,
+			limit: 5,
+			order_by: [],
+			current_page: 1
+		};
+	},
+	methods: {
+		pagechanged() {},
+		limitchanged() {}
+	}
 };
 </script>
