@@ -1,17 +1,16 @@
 <template>
-  <div>
-    <nuxt-child />
-  </div>
+	<div class="w-full">
+		<nuxt-child />
+	</div>
 </template>
 
 <script>
 export default {
-  data () {
-    return {}
-  },
-}
+	data() {
+		return {};
+	}
+};
 </script>
 
 <style>
-
 </style>

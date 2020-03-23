@@ -4,7 +4,7 @@
 			<Reminders />
 		</div>
 		<div v-if="userIsAuthorized" class="appointment-section">
-			<div class="flex justify-between items-center">
+			<div class="flex justify-between items-center lg:max-w-6xl">
 				<div class="text-sm sm:text-base font-bold">Appointments</div>
 				<div class="flex" v-if="$auth.user.domain === 'Locum'">
 					<AppButton
@@ -13,13 +13,25 @@
 						class="hidden md:block mr-2"
 						:inStyle="'padding-top: 6px; padding-bottom: 6px;'"
 					/>
+					<button
+						class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mr-2"
+						@click="$router.push('/dashboard/create')"
+					>
+						<svgicon name="create-job" color="#444 #555" width="21" height="21" />
+					</button>
 					<AppButton
 						v-if="!$auth.user.view_permanent_jobs"
 						:label="'Expenses'"
 						@click="expense_modal = true"
-						class="hidden md:block mr-2"
+						class="hidden md:block"
 						:inStyle="'padding-top: 6px; padding-bottom: 6px;'"
 					/>
+					<button
+						class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+						@click="expense_modal = true"
+					>
+						<svgicon name="billing" color="#444 #555" width="22" height="22" />
+					</button>
 				</div>
 			</div>
 			<Calendar />

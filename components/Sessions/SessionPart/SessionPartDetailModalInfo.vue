@@ -97,6 +97,7 @@
         <div class="font-bold text-sm sm:text-md">
           Session requirements:
         </div>
+        <div v-if="!session_requirements.length">(none)</div>
         <div
           v-for="(item, index) in session_requirements"
           :key="`${item}-${index}`"
