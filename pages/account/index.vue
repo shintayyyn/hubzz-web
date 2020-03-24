@@ -5,7 +5,7 @@
     <!-- =========PRACTICE========= -->
     <template v-if="$auth.user.domain === 'Practice'">
       <div class="flex flex-wrap ">
-        <div class="md:w-1/2 w-full">
+        <div class="w-full">
           <AppInput
             v-model="practiceForm.email"
             :type="'email'"
@@ -75,7 +75,7 @@
             <AppButton :label="'Save changes'" @click="save('practice')" />
           </div>
         </div>
-        <div class="md:w-1/2 w-full">
+        <!-- <div class="md:w-1/2 w-full">
             Your Account has the following Permissions
             <div
               v-for="(item,index) in authPermissions"
@@ -83,7 +83,7 @@
             >
             {{'• ' + item}}
             </div>
-        </div>
+        </div> -->
       </div>
       
     </template>
