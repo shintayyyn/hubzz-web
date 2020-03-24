@@ -49,7 +49,8 @@
 					<span v-if="deadline.hours > 0">and</span>
 					{{ deadline.minutes }} minute{{ deadline.minutes > 1 ? 's' : '' }}
 				</span>
-				before {{ $moment(updateDeadline).format("h:mm a, MMMM D, YYYY") }}.
+				,
+				before {{ $moment(updateDeadline).utc().format("h:mm a, MMMM D, YYYY") }}.
 			</div>
 			<div class="flex items-center justify-start mt-1">
 				<div
