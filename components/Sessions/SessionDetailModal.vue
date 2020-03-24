@@ -56,11 +56,11 @@
 			</template>
 		</div>
 
-		<template v-if="['Allocated','Live','Applied'].includes(job.status)">
+		<template v-if="['Allocated'].includes(job.status)">
 			<div
 				v-if="waitingForApproval"
 				class="mt-4"
-			>Waiting for locum's approval until {{ $moment(updateDeadline).format("h:mm a, MMMM D, YYYY") }}.</div>
+			>Waiting for locum's approval within {{ deadline.hours > 0 ? deadline.hours > 1 ? `${deadline.hours} hours` : `${deadline.hours} hour` : ''}} {{ deadline.hours ? 'and' : '' }} {{ deadline.minutes > 0 ? deadline.minutes > 1 ? `${deadline.minutes} minutes` : `${deadline.minutes} minute` : ''}}, before {{ $moment(updateDeadline).utc().format("h:mm a, MMMM D, YYYY") }}.</div>
 		</template>
 
 		<div class="flex flex-col mt-4">
@@ -134,7 +134,11 @@ export default {
 			user: null,
 			toEdit: false,
 			practice: "",
-			showMap: false
+			showMap: false,
+			deadline: {
+				hours: 0,
+				minutes: 0
+			}
 		};
 	},
 	computed: {
@@ -179,6 +183,13 @@ export default {
 	},
 	created() {
 		this.practice = this.$auth.user.practice_detail.practice;
+		let data = this.$moment.duration(
+			this.$moment(this.updateDeadline, "YYYY-MM-DDTHH:mm:ss:SSSZ").diff(
+				this.$moment()
+			)
+		);
+		this.deadline.hours = data._data.hours;
+		this.deadline.minutes = data._data.minutes;
 	},
 	mounted() {
 		setTimeout(() => {
