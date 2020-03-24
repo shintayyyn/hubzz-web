@@ -244,7 +244,9 @@ export default {
 				"absent_days_reason",
 				"late_hours_reason",
 				"final_hours_minute",
-				"final_hours_hour"
+				"final_hours_hour",
+				"late_minute",
+				"late_hour"
 			];
 			this.confirmation_modal = false;
 			if (this.has_absences === "false" || this.has_absences === false) {
