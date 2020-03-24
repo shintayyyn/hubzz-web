@@ -31,7 +31,8 @@
     "vue-clickaway": "^2.2.2",
     "vue-quill-editor": "^3.0.6",
     "vue-svgicon": "^3.2.6",
-    "vue2-google-maps": "^0.10.7"
+    "vue2-google-maps": "^0.10.7",
+    "vuex-shared-mutations": "^1.0.2"
   },
   "devDependencies": {
     "autoprefixer": "^8.6.4",
