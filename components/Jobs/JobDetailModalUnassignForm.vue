@@ -47,8 +47,6 @@ export default {
 			this.form.declined_reason = this.trimmedMessage(
 				this.form.declined_reason
 			);
-			console.log(this.form.declined_reason);
-			return;
 			this.formError = [];
 			this.Validate(this.form);
 			if (!this.formError.length) {
