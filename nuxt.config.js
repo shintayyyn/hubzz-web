@@ -93,7 +93,7 @@ export default {
       mode: 'client',
     },
     {
-      src: '@/plugins/vuex-shared-mutations.js',
+      src: '@/plugins/broadcast-channel.js',
       mode: 'client',
     },
   ],
