@@ -492,6 +492,7 @@
                   :name="'reference'"
                   :label="'Reference'"
                   :error="formError.find(item => item.field === 'reference')"
+                  @blur="formError.find(item => item.field === 'reference')"
                   :limit="255"
                   :resize="false"
                   :rows="3"
@@ -582,6 +583,14 @@ export default {
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";
+      }
+    },
+    "form.reference"(value) {
+      if (value && value.length <= 255) {
+        let index = this.formError.findIndex(item => item.field === 'reference')
+        if (index > -1) {
+          this.formError.splice(index, 1)
+        }
       }
     }
   },
@@ -860,6 +869,12 @@ export default {
           this.formError.push({
             field: "file",
             message: "File Is Required"
+          });
+        }else {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [err.response.data.message]
           });
         }
         this.activeLoading = this.activeLoading.filter(
