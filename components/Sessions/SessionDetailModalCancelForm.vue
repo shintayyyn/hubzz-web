@@ -54,14 +54,48 @@
 			/>
 
 			<template v-if="has_late === 'true' || has_late === true">
-				<AppInput
+				<!-- <AppInput
 					v-model="form.late_hours"
 					:type="'number'"
 					:name="'late_hours'"
 					:label="'Hours of Late'"
 					:in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
 					:error="formError.find(item => item.field === 'late_hours')"
-				/>
+				/>-->
+				<p class="text-sm">Hours of Late</p>
+				<div class="flex items-center justify-start flex-wrap">
+					<div class="flex items-center">
+						<AppInput
+							v-model="form.late_hour"
+							:type="'number'"
+							:name="'late_hour'"
+							:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+							:error="formError.find(item => item.field === 'late_hour')"
+							:min="1"
+							:limit="8"
+							@keydown="inputNumberOnly($event)"
+							@focus="hasValue(form.late_hour, 'late_hour')"
+							@blur="!form.late_hour ? form.late_hour = 0 : form.late_hour"
+						/>
+						<p class="mx-2 text-sm">hours</p>
+					</div>
+					<div class="flex items-center">
+						<AppInput
+							v-model="form.late_minute"
+							:type="'number'"
+							:name="'late_minute'"
+							:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+							:error="formError.find(item => item.field === 'late_minute')"
+							:min="1"
+							:maxInput="60"
+							:limit="2"
+							@keydown="inputNumberOnly($event)"
+							@focus="hasValue(form.late_minute, 'late_minute')"
+							@blur="!form.late_minute ? form.late_minute = 0 : form.late_minute"
+						/>
+						<p class="mx-2 text-sm">minutes</p>
+					</div>
+				</div>
 				<AppInput
 					v-model="form.late_hours_reason"
 					:type="'textarea'"
@@ -186,6 +220,8 @@ export default {
 				absent_days: 0,
 				absent_days_reason: "",
 				late_hours: 0,
+				late_hour: 0,
+				late_minute: 0,
 				late_hours_reason: "",
 				final_hours: 0,
 				final_hours_hour: 0,
@@ -232,7 +268,9 @@ export default {
 			let notRequired = [
 				"final_hours",
 				"final_hours_minute",
-				"final_hours_hour"
+				"final_hours_hour",
+				"late_minute",
+				"late_hour"
 			];
 
 			if (this.job.status !== "Ongoing") {
@@ -261,10 +299,28 @@ export default {
 						field: "final_hours_hour",
 						message: "Hours is required"
 					});
-				} else {
-					this.form.final_hours =
-						this.form.final_hours_hour * 60 +
-						parseInt(this.form.final_hours_minute);
+					if ([true, "true"].includes(this.has_late)) {
+						if (
+							[0, "0"].includes(this.form.late_hour) &&
+							[0, "0"].includes(this.form.late_minute)
+						) {
+							this.formError.push({
+								field: "late_minute",
+								message: "Late Minutes is required"
+							});
+							this.formError.push({
+								field: "late_hour",
+								message: "Late Hours is required"
+							});
+						} else {
+							this.form.late_hours =
+								this.form.late_hour * 60 + parseInt(this.form.late_minute);
+						}
+					} else {
+						this.form.final_hours =
+							this.form.final_hours_hour * 60 +
+							parseInt(this.form.final_hours_minute);
+					}
 				}
 			}
 

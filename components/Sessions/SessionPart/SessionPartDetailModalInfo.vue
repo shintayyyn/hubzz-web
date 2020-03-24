@@ -291,7 +291,7 @@
               Hours of Late:
             </div>
             <div class="text-xs sm:text-sm mb-8">
-              {{ job_part.late_hours }}
+              {{ job_part.late_hours | hoursMinutes }}
             </div>
           </template>
           <template v-if="job_part.late_hours_reason">
