@@ -380,7 +380,11 @@ export default {
       }
     },
     trimmedMessage(value) {
-      return value.replace(/^\s*/, "").replace(/\s*$/, "");
+      if (value) {
+        return value.replace(/^\s*/, "").replace(/\s*$/, "");
+      }else {
+        return ''
+      }
     },
     limitInput(e, value) {
       let acceptedKeys = [
