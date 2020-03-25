@@ -89,7 +89,7 @@ export default {
 					this.statistics.push({
 						label: "Ongoing Job Parts",
 						value: res.data.practice_statistics.total_ongoing_job_part_count,
-						route: "/my-banks?status=Favorite"
+						route: "/sessions?status=Ongoing"
 					});
 					this.statistics.push({
 						label: "Applied Jobs",
