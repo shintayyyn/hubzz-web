@@ -1089,10 +1089,10 @@ export default {
           field: "minutes",
           message: "Minutes is required"
         });
-        this.formError.push({
-          field: "hours",
-          message: "Hours is required"
-        });
+        // this.formError.push({
+        //   field: "hours",
+        //   message: "Hours is required"
+        // });
       } else {
         this.form.hours = !this.form.hours ? 0 : this.form.hours;
         this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
