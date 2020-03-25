@@ -30,7 +30,7 @@
           Extra information
         </div>
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-8 break-words"
         >
           {{ job.platform_job.extra_information?job.platform_job.extra_information:`(none)` }}
         </div>
@@ -103,13 +103,13 @@
         <div class="font-bold text-sm sm:text-md">
           Session structure information
         </div>
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-8 break-words">
           {{ job.platform_job.session_structure_information }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Update Remarks
         </div>
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-8 break-words">
           {{ job.update_remarks?job.update_remarks:`(none)` }}
         </div>
       </div>
