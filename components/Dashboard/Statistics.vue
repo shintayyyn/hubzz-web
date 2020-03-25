@@ -86,8 +86,8 @@ export default {
 				.$get(`/api/v1/practice/me/practice-statistics`)
 				.then(res => {
 					this.statistics.push({
-						label: "My Banks",
-						value: res.data.practice_statistics.favorite_locum_count,
+						label: "Ongoing Job Parts",
+						value: res.data.practice_statistics.ongoing_job_part_count,
 						route: "/my-banks?status=Favorite"
 					});
 					this.statistics.push({
