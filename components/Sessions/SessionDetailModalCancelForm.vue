@@ -295,31 +295,31 @@ export default {
 						field: "final_hours_minute",
 						message: "Minutes is required"
 					});
-					this.formError.push({
-						field: "final_hours_hour",
-						message: "Hours is required"
-					});
-					if ([true, "true"].includes(this.has_late)) {
-						if (
-							[0, "0"].includes(this.form.late_hour) &&
-							[0, "0"].includes(this.form.late_minute)
-						) {
-							this.formError.push({
-								field: "late_minute",
-								message: "Late Minutes is required"
-							});
-							this.formError.push({
-								field: "late_hour",
-								message: "Late Hours is required"
-							});
-						} else {
-							this.form.late_hours =
-								this.form.late_hour * 60 + parseInt(this.form.late_minute);
-						}
+					// this.formError.push({
+					// 	field: "final_hours_hour",
+					// 	message: "Hours is required"
+					// });
+				} else {
+					this.form.final_hours =
+						this.form.final_hours_hour * 60 +
+						parseInt(this.form.final_hours_minute);
+				}
+				if ([true, "true"].includes(this.has_late)) {
+					if (
+						[0, "0"].includes(this.form.late_hour) &&
+						[0, "0"].includes(this.form.late_minute)
+					) {
+						this.formError.push({
+							field: "late_minute",
+							message: "Late Minutes is required"
+						});
+						// this.formError.push({
+						// 	field: "late_hour",
+						// 	message: "Late Hours is required"
+						// });
 					} else {
-						this.form.final_hours =
-							this.form.final_hours_hour * 60 +
-							parseInt(this.form.final_hours_minute);
+						this.form.late_hours =
+							this.form.late_hour * 60 + parseInt(this.form.late_minute);
 					}
 				}
 			}
