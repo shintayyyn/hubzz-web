@@ -20,7 +20,7 @@
 						<svgicon name="create-job" color="#444 #555" width="21" height="21" />
 					</button>
 					<AppButton
-						v-if="!$auth.user.view_permanent_jobs"
+						v-if="$auth.user.view_locum_jobs"
 						:label="'Expenses'"
 						@click="expense_modal = true"
 						class="hidden md:block"

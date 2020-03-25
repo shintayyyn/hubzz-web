@@ -225,11 +225,11 @@
       console.log("locum assigned", this.user)
     },
     methods: {
-      getProfessionCategory (id) {
-        this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
+      getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
+        this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
           this.mandatory = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
-              return res.data.profession_category.mandatory_compliance_documents.some(
+              return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
                   mandatory_compliance_document.id ===
                   compliance_document.compliance_document.id
@@ -238,7 +238,7 @@
           )
           this.optional = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
-              return res.data.profession_category.optional_compliance_documents.some(
+              return res.data.profession_compliance_category.optional_compliance_documents.some(
                 optional_compliance_document =>
                   optional_compliance_document.id ===
                   compliance_document.compliance_document.id

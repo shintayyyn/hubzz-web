@@ -1096,6 +1096,14 @@ export default {
 	min-width: 2em;
 }
 
+.message-modal {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 60;
+}
+
 @media (min-width: 768px) {
   .message-modal {
     min-width: 550px;
