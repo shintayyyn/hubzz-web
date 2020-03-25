@@ -64,7 +64,7 @@
           Extra information
         </div>
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-8 break-words"
           v-text="job_part.job.platform_job.extra_information?job_part.job.platform_job.extra_information:`(none)`"
         />
         <div class="font-bold text-sm sm:text-md">
@@ -144,7 +144,7 @@
           Session structure information
         </div>
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-8 break-words"
         >
           {{ job_part.job.platform_job.session_structure_information }}
         </div>
@@ -152,7 +152,7 @@
           Update Remarks
         </div>
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-8 break-words"
         >
           {{ job_part.job.update_remarks?job_part.job.update_remarks:`(none)` }}
         </div>

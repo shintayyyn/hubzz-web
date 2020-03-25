@@ -5,7 +5,7 @@
         v-model="search"
         :type="'text'"
         :name="'search'"
-        :placeholder="'ID, Practice Name, Profession Name or keywords'"
+        :placeholder="'Search Job by ID, Practice Name, Profession Name or keywords'"
       />
     </div>
     <template v-if="$auth.user.domain === 'Practice'">
@@ -67,7 +67,7 @@
         v-else
         class="text-gray-600 px-3 py-2"
       >
-        No {{ $route.query.status ? $route.query.status : 'Available' }} jobs yet.
+        No {{ $route.query.status ? $route.query.status : 'Available' }} Found.
       </p>
     </template>
 
@@ -131,7 +131,7 @@
         v-else
         class="text-gray-600 px-3 py-2"
       >
-        No {{ $route.query.status ? $route.query.status : 'Available' }} jobs yet.
+        No {{ $route.query.status ? $route.query.status : 'Available' }} Found.
       </p>
     </template>
     <div
