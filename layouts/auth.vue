@@ -69,23 +69,6 @@
       }
     },
 
-    computed: {
-      authLoggedIn () {
-        return this.$auth.loggedIn
-      },
-    },
-
-    watch: {
-      authLoggedIn (loggedIn) {
-        console.log('authLoggedIn', loggedIn)
-        if (loggedIn) {
-          this.$store.commit('custom-auth/loggedIn')
-        } else {
-          this.$store.commit('custom-auth/loggedOut')
-        }
-      },
-    },
-
     mounted () {
       this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
       this.$store.dispatch("sign-up/getProfessions")
