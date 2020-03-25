@@ -241,6 +241,17 @@
             </div>
           </div>
 
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3" v-if="$route.query.status && $route.query.status === 'Ongoing'">
+            <AppInput
+              v-model="ended"
+              class="px-1"
+              :type="'select'"
+              :name="'ended'"
+              :label="'Status'"
+              :items="[{label: 'All', value: null}, {label: 'For Completion', value: true}, {label: 'Ongoing', value: false}]"
+            />
+          </div>
+
           <div
             v-if="$route.query.status && $route.query.status !== 'Ongoing'"
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
@@ -289,7 +300,17 @@
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
-        />
+        >
+        <template v-slot:ended="slotProps">
+        <div class="flex items-center justify-center">
+          <div
+            class="rounded-full px-6 py-1"
+          >
+            {{ slotProps.item.ended ? "For Completion" : "Ongoing" }}
+          </div>
+        </div>
+      </template>
+        </AppTable>
         <div
           v-if="!jobs.length && !loading && !isFiltered"
           class="flex justify-center py-4"
@@ -395,6 +416,7 @@ export default {
       shifts: [],
       rates: [],
       professions: [],
+      ended: null,
       filterModal: false,
       isFiltered: false,
       showRefresh: false
@@ -574,6 +596,15 @@ export default {
         columns.push({
           name: "Assigned",
           dataIndex: "assigned_to",
+          class: "text-center"
+        });
+      }
+      if (queryStatus === "ongoing") {
+        columns.push({
+          name: "Status",
+          // dataIndex: "ended",
+          slotName: "ended",
+          dataIndex: "",
           class: "text-center"
         });
       }
@@ -867,6 +898,8 @@ export default {
           })
       ]);
 
+      console.log("jobs", jobs)
+
       return {
         professions,
         shifts,
@@ -1014,7 +1047,8 @@ export default {
               //     ? false
               //     : null,
               profession_id: this.profession_id,
-              favorite_only: this.favorite_only
+              favorite_only: this.favorite_only,
+              ended: this.ended
             }
           }
         ),
@@ -1064,7 +1098,8 @@ export default {
               //     ? false
               //     : null,
               profession_id: this.profession_id,
-              favorite_only: this.favorite_only
+              favorite_only: this.favorite_only,
+              ended: this.ended
             }
           }
         )
@@ -1563,6 +1598,7 @@ export default {
       this.job_part_number_includes = "";
       this.profession_id = "";
       this.favorite_only = "";
+      this.ended = null
     }
   }
 };
