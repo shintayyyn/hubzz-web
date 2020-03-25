@@ -312,8 +312,8 @@
 
     created () {
       console.log(this.user)
-      this.getProfessionCategory(
-        this.user.locum_detail.profession.profession_category.id
+      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+        this.user.locum_detail.profession.profession_compliance_category_id
       )
       this.permanentJobApp = this.permanent_job_application
       console.log("permanent job app", this.permanent_job_application)
@@ -328,11 +328,11 @@
         this.sendMessageModal = true
       },
 
-      getProfessionCategory (id) {
-        this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
+      getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
+        this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
           this.mandatory = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
-              return res.data.profession_category.mandatory_compliance_documents.some(
+              return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
                   mandatory_compliance_document.id ===
                   compliance_document.compliance_document.id
@@ -341,7 +341,7 @@
           )
           this.optional = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
-              return res.data.profession_category.optional_compliance_documents.some(
+              return res.data.profession_compliance_category.optional_compliance_documents.some(
                 optional_compliance_document =>
                   optional_compliance_document.id ===
                   compliance_document.compliance_document.id
