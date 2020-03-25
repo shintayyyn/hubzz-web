@@ -85,9 +85,10 @@ export default {
 			this.$axios
 				.$get(`/api/v1/practice/me/practice-statistics`)
 				.then(res => {
+					console.log(res.data);
 					this.statistics.push({
 						label: "Ongoing Job Parts",
-						value: res.data.practice_statistics.ongoing_job_part_count,
+						value: res.data.practice_statistics.total_ongoing_job_part_count,
 						route: "/my-banks?status=Favorite"
 					});
 					this.statistics.push({
