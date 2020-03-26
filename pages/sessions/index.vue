@@ -555,7 +555,7 @@ export default {
           {
             name: "Title",
             dataIndex: "title",
-            class: "text-center",
+            class: "text-center break-words",
             sortable: true
           },
           {
@@ -602,10 +602,10 @@ export default {
       if (queryStatus === "ongoing") {
         columns.push({
           name: "Status",
-          // dataIndex: "ended",
+          dataIndex: "ended",
           slotName: "ended",
-          dataIndex: "",
-          class: "text-center"
+          class: "text-center",
+          sortable: true
         });
       }
       if (queryStatus === "live") {
@@ -677,9 +677,9 @@ export default {
         await this.getJobsPromiseAll();
         this.initialLoading = false;
       }
-    }
+    },
   },
-  async asyncData({ app, query, error }) {
+  async asyncData({ app, query, route, error }) {
     try {
       let status = [];
       let queryStatus = query.status;
@@ -791,7 +791,8 @@ export default {
               job_number_includes: !isJobPart ? job_number_includes : "",
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
-                : ""
+                : "",
+              // ended: queryStatus === "Ongoing" ? false : null
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -844,7 +845,8 @@ export default {
               job_number_includes: !isJobPart ? job_number_includes : "",
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
-                : ""
+                : "",
+              // ended: queryStatus === "Ongoing" ? false : null
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -897,8 +899,6 @@ export default {
             return jobs;
           })
       ]);
-
-      console.log("jobs", jobs)
 
       return {
         professions,
@@ -1207,7 +1207,8 @@ export default {
               : "",
             job_part_number_includes: this.isJobPart
               ? this.job_part_number_includes
-              : ""
+              : "",
+            ended: this.ended
             // has_favorite_applicants:
             //   queryStatus === "Applied" && bankStatus === "true"
             //     ? true
