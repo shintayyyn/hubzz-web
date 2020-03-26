@@ -43,7 +43,7 @@
 							<div
 								v-for="(column, index) in columns"
 								:key="index"
-								class="flex-1 px-2 break-words"
+								class="flex-1 px-2 break-word hyphens"
 								:class="
 									column.class &&
 									column.class.includes('text-center') &&
@@ -296,8 +296,5 @@ export default {
 <style scoped>
 .row {
 	min-width: 1200px;
-}
-.break-word {
-	word-break: break-word;
 }
 </style>
