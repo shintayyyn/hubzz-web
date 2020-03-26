@@ -677,9 +677,13 @@ export default {
         await this.getJobsPromiseAll();
         this.initialLoading = false;
       }
+    },
+    route(to, from) {
+      console.log("to", to)
+      console.log("from", from)
     }
   },
-  async asyncData({ app, query, error }) {
+  async asyncData({ app, query, route, error }) {
     try {
       let status = [];
       let queryStatus = query.status;
@@ -791,7 +795,8 @@ export default {
               job_number_includes: !isJobPart ? job_number_includes : "",
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
-                : ""
+                : "",
+              // ended: queryStatus === "Ongoing" ? false : null
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -844,7 +849,8 @@ export default {
               job_number_includes: !isJobPart ? job_number_includes : "",
               job_part_number_includes: isJobPart
                 ? job_part_number_includes
-                : ""
+                : "",
+              // ended: queryStatus === "Ongoing" ? false : null
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -897,8 +903,6 @@ export default {
             return jobs;
           })
       ]);
-
-      console.log("jobs", jobs)
 
       return {
         professions,
