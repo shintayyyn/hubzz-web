@@ -57,6 +57,7 @@
 						:label="'Description'"
 						:error="formError.find(item => item.field === 'description')"
 						@input="CheckEmptyField(form.description, 'description')"
+            :resize="false"
 					/>
 					<AppInput
 						v-model="form.total"
@@ -490,6 +491,7 @@
           this.form.description = foundExpenseReport.description
           this.form.total = foundExpenseReport.total
           this.form.date = foundExpenseReport.date
+          this.formError = []
           this.modal = true
         }
       },
@@ -504,6 +506,7 @@
         this.form.description = ""
         this.form.total = 0
         this.form.date = null
+        this.formError = []
         this.modal = true
       },
 
