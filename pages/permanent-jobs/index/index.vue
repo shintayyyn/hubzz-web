@@ -67,7 +67,7 @@
         v-else
         class="text-gray-600 px-3 py-2"
       >
-        No {{ $route.query.status ? $route.query.status : 'Available' }} Found.
+        No {{ $route.query.status ? $route.query.status : 'Available' }} Jobs Found.
       </p>
     </template>
 
@@ -131,7 +131,7 @@
         v-else
         class="text-gray-600 px-3 py-2"
       >
-        No {{ $route.query.status ? $route.query.status : 'Available' }} Found.
+        No {{ $route.query.status ? $route.query.status : 'Available' }} Jobs Found.
       </p>
     </template>
     <div
