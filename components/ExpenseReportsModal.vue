@@ -104,28 +104,37 @@
           </div>
         </div>
       </div>
+
       <AppTable v-if="expense_reports.length > 0" :total="total" :items="expense_reports" :currentPage="current_page"
                 :perPage="limit" :columns="columns" :orderBy="order_by" :loading="loading" :customWidth="480"
                 @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
       >
         <template v-slot:actions="slotProps">
           <div class="flex flex-wrap justify-center">
-            <div class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-                 @click="editExpenseReports(slotProps.item.id)"
+            <div
+              class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+              @click="editExpenseReports(slotProps.item.id)"
             >
               Edit
             </div>
-            <div class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
-                 @click="removeExpenseReports(slotProps.item.id)"
+            <div
+              class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+              @click="removeExpenseReports(slotProps.item.id)"
             >
               Delete
             </div>
           </div>
         </template>
       </AppTable>
+
       <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
-        You haven't added any Expense
-        Reports on this date.
+        <span>You haven't added any Expense Reports on this date.</span>
+      </div>
+
+      <div v-if="expense_reports.length > 0" class="flex justify-end">
+        <AppButton :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'" :inStyle="'padding: 5px 14px;'"
+                   :disabled="exporting" @click="exportExpenseReportAsPdf"
+        />
       </div>
     </template>
   </div>
@@ -175,7 +184,9 @@
         date_end: null,
         filter_date_total: 0,
         week_total: 0,
-        month_total: 0
+        month_total: 0,
+
+        exporting: false,
       }
     },
 
@@ -206,6 +217,7 @@
         )
         return columns
       },
+
       totalAmount () {
         return this.expense_reports && this.expense_reports.length > 0
           ? this.expense_reports
@@ -515,6 +527,61 @@
         this.loading = true
         await this.getExpenseReports()
         this.loading = false
+      },
+
+      exportExpenseReportAsPdf () {
+        const dateStart = this.date_start
+        const dateEnd = this.date_end
+        const formattedDateStart = this.$moment(dateStart, 'YYYY-MM-DD').format('DD/MM/YYYY')
+        const formattedDateEnd = this.$moment(dateEnd, 'YYYY_MM_DD').format('DD_MM_YYYY')
+        const filename = `expenses_${formattedDateStart}_${formattedDateEnd}.pdf`
+
+        this.exporting = true
+        this.$axios.get("/api/v1/locum/locum-expenses/pdf", {
+          params: {
+            date_start: dateStart,
+            date_end: dateEnd,
+          },
+          responseType: 'blob',
+        }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+
+          const link = document.createElement('a')
+
+          link.setAttribute('href', url)
+
+          link.setAttribute('download', filename)
+
+          document.body.appendChild(link)
+
+          link.click()
+
+          document.body.removeChild(link)
+
+          // const fileReader = new window.FileReader()
+
+          // fileReader.onload = function () {
+          //   const url = fileReader.result
+
+          //   const link = document.createElement('a')
+
+          //   link.setAttribute('href', url)
+
+          //   link.setAttribute('download', filename)
+
+          //   document.body.appendChild(link)
+
+          //   link.click()
+
+          //   document.body.removeChild(link)
+          // }
+
+          // fileReader.readAsDataURL(response.data)
+        }).catch((err) => {
+          console.log('err', err)
+        }).finally(() => {
+          this.exporting = false
+        })
       },
     },
   }
