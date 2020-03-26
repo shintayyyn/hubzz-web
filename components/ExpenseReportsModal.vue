@@ -28,8 +28,8 @@
         </div>
         <div class="flex flex-col mb-4 relative">
           <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
-                    :error="formError.find(item => item.field === 'description')"
-                    :resize="false" @input="CheckEmptyField(form.description, 'description')"
+                    :error="formError.find(item => item.field === 'description')" :resize="false"
+                    @input="CheckEmptyField(form.description, 'description')"
           />
           <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"
                     :error="formError.find(item => item.field === 'total')" :inStyle="'text-align:right'"
@@ -577,16 +577,24 @@
         }).catch((err) => {
           console.log('err', err)
 
-          let message = 'Something went wrong!'
+          if (err.response && err.response.data && err.response.data.text) {
+            err.response.data.text().then((data) => {
+              const json = JSON.parse(data)
 
-          if (err.response && err.response.data && err.response.data.message) {
-            message = err.response.data.message
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [json.message],
+              })
+            })
+
+            return
           }
 
           this.$store.commit('SET_NOTIFICATION', {
             enabled: true,
             status: 'danger',
-            text: message,
+            text: ['Something went wrong!'],
           })
         }).finally(() => {
           this.exporting = false
