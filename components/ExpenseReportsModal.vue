@@ -58,6 +58,7 @@
 						:error="formError.find(item => item.field === 'description')"
 						@input="CheckEmptyField(form.description, 'description')"
             :resize="false"
+            :limit="255"
 					/>
 					<AppInput
 						v-model="form.total"
@@ -434,6 +435,9 @@
 
       async save () {
         this.formError = []
+        if (this.form.description && this.form.description.length > 255) {
+          this.formError.push({field: 'description', message: 'Description is too long.'})
+        }
         this.Validate(this.form)
         this.form.date = this.$moment(this.form.date).format("YYYY-MM-DD")
         if (!this.formError.length) {
