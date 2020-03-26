@@ -260,7 +260,7 @@ export default {
 					if (index > 0) hasCheck.push(item.done);
 				});
 				if (findParent && hasCheck.includes(true)) findParent.done = true;
-				else findParent.done = false;
+				// else findParent.done = false;
 			}
 		},
 		isChecked(permissions) {
