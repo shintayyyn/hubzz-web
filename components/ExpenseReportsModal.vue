@@ -180,6 +180,11 @@
 				You haven't added any Expense
 				Reports on this date.
 			</div>
+      <div v-if="expense_reports.length > 0" class="flex justify-end">
+        <AppButton :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'" :inStyle="'padding: 5px 14px;'"
+                   :disabled="exporting" @click="exportExpenseReportAsPdf"
+        />
+      </div>
 		</template>
 	</div>
 </template>
@@ -228,7 +233,9 @@
         date_end: null,
         filter_date_total: 0,
         week_total: 0,
-        month_total: 0
+        month_total: 0,
+
+        exporting: false,
       }
     },
 
@@ -261,6 +268,7 @@
         )
         return columns
       },
+
       totalAmount () {
         return this.expense_reports && this.expense_reports.length > 0
           ? this.expense_reports
@@ -570,6 +578,61 @@
         this.loading = true
         await this.getExpenseReports()
         this.loading = false
+      },
+
+      exportExpenseReportAsPdf () {
+        const dateStart = this.date_start
+        const dateEnd = this.date_end
+        const formattedDateStart = this.$moment(dateStart, 'YYYY-MM-DD').format('DD/MM/YYYY')
+        const formattedDateEnd = this.$moment(dateEnd, 'YYYY_MM_DD').format('DD_MM_YYYY')
+        const filename = `expenses_${formattedDateStart}_${formattedDateEnd}.pdf`
+
+        this.exporting = true
+        this.$axios.get("/api/v1/locum/locum-expenses/pdf", {
+          params: {
+            date_start: dateStart,
+            date_end: dateEnd,
+          },
+          responseType: 'blob',
+        }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+
+          const link = document.createElement('a')
+
+          link.setAttribute('href', url)
+
+          link.setAttribute('download', filename)
+
+          document.body.appendChild(link)
+
+          link.click()
+
+          document.body.removeChild(link)
+
+          // const fileReader = new window.FileReader()
+
+          // fileReader.onload = function () {
+          //   const url = fileReader.result
+
+          //   const link = document.createElement('a')
+
+          //   link.setAttribute('href', url)
+
+          //   link.setAttribute('download', filename)
+
+          //   document.body.appendChild(link)
+
+          //   link.click()
+
+          //   document.body.removeChild(link)
+          // }
+
+          // fileReader.readAsDataURL(response.data)
+        }).catch((err) => {
+          console.log('err', err)
+        }).finally(() => {
+          this.exporting = false
+        })
       },
     },
   }
