@@ -108,6 +108,7 @@
                 </div>
               </div>
             </div>
+
             <div
               v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && !['Approved', 'Paid'].includes(propInvoice.items[0].status)) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex flex-col justify-start mt-2 px-2"
@@ -192,6 +193,7 @@
                 </p>
               </div>
             </div>
+
             <div
               v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && !['Approved', 'Paid'].includes(propInvoice.items[0].status)) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
               class="flex justify-start mt-2 px-2"
@@ -350,6 +352,7 @@
           :disabled="saveLoading"
           @click="save(false)"
         />
+
         <AppButton
           v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
           class="m-1"
@@ -358,6 +361,7 @@
           :disabled="saveLoading"
           @click="save(true)"
         />
+
         <AppButton
           v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
           class="m-1"
@@ -422,19 +426,23 @@
           ? this.form.items[0].total
           : 0
       },
+
       totalAmount () {
-        let total
         if (this.form.items && this.form.items.length > 0) {
-          total = this.form.items[0].total
+          let total = this.form.items[0].total
+
           if (this.propInvoice) {
             total =
               total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
           }
+
           return total
         }
+
         return 0
       }
     },
+
     mounted () {
       if (this.propJobPart && !this.propInvoice) {
         this.form.type = this.propJobPart.job.type
@@ -446,8 +454,11 @@
         // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
         let type = this.propJobPart.job.locum_detail_rate_type.name
+
         let finalHours = this.propJobPart.final_hours / 60
+
         let totalHours = this.propJobPart.job.total_hours / 60
+
         let total = 0
 
         switch (type) {
@@ -459,26 +470,29 @@
             break
         }
 
+        const jobPartNumber = this.propJobPart.job_part_number
+        const jobType = this.propJobPart.job.type
+        const jobRate = this.propJobPart.job.rate
+        const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
+        const formattedDateStart = this.$moment(this.propJobPart.date_start).format('DD/MM/YYYY')
+        const formattedDateEnd = this.$moment(this.propJobPart.date_end).format('DD/MM/YYYY')
+        const shiftName = this.propJobPart.job.shift.name
+        const finalHoursInMinutesHours = Math.floor(this.propJobPart.final_hours / 60)
+        const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
+        const finalHoursInMinutesMinutes = Math.floor(this.propJobPart.final_hours % 60)
+        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
+        const hasMinutes = finalHoursInMinutesMinutes > 0
+          ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
+          : ''
+        const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName} `
+          + `from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} / `
+          + `Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+
         this.form.items = [
           {
             type: "Job Part",
             job_part_id: this.propJobPart.id,
-            description: `Job number ${this.propJobPart.job_part_number} ${
-              this.propJobPart.job.type
-              } Job at £${this.propJobPart.job.rate} ${
-              this.propJobPart.job.locum_detail_rate_type.name
-              } from ${this.$moment(this.propJobPart.date_start).format('DD/MM/YYYY')} 
-            to ${this.$moment(this.propJobPart.date_end).format('DD/MM/YYYY')
-              } / ${this.propJobPart.job.shift.name} / 
-          Total of ${Math.floor(this.propJobPart.final_hours / 60)} hour${
-              Math.floor(this.propJobPart.final_hours / 60) > 1 ? "s" : ""
-              } ${
-              Math.floor(this.propJobPart.final_hours % 60) > 0
-                ? `and ${Math.floor(this.propJobPart.final_hours % 60)} minute${
-                Math.floor(this.propJobPart.final_hours % 60) > 1 ? "s" : ""
-                }`
-                : ""
-              }`,
+            description,
             total: total,
             dispute: this.propJobPart.disputed,
             absent_days: this.propJobPart.absent_days,
@@ -522,6 +536,7 @@
       this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
       this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
     },
+
     methods: {
       handleKeyDownEvent (e, formField, limit) {
         let acceptedKeys = [
@@ -539,13 +554,16 @@
           e.preventDefault()
         }
       },
+
       hasValue (value, field) {
         if (value == 0) {
           this.form[field] = ""
         }
       },
+
       save (final) {
         this.formError = []
+
         if (
           [0, "0"].includes(this.form.hours) &&
           [0, "0"].includes(this.form.minutes)
@@ -560,11 +578,16 @@
           })
         } else {
           this.form.hours = !this.form.hours ? 0 : this.form.hours
+
           this.form.minutes = !this.form.minutes ? 0 : this.form.minutes
+
           this.form.items[0].final_hours =
-            this.form.hours * 60 + parseInt(this.form.minutes)
+            parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)
+
+          this.form.items[0].late_hours =
+            parseInt(this.form.late_hours) * 60 + parseInt(this.form.late_minutes)
         }
-        this.form.items[0].late_hours = parseInt(this.form.late_hours) * 60 + parseInt(this.form.late_minutes)
+
         this.Validate(this.form, [
           "final",
           "ir35",
@@ -574,8 +597,10 @@
           "late_hours",
           "late_minutes"
         ])
+
         if (!this.formError.length) {
           this.saveLoading = true
+
           if (this.propJobPart && !this.propInvoice) {
             if (
               this.form.items &&
@@ -585,7 +610,9 @@
               this.form.items[0].absent_days = this.propJobPart.absent_days
               this.form.items[0].remarks = ""
             }
+
             this.form.final = final
+
             this.$axios
               .$post(`/api/v1/locum/locum-invoices`, this.form)
               .then(res => {
@@ -594,10 +621,12 @@
                   status: "success",
                   text: [`${res.message}`]
                 })
+
                 this.$emit("createInvoice", res.data.locum_invoice)
               })
               .catch(err => {
                 console.log("err", err.response || err)
+
                 if (err.response.data.message) {
                   this.$store.commit("SET_NOTIFICATION", {
                     enabled: true,
@@ -611,6 +640,7 @@
                 } else {
                   this.formError.push(err.response.data)
                 }
+
                 throw err
               })
               .finally(() => {
@@ -628,8 +658,11 @@
               // this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
               this.form.items[0].remarks = ""
             }
+
             this.form.final = final
+
             // return;
+
             this.$axios
               .$put(
                 `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
@@ -641,10 +674,12 @@
                   status: "success",
                   text: [`${res.message}`]
                 })
+
                 this.$emit("updateInvoice", res.data.locum_invoice)
               })
               .catch(err => {
                 console.log("err", err.response || err)
+
                 if (err.response.data.message) {
                   this.$store.commit("SET_NOTIFICATION", {
                     enabled: true,
@@ -658,6 +693,7 @@
                 } else {
                   this.formError.push(err.response.data)
                 }
+
                 throw err
               })
               .finally(() => {
@@ -666,6 +702,7 @@
           }
         }
       },
+
       waitingForPracticeReply (item) {
         let count = this.$moment(item.disputed_by_practice_at).diff(
           item.disputed_by_locum_at,
@@ -676,16 +713,18 @@
         }
         return false
       },
+
       viewAsPdf (invoiceId) {
         window.open(
           `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
         )
-      }
-    }
+      },
+    },
   }
 </script>
+
 <style scoped>
-.items-table {
-  /* width: 733px; */
-}
+  .items-table {
+    /* width: 733px; */
+  }
 </style>
