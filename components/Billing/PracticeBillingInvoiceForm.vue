@@ -326,12 +326,14 @@
     </div>
   </section>
 </template>
+
 <script>
   import AppLoading from "@/components/Base/AppLoading"
   import AppButton from "@/components/Base/AppButton"
   import AppDate from "@/components/Base/AppDate"
   import AppInput from "@/components/Base/AppInput"
   import { mixin as clickaway } from "vue-clickaway"
+
   export default {
     components: {
       AppLoading,
@@ -339,7 +341,9 @@
       AppDate,
       AppInput,
     },
+
     mixins: [clickaway],
+
     props: {
       propInvoice: {
         type: Object,
@@ -350,6 +354,7 @@
         default: () => null,
       }
     },
+
     data () {
       return {
         exportLoading: false,
@@ -370,13 +375,17 @@
         allowToBill: false
       }
     },
+
     computed: {
       subTotal () {
         let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
           .name
+
         let finalHours =
           (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+
         let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60
+
         let total = 0
 
         switch (type) {
@@ -389,17 +398,22 @@
               (this.propInvoice.items[0].job_part.job.rate / totalHours)
             break
         }
+
         return total
       },
+
       totalAmount () {
         // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
         // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
         let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
           .name
+
         let finalHours =
           (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+
         let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60
+
         let total = 0
 
         switch (type) {
@@ -417,8 +431,10 @@
           total =
             total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
         }
+
         return total
       },
+
       description () {
         let hour =
           parseInt(this.form.hours) === 0 || this.form.hours === ""
@@ -447,6 +463,7 @@
           } ${minute}`
       }
     },
+
     watch: {
       isApproved (value) {
         if (value) {
@@ -478,6 +495,7 @@
         this.form.items[0].approve = value
       }
     },
+
     mounted () {
       if (this.propInvoice) {
         this.form.date_start = this.propInvoice.date_start
@@ -523,6 +541,7 @@
       this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
       this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
     },
+
     methods: {
       handleKeyDownEvent (e, formField, limit) {
         let acceptedKeys = [
@@ -540,16 +559,19 @@
           e.preventDefault()
         }
       },
+
       hasValue (value, field) {
         if (value == 0) {
           this.form[field] = ""
         }
       },
+
       save () {
         this.formError = []
 
         this.form.hours = !this.form.hours ? 0 : this.form.hours
         this.form.minutes = !this.form.minutes ? 0 : this.form.minutes
+
         if (
           [0, "0"].includes(this.form.hours) &&
           [0, "0"].includes(this.form.minutes)
@@ -563,7 +585,9 @@
             message: "Hours is required"
           })
         }
+
         this.Validate(this.form, ["total_amount", "hours", "minutes", "late_hours", "late_minutes"])
+
         if (!this.formError.length) {
           this.form.items[0].final_hours =
             parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)
@@ -571,7 +595,9 @@
           this.form.items[0].description = this.description
           this.form.items[0].total = this.totalAmount
           this.form.total_amount = this.totalAmount
+
           this.saveLoading = true
+
           this.$axios
             .$put(
               `/api/v1/practice/locum-invoices/${
@@ -585,10 +611,12 @@
                 status: "success",
                 text: [`${res.message}`]
               })
+
               this.$emit("updateInvoice", res.data.locum_invoice)
             })
             .catch(err => {
               console.log("err", err.response || err)
+
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
@@ -608,6 +636,7 @@
             })
         }
       },
+
       waitingForLocumReply (item) {
         let count = this.$moment(item.disputed_by_locum_at).diff(
           item.disputed_by_practice_at,
@@ -618,6 +647,7 @@
         }
         return false
       },
+
       viewAsPdf (invoiceId) {
         window.open(
           `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`

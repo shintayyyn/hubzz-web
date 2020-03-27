@@ -28,7 +28,7 @@
         </div>
         <div class="flex flex-col mb-4 relative">
           <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
-                    :error="formError.find(item => item.field === 'description')"
+                    :error="formError.find(item => item.field === 'description')" :resize="false"
                     @input="CheckEmptyField(form.description, 'description')"
           />
           <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"
@@ -66,8 +66,9 @@
             <div class="flex justify-start text-md sm:text-md">
               Filtered Date
             </div>
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-5xl">
-              {{ filter_date_total }}
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+              £
+              {{ filter_date_total.toFixed(2) }}
             </div>
           </div>
         </div>
@@ -82,8 +83,9 @@
             <div class="flex justify-start text-md sm:text-md">
               This Week
             </div>
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-5xl">
-              {{ week_total }}
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+              £
+              {{ week_total.toFixed(2) }}
             </div>
           </div>
         </div>
@@ -98,8 +100,9 @@
             <div class="flex justify-start text-md sm:text-md">
               This Month
             </div>
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-5xl">
-              {{ month_total }}
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+              £
+              {{ month_total.toFixed(2) }}
             </div>
           </div>
         </div>
@@ -110,22 +113,35 @@
       >
         <template v-slot:actions="slotProps">
           <div class="flex flex-wrap justify-center">
-            <div class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-                 @click="editExpenseReports(slotProps.item.id)"
+            <div
+              class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+              @click="editExpenseReports(slotProps.item.id)"
             >
               Edit
             </div>
-            <div class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
-                 @click="removeExpenseReports(slotProps.item.id)"
+            <div
+              class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+              @click="removeExpenseReports(slotProps.item.id)"
             >
               Delete
             </div>
           </div>
         </template>
+        <template v-slot:date="slotProps">
+          {{ $moment(slotProps.item.date).format("DD/MM/YYYY") }}
+        </template>
+        <template v-slot:total="slotProps">
+          £ {{ slotProps.item.total.toFixed(2) }}
+        </template>
       </AppTable>
       <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
         You haven't added any Expense
         Reports on this date.
+      </div>
+      <div v-if="expense_reports.length > 0" class="flex justify-end">
+        <AppButton :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'" :inStyle="'padding: 5px 14px;'"
+                   :disabled="exporting" @click="exportExpenseReportAsPdf"
+        />
       </div>
     </template>
   </div>
@@ -175,7 +191,9 @@
         date_end: null,
         filter_date_total: 0,
         week_total: 0,
-        month_total: 0
+        month_total: 0,
+
+        exporting: false,
       }
     },
 
@@ -184,18 +202,20 @@
         let columns = []
         columns.push(
           {
+            name: "Date",
+            dataIndex: "date",
+            slotName: "date",
+            class: ""
+          },
+          {
             name: "Description",
             dataIndex: "description",
             class: "text-left"
           },
           {
-            name: "Date",
-            dataIndex: "date",
-            class: "text-center localDate"
-          },
-          {
             name: "Total",
             dataIndex: "total",
+            slotName: "total",
             class: "text-center"
           },
           {
@@ -206,6 +226,7 @@
         )
         return columns
       },
+
       totalAmount () {
         return this.expense_reports && this.expense_reports.length > 0
           ? this.expense_reports
@@ -427,6 +448,7 @@
           this.form.description = foundExpenseReport.description
           this.form.total = foundExpenseReport.total
           this.form.date = foundExpenseReport.date
+          this.formError = []
           this.modal = true
         }
       },
@@ -441,6 +463,7 @@
         this.form.description = ""
         this.form.total = 0
         this.form.date = null
+        this.formError = []
         this.modal = true
       },
 
@@ -515,6 +538,67 @@
         this.loading = true
         await this.getExpenseReports()
         this.loading = false
+      },
+
+      exportExpenseReportAsPdf () {
+        const dateStart = this.date_start
+        const dateEnd = this.date_end
+        const formattedDateStart = this.$moment(dateStart, 'YYYY-MM-DD').format('DD/MM/YYYY')
+        const formattedDateEnd = this.$moment(dateEnd, 'YYYY_MM_DD').format('DD_MM_YYYY')
+        const filename = `expenses_${formattedDateStart}_${formattedDateEnd}.pdf`
+
+        this.exporting = true
+        this.$axios.get("/api/v1/locum/locum-expenses/pdf", {
+          params: {
+            date_start: dateStart,
+            date_end: dateEnd,
+          },
+          responseType: 'blob',
+        }).then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.setAttribute('href', url)
+          link.setAttribute('download', filename)
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+
+          // const fileReader = new window.FileReader()
+          // fileReader.onload = function () {
+          //   const url = fileReader.result
+          //   const link = document.createElement('a')
+          //   link.setAttribute('href', url)
+          //   link.setAttribute('download', filename)
+          //   document.body.appendChild(link)
+          //   link.click()
+          //   document.body.removeChild(link)
+          // }
+          // fileReader.readAsDataURL(response.data)
+        }).catch((err) => {
+          console.log('err', err)
+
+          if (err.response && err.response.data && err.response.data.text) {
+            err.response.data.text().then((data) => {
+              const json = JSON.parse(data)
+
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [json.message],
+              })
+            })
+
+            return
+          }
+
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: ['Something went wrong!'],
+          })
+        }).finally(() => {
+          this.exporting = false
+        })
       },
     },
   }
