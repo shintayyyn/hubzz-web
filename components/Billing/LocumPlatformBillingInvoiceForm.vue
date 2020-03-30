@@ -526,6 +526,7 @@
             remarks: this.propInvoice.items[0].remarks
           }
         ]
+
         this.form.total_amount = this.propInvoice.total_amount
         this.form.final = false
         this.form.ir35 = this.propInvoice.ir35
@@ -724,7 +725,7 @@
 </script>
 
 <style scoped>
-  .items-table {
+  /* .items-table { */
     /* width: 733px; */
-  }
+  /* } */
 </style>
