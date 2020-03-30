@@ -1,194 +1,150 @@
 <template>
-	<div class="p-4 md:p-8">
-		<div>
-			<svgicon
-				name="left-arrow"
-				height="32"
-				width="32"
-				class="cursor-pointer"
-				@click="$emit('close')"
-			/>
-		</div>
+  <div class="p-4 md:p-8">
+    <div>
+      <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="$emit('close')" />
+    </div>
 
-		<div class="flex flex-row flex-wrap justify-between items-center">
-			<div class="font-bold text-lg mt-4">EXPENSES REPORTS</div>
-			<AppButton
-				:label="'Add expense report'"
-				:inStyle="'padding:5px 14px;'"
-				class="mb-4"
-				@click="addExpenseReports"
-			/>
-		</div>
+    <div class="flex flex-row flex-wrap justify-between items-center">
+      <div class="font-bold text-lg mt-4">
+        EXPENSES REPORTS
+      </div>
+      <AppButton :label="'Add expense report'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="addExpenseReports" />
+    </div>
 
-		<div class="flex flex-row flex-wrap justify-start items-center">
-			<AppDate
-				v-model="date_start"
-				:name="'date_start'"
-				:label="'From'"
-				:inStyle="'margin-bottom:0px'"
-			/>
-			<div class="mx-2" />
-			<AppDate v-model="date_end" :name="'date_end'" :label="'To'" :inStyle="'margin-bottom:0px'" />
-		</div>
+    <div class="flex flex-row flex-wrap justify-start items-center">
+      <AppDate v-model="date_start" :name="'date_start'" :label="'From'" :inStyle="'margin-bottom:0px'" />
+      <div class="mx-2" />
+      <AppDate v-model="date_end" :name="'date_end'" :label="'To'" :inStyle="'margin-bottom:0px'" />
+    </div>
 
-		<AppButton
-			:label="'Show expense reports'"
-			:inStyle="'padding:5px 14px;'"
-			class="mb-4"
-			@click="getExpenseReportsPromiseAll"
-		/>
+    <AppButton :label="'Show expense reports'" :inStyle="'padding:5px 14px;'" class="mb-4"
+               @click="getExpenseReportsPromiseAll"
+    />
 
-		<transition name="slide" mode="out-in">
-			<div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
-				<div>
-					<svgicon
-						name="left-arrow"
-						height="32"
-						width="32"
-						class="cursor-pointer"
-						@click="modal = false"
-					/>
-				</div>
-				<div class="flex flex-col mb-4 relative">
-					<AppInput
-						v-model="form.description"
-						:type="'textarea'"
-						:name="'description'"
-						:label="'Description'"
-						:error="formError.find(item => item.field === 'description')"
-						@input="CheckEmptyField(form.description, 'description')"
-            :resize="false"
-            :limit="255"
-					/>
-					<AppInput
-						v-model="form.total"
-						:type="'number'"
-						:name="'total'"
-						:label="'Total'"
-						:error="formError.find(item => item.field === 'total')"
-						:inStyle="'text-align:right'"
-						@input="CheckEmptyField(form.total, 'total')"
-					/>
-					<AppDate
-						v-model="form.date"
-						:name="'date'"
-						:label="'Date'"
-						:error="formError.find(item => item.field === 'date')"
-						@input="CheckEmptyField(form.date, 'date')"
-					/>
-					<AppLoading :loading="loading" spinner />
-				</div>
-				<AppButton
-					:label="'Save report'"
-					:inStyle="'padding:5px 14px;'"
-					:disabled="loading"
-					@click="save"
-				/>
-			</div>
-		</transition>
+    <transition name="slide" mode="out-in">
+      <div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
+        <div>
+          <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="modal = false" />
+        </div>
+        <div class="flex flex-col mb-4 relative">
+          <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
+                    :error="formError.find(item => item.field === 'description')" :resize="false"
+                    @input="CheckEmptyField(form.description, 'description')"
+          />
+          <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"
+                    :error="formError.find(item => item.field === 'total')" :inStyle="'text-align:right'"
+                    @input="CheckEmptyField(form.total, 'total')"
+          />
+          <AppDate v-model="form.date" :name="'date'" :label="'Date'"
+                   :error="formError.find(item => item.field === 'date')" @input="CheckEmptyField(form.date, 'date')"
+          />
+          <AppLoading :loading="loading" spinner />
+        </div>
+        <AppButton :label="'Save report'" :inStyle="'padding:5px 14px;'" :disabled="loading" @click="save" />
+      </div>
+    </transition>
 
-		<transition name="fade" mode="out-in">
-			<div v-if="modal" class="shield" @click="modal = false" />
-		</transition>
+    <transition name="fade" mode="out-in">
+      <div v-if="modal" class="shield" @click="modal = false" />
+    </transition>
 
-		<AppConfirmationModal
-			:label="'Proceed to add delete this expense report?'"
-			:confirmLabel="'Delete'"
-			:cancelLabel="'Cancel'"
-			:modal="delete_modal"
-			@confirm="remove"
-			@cancel="delete_modal = false"
-		/>
+    <AppConfirmationModal :label="'Proceed to add delete this expense report?'" :confirmLabel="'Delete'"
+                          :cancelLabel="'Cancel'" :modal="delete_modal" @confirm="remove" @cancel="delete_modal = false"
+    />
 
-		<AppLoading :loading="initialLoading" spinner />
+    <AppLoading :loading="initialLoading" spinner />
 
-		<template v-if="!initialLoading">
-			<div class="flex flex-row flex-wrap justify-start">
-				<div class="w-full lg:w-1/3 xl:max-w-sm">
-					<div
-						class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
-					>
-						<transition name="fade" mode="out-in">
-							<AppLoading :loading="initialLoading" spinner />
-						</transition>
-						<div class="flex justify-start text-md sm:text-md">Filtered Date</div>
-						<div
-							v-if="!initialLoading"
-							class="flex justify-end font-bold text-3xl md:text-5xl"
-						>£ {{ filter_date_total.toFixed(2) }}</div>
-					</div>
-				</div>
-				<div class="w-full lg:w-1/3 xl:max-w-sm">
-					<div
-						class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
-						@click="filterExpenseReport('week')"
-					>
-						<transition name="fade" mode="out-in">
-							<AppLoading :loading="initialLoading" spinner />
-						</transition>
-						<div class="flex justify-start text-md sm:text-md">This Week</div>
-						<div
-							v-if="!initialLoading"
-							class="flex justify-end font-bold text-3xl md:text-5xl"
-						>£ {{ week_total.toFixed(2) }}</div>
-					</div>
-				</div>
-				<div class="w-full lg:w-1/3 xl:max-w-sm">
-					<div
-						class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
-						@click="filterExpenseReport('month')"
-					>
-						<transition name="fade" mode="out-in">
-							<AppLoading :loading="initialLoading" spinner />
-						</transition>
-						<div class="flex justify-start text-md sm:text-md">This Month</div>
-						<div
-							v-if="!initialLoading"
-							class="flex justify-end font-bold text-3xl md:text-5xl"
-						>£ {{ month_total.toFixed(2) }}</div>
-					</div>
-				</div>
-			</div>
-			<AppTable
-				v-if="expense_reports.length > 0"
-				:total="total"
-				:items="expense_reports"
-				:currentPage="current_page"
-				:perPage="limit"
-				:columns="columns"
-				:orderBy="order_by"
-				:loading="loading"
-				:customWidth="480"
-				@pagechanged="pagechanged"
-				@limitchanged="limitchanged"
-				@sorted="sorted"
-			>
-				<template v-slot:actions="slotProps">
-					<div class="flex flex-wrap justify-center">
-						<div
-							class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-							@click="editExpenseReports(slotProps.item.id)"
-						>Edit</div>
-						<div
-							class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
-							@click="removeExpenseReports(slotProps.item.id)"
-						>Delete</div>
-					</div>
-				</template>
-				<template v-slot:date="slotProps">{{ $moment(slotProps.item.date).format("DD/MM/YYYY") }}</template>
-				<template v-slot:total="slotProps">£ {{ slotProps.item.total.toFixed(2) }}</template>
-			</AppTable>
-			<div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
-				You haven't added any Expense
-				Reports on this date.
-			</div>
+    <template v-if="!initialLoading">
+      <div class="flex flex-row flex-wrap justify-start">
+        <div class="w-full lg:w-1/3 xl:max-w-sm">
+          <div
+            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
+          >
+            <transition name="fade" mode="out-in">
+              <AppLoading :loading="initialLoading" spinner />
+            </transition>
+            <div class="flex justify-start text-md sm:text-md">
+              Filtered Date
+            </div>
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+              £
+              {{ filter_date_total.toFixed(2) }}
+            </div>
+          </div>
+        </div>
+        <div class="w-full lg:w-1/3 xl:max-w-sm">
+          <div
+            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+            @click="filterExpenseReport('week')"
+          >
+            <transition name="fade" mode="out-in">
+              <AppLoading :loading="initialLoading" spinner />
+            </transition>
+            <div class="flex justify-start text-md sm:text-md">
+              This Week
+            </div>
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+              £
+              {{ week_total.toFixed(2) }}
+            </div>
+          </div>
+        </div>
+        <div class="w-full lg:w-1/3 xl:max-w-sm">
+          <div
+            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+            @click="filterExpenseReport('month')"
+          >
+            <transition name="fade" mode="out-in">
+              <AppLoading :loading="initialLoading" spinner />
+            </transition>
+            <div class="flex justify-start text-md sm:text-md">
+              This Month
+            </div>
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+              £
+              {{ month_total.toFixed(2) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <AppTable v-if="expense_reports.length > 0" :total="total" :items="expense_reports" :currentPage="current_page"
+                :perPage="limit" :columns="columns" :orderBy="order_by" :loading="loading" :customWidth="480"
+                @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
+      >
+        <template v-slot:actions="slotProps">
+          <div class="flex flex-wrap justify-center">
+            <div
+              class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+              @click="editExpenseReports(slotProps.item.id)"
+            >
+              Edit
+            </div>
+            <div
+              class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+              @click="removeExpenseReports(slotProps.item.id)"
+            >
+              Delete
+            </div>
+          </div>
+        </template>
+        <template v-slot:date="slotProps">
+          {{ $moment(slotProps.item.date).format("DD/MM/YYYY") }}
+        </template>
+        <template v-slot:total="slotProps">
+          £ {{ slotProps.item.total.toFixed(2) }}
+        </template>
+      </AppTable>
+      <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
+        You haven't added any Expense
+        Reports on this date.
+      </div>
       <div v-if="expense_reports.length > 0" class="flex justify-end">
         <AppButton :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'" :inStyle="'padding: 5px 14px;'"
                    :disabled="exporting" @click="exportExpenseReportAsPdf"
         />
       </div>
-		</template>
-	</div>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -603,40 +559,46 @@
           responseType: 'blob',
         }).then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]))
-
           const link = document.createElement('a')
-
           link.setAttribute('href', url)
-
           link.setAttribute('download', filename)
-
           document.body.appendChild(link)
-
           link.click()
-
           document.body.removeChild(link)
 
           // const fileReader = new window.FileReader()
-
           // fileReader.onload = function () {
           //   const url = fileReader.result
-
           //   const link = document.createElement('a')
-
           //   link.setAttribute('href', url)
-
           //   link.setAttribute('download', filename)
-
           //   document.body.appendChild(link)
-
           //   link.click()
-
           //   document.body.removeChild(link)
           // }
-
           // fileReader.readAsDataURL(response.data)
         }).catch((err) => {
           console.log('err', err)
+
+          if (err.response && err.response.data && err.response.data.text) {
+            err.response.data.text().then((data) => {
+              const json = JSON.parse(data)
+
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [json.message],
+              })
+            })
+
+            return
+          }
+
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: ['Something went wrong!'],
+          })
         }).finally(() => {
           this.exporting = false
         })
@@ -646,19 +608,19 @@
 </script>
 
 <style scoped>
-.statistics-card {
-	min-height: 130px;
-	/* display: flex;
+  .statistics-card {
+    min-height: 130px;
+    /* display: flex;
   align-items: center; */
-}
+  }
 
-.modal-container {
-	z-index: 510;
-}
+  .modal-container {
+    z-index: 510;
+  }
 
-@media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 70%;
-	}
-}
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>
