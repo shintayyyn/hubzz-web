@@ -48,6 +48,59 @@
     "prettier": "^1.19.1",
     "tailwindcss": "^1.1.0"
   },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "browser": true
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:vue/recommended",
+      "plugin:vue/essential",
+      "plugin:nuxt/recommended"
+    ],
+    "plugins": [
+      "vue",
+      "nuxt"
+    ],
+    "rules": {
+      "vue/max-attributes-per-line": "off",
+      "vue/no-use-v-if-with-v-for": "off",
+      "vue/attribute-hyphenation": "off",
+      "vue/prop-name-casing": "off",
+      "object-curly-newline": "off",
+      "no-restricted-syntax": "off",
+      "no-underscore-dangle": "off",
+      "prefer-rest-params": "off",
+      "no-shadow": "off",
+      "no-multi-assign": "off",
+      "consistent-return": "off",
+      "no-param-reassign": "off",
+      "strict": "off",
+      "class-methods-use-this": "off",
+      "no-nested-ternary": "off",
+      "semi": [
+        "error",
+        "never"
+      ],
+      "space-before-function-paren": [
+        "error",
+        "always"
+      ],
+      "camelcase": "off",
+      "max-len": "off",
+      "no-console": "off",
+      "no-plusplus": "off",
+      "no-await-in-loop": "off",
+      "func-names": "off",
+      "global-require": "off",
+      "import/no-dynamic-require": "off"
+    }
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
