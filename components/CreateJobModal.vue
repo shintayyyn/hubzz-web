@@ -387,7 +387,7 @@
               <div class="px-1 w-full">
                 <AppInput
                   v-model="form.rate"
-                  :type="'number'"
+                  :type="'text'"
                   :name="'rate'"
                   :label="'Rate £'"
                   :min="1"
@@ -395,6 +395,7 @@
                   :in-style="'text-align:right'"
                   :limit="8"
                   @blur="CheckEmptyField(form.rate,'rate')"
+                  @keydown="isNumber($event)"
                 />
               </div>
               <div class="px-1 w-full">

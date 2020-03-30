@@ -25,9 +25,10 @@
               :label="item.compliance_document_name"
               :error="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
               :info="'For compliance; to be verified by the hubzz team'"
+							:limit="parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7"
               required
-              @blur="CheckEmptyField(form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()], item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
-              @keydown="inputNumberOnly($event)"
+              @blur="CheckEmptyField(form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()], item.compliance_document_name.replace(/ /g, '_').toLowerCase()), checkValidation(item.compliance_document_name, parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7)"
+              @keydown="[1, 10, '1','10'].includes(form.profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
             />
           </div>
           <!-- <AppInput
@@ -350,7 +351,9 @@
               :name="'sort_code'"
               :label="'Sort Code'"
               :error="formError.find(item => item.field === 'sort_code')"
+              :limit="6"
               required
+              @keydown="inputNumberOnly($event)"
             />
             <AppInput
               v-model="form.account_number"
@@ -358,7 +361,9 @@
               :name="'account_number'"
               :label="'Account Number'"
               :error="formError.find(item => item.field === 'account_number')"
+              :limit="8"
               required
+              @keydown="inputNumberOnly($event)"
             />
           </template>
 
@@ -774,6 +779,18 @@ export default {
     // }
   },
   methods: {
+    checkValidation(name, limit) {
+      let fieldName = name.replace(/ /g, "_").toLowerCase();
+			let field = this.form.reference_locum_compliance_documents.find(
+				item => item.name === name
+			);
+			if (field.reference.length < limit) {
+				this.formError.push({
+					field: fieldName,
+					message: `${name} must be ${limit} characters.`
+				});
+			}
+    },
     save() {
       let notRequired = [
         "nhs_smart_card_id_number",

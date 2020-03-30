@@ -230,4 +230,25 @@ export default {
     SET_CREDENTIAL_DETAIL_FORM_ERROR(state, payload) {
         state.credential_detail_form_error = payload
     },
+    SET_STAGE_1_DETAILS(state, payload) {
+        state.stage_1_details = payload
+    },
+    SET_STAGE_1_FORM_ERROR(state, payload) {
+        state.stage_1_details_form_error = payload
+    },
+    SET_STAGE_2_PT_1_DETAILS(state, payload) {
+        state.stage_2_pt_1_details = payload
+    },
+    SET_STAGE_2_PT_1_FORM_ERROR(state, payload) {
+        state.stage_2_pt_1_details_form_error = payload
+    },
+    SET_STAGE_2_PT_2_DETAILS(state, payload) {
+        state.stage_2_pt_2_details = payload
+    },
+    SET_STAGE_2_PT_2_FORM_ERROR(state, payload) {
+        state.stage_2_pt_2_details_form_error = payload
+    },
+    SET_REFERENCE_LOCUM_COMPLIANCE(state, payload) {
+        state.stage_2_pt_1_details.reference_locum_compliance_documents = payload
+    }
 }
