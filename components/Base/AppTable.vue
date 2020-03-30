@@ -63,7 +63,7 @@
 									<template v-if="column.dataIndex === 'actions-button'">
 										<slot name="actions-button" v-bind:item="item"></slot>
 									</template>
-									<temaplate v-if="!column.slotName">
+									<template v-if="!column.slotName">
 										<template
 											v-if="
 											column.class &&
@@ -86,7 +86,7 @@
 										"
 										>{{ dataCell(item, column) | fileSize }}</template>
 										<template v-else>{{ dataCell(item, column) }}</template>
-									</temaplate>
+									</template>
 								</template>
 							</div>
 						</div>

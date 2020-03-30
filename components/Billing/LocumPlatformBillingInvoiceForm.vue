@@ -379,6 +379,7 @@
   import AppButton from "@/components/Base/AppButton"
   import AppLoading from "@/components/Base/AppLoading"
   import AppDate from "@/components/Base/AppDate"
+
   export default {
     components: {
       AppInput,
@@ -386,6 +387,7 @@
       AppLoading,
       AppDate
     },
+
     props: {
       propInvoiceDetail: {
         type: Object,
@@ -400,6 +402,7 @@
         default: () => null,
       }
     },
+
     data () {
       return {
         exportLoading: false,
@@ -420,6 +423,7 @@
         disputed: false
       }
     },
+    
     computed: {
       subTotal () {
         return this.form.items && this.form.items.length > 0
