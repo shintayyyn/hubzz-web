@@ -376,7 +376,9 @@ export default {
 					this.practice.type === "Spoke" && this.practice.parent_practice_id
 						? this.practice.parent_practice_id
 						: null
-
+				console.log('this.practice', this.practice)
+				this.form.email = this.practice.email ? this.practice.email : null
+				this.form.report_to = this.practice.report_to ? this.practice.report_to : null
 				this.loading = false
 			})
 	},

@@ -5,7 +5,7 @@
         v-model="search"
         :type="'text'"
         :name="'search'"
-        :placeholder="'Search Job by ID, Practice Name, Profession Name or keywords'"
+        :placeholder="'Search Job by ID, Title, Practice Name, Profession Name or keywords'"
       />
     </div>
     <template v-if="$auth.user.domain === 'Practice'">
@@ -257,7 +257,7 @@ export default {
 		"$route.query.status" (newStatus, oldStatus) {
       this.params = {}
       this.current_page = 1
-      
+      this.search = ''
       Promise.all([
         this.locumColumns = [],
         this.practiceColumns = [],
