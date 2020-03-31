@@ -8,7 +8,9 @@
 
 		<div class="flex w-full justify-center xl:justify-start">
 			<div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-				<form class="w-full">
+				<form class="relative w-full">
+					<AppLoading :loading="loading" spinner />
+
 					<div
 						v-for="(item, index) in form.mandatory_locum_compliance_documents"
 						:key="item.compliance_document_id"
@@ -201,11 +203,13 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 import TermsAndConditions from "@/components/TermsAndConditions";
 export default {
 	components: {
 		AppInput,
 		AppButton,
+		AppLoading,
 		TermsAndConditions
 	},
 	data() {
@@ -234,6 +238,9 @@ export default {
 		},
 		mandatoryComplianceDocuments() {
 			return this.$store.getters["sign-up/getMandatoryComplianceDocuments"];
+		},
+		loading() {
+			return this.$store.getters["sign-up/signUpLoading"];
 		}
 	},
 	watch: {
@@ -259,17 +266,6 @@ export default {
 	mounted() {
 		let requiredMandatory = ["Passport", "CV", "DBS Certificate"];
 		this.mandatoryComplianceDocuments.forEach(item => {
-			// let existing =
-			// 	this.stage2details &&
-			// 	this.stage2details.mandatory_locum_compliance_documents.length
-			// 		? this.stage2details.mandatory_locum_compliance_documents.find(
-			// 				compliance =>
-			// 					compliance && compliance.compliance_document_name
-			// 						? conmpliance.compliance_document_name ===
-			// 						  item.compliance_document_name
-			// 						: ""
-			// 		  )
-			// 		: null;
 			let existing =
 				this.stage2details &&
 				this.stage2details.mandatory_locum_compliance_documents.length
@@ -341,11 +337,17 @@ export default {
 				});
 			}
 		});
-		this.$axios.$get(`/api/v1/countries`).then(res => {
-			res.data.countries.forEach(item =>
-				this.countries.push({ label: item.name, value: item.id })
-			);
-		});
+		this.$axios
+			.$get(`/api/v1/countries`, {
+				params: {
+					limit: 9999
+				}
+			})
+			.then(res => {
+				res.data.countries.forEach(item =>
+					this.countries.push({ label: item.name, value: item.id })
+				);
+			});
 		this.has_referral = this.referral_code ? true : false;
 		this.form.privacy_policy = this.stage2details.privacy_policy;
 		this.form.referral_code = this.stage2details.referral_code;
@@ -460,10 +462,10 @@ export default {
 			});
 
 			this.Validate(this.form, notRequired);
-			console.log(this.formError);
 			if (!this.formError.length) {
 				this.$store.commit("sign-up/SET_STAGE_2_PT_2_DETAILS", this.form);
 				this.$store.commit("sign-up/SET_STAGE_2_PT_2_FORM_ERROR", []);
+				this.$store.commit("sign-up/SET_SIGNUP_LOADING", true);
 				setTimeout(() => {
 					this.$store.dispatch("sign-up/registerLocum");
 				}, 1000);

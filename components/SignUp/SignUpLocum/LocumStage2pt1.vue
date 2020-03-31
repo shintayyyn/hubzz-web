@@ -138,7 +138,8 @@ export default {
 		// if (!this.stage2pt1details.reference_locum_compliance_documents.length) {
 		this.reference_locum_compliance_documents_list.forEach(item => {
 			let foundCompliance = this.stage2pt1details.reference_locum_compliance_documents.find(
-				compliance => compliance.name === item.compliance_document_name
+				compliance =>
+					compliance.compliance_document_id === item.compliance_document_id
 			);
 			let fieldName = item.compliance_document_name
 				.replace(/ /g, "_")

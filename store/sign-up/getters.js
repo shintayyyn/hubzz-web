@@ -21,6 +21,9 @@ export default {
     getMandatoryComplianceDocuments(state) {
         return state.mandatory_compliance_documents
     },
+    signUpLoading(state) {
+        return state.signup_loading
+    },
     // OLD
     accountDetails(state) {
         return state.account_details;

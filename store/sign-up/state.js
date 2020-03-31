@@ -153,4 +153,6 @@ export default () => ({
         mandatory_locum_compliance_documents: [],
         files: []
     },
+    mandatory_compliance_documents: [],
+    signup_loading: false
 })
