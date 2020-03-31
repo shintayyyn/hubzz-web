@@ -237,11 +237,25 @@ export default {
     },
     registerLocum ({ state, commit }) {
         let form = {}
+
         form = {
             ...state.stage_1_details,
             ...state.stage_2_pt_1_details,
             ...state.stage_2_pt_2_details
         }
+
+        let mandatory_compliance = []
+
+        form.mandatory_locum_compliance_documents.forEach(item => {
+            mandatory_compliance.push({
+                country_id: item.country_id ? item.country_id : '',
+                compliance_document_id: item.compliance_document_id,
+                has_reference: item.has_reference ? item.has_reference : false,
+                reference: item.reference ? item.reference : "",
+            })
+        })
+
+        form.mandatory_locum_compliance_documents = mandatory_compliance
 
         form.reference_locum_compliance_documents = form.reference_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
         form.mandatory_locum_compliance_documents = form.mandatory_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')

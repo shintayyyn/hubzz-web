@@ -11,6 +11,7 @@
         <form class="relative w-full">
           <AppLoading :loading="loading" spinner />
 
+<<<<<<< HEAD
           <div
             v-for="(item, index) in form.mandatory_locum_compliance_documents"
             :key="item.compliance_document_id"
@@ -43,6 +44,34 @@
                 </p>
               </template>
             </div>
+=======
+					<div
+						v-for="(item, index) in form.mandatory_locum_compliance_documents"
+						:key="item.compliance_document_id"
+						class="flex justify-between py-2 text-sm"
+						:class="[index !== 0 ? 'border-t' : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
+					>
+						<div
+							:class="item.child_compliance_documents && item.child_compliance_documents.length ? 'pb-2' : ''"
+						>
+							<p>
+								{{item.compliance_document_name}}
+								<span v-if="item.required" class="text-red-500">*</span>
+							</p>
+							<p v-if="item.file" class="text-xs">{{ item.file.name}}</p>
+							<p
+								class="text-xs"
+								v-if="item.child_compliance_documents && item.child_compliance_documents.length"
+							>Upload at least one (1)</p>
+							<template
+								v-if="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+							>
+								<p
+									class="text-xs text-red-500"
+								>{{ formError.find(err => err.field === item.compliance_document_name.replace(/ /g, "_").toLowerCase()).message }}</p>
+							</template>
+						</div>
+>>>>>>> e4390ee4... fix: locum registration
 
             <div
               v-if="item.compliance_document_type_name !== 'Safeguarding'"
@@ -283,13 +312,12 @@ export default {
 				this.stage2details.mandatory_locum_compliance_documents.length
 					? this.stage2details.mandatory_locum_compliance_documents.find(
 							mandatory =>
-								mandatory.compliance_document_name ===
-								item.compliance_document_name
+								mandatory.compliance_document_id === item.compliance_document_id
 					  )
 						? this.stage2details.mandatory_locum_compliance_documents.find(
 								mandatory =>
-									mandatory.compliance_document_name ===
-									item.compliance_document_name
+									mandatory.compliance_document_id ===
+									item.compliance_document_id
 						  )
 						: ""
 					: ""
@@ -339,10 +367,27 @@ export default {
 				item.child_compliance_documents.length
 			) {
 				item.child_compliance_documents.forEach(child => {
+					let existingChild =
+						this.stage2details &&
+						this.stage2details.mandatory_locum_compliance_documents.length
+							? this.stage2details.mandatory_locum_compliance_documents.find(
+									mandatory =>
+										mandatory.compliance_document_id ===
+										child.compliance_document_id
+							  )
+								? this.stage2details.mandatory_locum_compliance_documents.find(
+										mandatory =>
+											mandatory.compliance_document_id ===
+											child.compliance_document_id
+								  )
+								: ""
+							: "";
 					this.form.mandatory_locum_compliance_documents.push({
+						compliance_document_id: child.compliance_document_id,
 						compliance_document_name: child.compliance_document_name,
 						compliance_document_type_name: child.compliance_document_type_name,
-						file: null,
+						file:
+							existingChild && existingChild.file ? existingChild.file : null,
 						parent: "Safeguarding",
 						required: false
 					})
@@ -372,7 +417,12 @@ export default {
 		},
 		upload (compliance) {
 			// this.formError = [];
+<<<<<<< HEAD
 			let index
+=======
+			let index;
+			let formErrorIndex;
+>>>>>>> e4390ee4... fix: locum registration
 			if (compliance.compliance_document_type_name === "Passport") {
 				if (!compliance.country_id) {
 					this.modalError.push({
@@ -406,6 +456,14 @@ export default {
 				if (index > -1) {
 					this.modalError.splice(index, 1)
 				}
+			}
+			formErrorIndex = this.formError.findIndex(
+				err =>
+					err.field ===
+					compliance.compliance_document_name.replace(/ /g, "_").toLowerCase()
+			);
+			if (formErrorIndex > -1) {
+				this.formError.splice(formErrorIndex, 1);
 			}
 			if (!this.modalError.length) {
 				this.complianceModal = false
@@ -454,21 +512,31 @@ export default {
 							message: `${item.compliance_document_name} is required.`
 						})
 					}
+					if (item.compliance_document_type_name === "Passport") {
+						if (!item.country_id) {
+							this.formError.push({
+								field: "passport",
+								message: `Country is required.`
+							});
+						}
+					}
 				} else {
-					let safeguardingChild = this.form.mandatory_locum_compliance_documents.filter(
-						item => item.parent === "Safeguarding"
-					)
-					let safeguardingChildFiles = safeguardingChild.map(item =>
-						item.file ? true : false
-					)
+					if (item.required) {
+						let safeguardingChild = this.form.mandatory_locum_compliance_documents.filter(
+							item => item.parent === "Safeguarding"
+						);
+						let safeguardingChildFiles = safeguardingChild.map(item =>
+							item.file ? true : false
+						);
 
-					if (!safeguardingChildFiles.includes(true)) {
-						this.formError.push({
-							field: item.compliance_document_name
-								.replace(/ /g, "_")
-								.toLowerCase(),
-							message: `Must at least upload one (1) Safeguarding File.`
-						})
+						if (!safeguardingChildFiles.includes(true)) {
+							this.formError.push({
+								field: item.compliance_document_name
+									.replace(/ /g, "_")
+									.toLowerCase(),
+								message: `Must at least upload one (1) Safeguarding File.`
+							});
+						}
 					}
 				}
 			})

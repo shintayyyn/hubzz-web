@@ -264,12 +264,12 @@ export default {
                     country_id: item.country_id ? item.country_id : '',
                     compliance_document_id: item.compliance_document_id,
                     has_reference: item.has_reference ? item.has_reference : false,
-                    reference: item.reference ? item.reference : ""
+                    reference: item.reference ? item.reference : "",
+                    file: item.file
                 })
                 state.stage_2_pt_2_details.files.push(item.file)
             }
         })
-        console.log(state.stage_2_pt_2_details)
     },
     SET_STAGE_2_PT_2_FORM_ERROR(state, payload) {
         state.stage_2_pt_2_details_form_error = payload
