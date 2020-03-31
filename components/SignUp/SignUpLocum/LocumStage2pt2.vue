@@ -14,7 +14,7 @@
 						v-for="(item, index) in form.mandatory_locum_compliance_documents"
 						:key="item.compliance_document_id"
 						class="flex justify-between text-sm"
-						:class="[item.compliance_document_id !== 25 || (item.compliance_document_id === 25 && visa_countries.includes(country_id)) ? `py-2 ${index !== 0 ? 'border-t' : ''}` : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
+						:class="[item.compliance_document_type_name !== 'Visa' || (item.compliance_document_type_name === 'Visa' && visa_countries.includes(country_id)) ? `py-2 ${index !== 0 ? 'border-t' : ''}` : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
 					>
 						<template
 							v-if="item.compliance_document_id !== 25 || (item.compliance_document_id === 25 && visa_countries.includes(country_id))"
@@ -274,11 +274,13 @@ export default {
 			this.CheckEmptyField(this.form.privacy_policy, "privacy_policy");
 		},
 		country_id(value) {
+			let visa = this.form.mandatory_locum_compliance_documents.find(
+				item => item.compliance_document_type_name === "Visa"
+			);
 			if (this.visa_countries.includes(value)) {
-				let visa = this.form.mandatory_locum_compliance_documents.find(
-					item => item.compliance_document_id === 25
-				);
 				visa.required = true;
+			} else {
+				visa.file = null;
 			}
 		}
 	},
@@ -372,7 +374,7 @@ export default {
 					});
 				});
 			}
-			if (item.compliance_document_id === 25) {
+			if (item.compliance_document_type_name === "Visa") {
 				item.compliance_document_countries.forEach(country => {
 					this.visa_countries.push(country.id);
 				});
