@@ -17,7 +17,7 @@
 						:class="[item.compliance_document_type_name !== 'Visa' || (item.compliance_document_type_name === 'Visa' && visa_countries.includes(country_id)) ? `py-2 ${index !== 0 ? 'border-t' : ''}` : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
 					>
 						<template
-							v-if="item.compliance_document_id !== 25 || (item.compliance_document_id === 25 && visa_countries.includes(country_id))"
+							v-if="item.compliance_document_type_name !== 'Visa' || (item.compliance_document_type_name === 'Visa' && visa_countries.includes(country_id))"
 						>
 							<div
 								:class="item.child_compliance_documents && item.child_compliance_documents.length ? 'pb-2' : ''"
@@ -277,9 +277,11 @@ export default {
 			let visa = this.form.mandatory_locum_compliance_documents.find(
 				item => item.compliance_document_type_name === "Visa"
 			);
+			console.log(this.visa_countries);
 			if (this.visa_countries.includes(value)) {
 				visa.required = true;
 			} else {
+				visa.required = false;
 				visa.file = null;
 			}
 		}
@@ -524,7 +526,7 @@ export default {
 					}
 				}
 			});
-
+			console.log(this.formError);
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
 				this.$store.commit("sign-up/SET_STAGE_2_PT_2_DETAILS", this.form);
