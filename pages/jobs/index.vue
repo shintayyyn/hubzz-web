@@ -112,10 +112,12 @@
             <AppInput
               v-model="rate"
               class="px-1"
-              :type="'number'"
+              :type="'text'"
               :name="'rate'"
-              :label="'Rate'"
+              :label="'Rate £'"
               :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :limit="8"
+              @keydown="isNumber($event)"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -253,10 +255,12 @@
             <AppInput
               v-model="job_rate"
               class="px-1"
-              :type="'number'"
+              :type="'text'"
               :name="'job_rate'"
-              :label="'Rate'"
+              :label="'Rate £'"
               :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :limit="8"
+              @keydown="isNumber($event)"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">

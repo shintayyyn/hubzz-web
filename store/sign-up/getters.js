@@ -1,5 +1,27 @@
 export default {
     // LOCUMS
+    stage1Details(state) {
+        return state.stage_1_details;
+    },
+    stage1DetailsFormError(state) {
+        return state.stage_1_details_form_error;
+    },
+    stage2pt1Details(state) {
+        return state.stage_2_pt_1_details;
+    },
+    stage2pt1DetailsFormError(state) {
+        return state.stage_2_pt_1_details_form_error;
+    },
+    stage2pt2Details(state) {
+        return state.stage_2_pt_2_details;
+    },
+    stage2pt2DetailsFormError(state) {
+        return state.stage_2_pt_2_form_error;
+    },
+    getMandatoryComplianceDocuments(state) {
+        return state.mandatory_compliance_documents
+    },
+    // OLD
     accountDetails(state) {
         return state.account_details;
     },

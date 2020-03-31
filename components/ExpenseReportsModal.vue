@@ -391,6 +391,9 @@
 
       async save () {
         this.formError = []
+        if (this.form.description && this.form.description.length > 255) {
+          this.formError.push({field: 'description', message: 'Description is too long.'})
+        }
         this.Validate(this.form)
         this.form.date = this.$moment(this.form.date).format("YYYY-MM-DD")
         if (!this.formError.length) {

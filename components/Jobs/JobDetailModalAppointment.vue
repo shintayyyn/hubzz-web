@@ -86,12 +86,14 @@
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.rate"
-              :type="'number'"
+              :type="'text'"
               :name="'rate'"
               :label="'Rate £'"
               :placeholder="''"
               :in-style="'text-align:right'"
               :error="this.formError.find(item => item.field === 'rate')"
+              :limit="8"
+              @keydown="isNumber($event)"
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
