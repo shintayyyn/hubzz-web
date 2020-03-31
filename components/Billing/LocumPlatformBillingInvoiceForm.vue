@@ -89,7 +89,7 @@
           >
             <div class="relative flex justify-start mt-2">
               <div class="w-full text-xs sm:text-sm px-4 py-1">
-                {{ form.items[0].description }}
+                {{ description }}
               </div>
               <div v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
                    class="flex items-center align-middle sticky right-0 bg-white shadow-md"
@@ -379,6 +379,7 @@
   import AppButton from "@/components/Base/AppButton"
   import AppLoading from "@/components/Base/AppLoading"
   import AppDate from "@/components/Base/AppDate"
+
   export default {
     components: {
       AppInput,
@@ -386,6 +387,7 @@
       AppLoading,
       AppDate
     },
+
     props: {
       propInvoiceDetail: {
         type: Object,
@@ -400,6 +402,7 @@
         default: () => null,
       }
     },
+
     data () {
       return {
         exportLoading: false,
@@ -420,16 +423,106 @@
         disputed: false
       }
     },
+    
     computed: {
       subTotal () {
-        return this.form.items && this.form.items.length > 0
-          ? this.form.items[0].total
-          : 0
+        if (this.propJobPart && !this.propInvoice) {
+          let type = this.propJobPart.job.locum_detail_rate_type.name
+
+          let finalHours =
+            (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+
+          let totalHours = this.propJobPart.job.total_hours / 60
+
+          let total = 0
+
+          switch (type) {
+            case "Per Hour":
+              total = finalHours * this.propJobPart.job.rate
+              break
+            default:
+              total = finalHours * (this.propJobPart.job.rate / totalHours)
+              break
+          }
+
+          return total
+        }
+
+        if (this.propInvoice && !this.propJobPart) {
+          let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+            .name
+
+          let finalHours =
+            (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+
+          let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60
+
+          let total = 0
+
+          switch (type) {
+            case "Per Hour":
+              total = finalHours * this.propInvoice.items[0].job_part.job.rate
+              break
+            default:
+              total =
+                finalHours *
+                (this.propInvoice.items[0].job_part.job.rate / totalHours)
+              break
+          }
+
+          return total
+        }
+
+        return 0
       },
 
       totalAmount () {
-        if (this.form.items && this.form.items.length > 0) {
-          let total = this.form.items[0].total
+        if (this.propJobPart && !this.propInvoice) {
+          let type = this.propJobPart.job.locum_detail_rate_type.name
+
+          let finalHours =
+            (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+
+          let totalHours = this.propJobPart.job.total_hours / 60
+
+          let total = 0
+
+          switch (type) {
+            case "Per Hour":
+              total = finalHours * this.propJobPart.job.rate
+              break
+            default:
+              total = finalHours * (this.propJobPart.job.rate / totalHours)
+              break
+          }
+
+          return total
+        }
+
+        // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
+        // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
+
+        if (this.propInvoice && !this.propJobPart) {
+          let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+            .name
+
+          let finalHours =
+            (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+
+          let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60
+
+          let total = 0
+
+          switch (type) {
+            case "Per Hour":
+              total = finalHours * this.propInvoice.items[0].job_part.job.rate
+              break
+            default:
+              total =
+                finalHours *
+                (this.propInvoice.items[0].job_part.job.rate / totalHours)
+              break
+          }
 
           if (this.propInvoice) {
             total =
@@ -440,7 +533,85 @@
         }
 
         return 0
-      }
+      },
+
+      description () {
+        if (this.propJobPart && !this.propInvoice) {
+          const jobPartNumber = this.propJobPart.job_part_number
+          const jobType = this.propJobPart.job.type
+          const jobRate = this.propJobPart.job.rate
+          const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
+          const formattedDateStart = this.$moment(this.propJobPart.date_start).format('DD/MM/YYYY')
+          const formattedDateEnd = this.$moment(this.propJobPart.date_end).format('DD/MM/YYYY')
+          const shiftName = this.propJobPart.job.shift.name
+          const finalHoursInMinutesHours = parseInt(this.form.hours)
+          const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
+          const finalHoursInMinutesMinutes = parseInt(this.form.minutes)
+          const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
+          const hasMinutes = finalHoursInMinutesMinutes > 0
+            ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
+            : ''
+          const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName} `
+            + `from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} / `
+            + `Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+
+          return description
+        }
+
+        if (this.propInvoice && !this.propJobPart) {
+          let hour =
+            parseInt(this.form.hours) === 0 || this.form.hours === ""
+              ? ""
+              : parseInt(this.form.hours) > 1
+                ? "hours"
+                : "hour"
+
+          let minute =
+            parseInt(this.form.minutes) === 0 || this.form.minutes === ""
+              ? ""
+              : this.form.minutes > 1
+                ? "minutes"
+                : "minute"
+
+          let hasAnd = hour > 0 ? true : false
+
+          return `Job number ${
+            this.propInvoice.items[0].job_part.job_part_number
+            } ${this.propInvoice.items[0].job_part.job.type}
+          Job at £${this.propInvoice.items[0].job_part.job.rate} ${
+            this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+            }
+          from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
+          / ${this.propInvoice.items[0].job_part.job.shift.name} / Total of ${
+            this.form.hours > 0 ? this.form.hours : ""
+            } ${hour} ${hasAnd ? "and" : ""} ${
+            this.form.minutes > 0 ? this.form.minutes : ""
+            } ${minute}`
+        }
+        
+        return ''
+      },
+    
+      // subTotal () {
+      //   return this.form.items && this.form.items.length > 0
+      //     ? this.form.items[0].total
+      //     : 0
+      // },
+
+      // totalAmount () {
+      //   if (this.form.items && this.form.items.length > 0) {
+      //     let total = this.form.items[0].total
+
+      //     if (this.propInvoice) {
+      //       total =
+      //         total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
+      //     }
+
+      //     return total
+      //   }
+
+      //   return 0
+      // }
     },
 
     mounted () {
@@ -526,6 +697,7 @@
             remarks: this.propInvoice.items[0].remarks
           }
         ]
+
         this.form.total_amount = this.propInvoice.total_amount
         this.form.final = false
         this.form.ir35 = this.propInvoice.ir35
@@ -611,6 +783,10 @@
               this.form.items[0].remarks = ""
             }
 
+            this.form.items[0].description = this.description
+            this.form.items[0].total = this.totalAmount
+            this.form.total_amount = this.totalAmount
+
             this.form.final = final
 
             this.$axios
@@ -658,6 +834,10 @@
               // this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
               this.form.items[0].remarks = ""
             }
+
+            this.form.items[0].description = this.description
+            this.form.items[0].total = this.totalAmount
+            this.form.total_amount = this.totalAmount
 
             this.form.final = final
 
@@ -724,7 +904,7 @@
 </script>
 
 <style scoped>
-  .items-table {
+  /* .items-table { */
     /* width: 733px; */
-  }
+  /* } */
 </style>

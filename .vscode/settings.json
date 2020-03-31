@@ -1,7 +1,0 @@
-{
-  "editor.formatOnSave": true,
-  "prettier.printWidth": 130,
-  "prettier.disableLanguages": [
-    "vue"
-  ]
-}
