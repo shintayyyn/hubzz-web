@@ -292,8 +292,8 @@ export default {
             .then((res) => {
                 commit('CLEAR_LOCUM_REGISTER_FORM')
                 commit('CLEAR_FORM_ERROR_DETAILS')
-                commit("SET_SIGNUP_LOADING", false)
                 this.$router.push('/sign-up/success')
+                commit("SET_SIGNUP_LOADING", false)
             }).catch((err) => {
                 commit("SET_SIGNUP_LOADING", false)
                 if (
