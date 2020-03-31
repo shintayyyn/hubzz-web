@@ -19,12 +19,13 @@
             <div class="w-full">
               <AppInput
                 v-model="form.rate"
-                :type="'number'"
+                :type="'text'"
                 :name="'rate'"
                 :label="'Rate £'"
                 :error="formError.find(item => item.field === 'rate')"
                 :in-style="'text-align:right'"
                 :limit="8"
+                @keydown="isNumber($event)"
                 @blur="CheckEmptyField(form.rate,'rate')"
               />
             </div>

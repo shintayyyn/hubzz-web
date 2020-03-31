@@ -48,7 +48,7 @@ export default () => ({
     practice_surgery_detail_form_error: [],
     practice_account_detail_form_error: [],
     //  register locum
-    activeComponent: 'LocumAccountDetails',
+    activeComponent: 'LocumStage1',
     professions: [],
     gp_qualifications: [],
     others_qualifications: [],
@@ -121,5 +121,38 @@ export default () => ({
     address_detail_form_error: [],
     professional_detail_form_error: [],
     payroll_detail_form_error: [],
-    credential_detail_form_error: []
+    credential_detail_form_error: [],
+    register_loading: false,
+    stage_1_details_form_error: [],
+    stage_2_pt_1_details_form_error: [],
+    stage_2_pt_2_details_form_error: [],
+    stage_1_details: {
+        view_locum_jobs: false,
+        view_permanent_jobs: false,
+        profession_id: "",
+        title: "",
+        first_name: "",
+        last_name: '',
+        suffix: '',
+        mobile_number: '',
+        email: '',
+        password: '',
+        password_confirmation: ''
+    },
+    stage_2_pt_1_details: {
+        reference_locum_compliance_documents: [],
+        nhs_smart_card_id_number: "",
+        post_code: null,
+        address_line_1: "",
+        address_line_2: "",
+        address_line_3: ""
+    },
+    stage_2_pt_2_details: {
+        privacy_policy: false,
+        referral_code: null,
+        mandatory_locum_compliance_documents: [],
+        files: []
+    },
+    mandatory_compliance_documents: [],
+    signup_loading: false
 })
