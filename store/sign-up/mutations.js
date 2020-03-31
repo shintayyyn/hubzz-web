@@ -274,7 +274,7 @@ export default {
     SET_STAGE_2_PT_2_FORM_ERROR(state, payload) {
         state.stage_2_pt_2_details_form_error = payload
     },
-    CLEAR_LOCUM_REGISTER_FORM(state, payload) {
+    CLEAR_LOCUM_REGISTER_FORM(state) {
         state.stage_1_details.view_locum_jobs = false
         state.stage_1_details.view_permanent_jobs = false
         state.stage_1_details.profession_id = ""
