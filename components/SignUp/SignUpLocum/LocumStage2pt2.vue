@@ -10,44 +10,47 @@
 			<div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
 				<form class="relative w-full">
 					<AppLoading :loading="loading" spinner />
-
 					<div
 						v-for="(item, index) in form.mandatory_locum_compliance_documents"
 						:key="item.compliance_document_id"
-						class="flex justify-between py-2 text-sm"
-						:class="[index !== 0 ? 'border-t' : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
+						class="flex justify-between text-sm"
+						:class="[item.compliance_document_id !== 25 || (item.compliance_document_id === 25 && visa_countries.includes(country_id)) ? `py-2 ${index !== 0 ? 'border-t' : ''}` : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
 					>
-						<div
-							:class="item.child_compliance_documents && item.child_compliance_documents.length ? 'pb-2' : ''"
+						<template
+							v-if="item.compliance_document_id !== 25 || (item.compliance_document_id === 25 && visa_countries.includes(country_id))"
 						>
-							<p>
-								{{item.compliance_document_name}}
-								<span v-if="item.required" class="text-red-500">*</span>
-							</p>
-							<p v-if="item.file" class="text-xs">{{ item.file.name}}</p>
-							<p
-								class="text-xs"
-								v-if="item.child_compliance_documents && item.child_compliance_documents.length"
-							>Upload at least one (1)</p>
-							<template
-								v-if="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+							<div
+								:class="item.child_compliance_documents && item.child_compliance_documents.length ? 'pb-2' : ''"
 							>
+								<p>
+									{{item.compliance_document_name}}
+									<span v-if="item.required" class="text-red-500">*</span>
+								</p>
+								<p v-if="item.file" class="text-xs">{{ item.file.name}}</p>
 								<p
-									class="text-xs text-red-500"
-								>{{ formError.find(err => err.field === item.compliance_document_name.replace(/ /g, "_").toLowerCase()).message }}</p>
-							</template>
-						</div>
+									class="text-xs"
+									v-if="item.child_compliance_documents && item.child_compliance_documents.length"
+								>Upload at least one (1)</p>
+								<template
+									v-if="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+								>
+									<p
+										class="text-xs text-red-500"
+									>{{ formError.find(err => err.field === item.compliance_document_name.replace(/ /g, "_").toLowerCase()).message }}</p>
+								</template>
+							</div>
 
-						<div
-							v-if="item.compliance_document_type_name !== 'Safeguarding'"
-							class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-							@click="uploadCompliance(item)"
-						>
-							<span class="hidden md:block">Upload</span>
-							<span class="block md:hidden">
-								<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
-							</span>
-						</div>
+							<div
+								v-if="item.compliance_document_type_name !== 'Safeguarding'"
+								class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
+								@click="uploadCompliance(item)"
+							>
+								<span class="hidden md:block">Upload</span>
+								<span class="block md:hidden">
+									<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
+								</span>
+							</div>
+						</template>
 					</div>
 
 					<AppInput
@@ -225,6 +228,8 @@ export default {
 				referral_code: null,
 				mandatory_locum_compliance_documents: []
 			},
+			country_id: "",
+			visa_countries: [],
 			has_referral: false,
 			formError: [],
 			modalError: [],
@@ -267,6 +272,14 @@ export default {
 		},
 		"form.privacy_policy"(value) {
 			this.CheckEmptyField(this.form.privacy_policy, "privacy_policy");
+		},
+		country_id(value) {
+			if (this.visa_countries.includes(value)) {
+				let visa = this.form.mandatory_locum_compliance_documents.find(
+					item => item.compliance_document_id === 25
+				);
+				visa.required = true;
+			}
 		}
 	},
 	mounted() {
@@ -300,6 +313,7 @@ export default {
 					required: true
 				});
 			} else if (item.compliance_document_type_name === "Passport") {
+				this.country_id = parseInt(existing.country_id);
 				this.form.mandatory_locum_compliance_documents.push({
 					compliance_document_id: item.compliance_document_id,
 					child_compliance_documents: item.child_compliance_documents,
@@ -358,6 +372,11 @@ export default {
 					});
 				});
 			}
+			if (item.compliance_document_id === 25) {
+				item.compliance_document_countries.forEach(country => {
+					this.visa_countries.push(country.id);
+				});
+			}
 		});
 		this.$axios
 			.$get(`/api/v1/countries`, {
@@ -381,7 +400,6 @@ export default {
 			this.complianceModal = true;
 		},
 		upload(compliance) {
-			// this.formError = [];
 			let index;
 			let formErrorIndex;
 			if (compliance.compliance_document_type_name === "Passport") {
@@ -395,6 +413,9 @@ export default {
 					if (index > -1) {
 						this.modalError.splice(index, 1);
 					}
+				}
+				if (compliance.country_id) {
+					this.country_id = parseInt(compliance.country_id);
 				}
 			} else if (compliance.compliance_document_type_name === "DBS") {
 				if (compliance.has_reference && !compliance.reference) {
