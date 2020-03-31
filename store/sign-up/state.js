@@ -122,6 +122,7 @@ export default () => ({
     professional_detail_form_error: [],
     payroll_detail_form_error: [],
     credential_detail_form_error: [],
+    register_loading: false,
     stage_1_details_form_error: [],
     stage_2_pt_1_details_form_error: [],
     stage_2_pt_2_details_form_error: [],
@@ -133,6 +134,7 @@ export default () => ({
         first_name: "",
         last_name: '',
         suffix: '',
+        mobile_number: '',
         email: '',
         password: '',
         password_confirmation: ''
@@ -145,5 +147,10 @@ export default () => ({
         address_line_2: "",
         address_line_3: ""
     },
-    stage_2_pt_2_details: {}
+    stage_2_pt_2_details: {
+        privacy_policy: false,
+        referral_code: null,
+        mandatory_locum_compliance_documents: [],
+        files: []
+    },
 })

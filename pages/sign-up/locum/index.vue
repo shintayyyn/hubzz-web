@@ -46,38 +46,38 @@ export default {
 			return this.$store.getters["sign-up/activeTab"];
 		},
 		percentage() {
-			// switch (this.activeTab) {
-			// 	case "LocumStage1":
-			// 		return 25;
-			// 		break;
-			// 	case "LocumStage2pt1":
-			// 		return 50;
-			// 		break;
-			// 	case "LocumStage2pt2":
-			// 		return 100;
-			// 		break;
-			// 	default:
-			// 		return 0;
-			// }
 			switch (this.activeTab) {
-				case "LocumAccountDetails":
+				case "LocumStage1":
 					return 25;
 					break;
-				case "LocumAddressDetails":
-					return 45;
+				case "LocumStage2pt1":
+					return 50;
 					break;
-				case "LocumProfessionalDetails":
-					return 65;
-					break;
-				case "LocumPayrollDetails":
-					return 85;
-					break;
-				case "LocumCredentialDetails":
+				case "LocumStage2pt2":
 					return 100;
 					break;
 				default:
 					return 0;
 			}
+			// switch (this.activeTab) {
+			// 	case "LocumAccountDetails":
+			// 		return 25;
+			// 		break;
+			// 	case "LocumAddressDetails":
+			// 		return 45;
+			// 		break;
+			// 	case "LocumProfessionalDetails":
+			// 		return 65;
+			// 		break;
+			// 	case "LocumPayrollDetails":
+			// 		return 85;
+			// 		break;
+			// 	case "LocumCredentialDetails":
+			// 		return 100;
+			// 		break;
+			// 	default:
+			// 		return 0;
+			// }
 		}
 	}
 };

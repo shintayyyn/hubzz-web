@@ -39,7 +39,6 @@
 						:error="formError.find(item => item.field === 'profession_id')"
 						:items="professions"
 						required
-						@blur="CheckEmptyField(form.profession_id, 'profession_id')"
 					/>
 
 					<AppInput
@@ -58,7 +57,6 @@
 						:placeholder="'Your first name'"
 						:error="formError.find(error => error.field === 'first_name')"
 						required
-						@blur="CheckEmptyField(form.first_name, 'first_name')"
 					/>
 
 					<AppInput
@@ -69,7 +67,6 @@
 						:placeholder="'Your last name'"
 						:error="formError.find(error => error.field === 'last_name')"
 						required
-						@blur="CheckEmptyField(form.last_name, 'last_name')"
 					/>
 					<AppInput
 						v-model="form.suffix"
@@ -80,6 +77,13 @@
 					/>
 
 					<AppInput
+						v-model="form.mobile_number"
+						:type="'text'"
+						:name="'mobile_number'"
+						:label="'Mobile Number'"
+					/>
+
+					<AppInput
 						v-model="form.email"
 						:type="'email'"
 						:name="'email'"
@@ -87,7 +91,6 @@
 						:info="'If you have an NHS email address, please use this'"
 						:placeholder="'Your email address'"
 						:error="formError.find(item => item.field === 'email')"
-						@blur="CheckEmptyField(form.email, 'email')"
 						required
 					/>
 					<AppInput
@@ -96,8 +99,8 @@
 						:name="'password'"
 						:label="'Password'"
 						:placeholder="'Password'"
+						:info="'Must be at least 6 characters'"
 						:error="formError.find(item => item.field === 'password')"
-						@blur="CheckEmptyField(form.password, 'password')"
 						required
 					/>
 					<AppInput
@@ -108,7 +111,6 @@
 						:placeholder="'Repeat password'"
 						:password="form.password"
 						:error="formError.find(item => item.field === 'password_confirmation')"
-						@blur="CheckEmptyField(form.password_confirmation, 'password_confirmation')"
 						required
 					/>
 				</form>
@@ -134,6 +136,7 @@ export default {
 				first_name: "",
 				last_name: "",
 				suffix: "",
+				mobile_number: "",
 				profession_id: "",
 				view_permanent_jobs: false,
 				view_locum_jobs: false,
@@ -157,37 +160,60 @@ export default {
 		}
 	},
 	mounted() {
-		this.form.title = this.stage1Details.title;
-		this.form.first_name = this.stage1Details.first_name;
-		this.form.last_name = this.stage1Details.last_name;
-		this.form.suffix = this.stage1Details.suffix;
-		this.form.profession_id = this.stage1Details.profession_id;
-		this.form.view_permanent_jobs = this.stage1Details.view_permanent_jobs;
-		this.form.view_locum_jobs = this.stage1Details.view_locum_jobs;
-		this.form.email = this.stage1Details.email;
-		this.form.password = this.stage1Details.password;
-		this.form.password_confirmation = this.stage1Details.password_confirmation;
+		this.form.title = this.stage1Details.title ? this.stage1Details.title : "";
+		this.form.first_name = this.stage1Details.first_name
+			? this.stage1Details.first_name
+			: "";
+		this.form.last_name = this.stage1Details.last_name
+			? this.stage1Details.last_name
+			: "";
+		this.form.suffix = this.stage1Details.suffix
+			? this.stage1Details.suffix
+			: "";
+		this.form.profession_id = this.stage1Details.profession_id
+			? this.stage1Details.profession_id
+			: "";
+		this.form.view_permanent_jobs = this.stage1Details.view_permanent_jobs
+			? this.stage1Details.view_permanent_jobs
+			: false;
+		this.form.view_locum_jobs = this.stage1Details.view_locum_jobs
+			? this.stage1Details.view_locum_jobs
+			: false;
+		this.form.email = this.stage1Details.email ? this.stage1Details.email : "";
+		this.form.password = this.stage1Details.password
+			? this.stage1Details.password
+			: "";
+		this.form.password_confirmation = this.stage1Details.password_confirmation
+			? this.stage1Details.password_confirmation
+			: "";
 
-		if (this.stage1FormError.length > 0) {
-			this.stage1FormError.forEach(item => {
-				this.formError.push(item);
-			});
-		}
-		this.$axios.$get(`/api/v1/professions`).then(res => {});
+		this.$axios.$get(`/api/v1/professions`).then(res => {
+			this.professions_categories =
+				res.data && res.data.professions && res.data.professions.length > 0
+					? res.data.professions
+					: [];
+		});
 	},
-	async created() {
-		const response = await this.$axios.$get(`/api/v1/professions`);
-		this.professions_categories =
-			response.data &&
-			response.data.professions &&
-			response.data.professions.length > 0
-				? response.data.professions
-				: [];
+	watch: {
+		stage1FormError(value) {
+			if (value.length > 0) {
+				value.forEach(item => {
+					this.formError.push({
+						field:
+							item.validation === "confirmed"
+								? "password_confirmation"
+								: item.field,
+						message: item.message,
+						validation: item.validation
+					});
+				});
+			}
+		}
 	},
 	methods: {
 		next() {
 			this.formError = [];
-			let notRequired = ["title", "suffix"];
+			let notRequired = ["title", "suffix", "mobile_number"];
 			if ([false, "false"].includes(this.has_referral)) {
 				notRequired.push("referral_code");
 				this.form.referral_code = null;
@@ -206,13 +232,14 @@ export default {
 					? false
 					: this.form.view_permanent_jobs;
 			this.Validate(this.form, notRequired);
-			if (!this.formError.length) {
-				this.$store.commit("sign-up/SET_STAGE_1_DETAILS", this.form);
-				this.$store.commit("sign-up/SET_STAGE_1_FORM_ERROR", []);
-				this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumStage2pt1");
-			} else {
-				this.$store.commit("sign-up/SET_STAGE_1_FORM_ERROR", this.formError);
-			}
+			this.$store.dispatch("sign-up/registerCheckFirstPart", this.form);
+			setTimeout(() => {
+				if (!this.formError.length) {
+					this.$store.commit("sign-up/SET_STAGE_1_DETAILS", this.form);
+					this.$store.commit("sign-up/SET_STAGE_1_FORM_ERROR", []);
+					this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumStage2pt1");
+				}
+			}, 500);
 		}
 	}
 };

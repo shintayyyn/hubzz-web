@@ -25,8 +25,7 @@
 						v-model="form.nhs_smart_card_id_number"
 						:type="'text'"
 						:name="'nhs_smart_card_id_number'"
-						:label="'Your NHS Smart Card ID number'"
-						:placeholder="'NHS Smart Card ID number'"
+						:label="'NHS Smart Card ID number'"
 						@keydown="inputNumberOnly($event)"
 					/>
 
@@ -191,8 +190,9 @@ export default {
 		},
 		next() {
 			this.formError = [];
-			let notRequired = ["nhs_smart_card_id_number"];
+			let notRequired = ["nhs_smart_card_id_number", "address_line_2"];
 			this.Validate(this.form, notRequired);
+			console.log(this.formError);
 			if (!this.formError.length) {
 				this.$store.commit("sign-up/SET_STAGE_2_PT_1_DETAILS", this.form);
 				this.$store.commit("sign-up/SET_STAGE_2_PT_1_FORM_ERROR", []);

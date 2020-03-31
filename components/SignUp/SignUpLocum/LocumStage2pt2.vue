@@ -9,18 +9,37 @@
 		<div class="flex w-full justify-center xl:justify-start">
 			<div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
 				<form class="w-full">
-					<div class="flex items-center justify-between py-2 text-sm">
-						<div class="leading-tight">
+					<div
+						v-for="(item, index) in form.mandatory_locum_compliance_documents"
+						:key="item.compliance_document_id"
+						class="flex justify-between py-2 text-sm"
+						:class="[index !== 0 ? 'border-t' : '', item.child_compliance_documents && item.child_compliance_documents.length ? 'flex-col' : 'items-center ']"
+					>
+						<div
+							:class="item.child_compliance_documents && item.child_compliance_documents.length ? 'pb-2' : ''"
+						>
 							<p>
-								Upload passport
-								<span class="text-red-500">*</span>
-								<span class="text-xs italic">Visa if applicable</span>
+								{{item.compliance_document_name}}
+								<span v-if="item.required" class="text-red-500">*</span>
 							</p>
-							<p class="text-xs">filename.doc</p>
+							<p v-if="item.file" class="text-xs">{{ item.file.name}}</p>
+							<p
+								class="text-xs"
+								v-if="item.child_compliance_documents && item.child_compliance_documents.length"
+							>Upload at least one (1)</p>
+							<template
+								v-if="!item.file && (item.required && formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase()))"
+							>
+								<p
+									class="text-xs text-red-500"
+								>{{ formError.find(err => err.field === item.compliance_document_name.replace(/ /g, "_").toLowerCase()).message }}</p>
+							</template>
 						</div>
+
 						<div
 							class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-							@click="uploadCompliance('Passport')"
+							@click="uploadCompliance(item)"
+							v-if="item.compliance_document_type_name !== 'Safeguarding'"
 						>
 							<span class="hidden md:block">Upload</span>
 							<span class="block md:hidden">
@@ -28,86 +47,6 @@
 							</span>
 						</div>
 					</div>
-					<div class="flex items-center justify-between py-2 text-sm border-t">
-						<div>
-							<p>
-								Upload CV
-								<span class="text-red-500">*</span>
-							</p>
-							<p class="text-xs">filename.doc</p>
-						</div>
-						<div
-							class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-							@click="uploadCompliance()"
-						>
-							<span class="hidden md:block">Upload</span>
-							<span class="block md:hidden">
-								<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
-							</span>
-						</div>
-					</div>
-					<div class="flex items-center justify-between py-2 text-sm border-t">
-						<div>
-							<p>
-								Upload DBS Certificate
-								<span class="text-red-500">*</span>
-							</p>
-							<p class="text-xs">filename.doc</p>
-						</div>
-						<div
-							class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-							@click="uploadCompliance('DBS')"
-						>
-							<span class="hidden md:block">Upload</span>
-							<span class="block md:hidden">
-								<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
-							</span>
-						</div>
-					</div>
-					<template v-if="stage1details.view_permanent_jobs && !stage1details.view_locum_jobs">
-						<div class="flex items-center justify-between py-2 text-sm border-t">
-							<div>
-								<p>Upload Medical Indemnity insurance certificate</p>
-								<p class="text-xs">filename.doc</p>
-							</div>
-							<div
-								class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-								@click="uploadCompliance()"
-							>
-								<span class="hidden md:block">Upload</span>
-								<span class="block md:hidden">
-									<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
-								</span>
-							</div>
-						</div>
-						<div class="flex items-center justify-between py-2 text-sm border-t">
-							<div>
-								<p>Upload Basic Life support certificate</p>
-								<p class="text-xs">filename.doc</p>
-							</div>
-							<div
-								class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-								@click="uploadCompliance()"
-							>
-								<span class="hidden md:block">Upload</span>
-								<span class="block md:hidden">
-									<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
-								</span>
-							</div>
-						</div>
-						<div class="flex items-center justify-between py-2 text-sm border-t">
-							<p>Safeguarding</p>
-							<div
-								class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
-								@click="uploadCompliance('Reference')"
-							>
-								<span class="hidden md:block">Upload</span>
-								<span class="block md:hidden">
-									<svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
-								</span>
-							</div>
-						</div>
-					</template>
 
 					<AppInput
 						v-model="has_referral"
@@ -158,7 +97,7 @@
 		<div class="flex justify-center mt-4">
 			<AppButton
 				:label="'<<'"
-				@click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumStage2pt1')"
+				@click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumStage2pt1'), $store.commit('sign-up/SET_STAGE_2_PT_2_DETAILS', form)"
 			/>
 			<div class="mx-2"></div>
 			<AppButton :label="'Sign Up'" @click="signup" :inStyle="'padding:6px 16px;'" />
@@ -190,65 +129,69 @@
 						<div class="flex justify-end font-bold cursor-pointer" @click="complianceModal = false">X</div>
 						<template v-if="selectedComplianceTypeName === 'Passport'">
 							<AppInput
-								v-model="form.country_id"
+								v-model="toUploadCompliance.country_id"
 								:type="'select'"
 								:name="'country_id'"
 								:label="'Country'"
 								:placeholder="'Select...'"
-								:error="formError.find(item => item.field === 'country_id')"
+								:error="modalError.find(item => item.field === 'country_id')"
 								:items="countries"
 							/>
 						</template>
 						<template v-if="selectedComplianceTypeName === 'DBS'">
 							<AppInput
-								v-model="form.has_reference"
+								v-model="toUploadCompliance.has_reference"
 								:type="'single-checkbox'"
 								:name="'has_reference'"
 								:label="'Has Reference'"
-								:error="formError.find(item => item.field === 'has_reference')"
+								:error="modalError.find(item => item.field === 'has_reference')"
 							/>
 						</template>
-						<template v-if="selectedComplianceTypeName === 'Reference' || form.has_reference">
+						<template
+							v-if="selectedComplianceTypeName === 'Reference' || toUploadCompliance.has_reference"
+						>
 							<AppInput
-								v-model="form.reference"
+								v-model="toUploadCompliance.reference"
 								:type="'textarea'"
 								:name="'reference'"
 								:label="'Reference'"
-								:error="formError.find(item => item.field === 'reference')"
-								@blur="formError.find(item => item.field === 'reference')"
+								:error="modalError.find(item => item.field === 'reference')"
+								@blur="modalError.find(item => item.field === 'reference')"
 								:limit="255"
 								:resize="false"
 								:rows="3"
 							/>
 						</template>
 						<div
-							class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-							:class="form.has_reference ? '-mt-6' : 'mt-2'"
+							class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded"
+							:class="toUploadCompliance.has_reference ? '-mt-6' : 'mt-2'"
 						>
 							<input
 								type="file"
 								name="file"
 								id="file"
 								class="inputfile hidden"
-								@input="onFileInput($event, form.compliance_document_id)"
+								@input="onFileInput($event)"
 								@click.stop
 							/>
 							<svgicon name="cloud-upload" height="24" width="24" />
 							<label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
 						</div>
-						<div class="w-full text-center break-words" v-if="form.file">
-							<small>Uploaded file: {{form.file.name}}</small>
-						</div>
-						<div class="w-full text-center break-words" v-else-if="file">
-							<small>file: {{file.filename}}</small>
+						<div class="w-full text-center break-words" v-if="toUploadCompliance.file">
+							<small>Uploaded file: {{toUploadCompliance.file.name}}</small>
 						</div>
 						<transition name="drop-down">
 							<div
-								v-if="formError.find(item => item.field === 'file')"
+								v-if="modalError.find(item => item.field === 'file')"
 								class="text-red-500 py-1 text-xs text-white"
-							>{{ formError.find(item => item.field === 'file').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'file').message.slice(1).replace(/_/g, " ") }}</div>
+							>{{ modalError.find(item => item.field === 'file').message.charAt(0).toUpperCase() + modalError.find(item => item.field === 'file').message.slice(1).replace(/_/g, " ") }}</div>
 						</transition>
-						<AppButton class="mt-8" :label="'Submit'" @click="upload" :inStyle="'padding:5px 14px;'" />
+						<AppButton
+							class="mt-8"
+							:label="'Save'"
+							@click="upload(toUploadCompliance)"
+							:inStyle="'padding:5px 14px;'"
+						/>
 					</div>
 				</div>
 			</div>
@@ -270,19 +213,27 @@ export default {
 			form: {
 				privacy_policy: false,
 				referral_code: null,
-				compliance_document_id: "",
-				file: null
+				mandatory_locum_compliance_documents: []
 			},
 			has_referral: false,
 			formError: [],
+			modalError: [],
 			modal: false,
 			complianceModal: false,
-			selectedComplianceTypeName: ""
+			selectedComplianceTypeName: "",
+			countries: [],
+			toUploadCompliance: null
 		};
 	},
 	computed: {
 		stage1details() {
 			return this.$store.getters["sign-up/stage1Details"];
+		},
+		stage2details() {
+			return this.$store.getters["sign-up/stage2pt2Details"];
+		},
+		mandatoryComplianceDocuments() {
+			return this.$store.getters["sign-up/getMandatoryComplianceDocuments"];
 		}
 	},
 	watch: {
@@ -305,15 +256,172 @@ export default {
 			this.CheckEmptyField(this.form.privacy_policy, "privacy_policy");
 		}
 	},
-	mounted() {},
+	mounted() {
+		let requiredMandatory = ["Passport", "CV", "DBS Certificate"];
+		this.mandatoryComplianceDocuments.forEach(item => {
+			// let existing =
+			// 	this.stage2details &&
+			// 	this.stage2details.mandatory_locum_compliance_documents.length
+			// 		? this.stage2details.mandatory_locum_compliance_documents.find(
+			// 				compliance =>
+			// 					compliance && compliance.compliance_document_name
+			// 						? conmpliance.compliance_document_name ===
+			// 						  item.compliance_document_name
+			// 						: ""
+			// 		  )
+			// 		: null;
+			let existing =
+				this.stage2details &&
+				this.stage2details.mandatory_locum_compliance_documents.length
+					? this.stage2details.mandatory_locum_compliance_documents.find(
+							mandatory =>
+								mandatory.compliance_document_name ===
+								item.compliance_document_name
+					  )
+						? this.stage2details.mandatory_locum_compliance_documents.find(
+								mandatory =>
+									mandatory.compliance_document_name ===
+									item.compliance_document_name
+						  )
+						: ""
+					: "";
+			if (item.compliance_document_type_name === "DBS") {
+				this.form.mandatory_locum_compliance_documents.push({
+					compliance_document_id: item.compliance_document_id,
+					child_compliance_documents: item.child_compliance_documents,
+					compliance_document_countries: item.compliance_document_countries,
+					compliance_document_name: item.compliance_document_name,
+					compliance_document_type_name: item.compliance_document_type_name,
+					file: existing && existing.file ? existing.file : null,
+					has_reference:
+						existing && existing.has_reference ? existing.has_reference : false,
+					reference: existing && existing.reference ? existing.reference : "",
+					required: true
+				});
+			} else if (item.compliance_document_type_name === "Passport") {
+				this.form.mandatory_locum_compliance_documents.push({
+					compliance_document_id: item.compliance_document_id,
+					child_compliance_documents: item.child_compliance_documents,
+					compliance_document_countries: item.compliance_document_countries,
+					compliance_document_name: item.compliance_document_name,
+					compliance_document_type_name: item.compliance_document_type_name,
+					file: existing && existing.file ? existing.file : null,
+					country_id:
+						existing && existing.country_id ? existing.country_id : null,
+					required: true
+				});
+			} else {
+				this.form.mandatory_locum_compliance_documents.push({
+					compliance_document_id: item.compliance_document_id,
+					child_compliance_documents: item.child_compliance_documents,
+					compliance_document_countries: item.compliance_document_countries,
+					compliance_document_name: item.compliance_document_name,
+					compliance_document_type_name: item.compliance_document_type_name,
+					file: existing && existing.file ? existing.file : null,
+					required: requiredMandatory.includes(item.compliance_document_name)
+						? true
+						: this.stage1details.view_locum_jobs &&
+						  this.stage1details.view_permanent_jobs
+						? true
+						: false
+				});
+			}
+			if (
+				item.child_compliance_documents &&
+				item.child_compliance_documents.length
+			) {
+				item.child_compliance_documents.forEach(child => {
+					this.form.mandatory_locum_compliance_documents.push({
+						compliance_document_name: child.compliance_document_name,
+						compliance_document_type_name: child.compliance_document_type_name,
+						file: null,
+						parent: "Safeguarding",
+						required: false
+					});
+				});
+			}
+		});
+		this.$axios.$get(`/api/v1/countries`).then(res => {
+			res.data.countries.forEach(item =>
+				this.countries.push({ label: item.name, value: item.id })
+			);
+		});
+		this.has_referral = this.referral_code ? true : false;
+		this.form.privacy_policy = this.stage2details.privacy_policy;
+		this.form.referral_code = this.stage2details.referral_code;
+	},
 	methods: {
-		uploadCompliance(complianceName) {
-			this.selectedComplianceTypeName = complianceName;
+		uploadCompliance(item) {
+			this.selectedComplianceTypeName = item.compliance_document_type_name;
+			this.toUploadCompliance = item;
 			this.complianceModal = true;
 		},
-		upload() {
-			this.complianceModal = false;
-			console.log(this.form.file);
+		upload(compliance) {
+			// this.formError = [];
+			let index;
+			if (compliance.compliance_document_type_name === "Passport") {
+				if (!compliance.country_id) {
+					this.modalError.push({
+						field: "country_id",
+						message: "Country is required."
+					});
+				} else {
+					index = this.modalError.findIndex(err => err.field === "country_id");
+					if (index > -1) {
+						this.modalError.splice(index, 1);
+					}
+				}
+			} else if (compliance.compliance_document_type_name === "DBS") {
+				if (compliance.has_reference && !compliance.reference) {
+					this.modalError.push({
+						field: "reference",
+						message: "Reference is required."
+					});
+				} else {
+					index = this.modalError.findIndex(err => err.field === "reference");
+					if (index > -1) {
+						this.modalError.splice(index, 1);
+					}
+				}
+			}
+
+			if (compliance.required && !compliance.file) {
+				this.modalError.push({ field: "file", message: "File is required." });
+			} else {
+				index = this.modalError.findIndex(err => err.field === "file");
+				if (index > -1) {
+					this.modalError.splice(index, 1);
+				}
+			}
+			if (!this.modalError.length) {
+				this.complianceModal = false;
+			}
+		},
+		onFileInput(e) {
+			if (!e.target.files.length) {
+				return;
+			}
+			let types = [
+				"pdf",
+				"jpeg",
+				"msword",
+				"tiff",
+				"vnd.openxmlformats-officedocument.wordprocessingml.document",
+				"vnd.openxmlformats-officedocument.wordprocessingml.template",
+				"vnd.ms-word.document.macroEnabled.12",
+				"vnd.ms-word.template.macroEnabled.12"
+			];
+			let file = e.target.files[0];
+			let fileType = file.type.split("/")[1];
+			if (!types.includes(fileType)) {
+				this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "alert",
+					text: ["Invalid File Format"]
+				});
+				return;
+			}
+			this.toUploadCompliance.file = file;
 		},
 		signup() {
 			this.formError = [];
@@ -322,12 +430,42 @@ export default {
 				notRequired.push("referral_code");
 				this.form.referral_code = null;
 			}
+			this.form.mandatory_locum_compliance_documents.forEach(item => {
+				if (item.compliance_document_type_name !== "Safeguarding") {
+					if (item.required && !item.file) {
+						this.formError.push({
+							field: item.compliance_document_name
+								.replace(/ /g, "_")
+								.toLowerCase(),
+							message: `${item.compliance_document_name} is required.`
+						});
+					}
+				} else {
+					let safeguardingChild = this.form.mandatory_locum_compliance_documents.filter(
+						item => item.parent === "Safeguarding"
+					);
+					let safeguardingChildFiles = safeguardingChild.map(item =>
+						item.file ? true : false
+					);
+
+					if (!safeguardingChildFiles.includes(true)) {
+						this.formError.push({
+							field: item.compliance_document_name
+								.replace(/ /g, "_")
+								.toLowerCase(),
+							message: `Must at least upload one (1) Safeguarding File.`
+						});
+					}
+				}
+			});
+
 			this.Validate(this.form, notRequired);
+			console.log(this.formError);
 			if (!this.formError.length) {
-				this.$store.commit("sign-up/SET_CREDENTIAL_DETAILS", this.form);
-				this.$store.commit("sign-up/SET_CREDENTIAL_DETAIL_FORM_ERROR", []);
+				this.$store.commit("sign-up/SET_STAGE_2_PT_2_DETAILS", this.form);
+				this.$store.commit("sign-up/SET_STAGE_2_PT_2_FORM_ERROR", []);
 				setTimeout(() => {
-					this.$store.dispatch("sign-up/registeredLocum");
+					this.$store.dispatch("sign-up/registerLocum");
 				}, 1000);
 			}
 		}

@@ -26,8 +26,8 @@ export default {
 	},
 	layout: "auth",
 	mounted() {
-		this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumAccountDetails");
-		// this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumStage1");
+		// this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumAccountDetails");
+		this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumStage1");
 		this.$store.commit("sign-up/CLEAR_REGISTER_PRACTICE_FORM");
 	}
 };
