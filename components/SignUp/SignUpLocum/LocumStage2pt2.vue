@@ -100,9 +100,15 @@
 			<AppButton
 				:label="'<<'"
 				@click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumStage2pt1'), $store.commit('sign-up/SET_STAGE_2_PT_2_DETAILS', form)"
+				:disabled="loading"
 			/>
 			<div class="mx-2" />
-			<AppButton :label="'Sign Up'" :inStyle="'padding:6px 16px;'" @click="signup" />
+			<AppButton
+				:label="!loading ? 'Sign Up' : 'Signing Up...'"
+				:inStyle="'padding:6px 16px;'"
+				@click="signup"
+				:disabled="loading"
+			/>
 		</div>
 
 		<div

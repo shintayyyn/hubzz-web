@@ -117,7 +117,7 @@
 			</div>
 		</div>
 		<div class="flex justify-center mt-4">
-			<AppButton :label="'Next'" :inStyle="'padding:6px 16px;'" @click="next" />
+			<AppButton :label="'Next'" :inStyle="'padding:6px 16px;'" @click="next" :disabled="loading" />
 		</div>
 	</div>
 </template>
@@ -157,6 +157,9 @@ export default {
 		},
 		professions() {
 			return this.$store.getters["sign-up/getProfessions"];
+		},
+		loading() {
+			return this.$store.getters["sign-up/signUpLoading"];
 		}
 	},
 	mounted() {
