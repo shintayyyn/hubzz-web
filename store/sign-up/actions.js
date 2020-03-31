@@ -1,10 +1,10 @@
 export default {
-    getProfessions ({ commit }) {
+    getProfessions({ commit }) {
         this.$axios.$get(`/api/v1/professions`).then((res) => {
             commit('SET_PROFESSIONS', res.data.professions)
         })
     },
-    getQualifications ({ commit }) {
+    getQualifications({ commit }) {
         this.$axios.$get(`/api/v1/profession-categories`).then((res) => {
             let gp = res.data.profession_categories.find((category) => category.id === 1)
             let others = res.data.profession_categories.find((category) => category.id === 2)
@@ -12,27 +12,27 @@ export default {
             commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
         })
     },
-    getClinicalSystems ({ commit }) {
+    getClinicalSystems({ commit }) {
         this.$axios.$get(`/api/v1/clinical-systems`).then((res) => {
             commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
         })
     },
-    getSpokenLanguages ({ commit }) {
+    getSpokenLanguages({ commit }) {
         this.$axios.$get(`/api/v1/spoken-languages`).then((res) => {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
-    getPracticeTypes ({ commit }) {
+    getPracticeTypes({ commit }) {
         this.$axios.$get(`/api/v1/practice-types`).then((res) => {
             commit('SET_PRACTICE_TYPES', res.data.practice_types)
         })
     },
-    getMandatoryTrainings ({ commit }) {
+    getMandatoryTrainings({ commit }) {
         this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
             commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
         })
     },
-    registeredPractice ({ state, commit }) {
+    registeredPractice({ state, commit }) {
         let form = {}
         form = {
             ...state.practice_surgery_details,
@@ -103,7 +103,7 @@ export default {
                 }
             })
     },
-    registeredLocum ({ state, commit }) {
+    registeredLocum({ state, commit }) {
         let form = {}
         form = {
             ...state.account_details,
@@ -219,7 +219,8 @@ export default {
                 }
             })
     },
-    registerCheckFirstPart ({ state, commit }, payload) {
+    registerCheckFirstPart({ state, commit }, payload) {
+        commit("SET_SIGNUP_LOADING", true)
         this.$axios.$post(`/api/v1/locum/register/check-first-part`, payload)
             .then(res => {
                 commit("SET_COMPLIANCE_DOCUMENTS", {
@@ -227,15 +228,16 @@ export default {
                     reference_compliance_documents: res.data.reference_compliance_documents,
                 })
                 commit("SET_STAGE_1_FORM_ERROR", [])
+                commit("SET_SIGNUP_LOADING", false)
             })
             .catch(err => {
-                console.log({ err })
+                commit("SET_SIGNUP_LOADING", false)
                 if (err && err.response && err.response.data && err.response.data.error_messages) {
                     commit("SET_STAGE_1_FORM_ERROR", err.response.data.error_messages)
                 }
             })
     },
-    registerLocum ({ state, commit }) {
+    registerLocum({ state, commit }) {
         let form = {}
 
         form = {
