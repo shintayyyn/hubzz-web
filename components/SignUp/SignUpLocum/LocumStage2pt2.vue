@@ -8,7 +8,9 @@
 
 		<div class="flex w-full justify-center xl:justify-start">
 			<div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-				<form class="w-full">
+				<form class="relative w-full">
+					<AppLoading :loading="loading" spinner />
+
 					<div
 						v-for="(item, index) in form.mandatory_locum_compliance_documents"
 						:key="item.compliance_document_id"
@@ -28,7 +30,7 @@
 								v-if="item.child_compliance_documents && item.child_compliance_documents.length"
 							>Upload at least one (1)</p>
 							<template
-								v-if="!item.file && (item.required && formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase()))"
+								v-if="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
 							>
 								<p
 									class="text-xs text-red-500"
@@ -37,9 +39,9 @@
 						</div>
 
 						<div
+							v-if="item.compliance_document_type_name !== 'Safeguarding'"
 							class="flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 hover:bg-yellow-400 px-4 py-2 rounded-lg cursor-pointer"
 							@click="uploadCompliance(item)"
-							v-if="item.compliance_document_type_name !== 'Safeguarding'"
 						>
 							<span class="hidden md:block">Upload</span>
 							<span class="block md:hidden">
@@ -69,8 +71,8 @@
 					<div class="flex flex-col py-2 mb-6">
 						<div class="flex flex-row flex-no-wrap justify-between">
 							<input
-								v-model="form.privacy_policy"
 								id="privacy_policy"
+								v-model="form.privacy_policy"
 								type="checkbox"
 								class="checkbox mt-1 mr-1"
 							/>
@@ -85,9 +87,9 @@
 						</div>
 						<transition name="drop-down">
 							<div
-								class="py-1 text-xs text-red-500"
 								v-if="formError.find(item => item.field === 'privacy_policy')"
-							>{{formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ")}}</div>
+								class="py-1 text-xs text-red-500"
+							>{{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}</div>
 						</transition>
 					</div>
 				</form>
@@ -99,31 +101,31 @@
 				:label="'<<'"
 				@click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumStage2pt1'), $store.commit('sign-up/SET_STAGE_2_PT_2_DETAILS', form)"
 			/>
-			<div class="mx-2"></div>
-			<AppButton :label="'Sign Up'" @click="signup" :inStyle="'padding:6px 16px;'" />
+			<div class="mx-2" />
+			<AppButton :label="'Sign Up'" :inStyle="'padding:6px 16px;'" @click="signup" />
 		</div>
 
 		<div
-			class="shield"
 			v-if="modal || complianceModal"
+			class="shield"
 			@click="complianceModal ? complianceModal=false : modal=false"
-		></div>
+		/>
 		<transition name="slide" mode="out-in">
-			<div class="py-8 modal-container" v-if="modal">
+			<div v-if="modal" class="py-8 modal-container">
 				<div class="px-4 lg:px-10 pb-4">
 					<svgicon
 						name="left-arrow"
 						height="32"
 						width="32"
-						@click="modal = false"
 						class="cursor-pointer"
+						@click="modal = false"
 					/>
 				</div>
 				<TermsAndConditions />
 			</div>
 		</transition>
 		<transition name="fade" mode="out-in">
-			<div class="flex justify-center upload-modal" v-if="complianceModal">
+			<div v-if="complianceModal" class="flex justify-center upload-modal">
 				<div class="relative border-solid rounded-lg bg-white p-4 shadow-lg w-4/5 md:w-2/5 xl:w-1/4">
 					<div class="flex flex-col justify-center">
 						<div class="flex justify-end font-bold cursor-pointer" @click="complianceModal = false">X</div>
@@ -156,10 +158,10 @@
 								:name="'reference'"
 								:label="'Reference'"
 								:error="modalError.find(item => item.field === 'reference')"
-								@blur="modalError.find(item => item.field === 'reference')"
 								:limit="255"
 								:resize="false"
 								:rows="3"
+								@blur="modalError.find(item => item.field === 'reference')"
 							/>
 						</template>
 						<div
@@ -167,9 +169,9 @@
 							:class="toUploadCompliance.has_reference ? '-mt-6' : 'mt-2'"
 						>
 							<input
+								id="file"
 								type="file"
 								name="file"
-								id="file"
 								class="inputfile hidden"
 								@input="onFileInput($event)"
 								@click.stop
@@ -177,8 +179,8 @@
 							<svgicon name="cloud-upload" height="24" width="24" />
 							<label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
 						</div>
-						<div class="w-full text-center break-words" v-if="toUploadCompliance.file">
-							<small>Uploaded file: {{toUploadCompliance.file.name}}</small>
+						<div v-if="toUploadCompliance.file" class="w-full text-center break-words">
+							<small>Uploaded file: {{ toUploadCompliance.file.name }}</small>
 						</div>
 						<transition name="drop-down">
 							<div
@@ -189,8 +191,8 @@
 						<AppButton
 							class="mt-8"
 							:label="'Save'"
-							@click="upload(toUploadCompliance)"
 							:inStyle="'padding:5px 14px;'"
+							@click="upload(toUploadCompliance)"
 						/>
 					</div>
 				</div>
@@ -201,11 +203,13 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 import TermsAndConditions from "@/components/TermsAndConditions";
 export default {
 	components: {
 		AppInput,
 		AppButton,
+		AppLoading,
 		TermsAndConditions
 	},
 	data() {
@@ -234,6 +238,9 @@ export default {
 		},
 		mandatoryComplianceDocuments() {
 			return this.$store.getters["sign-up/getMandatoryComplianceDocuments"];
+		},
+		loading() {
+			return this.$store.getters["sign-up/signUpLoading"];
 		}
 	},
 	watch: {
@@ -259,29 +266,17 @@ export default {
 	mounted() {
 		let requiredMandatory = ["Passport", "CV", "DBS Certificate"];
 		this.mandatoryComplianceDocuments.forEach(item => {
-			// let existing =
-			// 	this.stage2details &&
-			// 	this.stage2details.mandatory_locum_compliance_documents.length
-			// 		? this.stage2details.mandatory_locum_compliance_documents.find(
-			// 				compliance =>
-			// 					compliance && compliance.compliance_document_name
-			// 						? conmpliance.compliance_document_name ===
-			// 						  item.compliance_document_name
-			// 						: ""
-			// 		  )
-			// 		: null;
 			let existing =
 				this.stage2details &&
 				this.stage2details.mandatory_locum_compliance_documents.length
 					? this.stage2details.mandatory_locum_compliance_documents.find(
 							mandatory =>
-								mandatory.compliance_document_name ===
-								item.compliance_document_name
+								mandatory.compliance_document_id === item.compliance_document_id
 					  )
 						? this.stage2details.mandatory_locum_compliance_documents.find(
 								mandatory =>
-									mandatory.compliance_document_name ===
-									item.compliance_document_name
+									mandatory.compliance_document_id ===
+									item.compliance_document_id
 						  )
 						: ""
 					: "";
@@ -331,21 +326,44 @@ export default {
 				item.child_compliance_documents.length
 			) {
 				item.child_compliance_documents.forEach(child => {
+					let existingChild =
+						this.stage2details &&
+						this.stage2details.mandatory_locum_compliance_documents.length
+							? this.stage2details.mandatory_locum_compliance_documents.find(
+									mandatory =>
+										mandatory.compliance_document_id ===
+										child.compliance_document_id
+							  )
+								? this.stage2details.mandatory_locum_compliance_documents.find(
+										mandatory =>
+											mandatory.compliance_document_id ===
+											child.compliance_document_id
+								  )
+								: ""
+							: "";
 					this.form.mandatory_locum_compliance_documents.push({
+						compliance_document_id: child.compliance_document_id,
 						compliance_document_name: child.compliance_document_name,
 						compliance_document_type_name: child.compliance_document_type_name,
-						file: null,
+						file:
+							existingChild && existingChild.file ? existingChild.file : null,
 						parent: "Safeguarding",
 						required: false
 					});
 				});
 			}
 		});
-		this.$axios.$get(`/api/v1/countries`).then(res => {
-			res.data.countries.forEach(item =>
-				this.countries.push({ label: item.name, value: item.id })
-			);
-		});
+		this.$axios
+			.$get(`/api/v1/countries`, {
+				params: {
+					limit: 9999
+				}
+			})
+			.then(res => {
+				res.data.countries.forEach(item =>
+					this.countries.push({ label: item.name, value: item.id })
+				);
+			});
 		this.has_referral = this.referral_code ? true : false;
 		this.form.privacy_policy = this.stage2details.privacy_policy;
 		this.form.referral_code = this.stage2details.referral_code;
@@ -359,6 +377,7 @@ export default {
 		upload(compliance) {
 			// this.formError = [];
 			let index;
+			let formErrorIndex;
 			if (compliance.compliance_document_type_name === "Passport") {
 				if (!compliance.country_id) {
 					this.modalError.push({
@@ -392,6 +411,14 @@ export default {
 				if (index > -1) {
 					this.modalError.splice(index, 1);
 				}
+			}
+			formErrorIndex = this.formError.findIndex(
+				err =>
+					err.field ===
+					compliance.compliance_document_name.replace(/ /g, "_").toLowerCase()
+			);
+			if (formErrorIndex > -1) {
+				this.formError.splice(formErrorIndex, 1);
 			}
 			if (!this.modalError.length) {
 				this.complianceModal = false;
@@ -440,30 +467,40 @@ export default {
 							message: `${item.compliance_document_name} is required.`
 						});
 					}
+					if (item.compliance_document_type_name === "Passport") {
+						if (!item.country_id) {
+							this.formError.push({
+								field: "passport",
+								message: `Country is required.`
+							});
+						}
+					}
 				} else {
-					let safeguardingChild = this.form.mandatory_locum_compliance_documents.filter(
-						item => item.parent === "Safeguarding"
-					);
-					let safeguardingChildFiles = safeguardingChild.map(item =>
-						item.file ? true : false
-					);
+					if (item.required) {
+						let safeguardingChild = this.form.mandatory_locum_compliance_documents.filter(
+							item => item.parent === "Safeguarding"
+						);
+						let safeguardingChildFiles = safeguardingChild.map(item =>
+							item.file ? true : false
+						);
 
-					if (!safeguardingChildFiles.includes(true)) {
-						this.formError.push({
-							field: item.compliance_document_name
-								.replace(/ /g, "_")
-								.toLowerCase(),
-							message: `Must at least upload one (1) Safeguarding File.`
-						});
+						if (!safeguardingChildFiles.includes(true)) {
+							this.formError.push({
+								field: item.compliance_document_name
+									.replace(/ /g, "_")
+									.toLowerCase(),
+								message: `Must at least upload one (1) Safeguarding File.`
+							});
+						}
 					}
 				}
 			});
 
 			this.Validate(this.form, notRequired);
-			console.log(this.formError);
 			if (!this.formError.length) {
 				this.$store.commit("sign-up/SET_STAGE_2_PT_2_DETAILS", this.form);
 				this.$store.commit("sign-up/SET_STAGE_2_PT_2_FORM_ERROR", []);
+				this.$store.commit("sign-up/SET_SIGNUP_LOADING", true);
 				setTimeout(() => {
 					this.$store.dispatch("sign-up/registerLocum");
 				}, 1000);

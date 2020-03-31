@@ -1,10 +1,10 @@
 export default {
-    getProfessions({ commit }) {
+    getProfessions ({ commit }) {
         this.$axios.$get(`/api/v1/professions`).then((res) => {
             commit('SET_PROFESSIONS', res.data.professions)
         })
     },
-    getQualifications({ commit }) {
+    getQualifications ({ commit }) {
         this.$axios.$get(`/api/v1/profession-categories`).then((res) => {
             let gp = res.data.profession_categories.find((category) => category.id === 1)
             let others = res.data.profession_categories.find((category) => category.id === 2)
@@ -12,27 +12,27 @@ export default {
             commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
         })
     },
-    getClinicalSystems({ commit }) {
+    getClinicalSystems ({ commit }) {
         this.$axios.$get(`/api/v1/clinical-systems`).then((res) => {
             commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
         })
     },
-    getSpokenLanguages({ commit }) {
+    getSpokenLanguages ({ commit }) {
         this.$axios.$get(`/api/v1/spoken-languages`).then((res) => {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
-    getPracticeTypes({ commit }) {
+    getPracticeTypes ({ commit }) {
         this.$axios.$get(`/api/v1/practice-types`).then((res) => {
             commit('SET_PRACTICE_TYPES', res.data.practice_types)
         })
     },
-    getMandatoryTrainings({ commit }) {
+    getMandatoryTrainings ({ commit }) {
         this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
             commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
         })
     },
-    registeredPractice({ state, commit }) {
+    registeredPractice ({ state, commit }) {
         let form = {}
         form = {
             ...state.practice_surgery_details,
@@ -103,7 +103,7 @@ export default {
                 }
             })
     },
-    registeredLocum({ state, commit }) {
+    registeredLocum ({ state, commit }) {
         let form = {}
         form = {
             ...state.account_details,
@@ -219,7 +219,7 @@ export default {
                 }
             })
     },
-    registerCheckFirstPart({ state, commit }, payload) {
+    registerCheckFirstPart ({ state, commit }, payload) {
         this.$axios.$post(`/api/v1/locum/register/check-first-part`, payload)
             .then(res => {
                 commit("SET_COMPLIANCE_DOCUMENTS", {
@@ -235,38 +235,52 @@ export default {
                 }
             })
     },
-    registerLocum({ state, commit }) {
+    registerLocum ({ state, commit }) {
         let form = {}
+
         form = {
             ...state.stage_1_details,
             ...state.stage_2_pt_1_details,
             ...state.stage_2_pt_2_details
         }
 
+        let mandatory_compliance = []
+
+        form.mandatory_locum_compliance_documents.forEach(item => {
+            mandatory_compliance.push({
+                country_id: item.country_id ? item.country_id : '',
+                compliance_document_id: item.compliance_document_id,
+                has_reference: item.has_reference ? item.has_reference : false,
+                reference: item.reference ? item.reference : "",
+            })
+        })
+
+        form.mandatory_locum_compliance_documents = mandatory_compliance
+
         form.reference_locum_compliance_documents = form.reference_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
         form.mandatory_locum_compliance_documents = form.mandatory_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
 
-        const formData = new FormData();
+        const formData = new FormData()
 
-        formData.append("view_locum_jobs", form.view_locum_jobs);
-        formData.append("view_permanent_jobs", form.view_permanent_jobs);
-        formData.append("profession_id", form.profession_id);
-        formData.append("title", form.title);
-        formData.append("first_name", form.first_name);
-        formData.append("last_name", form.last_name);
-        formData.append("suffix", form.suffix);
-        formData.append("mobile_number", form.mobile_number);
-        formData.append("email", form.email);
-        formData.append("password", form.password);
-        formData.append("password_confirmation", form.password_confirmation);
-        formData.append("nhs_smart_card_id_number", form.nhs_smart_card_id_number);
-        formData.append("post_code", form.post_code);
-        formData.append("address_line_1", form.address_line_1);
-        formData.append("address_line_2", form.address_line_2);
-        formData.append("address_line_3", form.address_line_3);
-        formData.append("privacy_policy", form.privacy_policy);
-        formData.append("referral_code", form.referral_code);
-        formData.append("reference_locum_compliance_documents", form.reference_locum_compliance_documents);
+        formData.append("view_locum_jobs", form.view_locum_jobs)
+        formData.append("view_permanent_jobs", form.view_permanent_jobs)
+        formData.append("profession_id", form.profession_id)
+        formData.append("title", form.title)
+        formData.append("first_name", form.first_name)
+        formData.append("last_name", form.last_name)
+        formData.append("suffix", form.suffix)
+        formData.append("mobile_number", form.mobile_number)
+        formData.append("email", form.email)
+        formData.append("password", form.password)
+        formData.append("password_confirmation", form.password_confirmation)
+        formData.append("nhs_smart_card_id_number", form.nhs_smart_card_id_number)
+        formData.append("post_code", form.post_code)
+        formData.append("address_line_1", form.address_line_1)
+        formData.append("address_line_2", form.address_line_2)
+        formData.append("address_line_3", form.address_line_3)
+        formData.append("privacy_policy", form.privacy_policy)
+        formData.append("referral_code", form.referral_code)
+        formData.append("reference_locum_compliance_documents", form.reference_locum_compliance_documents)
         formData.set("mandatory_locum_compliance_documents", form.mandatory_locum_compliance_documents)
         form.files.forEach((file) => {
             formData.append('files', file)
@@ -276,8 +290,10 @@ export default {
             .then((res) => {
                 commit('CLEAR_LOCUM_REGISTER_FORM')
                 commit('CLEAR_FORM_ERROR_DETAILS')
+                commit("SET_SIGNUP_LOADING", false)
                 this.$router.push('/sign-up/success')
             }).catch((err) => {
+                commit("SET_SIGNUP_LOADING", false)
                 if (
                     err.response &&
                     err.response.data &&

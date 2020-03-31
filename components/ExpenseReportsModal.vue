@@ -28,7 +28,7 @@
         </div>
         <div class="flex flex-col mb-4 relative">
           <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
-                    :error="formError.find(item => item.field === 'description')" :resize="false"
+                    :error="formError.find(item => item.field === 'description')" :resize="false" :limit="225"
                     @input="CheckEmptyField(form.description, 'description')"
           />
           <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"

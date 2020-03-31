@@ -240,7 +240,17 @@ export default {
         state.stage_1_details_form_error = payload
     },
     SET_STAGE_2_PT_1_DETAILS(state, payload) {
-        state.stage_2_pt_1_details = payload
+        payload.reference_locum_compliance_documents.forEach(item => {
+            state.stage_2_pt_1_details.reference_locum_compliance_documents.push({
+                compliance_document_id: item.compliance_document_id,
+                reference: item.reference
+            })
+        })
+        state.stage_2_pt_1_details.nhs_smart_card_id_number = payload.nhs_smart_card_id_number
+        state.stage_2_pt_1_details.post_code = payload.post_code
+        state.stage_2_pt_1_details.address_line_1 = payload.address_line_1
+        state.stage_2_pt_1_details.address_line_2 = payload.address_line_2
+        state.stage_2_pt_1_details.address_line_3 = payload.address_line_3
     },
     SET_STAGE_2_PT_1_FORM_ERROR(state, payload) {
         state.stage_2_pt_1_details_form_error = payload
@@ -250,7 +260,13 @@ export default {
         state.stage_2_pt_2_details.referral_code = payload.referral_code
         payload.mandatory_locum_compliance_documents.forEach(item => {
             if (item.file) {
-                state.stage_2_pt_2_details.mandatory_locum_compliance_documents.push(item)
+                state.stage_2_pt_2_details.mandatory_locum_compliance_documents.push({
+                    country_id: item.country_id ? item.country_id : '',
+                    compliance_document_id: item.compliance_document_id,
+                    has_reference: item.has_reference ? item.has_reference : false,
+                    reference: item.reference ? item.reference : "",
+                    file: item.file
+                })
                 state.stage_2_pt_2_details.files.push(item.file)
             }
         })
@@ -258,7 +274,7 @@ export default {
     SET_STAGE_2_PT_2_FORM_ERROR(state, payload) {
         state.stage_2_pt_2_details_form_error = payload
     },
-    CLEAR_LOCUM_REGISTER_FORM(state, payload) {
+    CLEAR_LOCUM_REGISTER_FORM(state) {
         state.stage_1_details.view_locum_jobs = false
         state.stage_1_details.view_permanent_jobs = false
         state.stage_1_details.profession_id = ""
@@ -286,5 +302,9 @@ export default {
     SET_COMPLIANCE_DOCUMENTS(state, payload) {
         state.reference_compliance_documents = payload.reference_compliance_documents
         state.mandatory_compliance_documents = payload.mandatory_compliance_documents
+    },
+    SET_SIGNUP_LOADING(state, payload) {
+        console.log(payload)
+        state.signup_loading = payload
     }
 }
