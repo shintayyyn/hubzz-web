@@ -428,7 +428,7 @@ export default {
 
 			this.Validate(this.form, notRequired)
 			if (!this.formError.length) {
-				if (!this.form.salary_amount || this.form.salary_amount) {
+				if (!this.form.salary_amount) {
 					this.form.salary_description_2 = ""
 				}
 				await this.$axios

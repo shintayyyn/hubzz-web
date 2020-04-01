@@ -28,7 +28,7 @@
         </div>
         <div class="flex flex-col mb-4 relative">
           <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
-                    :error="formError.find(item => item.field === 'description')" :resize="false"
+                    :error="formError.find(item => item.field === 'description')" :resize="false" :limit="225"
                     @input="CheckEmptyField(form.description, 'description')"
           />
           <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"
@@ -391,6 +391,9 @@
 
       async save () {
         this.formError = []
+        if (this.form.description && this.form.description.length > 255) {
+          this.formError.push({field: 'description', message: 'Description is too long.'})
+        }
         this.Validate(this.form)
         this.form.date = this.$moment(this.form.date).format("YYYY-MM-DD")
         if (!this.formError.length) {

@@ -1,4 +1,7 @@
 import Vue from "vue"
+
+import isEmail from 'validator/lib/isEmail'
+
 Vue.mixin({
   methods: {
     async CheckIfUserIsDeactivated () {
@@ -155,6 +158,19 @@ Vue.mixin({
             }
           }
         }
+        if (value) {
+          if (trimmedFieldName === 'email') {
+            // let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            // if (!re.test(String(value).toLowerCase())) {
+            // }
+            if (!isEmail(value)) {
+              this.formError.push({
+                field: trimmedFieldName,
+                message: "This is not a valid email"
+              })
+            }
+          }
+        }
       }
     },
     CheckPermissions (permissions) {
@@ -231,16 +247,53 @@ Vue.mixin({
       }
       return submitForm
     },
+
     isNumber (e) {
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
-      let charCode = (e.which) ? e.which : e.keyCode
-      if (charCode === 101 || charCode === 43 || charCode === 45) {
-        e.preventDefault()
-      } else {
-        return true
+      // let charCode = (e.which) ? e.which : e.keyCode
+      // if (charCode === 101 || charCode === 43 || charCode === 45) {
+      //   e.preventDefault()
+      // } else {
+      //   return true
+      // }
+
+      const {
+        key,
+        target,
+      } = e
+
+      const {
+        value,
+        selectionStart,
+        selectionEnd,
+      } = target
+
+			if (key < 10) {
+				if (value.includes('.')) {
+					const decimal = value.split('.')[1]
+
+					if (
+						decimal.length === 2 &&
+						selectionStart === selectionEnd &&
+						selectionStart > value.length - 3
+					) {
+						e.preventDefault()
+					}
+				}
+
+				return
+			} else if (key === '.') {
+				if (value.includes('.')) {
+					e.preventDefault()
+				}
+			} else if (key === 'Backspace') {
+				return
+			} else {
+				e.preventDefault()
       }
     },
+
     inputNumberOnly (e) {
       // numbers only [0-9]
       e = (e) ? e : window.event
@@ -249,6 +302,17 @@ Vue.mixin({
         e.preventDefault()
       } else {
         return true
+      }
+    },
+    alphaNumeric (e) {
+      // numbers only [0-9]
+      e = (e) ? e : window.event
+      var charCode = (e.which) ? e.which : e.keyCode
+      let specialKeys = [8, 9, 46, 36, 35, 37, 39]
+      if ((charCode >= 48 && charCode <= 57) || (charCode >= 65 && charCode <= 90) || charCode == 32 || ((charCode >= 97 && charCode <= 122) && ![109, 106, 111, 107].includes(charCode)) || (specialKeys.indexOf(e.keyCode) != -1 && e.charCode != e.keyCode)) {
+        return true
+      } else {
+        e.preventDefault()
       }
     },
     inputTelephone (e) {

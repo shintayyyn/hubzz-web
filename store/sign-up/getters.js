@@ -1,98 +1,123 @@
 export default {
     // LOCUMS
-    accountDetails(state) {
-        return state.account_details;
+    stage1Details (state) {
+        return state.stage_1_details
     },
-    accountFormError(state) {
-        return state.account_detail_form_error;
+    stage1DetailsFormError (state) {
+        return state.stage_1_details_form_error
     },
-    addressDetails(state) {
-        return state.address_details;
+    stage2pt1Details (state) {
+        return state.stage_2_pt_1_details
     },
-    addressFormError(state) {
-        return state.address_detail_form_error;
+    stage2pt1DetailsFormError (state) {
+        return state.stage_2_pt_1_details_form_error
     },
-    credentialDetails(state) {
-        return state.credential_details;
+    stage2pt2Details (state) {
+        return state.stage_2_pt_2_details
     },
-    credentialFormError(state) {
-        return state.credential_detail_form_error;
+    stage2pt2DetailsFormError (state) {
+        return state.stage_2_pt_2_form_error
     },
-    professionalDetails(state) {
-        return state.professional_details;
+    getMandatoryComplianceDocuments (state) {
+        return state.mandatory_compliance_documents
     },
-    professionalFormError(state) {
-        return state.professional_detail_form_error;
+    signUpLoading (state) {
+        return state.signup_loading
     },
-    payrollDetails(state) {
-        return state.payroll_details;
+    // OLD
+    accountDetails (state) {
+        return state.account_details
     },
-    payrollFormError(state) {
-        return state.payroll_detail_form_error;
+    accountFormError (state) {
+        return state.account_detail_form_error
     },
-    professionCategoryId(state) {
+    addressDetails (state) {
+        return state.address_details
+    },
+    addressFormError (state) {
+        return state.address_detail_form_error
+    },
+    credentialDetails (state) {
+        return state.credential_details
+    },
+    credentialFormError (state) {
+        return state.credential_detail_form_error
+    },
+    professionalDetails (state) {
+        return state.professional_details
+    },
+    professionalFormError (state) {
+        return state.professional_detail_form_error
+    },
+    payrollDetails (state) {
+        return state.payroll_details
+    },
+    payrollFormError (state) {
+        return state.payroll_detail_form_error
+    },
+    professionCategoryId (state) {
         return state.professional_details.profession_category_id
     },
     // PRACTICE
-    practiceDetails(state) {
+    practiceDetails (state) {
         return state.practice_details
     },
-    practiceFormError(state) {
+    practiceFormError (state) {
         return state.practice_detail_form_error
     },
-    practiceSurgeryDetails(state) {
+    practiceSurgeryDetails (state) {
         return state.practice_surgery_details
     },
-    practiceSurgeryFormError(state) {
+    practiceSurgeryFormError (state) {
         return state.practice_surgery_detail_form_error
     },
-    practiceAccountDetails(state) {
-        return state.practice_account_details;
+    practiceAccountDetails (state) {
+        return state.practice_account_details
     },
-    practiceAccountFormError(state) {
-        return state.practice_account_detail_form_error;
+    practiceAccountFormError (state) {
+        return state.practice_account_detail_form_error
     },
-    surgeryId(state) {
-        return state.practice_details.surgery_id;
+    surgeryId (state) {
+        return state.practice_details.surgery_id
     },
-    search_results(state) {
+    search_results (state) {
         return state.search_results
     },
-    activeTab(state) {
+    activeTab (state) {
         return state.activeComponent
     },
     // 
-    getProfessions(state) {
+    getProfessions (state) {
         return state.professions.map((item) => {
             return { value: item.id, label: item.name }
         })
     },
-    getGpQualifications(state) {
+    getGpQualifications (state) {
         return state.gp_qualifications.map((item) => {
             return { value: item.id, label: item.name }
         })
     },
-    getOthersQualifications(state) {
+    getOthersQualifications (state) {
         return state.others_qualifications.map((item) => {
             return { value: item.id, label: item.name }
         })
     },
-    getClinicalSystems(state) {
+    getClinicalSystems (state) {
         return state.clinical_systems.map((item) => {
             return { value: item.id, label: item.name }
         })
     },
-    getSpokenLanguages(state) {
+    getSpokenLanguages (state) {
         return state.spoken_languages.map((item) => {
             return { value: item.id, label: item.name }
         })
     },
-    getPracticeTypes(state) {
+    getPracticeTypes (state) {
         return state.practice_types.map((item) => {
             return { value: item.id, label: item.name }
         })
     },
-    getMandatoryTrainings(state) {
+    getMandatoryTrainings (state) {
         return state.mandatory_trainings.map((item) => {
             return { value: item.id, label: item.name }
         })

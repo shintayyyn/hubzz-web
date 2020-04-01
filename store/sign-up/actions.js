@@ -218,5 +218,137 @@ export default {
                     }
                 }
             })
+    },
+    registerCheckFirstPart({ state, commit }, payload) {
+        commit("SET_SIGNUP_LOADING", true)
+        this.$axios.$post(`/api/v1/locum/register/check-first-part`, payload)
+            .then(res => {
+                commit("SET_COMPLIANCE_DOCUMENTS", {
+                    mandatory_compliance_documents: res.data.mandatory_compliance_documents,
+                    reference_compliance_documents: res.data.reference_compliance_documents,
+                })
+                commit("SET_STAGE_1_FORM_ERROR", [])
+                commit("SET_SIGNUP_LOADING", false)
+            })
+            .catch(err => {
+                commit("SET_SIGNUP_LOADING", false)
+                if (err && err.response && err.response.data && err.response.data.error_messages) {
+                    commit("SET_STAGE_1_FORM_ERROR", err.response.data.error_messages)
+                }
+            })
+    },
+    registerLocum({ state, commit }) {
+        let form = {}
+
+        form = {
+            ...state.stage_1_details,
+            ...state.stage_2_pt_1_details,
+            ...state.stage_2_pt_2_details
+        }
+
+        let mandatory_compliance = []
+
+        form.mandatory_locum_compliance_documents.forEach(item => {
+            mandatory_compliance.push({
+                country_id: item.country_id ? item.country_id : '',
+                compliance_document_id: item.compliance_document_id,
+                has_reference: item.has_reference ? item.has_reference : false,
+                reference: item.reference ? item.reference : "",
+            })
+        })
+
+        form.mandatory_locum_compliance_documents = mandatory_compliance
+
+        form.reference_locum_compliance_documents = form.reference_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
+        form.mandatory_locum_compliance_documents = form.mandatory_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
+
+        const formData = new FormData()
+
+        formData.append("view_locum_jobs", form.view_locum_jobs)
+        formData.append("view_permanent_jobs", form.view_permanent_jobs)
+        formData.append("profession_id", form.profession_id)
+        formData.append("title", form.title)
+        formData.append("first_name", form.first_name)
+        formData.append("last_name", form.last_name)
+        formData.append("suffix", form.suffix)
+        formData.append("mobile_number", form.mobile_number)
+        formData.append("email", form.email)
+        formData.append("password", form.password)
+        formData.append("password_confirmation", form.password_confirmation)
+        formData.append("nhs_smart_card_id_number", form.nhs_smart_card_id_number)
+        formData.append("post_code", form.post_code)
+        formData.append("address_line_1", form.address_line_1)
+        formData.append("address_line_2", form.address_line_2)
+        formData.append("address_line_3", form.address_line_3)
+        formData.append("privacy_policy", form.privacy_policy)
+        formData.append("referral_code", form.referral_code)
+        formData.append("reference_locum_compliance_documents", form.reference_locum_compliance_documents)
+        formData.set("mandatory_locum_compliance_documents", form.mandatory_locum_compliance_documents)
+        form.files.forEach((file) => {
+            formData.append('files', file)
+        })
+
+        this.$axios.$post(`/api/v1/locum/register?referral_code=${state.stage_2_pt_2_details.referral_code ? state.stage_2_pt_2_details.referral_code.toUpperCase() : this.$router.app._route.query.referral_code}`, formData)
+            .then((res) => {
+                commit('CLEAR_LOCUM_REGISTER_FORM')
+                commit('CLEAR_FORM_ERROR_DETAILS')
+                this.$router.push('/sign-up/success')
+                commit("SET_SIGNUP_LOADING", false)
+            }).catch((err) => {
+                commit("SET_SIGNUP_LOADING", false)
+                if (
+                    err.response &&
+                    err.response.data &&
+                    err.response.data.error_messages &&
+                    err.response.data.error_messages.length > 0
+                ) {
+                    const first = err.response.data.error_messages.filter((errorMessage) => {
+                        return (
+                            errorMessage.field === 'title' ||
+                            errorMessage.field === 'first_name' ||
+                            errorMessage.field === 'last_name' ||
+                            errorMessage.field === 'suffix' ||
+                            errorMessage.field === 'profession_id' ||
+                            errorMessage.field === 'mobile_number' ||
+                            errorMessage.field === 'view_permanent_jobs' ||
+                            errorMessage.field === 'profession_id' ||
+                            errorMessage.field === 'email' ||
+                            errorMessage.field === 'password' ||
+                            errorMessage.field === 'password_confirmation'
+                        )
+                    })
+                    commit('SET_STAGE_1_FORM_ERROR', first)
+
+                    const second = err.response.data.error_messages.filter((errorMessage) => {
+                        return (
+                            errorMessage.field === 'reference_locum_compliance_documents' ||
+                            errorMessage.field === 'nhs_smart_card_id_number' ||
+                            errorMessage.field === 'post_code' ||
+                            errorMessage.field === 'address_line_1' ||
+                            errorMessage.field === 'address_line_2' ||
+                            errorMessage.field === 'address_line_3'
+                        )
+                    })
+                    commit('SET_STAGE_2_PT_1_FORM_ERROR', second)
+
+                    const third = err.response.data.error_messages.filter((errorMessage) => {
+                        return (
+                            errorMessage.field === 'privacy_policy' ||
+                            errorMessage.field === 'referral_code' ||
+                            errorMessage.field === 'mandatory_locum_compliance_documents' ||
+                            errorMessage.field === 'files'
+                        )
+                    })
+                    commit('SET_STAGE_2_PT_2_FORM_ERROR', third)
+
+                    if (first.length > 0) {
+                        commit('SET_ACTIVE_COMPONENT', 'LocumStage1')
+                    } else if (second.length > 0) {
+                        commit('SET_ACTIVE_COMPONENT', 'LocumStage2pt1')
+                    } else if (third.length > 0) {
+                        commit('SET_ACTIVE_COMPONENT', 'LocumStage2pt2')
+                    }
+                }
+            })
     }
 }
