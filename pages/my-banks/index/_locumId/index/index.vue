@@ -96,20 +96,53 @@
                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
               >{{ item.compliance_document.name }}</a>
             </div>
+            <template v-if="mandatory && !mandatory.length">
+              <span class="text-sm">(none)</span>
+            </template>
           </div>
+
           <div class="font-bold text-sm sm:text-md">
             Others documents
           </div>
           <div class="flex flex-col mb-8">
             <div v-for="item in optional" :key="item.id"
-                 class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
+              class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
             >
               <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
               <a :href="item.file.url" :download="item.file.filename" target="_blank" class="px-2"
                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
               >{{ item.compliance_document.name }}</a>
             </div>
+            <template v-if="optional && !optional.length">
+              <span class="text-sm">(none)</span>
+            </template>
           </div>
+
+          <div class="font-bold text-sm sm:text-md">
+            Mandatory Trainings
+          </div>
+          <div class="flex flex-col mb-8">
+            <div v-for="item in mandatoryTrainings" :key="item.id"
+              class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+            >
+              <div 
+                class="flex flex-row flex-no-wrap"
+                v-if="item.file"
+              >
+                <div class="w-5 h-5">
+                  <svgicon name="cloud-download" height="24" width="24" />
+                </div>
+                <a :href="item.file.url" :download="item.file.filename"
+                  class="break-words leading-loose mx-2 text-xs md:text-sm"
+                  @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.mandatory_training.name }}</a>
+              </div>
+            </div>
+            <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
+              <span class="text-sm">(none)</span>
+            </template>
+          </div>
+
 
           <div class="font-bold text-sm sm:text-md">
             Preferred rates
@@ -162,7 +195,8 @@
     data () {
       return {
         mandatory: [],
-        optional: []
+        optional: [],
+        mandatoryTrainings: [],
       }
     },
     async asyncData ({ app, params }) {
@@ -170,8 +204,7 @@
         const response = await app.$axios.$get(
           `/api/v1/practice/locums/${params.locumId}`
         )
-        const user =
-          response.data && response.data.user ? response.data.user : null
+        const user = response.data && response.data.user ? response.data.user : null
         return {
           user
         }
@@ -183,6 +216,7 @@
       this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
         this.user.locum_detail.profession.profession_compliance_category_id
       )
+      this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings
     },
     methods: {
       getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
