@@ -39,13 +39,13 @@
         </template>
         <div class="table" >
           <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm">
-            <div class="w-1/6 p-2">Type</div>
-            <div class="w-1/6 p-2">File</div>
-            <div class="w-1/6 p-2">Date uploaded</div>
-            <div class="w-1/6 p-2">Expiry date</div>
-            <div class="w-1/6 p-2">Status</div>
+            <div class="item w-1/6 p-2">Type</div>
+            <div class="item w-1/6 p-2">File</div>
+            <div class="item w-1/6 p-2">Date uploaded</div>
+            <div class="item w-1/6 p-2">Expiry date</div>
+            <div class="item w-1/6 p-2">Status</div>
             <div class="w-1/6 p-2">Note</div>
-            <div class="w-1/6 p-2" />
+            <div class="item w-1/6 p-2" />
           </div>
           <div v-for="item in mandatoryComplianceDocuments" :key="item.compliance_document_id">
             <div
@@ -105,7 +105,7 @@
                 <div class="item w-1/6" v-if="item && item.expired_at">{{ item.expired_at | localDate }}</div>
                 <div class="item w-1/6 py-2" v-else />
               </template>
-              <div class="item w-1/6" v-if="item && item.status ">
+              <div class="w-1/6" v-if="item && item.status ">
                 <div class="flex justify-start max-w-xs">
                   <div
                     class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -113,24 +113,37 @@
                   >{{ item.status }}</div>
                 </div>
               </div>
-              <div class="item w-1/6" v-else />
+              <div class="w-1/6" v-else />
               <template v-if="item.compliance_document_type_name !== 'Safeguarding'">
-                <div class="item w-1/6" v-if="(item && item.note)">{{ item.note | StringMaxLength(15) }}</div>
-                <div class="item w-1/6" v-else />
+                <div class="w-1/6" v-if="(item && item.note)">{{ item.note | StringMaxLength(15) }}</div>
+                <div class="w-1/6" v-else />
                 <div
                   v-if="item.compliance_document_type_name !== 'Safeguarding'"
-                  class="md:w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                  class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center "
                   style="position:sticky;right:0"
+                >
+                <div
+                  class="bg-yellow-500 px-4 py-2 rounded cursor-pointer"
                   @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'mandatory')"
                 >
-                <span class="hidden md:block">Upload</span>
-                <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                   <span class="hidden md:block">Upload</span>
+                  <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                </div>
                 </div>
                 <div class="w-1/6" v-else></div>
               </template>
             </div>
             <!-- SAFEGUARDING CHILDREN -->
             <div v-if="item.compliance_document_type_name === 'Safeguarding'">
+              <div class="ml-8 flex flex-no-wrap justify-start font-bold leading-none text-sm">
+                <div class="item w-1/6 p-2">Type</div>
+                <div class="item w-1/6 p-2">File</div>
+                <div class="item w-1/6 p-2">Date uploaded</div>
+                <div class="item w-1/6 p-2">Expiry date</div>
+                <div class="item w-1/6 p-2">Status</div>
+                <div class="item w-1/6 p-2">Note</div>
+                <div class="item w-1/6 p-2" />
+              </div>
               <div
                 v-for="childItem in item.child_locum_compliance_documents"
                 :key="childItem.compliance_document_id"
@@ -195,12 +208,16 @@
                   >{{ childItem.note | StringMaxLength(15) }}</div>
                   <div class="item w-1/6" v-else />
                   <div
-                    class="md:w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                    class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center "
                     style="position:sticky;right:0"
+                  >
+                  <div 
+                    class="bg-yellow-500 px-4 py-2 rounded cursor-pointer"
                     @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'mandatory-child')"
                   >
-                  <span class="hidden md:block">Upload</span>
-                  <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                    <span class="hidden md:block">Upload</span>
+                    <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                  </div>
                 </div>
                 </div>
               </div>
@@ -273,12 +290,16 @@
               <div class="item w-1/3" v-else />
               <div
                 v-if="item.compliance_document_type_name !== 'Safeguarding'"
-                class="md:w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center"
                 style="position:sticky;right:0"
-                @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'optional')"
               >
-                <span class="hidden md:block">Upload</span>
-                <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                <div
+                  class="bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                  @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'optional')"
+                >
+                  <span class="hidden md:block">Upload</span>
+                  <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                </div>
               </div>
               <div class="w-1/6" v-else></div>
             </div>
@@ -324,12 +345,16 @@
                   </div>
                   <div class="item w-1/3" v-else />
                   <div
-                    class="md:w-1/6 flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                    class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center "
                     style="position:sticky;right:0"
-                    @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'optional-child')"
                   >
-                    <span class="hidden md:block">Upload</span>
-                    <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                    <div 
+                      class="bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                      @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'optional-child')"
+                    >
+                      <span class="hidden md:block">Upload</span>
+                      <span class="block md:hidden"><svgicon class="fill-current" name="cloud-upload" width="20" height="20"/></span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1223,12 +1248,6 @@ table tbody td {
     min-width: 300px;
   }
 @media screen and (min-width: 1200px) {
-  .table {
-    min-width: 100%;
-  }
-  .table .item {
-    min-width: auto;
-  }
   .complianceModal {
     width: 80%;
   }
@@ -1236,6 +1255,15 @@ table tbody td {
     width: 80%;
   }
 }
+@media screen and (min-width: 1420px) {
+  .table {
+    min-width: 100%;
+  }
+  .table .item {
+    min-width: auto;
+  }
+}
+
 .loader-message:after {
   content: " .";
   animation: dots 1s steps(5, end) infinite;
