@@ -32,7 +32,7 @@ export default {
 		isJobPart() {
 			return (
 				this.propJob.status &&
-				["ongoing", "completed", "approved", "withdrawn"].includes(
+				["ongoing", "completed", "approved", "withdrawn", "allocated"].includes(
 					this.propJob.status.toLowerCase()
 				)
 			);
@@ -51,6 +51,7 @@ export default {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			switch (job.status) {
 				case "Applied":
+				case "Allocated":
 					return "bg-job-pending";
 					break;
 				case "Live":

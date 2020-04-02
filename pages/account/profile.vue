@@ -162,7 +162,6 @@
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
-                    class="w-1/2 px-1"
                     required
                   />
                   <!-- <AppInput
@@ -316,6 +315,7 @@
               :name="'payroll_sort_code'"
               :label="'Sort Code'"
               :error="formError.find(item => item.field === 'payroll_sort_code')"
+              :limit="6"
               required
             />
             <AppInput
