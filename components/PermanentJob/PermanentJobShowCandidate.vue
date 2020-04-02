@@ -11,10 +11,10 @@
           v-if="permanentJobApp.application_status === 'Applied' && permanent_job.job_posting_status === 'Available'"
         >
           <AppButton :label="'Accept'" :custom-theme="'bg-yellow-500 hover:bg-yellow-400'" class="mx-1"
-                     @click="accepted=!accepted"
+            @click="accepted=!accepted"
           />
           <AppButton class="mx-1" :label="'Reject'" :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
-                     @click="rejectConfirmModal = true"
+            @click="rejectConfirmModal = true"
           />
         </div>
       </div>
@@ -22,7 +22,7 @@
            class="absolute flex flex-col bg-white shadow-lg rounded-lg md:w-2/3 lg:w-1/2 xl:w-1/3 p-4 z-50"
       >
         <AppDate v-model="form.invitation_date" :name="'invitation_date'" :label="'Invitation Date'" is-after
-                 :error="formError.find(item => item.field === 'invitation_date')"
+          :error="formError.find(item => item.field === 'invitation_date')"
         />
         <AppTime v-model="form.invitation_time" :name="'invitation_time'" :label="'Invitation Time'"
                  :error="formError.find(item => item.field === 'invitation_time')"
@@ -72,7 +72,7 @@
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
             <div class="float-right">
               <AppAvatar :height="'80px'" :width="'80px'"
-                         :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
               />
             </div>
             <div class="font-bold text-sm sm:text-md">
@@ -170,7 +170,7 @@
             </div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div v-for="item in mandatory" :key="item.id"
-                   class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
+                class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
               >
                 <span>
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -180,7 +180,11 @@
                    @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 >{{ item.compliance_document.name }}</a>
               </div>
+              <template v-if="mandatory && !mandatory.length">
+                <span class="text-sm">(none)</span>
+              </template>
             </div>
+
             <div class="font-bold text-sm sm:text-md">
               Others documents
             </div>
@@ -193,6 +197,34 @@
                    @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 >{{ item.compliance_document.name }}</a>
               </div>
+              <template v-if="optional && !optional.length">
+                <span class="text-sm">(none)</span>
+              </template>
+            </div>
+
+            <div class="font-bold text-sm sm:text-md">
+              Mandatory Trainings
+            </div>
+            <div class="flex flex-col mb-8">
+              <div v-for="item in mandatoryTrainings" :key="item.id"
+                class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+              >
+                <div 
+                  class="flex flex-row flex-no-wrap"
+                  v-if="item.file"
+                >
+                  <div class="w-5 h-5">
+                    <svgicon name="cloud-download" height="24" width="24" />
+                  </div>
+                  <a :href="item.file.url" :download="item.file.filename"
+                    class="break-words leading-loose mx-2 text-xs md:text-sm"
+                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                  >{{ item.mandatory_training.name }}</a>
+                </div>
+              </div>
+              <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
+                <span class="text-sm">(none)</span>
+              </template>
             </div>
 
             <div class="font-bold text-sm sm:text-md">
@@ -243,12 +275,20 @@
       </div>
     </transition>
     <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
-    <AppConfirmationModal :label="'Are you sure you want to reject this Locum?'" :confirm-label="'Yes'"
-                          :cancel-label="'Cancel'" :modal="rejectConfirmModal" @confirm="rejectLocum()"
-                          @cancel="rejectConfirmModal = false"
+    <AppConfirmationModal :label="'Are you sure you want to reject this Locum?'" 
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'" 
+      :modal="rejectConfirmModal" 
+      @confirm="rejectLocum()"
+      @cancel="rejectConfirmModal = false"
     />
-    <AppConfirmationModal :label="'Appoint this Locum?'" :confirm-label="'Yes'" :cancel-label="'Cancel'"
-                          :modal="confirmation_modal" @confirm="appoint" @cancel="confirmation_modal = false"
+    <AppConfirmationModal 
+      :label="'Appoint this Locum?'" 
+      :confirm-label="'Yes'" 
+      :cancel-label="'Cancel'"
+      :modal="confirmation_modal" 
+      @confirm="appoint" 
+      @cancel="confirmation_modal = false"
     />
   </section>
 </template>
@@ -290,6 +330,7 @@
         rejectConfirmModal: false,
         mandatory: [],
         optional: [],
+        mandatoryTrainings: [],
         sendMessageModal: false,
         form: {
           invitation_date: "",
@@ -311,15 +352,16 @@
     },
 
     created () {
-      console.log(this.user)
+      // console.log(this.user)
+      // console.log("permanent job app", this.permanent_job_application)
+      // console.log("referees", this.user.locum_detail.referees)
+      // console.log("permanentJobApp", this.permanentJobApp)
+
       this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
         this.user.locum_detail.profession.profession_compliance_category_id
       )
-      this.permanentJobApp = this.permanent_job_application
-      console.log("permanent job app", this.permanent_job_application)
-
-      console.log("referees", this.user.locum_detail.referees)
-      console.log("permanentJobApp", this.permanentJobApp)
+       this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings
+      this.permanentJobApp = this.permanent_job_application      
     },
 
     methods: {
