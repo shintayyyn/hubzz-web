@@ -237,9 +237,6 @@ export default {
 
 			locumColumns: [],
       practiceColumns: [],
-
-			permanent_job_count: 0,
-      permanent_jobs: [],
       
       permanent_jobs_for_practice: [],
       permanent_jobs_for_practice_count: 0,
@@ -250,7 +247,28 @@ export default {
 			permanent_jobs_for_locum_count: 0,
 			permanent_jobs_for_locum: []
 		}
-	},
+  },
+  
+  computed: {
+    locum_permanent_job_count() {
+      return this.$store.state.permanentjobs.locum_permanent_job_count
+    },
+    locum_permanent_jobs() {
+      return this.$store.state.permanentjobs.locum_permanent_jobs
+    },
+    practice_permanent_job_count() {
+      return this.$store.state.permanentjobs.practice_permanent_job_count
+    },
+    practice_permanent_jobs() {
+      return this.$store.state.permanentjobs.practice_permanent_jobs
+    },
+    permanent_job_applications_state_count() {
+      return this.$store.state.permanent_job_applications_count
+    },
+    permanent_job_applications_state() {
+      return this.$store.state.permanent_job_applications
+    }
+  },
 
 	watch: {
 		// eslint-disable-next-line no-unused-vars
@@ -382,7 +400,7 @@ export default {
     
 	},  
 
-	async asyncData ({ app, route, error}) {
+	async asyncData ({ app, route, store, error}) {
 		try {
       // FOR PRACTICE ONLY
       let permanent_jobs_for_practice = ""
@@ -391,7 +409,8 @@ export default {
 			let permanent_job_applications_count = ""
 			let permanent_job_applications = ""
 			let permanent_jobs_for_locum = ""
-			let permanent_jobs_for_locum_count = ""
+      let permanent_jobs_for_locum_count = ""
+      
       let params = {}
       
       // ------------------FOR LOCUM---------------
@@ -410,25 +429,31 @@ export default {
 					{ params }
 				)
 				permanent_jobs_for_locum_count =
-					response.data && response.data.count ? response.data.count : null
+          response.data && response.data.count ? response.data.count : null
+          
+        await store.commit("permanentjobs/SET_LOCUM_PERMANENT_JOB_COUNT", permanent_jobs_for_locum_count)
 
 				response = await app.$axios.$get(`/api/v1/locum/permanent-jobs`, {
 					params
-				})
+        })        
+        
 				permanent_jobs_for_locum =
 					response.data && response.data.permanent_jobs
 						? response.data.permanent_jobs
-						: null
-
+            : null
+            
 				response = await app.$axios.$get(
 					`/api/v1/locum/permanent-job-applications/count`
 				)
 				permanent_job_applications_count =
 					response.data && response.data.count ? response.data.count : null
 
+        await store.commit("permanentjobs/SET_PERMANENT_JOB_APPLICATIONS_COUNT", permanent_job_applications_count)
+
 				response = await app.$axios.$get(
 					`/api/v1/locum/permanent-job-applications`
-				)
+        )
+        
 				permanent_job_applications =
 					response.data && response.data.permanent_job_applications
 						? response.data.permanent_job_applications
@@ -455,7 +480,9 @@ export default {
             }
 					}
 					return permanent_job
-        }) 
+        })
+        
+        await store.commit("permanentjobs/SET_LOCUM_PERMANENT_JOBS", permanent_jobs_for_locum)
          // ------------------FOR PRACTICE---------------
 			} else if (app.$auth.user.domain === "Practice") {
 				params = {
@@ -470,7 +497,9 @@ export default {
 					{ params }
 				)
 				permanent_jobs_for_practice_count =
-					response.data && response.data.count ? response.data.count : null
+          response.data && response.data.count ? response.data.count : null
+          
+        await store.commit("permanentjobs/SET_PRACTICE_PERMANENT_JOB_COUNT", permanent_jobs_for_practice_count)
       
 				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
 					params
@@ -480,14 +509,22 @@ export default {
 					response.data && response.data.permanent_jobs
 						? response.data.permanent_jobs
             : null
+
+        permanent_job_applications_count =
+					response.data && response.data.count ? response.data.count : null
+
+        await store.commit("permanentjobs/SET_PERMANENT_JOB_APPLICATIONS_COUNT", permanent_job_applications_count)
         
         response = await app.$axios.$get(
 					`/api/v1/practice/permanent-job-applications`
-				)
+        )
+        
 				permanent_job_applications =
 					response.data && response.data.permanent_job_applications
 						? response.data.permanent_job_applications
-						: null
+            : null
+
+        await store.commit("permanentjobs/SET_PERMANENT_JOB_APPLICATIONS", permanent_job_applications_count)
 
 				permanent_jobs_for_practice = permanent_jobs_for_practice.map(permanent_job => {
 					const permanent_job_app_found = permanent_job_applications.find(
@@ -505,8 +542,8 @@ export default {
 					}
 					return permanent_job
         })
-        
-        // permanent_jobs_for_practice_count = permanent_jobs_for_practice.length
+
+        await store.commit("permanentjobs/SET_PRACTICE_PERMANENT_JOBS",permanent_jobs_for_practice)
 			}
 			return {
 				permanent_jobs_for_practice_count,
@@ -528,6 +565,10 @@ export default {
   },
   
   created () {
+    console.log("states")
+    console.log("locum permanent job", this.locum_permanent_job_count, this.locum_permanent_jobs)
+    console.log("practice permanent jobs", this.practice_permanent_job_count, this.practice_permanent_jobs)
+    console.log("permanent job applications", this.permanent)
     if(this.$auth.user.domain === "Locum") {
       this.locumColumns = [
         ...this.defaultColumns,
