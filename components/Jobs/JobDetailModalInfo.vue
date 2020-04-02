@@ -89,7 +89,9 @@
         <div class="font-bold text-sm sm:text-md">
           Session requirements:
         </div>
-        <div v-if="!session_requirements.length">(none)</div>
+        <div v-if="!session_requirements.length">
+          (none)
+        </div>
         <div
           v-for="(item, index) in session_requirements"
           :key="`${item}-${index}`"
@@ -124,8 +126,8 @@
             <p>Shift</p>
           </div>
           <div class="px-1">
-            <p>{{ $moment(job.date_start, 'YYYY-MM-DD').format('DD-MM-YYYY') }} | {{ job.time_start }}</p>
-            <p>{{ $moment(job.date_end, 'YYYY-MM-DD').format('DD-MM-YYYY') }} | {{ job.time_end }}</p>
+            <p>{{ $moment(job.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job.time_start }}</p>
+            <p>{{ $moment(job.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job.time_end }}</p>
             <p>{{ job.shift.name }}</p>
           </div>
         </div>
@@ -147,6 +149,17 @@
         <div class="text-xs sm:text-sm mb-8">
           {{ job.platform_job.unpaid_breaks_in_minutes }}
         </div>
+
+        <template v-if="job.selection_date">
+          <div class="font-bold text-sm sm:text-md">
+            Selection will be made and you will receive a notification
+            by this date
+          </div>
+          <div class="text-xs sm:text-sm mb-8">
+            {{ $moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY') }} |
+            {{ $moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm') }}
+          </div>
+        </template>
 
         <div class="text-xs sm:text-sm mb-8">
           This job is
@@ -371,36 +384,51 @@
     </transition>
   </div>
 </template>
-<script>
-export default {
-  props: ["job"],
-  data () {
-    return {
-      modal: false
-    }
-  },
-  computed: {
-    session_requirements () {
-      return this.job.platform_job.session_requirements
-        ? this.job.platform_job.session_requirements.split(",")
-        : []
-    }
-  },
-  methods: {
-    convertDoc (document) {
-      return `https://docs.google.com/gview?url=${document}&embedded=true`
-    }
-  }
-}
-</script>
-<style scoped>
-.modal-container {
-  z-index: 510;
-}
 
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 70%;
+<script>
+  export default {
+    props: {
+      job: {
+        type: Object,
+        requried: true,
+      }
+    },
+
+    data () {
+      return {
+        modal: false
+      }
+    },
+
+    computed: {
+
+      session_requirements () {
+        return this.job.platform_job.session_requirements
+          ? this.job.platform_job.session_requirements.split(",")
+          : []
+      },
+
+    },
+
+    methods: {
+
+      convertDoc (document) {
+        return `https://docs.google.com/gview?url=${document}&embedded=true`
+      },
+
+    },
+
   }
-}
+</script>
+
+<style scoped>
+  .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>
