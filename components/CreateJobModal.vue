@@ -1269,6 +1269,8 @@
         this.formError = []
 
         let notRequired = [
+          "title",
+          "description",
           "session_requirements",
           "session_structure_information",
           "extra_information",
