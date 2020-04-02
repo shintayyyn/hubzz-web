@@ -11,7 +11,7 @@
         <div class="flex flex-row justify-between">
           <div class="flex flex-col w-full">
             <AppAvatar class="mb-4" :height="'80px'" :width="'80px'"
-                       :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+              :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
             />
             <div class="flex flex-col w-full">
               <div class="font-bold text-sm lg:text-lg">
@@ -25,18 +25,18 @@
           <div class="flex justify-start items-start z-50">
             <template v-if="user.is_favorite">
               <svgicon name="on-star" height="32" width="32"
-                       class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                       @click="unfavorite"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="unfavorite"
               />
             </template>
             <template v-else-if="!user.is_favorite">
               <svgicon name="off-star" height="32" width="32"
-                       class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                       @click="favorite"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="favorite"
               />
             </template>
             <button class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
-                    @click.prevent="message(user.id)"
+              @click.prevent="message(user.id)"
             >
               <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
             </button>
@@ -44,7 +44,7 @@
           <transition name="fade" mode="out-in">
             <div v-if="sendMessageModal" class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3">
               <SendMessageModal :user="user" @close="sendMessageModal=false"
-                                @showProfile="show(user.id)"
+                @showProfile="show(user.id)"
               />
             </div>
           </transition>
@@ -92,7 +92,7 @@
           </div>
           <div class="flex flex-col mb-8">
             <div v-for="item in user.locum_detail.rates" :key="item.id"
-                 class="flex flex-row flex-no-wrap mt-2"
+              class="flex flex-row flex-no-wrap mt-2"
             >
               <div class="text-xs sm:text-sm">
                 {{ item.rate_type.name }}: £ {{ item.min }}
@@ -151,6 +151,7 @@
               <span class="text-sm">(none)</span>
             </template>
           </div>
+
           <div class="font-bold text-sm sm:text-md">
             Other documents
           </div>
@@ -170,6 +171,33 @@
               <span class="text-sm">(none)</span>
             </template>
           </div>
+
+          <div class="font-bold text-sm sm:text-md">
+            Mandatory Trainings
+          </div>
+          <div class="flex flex-col mb-8">
+            <div v-for="item in mandatoryTrainings" :key="item.id"
+              class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+            >
+              <div 
+                class="flex flex-row flex-no-wrap"
+                v-if="item.file"
+              >
+                <div class="w-5 h-5">
+                  <svgicon name="cloud-download" height="24" width="24" />
+                </div>
+                <a :href="item.file.url" :download="item.file.filename"
+                  class="break-words leading-loose mx-2 text-xs md:text-sm"
+                  @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.mandatory_training.name }}</a>
+              </div>
+            </div>
+            <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
+              <span class="text-sm">(none)</span>
+            </template>
+          </div>
+
+
           <div class="font-bold text-sm sm:text-md">
             Referees
           </div>
@@ -197,7 +225,7 @@
       </div>
     </div>
     <AppConfirmationModal :label="confirmation_text" :confirmLabel="'Yes'" :cancelLabel="'Cancel'"
-                          :modal="confirmation_modal" @confirm="confirm" @cancel="confirmation_modal = false"
+      :modal="confirmation_modal" @confirm="confirm" @cancel="confirmation_modal = false"
     />
   </div>
 </template>
@@ -224,14 +252,16 @@
 				loading: false,
 				user: null,
 				mandatory: [],
-				optional: [],
+        optional: [],
+        mandatoryTrainings: [],
 				confirmation_text: "",
 				confirmation_modal: false,
 				sendMessageModal: false
 			}
 		},
 		created () {
-			this.getAppointedLocum()
+      this.getAppointedLocum()
+      
 		},
 		methods: {
 			message (id) {
@@ -248,10 +278,12 @@
 						`/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
 					)
 					.then(res => {
-						this.user = res.data.user
+            this.user = res.data.user
+            this.mandatoryTrainings = res.data.user.locum_detail.mandatory_trainings
 						this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
 							res.data.user.locum_detail.profession.profession_compliance_category_id
-						)
+            )
+            console.log('locum', this.user)
 					})
 					.catch(err => {
 						console.log("err", err.response || err)
@@ -283,7 +315,7 @@
 						}
 					)
 				})
-			},
+      },
 			favorite () {
 				this.confirmation_text = "Add this Locum to MyBanks?"
 				this.confirmation_modal = true

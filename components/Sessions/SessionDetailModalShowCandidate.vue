@@ -113,6 +113,7 @@
                 >{{ item.compliance_document.name }}</a>
               </div>
             </div>
+
             <div class="font-bold text-sm sm:text-md">
               Others documents
             </div>
@@ -127,6 +128,31 @@
                    @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 >{{ item.compliance_document.name }}</a>
               </div>
+            </div>
+
+            <div class="font-bold text-sm sm:text-md">
+              Mandatory Trainings
+            </div>
+            <div class="flex flex-col mb-8">
+              <div v-for="item in mandatoryTrainings" :key="item.id"
+                class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+              >
+                <div 
+                  class="flex flex-row flex-no-wrap"
+                  v-if="item.file"
+                >
+                  <div class="w-5 h-5">
+                    <svgicon name="cloud-download" height="24" width="24" />
+                  </div>
+                  <a :href="item.file.url" :download="item.file.filename"
+                    class="break-words leading-loose mx-2 text-xs md:text-sm"
+                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                  >{{ item.mandatory_training.name }}</a>
+                </div>
+              </div>
+              <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
+                <span class="text-sm">(none)</span>
+              </template>
             </div>
 
             <div class="font-bold text-sm sm:text-md">
@@ -146,7 +172,7 @@
             </div>
             <div v-if="user.locum_detail.referees.length > 0">
               <div v-for="item in user.locum_detail.referees" :key="item.id"
-                   class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
+                class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
               >
                 <div class="text-xs sm:text-sm">
                   {{ item ? item.name:null }}
@@ -183,7 +209,7 @@
     </transition>
     <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
     <AppConfirmationModal :label="'Appoint this Locum?'" :confirmLabel="'Yes'" :cancelLabel="'Cancel'"
-                          :modal="confirmation_modal" @confirm="appoint" @cancel="confirmation_modal = false"
+      :modal="confirmation_modal" @confirm="appoint" @cancel="confirmation_modal = false"
     />
   </section>
 </template>
@@ -213,7 +239,8 @@
 			return {
 				confirmation_modal: false,
 				mandatory: [],
-				optional: [],
+        optional: [],
+        mandatoryTrainings: [],
 				sendMessageModal: false,
 				deadline: {
 					hours: 0,
@@ -235,7 +262,8 @@
 					this.user.locum_job_applied_update_accepted_until,
 					"YYYY-MM-DDTHH:mm:ss:SSSZ"
 				).diff(this.$moment())
-			)
+      )
+      this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings
 			this.deadline.hours = data._data.hours
 			this.deadline.minutes = data._data.minutes
 			console.log(this.deadline)
