@@ -4,6 +4,7 @@
       <div>
         <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="close" />
       </div>
+
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">
         Create a new job
       </div>
@@ -15,6 +16,7 @@
             <h4 class="font-bold">
               Practice
             </h4>
+
             <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
               <AppInput
                 v-model="form.practice_id"
@@ -26,6 +28,7 @@
                 @blur="CheckEmptyField(form.practice_id, 'practice_id')"
               />
             </div>
+
             <div class="flex flex-col">
               <h4 class="font-bold mt-4">
                 Criteria
@@ -80,6 +83,91 @@
                         Compliance documents
                       </div>
                     </div>
+
+                    <div v-if="false" class="flex flex-row flex-wrap justify-bettwen">
+                      <template v-if="selectedProfessionComplianceCategory">
+                        <div class="flex flex-col w-full px-2">
+                          <div>For {{ selectedProfessionComplianceCategory.name }}:</div>
+                          <div class="ml-4">
+                            <input :id="`${selectedProfessionComplianceCategory.id}-${selectedProfessionComplianceCategory.name}`"
+                                   v-model="emptyComplianceDocumentId"
+                                   type="checkbox"
+                                   :disabled="emptyComplianceDocumentId"
+                            >
+                            <label
+                              :for="`${selectedProfessionComplianceCategory.id}-${selectedProfessionComplianceCategory.name}`"
+                            >N/A</label>
+                          </div>
+                          <div class="ml-2">
+                            Reference
+                          </div>
+                          <template
+                            v-for="complianceDocument in selectedProfessionComplianceCategory.reference_compliance_documents"
+                          >
+                            <div :key="`${complianceDocument.id}-${complianceDocument.name}`"
+                                 class="ml-4 flex flex-row justify-start items-center"
+                            >
+                              <input :id="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                                     v-model="form.compliance_document_id"
+                                     type="checkbox" :value="complianceDocument.id"
+                              >
+                              <label
+                                :for="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                              >{{ complianceDocument.name }}</label>
+                            </div>
+                          </template>
+                          <div class="ml-2">
+                            Mandatory
+                          </div>
+                          <template
+                            v-for="complianceDocument in selectedProfessionComplianceCategory.mandatory_compliance_documents"
+                          >
+                            <div v-if="complianceDocument.compliance_document_type_name !== 'Safeguarding'"
+                                 :key="`${complianceDocument.id}-${complianceDocument.name}`"
+                                 class="ml-4 flex flex-row justify-start items-center"
+                            >
+                              <input :id="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                                     v-model="form.compliance_document_id"
+                                     type="checkbox" :value="complianceDocument.id"
+                              >
+                              <label
+                                :for="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                              >{{ complianceDocument.name }}</label>
+                            </div>
+                            <div v-for="childComplianceDocument in complianceDocument.child_compliance_documents"
+                                 v-if="complianceDocument.compliance_document_type_name === 'Safeguarding'"
+                                 :key="`${childComplianceDocument.id}-${childComplianceDocument.name}`"
+                                 class="ml-4 flex flex-row justify-start items-center"
+                            >
+                              <input :id="`${childComplianceDocument.id}-${childComplianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                                     v-model="form.compliance_document_id"
+                                     type="checkbox" :value="childComplianceDocument.id"
+                              >
+                              <label
+                                :for="`${childComplianceDocument.id}-${childComplianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                              >{{ childComplianceDocument.name }}</label>
+                            </div>
+                          </template>
+                          <div class="ml-2">
+                            Optional
+                          </div>
+                          <template v-for="complianceDocument in selectedProfessionComplianceCategory.optional_compliance_documents">
+                            <div :key="`${complianceDocument.id}-${complianceDocument.name}`"
+                                 class="ml-4 flex flex-row justify-start items-center"
+                            >
+                              <input :id="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                                     v-model="form.compliance_document_id"
+                                     type="checkbox" :value="complianceDocument.id"
+                              >
+                              <label
+                                :for="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
+                              >{{ complianceDocument.name }}</label>
+                            </div>
+                          </template>
+                        </div>
+                      </template>
+                    </div>
+
                     <AppInput
                       v-if="compliances.length > 0"
                       v-model="form.compliance_document_id"
@@ -92,6 +180,7 @@
                       @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
                       @uncheckAll="form.compliance_document_id = []"
                     />
+
                     <div v-if="compliances.length === 0" class="mb-6 text-center md:text-left mt-2">
                       <AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
                     </div>
@@ -99,6 +188,7 @@
                 </template>
               </div>
             </div>
+
             <div class="flex flex-col">
               <h4 class="font-bold mt-4">
                 Duration
@@ -281,10 +371,12 @@
             </div>
           </div>
         </div>
+
         <div class="w-full md:w-1/2 lg:pl-4 mb-4">
           <h4 class="font-bold mt-4">
             Overview
           </h4>
+
           <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
             <AppInput
               v-model="form.title"
@@ -304,6 +396,7 @@
               :error="formError.find(item => item.field === 'description')"
               @blur="CheckEmptyField(form.description,'description')"
             />
+
             <AppInput
               v-model="form.report_to"
               :type="'text'"
@@ -313,6 +406,7 @@
               :error="formError.find(item => item.field === 'report_to')"
               @blur="CheckEmptyField(form.report_to,'report_to')"
             />
+
             <AppInput
               v-model="form.email"
               :type="'text'"
@@ -322,6 +416,7 @@
               :error="formError.find(item => item.field === 'email')"
               @blur="CheckEmptyField(form.email,'email')"
             />
+
             <AppInput
               v-model="form.is_another_doctor"
               :type="'select'"
@@ -329,6 +424,7 @@
               :label="'Is there another Dr on site?'"
               :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
             />
+
             <AppInput
               v-model="form.is_nurse_available"
               :type="'select'"
@@ -336,6 +432,7 @@
               :label="'Is nurse support available?'"
               :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
             />
+
             <AppInput
               v-model="form.number_of_patients"
               :type="'number'"
@@ -346,6 +443,7 @@
               :error="formError.find(item => item.field === 'number_of_patients')"
               @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
             />
+
             <AppInput
               v-model="form.duration_for_each_appointment"
               :type="'number'"
@@ -356,6 +454,7 @@
               :error="formError.find(item => item.field === 'duration_for_each_appointment')"
               @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
             />
+
             <AppInput
               v-model="form.opportunity_for_catch_up_slots"
               :type="'select'"
@@ -363,6 +462,7 @@
               :label="'Opportunity for catch up slots?'"
               :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
             />
+
             <AppInput
               v-model="form.session_requirements"
               :type="'multi-checkbox'"
@@ -386,6 +486,7 @@
               :error="formError.find(item => item.field === 'session_structure_information')"
               @blur="CheckEmptyField(form.session_structure_information, 'session_structure_information')"
             />
+
             <AppInput
               v-model="form.extra_information"
               :type="'textarea'"
@@ -410,6 +511,7 @@
                   @keydown="isNumber($event)"
                 />
               </div>
+
               <div class="px-1 w-full">
                 <AppInput
                   v-model="form.locum_detail_rate_type_id"
@@ -420,10 +522,12 @@
                 />
               </div>
             </div>
+
             <div class="flex flex-col py-2 mb-3 md:mb-6">
               <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
               </div>
+
               <div class="flex flex-row flex-wrap justify-start mt-1">
                 <div class="flex items-center mr-2">
                   <div class="flex flex-col">
@@ -472,6 +576,7 @@
                 </div>
               </div>
             </div>
+
             <template v-if="selectedProfession.profession_category.id === 1">
               <AppInput
                 v-model="form.ir35"
@@ -481,6 +586,7 @@
                 :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
               />
             </template>
+
             <AppInput
               v-model="form.mandatory_training_id"
               :type="'multi-checkbox'"
@@ -493,11 +599,13 @@
               @unchecked="form.mandatory_training_id.splice(form.mandatory_training_id.findIndex(item => item === parseInt($event)), 1)"
               @uncheckAll="form.mandatory_training_id = []"
             />
+
             <div v-if="mandatory_training_lists.length === 0" class="mb-6 text-center md:text-left">
               <AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
             </div>
           </div>
         </div>
+
         <div class="pt-4 pb-8 w-full flex">
           <AppButton
             v-if="authPermissions.includes('Create Sessions Job')"
@@ -551,19 +659,19 @@
         session_requirements_lists,
         mandatory_training_lists: [],
 
-        gp_compliance_documents_lists: [],
-        nurse_compliance_documents_lists: [],
-        paramedics_compliance_documents_lists: [],
-        pharmacists_compliance_documents_lists: [],
+        // gp_compliance_documents_lists: [],
+        // nurse_compliance_documents_lists: [],
+        // paramedics_compliance_documents_lists: [],
+        // pharmacists_compliance_documents_lists: [],
 
         professions_categories: [],
-        
+
         professionComplianceCategories: [],
+        practiceProfessionComplianceCategoryComplianceDocuments: [],
 
         selectedProfession: {
           profession_category: {}
         },
-        compliances: [],
         unpaid_breaks: false,
         auto_assign_job: false,
         selection_notification: false,
@@ -626,21 +734,96 @@
     },
 
     computed: {
+
       authPermissions () {
         return this.$store.getters["permissions"]
       },
+
       repostJob () {
         return this.$store.state.calendar.repost_job
       },
+
       hasBanks () {
         return this.banksCount > 0 ? true : false
       },
+
       complianceListLabel () {
         return `For ${this.selectedProfession.profession_compliance_category_name}:`
-      }
+      },
+
+      selectedProfessionComplianceCategory () {
+        if (!this.form.role) {
+          return null
+        }
+
+        const profession = this.professions_categories
+          .find(profession => profession.id.toString() === this.form.role.toString())
+        
+        if (!profession) {
+          return null
+        }
+
+        const professionComplianceCategory = this.professionComplianceCategories
+          .find(professionComplianceCategory => professionComplianceCategory.id === profession.profession_compliance_category_id)
+
+        return professionComplianceCategory || null
+      },
+
+      emptyComplianceDocumentId: {
+        get () {
+          return this.form.compliance_document_id.length === 0
+        },
+        set (emptyComplianceDocumentId) {
+          if (emptyComplianceDocumentId) {
+            this.form.compliance_document_id = []
+          }
+        }
+      },
+
+      compliances () {
+        if (!this.form.role) {
+          return []
+        }
+
+        const profession = this.professions_categories
+          .find(profession => profession.id.toString() === this.form.role.toString())
+        
+        if (!profession) {
+          return []
+        }
+
+        return this.practiceProfessionComplianceCategoryComplianceDocuments
+          .filter(practiceProfessionComplianceCategoryComplianceDocument =>
+            practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+              === this.selectedProfessionComplianceCategory.id
+          )
+          .map(practiceProfessionComplianceCategoryComplianceDocument => ({
+            label: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_name,
+            value: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
+          }))
+      },
+
     },
 
     watch: {
+
+      selectedProfessionComplianceCategory () {
+        if (this.selectedProfessionComplianceCategory) {
+          const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
+            .filter(practiceProfessionComplianceCategoryComplianceDocument =>
+              practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+                === this.selectedProfessionComplianceCategory.id
+            )
+            .map(practiceProfessionComplianceCategoryComplianceDocument =>
+              practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
+            )
+
+          this.form.compliance_document_id = defaultSelectedComplianceDocumentIds
+        } else {
+          this.form.compliance_document_id = []
+        }
+      },
+
       async "form.role" (newValue, oldValue) {
         this.CheckEmptyField(newValue, "role")
 
@@ -654,34 +837,33 @@
 
           let response = await this.$axios.$get(`/api/v1/practice/locums/count`, {
             params: {
-              profession_category_id: this.selectedProfession.profession_category
-                .id,
-              practice_locum_type: "Favorite"
-            }
+              profession_category_id: this.selectedProfession.profession_category.id,
+              practice_locum_type: "Favorite",
+            },
           })
 
           this.banksCount =
             response.data && response.data.count ? response.data.count : 0
 
-          if (this.selectedProfession.profession_compliance_category.id === 1) {
-            this.compliances = this.gp_compliance_documents_lists
-            return
-          }
+          // if (this.selectedProfession.profession_compliance_category.id === 1) {
+          //   this.compliances = this.gp_compliance_documents_lists
+          //   return
+          // }
 
-          if (this.selectedProfession.profession_compliance_category.id === 2) {
-            this.compliances = this.nurse_compliance_documents_lists
-            return
-          }
+          // if (this.selectedProfession.profession_compliance_category.id === 2) {
+          //   this.compliances = this.nurse_compliance_documents_lists
+          //   return
+          // }
 
-          if (this.selectedProfession.profession_compliance_category.id === 3) {
-            this.compliances = this.paramedics_compliance_documents_lists
-            return
-          }
+          // if (this.selectedProfession.profession_compliance_category.id === 3) {
+          //   this.compliances = this.paramedics_compliance_documents_lists
+          //   return
+          // }
 
-          if (this.selectedProfession.profession_compliance_category.id === 4) {
-            this.compliances = this.pharmacists_compliance_documents_lists
-            return
-          }
+          // if (this.selectedProfession.profession_compliance_category.id === 4) {
+          //   this.compliances = this.pharmacists_compliance_documents_lists
+          //   return
+          // }
         }
       },
 
@@ -791,11 +973,13 @@
           report_to: reportTo,
           email,
           extra_information: extraInformation,
+          practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
         } = profileProfile
 
         this.form.report_to = reportTo
         this.form.email = email
         this.form.extra_information = extraInformation
+        this.practiceProfessionComplianceCategoryComplianceDocuments = practiceProfessionComplianceCategoryComplianceDocuments
 
         profileProfile.mandatory_trainings.forEach(item => {
           this.mandatory_training_lists.push({
@@ -804,46 +988,46 @@
           })
         })
 
-        profileProfile.practice_profession_compliance_category_compliance_documents.forEach(
-          complianceCategoryDocument => {
-            if (
-              complianceCategoryDocument.profession_compliance_category_id ===
-              1
-            ) {
-              this.gp_compliance_documents_lists.push({
-                label: complianceCategoryDocument.compliance_document_name,
-                value: complianceCategoryDocument.compliance_document_id
-              })
-            }
-            if (
-              complianceCategoryDocument.profession_compliance_category_id ===
-              2
-            ) {
-              this.nurse_compliance_documents_lists.push({
-                label: complianceCategoryDocument.compliance_document_name,
-                value: complianceCategoryDocument.compliance_document_id
-              })
-            }
-            if (
-              complianceCategoryDocument.profession_compliance_category_id ===
-              3
-            ) {
-              this.paramedics_compliance_documents_lists.push({
-                label: complianceCategoryDocument.compliance_document_name,
-                value: complianceCategoryDocument.compliance_document_id
-              })
-            }
-            if (
-              complianceCategoryDocument.profession_compliance_category_id ===
-              4
-            ) {
-              this.pharmacists_compliance_documents_lists.push({
-                label: complianceCategoryDocument.compliance_document_name,
-                value: complianceCategoryDocument.compliance_document_id
-              })
-            }
-          }
-        )
+        // profileProfile.practice_profession_compliance_category_compliance_documents.forEach(
+        //   complianceCategoryDocument => {
+        //     if (
+        //       complianceCategoryDocument.profession_compliance_category_id ===
+        //       1
+        //     ) {
+        //       this.gp_compliance_documents_lists.push({
+        //         label: complianceCategoryDocument.compliance_document_name,
+        //         value: complianceCategoryDocument.compliance_document_id
+        //       })
+        //     }
+        //     if (
+        //       complianceCategoryDocument.profession_compliance_category_id ===
+        //       2
+        //     ) {
+        //       this.nurse_compliance_documents_lists.push({
+        //         label: complianceCategoryDocument.compliance_document_name,
+        //         value: complianceCategoryDocument.compliance_document_id
+        //       })
+        //     }
+        //     if (
+        //       complianceCategoryDocument.profession_compliance_category_id ===
+        //       3
+        //     ) {
+        //       this.paramedics_compliance_documents_lists.push({
+        //         label: complianceCategoryDocument.compliance_document_name,
+        //         value: complianceCategoryDocument.compliance_document_id
+        //       })
+        //     }
+        //     if (
+        //       complianceCategoryDocument.profession_compliance_category_id ===
+        //       4
+        //     ) {
+        //       this.pharmacists_compliance_documents_lists.push({
+        //         label: complianceCategoryDocument.compliance_document_name,
+        //         value: complianceCategoryDocument.compliance_document_id
+        //       })
+        //     }
+        //   }
+        // )
 
         if (this.repostJob) {
           this.form.practice_id = this.repostJob.platform_job.practice.id
@@ -1085,6 +1269,8 @@
         this.formError = []
 
         let notRequired = [
+          "title",
+          "description",
           "session_requirements",
           "session_structure_information",
           "extra_information",
