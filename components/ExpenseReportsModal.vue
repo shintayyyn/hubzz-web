@@ -67,8 +67,7 @@
               Filtered Date
             </div>
             <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
-              £
-              {{ filter_date_total.toFixed(2) }}
+              £ {{ filter_date_total.toFixed(2) | currency }}
             </div>
           </div>
         </div>
@@ -84,8 +83,7 @@
               This Week
             </div>
             <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
-              £
-              {{ week_total.toFixed(2) }}
+              £ {{ week_total.toFixed(2) | currency }}
             </div>
           </div>
         </div>
@@ -101,8 +99,7 @@
               This Month
             </div>
             <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
-              £
-              {{ month_total.toFixed(2) }}
+              £ {{ month_total.toFixed(2) | currency }}
             </div>
           </div>
         </div>
@@ -131,7 +128,7 @@
           {{ $moment(slotProps.item.date).format("DD/MM/YYYY") }}
         </template>
         <template v-slot:total="slotProps">
-          £ {{ slotProps.item.total.toFixed(2) }}
+          £ {{ slotProps.item.total.toFixed(2) | currency }}
         </template>
       </AppTable>
       <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
