@@ -27,7 +27,7 @@
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
             <div class="float-right">
               <AppAvatar :height="'80px'" :width="'80px'"
-                         :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
               />
             </div>
             <div class="font-bold text-sm sm:text-md">
