@@ -436,62 +436,56 @@
       },
 
       description () {
-        let hour =
-          parseInt(this.form.hours) === 0 || this.form.hours === ""
-            ? ""
-            : parseInt(this.form.hours) > 1
-              ? "hours"
-              : "hour"
-        let minute =
-          parseInt(this.form.minutes) === 0 || this.form.minutes === ""
-            ? ""
-            : this.form.minutes > 1
-              ? "minutes"
-              : "minute"
-        let hasAnd = hour > 0 ? true : false
-        return `Job number ${
-          this.propInvoice.items[0].job_part.job_part_number
-          } ${this.propInvoice.items[0].job_part.job.type}
-        Job at £${this.propInvoice.items[0].job_part.job.rate} ${
-          this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
-          }
-        from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
-        / ${this.propInvoice.items[0].job_part.job.shift.name} / Total of ${
-          this.form.hours > 0 ? this.form.hours : ""
-          } ${hour} ${hasAnd ? "and" : ""} ${
-          this.form.minutes > 0 ? this.form.minutes : ""
-          } ${minute}`
+        const jobPartNumber = this.propInvoice.items[0].job_part.job_part_number
+        const jobType = this.propInvoice.items[0].job_part.job.type
+        const jobRate = this.propInvoice.items[0].job_part.job.rate
+        const jobRateTypeName = this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+        const formattedDateStart = this.$moment(this.propInvoice.date_start).format('DD/MM/YYYY')
+        const formattedDateEnd = this.$moment(this.propInvoice.date_end).format('DD/MM/YYYY')
+        const shiftName = this.propInvoice.items[0].job_part.job.shift.name
+        const finalHoursInMinutesHours = parseInt(this.form.hours)
+        const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
+        const finalHoursInMinutesMinutes = parseInt(this.form.minutes)
+        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
+        const hasMinutes = finalHoursInMinutesMinutes > 0
+          ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
+          : ''
+        const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+          + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+          + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+
+        return description
       }
     },
 
     watch: {
       isApproved (value) {
-        if (value) {
-          this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`
-          this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-          this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-          this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-          this.form.items[0].remarks = this.propInvoice.items[0].remarks
-          this.form.items[0].total =
-            this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-              "Per Hour"
-              ? this.propInvoice.items[0].job_part.job.rate *
-              this.propInvoice.items[0].final_hours
-              : this.propInvoice.items[0].job_part.job.rate
-          this.form.total_amount =
-            this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-              "Per Hour"
-              ? this.propInvoice.items[0].job_part.job.rate *
-              this.propInvoice.items[0].final_hours
-              : this.propInvoice.items[0].job_part.job.rate
-        } else if (value === false) {
-          this.form.items[0].description = this.propInvoice.items[0].description
-          this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
-          this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
-          this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
-          this.form.items[0].remarks = this.propInvoice.items[0].remarks
-          this.form.items[0].total = this.propInvoice.items[0].total
-        }
+        // if (value) {
+        //   this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`
+        //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
+        //   this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
+        //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
+        //   this.form.items[0].remarks = this.propInvoice.items[0].remarks
+        //   this.form.items[0].total =
+        //     this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+        //       "Per Hour"
+        //       ? this.propInvoice.items[0].job_part.job.rate *
+        //       this.propInvoice.items[0].final_hours
+        //       : this.propInvoice.items[0].job_part.job.rate
+        //   this.form.total_amount =
+        //     this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+        //       "Per Hour"
+        //       ? this.propInvoice.items[0].job_part.job.rate *
+        //       this.propInvoice.items[0].final_hours
+        //       : this.propInvoice.items[0].job_part.job.rate
+        // } else if (value === false) {
+        //   this.form.items[0].description = this.propInvoice.items[0].description
+        //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
+        //   this.form.items[0].late_hours = this.propInvoice.items[0].late_hours
+        //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours
+        //   this.form.items[0].remarks = this.propInvoice.items[0].remarks
+        //   this.form.items[0].total = this.propInvoice.items[0].total
+        // }
         this.form.items[0].approve = value
       }
     },
