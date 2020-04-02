@@ -1,6 +1,6 @@
 <template>
 	<section class="modal-container">
-		<div class="p-4 md:p-8">
+		<div class="relative p-4 md:p-8">
 			<nuxt-link :to="{
           path: `/permanent-jobs`,
           query:$route.query
@@ -45,7 +45,7 @@
 
 			<div
 				v-if="toApply === true"
-				class="w-full md:w-1/2 p-2 pb-4 absolute shadow bg-white rounded-lg z-50"
+				class="w-full md:w-1/2 p-2 pb-4 absolute shadow bg-white rounded-lg z-50 left-0 md:left-auto"
 			>
 				<div class="mx-4 mt-4">
 					<div class="w-full">
@@ -78,14 +78,15 @@
 							</p>
 						</div>
 					</div>
-					<div class="flex justify-between w-full">
+					<div class="flex flex-col md:flex-row justify-between w-full">
 						<AppButton
+							class="my-1"
 							:label="'Send Application'"
 							:disabled="(!canApply || job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000) || (!job_application.job_application_pitch && !job_application.file)"
 							@click="apply()"
 						/>
 						<label
-							class="leading-loose cursor-pointer text-black flex items-center py-2 rounded-lg transition-hover"
+							class="my-1 leading-loose cursor-pointer text-black flex items-center justify-center py-1 md:py-2 rounded-lg transition-hover border border-yellow-500 text-sm md:text-base"
 							:class="uploadedFile ? '' : 'hover:bg-yellow-500 px-4 '"
 						>
 							<input
@@ -97,14 +98,16 @@
 								@input="uploadFile($event)"
 							/>
 							<svgicon name="cloud-upload" height="24" width="24" class="mr-2" />
-							{{ uploadedFile ? uploadedFile : 'Upload File' | StringMaxLength(15)}}
+							{{ uploadedFile ? "Update File" : 'Upload File'}}
 						</label>
 					</div>
-					<p
-						v-if="uploadedFile"
-						class="text-xs text-right cursor-pointer hover:underline"
-						@click="uploadedFile = '', job_application.file = ''"
-					>Remove File</p>
+					<div class="text-xs flex justify-between" v-if="uploadedFile">
+						<p>{{uploadedFile | StringMaxLength(25)}}</p>
+						<p
+							class="text-right cursor-pointer hover:underline"
+							@click="uploadedFile = '', job_application.file = ''"
+						>Remove File</p>
+					</div>
 				</div>
 
 				<p v-if="!canApply" class="text-sm px-4 text-red-500">
@@ -173,12 +176,13 @@
 						label="Share"
 						@click="toShowLink = !toShowLink"
 					/>
-					<div v-if="toShowLink" class="rounded-lg p-4 shadow-lg">
-						<div class="font-semibold flex items-center">
+					<div v-if="toShowLink" class="rounded-lg p-4 shadow-lg mb-2">
+						<div class="text-sm md:text-base font-semibold flex flex-wrap items-center px-2">
 							<div
-								class="mx-2"
+								class
 							>{{ `${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}` }}</div>
 							<AppButton
+								class
 								:label="'Copy Link'"
 								@click="copyToClipboard(`${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}`)"
 							/>
