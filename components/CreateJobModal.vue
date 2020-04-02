@@ -84,7 +84,7 @@
                       </div>
                     </div>
 
-                    <div class="flex flex-row flex-wrap justify-bettwen">
+                    <div v-if="false" class="flex flex-row flex-wrap justify-bettwen">
                       <template v-if="selectedProfessionComplianceCategory">
                         <div class="flex flex-col w-full px-2">
                           <div>For {{ selectedProfessionComplianceCategory.name }}:</div>
@@ -168,7 +168,7 @@
                       </template>
                     </div>
 
-                    <!-- <AppInput
+                    <AppInput
                       v-if="compliances.length > 0"
                       v-model="form.compliance_document_id"
                       :type="'multi-checkbox'"
@@ -183,7 +183,7 @@
 
                     <div v-if="compliances.length === 0" class="mb-6 text-center md:text-left mt-2">
                       <AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
-                    </div> -->
+                    </div>
                   </template>
                 </template>
               </div>
@@ -672,7 +672,6 @@
         selectedProfession: {
           profession_category: {}
         },
-        // compliances: [],
         unpaid_breaks: false,
         auto_assign_job: false,
         selection_notification: false,
@@ -779,6 +778,29 @@
             this.form.compliance_document_id = []
           }
         }
+      },
+
+      compliances () {
+        if (!this.form.role) {
+          return []
+        }
+
+        const profession = this.professions_categories
+          .find(profession => profession.id.toString() === this.form.role.toString())
+        
+        if (!profession) {
+          return []
+        }
+
+        return this.practiceProfessionComplianceCategoryComplianceDocuments
+          .filter(practiceProfessionComplianceCategoryComplianceDocument =>
+            practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+              === this.selectedProfessionComplianceCategory.id
+          )
+          .map(practiceProfessionComplianceCategoryComplianceDocument => ({
+            label: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_name,
+            value: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
+          }))
       },
 
     },
