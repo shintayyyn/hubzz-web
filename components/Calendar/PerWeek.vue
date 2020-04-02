@@ -94,12 +94,12 @@
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div> -->
-          <!-- <div
+          <div
             v-else-if="hasPracticeAllocatedJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
-          ></div> -->
+          ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'AM', day)"
             :key="`${date}-${index}-${id}-${id}`"
@@ -156,12 +156,13 @@
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
+          -->
           <div
             v-else-if="hasPracticeAllocatedJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
-          ></div> -->
+          ></div> 
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'PM', day)"
             :key="`${date}-${index}-${id}`"
@@ -218,12 +219,13 @@
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
-          <div
+           -->
+           <div
             v-else-if="hasPracticeAllocatedJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
-          ></div> -->
+          ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'OOH', day)"
             :key="`${date}-${index}-${id}`"
@@ -280,12 +282,13 @@
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
-          <div
+           -->
+           <div
             v-else-if="hasPracticeAllocatedJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
-          ></div> -->
+          ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}-${id}`"
@@ -384,15 +387,15 @@
             :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'AM')"
           />
-          <!-- <div
-            v-if="hasLocumCompletedJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+          <div
+            v-else-if="hasLocumAllocatedJobs(date, 'AM', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
-          <div
-            v-else-if="hasLocumAllocatedJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
+          <!-- <div
+            v-if="hasLocumCompletedJobs(date, 'AM', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
@@ -460,15 +463,16 @@
             :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'PM')"
           />
-          <!-- <div
-            v-if="hasLocumCompletedJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+          <div
+            v-else-if="hasLocumAllocatedJobs(date, 'PM', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
-          <div
-            v-else-if="hasLocumAllocatedJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
+
+          <!-- <div
+            v-if="hasLocumCompletedJobs(date, 'PM', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
@@ -536,16 +540,17 @@
             :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'OOH')"
           />
+          <div
+            v-else-if="hasLocumAllocatedJobs(date, 'OOH', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
+            :key="`${date}-${index}`"
+            @click="selectDateShift(date, 'OOH')"
+          ></div>
+
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'OOH')"
-          ></div>
-          <div
-            v-else-if="hasLocumAllocatedJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
-            :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
@@ -612,16 +617,17 @@
             :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'Whole Day')"
           />
+          <div
+            v-else-if="hasLocumAllocatedJobs(date, 'Whole Day', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
+            :key="`${date}-${index}`"
+            @click="selectDateShift(date, 'Whole Day')"
+          ></div>
+
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'Whole Day')"
-          ></div>
-          <div
-            v-else-if="hasLocumAllocatedJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300"
-            :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
@@ -716,6 +722,9 @@ export default {
     getPracticeCompletedJobs () {
       return this.$store.getters["jobs/getPracticeCompletedJobs"]
     },
+    getPracticeAllocatedPartJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    },
     // WHOLE
     getPracticeAllocatedJobs () {
       return this.$store.getters["jobs/getPracticeAllocatedJobs"]
@@ -747,6 +756,9 @@ export default {
     getLocumCompletedJobs () {
       return this.$store.getters["jobs/getLocumCompletedJobs"]
     },
+    getLocumAllocatedPartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
+    },
     // WHOLE
     getLocumAllocatedJobs () {
       return this.$store.getters["jobs/getLocumAllocatedJobs"]
@@ -763,8 +775,8 @@ export default {
     getLocumBankJobs () {
       return this.$store.getters["jobs/getLocumBankJobs"]
     },
-    getLocumPrivateJobs () {
-      return this.$store.getters["jobs/getLocumPrivateJobs"]
+    getLocumPrivateJobParts () {
+      return this.$store.getters["jobs/getLocumPrivateJobParts"]
     },
     // UNAVAILABILITIES
     getLocumUnavailabilities () {
@@ -982,7 +994,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
-              status: ["Ongoing"],
+              status: ["Ongoing", "Allocated"],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1024,6 +1036,7 @@ export default {
                   job => job.status === "Applied"
                 )
               )
+              
               this.$store.commit(
                 "jobs/SET_PRACTICE_UNFILLED_JOBS",
                 responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
@@ -1048,6 +1061,12 @@ export default {
                   jobPart => jobPart.status === "Ongoing"
                 )
               )
+              this.$store.commit(
+                "jobs/SET_PRACTICE_ALLOCATED_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(
+                  jobPart => jobPart.status === "Allocated"
+                )
+              );
               // this.$store.commit(
               //   "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
               //   responseOngoingAndCompleted.data.job_parts.filter(
@@ -1091,7 +1110,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
-              locum_status: ["Ongoing"],
+              locum_status: ["Ongoing", "Allocated"],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1099,22 +1118,22 @@ export default {
                 .subtract(1, "days")
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000
+              limit: 100000000,
             }
           }),
-          this.$axios.$get("/api/v1/locum/jobs", {
-            params: {
-              type: ["Private"],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000
-            }
-          }),
+          // this.$axios.$get("/api/v1/locum/jobs", {
+          //   params: {
+          //     type: ["Private"],
+          //     calendar_date_start: `${this.$moment(
+          //       this.firstDayOfTheWeek,
+          //       "YYYY-MM-DD"
+          //     )
+          //       .subtract(1, "days")
+          //       .format("YYYY-MM-DD")}:gte`,
+          //     calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+          //     limit: 100000000
+          //   }
+          // }),
           // this.$axios.$get("/api/v1/locum/unavailabilities", {
           //   params: {
           //     date_start: `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
@@ -1129,7 +1148,7 @@ export default {
             ([
               responseAllocatedAndAppliedAndAvailable,
               responseOngoingAndCompleted,
-              responsePrivate,
+              // responsePrivate,
               // responseUnavailabilities
             ]) => {
               this.$store.commit(
@@ -1139,11 +1158,8 @@ export default {
                 )
               )
               this.$store.commit(
-                "jobs/SET_LOCUM_PRIVATE_JOBS",
-                responsePrivate.data.jobs
-                // responsePrivate.data.jobs.filter(
-                //   job => job.locum_status === "Ongoing"
-                // )
+                "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(jobPart => jobPart.job.type === 'Private')
               )
               // this.$store.commit(
               //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
@@ -1172,7 +1188,13 @@ export default {
               this.$store.commit(
                 "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
                 responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.locum_status === "Ongoing"
+                  jobPart => jobPart.locum_status === "Ongoing" && jobPart.job.type === 'Platform'
+                )
+              )
+              this.$store.commit(
+                "jobs/SET_LOCUM_ALLOCATED_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(
+                  jobPart => jobPart.locum_status === "Allocated" && jobPart.job.type === 'Platform'
                 )
               )
               // this.$store.commit(
@@ -1366,23 +1388,41 @@ export default {
         )
       }
     },
-    // WHOLE
     hasPracticeAllocatedJobs (date, type, day) {
       if (
-        this.getPracticeAllocatedJobs &&
-        this.getPracticeAllocatedJobs.length > 0
+        this.getPracticeAllocatedPartJobs &&
+        this.getPracticeAllocatedPartJobs.length > 0
       ) {
-        return this.getPracticeAllocatedJobs.find(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type &&
-            ((job.include_saturday === false && day !== 6) ||
-              job.include_saturday === true) &&
-            ((job.include_sunday === false && day !== 0) ||
-              job.include_sunday === true)
+        return this.getPracticeAllocatedPartJobs.find(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) &&
+            job_part.job.shift.name === type &&
+            ((job_part.job.include_saturday === false && day !== 6) ||
+              job_part.job.include_saturday === true) &&
+            ((job_part.job.include_sunday === false && day !== 0) ||
+              job_part.job.include_sunday === true)
         )
       }
     },
+    // WHOLE
+    // hasPracticeAllocatedJobs (date, type, day) {
+    //   if (
+    //     this.getPracticeAllocatedJobs &&
+    //     this.getPracticeAllocatedJobs.length > 0
+    //   ) {
+    //     return this.getPracticeAllocatedJobs.find(
+    //       job =>
+    //         this.getDateArray(job.date_start, job.date_end).includes(date) &&
+    //         job.shift.name === type &&
+    //         ((job.include_saturday === false && day !== 6) ||
+    //           job.include_saturday === true) &&
+    //         ((job.include_sunday === false && day !== 0) ||
+    //           job.include_sunday === true)
+    //     )
+    //   }
+    // },
     hasPracticeAppliedJobs (date, type, day) {
       if (
         this.getPracticeAppliedJobs &&
@@ -1501,19 +1541,21 @@ export default {
     //   }
     // },
     // WHOLE
-    // hasLocumAllocatedJobs (date, type, day) {
-    //   if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
-    //     return this.getLocumAllocatedJobs.find(
-    //       job =>
-    //         this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //         job.shift.name === type &&
-    //         ((job.include_saturday === false && day !== 6) ||
-    //           job.include_saturday === true) &&
-    //         ((job.include_sunday === false && day !== 0) ||
-    //           job.include_sunday === true)
-    //     )
-    //   }
-    // },
+    hasLocumAllocatedJobs (date, type, day) {
+      if (this.getLocumAllocatedPartJobs && this.getLocumAllocatedPartJobs.length > 0) {
+        return this.getLocumAllocatedPartJobs.find(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) &&
+            job_part.job.shift.name === type &&
+            ((job_part.job.include_saturday === false && day !== 6) ||
+              job_part.job.include_saturday === true) &&
+            ((job_part.job.include_sunday === false && day !== 0) ||
+              job_part.job.include_sunday === true)
+        )
+      }
+    },
     // hasLocumAvailableJobs (date, type, day) {
     //   if (this.getLocumAvailableJobs && this.getLocumAvailableJobs.length > 0) {
     //     return this.getLocumAvailableJobs.find(
@@ -1565,30 +1607,32 @@ export default {
       )
     },
     hasLocumPrivateOngoingJobs (date, type, day) {
-      return this.getLocumPrivateJobs.find(
-        job =>
-          job.locum_status === 'Ongoing' && 
-          this.getDateArray(job.date_start, job.date_end).includes(date)
-           &&
-            job.shift.name === type &&
-          ((job.include_saturday === false && day !== 6) ||
-            job.include_saturday === true) &&
-          ((job.include_sunday === false && day !== 0) ||
-            job.include_sunday === true)
-      )
+      return this.getLocumPrivateJobParts.find(
+        job_part =>
+          job_part.locum_status === 'Ongoing' && 
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) &&
+            job_part.job.shift.name === type &&
+            ((job_part.job.include_saturday === false && day !== 6) ||
+              job_part.job.include_saturday === true) &&
+            ((job_part.job.include_sunday === false && day !== 0) ||
+              job_part.job.include_sunday === true)
+        )
     },
     hasLocumPrivateAllocatedJobs (date, type, day) {
-      return this.getLocumPrivateJobs.find(
-        job =>
-          job.locum_status === 'Allocated' && 
-          this.getDateArray(job.date_start, job.date_end).includes(date)
-           &&
-            job.shift.name === type &&
-          ((job.include_saturday === false && day !== 6) ||
-            job.include_saturday === true) &&
-          ((job.include_sunday === false && day !== 0) ||
-            job.include_sunday === true)
-      )
+      return this.getLocumPrivateJobParts.find(
+        job_part =>
+          job_part.locum_status === 'Allocated' && 
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) &&
+            job_part.job.shift.name === type &&
+            ((job_part.job.include_saturday === false && day !== 6) ||
+              job_part.job.include_saturday === true) &&
+            ((job_part.job.include_sunday === false && day !== 0) ||
+              job_part.job.include_sunday === true)
+        )
     },
     // UNAVAILABILITIES
     // hasLocumUnavailabilities (date, type) {

@@ -38,8 +38,7 @@ export default {
 		},
 		isJobPart() {
 			if (
-				this.propJob &&
-				this.propJob.job &&
+				(this.propJob && this.propJob.job) ||
 				this.propJob.job.type === "Private"
 			) {
 				return true;

@@ -264,11 +264,11 @@
               </div>
               <div class="flex items-center">
                 <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Applied Jobs{{ $auth.user.domain === 'Locum' ? ', Allocated Private Jobs' : ''  }}</p>
+                <p class="ml-2">Applied Jobs, Allocated Jobs</p>
               </div>
               <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
                 <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Unfilled, Withdrawn</p>
+                <p class="ml-2">Unfilled Jobs, Withdrawn Jobs</p>
               </div>
               <div class="flex items-center" v-if="$auth.user.domain === 'Locum'">
                 <span>
@@ -347,6 +347,9 @@ export default {
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
+    getLocumAllocatedPartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
+    },
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
     },
@@ -369,6 +372,9 @@ export default {
     getPracticeUnfilledJobs() {
       return this.$store.getters["jobs/getPracticeUnfilledJobs"];
     },
+    getPracticeAllocatedPartJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    },
     jobsInMonth() {
       let jobsInMonth = [];
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
@@ -378,7 +384,8 @@ export default {
         ];
         let jobParts = [
           ...this.getPracticeOngoingJobs,
-          ...this.getPracticeWithdrawnJobs
+          ...this.getPracticeWithdrawnJobs,
+          ...this.getPracticeAllocatedPartJobs
         ];
         this.daysInMonth.forEach((days, daysIndex) => {
           if (jobs.length > 0) {
@@ -469,6 +476,7 @@ export default {
         let jobs = [...this.getLocumAppliedJobs];
         let jobParts = [
           ...this.getLocumOngoingJobs,
+          ...this.getLocumAllocatedPartJobs,
           ...this.getLocumPrivateJobParts
         ];
         this.daysInMonth.forEach((days, daysIndex) => {
@@ -895,7 +903,7 @@ export default {
           this.$axios
             .$get("/api/v1/practice/job-parts", {
               params: {
-                status: ["Ongoing", "Withdrawn"],
+                status: ["Ongoing", "Withdrawn", "Allocated"],
                 calendar_date_start: `${this.startOfMonth}:gte`,
                 calendar_date_end: `${this.endOfMonth}:lte`,
                 limit: 100000000
@@ -925,6 +933,12 @@ export default {
               )
             );
             this.$store.commit(
+              "jobs/SET_PRACTICE_ALLOCATED_JOB_PARTS",
+              ongoingAndWithdrawnJobParts.filter(
+                jobPart => jobPart.status === "Allocated"
+              )
+            );
+            this.$store.commit(
               "jobs/SET_PRACTICE_WITHDRAWN_JOB_PARTS",
               ongoingAndWithdrawnJobParts.filter(
                 jobPart => jobPart.status === "Withdrawn"
@@ -950,8 +964,7 @@ export default {
           this.$axios
             .$get("/api/v1/locum/job-parts", {
               params: {
-                locum_status: ["Ongoing"],
-                job_type: ["Platform"],
+                locum_status: ["Ongoing", "Allocated"],
                 calendar_date_start: `${this.startOfMonth}:gte`,
                 calendar_date_end: `${this.endOfMonth}:lte`,
                 limit: 100000000
@@ -973,19 +986,19 @@ export default {
             .then(res => {
               return res.data.jobs;
             }),
-          this.$axios
-            .$get("/api/v1/locum/job-parts", {
-              params: {
-                locum_status: ["Ongoing", "Allocated"],
-                job_type: ["Private"],
-                calendar_date_start: `${this.startOfMonth}:gte`,
-                calendar_date_end: `${this.endOfMonth}:lte`,
-                limit: 100000000
-              }
-            })
-            .then(res => {
-              return res.data.job_parts;
-            }),
+          // this.$axios
+          //   .$get("/api/v1/locum/job-parts", {
+          //     params: {
+          //       locum_status: ["Ongoing", "Allocated"],
+          //       job_type: ["Private"],
+          //       calendar_date_start: `${this.startOfMonth}:gte`,
+          //       calendar_date_end: `${this.endOfMonth}:lte`,
+          //       limit: 100000000
+          //     }
+          //   })
+          //   .then(res => {
+          //     return res.data.job_parts;
+          //   }),
             this.$axios
             .$get("/api/v1/locum/permanent-job-applications", {
               params: {
@@ -1003,21 +1016,23 @@ export default {
               };
             })
         ])
-          .then(([ongoingJobParts, appliedJobs, privateJobParts, permanent_jobs_invites]) => {
+          .then(([ongoingJobParts, appliedJobs, permanent_jobs_invites]) => {
             this.$store.commit(
               "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
-              ongoingJobParts
+              ongoingJobParts.filter(item => item.job.status === "Ongoing" && item.job.type === "Platform")
             );
+            this.$store.commit("jobs/SET_LOCUM_ALLOCATED_JOB_PARTS", 
+              ongoingJobParts.filter(item => item.job.status === "Allocated" && item.job.type === "Platform"))
 
             this.$store.commit("jobs/SET_LOCUM_APPLIED_JOBS", appliedJobs);
             this.$store.commit(
               "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
-              privateJobParts
+              ongoingJobParts.filter(item => item.job.type === "Private")
             );
-              this.$store.commit(
-                "jobs/SET_LOCUM_PERMANENT_JOBS",
-                permanent_jobs_invites
-              );
+            this.$store.commit(
+              "jobs/SET_LOCUM_PERMANENT_JOBS",
+              permanent_jobs_invites
+            );
           })
           .finally(() => {
             this.$store.commit("calendar/TOGGLE_LOADING", false);
