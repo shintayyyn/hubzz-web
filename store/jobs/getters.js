@@ -108,7 +108,7 @@ export default {
           notifObj = {
               ...notif,
               id,
-              title: notif.title ? notif.title : notif.job.title,
+              title: notif.job ? notif.job.title : notif.title,
               status: notif.status,
               // === 'Declined' ? 'Withdrawn' : notif.status
               status_tag: notif.status === 'Cancelled' && notif.job_terminated ? 'Terminated' : "",
@@ -723,7 +723,7 @@ export default {
           notifObj = {
               ...notif,
               id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
-              title: notif.title ? notif.title : notif.job.title,
+              title: notif.job ? notif.job.title : notif.title,
               status: notif.locum_status,
               // === 'Declined' ? 'Withdrawn' : notif.locum_status
               status_tag: notif.locum_status === 'Cancelled' && notif.job_terminated ? 'Terminated' : "",
