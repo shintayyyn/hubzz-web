@@ -127,6 +127,7 @@ export default {
 		}
 	},
 	created() {
+		console.log(this.mandatory_training);
 		this.expiry_date = this.mandatory_training.expired_at;
 		this.file = this.mandatory_training.file;
 	},
@@ -143,7 +144,7 @@ export default {
 				}
 				const response = await this.$axios.$patch(
 					`/api/v1/locum/locum-detail-mandatory-trainings/${this.$route.params.id}`,
-					{ expiry_date: this.expiry_date }
+					{ expired_at: this.expiry_date }
 				);
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
