@@ -152,8 +152,7 @@
 
         <template v-if="job.selection_date">
           <div class="font-bold text-sm sm:text-md">
-            Selection will be made and you will receive a notification
-            by this date
+            Selection will be made by this date
           </div>
           <div class="text-xs sm:text-sm mb-8">
             {{ $moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY') }} |
