@@ -97,7 +97,9 @@
         <div class="font-bold text-sm sm:text-md">
           Session requirements:
         </div>
-        <div v-if="!session_requirements.length">(none)</div>
+        <div v-if="!session_requirements.length">
+          (none)
+        </div>
         <div
           v-for="(item, index) in session_requirements"
           :key="`${item}-${index}`"
@@ -137,8 +139,8 @@
             <p>Shift</p>
           </div>
           <div class="px-1">
-            <p>{{ job_part.date_start }} | {{ job_part.time_start }}</p>
-            <p>{{ job_part.date_end }} | {{ job_part.time_end }}</p>
+            <p>{{ $moment(job_part.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job_part.time_start }}</p>
+            <p>{{ $moment(job_part.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job_part.time_end }}</p>
             <p>{{ job_part.job.shift.name }}</p>
           </div>
         </div>
@@ -442,40 +444,50 @@
     </transition>
   </div>
 </template>
-<script>
-import AppButton from "@/components/Base/AppButton"
-export default {
-  components: {
-    AppButton
-  },
-  props: ["job_part"],
-  data () {
-    return {
-      modal: false
-    }
-  },
-  computed: {
-    session_requirements () {
-      return this.job_part.job.platform_job.session_requirements
-        ? this.job_part.job.platform_job.session_requirements.split(",")
-        : []
-    }
-  },
-  methods: {
-    convertDoc (document) {
-      return `https://docs.google.com/gview?url=${document}&embedded=true`
-    }
-  }
-}
-</script>
-<style scoped>
-.modal-container {
-  z-index: 510;
-}
 
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 70%;
+<script>
+  export default {
+    props: {
+      job_part: {
+        type: Object,
+        required: true,
+      },
+    },
+
+    data () {
+      return {
+        modal: false
+      }
+    },
+
+    computed: {
+      
+      session_requirements () {
+        return this.job_part.job.platform_job.session_requirements
+          ? this.job_part.job.platform_job.session_requirements.split(",")
+          : []
+      },
+
+    },
+
+    methods: {
+
+      convertDoc (document) {
+        return `https://docs.google.com/gview?url=${document}&embedded=true`
+      },
+
+    },
   }
-}
+</script>
+
+<style scoped>
+  .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>

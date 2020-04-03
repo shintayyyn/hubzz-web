@@ -1,7 +1,7 @@
 <template>
   <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
     <AppLoading :loading="loading" spinner />
-    <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
+    <AppFormError v-if="false && formError.length > 0" :formError="formError" />
     <!-- =========PRACTICE========= -->
     <template v-if="$auth.user.domain === 'Practice'">
       <div class="flex flex-wrap ">
@@ -12,16 +12,16 @@
             :name="'email'"
             :label="'Email address'"
             :error="formError.find(item => item.field === 'email')"
+            required
             @submit="save"
             @blur="CheckEmptyField(practiceForm.email, 'email')"
-            required
           />
-          <div class="-mt-6 mb-4" v-if="email_verifiedAt">
+          <div v-if="email_verifiedAt" class="-mt-6 mb-4">
             <span
               class="text-xs"
-            >E-mail is Verified on {{$moment(email_verifiedAt).utc().format('MMM DD, YYYY | hh:mm A')}}</span>
+            >E-mail is Verified on {{ $moment(email_verifiedAt).utc().format('DD/MM/YYYY | hh:mm A') }}</span>
           </div>
-          <div class="-mt-6 mb-4" v-if="!email_verifiedAt">
+          <div v-if="!email_verifiedAt" class="-mt-6 mb-4">
             <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
             <span
               class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
@@ -41,9 +41,9 @@
             :name="'first_name'"
             :label="'First name'"
             :error="formError.find(item => item.field === 'first_name')"
+            required
             @submit="save"
             @blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
-            required
           />
           <AppInput
             v-model="practiceForm.last_name"
@@ -51,9 +51,9 @@
             :name="'last_name'"
             :label="'Last name'"
             :error="formError.find(item => item.field === 'last_name')"
+            required
             @submit="save"
             @blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
-            required
           />
           <AppInput
             v-model="practiceForm.suffix"
@@ -85,7 +85,6 @@
             </div>
         </div> -->
       </div>
-      
     </template>
     <!-- ==========LOCUM=========== -->
     <template v-if="$auth.user.domain === 'Locum'">
@@ -95,15 +94,15 @@
         :name="'email'"
         :label="'Email address'"
         :error="formError.find(item => item.field === 'email')"
+        required
         @submit="save"
         @blur="CheckEmptyField(locumForm.email, 'email')"
-        required
       />
       <div class="-mt-4 mb-4">
         <template v-if="email_verifiedAt">
           <span
             class="text-xs"
-          >E-mail is Verified on {{$moment(email_verifiedAt).utc().format('MMM DD, YYYY | hh:mm A')}}</span>
+          >E-mail is Verified on {{ $moment(email_verifiedAt).utc().format('DD/MM/YYYY | hh:mm A') }}</span>
         </template>
         <template v-else>
           <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
@@ -127,9 +126,9 @@
         :name="'first_name'"
         :label="'First name'"
         :error="formError.find(item => item.field === 'first_name')"
+        required
         @submit="save"
         @blur="CheckEmptyField(locumForm.first_name, 'first_name')"
-        required
       />
       <AppInput
         v-model="locumForm.last_name"
@@ -137,9 +136,9 @@
         :name="'last_name'"
         :label="'Last name'"
         :error="formError.find(item => item.field === 'last_name')"
+        required
         @submit="save"
         @blur="CheckEmptyField(locumForm.last_name, 'last_name')"
-        required
       />
       <AppInput
         v-model="locumForm.suffix"
@@ -155,19 +154,19 @@
         :label="'Gender'"
         :error="formError.find(item => item.field === 'gender')"
         :items="[{ label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }]"
-        @blur="CheckEmptyField(locumForm.gender, 'gender')"
         required
+        @blur="CheckEmptyField(locumForm.gender, 'gender')"
       />
       <AppDate
         v-model="locumForm.date_of_birth"
         :name="'date_of_birth'"
         :label="'Date of Birth'"
         :error="formError.find(item => item.field === 'date_of_birth')"
-        @blur="CheckEmptyField(locumForm.date_of_birth, 'date_of_birth')"
         isBefore
         :limitYear="100"
         :maxYearBefore="10"
         required
+        @blur="CheckEmptyField(locumForm.date_of_birth, 'date_of_birth')"
       />
       <AppInput
         v-model="locumForm.mobile_number"
@@ -175,9 +174,9 @@
         :name="'mobile_number'"
         :label="'Mobile Number'"
         :error="formError.find(item => item.field === 'mobile_number')"
+        required
         @submit="save"
         @blur="CheckEmptyField(locumForm.mobile_number, 'mobile_number')"
-        required
       />
       <AppInput
         v-model="locumForm.home_number"
@@ -195,14 +194,14 @@
       />
       <div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
         <AppPostCode
-          :urlIndex="'/api/v1/postcode-coordinates'"
           v-model="locumForm.post_code"
+          :urlIndex="'/api/v1/postcode-coordinates'"
           :name="'post_code'"
           :label="'Post code'"
           :error="formError.find(item => item.field === 'post_code')"
           :inStyle="'background-color:#dae1e7;border-color:white'"
-          @blur="CheckEmptyField(locumForm.post_code, 'post_code')"
           required
+          @blur="CheckEmptyField(locumForm.post_code, 'post_code')"
         />
         <AppInput
           v-model="locumForm.address_line_1"
@@ -211,9 +210,9 @@
           :label="'Address line 1'"
           :error="formError.find(item => item.field === 'address_line_1')"
           :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
+          required
           @submit="save"
           @blur="CheckEmptyField(locumForm.address_line_1, 'address_line_1')"
-          required
         />
         <AppInput
           v-model="locumForm.address_line_2"
@@ -230,9 +229,9 @@
           :label="'City / Town / District'"
           :error="formError.find(item => item.field === 'address_line_3')"
           :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
+          required
           @submit="save"
           @blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3', 'City / Town / District')"
-          required
         />
       </div>
       <div class="text-left mt-5">
@@ -241,292 +240,292 @@
     </template>
   </div>
 </template>
+
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
-import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
-import AppFormError from "@/components/Base/AppFormError";
-import AppPostCode from "@/components/Base/AppPostCode";
-const roles = [
-  { value: "Practice Staff", label: "Practice Staff" },
-  { value: "Practice Manager", label: "Practice Manager" },
-  { value: "Partner", label: "Partner" }
-];
-export default {
-  transition: {
-    name: "fade",
-    mode: "out-in"
-  },
-  components: {
-    AppInput,
-    AppDate,
-    AppButton,
-    AppLoading,
-    AppFormError,
-    AppPostCode
-  },
-  data() {
-    return {
-      loading: false,
-      formError: [],
-      email_verifiedAt: "",
-      roles,
-
-      practiceForm: {
-        email: "",
-        title: "",
-        first_name: "",
-        last_name: "",
-        suffix: "",
-        practice_role: ""
-      },
-      practiceRole: null,
-      practicePermissions: {},
-      locumForm: {
-        email: "",
-        title: "",
-        first_name: "",
-        last_name: "",
-        suffix: "",
-        gender: "",
-        mobile_number: "",
-        home_number: "",
-        work_number: "",
-        post_code: "",
-        address_line_1: "",
-        address_line_2: "",
-        address_line_3: ""
-      }
-    };
-  },
-  created() {
-    console.log('authpermissions', this.authPermissions)
-    console.log('')
-
-  },  
-  computed: {
-    authPermissions() {
-			return this.$store.getters["permissions"];
-		},
-  },
-  async asyncData({ app, error }) {
-    try {
-      const response = await app.$axios.$get("/api/v1/me");
-      const user =
-        response.data && response.data && response.data.user
-          ? response.data.user
-          : null;
-
-      let practiceForm = {};
-      let practiceRole = ""
-
-      let locumForm = {};
-      let email_verifiedAt = "";
-
-      if (user.domain === "Practice") {
-        practiceForm.email = user.email;
-        practiceForm.title = user.personal_detail.title;
-        practiceForm.first_name = user.personal_detail.first_name;
-        practiceForm.last_name = user.personal_detail.last_name;
-        practiceForm.suffix = user.personal_detail.suffix;
-        practiceForm.practice_role = user.practice_detail.practice_role;
-        email_verifiedAt = user.email_verified_at;
-        practiceRole = user.practice_detail.role
-        return {
-          user,
-          practiceForm,
-          email_verifiedAt,
-          practiceRole,
-        };
-      }
-      if (user.domain === "Locum") {
-        locumForm.email = user.email;
-        locumForm.title = user.personal_detail.title;
-        locumForm.first_name = user.personal_detail.first_name;
-        locumForm.last_name = user.personal_detail.last_name;
-        locumForm.suffix = user.personal_detail.suffix;
-        locumForm.gender = user.personal_detail.gender;
-        locumForm.date_of_birth = user.personal_detail.date_of_birth;
-        locumForm.mobile_number = user.contact_detail.mobile_number;
-        locumForm.home_number = user.contact_detail.home_number;
-        locumForm.work_number = user.contact_detail.work_number;
-        locumForm.address_line_1 = user.address_detail.address.line_1;
-        locumForm.address_line_2 = user.address_detail.address.line_2;
-        locumForm.address_line_3 = user.address_detail.address.line_3;
-        locumForm.post_code = user.address_detail.address.post_code;
-        email_verifiedAt = user.email_verified_at;
-
-        return {
-          user,
-          locumForm,
-          email_verifiedAt
-        };
-      }
-    } catch (err) {
-      return error({ status: 404, message: "Not Authorized" });
-      throw err;
-    }
-  },
-  mounted() {
-    this.$socket.on(
-      "User Notification Email Pending",
-      this.getEmailVerificationRealTime
-    );
-    this.$socket.on(
-      "User Notification Email Verified",
-      this.getEmailVerificationRealTime
-    );
-  },
-  destroyed() {
-    this.removeListener();
-  },
-  methods: {
-    async getEmailVerificationRealTime() {
-      await this.$auth.fetchUser();
-      this.email_verifiedAt = this.$auth.user.email_verified_at;
+  import AppInput from "@/components/Base/AppInput"
+  import AppDate from "@/components/Base/AppDate"
+  import AppButton from "@/components/Base/AppButton"
+  import AppLoading from "@/components/Base/AppLoading"
+  import AppFormError from "@/components/Base/AppFormError"
+  import AppPostCode from "@/components/Base/AppPostCode"
+  const roles = [
+    { value: "Practice Staff", label: "Practice Staff" },
+    { value: "Practice Manager", label: "Practice Manager" },
+    { value: "Partner", label: "Partner" }
+  ]
+  export default {
+    transition: {
+      name: "fade",
+      mode: "out-in"
     },
-    removeListener() {
-      this.$socket.removeListener(
+    components: {
+      AppInput,
+      AppDate,
+      AppButton,
+      AppLoading,
+      AppFormError,
+      AppPostCode
+    },
+    data () {
+      return {
+        loading: false,
+        formError: [],
+        email_verifiedAt: "",
+        roles,
+
+        practiceForm: {
+          email: "",
+          title: "",
+          first_name: "",
+          last_name: "",
+          suffix: "",
+          practice_role: ""
+        },
+        practiceRole: null,
+        practicePermissions: {},
+        locumForm: {
+          email: "",
+          title: "",
+          first_name: "",
+          last_name: "",
+          suffix: "",
+          gender: "",
+          mobile_number: "",
+          home_number: "",
+          work_number: "",
+          post_code: "",
+          address_line_1: "",
+          address_line_2: "",
+          address_line_3: ""
+        }
+      }
+    },  
+    computed: {
+      authPermissions () {
+        return this.$store.getters["permissions"]
+      },
+    },
+    async asyncData ({ app }) {
+      try {
+        const response = await app.$axios.$get("/api/v1/me")
+        const user =
+          response.data && response.data && response.data.user
+            ? response.data.user
+            : null
+
+        let practiceForm = {}
+        let practiceRole = ""
+
+        let locumForm = {}
+        let email_verifiedAt = ""
+
+        if (user.domain === "Practice") {
+          practiceForm.email = user.email
+          practiceForm.title = user.personal_detail.title
+          practiceForm.first_name = user.personal_detail.first_name
+          practiceForm.last_name = user.personal_detail.last_name
+          practiceForm.suffix = user.personal_detail.suffix
+          practiceForm.practice_role = user.practice_detail.practice_role
+          email_verifiedAt = user.email_verified_at
+          practiceRole = user.practice_detail.role
+          return {
+            user,
+            practiceForm,
+            email_verifiedAt,
+            practiceRole,
+          }
+        }
+        if (user.domain === "Locum") {
+          locumForm.email = user.email
+          locumForm.title = user.personal_detail.title
+          locumForm.first_name = user.personal_detail.first_name
+          locumForm.last_name = user.personal_detail.last_name
+          locumForm.suffix = user.personal_detail.suffix
+          locumForm.gender = user.personal_detail.gender
+          locumForm.date_of_birth = user.personal_detail.date_of_birth
+          locumForm.mobile_number = user.contact_detail.mobile_number
+          locumForm.home_number = user.contact_detail.home_number
+          locumForm.work_number = user.contact_detail.work_number
+          locumForm.address_line_1 = user.address_detail.address.line_1
+          locumForm.address_line_2 = user.address_detail.address.line_2
+          locumForm.address_line_3 = user.address_detail.address.line_3
+          locumForm.post_code = user.address_detail.address.post_code
+          email_verifiedAt = user.email_verified_at
+
+          return {
+            user,
+            locumForm,
+            email_verifiedAt
+          }
+        }
+      } catch (err) {
+        throw err
+      }
+    },
+    created () {
+      console.log('authpermissions', this.authPermissions)
+      console.log('')
+
+    },
+    mounted () {
+      this.$socket.on(
         "User Notification Email Pending",
         this.getEmailVerificationRealTime
-      );
-      this.$socket.removeListener(
+      )
+      this.$socket.on(
         "User Notification Email Verified",
         this.getEmailVerificationRealTime
-      );
+      )
     },
-    resendEmailVerification() {
-      this.$axios
-        .$post(`/api/v1/email-verification/resend`)
-        .then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
-          });
-        })
-        .catch(err => {
-          console.log("err", err.response || err);
-          if (err.response.data.message) {
+    destroyed () {
+      this.removeListener()
+    },
+    methods: {
+      async getEmailVerificationRealTime () {
+        await this.$auth.fetchUser()
+        this.email_verifiedAt = this.$auth.user.email_verified_at
+      },
+      removeListener () {
+        this.$socket.removeListener(
+          "User Notification Email Pending",
+          this.getEmailVerificationRealTime
+        )
+        this.$socket.removeListener(
+          "User Notification Email Verified",
+          this.getEmailVerificationRealTime
+        )
+      },
+      resendEmailVerification () {
+        this.$axios
+          .$post(`/api/v1/email-verification/resend`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            })
+          })
+          .catch(err => {
+            console.log("err", err.response || err)
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              })
+              throw err
+            }
+          })
+      },
+      save (domain) {
+        if (domain === "practice") {
+          this.formError = []
+          this.Validate(
+            this.practiceForm,
+            ["title", "suffix"],
+            [{ field: "address_line_3", display: "City / Town / District" }]
+          )
+          if (!this.formError.length) {
+            this.loading = true
+            this.$axios
+              .$put(`/api/v1/practice/me/account`, this.practiceForm)
+              .then(() => {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "success",
+                  text: ["Saved"]
+                })
+              })
+              .catch(err => {
+                console.log("err", err.response || err)
+                if (err.response.data.message) {
+                  this.$store.commit("SET_NOTIFICATION", {
+                    enabled: true,
+                    status: "danger",
+                    text: [`${err.response.data.message}`]
+                  })
+                }
+                if (err.response.data.error_messages) {
+                  err.response.data.error_messages.forEach(error => {
+                    this.formError.push(error)
+                  })
+                }
+              })
+              .finally(() => {
+                this.scrollToTop()
+                this.loading = false
+              })
+          } else {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-            throw err;
+              text: ["Please fill up all the forms"]
+            })
+            this.scrollToTop()
           }
-        });
-    },
-    save(domain) {
-      if (domain === "practice") {
-        this.formError = [];
-        this.Validate(
-          this.practiceForm,
-          ["title", "suffix"],
-          [{ field: "address_line_3", display: "City / Town / District" }]
-        );
-        if (!this.formError.length) {
-          this.loading = true;
-          this.$axios
-            .$put(`/api/v1/practice/me/account`, this.practiceForm)
-            .then(res => {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: ["Saved"]
-              });
-            })
-            .catch(err => {
-              console.log("err", err.response || err);
-              if (err.response.data.message) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                });
-              }
-              if (err.response.data.error_messages) {
-                err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error);
-                });
-              }
-            })
-            .finally(() => {
-              this.scrollToTop();
-              this.loading = false;
-            });
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
-          });
-          this.scrollToTop();
         }
-      }
 
-      if (domain === "locum") {
-        this.formError = [];
-        this.Validate(this.locumForm, [
-          "title",
-          "suffix",
-          "home_number",
-          "work_number",
-          "address_line_2"
-        ]);
-        if (!this.formError.length) {
-          this.loading = true;
-          this.$axios
-            .$put(`/api/v1/locum/me/account`, this.locumForm)
-            .then(res => {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: ["Saved"]
-              });
-              this.CheckUserVerification();
-            })
-            .catch(err => {
-              console.log("err", err.response || err);
-              if (err.response.data.message) {
+        if (domain === "locum") {
+          this.formError = []
+          this.Validate(this.locumForm, [
+            "title",
+            "suffix",
+            "home_number",
+            "work_number",
+            "address_line_2"
+          ])
+          if (!this.formError.length) {
+            this.loading = true
+            this.$axios
+              .$put(`/api/v1/locum/me/account`, this.locumForm)
+              .then(() => {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                });
-              }
-              if (err.response.data.error_messages) {
-                err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error);
-                });
-              }
+                  status: "success",
+                  text: ["Saved"]
+                })
+                this.CheckUserVerification()
+              })
+              .catch(err => {
+                console.log("err", err.response || err)
+                if (err.response.data.message) {
+                  this.$store.commit("SET_NOTIFICATION", {
+                    enabled: true,
+                    status: "danger",
+                    text: [`${err.response.data.message}`]
+                  })
+                }
+                if (err.response.data.error_messages) {
+                  err.response.data.error_messages.forEach(error => {
+                    this.formError.push(error)
+                  })
+                }
+              })
+              .finally(() => {
+                this.scrollToTop()
+                this.loading = false
+              })
+          } else {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: ["Please fill up all the forms"]
             })
-            .finally(() => {
-              this.scrollToTop();
-              this.loading = false;
-            });
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
-          });
-          this.scrollToTop();
+            this.scrollToTop()
+          }
         }
-      }
+      },
+      // async processPracticePermission () {
+        
+      //   await this.practiceRole.permissions.forEach((permission) => {
+      //     let category = {
+      //       name: '',
+      //       permissions: []
+      //     }
+      //     if(permission.name){}
+            
+      //   })
+      // },
     },
-    async processPracticePermission() {
-      
-      await this.practiceRole.permissions.forEach((permission) => {
-        let category = {
-          name: '',
-          permissions: []
-        }
-        if(permission.name){}
-          
-      })
-    }
   }
-};
 </script>
