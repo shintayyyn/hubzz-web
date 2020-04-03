@@ -551,42 +551,33 @@
           const hasMinutes = finalHoursInMinutesMinutes > 0
             ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
             : ''
-          const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName} `
-            + `from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} / `
-            + `Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+          const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+            + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+            + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
 
           return description
         }
 
         if (this.propInvoice && !this.propJobPart) {
-          let hour =
-            parseInt(this.form.hours) === 0 || this.form.hours === ""
-              ? ""
-              : parseInt(this.form.hours) > 1
-                ? "hours"
-                : "hour"
+          const jobPartNumber = this.propInvoice.items[0].job_part.job_part_number
+          const jobType = this.propInvoice.items[0].job_part.job.type
+          const jobRate = this.propInvoice.items[0].job_part.job.rate
+          const jobRateTypeName = this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+          const formattedDateStart = this.$moment(this.propInvoice.date_start).format('DD/MM/YYYY')
+          const formattedDateEnd = this.$moment(this.propInvoice.date_end).format('DD/MM/YYYY')
+          const shiftName = this.propInvoice.items[0].job_part.job.shift.name
+          const finalHoursInMinutesHours = parseInt(this.form.hours)
+          const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
+          const finalHoursInMinutesMinutes = parseInt(this.form.minutes)
+          const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
+          const hasMinutes = finalHoursInMinutesMinutes > 0
+            ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
+            : ''
+          const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+            + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+            + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
 
-          let minute =
-            parseInt(this.form.minutes) === 0 || this.form.minutes === ""
-              ? ""
-              : this.form.minutes > 1
-                ? "minutes"
-                : "minute"
-
-          let hasAnd = hour > 0 ? true : false
-
-          return `Job number ${
-            this.propInvoice.items[0].job_part.job_part_number
-            } ${this.propInvoice.items[0].job_part.job.type}
-          Job at £${this.propInvoice.items[0].job_part.job.rate} ${
-            this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
-            }
-          from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
-          / ${this.propInvoice.items[0].job_part.job.shift.name} / Total of ${
-            this.form.hours > 0 ? this.form.hours : ""
-            } ${hour} ${hasAnd ? "and" : ""} ${
-            this.form.minutes > 0 ? this.form.minutes : ""
-            } ${minute}`
+          return description
         }
         
         return ''
@@ -655,9 +646,9 @@
         const hasMinutes = finalHoursInMinutesMinutes > 0
           ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
           : ''
-        const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName} `
-          + `from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} / `
-          + `Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+        const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+          + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+          + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
 
         this.form.items = [
           {
