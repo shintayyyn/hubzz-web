@@ -12,7 +12,7 @@
         <strong>compliance</strong> requirements to be eligible to apply for this job
       </div>
       <nuxt-link :to="{ path: '/compliance' }"
-                 class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
+        class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
       >
         Go to Compliance
       </nuxt-link>
@@ -83,7 +83,7 @@
               status: "success",
               text: [`${res.message}`]
             })
-            this.$emit("applied", this.job.id)
+            this.$emit("applied", this.job.id) // FILTERS THE JOBS DATATABLE
           })
           .catch(err => {
             console.log("err", err.response || err)

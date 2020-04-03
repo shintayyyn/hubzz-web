@@ -269,7 +269,6 @@ export default {
 					complianceDoc => complianceDoc.compliance_document.name == "CV"
 				);
 				if (found) {
-					console.log("locum can apply");
 					this.canApply = true;
 				}
 			});
@@ -290,7 +289,6 @@ export default {
 				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
 				.then(res => {
 					permanent_job = res.data.permanent_job;
-					console.log("permanent job", permanent_job);
 				});
 
 			await this.$axios
@@ -305,7 +303,6 @@ export default {
 
 			this.permanent_job_application = permanent_job_application;
 
-			console.log("permanent  job app", this.permanent_job_application);
 			if (this.permanent_job_application) {
 				permanent_job.status = this.permanent_job_application.application_status;
 				this.permanent_job = permanent_job;
@@ -382,7 +379,6 @@ export default {
 				});
 				return;
 			}
-			console.log(file);
 			this.job_application.file = file;
 			this.uploadedFile = file.name;
 		},
@@ -436,7 +432,6 @@ export default {
 					`/api/v1/locum/permanent-job-applications/${this.permanent_job_application.id}/delete-application`
 				)
 				.then(res => {
-					console.log("res", res);
 					this.$router.push("/permanent-jobs");
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
@@ -469,8 +464,6 @@ export default {
 
 		jobClosingTag(item) {
 			let closingTag = "";
-			console.log("item", item.hired_through);
-
 			if (
 				this.permanent_job_application &&
 				this.permanent_job_application.application_status === "Rejected"
