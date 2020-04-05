@@ -166,7 +166,7 @@
         } catch (err) {
           console.log('err', err.response || err)
 
-          let message
+          let message = null
 
           if (err.response) {
             if (err.response.status === 400 || err.response.data.error_messages) {

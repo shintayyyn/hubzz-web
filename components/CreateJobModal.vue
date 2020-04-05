@@ -1351,7 +1351,9 @@
         }
 
         this.validateNumber(this.form.rate, "rate")
+
         this.Validate(this.form, notRequired)
+
         if (!this.formError.length) {
           this.form.profession_id = this.form.role
           this.form.shift_id = this.form.shift
@@ -1426,11 +1428,14 @@
           if (["false", false].includes(this.unpaid_breaks)) {
             this.form.unpaid_breaks_in_minutes = ""
           }
+
           this.form.ir35 =
             this.selectedProfession.profession_category.id === 1
               ? this.form.ir35
               : false
+
           this.loading = true
+
           this.$axios
             .$post(`/api/v1/practice/jobs`, this.form)
             .then(res => {
@@ -1449,47 +1454,42 @@
             })
             .catch(err => {
               console.log("err", err.response || err)
+
               this.$refs.modalContainer.scrollTop = 0
+
               this.form.clinical_system = this.selectedClinicalSystem
+
               this.form.specialty = this.selectedQualification
+
               this.form.spoken_language_id = this.selectedSpokenLanguage
 
               this.form.session_requirements = this.form.session_requirements
                 ? this.form.session_requirements.split(",")
                 : []
-              if (err.response.status === 500) {
-                this.formError.push({
-                  field: err.response.statusText,
-                  message: "Please check your inputs"
-                })
-                return
-              } else if (err.response.status === 401) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                })
-                return
-              } else if (
-                err.response &&
-                err.response.status === 400 &&
-                !err.response.data.error_messages
-              ) {
-                this.formError.push({
-                  field: "date_start",
-                  message: err.response.data.message
-                })
-                this.formError.push({
-                  field: "date_end",
-                  message: err.response.data.message
-                })
-                return
+
+              let message = null
+
+              if (err.response) {
+                if (err.response.status === 400 || err.response.data.error_messages) {
+                  this.formError = err.response.data.error_messages
+                } else {
+                  message = err.response.data.message
+                }
+              } else if (err.request) {
+                message = 'Something weng wrong!'
               } else {
-                this.formError = err.response.data.error_messages
+                message = err.message
               }
-              throw err
-            })
-            .finally(() => {
+
+              if (message) {
+                this.$store.commit('SET_NOTIFICATION', {
+                  enabled: true,
+                  status: 'danger',
+                  text: [`${message}`],
+                })
+              }
+
+            }).finally(() => {
               this.loading = false
             })
         } else {
