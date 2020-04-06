@@ -5,7 +5,7 @@
         v-model="form.email"
         :type="'text'"
         :name="'email'"
-        :label="'Email address'"
+        :label="'Email address or Username'"
         :placeholder="''"
         :error="formError.find(item => item.field === 'email')" @submit="login"
       />
