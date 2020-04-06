@@ -748,9 +748,9 @@
       },
 
       complianceListLabel () {
-        return this.selectedProfession
-          ? `For ${this.selectedProfession.profession_compliance_category_name}:`
-          : null
+        return this.selectedProfessionComplianceCategory
+          ? `For ${this.selectedProfessionComplianceCategory.name}:`
+          : ''
       },
 
       google: gmapApi,
