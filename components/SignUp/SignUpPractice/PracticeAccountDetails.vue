@@ -248,7 +248,7 @@
     <div class="flex justify-center mt-4">
       <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeSurgeryDetails')" />
       <div class="mx-2" />
-      <AppButton :label="'Next'" @click="signUp" />
+      <AppButton :label="'Sign Up'" @click="signUp" />
     </div>
 
     <div v-if="modal" class="shield" @click="modal=false" />
@@ -411,11 +411,7 @@
         }
         this.Validate(this.form, notRequired)
         if (!this.formError.length) {
-          let submitForm = {}
-          submitForm = {
-            ...this.form
-          }
-          this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm)
+          this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", this.form)
           setTimeout(() => {
             this.$store.dispatch("sign-up/registeredPractice")
           }, 1000)
