@@ -457,7 +457,7 @@
             </template>
           </template>
 
-          <template v-if="parseInt(selectedProfessionCategoryId) === 1">
+          <template v-if="selectedProfession && selectedProfession.profession_category.id === 1">
             <AppInput
               v-model="form.ir35"
               :type="'select'"
@@ -487,7 +487,10 @@
             :error="formError.find(item => item.field === 'qualification_id')"
             :info="'Choose at least one qualification'"
             :url="'/api/v1/qualifications'"
-            :professionCategoryId="selectedProfessionCategoryId"
+            :professionCategoryId="selectedProfession && selectedProfession.profession_category
+              ? selectedProfession.profession_category.id.toString()
+              : null
+            "
             :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
             :disabled="job.status === 'Allocated'"
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
@@ -656,13 +659,6 @@
 
         practiceProfessionComplianceCategoryComplianceDocuments: [],
 
-        oldSelectedProfessionId: null,
-        oldSelectedProfessionCategoryId: null,
-        oldSelectedComplianceDocumentIds: [],
-
-        selectedProfession: {
-          profession_category: {}
-        },
         unpaid_breaks: false,
         auto_assign_job: false,
         selection_notification: false,
@@ -752,7 +748,9 @@
       },
 
       complianceListLabel () {
-        return `For ${this.selectedProfession.profession_compliance_category_name}:`
+        return this.selectedProfession
+          ? `For ${this.selectedProfession.profession_compliance_category_name}:`
+          : null
       },
 
       google: gmapApi,
@@ -761,12 +759,19 @@
         return this.job.platform_job.practice.surgery.address.coordinates
       },
 
-      selectedProfessionCategoryId () {
-        return this.selectedProfession &&
-          this.selectedProfession.profession_category &&
-          this.selectedProfession.profession_category.id
-          ? this.selectedProfession.profession_category.id.toString()
-          : null
+      selectedProfession () {
+        if (!this.form.role) {
+          return null
+        }
+
+        const profession = this.professions_categories
+          .find(profession => profession.id.toString() === this.form.role.toString())
+        
+        if (!profession) {
+          return null
+        }
+
+        return profession
       },
 
       selectedProfessionComplianceCategory () {
@@ -824,20 +829,8 @@
     },
 
     watch: {
-      selectedProfessionComplianceCategory (newValue, oldValue) {
-        if (!oldValue) {
-          return
-        }
-
+      selectedProfessionComplianceCategory () {
         if (this.selectedProfessionComplianceCategory) {
-          // if (
-          //   this.form.profession_id.toString() === this.oldSelectedProfessionId.toString()
-          //   && this.selectedProfessionComplianceCategory.id === this.oldSelectedProfessionCategoryId
-          // ) {
-          //   this.form.compliance_document_id = this.oldSelectedComplianceDocumentIds
-          //   return
-          // }
-          
           const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
             .filter(practiceProfessionComplianceCategoryComplianceDocument =>
               practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
@@ -856,11 +849,6 @@
       },
 
       "form.profession_id" (newValue, oldValue) {
-        if (newValue && this.professions_categories.length > 0) {
-          this.selectedProfession = this.professions_categories.find(
-            item => item.id == newValue
-          )
-        }
         if (newValue && oldValue) {
           this.form.qualification_id = []
         }
@@ -970,10 +958,10 @@
         }))
 
         if (this.job) {
-          this.selectedProfession = this.professions_categories
+          const selectedProfession = this.professions_categories
             .find(profession => profession.id === this.job.platform_job.profession.id)
 
-          const selectedProfessionCategoryId = this.selectedProfession.profession_category.id
+          const selectedProfessionCategoryId = selectedProfession.profession_category.id
 
           this.$axios.get(`/api/v1/practice/locums/count`, {
             params: {
@@ -1022,22 +1010,18 @@
 
           this.form.profession_id = this.job.platform_job.profession.id
 
-          this.oldSelectedProfessionId = this.job.platform_job.profession.id
-
-          this.oldSelectedProfessionCategoryId = selectedProfessionCategoryId
-
           const complianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
             .filter(practiceProfessionComplianceCategoryComplianceDocument =>
               practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-                === this.oldSelectedProfessionCategoryId
+                === selectedProfessionCategoryId
             )
             .map(({ compliance_document_id: complianceDocumentId }) => complianceDocumentId)
 
-          this.oldSelectedComplianceDocumentIds = this.job.platform_job.compliance_documents
-            .map(complianceDocument => complianceDocument.id)
-            .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
-
-          this.form.compliance_document_id = this.oldSelectedComplianceDocumentIds
+          this.$nextTick(() => {
+            this.form.compliance_document_id = this.job.platform_job.compliance_documents
+              .map(complianceDocument => complianceDocument.id)
+              .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
+          })
 
           this.form.date_start = this.job.date_start
           this.form.date_end = this.job.date_end
@@ -1426,10 +1410,9 @@
             this.form.unpaid_breaks_in_minutes = ""
           }
 
-          this.form.ir35 =
-            this.selectedProfession.profession_category.id === 1
-              ? this.form.ir35
-              : false
+          this.form.ir35 = this.selectedProfession && this.selectedProfession.profession_category.id === 1
+            ? this.form.ir35
+            : false
 
           this.loading = true
 
