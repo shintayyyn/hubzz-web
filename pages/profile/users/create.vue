@@ -40,6 +40,15 @@
         />
         <AppInput v-model="form.suffix" :type="'text'" :name="'suffix'" :label="'Suffix'" />
         <AppInput
+          v-model="form.username"
+          :type="'text'"
+          :name="'username'"
+          :label="'Username'"
+          :error="formError.find(item => item.field === 'username')"
+          required
+          @blur="CheckEmptyField(form.first_name, 'username')"
+        />
+        <AppInput
           v-model="form.email"
           :type="'email'"
           :name="'email'"
@@ -128,6 +137,7 @@ export default {
         first_name: "",
         last_name: "",
         suffix: "",
+        username: "",
         email: "",
         practice_role: "",
         practice_user_role_id: "",

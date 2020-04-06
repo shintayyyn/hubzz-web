@@ -7,6 +7,16 @@
       <div class="flex flex-wrap ">
         <div class="w-full">
           <AppInput
+            v-model="practiceForm.username"
+            :type="'text'"
+            :name="'username'"
+            :label="'Username'"
+            :error="formError.find(item => item.field === 'username')"
+            required
+            @submit="save"
+            @blur="CheckEmptyField(practiceForm.username, 'username')"
+          />
+          <AppInput
             v-model="practiceForm.email"
             :type="'email'"
             :name="'email'"
@@ -248,16 +258,20 @@
   import AppLoading from "@/components/Base/AppLoading"
   import AppFormError from "@/components/Base/AppFormError"
   import AppPostCode from "@/components/Base/AppPostCode"
+
   const roles = [
     { value: "Practice Staff", label: "Practice Staff" },
     { value: "Practice Manager", label: "Practice Manager" },
     { value: "Partner", label: "Partner" }
   ]
+
   export default {
+
     transition: {
       name: "fade",
       mode: "out-in"
     },
+
     components: {
       AppInput,
       AppDate,
@@ -266,6 +280,7 @@
       AppFormError,
       AppPostCode
     },
+
     data () {
       return {
         loading: false,
@@ -274,6 +289,7 @@
         roles,
 
         practiceForm: {
+          username: "",
           email: "",
           title: "",
           first_name: "",
@@ -300,11 +316,15 @@
         }
       }
     },  
+
     computed: {
+
       authPermissions () {
         return this.$store.getters["permissions"]
       },
+
     },
+
     async asyncData ({ app }) {
       try {
         const response = await app.$axios.$get("/api/v1/me")
@@ -320,6 +340,7 @@
         let email_verifiedAt = ""
 
         if (user.domain === "Practice") {
+          practiceForm.username = user.username
           practiceForm.email = user.email
           practiceForm.title = user.personal_detail.title
           practiceForm.first_name = user.personal_detail.first_name
@@ -335,6 +356,7 @@
             practiceRole,
           }
         }
+
         if (user.domain === "Locum") {
           locumForm.email = user.email
           locumForm.title = user.personal_detail.title
@@ -362,11 +384,13 @@
         throw err
       }
     },
+
     created () {
       console.log('authpermissions', this.authPermissions)
       console.log('')
 
     },
+
     mounted () {
       this.$socket.on(
         "User Notification Email Pending",
@@ -377,14 +401,17 @@
         this.getEmailVerificationRealTime
       )
     },
+
     destroyed () {
       this.removeListener()
     },
+
     methods: {
       async getEmailVerificationRealTime () {
         await this.$auth.fetchUser()
         this.email_verifiedAt = this.$auth.user.email_verified_at
       },
+
       removeListener () {
         this.$socket.removeListener(
           "User Notification Email Pending",
@@ -395,6 +422,7 @@
           this.getEmailVerificationRealTime
         )
       },
+
       resendEmailVerification () {
         this.$axios
           .$post(`/api/v1/email-verification/resend`)
@@ -417,6 +445,7 @@
             }
           })
       },
+
       save (domain) {
         if (domain === "practice") {
           this.formError = []
@@ -527,5 +556,6 @@
       //   })
       // },
     },
+    
   }
 </script>

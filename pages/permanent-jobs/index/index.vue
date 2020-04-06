@@ -574,10 +574,10 @@ export default {
   },
   
   created () {
-    console.log("states")
-    console.log("locum permanent job", this.locum_permanent_job_count, this.locum_permanent_jobs)
-    console.log("practice permanent jobs", this.practice_permanent_job_count, this.practice_permanent_jobs)
-    console.log("permanent job applications", this.permanent)
+    // console.log("states")
+    // console.log("locum permanent job", this.locum_permanent_job_count, this.locum_permanent_jobs)
+    // console.log("practice permanent jobs", this.practice_permanent_job_count, this.practice_permanent_jobs)
+    // console.log("permanent job applications", this.permanent)
     if(this.$auth.user.domain === "Locum") {
       this.locumColumns = [
         ...this.defaultColumns,

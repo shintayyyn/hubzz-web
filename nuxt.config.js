@@ -96,6 +96,10 @@ export default {
       src: '@/plugins/broadcast-channel.js',
       mode: 'client',
     },
+    {
+      src: '@/plugins/validator.js',
+      mode: 'client',
+    },
   ],
 
   modules: [

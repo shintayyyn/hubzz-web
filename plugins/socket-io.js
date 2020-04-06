@@ -54,6 +54,7 @@ export default (ctx, inject) => {
   ctx.store.dispatch('socket/init')
   ctx.store.dispatch('jobs/initializeJobListener')
   ctx.store.dispatch('billing/initializeBillingListener')
+  ctx.store.dispatch('permanentjobs/initializePermanentJobListener')
   ctx.store.dispatch('chat/initializeChatListener')
   ctx.store.dispatch('chat/initializeUsersOnline')
   // ctx.store.dispatch('compliance/initializeComplianceListener')
