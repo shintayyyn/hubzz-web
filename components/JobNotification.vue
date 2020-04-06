@@ -1,7 +1,7 @@
 <template>
   <transition name="slide">
     <div
-      v-if="jobNotifications.length > 0 || billingNotifications.length > 0"
+      v-if="jobNotifications.length > 0 || billingNotifications.length > 0 || permanentJobNotifications.length > 0"
       class="job-notification"
     >
       <div
