@@ -26,6 +26,7 @@ export default {
         status: notif.permanent_job_application.application_status,
         permanent_job_status: notif.permanent_job.status,
         permanent_job_app_id: notif.permanent_job_application.id,
+        notification_type: notif.notificationType,
         type: 'Permanent Jobs',
         message: `${message}. ${notif.locum_status === 'Pending'? 'This Permanent Job is no longer available.' : ''}`
       }
@@ -58,6 +59,7 @@ export default {
         status: notif.permanent_job.job_posting_status,
         application_status: notif.permanent_job_application.application_status,
         permanent_job_app_id: notif.permanent_job_application.id,
+        notification_type: notif.notificationType,
         type: 'Permanent Jobs',
         message,
       }

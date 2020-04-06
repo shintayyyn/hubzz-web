@@ -15,11 +15,11 @@
             required
           />
           <div
-            v-for="item in reference_locum_compliance_documents_list"
+            v-for="(item, index) in form.reference_locum_compliance_documents"
             :key="item.compliance_document_id"
           >
             <AppInput
-              v-model="form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()]"
+              v-model="form.reference_locum_compliance_documents[index].reference"
               :type="'text'"
               :name="item.compliance_document_name.replace(/ /g, '_').toLowerCase()"
               :label="item.compliance_document_name"
@@ -27,7 +27,7 @@
               :info="'For compliance; to be verified by the hubzz team'"
 							:limit="parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7"
               required
-              @blur="CheckEmptyField(form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()], item.compliance_document_name.replace(/ /g, '_').toLowerCase()), checkValidation(item.compliance_document_name, parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7)"
+              @blur="CheckEmptyField(form.reference_locum_compliance_documents[index].reference, item.compliance_document_name.replace(/ /g, '_').toLowerCase()), checkValidation(item.compliance_document_name, parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7)"
               @keydown="[1, 10, '1','10'].includes(form.profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
             />
           </div>
@@ -726,9 +726,26 @@ export default {
 				item =>item.value === parseInt(this.user.profession.id));
     this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
 
+    // this.reference_locum_compliance_documents_list.forEach(item => {
+    //   this.form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()] = this.user.reference_locum_compliance_documents.find(ref => ref.compliance_document_id === item.compliance_document_id).reference
+    // })
+
+
     this.reference_locum_compliance_documents_list.forEach(item => {
-      this.form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()] = this.user.reference_locum_compliance_documents.find(ref => ref.compliance_document_id === item.compliance_document_id).reference
-    })
+			let foundCompliance = this.user.reference_locum_compliance_documents.find(
+				compliance =>
+					compliance.compliance_document_id === item.compliance_document_id
+			)
+			let fieldName = item.compliance_document_name
+				.replace(/ /g, "_")
+				.toLowerCase()
+			this.form.reference_locum_compliance_documents.push({
+				compliance_document_id: item.compliance_document_id,
+				compliance_document_name: item.compliance_document_name,
+				reference: foundCompliance ? foundCompliance.reference : ""
+			})
+		})
+    console.log(this.form.reference_locum_compliance_documents)
 
     this.form.referee_1_contact_name = this.user.referee_1_contact_name;
     this.form.referee_1_phone_number = this.user.referee_1_phone_number;
@@ -782,8 +799,8 @@ export default {
     checkValidation(name, limit) {
       let fieldName = name.replace(/ /g, "_").toLowerCase();
 			let field = this.form.reference_locum_compliance_documents.find(
-				item => item.name === name
-			);
+				item => item.compliance_document_name === name
+      );
 			if (field.reference.length < limit) {
 				this.formError.push({
 					field: fieldName,

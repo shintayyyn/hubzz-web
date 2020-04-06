@@ -39,13 +39,15 @@ export default {
 		isJobPart() {
 			if (
 				(this.propJob && this.propJob.job) ||
-				this.propJob.job.type === "Private"
+				(this.propJob.job && this.propJob.job.type === "Private")
 			) {
 				return true;
 			}
 			return (
 				this.propJob.locum_status &&
-				["ongoing"].includes(this.propJob.locum_status.toLowerCase())
+				["ongoing", "allocated"].includes(
+					this.propJob.locum_status.toLowerCase()
+				)
 			);
 		},
 		link() {
