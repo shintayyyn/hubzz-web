@@ -56,9 +56,9 @@
 
     <template v-if="!initialLoading">
       <div class="flex flex-row flex-wrap justify-start">
-        <div class="w-full lg:w-1/3 xl:max-w-sm">
+        <div class="w-full lg:w-1/3">
           <div
-            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
+            class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
           >
             <transition name="fade" mode="out-in">
               <AppLoading :loading="initialLoading" spinner />
@@ -71,9 +71,9 @@
             </div>
           </div>
         </div>
-        <div class="w-full lg:w-1/3 xl:max-w-sm">
+        <div class="w-full lg:w-1/3">
           <div
-            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+            class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
             @click="filterExpenseReport('week')"
           >
             <transition name="fade" mode="out-in">
@@ -87,9 +87,9 @@
             </div>
           </div>
         </div>
-        <div class="w-full lg:w-1/3 xl:max-w-sm">
+        <div class="w-full lg:w-1/3">
           <div
-            class="relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+            class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
             @click="filterExpenseReport('month')"
           >
             <transition name="fade" mode="out-in">

@@ -460,6 +460,7 @@ export default {
 					return "px-4 bg-red-700 text-white";
 				case "Closed":
 					return "px-4 bg-gray-700 text-white";
+				case "Unfilled":
 				case "Unsuccessful":
 					return "px-4 bg-gray-400";
 				default:

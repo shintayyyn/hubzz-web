@@ -2,13 +2,19 @@
   <section class="flex flex-col items-start w-full">
     <div class="w-full">
       <AppInput
+        v-if="($auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0) || ($auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0)"
         v-model="search"
         :type="'text'"
         :name="'search'"
         :placeholder="'Search Job by ID, Title, Practice Name, Profession Name or keywords'"
+        :disabled="loading"
       />
     </div>
-    <template v-if="$auth.user.domain === 'Practice'">
+    <transition name="fade" mode="out-in">
+    <div v-if="loading" class="relative flex w-full" style="min-height:80px">
+      <AppLoading :loading="loading" spinner />
+    </div>
+    <template v-if="$auth.user.domain === 'Practice' && !loading">
       <AppTable
         v-if="permanent_jobs_for_practice_count > 0"
         class="w-full"
@@ -31,16 +37,16 @@
           </template>
         </template>
 
-         <template v-slot:date_posted="slotProps">
+        <template v-slot:date_posted="slotProps">
           {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
         </template>
 
-         <template v-slot:date_closing="slotProps">
+        <template v-slot:date_closing="slotProps">
           {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
         </template>
 
         <template v-slot:status_slot="slotProps">
-          <div class="flex items-center justify-center">
+          <div v-if="slotProps.item.status" class="flex items-center justify-center">
             <div
               class="rounded-full px-6 py-1"
               :class="statusStyle(slotProps.item.status)"
@@ -71,7 +77,7 @@
       </p>
     </template>
 
-    <template v-if="$auth.user.domain === 'Locum'">
+    <template v-if="$auth.user.domain === 'Locum' && !loading">
       <AppTable
         v-if="permanent_jobs_for_locum_count > 0"
         class="w-full"
@@ -105,11 +111,11 @@
           </div>
         </template>
 
-         <template v-slot:date_posted="slotProps">
+        <template v-slot:date_posted="slotProps">
             {{ $moment(slotProps.item.date_posted).format("DD/MM/YYYY") }}
         </template>
 
-         <template v-slot:date_closing="slotProps">
+        <template v-slot:date_closing="slotProps">
             {{ $moment(slotProps.item.date_closing).format("DD/MM/YYYY") }}
         </template>
 
@@ -134,6 +140,7 @@
         No {{ $route.query.status ? $route.query.status : 'Available' }} Jobs Found.
       </p>
     </template>
+    </transition>
     <div
       v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
       class="shield"
@@ -147,9 +154,11 @@
 import debounce from "lodash.debounce"
 import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
+import AppLoading from "@/components/Base/AppLoading"
 export default {
 	components: {
-		// AppButton,
+    // AppButton,
+    AppLoading,
     AppTable,
     AppInput,
 	},
@@ -658,10 +667,11 @@ export default {
 					return "bg-red-700 text-white"
 				case "Closed":
 					return "bg-gray-700 text-white"
+				case "Unfilled":
 				case "Unsuccessful":
 					return "bg-gray-400"
 				default:
-					return "bg-yellow-400 text-black"
+					return;
 			}
 		},
     jobClosingTag (item) {
