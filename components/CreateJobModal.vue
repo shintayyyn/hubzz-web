@@ -53,7 +53,10 @@
                     :placeholder="'Select...'"
                     :info="'Choose at least one qualification'"
                     :url="'/api/v1/qualifications'"
-                    :profession-category-id="selectedProfession.profession_category.id.toString()"
+                    :professionCategoryId="selectedProfession && selectedProfession.profession_category
+                      ? selectedProfession.profession_category.id.toString()
+                      : null
+                    "
                     :error="formError.find(item => item.field === 'specialty')"
                   />
 
@@ -577,7 +580,7 @@
               </div>
             </div>
 
-            <template v-if="selectedProfession.profession_category.id === 1">
+            <template v-if="selectedProfession && selectedProfession.profession_category.id === 1">
               <AppInput
                 v-model="form.ir35"
                 :type="'select'"
@@ -664,9 +667,6 @@
         professionComplianceCategories: [],
         practiceProfessionComplianceCategoryComplianceDocuments: [],
 
-        selectedProfession: {
-          profession_category: {}
-        },
         unpaid_breaks: false,
         auto_assign_job: false,
         selection_notification: false,
@@ -744,6 +744,21 @@
 
       complianceListLabel () {
         return `For ${this.selectedProfession.profession_compliance_category_name}:`
+      },
+
+      selectedProfession () {
+        if (!this.form.role) {
+          return null
+        }
+
+        const profession = this.professions_categories
+          .find(profession => profession.id.toString() === this.form.role.toString())
+        
+        if (!profession) {
+          return null
+        }
+
+        return profession
       },
 
       selectedProfessionComplianceCategory () {
@@ -825,20 +840,18 @@
         if (newValue && oldValue) {
           this.form.specialty = []
         }
+      },
 
-        if (newValue) {
-          this.selectedProfession = this.professions_categories
-            .find(profession => profession.id == newValue)
-
-          let response = await this.$axios.$get(`/api/v1/practice/locums/count`, {
+      selectedProfession () {
+        if (this.selectedProfession) {
+          this.$axios.get('/api/v1/practice/locums/count', {
             params: {
               profession_category_id: this.selectedProfession.profession_category.id,
-              practice_locum_type: "Favorite",
+              practice_locum_type: 'Favorite',
             },
+          }).then((response) => {
+            this.banksCount = response.data.data.count
           })
-
-          this.banksCount =
-            response.data && response.data.count ? response.data.count : 0
         }
       },
 
@@ -960,6 +973,11 @@
         }))
 
         if (this.repostJob) {
+          const selectedProfession = this.professions_categories
+            .find(profession => profession.id === this.repostJob.platform_job.profession.id)
+
+          const selectedProfessionCategoryId = selectedProfession.profession_category.id
+
           this.form.practice_id = this.repostJob.platform_job.practice.id
           this.form.title = this.repostJob.title
           this.form.description = this.repostJob.description
@@ -1008,6 +1026,7 @@
               })
             }
           )
+
           this.repostJob.platform_job.spoken_languages.forEach(
             spokenLanguage => {
               this.form.spoken_language_id.push({
@@ -1016,9 +1035,19 @@
               })
             }
           )
-          this.form.compliance_document_id = this.repostJob.platform_job.compliance_documents.map(
-            item => item.id
-          )
+
+          const complianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
+            .filter(practiceProfessionComplianceCategoryComplianceDocument =>
+              practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+                === selectedProfessionCategoryId
+            )
+            .map(({ compliance_document_id: complianceDocumentId }) => complianceDocumentId)
+
+          this.$nextTick(() => {
+            this.form.compliance_document_id = this.repostJob.platform_job.compliance_documents
+              .map(complianceDocument => complianceDocument.id)
+              .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
+          })
 
           this.form.date_start = this.$moment().isBefore(
             this.repostJob.date_start
@@ -1359,10 +1388,9 @@
             this.form.unpaid_breaks_in_minutes = ""
           }
 
-          this.form.ir35 =
-            this.selectedProfession.profession_category.id === 1
-              ? this.form.ir35
-              : false
+          this.form.ir35 = this.selectedProfession && this.selectedProfession.profession_category.id === 1
+            ? this.form.ir35
+            : false
 
           this.loading = true
 
