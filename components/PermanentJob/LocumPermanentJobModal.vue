@@ -1,10 +1,7 @@
 <template>
-	<section class="modal-container">
+  <section class="modal-container">
 		<div class="relative p-4 md:p-8">
-			<nuxt-link :to="{
-          path: `/permanent-jobs`,
-          query:$route.query
-        }">
+			<nuxt-link :to="{ path: `/permanent-jobs`, query:$route.query}">
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
@@ -74,21 +71,21 @@
 									height="12"
 									class="fill-current mr-1"
 								/>
-								{{job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, "").length}}/2000
+								{{ job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length }}/2000
 							</p>
 						</div>
-					</div>
-					<div class="flex flex-col md:flex-row justify-between w-full">
-						<AppButton
-							class="my-1"
-							:label="'Send Application'"
-							:disabled="(!canApply || job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000) || (!job_application.job_application_pitch && !job_application.file)"
-							@click="apply()"
-						/>
-						<label
-							class="my-1 leading-loose cursor-pointer text-black flex items-center justify-center py-1 md:py-2 rounded-lg transition-hover border border-yellow-500 text-sm md:text-base"
-							:class="uploadedFile ? '' : 'hover:bg-yellow-500 px-4 '"
-						>
+						</div>
+						<div class="flex flex-col md:flex-row justify-between w-full">
+							<AppButton
+								class="my-1"
+								:label="'Send Application'"
+								:disabled="(!canApply || job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length > 2000) || (!job_application.job_application_pitch && !job_application.file)"
+								@click="apply()"
+							/>
+							<label
+								class="my-1 leading-loose cursor-pointer text-black flex items-center justify-center py-1 md:py-2 rounded-lg transition-hover border border-yellow-500 text-sm md:text-base"
+								:class="uploadedFile ? '' : 'hover:bg-yellow-500 px-4 '"
+							>
 							<input
 								id="coverEmail"
 								type="file"
@@ -96,19 +93,23 @@
 								class="inputfile hidden"
 								accept="image/jpeg, .pdf, .doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 								@input="uploadFile($event)"
-							/>
-							<svgicon name="cloud-upload" height="24" width="24" class="mr-2" />
-							{{ uploadedFile ? "Update File" : 'Upload File'}}
-						</label>
-					</div>
-					<div class="text-xs flex justify-between" v-if="uploadedFile">
-						<p>{{uploadedFile | StringMaxLength(25)}}</p>
-						<p
-							class="text-right cursor-pointer hover:underline"
-							@click="uploadedFile = '', job_application.file = ''"
-						>Remove File</p>
-					</div>
-				</div>
+							>
+								<svgicon name="cloud-upload" height="24" width="24" class="mr-2" />
+								{{ uploadedFile ? "Update File" : 'Upload File'}}
+							</label>
+						</div>
+						<div class="text-xs flex justify-between" v-if="uploadedFile">
+							<p>
+								{{ uploadedFile | StringMaxLength(25) }}
+							</p>
+							<p
+								class="text-right cursor-pointer hover:underline"
+								@click="uploadedFile = '', job_application.file = ''"
+							>
+								Remove File
+							</p>
+						</div>
+						</div>
 
 				<p v-if="!canApply" class="text-sm px-4 text-red-500">
 					CV is not uploaded yet. Upload
@@ -197,14 +198,14 @@
 	</section>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton";
-import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
+import AppButton from "@/components/Base/AppButton"
+import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap"
 export default {
 	components: {
 		AppButton,
 		PermanentJobMap
 	},
-	data() {
+	data () {
 		return {
 			toApply: false,
 			toShowLink: false,
@@ -253,112 +254,112 @@ export default {
 					]
 				}
 			}
-		};
+		}
 	},
-	async beforeMount() {
+	async beforeMount () {
 		// this.site = await window && window.location.origin ? window.location.origin :"https://locum.halcyondigitalhost.com/"
-		this.site = await window.location.origin;
+		this.site = await window.location.origin
 	},
-	async created() {
-		let complianceDocs = [];
+	async created () {
+		let complianceDocs = []
 		await this.$axios
 			.$get(`/api/v1/locum/locum-detail-compliance-documents`)
 			.then(res => {
-				complianceDocs = res.data.locum_detail_compliance_documents;
+				complianceDocs = res.data.locum_detail_compliance_documents
 				const found = complianceDocs.find(
 					complianceDoc => complianceDoc.compliance_document.name == "CV"
-				);
+				)
 				if (found) {
-					this.canApply = true;
+					this.canApply = true
 				}
-			});
+			})
 
-		await this.getJob();
+		await this.getJob()
 	},
 	methods: {
-		async getJob() {
-			let permanent_job = "";
-			let permanent_job_applications = "";
-			let permanent_job_application = "";
+		async getJob () {
+			let permanent_job = ""
+			let permanent_job_applications = ""
+			let permanent_job_application = ""
 
 			const params = {
 				locum_user_id: this.$auth.user.id,
 				permanent_job_id: this.$route.params.id
-			};
+			}
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
 				.then(res => {
-					permanent_job = res.data.permanent_job;
-				});
+					permanent_job = res.data.permanent_job
+				})
 
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-job-applications`, { params })
 				.then(res => {
-					permanent_job_applications = res.data.permanent_job_applications;
-				});
+					permanent_job_applications = res.data.permanent_job_applications
+				})
 
 			permanent_job_application = permanent_job_applications.find(
 				item => item.permanent_job_id === permanent_job.id
-			);
+			)
 
-			this.permanent_job_application = permanent_job_application;
+			this.permanent_job_application = permanent_job_application
 
 			if (this.permanent_job_application) {
-				permanent_job.status = this.permanent_job_application.application_status;
-				this.permanent_job = permanent_job;
+				permanent_job.status = this.permanent_job_application.application_status
+				this.permanent_job = permanent_job
 			} else if (permanent_job.job_posting_status === "Closed") {
-				permanent_job.status = "Closed";
-				this.permanent_job = permanent_job;
+				permanent_job.status = "Closed"
+				this.permanent_job = permanent_job
 			} else if (permanent_job.job_posting_status === "Unfilled") {
-				permanent_job.status = "Unfilled";
-				this.permanent_job = permanent_job;
+				permanent_job.status = "Unfilled"
+				this.permanent_job = permanent_job
 			} else if (permanent_job.job_posting_status === "Available") {
-				permanent_job.status = "Available";
-				this.permanent_job = permanent_job;
+				permanent_job.status = "Available"
+				this.permanent_job = permanent_job
 			}
 		},
 
-		copyToClipboard(text) {
+		copyToClipboard (text) {
 			// 1) Add the text to the DOM (usually achieved with a hidden input field)
-			const input = document.createElement("input");
-			input.setAttribute("id", "copiedText");
-			document.body.appendChild(input);
-			input.value = text;
+			const input = document.createElement("input")
+			input.setAttribute("id", "copiedText")
+			document.body.appendChild(input)
+			input.value = text
 
 			// 2) Select the text
-			input.focus();
-			input.select();
+			input.focus()
+			input.select()
 
 			// 3) Copy text to clipboard
-			const isSuccessful = document.execCommand("copy");
+			const isSuccessful = document.execCommand("copy")
 
 			// 4) Catch errors
 			if (!isSuccessful) {
-				console.error("Failed to copy text.");
+				console.error("Failed to copy text.")
 			} else {
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "success",
 					text: [`Copied to Clipboard`]
-				});
-				let copiedText = document.getElementById("copiedText");
-				copiedText.parentNode.removeChild(copiedText);
+				})
+				let copiedText = document.getElementById("copiedText")
+				copiedText.parentNode.removeChild(copiedText)
 			}
 		},
 
-		onEditorBlur(editor) {
-			console.log("editor blur!", editor);
+		onEditorBlur (editor) {
+			console.log("editor blur!", editor)
 		},
 
-		onEditorFocus(editor) {
-			console.log("editor focus!", editor);
+		onEditorFocus (editor) {
+			console.log("editor focus!", editor)
 		},
 
-		onEditorReady(editor) {
-			console.log("editor ready!", editor);
+		onEditorReady (editor) {
+			console.log("editor ready!", editor)
 		},
 
-		uploadFile(e) {
+		uploadFile (e) {
 			let types = [
 				"pdf",
 				"jpeg",
@@ -367,45 +368,45 @@ export default {
 				"vnd.openxmlformats-officedocument.wordprocessingml.template",
 				"vnd.ms-word.document.macroEnabled.12",
 				"vnd.ms-word.template.macroEnabled.12"
-			];
-			let file = e.target.files[0];
-			this.file;
-			let fileType = file.type.split("/")[1];
+			]
+			let file = e.target.files[0]
+			this.file
+			let fileType = file.type.split("/")[1]
 			if (!types.includes(fileType)) {
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "alert",
 					text: ["Invalid File Format"]
-				});
-				return;
+				})
+				return
 			}
-			this.job_application.file = file;
-			this.uploadedFile = file.name;
+			this.job_application.file = file
+			this.uploadedFile = file.name
 		},
 
-		async apply() {
+		async apply () {
 			if (this.canApply === false) {
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "danger",
 					text: ["Please Upload your CV first in Compliance Documents Page"]
-				});
+				})
 			} else {
-				this.job_application.locum_user_id = this.$auth.user.id;
+				this.job_application.locum_user_id = this.$auth.user.id
 				if (
 					this.job_application.job_application_pitch ||
 					this.job_application.file
 				) {
-					const formData = new FormData();
-					formData.append("locum_user_id", this.$auth.user.id);
+					const formData = new FormData()
+					formData.append("locum_user_id", this.$auth.user.id)
 					if (this.job_application.job_application_pitch) {
 						formData.append(
 							"job_application_pitch",
 							this.job_application.job_application_pitch
-						);
+						)
 					}
 					if (this.job_application.file) {
-						formData.append("file", this.job_application.file);
+						formData.append("file", this.job_application.file)
 					}
 					await this.$axios
 						.$put(
@@ -413,79 +414,79 @@ export default {
 							formData
 						)
 						.then(() => {
-							this.job.applied = true;
-							this.toApply = false;
+							this.job.applied = true
+							this.toApply = false
 							this.$store.commit("SET_NOTIFICATION", {
 								enabled: true,
 								status: "success",
 								text: ["You have successfully Applied to this job"]
-							});
-							this.getJob();
-						});
+							})
+							this.getJob()
+						})
 				}
 			}
 		},
 
-		async cancelApplication() {
+		async cancelApplication () {
 			await this.$axios
 				.$delete(
 					`/api/v1/locum/permanent-job-applications/${this.permanent_job_application.id}/delete-application`
 				)
 				.then(res => {
-					this.$router.push("/permanent-jobs");
+					this.$router.push("/permanent-jobs")
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
 						text: [res.message]
-					});
-				});
+					})
+				})
 		},
 
-		statusStyle(jobStatus) {
+		statusStyle (jobStatus) {
 			switch (jobStatus) {
 				case "Available":
-					return "px-4 bg-green-500 text-white";
+					return "px-4 bg-green-500 text-white"
 				case "Applied":
-					return "px-4 bg-yellow-600 text-white";
+					return "px-4 bg-yellow-600 text-white"
 				case "For Interview":
-					return "px-4 bg-green-600 text-white";
+					return "px-4 bg-green-600 text-white"
 				case "Accepted":
-					return "px-4 bg-green-700 text-white";
+					return "px-4 bg-green-700 text-white"
 				case "Rejected":
-					return "px-4 bg-red-700 text-white";
+					return "px-4 bg-red-700 text-white"
 				case "Closed":
-					return "px-4 bg-gray-700 text-white";
+					return "px-4 bg-gray-700 text-white"
 				case "Unsuccessful":
-					return "px-4 bg-gray-400";
+					return "px-4 bg-gray-400"
 				default:
-					return;
+					return
 			}
 		},
 
-		jobClosingTag(item) {
-			let closingTag = "";
+		jobClosingTag (item) {
+			let closingTag = ""
 			if (
 				this.permanent_job_application &&
 				this.permanent_job_application.application_status === "Rejected"
 			) {
-				closingTag = "Rejected";
+				closingTag = "Rejected"
 			} else {
-				closingTag = item.hired_through;
+				closingTag = item.hired_through
 			}
 
 			switch (closingTag) {
 				case "Direct Hiring":
-					return "Hired Directly";
+					return "Hired Directly"
 				case "Through HUBZZ":
-					return "Hired Through Hubzz";
+					return "Hired Through Hubzz"
 				case "Unfilled":
-					return "Unfilled";
+					return "Unfilled"
 				default:
-					return "Closed By Practice";
+					return "Closed By Practice"
 			}
 		}
 	}
-};
+}
 </script>
 
 <style scoped>
