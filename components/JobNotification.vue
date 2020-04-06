@@ -203,6 +203,7 @@ export default {
       // path url
       let url = ""
       if (type === "Jobs") {
+        console.log('notificaiton', notification)
         url = this.$route.name.includes("dashboard")
           ? this.$route.path
           : !this.$route.name.includes("dashboard") &&
@@ -344,16 +345,26 @@ export default {
             query: { ...this.$route.query, status: routeStatus }
           })
         }
+
         setTimeout(() => {
           this.$router.push({
             path: `${url}/${id}/edit`,
             query: { ...this.$route.query, status: routeStatus }
           })
         }, 500)
+      } else if (type === "Permanent Jobs") {
+        this.$router.push({
+          path: `${url}/${id}`,
+          query: { ...this.$route.query }
+        })
       }
+
       this.close(id, type, notification.notification_type)
     },
     close (id, type, notificationType) {
+      console.log('id', id)
+      console.log('type', type)
+      console.log('notification type', notificationType)
       if (type === "Jobs") {
         if (
           [
@@ -486,8 +497,8 @@ export default {
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
       this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
       this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION")
-      this.$store.commit("permanentjobs/CLEAR_PRACTICE_PERMANENT_JOB_NOTIFICATIONS")
-      this.$store.commit("permanentjobs/CLEAR_LOCUM_PERMANENT_JOB_NOTIFICATIONS") 
+      this.$store.commit("permanentjobs/CLEAR_PRACTICE_PERMANENT_JOB_NOTIFICATION")
+      this.$store.commit("permanentjobs/CLEAR_LOCUM_PERMANENT_JOB_NOTIFICATION") 
     }
   }
 }
