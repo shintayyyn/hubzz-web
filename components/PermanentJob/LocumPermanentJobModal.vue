@@ -1,10 +1,7 @@
 <template>
 	<section class="modal-container">
 		<div class="relative p-4 md:p-8">
-			<nuxt-link :to="{
-          path: `/permanent-jobs`,
-          query:$route.query
-        }">
+			<nuxt-link :to="{ path: `/permanent-jobs`, query:$route.query}">
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
@@ -74,7 +71,7 @@
 									height="12"
 									class="fill-current mr-1"
 								/>
-								{{job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, "").length}}/2000
+								{{ job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length }}/2000
 							</p>
 						</div>
 					</div>
@@ -102,7 +99,7 @@
 						</label>
 					</div>
 					<div class="text-xs flex justify-between" v-if="uploadedFile">
-						<p>{{uploadedFile | StringMaxLength(25)}}</p>
+						<p>{{ uploadedFile | StringMaxLength(25) }}</p>
 						<p
 							class="text-right cursor-pointer hover:underline"
 							@click="uploadedFile = '', job_application.file = ''"
@@ -455,7 +452,6 @@ export default {
 					return "px-4 bg-red-700 text-white";
 				case "Closed":
 					return "px-4 bg-gray-700 text-white";
-				case "Unfilled":
 				case "Unsuccessful":
 					return "px-4 bg-gray-400";
 				default:

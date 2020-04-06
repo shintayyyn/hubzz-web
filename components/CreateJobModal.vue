@@ -659,11 +659,6 @@
         session_requirements_lists,
         mandatory_training_lists: [],
 
-        // gp_compliance_documents_lists: [],
-        // nurse_compliance_documents_lists: [],
-        // paramedics_compliance_documents_lists: [],
-        // pharmacists_compliance_documents_lists: [],
-
         professions_categories: [],
 
         professionComplianceCategories: [],
@@ -844,26 +839,6 @@
 
           this.banksCount =
             response.data && response.data.count ? response.data.count : 0
-
-          // if (this.selectedProfession.profession_compliance_category.id === 1) {
-          //   this.compliances = this.gp_compliance_documents_lists
-          //   return
-          // }
-
-          // if (this.selectedProfession.profession_compliance_category.id === 2) {
-          //   this.compliances = this.nurse_compliance_documents_lists
-          //   return
-          // }
-
-          // if (this.selectedProfession.profession_compliance_category.id === 3) {
-          //   this.compliances = this.paramedics_compliance_documents_lists
-          //   return
-          // }
-
-          // if (this.selectedProfession.profession_compliance_category.id === 4) {
-          //   this.compliances = this.pharmacists_compliance_documents_lists
-          //   return
-          // }
         }
       },
 
@@ -940,8 +915,6 @@
           }))),
         this.$axios.get('/api/v1/professions')
           .then((response) => response.data.data.professions),
-        // this.$axios.get('/api/v1/profession-categories')
-        //   .then((response) => response.data.data.profession_categories),
         this.$axios.get('/api/v1/practice/me/practice-profile')
           .then((response) => response.data.data.practice),
         this.$axios.get('/api/v1/profession-compliance-categories')
@@ -954,7 +927,6 @@
           rateLists,
           shiftLists,
           professions,
-          // professionCategories,
           profileProfile,
           professionComplianceCategories,
         ] = responses
@@ -974,6 +946,7 @@
           email,
           extra_information: extraInformation,
           practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
+          mandatory_trainings: mandatoryTrainings,
         } = profileProfile
 
         this.form.report_to = reportTo
@@ -981,53 +954,10 @@
         this.form.extra_information = extraInformation
         this.practiceProfessionComplianceCategoryComplianceDocuments = practiceProfessionComplianceCategoryComplianceDocuments
 
-        profileProfile.mandatory_trainings.forEach(item => {
-          this.mandatory_training_lists.push({
-            label: item.name,
-            value: item.id
-          })
-        })
-
-        // profileProfile.practice_profession_compliance_category_compliance_documents.forEach(
-        //   complianceCategoryDocument => {
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       1
-        //     ) {
-        //       this.gp_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       2
-        //     ) {
-        //       this.nurse_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       3
-        //     ) {
-        //       this.paramedics_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       4
-        //     ) {
-        //       this.pharmacists_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //   }
-        // )
+        this.mandatory_training_lists = mandatoryTrainings.map(mandatoryTraining => ({
+          label: mandatoryTraining.name,
+          value: mandatoryTraining.id
+        }))
 
         if (this.repostJob) {
           this.form.practice_id = this.repostJob.platform_job.practice.id
@@ -1175,9 +1105,9 @@
             this.bank_only = true
           }
         }
-        }).finally(() => {
-          this.loading = false
-        })
+      }).finally(() => {
+        this.loading = false
+      })
     },
 
     methods: {

@@ -20,11 +20,38 @@ export default {
 
   ADD_LOCUM_PERMANENT_JOB_NOTIFICATION (state, payload) {
     console.log('payload', payload)
-    // let index = state.locum_permanent_job_notifications.findIndex(permJobNotif => permJobNotif.id === payload.id)
-    // if (index < 0) {
-    //     state.locum_permanent_job_notifications.unshift(payload)
-    // } else if (index >= 0) {
-    //     state.locum_permanent_job_notifications.splice(index, 1, payload)
-    // }
-},
+    let index = state.locum_permanent_job_notifications.findIndex(permJobNotif => permJobNotif.id === payload.permanent_job.id)
+    if (index < 0) {
+        state.locum_permanent_job_notifications.unshift(payload)
+    } else if (index >= 0) {
+        state.locum_permanent_job_notifications.splice(index, 1, payload)
+    }
+  },
+
+  ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION (state, payload) {
+    console.log('payload', payload)
+    let index = state.practice_permanent_job_notifications.findIndex(permJobNotif => permJobNotif.id === payload.permanent_job.id)
+    if (index < 0) {
+        state.practice_permanent_job_notifications.unshift(payload)
+    } else if (index >= 0) {
+        state.practice_permanent_job_notifications.splice(index, 1, payload)
+    }
+  },
+
+  REMOVE_LOCUM_PERMANENT_JOB_NOTIFICATION (state, payload) {
+    state.locum_permanent_job_notifications = state.locum_permanent_job_notifications.filter(permJobNotif => permJobNotif.id !== payload)
+  },
+
+  REMOVE_PRACTICE_PERMANENT_JOB_NOTIFICATION (state, payload) {
+    state.practice_permanent_job_notifications = state.practice_permanent_job_notifications.filter(permJobNotif => permJobNotif.id !== payload)
+  },
+
+  CLEAR_LOCUM_PERMANENT_JOB_NOTIFICATION (state) {
+    state.locum_permanent_job_notifications = []
+  },
+
+  CLEAR_PRACTICE_PERMANENT_JOB_NOTIFICATION (state) {
+    state.practice_permanent_job_notifications = []
+  }
+
 }
