@@ -931,7 +931,7 @@
           .then((response) => {
             return response.data.data.profession_compliance_categories
           }),
-      ]).then(async (responses) => {
+      ]).then((responses) => {
         const [
           practiceLists,
           rateLists,
@@ -975,14 +975,14 @@
 
           const selectedProfessionCategoryId = this.selectedProfession.profession_category.id
 
-          const response = await this.$axios.get(`/api/v1/practice/locums/count`, {
+          this.$axios.get(`/api/v1/practice/locums/count`, {
             params: {
               profession_category_id: selectedProfessionCategoryId,
               practice_locum_type: "Favorite",
             }
+          }).then((response) => {
+            this.banksCount = response.data.data.count
           })
-
-          this.banksCount = response.data.data.count
 
           this.form.practice_id = this.job.platform_job.practice.id
           this.form.title = this.job.title
