@@ -76,13 +76,15 @@
 								>{{ this.unreadMessages }}</span>
 							</button>
 						</div>
-						<!-- <button
-							class="button rounded-lg p-2 focus:outline-none cursor-pointer"
-							@click="view_notif=!view_notif"
-						>
-							<svgicon name="bell" width="21" height="21"></svgicon>
-						</button>-->
-
+						<!-- <div :class="showAllNotif ? '' : 'sm:relative'">
+							<button
+								class="button rounded-lg p-2 focus:outline-none cursor-pointer"
+								@click="view_notif=!view_notif"
+							>
+								<svgicon name="bell" width="21" height="21"></svgicon>
+							</button>
+							<AppNotifDropdown v-if="view_notif" @showAll="showAllNotif=!showAllNotif" />
+						</div>-->
 						<!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
 							<AppButton
 								:label="'Expenses'"
@@ -101,9 +103,6 @@
 				</div>
 			</div>
 		</div>
-		<transition>
-			<AppNotifDropdown v-if="view_notif" />
-		</transition>
 		<transition name="shield" mode="out-in">
 			<div v-if="create_job_modal || expense_modal" class="shield" @click="close" />
 		</transition>
@@ -130,7 +129,8 @@ export default {
 		return {
 			notAllowed: false,
 			expense_modal: false,
-			view_notif: false
+			view_notif: false,
+			showAllNotif: false
 		};
 	},
 	computed: {
