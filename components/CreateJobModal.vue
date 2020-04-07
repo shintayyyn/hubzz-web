@@ -172,13 +172,13 @@
                     </div>
 
                     <AppInput
-                      v-if="compliances.length > 0"
                       v-model="form.compliance_document_id"
                       :type="'multi-checkbox'"
                       :error="formError.find(item => item.field === 'compliance_document_id')"
                       :name="'compliance_document_id'"
                       :label="`${complianceListLabel}`"
                       :lists="compliances"
+                      :info="'Check all that apply'"
                       @checked="form.compliance_document_id.push(parseInt($event))"
                       @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
                       @uncheckAll="form.compliance_document_id = []"
