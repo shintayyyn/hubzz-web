@@ -538,18 +538,22 @@
           </div>
 
           <AppInput
-            v-if="compliances.length > 0"
             v-model="form.compliance_document_id"
             :type="'multi-checkbox'"
             :error="formError.find(item => item.field === 'compliance_document_id')"
             :name="'compliance_document_id'"
             :label="`${complianceListLabel}`"
             :lists="compliances"
+            :info="'Check all that apply'"
             :disabled="job.status === 'Allocated'"
             @checked="job.status === 'Allocated' ? '' : form.compliance_document_id.push(parseInt($event))"
             @unchecked="job.status === 'Allocated' ? '' : form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
             @uncheckAll="job.status === 'Allocated' ? '' : form.compliance_document_id = []"
           />
+
+          <div v-if="compliances.length === 0" class="mb-6 text-center md:text-left mt-2">
+            <AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
+          </div>
 
           <div class="font-bold text-sm sm:text-md">
             Mandatory trainings
