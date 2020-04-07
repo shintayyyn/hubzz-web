@@ -339,8 +339,8 @@ export default {
 					file: existing && existing.file ? existing.file : null,
 					required: requiredMandatory.includes(item.compliance_document_name)
 						? true
-						: this.stage1details.view_locum_jobs &&
-						  this.stage1details.view_permanent_jobs
+						: ((this.stage1details.view_locum_jobs &&
+						  this.stage1details.view_permanent_jobs) || this.stage1details.view_locum_jobs)
 						? true
 						: false
 				});
