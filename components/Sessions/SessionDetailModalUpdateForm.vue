@@ -277,8 +277,19 @@
           <div class="font-bold text-sm sm:text-md">
             Duration
           </div>
+          <div class="px-1 w-full">
+            <AppMultipleDates
+              v-model="form.jobs_dates"
+              :name="'jobs_dates'"
+              :label="'Job Dates'"
+              :error="formError.find(item => item.field === 'jobs_dates')"
+              is-after
+              multipleSelection
+              @blur="CheckEmptyField(form.date_start,'date_start')"
+            />
+          </div>
           <div class="flex flex-row flex-wrap justify-between">
-            <div class="px-1 w-full md:w-1/2">
+            <!-- <div class="px-1 w-full md:w-1/2">
               <AppDate
                 v-model="form.date_start"
                 :name="'date_start'"
@@ -286,7 +297,7 @@
                 :error="formError.find(item => item.field === 'date_start')"
                 isAfter
               />
-            </div>
+            </div> -->
             <div class="px-1 w-full md:w-1/2">
               <AppTime
                 v-model="form.time_start"
@@ -296,7 +307,7 @@
                 :error="formError.find(item => item.field === 'time_start')"
               />
             </div>
-            <div class="px-1 w-full md:w-1/2">
+            <!-- <div class="px-1 w-full md:w-1/2">
               <AppDate
                 v-model="form.date_end"
                 :name="'date_end'"
@@ -305,7 +316,7 @@
                 :startDate="form.date_start"
                 isAfter
               />
-            </div>
+            </div> -->
             <div class="px-1 w-full md:w-1/2">
               <AppTime
                 v-model="form.time_end"
@@ -315,7 +326,7 @@
                 :error="formError.find(item => item.field === 'time_end')"
               />
             </div>
-            <div class="w-full">
+            <!-- <div class="w-full">
               <AppInput
                 v-if="show_saturday"
                 v-model="form.include_saturday"
@@ -332,7 +343,7 @@
                 :label="'Include Sunday'"
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
               />
-            </div>
+            </div> -->
           </div>
           <AppInput
             v-model="form.shift_id"
@@ -594,6 +605,7 @@
   import AppFilterSearch from "@/components/Base/AppFilterSearch"
   import AppFormError from "@/components/Base/AppFormError"
   import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+  import AppMultipleDates from "@/components/Base/AppMultipleDates"
 
   const session_requirements_lists = [
     { label: "Practice admin", value: "Practice admin" },
@@ -633,7 +645,8 @@
       AppButton,
       AppFilterSearch,
       AppFormError,
-      AppConfirmationModal
+      AppConfirmationModal,
+      AppMultipleDates
     },
 
     mixins: [clickaway],
@@ -707,9 +720,10 @@
           clinical_system_id: [],
           spoken_language_id: [],
           compliance_document_id: [],
-          date_start: null,
+          jobs_dates: [],
+          // date_start: null,
+          // date_end: null,
           time_start: null,
-          date_end: null,
           time_end: null,
           include_saturday: true,
           include_sunday: true,
@@ -854,33 +868,33 @@
         }
       },
 
-      "form.date_end" (value) {
-        let end = this.$moment(value, "YYYY-MM-DD")
-        let days = []
-        let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
-        while (startDay <= end) {
-          days.push(startDay.day())
-          startDay = startDay.clone().add(1, "d")
-        }
-        this.getListofDays(days)
-      },
+      // "form.date_end" (value) {
+      //   let end = this.$moment(value, "YYYY-MM-DD")
+      //   let days = []
+      //   let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
+      //   while (startDay <= end) {
+      //     days.push(startDay.day())
+      //     startDay = startDay.clone().add(1, "d")
+      //   }
+      //   this.getListofDays(days)
+      // },
 
-      session_amendment (value) {
-        if (value !== "other") {
-          this.form.update_remarks = value
-        }
-      },
+      // session_amendment (value) {
+      //   if (value !== "other") {
+      //     this.form.update_remarks = value
+      //   }
+      // },
 
-      "form.date_start" (value) {
-        let start = this.$moment(value, "YYYY-MM-DD")
-        let days = []
-        let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
-        while (endDay >= start) {
-          days.push(endDay.day())
-          endDay = endDay.clone().subtract(1, "d")
-        }
-        this.getListofDays(days)
-      },
+      // "form.date_start" (value) {
+      //   let start = this.$moment(value, "YYYY-MM-DD")
+      //   let days = []
+      //   let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
+      //   while (endDay >= start) {
+      //     days.push(endDay.day())
+      //     endDay = endDay.clone().subtract(1, "d")
+      //   }
+      //   this.getListofDays(days)
+      // },
 
       "form.rate" () {
         this.validateNumber(this.form.rate, "rate")
@@ -1023,8 +1037,8 @@
               .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
           })
 
-          this.form.date_start = this.job.date_start
-          this.form.date_end = this.job.date_end
+          // this.form.date_start = this.job.date_start
+          // this.form.date_end = this.job.date_end
           this.form.time_start = this.job.time_start
           this.form.time_end = this.job.time_end
           this.form.shift_id = this.job.shift.id
@@ -1344,14 +1358,14 @@
             item => item.value
           )
 
-          this.form.date_start = this.$moment(
-            this.form.date_start,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")
-          this.form.date_end = this.$moment(
-            this.form.date_end,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")
+          // this.form.date_start = this.$moment(
+          //   this.form.date_start,
+          //   "YYYY-MM-DD"
+          // ).format("YYYY-MM-DD")
+          // this.form.date_end = this.$moment(
+          //   this.form.date_end,
+          //   "YYYY-MM-DD"
+          // ).format("YYYY-MM-DD")
 
           if (Array.isArray(this.form.session_requirements)) {
             if (this.form.session_requirements.length === 1) {
@@ -1445,14 +1459,14 @@
                   message: "Please check your inputs"
                 })
               } else if (err.response.status === 400) {
-                this.formError.push({
-                  field: "date_start",
-                  message: err.response.data.message
-                })
-                this.formError.push({
-                  field: "date_end",
-                  message: err.response.data.message
-                })
+                // this.formError.push({
+                //   field: "date_start",
+                //   message: err.response.data.message
+                // })
+                // this.formError.push({
+                //   field: "date_end",
+                //   message: err.response.data.message
+                // })
               } else {
                 this.formError = err.response.data.error_messages
               }

@@ -33,7 +33,18 @@
           <AppButton :label="'Add'" :in-style="'padding:8px 16px;'" @click="surgery_modal = true" />
         </div>
         <div class="flex flex-row flex-wrap justify-start mt-8">
-          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+          <div class="px-1 w-full sm:w-1/2">
+            <AppMultipleDates
+              v-model="form.jobs_dates"
+              :name="'jobs_dates'"
+              :label="'Job Dates'"
+              :error="formError.find(item => item.field === 'jobs_dates')"
+              is-after
+              multipleSelection
+              @blur="CheckEmptyField(form.date_start,'date_start')"
+            />
+          </div>
+          <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate
               v-model="form.date_start"
               :name="'date_start'"
@@ -41,8 +52,7 @@
               :error="this.formError.find(item => item.field === 'date_start')"
               isAfter
             />
-            <!-- isAfter -->
-          </div>
+          </div> -->
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime
               v-model="form.time_start"
@@ -51,7 +61,7 @@
               :error="this.formError.find(item => item.field === 'time_start')"
             />
           </div>
-          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+          <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate
               v-model="form.date_end"
               :name="'date_end'"
@@ -60,8 +70,7 @@
               :error="this.formError.find(item => item.field === 'date_end')"
               isAfter
             />
-            <!-- isAfter -->
-          </div>
+          </div> -->
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime
               v-model="form.time_end"
@@ -164,6 +173,7 @@ import AppButton from "@/components/Base/AppButton"
 import AddSurgeryModal from "@/components/AddSurgeryModal"
 import AppLoading from "@/components/Base/AppLoading"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppMultipleDates from "@/components/Base/AppMultipleDates"
 export default {
   components: {
     AppInput,
@@ -172,7 +182,8 @@ export default {
     AppButton,
     AddSurgeryModal,
     AppLoading,
-    AppConfirmationModal
+    AppConfirmationModal,
+    AppMultipleDates
   },
   props: ["job"],
   data () {
@@ -184,9 +195,10 @@ export default {
       rate_types: [],
       form: {
         private_practice_id: "",
-        date_start: "",
+        // date_start: "",
+        // date_end: "",
+        jobs_dates: [],
         time_start: "",
-        date_end: "",
         time_end: "",
         shift_id: "",
         locum_detail_rate_type_id: "",
