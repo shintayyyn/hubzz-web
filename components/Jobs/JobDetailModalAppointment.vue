@@ -35,13 +35,13 @@
         <div class="flex flex-row flex-wrap justify-start mt-8">
           <div class="px-1 w-full sm:w-1/2">
             <AppMultipleDates
-              v-model="form.jobs_dates"
-              :name="'jobs_dates'"
+              v-model="form.dates"
+              :name="'dates'"
               :label="'Job Dates'"
-              :error="formError.find(item => item.field === 'jobs_dates')"
+              :error="formError.find(item => item.field === 'dates')"
               is-after
               multipleSelection
-              @blur="CheckEmptyField(form.date_start,'date_start')"
+              @blur="CheckEmptyField(form.dates,'dates')"
             />
           </div>
           <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -197,7 +197,7 @@ export default {
         private_practice_id: "",
         // date_start: "",
         // date_end: "",
-        jobs_dates: [],
+        dates: [],
         time_start: "",
         time_end: "",
         shift_id: "",

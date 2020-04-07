@@ -279,10 +279,10 @@
           </div>
           <div class="px-1 w-full">
             <AppMultipleDates
-              v-model="form.jobs_dates"
-              :name="'jobs_dates'"
+              v-model="form.dates"
+              :name="'dates'"
               :label="'Job Dates'"
-              :error="formError.find(item => item.field === 'jobs_dates')"
+              :error="formError.find(item => item.field === 'dates')"
               is-after
               multipleSelection
               @blur="CheckEmptyField(form.date_start,'date_start')"
@@ -724,7 +724,7 @@
           clinical_system_id: [],
           spoken_language_id: [],
           compliance_document_id: [],
-          jobs_dates: [],
+          dates: [],
           // date_start: null,
           // date_end: null,
           time_start: null,

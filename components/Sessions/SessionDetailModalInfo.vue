@@ -442,6 +442,10 @@
 
     },
 
+    created() {
+      console.log("job", this.job)
+    },
+
     methods: {
 
       convertDoc (document) {
