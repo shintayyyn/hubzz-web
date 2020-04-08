@@ -155,7 +155,7 @@ export default {
   methods: {
     getUserRoles () {
       this.$axios
-        .$get(`/api/v1/practice/practice-roles`)
+        .$get(`/api/v1/practice/practice-roles?include_all=true`)
         .then(res => {
           return res.data.roles.forEach(role => {
             this.user_roles.push({ label: role.name, value: role.id })
