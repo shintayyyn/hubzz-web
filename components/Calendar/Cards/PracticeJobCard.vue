@@ -50,13 +50,11 @@ export default {
 		bgStatus() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
 			switch (job.status) {
-				case "Applied":
 				case "Allocated":
-					return "bg-job-pending";
-					break;
-				case "Live":
-				case "Ongoing":
 					return "bg-job-active";
+					break;
+				case "Applied":
+					return "bg-job-pending";
 					break;
 				case "Unfilled":
 				case "Withdrawn":

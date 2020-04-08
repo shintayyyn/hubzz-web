@@ -1,254 +1,249 @@
 <template>
-	<section class="relative">
-		<div v-if="showRefresh" class="flex flex-row flex-wrap justify-between mx-1">
-			<AppButton
-				:label="'Refresh'"
-				:in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-				@click="refreshJobs"
-			/>
-		</div>
-		<div class="flex flex-row flex-wrap justify-between mx-1">
-			<div class="w-2/3 py-1 sm:w-1/3">
-				<div
-					class="font-bold text-gray-800"
-				>{{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}</div>
-			</div>
-			<div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
-				<span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('previous')">
-					<svgicon name="arrow-up" class="fill-current" height="29" width="29" />
-				</span>
-				<span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('next')">
-					<svgicon name="down" class="fill-current" height="16" width="16" />
-				</span>
-			</div>
-			<div class="w-full text-right py-1 sm:w-1/3">
-				<span
-					class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-					:class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
-					@click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
-				>Month</span>
-				<span
-					class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-					:class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
-					@click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
-				>Week</span>
-			</div>
-		</div>
-		<div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-			<div class="w-full text-center text-gray-500 font-bold">MON</div>
-			<div class="w-full text-center text-gray-500 font-bold">TUE</div>
-			<div class="w-full text-center text-gray-500 font-bold">WED</div>
-			<div class="w-full text-center text-gray-500 font-bold">THU</div>
-			<div class="w-full text-center text-gray-500 font-bold">FRI</div>
-			<div class="w-full text-center text-gray-500 font-bold">SAT</div>
-			<div class="w-full text-center text-gray-500 font-bold">SUN</div>
-		</div>
-		<div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5 md:mb-4">
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 1"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 2"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 3"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 4"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 5"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 6"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col w-full items-center">
-				<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
-					<div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
-				</div>
-				<div v-for="(item, index) in daysInMonth" :key="index">
-					<div
-						v-if="item.day === 0"
-						class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-						:class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
-						@click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
-					>
-						<template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
-							<svgicon
-								v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
-								name="pushpin"
-								width="14"
-								height="14"
-								class="fill-current text-blue-500"
-							/>
-						</template>
-						<div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
-						<PerMonthInfo
-							:item="item"
-							:info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
-						/>
-						<!-- <PerMonthDateStatus :item="item" @hasActivities="getActivities(item.fullDate)" /> -->
-					</div>
-				</div>
-			</div>
-		</div>
-    <span class="mt-4">
+	<section class="relative flex flex-col justify-between h-full">
+    <div>
+      <div v-if="showRefresh" class="flex flex-row flex-wrap justify-between mx-1">
+        <AppButton
+          :label="'Refresh'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          @click="refreshJobs"
+        />
+      </div>
+      <div class="flex flex-row flex-wrap justify-between mx-1">
+        <div class="w-2/3 py-1 sm:w-1/3">
+          <div
+            class="font-bold text-gray-800"
+          >{{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}</div>
+        </div>
+        <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
+          <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('previous')">
+            <svgicon name="arrow-up" class="fill-current" height="29" width="29" />
+          </span>
+          <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('next')">
+            <svgicon name="down" class="fill-current" height="16" width="16" />
+          </span>
+        </div>
+        <div class="w-full text-right py-1 sm:w-1/3">
+          <span
+            class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
+            :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
+            @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
+          >Month</span>
+          <span
+            class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
+            :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
+            @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
+          >Week</span>
+        </div>
+      </div>
+      <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
+        <div class="w-full text-center text-gray-500 font-bold">MON</div>
+        <div class="w-full text-center text-gray-500 font-bold">TUE</div>
+        <div class="w-full text-center text-gray-500 font-bold">WED</div>
+        <div class="w-full text-center text-gray-500 font-bold">THU</div>
+        <div class="w-full text-center text-gray-500 font-bold">FRI</div>
+        <div class="w-full text-center text-gray-500 font-bold">SAT</div>
+        <div class="w-full text-center text-gray-500 font-bold">SUN</div>
+      </div>
+      <div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5 md:mb-4">
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 1"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 2"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 3"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 4"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 5"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 6"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center">
+          <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+          </div>
+          <div v-for="(item, index) in daysInMonth" :key="index">
+            <div
+              v-if="item.day === 0"
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
+            >
+              <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
+                <svgicon
+                  v-if="getLocumPermanentJobs.find(job => $moment(job.invitation_schedule).format('YYYY-MM-DD') === item.fullDate)"
+                  name="pushpin"
+                  width="14"
+                  height="14"
+                  class="fill-current text-blue-500"
+                />
+              </template>
+              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <PerMonthInfo
+                :item="item"
+                :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="mt-4 ">
       <svgicon @click="legendsModal=true" name="info" width="16" height="16" class="fill-current cursor-pointer hover:text-gray-700"/>
     </span>
     <transition name="fade">
@@ -260,15 +255,23 @@
               <p>Job Status</p>
               <div class="flex items-center">
                 <span class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Ongoing Jobs</p>
+                <p class="ml-2">Allocated Jobs</p>
               </div>
               <div class="flex items-center">
                 <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Applied Jobs, Allocated-Pending Jobs</p>
+                <p class="ml-2">Applied Jobs</p>
               </div>
               <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
                 <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
                 <p class="ml-2">Unfilled Jobs, Withdrawn Jobs</p>
+              </div>
+              <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
+                <span class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">Live Jobs</p>
+              </div>
+              <div class="flex items-center" v-if="$auth.user.domain === 'Locum'">
+                <span class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
+                <p class="ml-2">Ongoing Private Jobs</p>
               </div>
               <div class="flex items-center" v-if="$auth.user.domain === 'Locum'">
                 <span>
@@ -310,7 +313,6 @@
 	</section>
 </template>
 <script>
-import PerMonthDateStatus from "@/components/Calendar/PerMonthDateStatus";
 import PerMonthInfo from "@/components/Calendar/PerMonthInfo";
 import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
@@ -319,7 +321,6 @@ export default {
     AppLoading,
     AppButton,
     PerMonthInfo,
-    PerMonthDateStatus
   },
   data() {
     return {
@@ -363,6 +364,9 @@ export default {
     getPracticeOngoingJobs() {
       return this.$store.getters["jobs/getPracticeOngoingJobs"];
     },
+    getPracticeAvailableJobs() {
+      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    },
     getPracticeWithdrawnJobs() {
       return this.$store.getters["jobs/getPracticeWithdrawnJobs"];
     },
@@ -380,25 +384,18 @@ export default {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
         let jobs = [
           ...this.getPracticeAppliedJobs,
-          ...this.getPracticeUnfilledJobs
+          ...this.getPracticeUnfilledJobs,
+          ...this.getPracticeAvailableJobs
         ];
         let jobParts = [
-          ...this.getPracticeOngoingJobs,
+          // ...this.getPracticeOngoingJobs,
           ...this.getPracticeWithdrawnJobs,
           ...this.getPracticeAllocatedPartJobs
         ];
         this.daysInMonth.forEach((days, daysIndex) => {
           if (jobs.length > 0) {
             jobs.forEach(job => {
-              if (
-                this.getDateArray(job.date_start, job.date_end).includes(
-                  days.fullDate
-                ) &&
-                ((job.include_saturday === false && days.day !== 6) ||
-                  job.include_saturday === true) &&
-                ((job.include_sunday === false && days.day !== 0) ||
-                  job.include_sunday === true)
-              ) {
+              if (job.dates.includes(days.fullDate)) {
                 if (jobsInMonth.length === 0) {
                   jobsInMonth.push({
                     date: days.fullDate,
@@ -431,16 +428,7 @@ export default {
           }
           if (jobParts.length > 0) {
             jobParts.forEach(jobPart => {
-              if (
-                this.getDateArray(
-                  jobPart.date_start,
-                  jobPart.date_end
-                ).includes(days.fullDate) &&
-                ((jobPart.job.include_saturday === false && days.day !== 6) ||
-                  jobPart.job.include_saturday === true) &&
-                ((jobPart.job.include_sunday === false && days.day !== 0) ||
-                  jobPart.job.include_sunday === true)
-              ) {
+              if (jobPart.dates.includes(days.fullDate)) {
                 if (jobsInMonth.length === 0) {
                   jobsInMonth.push({
                     date: days.fullDate,
@@ -475,22 +463,14 @@ export default {
       } else if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
         let jobs = [...this.getLocumAppliedJobs];
         let jobParts = [
-          ...this.getLocumOngoingJobs,
+          // ...this.getLocumOngoingJobs,
           ...this.getLocumAllocatedPartJobs,
           ...this.getLocumPrivateJobParts
         ];
         this.daysInMonth.forEach((days, daysIndex) => {
           if (jobs.length > 0) {
             jobs.forEach(job => {
-              if (
-                this.getDateArray(job.date_start, job.date_end).includes(
-                  days.fullDate
-                ) &&
-                ((job.include_saturday === false && days.day !== 6) ||
-                  job.include_saturday === true) &&
-                ((job.include_sunday === false && days.day !== 0) ||
-                  job.include_sunday === true)
-              ) {
+              if (job.dates.includes(days.fullDate)) {
                 if (jobsInMonth.length === 0) {
                   jobsInMonth.push({
                     date: days.fullDate,
@@ -523,16 +503,7 @@ export default {
           }
           if (jobParts.length > 0) {
             jobParts.forEach(jobPart => {
-              if (
-                this.getDateArray(
-                  jobPart.date_start,
-                  jobPart.date_end
-                ).includes(days.fullDate) &&
-                ((jobPart.job.include_saturday === false && days.day !== 6) ||
-                  jobPart.job.include_saturday === true) &&
-                ((jobPart.job.include_sunday === false && days.day !== 0) ||
-                  jobPart.job.include_sunday === true)
-              ) {
+              if (jobPart.dates.includes(days.fullDate)) {
                 if (jobsInMonth.length === 0) {
                   jobsInMonth.push({
                     date: days.fullDate,
@@ -903,7 +874,7 @@ export default {
           this.$axios
             .$get("/api/v1/practice/job-parts", {
               params: {
-                status: ["Ongoing", "Withdrawn", "Allocated"],
+                status: ["Withdrawn", "Allocated"],
                 calendar_date_start: `${this.startOfMonth}:gte`,
                 calendar_date_end: `${this.endOfMonth}:lte`,
                 limit: 100000000
@@ -915,7 +886,7 @@ export default {
           this.$axios
             .$get("/api/v1/practice/jobs", {
               params: {
-                status: ["Applied", "Unfilled"],
+                status: ["Applied", "Unfilled", "Live"],
                 calendar_date_start: `${this.startOfMonth}:gte`,
                 calendar_date_end: `${this.endOfMonth}:lte`,
                 limit: 100000000
@@ -927,9 +898,9 @@ export default {
         ])
           .then(([ongoingAndWithdrawnJobParts, appliedAndUnfilledJobs]) => {
             this.$store.commit(
-              "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
-              ongoingAndWithdrawnJobParts.filter(
-                jobPart => jobPart.status === "Ongoing"
+              "jobs/SET_PRACTICE_AVAILABLE_JOBS",
+              appliedAndUnfilledJobs.filter(
+                jobPart => jobPart.status === "Live"
               )
             );
             this.$store.commit(
@@ -1017,10 +988,10 @@ export default {
             })
         ])
           .then(([ongoingJobParts, appliedJobs, permanent_jobs_invites]) => {
-            this.$store.commit(
-              "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
-              ongoingJobParts.filter(item => item.job.status === "Ongoing" && item.job.type === "Platform")
-            );
+            // this.$store.commit(
+            //   "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
+            //   ongoingJobParts.filter(item => item.job.status === "Ongoing" && item.job.type === "Platform")
+            // );
             this.$store.commit("jobs/SET_LOCUM_ALLOCATED_JOB_PARTS", 
               ongoingJobParts.filter(item => item.job.status === "Allocated" && item.job.type === "Platform"))
 
