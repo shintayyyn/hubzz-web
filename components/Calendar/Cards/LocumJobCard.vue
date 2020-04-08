@@ -95,17 +95,18 @@ export default {
 			// if (job.type === "Private") {
 			// 	if (job.locum_status === )
 			// }
-
 			switch (job.locum_status) {
 				case "Applied":
-				case "Allocated":
 					return `bg-job-pending`;
 					break;
-				case "Ongoing":
+				case "Allocated":
 					return `bg-job-active`;
 					break;
-				case "Permanent":
+				case "Ongoing":
 					return `bg-blue-500`;
+					break;
+				case "Permanent":
+					return `bg-blue-300`;
 					break;
 				default:
 					return `bg-gray-500`;

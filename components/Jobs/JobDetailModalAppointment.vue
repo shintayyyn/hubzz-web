@@ -1,51 +1,49 @@
 <template>
-  <section>
-    <AppConfirmationModal
-      :label="'Delete this appointment?'"
-      :confirm-label="'Yes'"
-      :cancel-label="'Cancel'"
-      :modal="delete_modal"
-      @confirm="remove"
-      @cancel="delete_modal = false"
-    />
-    <div class="flex flex-col items-start p-4 md:p-8 w-full">
-      <nuxt-link
-        :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ?  '' : {...$route.query}}"
-        class="cursor-pointer"
-      >
-        <svgicon name="left-arrow" height="32" width="32" />
-      </nuxt-link>
-      <div class="flex flex-row justify-start font-bold mt-8">
-        Appointment
-      </div>
-      <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
-        <AppLoading :loading="loading || dataLoading" spinner />
-        <template v-if="!dataLoading && !loading">
-        <AppInput
-          v-model="form.private_practice_id"
-          :type="'select'"
-          :name="'private_practice_id'"
-          :label="'Practice'"
-          :placeholder="'Select...'"
-          :items="practices"
-          :error="this.formError.find(item => item.field === 'private_practice_id')"
-        />
-        <div class="-mt-6 md:-mt-10 pt-4">
-          <AppButton :label="'Add'" :in-style="'padding:8px 16px;'" @click="surgery_modal = true" />
-        </div>
-        <div class="flex flex-row flex-wrap justify-start mt-8">
-          <div class="px-1 w-full sm:w-1/2">
-            <AppMultipleDates
-              v-model="form.dates"
-              :name="'dates'"
-              :label="'Job Dates'"
-              :error="formError.find(item => item.field === 'dates')"
-              is-after
-              multipleSelection
-              @blur="CheckEmptyField(form.dates,'dates')"
-            />
-          </div>
-          <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+	<section>
+		<AppConfirmationModal
+			:label="'Delete this appointment?'"
+			:confirm-label="'Yes'"
+			:cancel-label="'Cancel'"
+			:modal="delete_modal"
+			@confirm="remove"
+			@cancel="delete_modal = false"
+		/>
+		<div class="flex flex-col items-start p-4 md:p-8 w-full">
+			<nuxt-link
+				:to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ?  '' : {...$route.query}}"
+				class="cursor-pointer"
+			>
+				<svgicon name="left-arrow" height="32" width="32" />
+			</nuxt-link>
+			<div class="flex flex-row justify-start font-bold mt-8">Appointment</div>
+			<div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
+				<AppLoading :loading="dataLoading" spinner />
+				<template v-if="!dataLoading && !loading">
+					<AppInput
+						v-model="form.private_practice_id"
+						:type="'select'"
+						:name="'private_practice_id'"
+						:label="'Practice'"
+						:placeholder="'Select...'"
+						:items="practices"
+						:error="this.formError.find(item => item.field === 'private_practice_id')"
+					/>
+					<div class="-mt-6 md:-mt-10 pt-4">
+						<AppButton :label="'Add'" :in-style="'padding:8px 16px;'" @click="surgery_modal = true" />
+					</div>
+					<div class="flex flex-row flex-wrap justify-start mt-8">
+						<div class="px-1 w-full sm:w-1/2">
+							<AppMultipleDates
+								v-model="form.dates"
+								:name="'dates'"
+								:label="'Job Dates'"
+								:error="formError.find(item => item.field === 'dates')"
+								is-after
+								multipleSelection
+								@blur="CheckEmptyField(form.dates,'dates')"
+							/>
+						</div>
+						<!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate
               v-model="form.date_start"
               :name="'date_start'"
@@ -53,16 +51,16 @@
               :error="this.formError.find(item => item.field === 'date_start')"
               isAfter
             />
-          </div> -->
-          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppTime
-              v-model="form.time_start"
-              :name="'time_start'"
-              :label="'Start time'"
-              :error="this.formError.find(item => item.field === 'time_start')"
-            />
-          </div>
-          <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+						</div>-->
+						<div class="px-1 w-full sm:w-1/2 md:w-1/4">
+							<AppTime
+								v-model="form.time_start"
+								:name="'time_start'"
+								:label="'Start time'"
+								:error="this.formError.find(item => item.field === 'time_start')"
+							/>
+						</div>
+						<!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate
               v-model="form.date_end"
               :name="'date_end'"
@@ -71,101 +69,99 @@
               :error="this.formError.find(item => item.field === 'date_end')"
               isAfter
             />
-          </div> -->
-          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppTime
-              v-model="form.time_end"
-              :name="'time_end'"
-              :label="'End time'"
-              :error="this.formError.find(item => item.field === 'time_end')"
-            />
-          </div>
-        </div>
-        <div class="w-full flex flex-row flex-wrap justify-start mt-4">
-          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
-            <AppInput
-              v-model="form.shift_id"
-              :type="'select'"
-              :name="'shift_id'"
-              :label="'Shift'"
-              :placeholder="'Select...'"
-              :items="shifts"
-              :error="this.formError.find(item => item.field === 'shift_id')"
-            />
-          </div>
-          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
-            <AppInput
-              v-model="form.rate"
-              :type="'text'"
-              :name="'rate'"
-              :label="'Rate £'"
-              :placeholder="''"
-              :in-style="'text-align:right'"
-              :error="this.formError.find(item => item.field === 'rate')"
-              :limit="8"
-              @keydown="isNumber($event)"
-            />
-          </div>
-          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
-            <AppInput
-              v-model="form.locum_detail_rate_type_id"
-              :type="'select'"
-              :name="'locum_detail_rate_type_id'"
-              :label="'per'"
-              :placeholder="'Select...'"
-              :items="rate_types"
-              :error="this.formError.find(item => item.field === 'locum_detail_rate_type_id')"
-            />
-          </div>
-        </div>
-        <div class="flex flex-row flex-wrap justify-start mt-4">
-          <div class="flex flex-wrap items-center mt-2">
-            <AppInput
-              v-model="form.total_hours"
-              :type="'number'"
-              :name="'total_hours'"
-              :label="'Total hours'"
-              :placeholder="''"
-              :in-style="'text-align:right'"
-              :error="this.formError.find(item => item.field === 'total_hours')"
-            />
-            <div class="text-xs sm:text-sm mx-2">
-              hours
-            </div>
-          </div>
-        </div>
-        <div class="mt-4">
-          <AppInput
-            v-model="form.description"
-            :type="'textarea'"
-            :name="'description'"
-            :label="'Private notes'"
-            :resize="false"
-          />
-        </div>
-        <div class="flex flex-no-wrap justify-start">
-          <template v-if="!job">
-            <AppButton :label="'Save'" :disabled="loading" @click="create" />
-          </template>
-          <template v-else>
-            <AppButton :label="'Delete'" :disabled="loading" @click="delete_modal = true" />
-            <div class="mx-1" />
-            <AppButton :label="'Save'" :disabled="loading" @click="edit" />
-          </template>
-        </div>
-        </template>
-      </div>
-    </div>
+						</div>-->
+						<div class="px-1 w-full sm:w-1/2 md:w-1/4">
+							<AppTime
+								v-model="form.time_end"
+								:name="'time_end'"
+								:label="'End time'"
+								:error="this.formError.find(item => item.field === 'time_end')"
+							/>
+						</div>
+					</div>
+					<div class="w-full flex flex-row flex-wrap justify-start mt-4">
+						<div class="px-1 w-full sm:w-1/2 md:w-1/3">
+							<AppInput
+								v-model="form.shift_id"
+								:type="'select'"
+								:name="'shift_id'"
+								:label="'Shift'"
+								:placeholder="'Select...'"
+								:items="shifts"
+								:error="this.formError.find(item => item.field === 'shift_id')"
+							/>
+						</div>
+						<div class="px-1 w-full sm:w-1/2 md:w-1/3">
+							<AppInput
+								v-model="form.rate"
+								:type="'text'"
+								:name="'rate'"
+								:label="'Rate £'"
+								:placeholder="''"
+								:in-style="'text-align:right'"
+								:error="this.formError.find(item => item.field === 'rate')"
+								:limit="8"
+								@keydown="isNumber($event)"
+							/>
+						</div>
+						<div class="px-1 w-full sm:w-1/2 md:w-1/3">
+							<AppInput
+								v-model="form.locum_detail_rate_type_id"
+								:type="'select'"
+								:name="'locum_detail_rate_type_id'"
+								:label="'per'"
+								:placeholder="'Select...'"
+								:items="rate_types"
+								:error="this.formError.find(item => item.field === 'locum_detail_rate_type_id')"
+							/>
+						</div>
+					</div>
+					<div class="flex flex-row flex-wrap justify-start mt-4">
+						<div class="flex flex-wrap items-center mt-2">
+							<AppInput
+								v-model="form.total_hours"
+								:type="'number'"
+								:name="'total_hours'"
+								:label="'Total hours'"
+								:placeholder="''"
+								:in-style="'text-align:right'"
+								:error="this.formError.find(item => item.field === 'total_hours')"
+							/>
+							<div class="text-xs sm:text-sm mx-2">hours</div>
+						</div>
+					</div>
+					<div class="mt-4">
+						<AppInput
+							v-model="form.description"
+							:type="'textarea'"
+							:name="'description'"
+							:label="'Private notes'"
+							:resize="false"
+						/>
+					</div>
+					<div class="flex flex-no-wrap justify-start">
+						<template v-if="!job">
+							<AppButton :label="'Save'" :disabled="saving" @click="create" />
+						</template>
+						<template v-else>
+							<AppButton :label="'Delete'" :disabled="saving" @click="delete_modal = true" />
+							<div class="mx-1" />
+							<AppButton :label="'Save Changes'" :disabled="saving" @click="edit" />
+						</template>
+					</div>
+				</template>
+			</div>
+		</div>
 
-    <transition name="fade" mode="out-in">
-      <div v-if="surgery_modal" class="shield" @click="surgery_modal = false" />
-    </transition>
-    <transition name="slide" mode="out-in">
-      <div v-if="surgery_modal" class="modal-container shadow-lg">
-        <AddSurgeryModal @close="surgery_modal = false" />
-      </div>
-    </transition>
-  </section>
+		<transition name="fade" mode="out-in">
+			<div v-if="surgery_modal" class="shield" @click="surgery_modal = false" />
+		</transition>
+		<transition name="slide" mode="out-in">
+			<div v-if="surgery_modal" class="modal-container shadow-lg">
+				<AddSurgeryModal @close="surgery_modal = false" />
+			</div>
+		</transition>
+	</section>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput"
@@ -192,6 +188,7 @@ export default {
     return {
       loading: false,
       dataLoading: false,
+      saving: false,
       delete_modal: false,
       surgery_modal: false,
       shifts: [],
@@ -453,7 +450,7 @@ export default {
       }
       if (!this.formError.length) {
         try {
-          this.loading = true
+          this.saving = true
           const jobResponse = await this.$axios.$post(
             `/api/v1/locum/jobs`,
             this.form
@@ -517,7 +514,7 @@ export default {
             status: "success",
             text: [`${jobResponse.message}`]
           })
-          this.loading = false
+          this.saving = false
         } catch (err) {
           this.$emit("scrollTop")
           console.log("err", err.response || err)
@@ -542,7 +539,7 @@ export default {
               this.formError.push(error)
             })
           }
-          this.loading = false
+          this.saving = false
         }
       } else {
         this.$emit("scrollTop")
@@ -555,6 +552,7 @@ export default {
     },
     edit () {
       this.formError = []
+      this.saving = true
       this.Validate(this.form, ["description"])
       if (!this.formError.length) {
         this.$axios
@@ -572,12 +570,17 @@ export default {
                   "jobs/REMOVE_LOCUM_COMPLETED_JOB_PART",
                   jobPart.id
                 )
+                this.$store.commit(
+                  "jobs/REMOVE_LOCUM_PRIVATE_JOB_PARTS",
+                  jobPart.id
+                )
               })
               this.$store.commit(
                 "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
                 this.job.id
               )
-
+              
+              
               if (res.data.job.locum_status === "Allocated") {
                 this.$store.commit(
                   "jobs/ADD_LOCUM_ALLOCATED_JOB",
@@ -604,11 +607,24 @@ export default {
                   })
                 })
               }
+
+              const job = res.data && res.data.job
+                ? res.data.job
+                : null
+
+              if (job) {
+                if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
+                  this.updatePrivateJobs(job)
+                }
+              }
             }
+
+
             if (this.$route.name === "jobs-index-id") {
               this.$emit("appointmentUpdated")
             }
             this.$emit("close")
+            this.saving = false
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -616,9 +632,13 @@ export default {
             })
           })
           .catch(err => {
-            err.response.data.error_messages.forEach(error => {
+            console.log({err})
+            this.saving = false
+            if (err && err.response && err.response.data && err.response.data.error_messages) {
+              err.response.data.error_messages.forEach(error => {
               this.formError.push(error)
             })
+            }
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
@@ -632,6 +652,18 @@ export default {
           text: ["Please fill up all the forms"]
         })
       }
+    },
+    async updatePrivateJobs(job, type) {
+    if (job.locum_status === "Allocated" || job.locum_status === "Ongoing") {
+      const privateResponse = await this.getJobParts(job.id)
+      const privateJobParts =
+        privateResponse.data &&
+        privateResponse.data.job_parts &&
+        privateResponse.data.job_parts.length > 0
+          ? privateResponse.data.job_parts
+          : []
+        this.$store.commit("jobs/ADD_LOCUM_PRIVATE_JOB_PARTS", privateJobParts)
+    }
     },
     remove () {
       this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
@@ -652,6 +684,7 @@ export default {
               this.$store.commit("jobs/REMOVE_LOCUM_COMPLETED_JOB_PART", id)
             })
         }
+        this.$store.commit("jobs/REMOVE_LOCUM_PRIVATE_JOB_PARTS", this.job.id)
         this.$emit("close")
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
@@ -665,16 +698,16 @@ export default {
 </script>
 <style scoped>
 .modal-container {
-  z-index: 512;
+	z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 70%;
-  }
+	.modal-container {
+		width: 70%;
+	}
 }
 
 .shield {
-  z-index: 511;
+	z-index: 511;
 }
 </style>
 

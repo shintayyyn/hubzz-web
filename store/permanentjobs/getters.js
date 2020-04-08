@@ -2,7 +2,6 @@ export default {
   getLocumPermanentJobNotifications (state) {
     let notifications = []
     state.locum_permanent_job_notifications.forEach(notif => {
-      
       let message = ''
       let notifObj = null
 
@@ -16,6 +15,9 @@ export default {
         case 'Locum Notification Permanent Job Rejected':
           message = 'Your application for a Permanent Job position has been rejected'
           break
+        case 'Locum Notification Permanent Job Unsuccessful':
+          message = 'Your application for a Permanent Job position has been Unsuccessful'
+          break
         default: 
           message = ''
       }
@@ -23,15 +25,16 @@ export default {
       notifObj = {
         ...notif,
         id: notif.permanent_job.id,
-        status: notif.permanent_job_application.application_status,
+        status: notif.permanent_job_application ? notif.permanent_job_application.application_status : notif.permanent_job.job_posting_status,
         permanent_job_status: notif.permanent_job.status,
-        permanent_job_app_id: notif.permanent_job_application.id,
+        permanent_job_app_id: notif.permanent_job_application ? notif.permanent_job_application.id : null,
         notification_type: notif.notificationType,
         type: 'Permanent Jobs',
         message: `${message}. ${notif.locum_status === 'Pending'? 'This Permanent Job is no longer available.' : ''}`
       }
       notifications.push(notifObj)
     })
+
     console.log('notif', notifications)
     return notifications
   },

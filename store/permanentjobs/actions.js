@@ -66,7 +66,20 @@ export default {
       }
     })
 
-   
+    this.$socket.on('Locum Notification Permanent Job Application Unsuccessful', async (permanentJob) => {
+      let permanent_job = null
+      let permanent_job_application = null
+      
+      let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.id}`)
+
+      if(response.data && response.data.permanent_job) {
+        permanent_job = response.data.permanent_job
+      }
+
+      if(permanent_job) {
+        commit('ADD_LOCUM_PERMANENT_JOB_NOTIFICATION', {permanent_job, permanent_job_application, notificationType: 'Locum Notification Permanent Job Unsuccessful'})
+      }
+    })
 
     //====================================PRACTICE===========================================
     this.$socket.on('Practice Notification Permanent Job Applied', async (permanentJob) => {
