@@ -30,9 +30,9 @@ export default {
   ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION (state, payload) {
     let index = state.practice_permanent_job_notifications.findIndex(permJobNotif => permJobNotif.id === payload.permanent_job.id)
     if (index < 0) {
-        state.practice_permanent_job_notifications.unshift(payload)
+      state.practice_permanent_job_notifications.unshift(payload)
     } else if (index >= 0) {
-        state.practice_permanent_job_notifications.splice(index, 1, payload)
+      state.practice_permanent_job_notifications.splice(index, 1, payload)
     }
   },
 

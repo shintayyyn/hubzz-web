@@ -140,7 +140,7 @@
       />
 
       <div
-        v-if="user && user.practice_detail && user.practice_detail.practice_role !== 'Practice User Admin'"
+        v-if="user && user.practice_detail && user.practice_detail.role.name !== 'Practice User Admin'"
         class="text-left mt-5"
       >
         <AppButton
@@ -220,7 +220,6 @@
     },
 
     computed: {
-
       authPermissions () {
         return this.$store.getters["permissions"]
       },
@@ -228,7 +227,6 @@
       verifiedEmail () {
         return this.user && this.user.email_verified_at ? true : false
       },
-
     },
 
     async asyncData ({ app, params, error }) {
@@ -236,8 +234,10 @@
         const response = await app.$axios.$get(
           `/api/v1/practice/practice-users/${params.id}`
         )
-        const user =
-          response.data && response.data.user ? response.data.user : null
+
+        const user = response.data && response.data.user ? response.data.user : null
+
+        console.log('suer',user)
 
         const responseRoles = await app.$axios.$get(
           `/api/v1/practice/practice-roles?include_all=true`
