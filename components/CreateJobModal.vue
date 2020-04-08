@@ -10,7 +10,9 @@
       </div>
       <!-- <AppFormError :formError="formError" v-if="formError.length" /> -->
 
-      <div class="flex flex-row flex-wrap justify-start mt-8">
+      <div class="relative flex flex-row flex-wrap justify-start mt-8" >
+      <AppLoading :loading="dataLoading" spinner />
+        <template v-if="!dataLoading">
         <div class="w-full md:w-1/2 md:pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">
@@ -53,7 +55,10 @@
                     :placeholder="'Select...'"
                     :info="'Choose at least one qualification'"
                     :url="'/api/v1/qualifications'"
-                    :profession-category-id="selectedProfession.profession_category.id.toString()"
+                    :professionCategoryId="selectedProfession && selectedProfession.profession_category
+                      ? selectedProfession.profession_category.id.toString()
+                      : null
+                    "
                     :error="formError.find(item => item.field === 'specialty')"
                   />
 
@@ -169,13 +174,13 @@
                     </div>
 
                     <AppInput
-                      v-if="compliances.length > 0"
                       v-model="form.compliance_document_id"
                       :type="'multi-checkbox'"
                       :error="formError.find(item => item.field === 'compliance_document_id')"
                       :name="'compliance_document_id'"
                       :label="`${complianceListLabel}`"
                       :lists="compliances"
+                      :info="'Check all that apply'"
                       @checked="form.compliance_document_id.push(parseInt($event))"
                       @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
                       @uncheckAll="form.compliance_document_id = []"
@@ -194,8 +199,19 @@
                 Duration
               </h4>
               <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                <div class="px-1 w-full">
+                  <AppMultipleDates
+                    v-model="form.dates"
+                    :name="'dates'"
+                    :label="'Job Dates'"
+                    :error="formError.find(item => item.field === 'dates')"
+                    is-after
+                    multipleSelection
+                    @blur="CheckEmptyField(form.dates,'dates')"
+                  />
+                </div>
                 <div class="flex flex-row flex-wrap justify-between">
-                  <div class="px-1 w-full md:w-1/2">
+                  <!-- <div class="px-1 w-full md:w-1/2">
                     <AppDate
                       v-model="form.date_start"
                       :name="'date_start'"
@@ -204,7 +220,7 @@
                       is-after
                       @blur="CheckEmptyField(form.date_start,'date_start')"
                     />
-                  </div>
+                  </div> -->
                   <div class="px-1 w-full md:w-1/2">
                     <AppTime
                       v-model="form.time_start"
@@ -215,7 +231,7 @@
                       @blur="CheckEmptyField(form.time_start,'time_start')"
                     />
                   </div>
-                  <div class="px-1 w-full md:w-1/2">
+                  <!-- <div class="px-1 w-full md:w-1/2">
                     <AppDate
                       v-model="form.date_end"
                       :name="'date_end'"
@@ -225,7 +241,7 @@
                       is-after
                       @blur="CheckEmptyField(form.date_end,'date_end')"
                     />
-                  </div>
+                  </div> -->
                   <div class="px-1 w-full md:w-1/2">
                     <AppTime
                       v-model="form.time_end"
@@ -237,22 +253,22 @@
                     />
                   </div>
                 </div>
-                <AppInput
+                <!-- <AppInput
                   v-if="show_saturday"
                   v-model="form.include_saturday"
                   :type="'select'"
                   :name="'include_saturday'"
                   :label="'Include Saturday'"
                   :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                />
-                <AppInput
+                /> -->
+                <!-- <AppInput
                   v-if="show_sunday"
                   v-model="form.include_sunday"
                   :type="'select'"
                   :name="'include_sunday'"
                   :label="'Include Sunday'"
                   :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                />
+                /> -->
                 <AppInput
                   v-model="unpaid_breaks"
                   :type="'select'"
@@ -577,7 +593,7 @@
               </div>
             </div>
 
-            <template v-if="selectedProfession.profession_category.id === 1">
+            <template v-if="selectedProfession && selectedProfession.profession_category.id === 1">
               <AppInput
                 v-model="form.ir35"
                 :type="'select'"
@@ -615,9 +631,9 @@
             @click="publish"
           />
         </div>
+        </template>
       </div>
 
-      <!-- <AppLoading :loading="true" spinner /> -->
     </div>
   </transition>
 </template>
@@ -626,8 +642,10 @@
   import AppInput from "@/components/Base/AppInput"
   import AppFilterSearch from "@/components/Base/AppFilterSearch"
   import AppDate from "@/components/Base/AppDate"
+  import AppMultipleDates from "@/components/Base/AppMultipleDates"
   import AppButton from "@/components/Base/AppButton"
   import AppTime from "@/components/Base/AppTime"
+  import AppLoading from "@/components/Base/AppLoading"
 
   const session_requirements_lists = [
     { label: "Practice admin", value: "Practice admin" },
@@ -639,18 +657,21 @@
     components: {
       AppInput,
       AppFilterSearch,
+      AppMultipleDates,
       AppDate,
       AppButton,
-      AppTime
+      AppTime,
+      AppLoading
     },
 
     data () {
       return {
         banksCount: 0,
         loading: false,
+        dataLoading: false,
 
-        show_saturday: false,
-        show_sunday: false,
+        // show_saturday: false,
+        // show_sunday: false,
 
         practice_lists: [],
         rate_lists: [],
@@ -659,19 +680,11 @@
         session_requirements_lists,
         mandatory_training_lists: [],
 
-        // gp_compliance_documents_lists: [],
-        // nurse_compliance_documents_lists: [],
-        // paramedics_compliance_documents_lists: [],
-        // pharmacists_compliance_documents_lists: [],
-
         professions_categories: [],
 
         professionComplianceCategories: [],
         practiceProfessionComplianceCategoryComplianceDocuments: [],
 
-        selectedProfession: {
-          profession_category: {}
-        },
         unpaid_breaks: false,
         auto_assign_job: false,
         selection_notification: false,
@@ -717,12 +730,13 @@
           clinical_system: [],
           spoken_language_id: [],
           compliance_document_id: [],
-          date_start: null,
+          dates: [],
+          // date_start: null,
+          // date_end: null,
           time_start: null,
-          date_end: null,
           time_end: null,
-          include_saturday: true,
-          include_sunday: true,
+          // include_saturday: true,
+          // include_sunday: true,
           unpaid_breaks_in_minutes: "",
           shift: "",
           auto_assign_at: null,
@@ -749,6 +763,21 @@
 
       complianceListLabel () {
         return `For ${this.selectedProfession.profession_compliance_category_name}:`
+      },
+
+      selectedProfession () {
+        if (!this.form.role) {
+          return null
+        }
+
+        const profession = this.professions_categories
+          .find(profession => profession.id.toString() === this.form.role.toString())
+        
+        if (!profession) {
+          return null
+        }
+
+        return profession
       },
 
       selectedProfessionComplianceCategory () {
@@ -806,7 +835,6 @@
     },
 
     watch: {
-
       selectedProfessionComplianceCategory () {
         if (this.selectedProfessionComplianceCategory) {
           const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
@@ -830,40 +858,18 @@
         if (newValue && oldValue) {
           this.form.specialty = []
         }
+      },
 
-        if (newValue) {
-          this.selectedProfession = this.professions_categories
-            .find(profession => profession.id == newValue)
-
-          let response = await this.$axios.$get(`/api/v1/practice/locums/count`, {
+      selectedProfession () {
+        if (this.selectedProfession) {
+          this.$axios.get('/api/v1/practice/locums/count', {
             params: {
               profession_category_id: this.selectedProfession.profession_category.id,
-              practice_locum_type: "Favorite",
+              practice_locum_type: 'Favorite',
             },
+          }).then((response) => {
+            this.banksCount = response.data.data.count
           })
-
-          this.banksCount =
-            response.data && response.data.count ? response.data.count : 0
-
-          // if (this.selectedProfession.profession_compliance_category.id === 1) {
-          //   this.compliances = this.gp_compliance_documents_lists
-          //   return
-          // }
-
-          // if (this.selectedProfession.profession_compliance_category.id === 2) {
-          //   this.compliances = this.nurse_compliance_documents_lists
-          //   return
-          // }
-
-          // if (this.selectedProfession.profession_compliance_category.id === 3) {
-          //   this.compliances = this.paramedics_compliance_documents_lists
-          //   return
-          // }
-
-          // if (this.selectedProfession.profession_compliance_category.id === 4) {
-          //   this.compliances = this.pharmacists_compliance_documents_lists
-          //   return
-          // }
         }
       },
 
@@ -875,27 +881,27 @@
         this.CheckEmptyField(value, "clinical_system")
       },
 
-      "form.date_end" (value) {
-        let end = this.$moment(value, "YYYY-MM-DD")
-        let days = []
-        let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
-        while (startDay <= end) {
-          days.push(startDay.day())
-          startDay = startDay.clone().add(1, "d")
-        }
-        this.getListofDays(days)
-      },
+      // "form.date_end" (value) {
+      //   let end = this.$moment(value, "YYYY-MM-DD")
+      //   let days = []
+      //   let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
+      //   while (startDay <= end) {
+      //     days.push(startDay.day())
+      //     startDay = startDay.clone().add(1, "d")
+      //   }
+      //   this.getListofDays(days)
+      // },
 
-      "form.date_start" (value) {
-        let start = this.$moment(value, "YYYY-MM-DD")
-        let days = []
-        let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
-        while (endDay >= start) {
-          days.push(endDay.day())
-          endDay = endDay.clone().subtract(1, "d")
-        }
-        this.getListofDays(days)
-      },
+      // "form.date_start" (value) {
+      //   let start = this.$moment(value, "YYYY-MM-DD")
+      //   let days = []
+      //   let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
+      //   while (endDay >= start) {
+      //     days.push(endDay.day())
+      //     endDay = endDay.clone().subtract(1, "d")
+      //   }
+      //   this.getListofDays(days)
+      // },
 
       "form.rate" () {
         this.validateNumber(this.form.rate, "rate")
@@ -920,7 +926,8 @@
     },
 
     created () {
-      this.loading = true
+      this.dataLoading = true
+
 
       Promise.all([
         this.$axios.get('/api/v1/practice/me/practice-practices')
@@ -940,8 +947,6 @@
           }))),
         this.$axios.get('/api/v1/professions')
           .then((response) => response.data.data.professions),
-        // this.$axios.get('/api/v1/profession-categories')
-        //   .then((response) => response.data.data.profession_categories),
         this.$axios.get('/api/v1/practice/me/practice-profile')
           .then((response) => response.data.data.practice),
         this.$axios.get('/api/v1/profession-compliance-categories')
@@ -954,7 +959,6 @@
           rateLists,
           shiftLists,
           professions,
-          // professionCategories,
           profileProfile,
           professionComplianceCategories,
         ] = responses
@@ -974,6 +978,7 @@
           email,
           extra_information: extraInformation,
           practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
+          mandatory_trainings: mandatoryTrainings,
         } = profileProfile
 
         this.form.report_to = reportTo
@@ -981,55 +986,16 @@
         this.form.extra_information = extraInformation
         this.practiceProfessionComplianceCategoryComplianceDocuments = practiceProfessionComplianceCategoryComplianceDocuments
 
-        profileProfile.mandatory_trainings.forEach(item => {
-          this.mandatory_training_lists.push({
-            label: item.name,
-            value: item.id
-          })
-        })
-
-        // profileProfile.practice_profession_compliance_category_compliance_documents.forEach(
-        //   complianceCategoryDocument => {
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       1
-        //     ) {
-        //       this.gp_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       2
-        //     ) {
-        //       this.nurse_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       3
-        //     ) {
-        //       this.paramedics_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //     if (
-        //       complianceCategoryDocument.profession_compliance_category_id ===
-        //       4
-        //     ) {
-        //       this.pharmacists_compliance_documents_lists.push({
-        //         label: complianceCategoryDocument.compliance_document_name,
-        //         value: complianceCategoryDocument.compliance_document_id
-        //       })
-        //     }
-        //   }
-        // )
+        this.mandatory_training_lists = mandatoryTrainings.map(mandatoryTraining => ({
+          label: mandatoryTraining.name,
+          value: mandatoryTraining.id
+        }))
 
         if (this.repostJob) {
+          const selectedProfession = this.professions_categories
+            .find(profession => profession.id === this.repostJob.platform_job.profession.id)
+
+          const selectedProfessionCategoryId = selectedProfession.profession_category.id
           this.form.practice_id = this.repostJob.platform_job.practice.id
           this.form.title = this.repostJob.title
           this.form.description = this.repostJob.description
@@ -1078,6 +1044,7 @@
               })
             }
           )
+
           this.repostJob.platform_job.spoken_languages.forEach(
             spokenLanguage => {
               this.form.spoken_language_id.push({
@@ -1086,34 +1053,50 @@
               })
             }
           )
-          this.form.compliance_document_id = this.repostJob.platform_job.compliance_documents.map(
-            item => item.id
-          )
 
-          this.form.date_start = this.$moment().isBefore(
-            this.repostJob.date_start
-          )
-            ? this.repostJob.date_start
-            : null
+          const complianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
+            .filter(practiceProfessionComplianceCategoryComplianceDocument =>
+              practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+                === selectedProfessionCategoryId
+            )
+            .map(({ compliance_document_id: complianceDocumentId }) => complianceDocumentId)
+
+          this.$nextTick(() => {
+            this.form.compliance_document_id = this.repostJob.platform_job.compliance_documents
+              .map(complianceDocument => complianceDocument.id)
+              .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
+          })
+
+          // this.form.dates = this.repostJob.dates
+
+          // this.form.date_start = this.$moment().isBefore(
+          //   this.repostJob.date_start
+          // )
+          //   ? this.repostJob.date_start
+          //   : null
+         
+          // this.form.date_end = this.$moment().isBefore(
+          //   this.repostJob.date_end
+          // )
+          //   ? this.repostJob.date_end
+          //   : null
+          
+
+          // this.form.include_saturday = this.repostJob.include_saturday
+          // this.form.include_sunday = this.repostJob.include_sunday
+
           this.form.time_start = this.$moment().isBefore(
-            this.repostJob.date_start
-          )
+            this.repostJob.dates[0])
             ? this.repostJob.time_start
             : null
-          this.form.date_end = this.$moment().isBefore(
-            this.repostJob.date_end
-          )
-            ? this.repostJob.date_end
-            : null
-          this.form.time_end = this.$moment().isBefore(
-            this.repostJob.date_end
-          )
+            this.form.time_end = this.$moment().isBefore(
+          this.repostJob.dates[this.repostJob.dates.length-1])
             ? this.repostJob.time_end
             : null
 
-          this.form.include_saturday = this.repostJob.include_saturday
-          this.form.include_sunday = this.repostJob.include_sunday
-
+          if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
+            this.repostJob.dates.forEach(date => this.form.dates.push(date))
+          }
           if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
             this.unpaid_breaks = false
           } else if (
@@ -1175,9 +1158,9 @@
             this.bank_only = true
           }
         }
-        }).finally(() => {
-          this.loading = false
-        })
+      }).finally(() => {
+        this.dataLoading = false
+      })
     },
 
     methods: {
@@ -1204,28 +1187,28 @@
         }
       },
 
-      getListofDays (days) {
-        if (days.includes(6) && days.length > 1) {
-          this.show_saturday = true
-          this.form.include_saturday = true
-        } else if (days.includes(6) && days.length === 1) {
-          this.show_saturday = false
-          this.form.include_saturday = true
-        } else if (!days.includes(6)) {
-          this.show_saturday = false
-          this.form.include_saturday = false
-        }
-        if (days.includes(0) && days.length > 1) {
-          this.show_sunday = true
-          this.form.include_sunday = true
-        } else if (days.includes(0) && days.length === 1) {
-          this.show_sunday = false
-          this.form.include_sunday = true
-        } else if (!days.includes(0)) {
-          this.show_sunday = false
-          this.form.include_sunday = false
-        }
-      },
+      // getListofDays (days) {
+      //   if (days.includes(6) && days.length > 1) {
+      //     this.show_saturday = true
+      //     this.form.include_saturday = true
+      //   } else if (days.includes(6) && days.length === 1) {
+      //     this.show_saturday = false
+      //     this.form.include_saturday = true
+      //   } else if (!days.includes(6)) {
+      //     this.show_saturday = false
+      //     this.form.include_saturday = false
+      //   }
+      //   if (days.includes(0) && days.length > 1) {
+      //     this.show_sunday = true
+      //     this.form.include_sunday = true
+      //   } else if (days.includes(0) && days.length === 1) {
+      //     this.show_sunday = false
+      //     this.form.include_sunday = true
+      //   } else if (!days.includes(0)) {
+      //     this.show_sunday = false
+      //     this.form.include_sunday = false
+      //   }
+      // },
 
       close () {
         this.$store.commit("calendar/CREATE_JOB_MODAL", false)
@@ -1351,7 +1334,9 @@
         }
 
         this.validateNumber(this.form.rate, "rate")
+
         this.Validate(this.form, notRequired)
+
         if (!this.formError.length) {
           this.form.profession_id = this.form.role
           this.form.shift_id = this.form.shift
@@ -1367,14 +1352,14 @@
           this.form.spoken_language_id = this.form.spoken_language_id.map(
             item => item.value
           )
-          this.form.date_start = this.$moment(
-            this.form.date_start,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")
-          this.form.date_end = this.$moment(
-            this.form.date_end,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")
+          // this.form.date_start = this.$moment(
+          //   this.form.date_start,
+          //   "YYYY-MM-DD"
+          // ).format("YYYY-MM-DD")
+          // this.form.date_end = this.$moment(
+          //   this.form.date_end,
+          //   "YYYY-MM-DD"
+          // ).format("YYYY-MM-DD")
 
           if (Array.isArray(this.form.session_requirements)) {
             if (this.form.session_requirements.length === 1) {
@@ -1426,11 +1411,13 @@
           if (["false", false].includes(this.unpaid_breaks)) {
             this.form.unpaid_breaks_in_minutes = ""
           }
-          this.form.ir35 =
-            this.selectedProfession.profession_category.id === 1
-              ? this.form.ir35
-              : false
+
+          this.form.ir35 = this.selectedProfession && this.selectedProfession.profession_category.id === 1
+            ? this.form.ir35
+            : false
+
           this.loading = true
+
           this.$axios
             .$post(`/api/v1/practice/jobs`, this.form)
             .then(res => {
@@ -1449,47 +1436,42 @@
             })
             .catch(err => {
               console.log("err", err.response || err)
+
               this.$refs.modalContainer.scrollTop = 0
+
               this.form.clinical_system = this.selectedClinicalSystem
+
               this.form.specialty = this.selectedQualification
+
               this.form.spoken_language_id = this.selectedSpokenLanguage
 
               this.form.session_requirements = this.form.session_requirements
                 ? this.form.session_requirements.split(",")
                 : []
-              if (err.response.status === 500) {
-                this.formError.push({
-                  field: err.response.statusText,
-                  message: "Please check your inputs"
-                })
-                return
-              } else if (err.response.status === 401) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                })
-                return
-              } else if (
-                err.response &&
-                err.response.status === 400 &&
-                !err.response.data.error_messages
-              ) {
-                this.formError.push({
-                  field: "date_start",
-                  message: err.response.data.message
-                })
-                this.formError.push({
-                  field: "date_end",
-                  message: err.response.data.message
-                })
-                return
+
+              let message = null
+
+              if (err.response) {
+                if (err.response.status === 400 || err.response.data.error_messages) {
+                  this.formError = err.response.data.error_messages
+                } else {
+                  message = err.response.data.message
+                }
+              } else if (err.request) {
+                message = 'Something weng wrong!'
               } else {
-                this.formError = err.response.data.error_messages
+                message = err.message
               }
-              throw err
-            })
-            .finally(() => {
+
+              if (message) {
+                this.$store.commit('SET_NOTIFICATION', {
+                  enabled: true,
+                  status: 'danger',
+                  text: [`${message}`],
+                })
+              }
+
+            }).finally(() => {
               this.loading = false
             })
         } else {

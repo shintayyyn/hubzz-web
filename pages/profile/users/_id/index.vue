@@ -1,6 +1,7 @@
 <template>
   <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
     <AppLoading :loading="loading" spinner />
+
     <template v-if="user.status === 'Deactivated'">
       <div class="flex flex-col">
         <div class="flex flex-col">
@@ -50,7 +51,18 @@
         </div>
       </div>
     </template>
+
     <template v-if="user.status !== 'Deactivated'">
+      <AppInput
+        v-model="form.username"
+        :type="'text'"
+        :name="'username'"
+        :label="'Username'"
+        :error="formError.find(item => item.field === 'username')"
+        @submit="save"
+        @blur="CheckEmptyField(form.username, 'username')"
+      />
+
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -60,6 +72,7 @@
         @submit="save"
         @blur="CheckEmptyField(form.email, 'email')"
       />
+
       <AppInput
         v-model="form.title"
         :type="'text'"
@@ -67,6 +80,7 @@
         :label="'Title'"
         @submit="save"
       />
+
       <AppInput
         v-model="form.first_name"
         :type="'text'"
@@ -76,6 +90,7 @@
         @submit="save"
         @blur="CheckEmptyField(form.first_name, 'first_name')"
       />
+
       <AppInput
         v-model="form.last_name"
         :type="'text'"
@@ -85,6 +100,7 @@
         @submit="save"
         @blur="CheckEmptyField(form.last_name, 'last_name')"
       />
+
       <AppInput
         v-model="form.suffix"
         :type="'text'"
@@ -92,6 +108,7 @@
         :label="'Suffix'"
         @submit="save"
       />
+
       <AppInput
         v-model="form.practice_role"
         :type="'select'"
@@ -100,6 +117,7 @@
         :placeholder="'Select...'"
         :items="practice_roles"
       />
+
       <AppInput
         v-model="form.practice_user_role_id"
         :type="'select'"
@@ -110,6 +128,7 @@
         :items="roles"
         :disabled="!roles.length"
       />
+
       <AppInput
         v-model="form.status"
         :type="'select'"
@@ -119,6 +138,7 @@
         :items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
         :disabled="!Boolean(verifiedEmail)"
       />
+
       <div
         v-if="user && user.practice_detail && user.practice_detail.practice_role !== 'Practice User Admin'"
         class="text-left mt-5"
@@ -138,6 +158,7 @@
           @click="modal = true"
         />
       </div>
+
       <AppConfirmationModal
         :label="'Proceed to deactivate this user?'"
         :confirm-label="'Yes'"
@@ -149,163 +170,181 @@
     </template>
   </div>
 </template>
-<script>
-import AppLoading from "@/components/Base/AppLoading"
-import AppInput from "@/components/Base/AppInput"
-import AppButton from "@/components/Base/AppButton"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-const practice_roles = [
-  { value: "Partner", label: "Partner" },
-  { value: "Practice Manager", label: "Practice Manager" },
-  { value: "Practice Staff", label: "Practice Staff" }
-]
-export default {
-  components: {
-    AppLoading,
-    AppInput,
-    AppButton,
-    AppConfirmationModal
-  },
-  transition: {
-    name: "fade",
-    mode: "out-in"
-  },
-  data () {
-    return {
-      practice_roles,
-      user: null,
-      user_roles: [],
-      roles: [],
-      form: {
-        email: "",
-        title: "",
-        first_name: "",
-        last_name: "",
-        suffix: "",
-        practice_role: "",
-        practice_user_role_id: "",
-        status: ""
-      },
-      loading: false,
-      modal: false,
-      formError: []
-    }
-  },
-  computed: {
-    authPermissions () {
-      return this.$store.getters["permissions"]
-    },
-    verifiedEmail () {
-      return this.user && this.user.email_verified_at ? true : false
-    }
-  },
-  async asyncData ({ app, params, error }) {
-    try {
-      const response = await app.$axios.$get(
-        `/api/v1/practice/practice-users/${params.id}`
-      )
-      const user =
-        response.data && response.data.user ? response.data.user : null
 
-      const responseRoles = await app.$axios.$get(
-        `/api/v1/practice/practice-roles?include_all=true`
-      )
-      const roles =
-        responseRoles.data && responseRoles.data.roles
-          ? responseRoles.data.roles.map(item => {
-              return {
-                label: item.name,
-                value: item.id
+<script>
+  import AppLoading from "@/components/Base/AppLoading"
+  import AppInput from "@/components/Base/AppInput"
+  import AppButton from "@/components/Base/AppButton"
+  import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+
+  const practice_roles = [
+    { value: "Partner", label: "Partner" },
+    { value: "Practice Manager", label: "Practice Manager" },
+    { value: "Practice Staff", label: "Practice Staff" }
+  ]
+
+  export default {
+    components: {
+      AppLoading,
+      AppInput,
+      AppButton,
+      AppConfirmationModal
+    },
+
+    transition: {
+      name: "fade",
+      mode: "out-in"
+    },
+
+    data () {
+      return {
+        practice_roles,
+        user: null,
+        user_roles: [],
+        roles: [],
+        form: {
+          username: "",
+          email: "",
+          title: "",
+          first_name: "",
+          last_name: "",
+          suffix: "",
+          practice_role: "",
+          practice_user_role_id: "",
+          status: ""
+        },
+        loading: false,
+        modal: false,
+        formError: []
+      }
+    },
+
+    computed: {
+
+      authPermissions () {
+        return this.$store.getters["permissions"]
+      },
+
+      verifiedEmail () {
+        return this.user && this.user.email_verified_at ? true : false
+      },
+
+    },
+
+    async asyncData ({ app, params, error }) {
+      try {
+        const response = await app.$axios.$get(
+          `/api/v1/practice/practice-users/${params.id}`
+        )
+        const user =
+          response.data && response.data.user ? response.data.user : null
+
+        const responseRoles = await app.$axios.$get(
+          `/api/v1/practice/practice-roles?include_all=true`
+        )
+        const roles =
+          responseRoles.data && responseRoles.data.roles
+            ? responseRoles.data.roles.map(item => {
+                return {
+                  label: item.name,
+                  value: item.id
+                }
+              })
+            : []
+
+        return {
+          user,
+          roles
+        }
+      } catch (err) {
+        console.log("err", err || err.response)
+        return error({ status: 404, message: "Page Not Found" })
+      }
+    },
+
+    mounted () {
+      this.form.username = this.user.username
+      this.form.email = this.user.email
+      this.form.title = this.user.personal_detail.title
+      this.form.first_name = this.user.personal_detail.first_name
+      this.form.last_name = this.user.personal_detail.last_name
+      this.form.suffix = this.user.personal_detail.suffix
+      this.form.practice_role = this.user.practice_detail.practice_role
+      this.form.practice_user_role_id = this.user.practice_detail.role
+        ? this.user.practice_detail.role.id
+        : null
+      this.form.status = this.user.status
+    },
+
+    methods: {
+
+      save () {
+        this.Validate(this.form, ["title", "suffix"])
+        if (!this.formError.length) {
+          this.loading = true
+          this.$axios
+            .$put(
+              `/api/v1/practice/practice-users/${this.$route.params.id}/account`,
+              this.form
+            )
+            .then(res => {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: [`${res.message}`]
+              })
+              this.$emit("updateUser", res.data.user)
+              this.$router.push("/profile/users")
+            })
+            .catch(err => {
+              console.log("err", err.response || err)
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                })
+              }
+              if (err.response.data.error_messages) {
+                this.formError = err.response.data.error_messages
               }
             })
-          : []
+            .finally(() => {
+              this.loading = false
+            })
+        }
+      },
 
-      return {
-        user,
-        roles
-      }
-    } catch (err) {
-      console.log("err", err || err.response)
-      return error({ status: 404, message: "Page Not Found" })
-    }
-  },
-  mounted () {
-    this.form.email = this.user.email
-    this.form.title = this.user.personal_detail.title
-    this.form.first_name = this.user.personal_detail.first_name
-    this.form.last_name = this.user.personal_detail.last_name
-    this.form.suffix = this.user.personal_detail.suffix
-    this.form.practice_role = this.user.practice_detail.practice_role
-    this.form.practice_user_role_id = this.user.practice_detail.role
-      ? this.user.practice_detail.role.id
-      : null
-    this.form.status = this.user.status
-  },
-  methods: {
-    save () {
-      this.Validate(this.form, ["title", "suffix"])
-      if (!this.formError.length) {
+      remove () {
         this.loading = true
         this.$axios
-          .$put(
-            `/api/v1/practice/practice-users/${this.$route.params.id}/account`,
-            this.form
-          )
+          .$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
           .then(res => {
+            console.log(res)
+            this.loading = false
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
             })
-            this.$emit("updateUser", res.data.user)
+            // let index = this.users.findIndex(
+            // 	item => item.id == this.this.user.id
+            // );
+            // if (index >= 0) {
+            // 	this.users.splice(index, 1);
+            // }
+            this.modal = false
             this.$router.push("/profile/users")
           })
           .catch(err => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`]
-              })
-            }
-            if (err.response.data.error_messages) {
-              this.formError = err.response.data.error_messages
-            }
-          })
-          .finally(() => {
             this.loading = false
+            this.modal = false
+            console.log("err", err.response)
+            this.formError = err.response.data.error_messages
           })
-      }
+      },
+
     },
-    remove () {
-      this.loading = true
-      this.$axios
-        .$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
-        .then(res => {
-          console.log(res)
-          this.loading = false
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
-          })
-          // let index = this.users.findIndex(
-          // 	item => item.id == this.this.user.id
-          // );
-          // if (index >= 0) {
-          // 	this.users.splice(index, 1);
-          // }
-          this.modal = false
-          this.$router.push("/profile/users")
-        })
-        .catch(err => {
-          this.loading = false
-          this.modal = false
-          console.log("err", err.response)
-          this.formError = err.response.data.error_messages
-        })
-    }
   }
-}
+
 </script>

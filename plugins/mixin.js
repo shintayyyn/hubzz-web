@@ -4,7 +4,7 @@ import isEmail from 'validator/lib/isEmail'
 
 Vue.mixin({
   methods: {
-    async CheckIfUserIsDeactivated () {
+    async CheckIfUserIsDeactivated() {
       if (this.$auth.loggedIn) {
         await this.$auth.fetchUser()
         if (this.$auth.user.status === 'Deactivated') {
@@ -12,7 +12,7 @@ Vue.mixin({
         }
       }
     },
-    async CheckUserVerification () {
+    async CheckUserVerification() {
       if (this.$auth.user.domain === 'Locum') {
         let oldStatus = this.$auth.user.status
         const response = await this.$axios.$get(`/api/v1/me`)
@@ -40,10 +40,10 @@ Vue.mixin({
         }
       }
     },
-    scrollToTop () {
+    scrollToTop() {
       window.scrollTo(0, 0)
     },
-    getDateArray (start, end) {
+    getDateArray(start, end) {
       let arr = new Array()
       let dt = new Date(start)
       while (dt <= new Date(end)) {
@@ -52,7 +52,7 @@ Vue.mixin({
       }
       return arr
     },
-    CheckEmptyField (inputField, fieldName, preferredDisplayName) {
+    CheckEmptyField(inputField, fieldName, preferredDisplayName) {
       let trimmedFieldName = fieldName
       let displayFieldName = null
       if (!preferredDisplayName) {
@@ -64,7 +64,6 @@ Vue.mixin({
         }
         displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
       }
-
 
       if (!this.formError) {
         return
@@ -106,7 +105,7 @@ Vue.mixin({
         // }
       }
     },
-    Validate (form, lists, preferredDisplayName) {
+    Validate(form, lists, preferredDisplayName) {
       let items = Object.entries(form)
       for (const [key, value] of items) {
         let trimmedFieldName = key
@@ -173,7 +172,7 @@ Vue.mixin({
         }
       }
     },
-    CheckPermissions (permissions) {
+    CheckPermissions(permissions) {
       let hasPermission = true
       switch (this.$route.name) {
         case "profile-practice":
@@ -236,7 +235,7 @@ Vue.mixin({
         hasPermission
       }
     },
-    changeDateFormat (form, dates, oldFormat, newFormat) {
+    changeDateFormat(form, dates, oldFormat, newFormat) {
       let submitForm = { ...form }
       let items = Object.entries(form)
       for (const [key, value] of items) {
@@ -248,7 +247,7 @@ Vue.mixin({
       return submitForm
     },
 
-    isNumber (e) {
+    isNumber(e) {
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
       // let charCode = (e.which) ? e.which : e.keyCode
@@ -269,32 +268,32 @@ Vue.mixin({
         selectionEnd,
       } = target
 
-			if (key < 10) {
-				if (value.includes('.')) {
-					const decimal = value.split('.')[1]
+      if (key < 10) {
+        if (value.includes('.')) {
+          const decimal = value.split('.')[1]
 
-					if (
-						decimal.length === 2 &&
-						selectionStart === selectionEnd &&
-						selectionStart > value.length - 3
-					) {
-						e.preventDefault()
-					}
-				}
+          if (
+            decimal.length === 2 &&
+            selectionStart === selectionEnd &&
+            selectionStart > value.length - 3
+          ) {
+            e.preventDefault()
+          }
+        }
 
-				return
-			} else if (key === '.') {
-				if (value.includes('.')) {
-					e.preventDefault()
-				}
-			} else if (key === 'Backspace') {
-				return
-			} else {
-				e.preventDefault()
+        return
+      } else if (key === '.') {
+        if (value.includes('.')) {
+          e.preventDefault()
+        }
+      } else if (key === 'Backspace') {
+        return
+      } else {
+        e.preventDefault()
       }
     },
 
-    inputNumberOnly (e) {
+    inputNumberOnly(e) {
       // numbers only [0-9]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
@@ -304,7 +303,7 @@ Vue.mixin({
         return true
       }
     },
-    alphaNumeric (e) {
+    alphaNumeric(e) {
       // numbers only [0-9]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
@@ -315,7 +314,7 @@ Vue.mixin({
         e.preventDefault()
       }
     },
-    inputTelephone (e) {
+    inputTelephone(e) {
       // [0-9,+,-,#]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
@@ -326,7 +325,7 @@ Vue.mixin({
       }
     },
 
-    limitInput (e, value, limit) {
+    limitInput(e, value, limit) {
       console.log(value.length)
       if (value.length >= limit) {
         console.log(e)

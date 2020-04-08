@@ -53,7 +53,7 @@
               class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
             >
               <span
-                class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
               >Uploading</span>
             </div>
             <div
@@ -154,7 +154,7 @@
                   class="flex flex-no-wrap justify-between shadow-lg rounded-lg items-center p-3 my-3 ml-8 bg-gray-200"
                 >
                   <span
-                    class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                    class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
                   >Uploading</span>
                 </div>
                 <div
@@ -252,7 +252,7 @@
               class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
             >
               <span
-                class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
               >Uploading</span>
             </div>
             <div
@@ -315,7 +315,7 @@
                   class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-gray-200"
                 >
                   <span
-                    class="w-full loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+                    class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
                   >Uploading</span>
                 </div>
                 <div
@@ -391,7 +391,7 @@
                   :key="item.id"
                   class="text-left bg-gray-200 "
                 >
-                  <td colspan="4" class="loader-message text-center text-gray-800">Uploading</td>
+                  <td colspan="4" class="loader-message md:text-center text-gray-800">Uploading</td>
                 </tr>
                 <tr
                   v-else

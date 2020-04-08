@@ -1,10 +1,7 @@
 <template>
 	<section class="modal-container">
 		<div class="relative p-4 md:p-8">
-			<nuxt-link :to="{
-          path: `/permanent-jobs`,
-          query:$route.query
-        }">
+			<nuxt-link :to="{ path: `/permanent-jobs`, query:$route.query}">
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
@@ -74,7 +71,7 @@
 									height="12"
 									class="fill-current mr-1"
 								/>
-								{{job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, "").length}}/2000
+								{{ job_application.job_application_pitch.replace(/(<([^>]+)>)/ig, '').length }}/2000
 							</p>
 						</div>
 					</div>
@@ -102,7 +99,7 @@
 						</label>
 					</div>
 					<div class="text-xs flex justify-between" v-if="uploadedFile">
-						<p>{{uploadedFile | StringMaxLength(25)}}</p>
+						<p>{{ uploadedFile | StringMaxLength(25) }}</p>
 						<p
 							class="text-right cursor-pointer hover:underline"
 							@click="uploadedFile = '', job_application.file = ''"
@@ -269,7 +266,6 @@ export default {
 					complianceDoc => complianceDoc.compliance_document.name == "CV"
 				);
 				if (found) {
-					console.log("locum can apply");
 					this.canApply = true;
 				}
 			});
@@ -290,7 +286,6 @@ export default {
 				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
 				.then(res => {
 					permanent_job = res.data.permanent_job;
-					console.log("permanent job", permanent_job);
 				});
 
 			await this.$axios
@@ -305,7 +300,6 @@ export default {
 
 			this.permanent_job_application = permanent_job_application;
 
-			console.log("permanent  job app", this.permanent_job_application);
 			if (this.permanent_job_application) {
 				permanent_job.status = this.permanent_job_application.application_status;
 				this.permanent_job = permanent_job;
@@ -382,7 +376,6 @@ export default {
 				});
 				return;
 			}
-			console.log(file);
 			this.job_application.file = file;
 			this.uploadedFile = file.name;
 		},
@@ -436,7 +429,6 @@ export default {
 					`/api/v1/locum/permanent-job-applications/${this.permanent_job_application.id}/delete-application`
 				)
 				.then(res => {
-					console.log("res", res);
 					this.$router.push("/permanent-jobs");
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
@@ -469,8 +461,6 @@ export default {
 
 		jobClosingTag(item) {
 			let closingTag = "";
-			console.log("item", item.hired_through);
-
 			if (
 				this.permanent_job_application &&
 				this.permanent_job_application.application_status === "Rejected"

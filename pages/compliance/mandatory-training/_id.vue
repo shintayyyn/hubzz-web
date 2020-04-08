@@ -118,7 +118,6 @@ export default {
 				response.data && response.data.locum_detail_mandatory_training
 					? response.data.locum_detail_mandatory_training
 					: null;
-			console.log(mandatory_training);
 			return {
 				mandatory_training
 			};
@@ -127,7 +126,6 @@ export default {
 		}
 	},
 	created() {
-		console.log(this.mandatory_training);
 		this.expiry_date = this.mandatory_training.expired_at;
 		this.file = this.mandatory_training.file;
 	},
