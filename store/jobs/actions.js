@@ -1,5 +1,5 @@
 export default {
-    async initializeJobListener ({ commit }) {
+    async initializeJobListener({ commit }) {
         // LOCUM
         this.$socket.on('Locum Notification Job Reminder', async (job) => {
             const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)

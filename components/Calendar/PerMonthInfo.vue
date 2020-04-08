@@ -2,13 +2,23 @@
 	<div class="flex flex-row flex-wrap justify-center w-full px-1">
 		<span
 			class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white"
-			v-if="info && info.status && info.status.includes('Ongoing')"
+			v-if="info && info.status && info.status.includes('Allocated')"
 		/>
 		<span
 			class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white"
-			v-if="info && info.status && (info.status.includes('Allocated') || info.status.includes('Applied'))"
+			v-if="info && info.status && info.status.includes('Applied')"
 		/>
+		<template v-if="$auth.user.domain === 'Locum'">
+			<span
+				class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+				v-if="info && info.status && info.status.includes('Ongoing')"
+			/>
+		</template>
 		<template v-if="$auth.user.domain === 'Practice'">
+			<span
+				class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+				v-if="info && info.status && info.status.includes('Live')"
+			/>
 			<span
 				v-if="info && info.status && (info.status.includes('Unfilled') || info.status.includes('Declined') || info.status.includes('Withdrawn'))"
 				class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white"
