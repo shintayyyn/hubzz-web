@@ -240,7 +240,7 @@
         console.log('suer',user)
 
         const responseRoles = await app.$axios.$get(
-          `/api/v1/practice/practice-roles?include_all=true`
+          `/api/v1/practice/practice-roles`
         )
         const roles =
           responseRoles.data && responseRoles.data.roles
