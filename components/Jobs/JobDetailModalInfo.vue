@@ -119,7 +119,22 @@
         <div class="font-bold text-sm sm:text-md">
           Duration
         </div>
-        <div class="flex text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-8">
+          <p class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+          <div class="flex">
+            <div class="px-1">
+              <p>Days</p>
+              <p>Time</p>
+              <p>Shift</p>
+            </div>
+          <div class="px-1">
+            <p>{{ job.dates.length }}</p>
+            <p>{{ job.time_start }} - {{ job.time_end }}</p>
+            <p>{{ job.shift.name }}</p>
+          </div> 
+          </div>
+        </div>
+        <!-- <div class="flex text-xs sm:text-sm mb-8">
           <div class="px-1">
             <p>From</p>
             <p>To</p>
@@ -130,8 +145,8 @@
             <p>{{ $moment(job.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job.time_end }}</p>
             <p>{{ job.shift.name }}</p>
           </div>
-        </div>
-        <div class="font-bold text-sm sm:text-md">
+        </div> -->
+        <!-- <div class="font-bold text-sm sm:text-md">
           Include Saturday
         </div>
         <div class="text-xs sm:text-sm mb-8">
@@ -139,10 +154,10 @@
         </div>
         <div class="font-bold text-sm sm:text-md">
           Include Sunday
-        </div>
+        </div> 
         <div class="text-xs sm:text-sm mb-8">
           {{ job.include_sunday ? 'Yes' : 'No' }}
-        </div>
+        </div>-->
         <div class="font-bold text-sm sm:text-md">
           Unpaid break
         </div>

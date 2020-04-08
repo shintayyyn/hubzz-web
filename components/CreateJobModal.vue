@@ -10,7 +10,9 @@
       </div>
       <!-- <AppFormError :formError="formError" v-if="formError.length" /> -->
 
-      <div class="flex flex-row flex-wrap justify-start mt-8">
+      <div class="relative flex flex-row flex-wrap justify-start mt-8" >
+      <AppLoading :loading="dataLoading" spinner />
+        <template v-if="!dataLoading">
         <div class="w-full md:w-1/2 md:pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">
@@ -629,9 +631,9 @@
             @click="publish"
           />
         </div>
+        </template>
       </div>
 
-      <!-- <AppLoading :loading="true" spinner /> -->
     </div>
   </transition>
 </template>
@@ -643,6 +645,7 @@
   import AppMultipleDates from "@/components/Base/AppMultipleDates"
   import AppButton from "@/components/Base/AppButton"
   import AppTime from "@/components/Base/AppTime"
+  import AppLoading from "@/components/Base/AppLoading"
 
   const session_requirements_lists = [
     { label: "Practice admin", value: "Practice admin" },
@@ -657,13 +660,15 @@
       AppMultipleDates,
       AppDate,
       AppButton,
-      AppTime
+      AppTime,
+      AppLoading
     },
 
     data () {
       return {
         banksCount: 0,
         loading: false,
+        dataLoading: false,
 
         // show_saturday: false,
         // show_sunday: false,
@@ -921,7 +926,8 @@
     },
 
     created () {
-      this.loading = true
+      this.dataLoading = true
+
 
       Promise.all([
         this.$axios.get('/api/v1/practice/me/practice-practices')
@@ -990,7 +996,6 @@
             .find(profession => profession.id === this.repostJob.platform_job.profession.id)
 
           const selectedProfessionCategoryId = selectedProfession.profession_category.id
-
           this.form.practice_id = this.repostJob.platform_job.practice.id
           this.form.title = this.repostJob.title
           this.form.description = this.repostJob.description
@@ -1062,30 +1067,36 @@
               .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
           })
 
+          // this.form.dates = this.repostJob.dates
+
           // this.form.date_start = this.$moment().isBefore(
           //   this.repostJob.date_start
           // )
           //   ? this.repostJob.date_start
           //   : null
-          // this.form.time_start = this.$moment().isBefore(
-          //   this.repostJob.date_start
-          // )
-          //   ? this.repostJob.time_start
-          //   : null
+         
           // this.form.date_end = this.$moment().isBefore(
           //   this.repostJob.date_end
           // )
           //   ? this.repostJob.date_end
           //   : null
-          // this.form.time_end = this.$moment().isBefore(
-          //   this.repostJob.date_end
-          // )
-          //   ? this.repostJob.time_end
-          //   : null
+          
 
           // this.form.include_saturday = this.repostJob.include_saturday
           // this.form.include_sunday = this.repostJob.include_sunday
 
+          this.form.time_start = this.$moment().isBefore(
+            this.repostJob.dates[0])
+            ? this.repostJob.time_start
+            : null
+            this.form.time_end = this.$moment().isBefore(
+          this.repostJob.dates[this.repostJob.dates.length-1])
+            ? this.repostJob.time_end
+            : null
+
+          if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
+            this.repostJob.dates.forEach(date => this.form.dates.push(date))
+          }
           if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
             this.unpaid_breaks = false
           } else if (
@@ -1148,7 +1159,7 @@
           }
         }
       }).finally(() => {
-        this.loading = false
+        this.dataLoading = false
       })
     },
 

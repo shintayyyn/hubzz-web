@@ -292,7 +292,9 @@ export default {
 		};
 	},
 	created() {
+		console.log("VALUE", this.value);
 		if (this.value && this.value.length) {
+			this.dates = this.value;
 			let last = this.value.find(
 				(item, index) => index + 1 === this.value.length
 			);

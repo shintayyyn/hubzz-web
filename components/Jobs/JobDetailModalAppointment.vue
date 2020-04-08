@@ -19,7 +19,8 @@
         Appointment
       </div>
       <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
-        <AppLoading :loading="loading" spinner />
+        <AppLoading :loading="loading || dataLoading" spinner />
+        <template v-if="!dataLoading && !loading">
         <AppInput
           v-model="form.private_practice_id"
           :type="'select'"
@@ -152,6 +153,7 @@
             <AppButton :label="'Save'" :disabled="loading" @click="edit" />
           </template>
         </div>
+        </template>
       </div>
     </div>
 
@@ -189,6 +191,7 @@ export default {
   data () {
     return {
       loading: false,
+      dataLoading: false,
       delete_modal: false,
       surgery_modal: false,
       shifts: [],
@@ -393,6 +396,7 @@ export default {
   mounted () {
     if (this.job) {
       // ! get private practice id
+      this.dataLoading = true
       this.form.private_practice_id = this.job.private_practice_id
       this.form.date_start = this.job.date_start
       this.form.time_start = this.job.time_start
@@ -403,6 +407,10 @@ export default {
       this.form.rate = this.job.rate
       this.form.total_hours = this.job.total_hours
       this.form.description = this.job.description
+      if (this.job.dates) {
+        this.job.dates.forEach(date => this.form.dates.push(date))
+      }
+      this.dataLoading = false
     }
   },
   methods: {

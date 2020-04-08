@@ -1,8 +1,9 @@
 <template>
   <div class="flex flex-col w-full">
     <AppFormError v-if="formError.length > 0" :formError="formError" />
-    <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
-      <div class="flex flex-row flex-wrap">
+    <div class="relative  bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4" >
+    <AppLoading :loading="dataLoading" spinner/>
+      <div class="flex flex-row flex-wrap" v-if="!dataLoading">
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">
             Job number
@@ -579,7 +580,7 @@
           </div>
         </div>
       </div>
-      <div class="mb-8">
+      <div class="mb-8" v-if="!dataLoading">
         <AppButton
           :label="'Save changes'"
           :inStyle="'padding:8px'"
@@ -610,6 +611,7 @@
   import AppFormError from "@/components/Base/AppFormError"
   import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
   import AppMultipleDates from "@/components/Base/AppMultipleDates"
+  import AppLoading from "@/components/Base/AppLoading"
 
   const session_requirements_lists = [
     { label: "Practice admin", value: "Practice admin" },
@@ -650,7 +652,8 @@
       AppFilterSearch,
       AppFormError,
       AppConfirmationModal,
-      AppMultipleDates
+      AppMultipleDates,
+      AppLoading
     },
 
     mixins: [clickaway],
@@ -661,6 +664,7 @@
       return {
         banksCount: 0,
         loading: false,
+        dataLoading: false,
         modal: false,
 
         professionCategoryId: "",
@@ -911,7 +915,7 @@
     },
 
     created () {
-      this.loading = true
+      this.dataLoading = true
 
       Promise.all([
         this.$axios.get('/api/v1/practice/me/practice-practices')
@@ -946,7 +950,7 @@
           profileProfile,
           professionComplianceCategories,
         ] = responses
-
+        this.form.dates = this.job.dates
         this.practice_lists = practiceLists
         this.rate_lists = rateLists
         this.shifts = shiftLists
@@ -1143,7 +1147,7 @@
           })
         }
       }).finally(() => {
-        this.loading = false
+        this.dataLoading = false
       })
     },
     
