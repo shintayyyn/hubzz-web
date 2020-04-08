@@ -200,10 +200,10 @@ export default {
       let dateStart = notification.date_start
 
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+      console.log('notificaiton', notification)
       // path url
       let url = ""
       if (type === "Jobs") {
-        console.log('notificaiton', notification)
         url = this.$route.name.includes("dashboard")
           ? this.$route.path
           : !this.$route.name.includes("dashboard") &&
@@ -476,6 +476,7 @@ export default {
         case "Paid":
         case "Completed":
         case "Approved":
+        case "For Interview":
           str = "bg-green-500 text-white"
           break
         case "Allocated":
