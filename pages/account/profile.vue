@@ -584,9 +584,27 @@ export default {
       } else if (profession.label !== "GP") {
         this.professionCategoryId = 2;
       }
-      let findprofession = this.professions.find(
-				item =>item.value === parseInt(value));
-			this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+      // let findprofession = this.professions.find(
+      //   item =>item.value === parseInt(value));
+      // this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+    this.form.reference_locum_compliance_documents = []
+    let findprofession = this.professions.find(
+      item =>item.value === parseInt(value));
+    this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+     this.reference_locum_compliance_documents_list.forEach(item => {
+			let foundCompliance = this.user.reference_locum_compliance_documents.find(
+				compliance =>
+					compliance.compliance_document_id === item.compliance_document_id
+			)
+			let fieldName = item.compliance_document_name
+				.replace(/ /g, "_")
+				.toLowerCase()
+			this.form.reference_locum_compliance_documents.push({
+				compliance_document_id: item.compliance_document_id,
+				compliance_document_name: item.compliance_document_name,
+				reference: foundCompliance ? foundCompliance.reference : ""
+			})
+		})
     }
   },
   async asyncData({ app, store, error }) {
@@ -659,7 +677,7 @@ export default {
     }
   },
   mounted() {
-    this.profile.avatar = this.user.file_url;
+    this.profile.avatar = this.user.file_url ? this.user.file_url : null;
     this.profile.name = `${this.user.first_name} ${this.user.last_name}`;
     this.profile.email = this.user.email;
     // this.form.gmc_or_nmc_number =

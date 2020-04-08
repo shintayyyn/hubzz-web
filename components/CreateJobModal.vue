@@ -10,7 +10,9 @@
       </div>
       <!-- <AppFormError :formError="formError" v-if="formError.length" /> -->
 
-      <div class="flex flex-row flex-wrap justify-start mt-8">
+      <div class="relative flex flex-row flex-wrap justify-start mt-8" >
+      <AppLoading :loading="dataLoading" spinner />
+        <template v-if="!dataLoading">
         <div class="w-full md:w-1/2 md:pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">
@@ -197,8 +199,19 @@
                 Duration
               </h4>
               <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                <div class="px-1 w-full">
+                  <AppMultipleDates
+                    v-model="form.dates"
+                    :name="'dates'"
+                    :label="'Job Dates'"
+                    :error="formError.find(item => item.field === 'dates')"
+                    is-after
+                    multipleSelection
+                    @blur="CheckEmptyField(form.dates,'dates')"
+                  />
+                </div>
                 <div class="flex flex-row flex-wrap justify-between">
-                  <div class="px-1 w-full md:w-1/2">
+                  <!-- <div class="px-1 w-full md:w-1/2">
                     <AppDate
                       v-model="form.date_start"
                       :name="'date_start'"
@@ -207,7 +220,7 @@
                       is-after
                       @blur="CheckEmptyField(form.date_start,'date_start')"
                     />
-                  </div>
+                  </div> -->
                   <div class="px-1 w-full md:w-1/2">
                     <AppTime
                       v-model="form.time_start"
@@ -218,7 +231,7 @@
                       @blur="CheckEmptyField(form.time_start,'time_start')"
                     />
                   </div>
-                  <div class="px-1 w-full md:w-1/2">
+                  <!-- <div class="px-1 w-full md:w-1/2">
                     <AppDate
                       v-model="form.date_end"
                       :name="'date_end'"
@@ -228,7 +241,7 @@
                       is-after
                       @blur="CheckEmptyField(form.date_end,'date_end')"
                     />
-                  </div>
+                  </div> -->
                   <div class="px-1 w-full md:w-1/2">
                     <AppTime
                       v-model="form.time_end"
@@ -240,22 +253,22 @@
                     />
                   </div>
                 </div>
-                <AppInput
+                <!-- <AppInput
                   v-if="show_saturday"
                   v-model="form.include_saturday"
                   :type="'select'"
                   :name="'include_saturday'"
                   :label="'Include Saturday'"
                   :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                />
-                <AppInput
+                /> -->
+                <!-- <AppInput
                   v-if="show_sunday"
                   v-model="form.include_sunday"
                   :type="'select'"
                   :name="'include_sunday'"
                   :label="'Include Sunday'"
                   :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                />
+                /> -->
                 <AppInput
                   v-model="unpaid_breaks"
                   :type="'select'"
@@ -618,9 +631,9 @@
             @click="publish"
           />
         </div>
+        </template>
       </div>
 
-      <!-- <AppLoading :loading="true" spinner /> -->
     </div>
   </transition>
 </template>
@@ -629,8 +642,10 @@
   import AppInput from "@/components/Base/AppInput"
   import AppFilterSearch from "@/components/Base/AppFilterSearch"
   import AppDate from "@/components/Base/AppDate"
+  import AppMultipleDates from "@/components/Base/AppMultipleDates"
   import AppButton from "@/components/Base/AppButton"
   import AppTime from "@/components/Base/AppTime"
+  import AppLoading from "@/components/Base/AppLoading"
 
   const session_requirements_lists = [
     { label: "Practice admin", value: "Practice admin" },
@@ -642,18 +657,21 @@
     components: {
       AppInput,
       AppFilterSearch,
+      AppMultipleDates,
       AppDate,
       AppButton,
-      AppTime
+      AppTime,
+      AppLoading
     },
 
     data () {
       return {
         banksCount: 0,
         loading: false,
+        dataLoading: false,
 
-        show_saturday: false,
-        show_sunday: false,
+        // show_saturday: false,
+        // show_sunday: false,
 
         practice_lists: [],
         rate_lists: [],
@@ -712,12 +730,13 @@
           clinical_system: [],
           spoken_language_id: [],
           compliance_document_id: [],
-          date_start: null,
+          dates: [],
+          // date_start: null,
+          // date_end: null,
           time_start: null,
-          date_end: null,
           time_end: null,
-          include_saturday: true,
-          include_sunday: true,
+          // include_saturday: true,
+          // include_sunday: true,
           unpaid_breaks_in_minutes: "",
           shift: "",
           auto_assign_at: null,
@@ -816,7 +835,6 @@
     },
 
     watch: {
-
       selectedProfessionComplianceCategory () {
         if (this.selectedProfessionComplianceCategory) {
           const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
@@ -863,27 +881,27 @@
         this.CheckEmptyField(value, "clinical_system")
       },
 
-      "form.date_end" (value) {
-        let end = this.$moment(value, "YYYY-MM-DD")
-        let days = []
-        let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
-        while (startDay <= end) {
-          days.push(startDay.day())
-          startDay = startDay.clone().add(1, "d")
-        }
-        this.getListofDays(days)
-      },
+      // "form.date_end" (value) {
+      //   let end = this.$moment(value, "YYYY-MM-DD")
+      //   let days = []
+      //   let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
+      //   while (startDay <= end) {
+      //     days.push(startDay.day())
+      //     startDay = startDay.clone().add(1, "d")
+      //   }
+      //   this.getListofDays(days)
+      // },
 
-      "form.date_start" (value) {
-        let start = this.$moment(value, "YYYY-MM-DD")
-        let days = []
-        let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
-        while (endDay >= start) {
-          days.push(endDay.day())
-          endDay = endDay.clone().subtract(1, "d")
-        }
-        this.getListofDays(days)
-      },
+      // "form.date_start" (value) {
+      //   let start = this.$moment(value, "YYYY-MM-DD")
+      //   let days = []
+      //   let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
+      //   while (endDay >= start) {
+      //     days.push(endDay.day())
+      //     endDay = endDay.clone().subtract(1, "d")
+      //   }
+      //   this.getListofDays(days)
+      // },
 
       "form.rate" () {
         this.validateNumber(this.form.rate, "rate")
@@ -908,7 +926,8 @@
     },
 
     created () {
-      this.loading = true
+      this.dataLoading = true
+
 
       Promise.all([
         this.$axios.get('/api/v1/practice/me/practice-practices')
@@ -977,7 +996,6 @@
             .find(profession => profession.id === this.repostJob.platform_job.profession.id)
 
           const selectedProfessionCategoryId = selectedProfession.profession_category.id
-
           this.form.practice_id = this.repostJob.platform_job.practice.id
           this.form.title = this.repostJob.title
           this.form.description = this.repostJob.description
@@ -1049,30 +1067,36 @@
               .filter((complianceDocumentId) => complianceDocumentIds.includes(complianceDocumentId))
           })
 
-          this.form.date_start = this.$moment().isBefore(
-            this.repostJob.date_start
-          )
-            ? this.repostJob.date_start
-            : null
+          // this.form.dates = this.repostJob.dates
+
+          // this.form.date_start = this.$moment().isBefore(
+          //   this.repostJob.date_start
+          // )
+          //   ? this.repostJob.date_start
+          //   : null
+         
+          // this.form.date_end = this.$moment().isBefore(
+          //   this.repostJob.date_end
+          // )
+          //   ? this.repostJob.date_end
+          //   : null
+          
+
+          // this.form.include_saturday = this.repostJob.include_saturday
+          // this.form.include_sunday = this.repostJob.include_sunday
+
           this.form.time_start = this.$moment().isBefore(
-            this.repostJob.date_start
-          )
+            this.repostJob.dates[0])
             ? this.repostJob.time_start
             : null
-          this.form.date_end = this.$moment().isBefore(
-            this.repostJob.date_end
-          )
-            ? this.repostJob.date_end
-            : null
-          this.form.time_end = this.$moment().isBefore(
-            this.repostJob.date_end
-          )
+            this.form.time_end = this.$moment().isBefore(
+          this.repostJob.dates[this.repostJob.dates.length-1])
             ? this.repostJob.time_end
             : null
 
-          this.form.include_saturday = this.repostJob.include_saturday
-          this.form.include_sunday = this.repostJob.include_sunday
-
+          if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
+            this.repostJob.dates.forEach(date => this.form.dates.push(date))
+          }
           if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
             this.unpaid_breaks = false
           } else if (
@@ -1135,7 +1159,7 @@
           }
         }
       }).finally(() => {
-        this.loading = false
+        this.dataLoading = false
       })
     },
 
@@ -1163,28 +1187,28 @@
         }
       },
 
-      getListofDays (days) {
-        if (days.includes(6) && days.length > 1) {
-          this.show_saturday = true
-          this.form.include_saturday = true
-        } else if (days.includes(6) && days.length === 1) {
-          this.show_saturday = false
-          this.form.include_saturday = true
-        } else if (!days.includes(6)) {
-          this.show_saturday = false
-          this.form.include_saturday = false
-        }
-        if (days.includes(0) && days.length > 1) {
-          this.show_sunday = true
-          this.form.include_sunday = true
-        } else if (days.includes(0) && days.length === 1) {
-          this.show_sunday = false
-          this.form.include_sunday = true
-        } else if (!days.includes(0)) {
-          this.show_sunday = false
-          this.form.include_sunday = false
-        }
-      },
+      // getListofDays (days) {
+      //   if (days.includes(6) && days.length > 1) {
+      //     this.show_saturday = true
+      //     this.form.include_saturday = true
+      //   } else if (days.includes(6) && days.length === 1) {
+      //     this.show_saturday = false
+      //     this.form.include_saturday = true
+      //   } else if (!days.includes(6)) {
+      //     this.show_saturday = false
+      //     this.form.include_saturday = false
+      //   }
+      //   if (days.includes(0) && days.length > 1) {
+      //     this.show_sunday = true
+      //     this.form.include_sunday = true
+      //   } else if (days.includes(0) && days.length === 1) {
+      //     this.show_sunday = false
+      //     this.form.include_sunday = true
+      //   } else if (!days.includes(0)) {
+      //     this.show_sunday = false
+      //     this.form.include_sunday = false
+      //   }
+      // },
 
       close () {
         this.$store.commit("calendar/CREATE_JOB_MODAL", false)
@@ -1328,14 +1352,14 @@
           this.form.spoken_language_id = this.form.spoken_language_id.map(
             item => item.value
           )
-          this.form.date_start = this.$moment(
-            this.form.date_start,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")
-          this.form.date_end = this.$moment(
-            this.form.date_end,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")
+          // this.form.date_start = this.$moment(
+          //   this.form.date_start,
+          //   "YYYY-MM-DD"
+          // ).format("YYYY-MM-DD")
+          // this.form.date_end = this.$moment(
+          //   this.form.date_end,
+          //   "YYYY-MM-DD"
+          // ).format("YYYY-MM-DD")
 
           if (Array.isArray(this.form.session_requirements)) {
             if (this.form.session_requirements.length === 1) {

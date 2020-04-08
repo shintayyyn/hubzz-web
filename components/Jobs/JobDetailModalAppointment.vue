@@ -19,7 +19,8 @@
         Appointment
       </div>
       <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
-        <AppLoading :loading="loading" spinner />
+        <AppLoading :loading="loading || dataLoading" spinner />
+        <template v-if="!dataLoading && !loading">
         <AppInput
           v-model="form.private_practice_id"
           :type="'select'"
@@ -33,7 +34,18 @@
           <AppButton :label="'Add'" :in-style="'padding:8px 16px;'" @click="surgery_modal = true" />
         </div>
         <div class="flex flex-row flex-wrap justify-start mt-8">
-          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+          <div class="px-1 w-full sm:w-1/2">
+            <AppMultipleDates
+              v-model="form.dates"
+              :name="'dates'"
+              :label="'Job Dates'"
+              :error="formError.find(item => item.field === 'dates')"
+              is-after
+              multipleSelection
+              @blur="CheckEmptyField(form.dates,'dates')"
+            />
+          </div>
+          <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate
               v-model="form.date_start"
               :name="'date_start'"
@@ -41,8 +53,7 @@
               :error="this.formError.find(item => item.field === 'date_start')"
               isAfter
             />
-            <!-- isAfter -->
-          </div>
+          </div> -->
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime
               v-model="form.time_start"
@@ -51,7 +62,7 @@
               :error="this.formError.find(item => item.field === 'time_start')"
             />
           </div>
-          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+          <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate
               v-model="form.date_end"
               :name="'date_end'"
@@ -60,8 +71,7 @@
               :error="this.formError.find(item => item.field === 'date_end')"
               isAfter
             />
-            <!-- isAfter -->
-          </div>
+          </div> -->
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime
               v-model="form.time_end"
@@ -143,6 +153,7 @@
             <AppButton :label="'Save'" :disabled="loading" @click="edit" />
           </template>
         </div>
+        </template>
       </div>
     </div>
 
@@ -164,6 +175,7 @@ import AppButton from "@/components/Base/AppButton"
 import AddSurgeryModal from "@/components/AddSurgeryModal"
 import AppLoading from "@/components/Base/AppLoading"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppMultipleDates from "@/components/Base/AppMultipleDates"
 export default {
   components: {
     AppInput,
@@ -172,21 +184,24 @@ export default {
     AppButton,
     AddSurgeryModal,
     AppLoading,
-    AppConfirmationModal
+    AppConfirmationModal,
+    AppMultipleDates
   },
   props: ["job"],
   data () {
     return {
       loading: false,
+      dataLoading: false,
       delete_modal: false,
       surgery_modal: false,
       shifts: [],
       rate_types: [],
       form: {
         private_practice_id: "",
-        date_start: "",
+        // date_start: "",
+        // date_end: "",
+        dates: [],
         time_start: "",
-        date_end: "",
         time_end: "",
         shift_id: "",
         locum_detail_rate_type_id: "",
@@ -381,6 +396,7 @@ export default {
   mounted () {
     if (this.job) {
       // ! get private practice id
+      this.dataLoading = true
       this.form.private_practice_id = this.job.private_practice_id
       this.form.date_start = this.job.date_start
       this.form.time_start = this.job.time_start
@@ -391,6 +407,10 @@ export default {
       this.form.rate = this.job.rate
       this.form.total_hours = this.job.total_hours
       this.form.description = this.job.description
+      if (this.job.dates) {
+        this.job.dates.forEach(date => this.form.dates.push(date))
+      }
+      this.dataLoading = false
     }
   },
   methods: {
