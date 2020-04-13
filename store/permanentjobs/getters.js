@@ -34,8 +34,6 @@ export default {
       }
       notifications.push(notifObj)
     })
-
-    console.log('notif', notifications)
     return notifications
   },
 

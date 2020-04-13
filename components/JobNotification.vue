@@ -99,10 +99,8 @@ export default {
   computed: {
     jobNotifications () {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-        console.log('practice job notifs', this.$store.getters["jobs/getPracticeJobNotifications"])
         return this.$store.getters["jobs/getPracticeJobNotifications"]
       }
-      console.log('locum job notifs', this.$store.getters["jobs/getLocumJobNotifications"])
       return this.$store.getters["jobs/getLocumJobNotifications"]
     },
     billingNotifications () {
@@ -113,17 +111,14 @@ export default {
     },
     permanentJobNotifications () {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-        console.log('practice perm job notifs', this.$store.getters["permanentjobs/getPracticePermanentJobNotifications"])
         return this.$store.getters["permanentjobs/getPracticePermanentJobNotifications"]
       }
-      console.log('locum perm job notifs', this.$store.getters["permanentjobs/getLocumPermanentJobNotifications"])
       return this.$store.getters["permanentjobs/getLocumPermanentJobNotifications"]
     },
     url () {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
     },
     notifications () {
-      console.log('notifs', this.permanentJobNotifications)
       return [...this.jobNotifications, ...this.billingNotifications, ...this.permanentJobNotifications].sort(
         (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
       )
@@ -200,7 +195,6 @@ export default {
       let dateStart = notification.date_start
 
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
-      console.log('notificaiton', notification)
       // path url
       let url = ""
       if (type === "Jobs") {
@@ -238,7 +232,6 @@ export default {
             ? `/locum-billing/private-invoices`
             : null
       } else if (type === "Permanent Jobs") {
-        console.log('notificaiton', notification)
         url = `/permanent-jobs`
       }
 
@@ -285,9 +278,6 @@ export default {
           default:
             routeStatus = status
         }
-
-        // console.log(url, status, routeStatus, notification)
-        // return
 
         if (url === null) {
           this.close(id, type, notification.notification_type)
@@ -336,9 +326,6 @@ export default {
             routeStatus = status
         }
 
-        // console.log(url, status, routeStatus, notification)
-        // return
-
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
@@ -362,9 +349,6 @@ export default {
       this.close(id, type, notification.notification_type)
     },
     close (id, type, notificationType) {
-      console.log('id', id)
-      console.log('type', type)
-      console.log('notification type', notificationType)
       if (type === "Jobs") {
         if (
           [
