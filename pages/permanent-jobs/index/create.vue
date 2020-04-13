@@ -3,21 +3,13 @@
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppFilterSearch from "@/components/Base/AppFilterSearch";
-import AppDate from "@/components/Base/AppDate";
-import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal";
+import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal"
 
 export default {
 	components: {
-		AppInput,
-		AppButton,
-		AppFilterSearch,
-		AppDate,
 		CreatePermanentJobModal
 	},
-	data() {
+	data () {
 		return {
 			form: {
 				title: "",
@@ -87,16 +79,36 @@ export default {
 				}
 			],
 			formError: []
-		};
+		}
 	},
-	created() {
-		this.loading = true;
+	watch: {
+		"form.profession_id" (newValue, oldValue) {
+			this.CheckEmptyField(newValue, "profession_id")
+			if (newValue && oldValue) {
+				this.form.qualification_id = []
+			}
+			if (newValue) {
+				this.selectedProfession = this.professions_categories.find(
+					item => item.id == newValue
+				)
+				if (this.selectedProfession.profession_category.name === 'GP') {
+					this.compliances = this.gp_compliance_documents_lists
+					return
+				}
+				if (this.selectedProfession.profession_category.name !== 'GP') {
+					this.compliances = this.others_compliance_documents_lists
+					return
+				}
+			}
+		}
+	},
+	created () {
+		this.loading = true
 		Promise.all([
 			this.$axios.$get("/api/v1/practice/me/practice-practices"),
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
-			this.$axios.$get("/api/v1/me")
 		])
 			.then(
 				([
@@ -104,76 +116,55 @@ export default {
 					responseRateLists,
 					responseShifts,
 					responseProfessions,
-					responseMe
 				]) => {
-					this.practice_lists = [];
+					this.practice_lists = []
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
 							value: item.id
-						});
-					});
-					this.rate_lists = [];
+						})
+					})
+					this.rate_lists = []
 					responseRateLists.data.locum_detail_rate_types.forEach(item => {
-						this.rate_lists.push({ label: item.name, value: item.id });
-					});
-					this.shifts = [];
+						this.rate_lists.push({ label: item.name, value: item.id })
+					})
+					this.shifts = []
 					responseShifts.data.shifts.forEach(item => {
-						this.shifts.push({ label: item.name, value: item.id });
-					});
-					this.professions = [];
+						this.shifts.push({ label: item.name, value: item.id })
+					})
+					this.professions = []
 					responseProfessions.data.professions.forEach(item => {
-						this.professions.push({ label: item.name, value: item.id });
-						this.professions_categories.push(item);
-					});
+						this.professions.push({ label: item.name, value: item.id })
+						this.professions_categories.push(item)
+					})
 				}
 			)
 			.finally(() => {
-				this.loading = false;
-			});
-	},
-	watch: {
-		"form.profession_id"(newValue, oldValue) {
-			this.CheckEmptyField(newValue, "profession_id");
-			if (newValue && oldValue) {
-				this.form.qualification_id = [];
-			}
-			if (newValue) {
-				this.selectedProfession = this.professions_categories.find(
-					item => item.id == newValue
-				);
-				if (this.selectedProfession.profession_category.id == 1) {
-					this.compliances = this.gp_compliance_documents_lists;
-					return;
-				}
-				if (this.selectedProfession.profession_category.id == 2) {
-					this.compliances = this.others_compliance_documents_lists;
-					return;
-				}
-			}
-		}
+				this.loading = false
+			})
 	}
-};
+}
 </script>
-<style>
-.wrapper {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	transition: all 0.3s ease-in-out;
-	scroll-behavior: smooth;
-}
 
-.modal-container {
-	z-index: 510;
-}
-@media (min-width: 1200px) {
-	.modal-container {
-		width: 80%;
-	}
-}
-.shield {
-	z-index: 509;
-}
+<style>
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    transition: all 0.3s ease-in-out;
+    scroll-behavior: smooth;
+  }
+
+  .modal-container {
+    z-index: 510;
+  }
+  @media (min-width: 1200px) {
+    .modal-container {
+      width: 80%;
+    }
+  }
+  .shield {
+    z-index: 509;
+  }
 </style>

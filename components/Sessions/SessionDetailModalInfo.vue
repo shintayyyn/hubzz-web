@@ -127,14 +127,14 @@
           <p class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
           <div class="flex">
             <div class="px-1">
-              <p>Shift:</p>
-              <p>Time:</p>
               <p>Days:</p>
+              <p>Time:</p>
+              <p>Shift:</p>
             </div>
           <div class="px-1">
-            <p>{{ job.shift.name }}</p>
-            <p>{{ job.time_start }} - {{ job.time_end }}</p>
             <p>{{ job.dates.length }}</p>
+            <p>{{ job.time_start }} - {{ job.time_end }}</p>
+            <p>{{ job.shift.name }}</p>
           </div> 
           </div>
           <div class="overflow-y-auto" style="max-height: 205px;">

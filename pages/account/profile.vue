@@ -3,7 +3,7 @@
     <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
       <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
         <AppLoading :loading="loading" spinner />
-        <AppFormError :formError="formError" v-if="formError.length > 0" />
+        <AppFormError v-if="formError.length > 0" :formError="formError" />
         <form class="w-full">
           <AppInput
             v-model="form.profession_id"
@@ -25,7 +25,7 @@
               :label="item.compliance_document_name"
               :error="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
               :info="'For compliance; to be verified by the hubzz team'"
-							:limit="parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7"
+              :limit="parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7"
               required
               @blur="CheckEmptyField(form.reference_locum_compliance_documents[index].reference, item.compliance_document_name.replace(/ /g, '_').toLowerCase()), checkValidation(item.compliance_document_name, parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7)"
               @keydown="[1, 10, '1','10'].includes(form.profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
@@ -62,9 +62,9 @@
             :info="'Choose at least one qualification'"
             :url="'/api/v1/qualifications'"
             :professionCategoryId="professionCategoryId.toString()"
+            required
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-            required
           />
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -74,9 +74,9 @@
             :error="formError.find(item => item.field === 'clinical_system_id')"
             :info="'Choose at least one IT system'"
             :url="'/api/v1/clinical-systems'"
+            required
             @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
             @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-            required
           />
           <AppFilterSearch
             v-model="form.spoken_language_id"
@@ -148,7 +148,9 @@
                 Your preferred rates £
                 <small>(minimum)</small>
               </label>
-              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">To match available jobs with</div>
+              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
+                To match available jobs with
+              </div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
@@ -160,9 +162,9 @@
                     :name="'min_rate_per_hour'"
                     :label="'Per Hour £'"
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
+                    required
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
-                    required
                   />
                   <!-- <AppInput
                     v-model="form.max_rate_per_hour"
@@ -186,11 +188,11 @@
                     :name="'min_rate_per_half_day_session'"
                     :label="'Per Half Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
+                    required
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
-                    required
                   />
-                  <div class="mx-1"></div>
+                  <div class="mx-1" />
                   <!-- <AppInput
                     v-model="form.max_rate_per_half_day_session"
                     :type="'number'"
@@ -212,11 +214,11 @@
                     :name="'min_rate_per_whole_day_session'"
                     :label="'Per Whole Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
+                    required
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
-                    required
                   />
-                  <div class="mx-1"></div>
+                  <div class="mx-1" />
                   <!-- <AppInput
                     v-model="form.max_rate_per_whole_day_session"
                     :type="'number'"
@@ -248,9 +250,9 @@
             :label="'What type of Practice(s) would you like to work for?'"
             :error="formError.find(item => item.field === 'practice_type_id')"
             :lists="practiceTypes"
+            required
             @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-            required
           />
           <AppInput
             v-model="form.employment_type"
@@ -279,8 +281,8 @@
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="''"
-              @keypress="inputNumberOnly($event)"
               required
+              @keypress="inputNumberOnly($event)"
             />
           </template>
           <AppInput
@@ -292,7 +294,9 @@
             required
           />
           <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
-            <div class="font-bold text-sm my-4">Payroll Details</div>
+            <div class="font-bold text-sm my-4">
+              Payroll Details
+            </div>
             <AppInput
               v-model="form.payroll_account_name"
               :type="'text'"
@@ -328,7 +332,9 @@
             />
           </template>
           <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
-            <div class="font-bold text-sm my-4">Bank Details</div>
+            <div class="font-bold text-sm my-4">
+              Bank Details
+            </div>
             <AppInput
               v-model="form.account_name"
               :type="'text'"
@@ -398,13 +404,13 @@
           </template>
 
           <AppPostCode
-            :urlIndex="'/api/v1/postcode-coordinates'"
             v-model="form.post_code"
+            :urlIndex="'/api/v1/postcode-coordinates'"
             :name="'post_code'"
             :label="'The post code where I will be available at'"
             :error="formError.find(item => item.field === 'post_code')"
-            @blur="CheckEmptyField(form.post_code, 'post_code')"
             required
+            @blur="CheckEmptyField(form.post_code, 'post_code')"
           />
           <AppInput
             v-model="form.miles"
@@ -413,10 +419,12 @@
             :label="`I will travel up to ${form.miles ? form.miles : 'n'} miles from this postcode`"
             :error="formError.find(item => item.field === 'miles')"
             :inStyle="'text-align:right;'"
-            @blur="CheckEmptyField(form.miles, 'miles')"
             required
+            @blur="CheckEmptyField(form.miles, 'miles')"
           />
-          <div class="text-xs sm:text-sm">Referees</div>
+          <div class="text-xs sm:text-sm">
+            Referees
+          </div>
           <div class="rounded-lg bg-gray-400 p-8 my-2">
             <AppInput
               v-model="form.referee_1_contact_name"
@@ -479,7 +487,9 @@
           :src="profile.avatar ? profile.avatar : ''"
         />
         <div class="leading-none text-center text-sm pt-4">
-          <p class="font-bold">{{ profile.name }}</p>
+          <p class="font-bold">
+            {{ profile.name }}
+          </p>
           <p>{{ profile.email }}</p>
         </div>
       </div>
@@ -490,14 +500,14 @@
 let employmentTypes = [
   { label: "Self-Employed", value: "Self-Employed" },
   { label: "Limited Company", value: "Limited Company" }
-];
-import AppFormError from "@/components/Base/AppFormError";
-import AppLoading from "@/components/Base/AppLoading";
-import AppInput from "@/components/Base/AppInput";
-import AppPostCode from "@/components/Base/AppPostCode";
-import AppFilterSearch from "@/components/Base/AppFilterSearch";
-import AppButton from "@/components/Base/AppButton";
-import AppAvatar from "@/components/Base/AppAvatar";
+]
+import AppFormError from "@/components/Base/AppFormError"
+import AppLoading from "@/components/Base/AppLoading"
+import AppInput from "@/components/Base/AppInput"
+import AppPostCode from "@/components/Base/AppPostCode"
+import AppFilterSearch from "@/components/Base/AppFilterSearch"
+import AppButton from "@/components/Base/AppButton"
+import AppAvatar from "@/components/Base/AppAvatar"
 export default {
   transition: {
     name: "fade",
@@ -512,7 +522,7 @@ export default {
     AppButton,
     AppAvatar
   },
-  data() {
+  data () {
     return {
       employmentTypes,
       professionCategoryId: "",
@@ -575,15 +585,15 @@ export default {
       },
       formError: [],
       loading: false
-    };
+    }
   },
   watch: {
-    "form.profession_id"(value) {
-      let profession = this.professions.find(item => item.value == value);
+    "form.profession_id" (value) {
+      let profession = this.professions.find(item => item.value == value)
       if (profession.label === "GP") {
-        this.professionCategoryId = 1;
+        this.professionCategoryId = 1
       } else if (profession.label !== "GP") {
-        this.professionCategoryId = 2;
+        this.professionCategoryId = 2
       }
       // let findprofession = this.professions.find(
       //   item =>item.value === parseInt(value));
@@ -604,16 +614,16 @@ export default {
 
     this.form.reference_locum_compliance_documents = []
     let findprofession = this.professions.find(
-      item =>item.value === parseInt(value));
-    this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+      item =>item.value === parseInt(value))
+    this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
      this.reference_locum_compliance_documents_list.forEach(item => {
 			let foundCompliance = this.user.reference_locum_compliance_documents.find(
 				compliance =>
 					compliance.compliance_document_id === item.compliance_document_id
 			)
-			let fieldName = item.compliance_document_name
-				.replace(/ /g, "_")
-				.toLowerCase()
+			// let fieldName = item.compliance_document_name
+			// 	.replace(/ /g, "_")
+			// 	.toLowerCase()
 			this.form.reference_locum_compliance_documents.push({
 				compliance_document_id: item.compliance_document_id,
 				compliance_document_name: item.compliance_document_name,
@@ -625,7 +635,7 @@ export default {
     this.old_compliances = []
     },
   },
-  async asyncData({ app, store, error }) {
+  async asyncData ({ app, store }) {
     try {
       const [
         professions,
@@ -634,46 +644,46 @@ export default {
         user
       ] = await Promise.all([
         app.$axios.$get(`/api/v1/professions`).then(responseProfessions => {
-          const professions = [];
+          const professions = []
           responseProfessions.data.professions.forEach(profession => {
-            professions.push({ label: profession.name, value: profession.id, reference_compliance_documents: profession.profession_compliance_category.reference_compliance_documents });
-          });
-          return professions;
+            professions.push({ label: profession.name, value: profession.id, reference_compliance_documents: profession.profession_compliance_category.reference_compliance_documents })
+          })
+          return professions
         }),
         app.$axios
           .$get(`/api/v1/practice-types`)
           .then(responsePracticeTypes => {
-            const practice_types = [];
+            const practice_types = []
             responsePracticeTypes.data.practice_types.forEach(practiceType => {
               practice_types.push({
                 label: practiceType.name,
                 value: practiceType.id
-              });
-            });
-            return practice_types;
+              })
+            })
+            return practice_types
           }),
         app.$axios
           .$get(`/api/v1/mandatory-trainings`)
           .then(responseMandatoryTrainings => {
-            const mandatory_trainings = [];
+            const mandatory_trainings = []
             responseMandatoryTrainings.data.mandatory_trainings.forEach(
               mandatoryTraining => {
                 mandatory_trainings.push({
                   label: mandatoryTraining.name,
                   value: mandatoryTraining.id
-                });
+                })
               }
-            );
-            return mandatory_trainings;
+            )
+            return mandatory_trainings
           }),
         app.$axios.$get(`/api/v1/locum/me/profile`).then(responseMe => {
           const user =
             responseMe.data && responseMe.data.user
               ? responseMe.data.user
-              : null;
-          return user;
+              : null
+          return user
         })
-      ]);
+      ])
 
       return {
         professions,
@@ -681,23 +691,23 @@ export default {
         practiceTypes,
         mandatoryTrainings,
         user
-      };
+      }
     } catch (err) {
-      console.log("err", err);
+      console.log("err", err)
       if (err.response.data.message) {
         store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
           text: [`${err.response.data.message}`]
-        });
+        })
       }
-      throw err;
+      throw err
     }
   },
-  mounted() {
-    this.profile.avatar = this.user.file_url ? this.user.file_url : null;
-    this.profile.name = `${this.user.first_name} ${this.user.last_name}`;
-    this.profile.email = this.user.email;
+  mounted () {
+    this.profile.avatar = this.user.file_url ? this.user.file_url : null
+    this.profile.name = `${this.user.first_name} ${this.user.last_name}`
+    this.profile.email = this.user.email
     // this.form.gmc_or_nmc_number =
     //   this.user.locum_detail && this.user.locum_detail.gmc_or_nmc_number
     //     ? this.user.locum_detail.gmc_or_nmc_number.number
@@ -718,30 +728,30 @@ export default {
     //     message: "Rejected"
     //   });
     // }
-    this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number;
-    this.form.headline = this.user.headline;
-    this.form.short_biography = this.user.short_biography;
-    this.form.special_requirements = this.user.special_requirements;
-    this.form.profession_id = this.user.profession.id;
+    this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number
+    this.form.headline = this.user.headline
+    this.form.short_biography = this.user.short_biography
+    this.form.special_requirements = this.user.special_requirements
+    this.form.profession_id = this.user.profession.id
     // this.professionCategoryId = this.user.profession.profession_category.id;
 
     this.form.qualification_id = this.user.qualifications.map(
       qualification => {
-        return { label: qualification.name, value: qualification.id };
+        return { label: qualification.name, value: qualification.id }
       }
-    );
+    )
     this.form.clinical_system_id = this.user.clinical_systems.map(
       clinicalSystem => {
-        return { label: clinicalSystem.name, value: clinicalSystem.id };
+        return { label: clinicalSystem.name, value: clinicalSystem.id }
       }
-    );
+    )
     this.form.spoken_language_id = this.user.spoken_languages.map(
       spokenLanguage => {
-        return { label: spokenLanguage.name, value: spokenLanguage.id };
+        return { label: spokenLanguage.name, value: spokenLanguage.id }
       }
-    );
-    this.form.view_locum_jobs = this.user.view_locum_jobs;
-    this.form.view_permanent_jobs = this.user.view_permanent_jobs;
+    )
+    this.form.view_locum_jobs = this.user.view_locum_jobs
+    this.form.view_permanent_jobs = this.user.view_permanent_jobs
     this.form.min_rate_per_hour = this.user.min_rate_per_hour
     this.form.max_rate_per_hour = this.user.max_rate_per_hour
     this.form.min_rate_per_half_day_session = this.user.min_rate_per_half_day_session
@@ -750,17 +760,17 @@ export default {
     this.form.max_rate_per_whole_day_session = this.user.max_rate_per_whole_day_session
     this.form.practice_type_id = this.user.practice_types.map(
       practiceType => practiceType.id
-    );
+    )
     this.form.mandatory_training_id = this.user.mandatory_trainings.map(
       mandatoryTraining => mandatoryTraining.mandatory_training.id
-    );
-    this.form.post_code = this.user.locum_postcode;
-    this.form.miles = this.user.miles;
+    )
+    this.form.post_code = this.user.locum_postcode
+    this.form.miles = this.user.miles
 
 
     let findprofession = this.professions.find(
-				item =>item.value === parseInt(this.user.profession.id));
-    this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+				item =>item.value === parseInt(this.user.profession.id))
+    this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
 
     // this.reference_locum_compliance_documents_list.forEach(item => {
     //   this.form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()] = this.user.reference_locum_compliance_documents.find(ref => ref.compliance_document_id === item.compliance_document_id).reference
@@ -772,9 +782,9 @@ export default {
 				compliance =>
 					compliance.compliance_document_id === item.compliance_document_id
 			)
-			let fieldName = item.compliance_document_name
-				.replace(/ /g, "_")
-				.toLowerCase()
+			// let fieldName = item.compliance_document_name
+			// 	.replace(/ /g, "_")
+			// 	.toLowerCase()
 			this.form.reference_locum_compliance_documents.push({
 				compliance_document_id: item.compliance_document_id,
 				compliance_document_name: item.compliance_document_name,
@@ -784,12 +794,12 @@ export default {
 		})
     console.log(this.form.reference_locum_compliance_documents)
 
-    this.form.referee_1_contact_name = this.user.referee_1_contact_name;
-    this.form.referee_1_phone_number = this.user.referee_1_phone_number;
-    this.form.referee_1_email = this.user.referee_1_email;
-    this.form.referee_2_contact_name = this.user.referee_2_contact_name;
-    this.form.referee_2_phone_number = this.user.referee_2_phone_number;
-    this.form.referee_2_email = this.user.referee_2_email;
+    this.form.referee_1_contact_name = this.user.referee_1_contact_name
+    this.form.referee_1_phone_number = this.user.referee_1_phone_number
+    this.form.referee_1_email = this.user.referee_1_email
+    this.form.referee_2_contact_name = this.user.referee_2_contact_name
+    this.form.referee_2_phone_number = this.user.referee_2_phone_number
+    this.form.referee_2_email = this.user.referee_2_email
 
     // this.user.referees.forEach((referee, index) => {
     //   if (index == 0) {
@@ -805,39 +815,39 @@ export default {
     // });
     // if (this.user.locum_detail.invoice_detail) {
       this.form.employment_type = this.user.employment_type
-      this.form.utr_number = this.user.utr_number;
-      this.form.company_registration_number = this.user.company_registration_number;
-      this.form.ir35 = this.user.ir35;
+      this.form.utr_number = this.user.utr_number
+      this.form.company_registration_number = this.user.company_registration_number
+      this.form.ir35 = this.user.ir35
       // claim nhs
-      this.form.claim_nhs = this.user.claim_nhs;
-      this.form.nhs_number = this.user.nhs_number;
-      this.form.paid_under_payroll = this.user.paid_under_payroll;
+      this.form.claim_nhs = this.user.claim_nhs
+      this.form.nhs_number = this.user.nhs_number
+      this.form.paid_under_payroll = this.user.paid_under_payroll
     // }
     // if (
     //   this.user.locum_detail.invoice_detail &&
     //   this.user.locum_detail.invoice_detail.payroll_detail
     // ) {
-      this.form.payroll_account_name = this.user.payroll_account_name;
-      this.form.payroll_account_number = this.user.payroll_account_number;
-      this.form.payroll_sort_code = this.user.payroll_sort_code;
-      this.form.payroll_bank_name = this.user.payroll_bank_name;
+      this.form.payroll_account_name = this.user.payroll_account_name
+      this.form.payroll_account_number = this.user.payroll_account_number
+      this.form.payroll_sort_code = this.user.payroll_sort_code
+      this.form.payroll_bank_name = this.user.payroll_bank_name
     // }
     // if (
     //   this.user.locum_detail.invoice_detail &&
     //   this.user.locum_detail.invoice_detail.bank_account
     // ) {
-      this.form.account_name = this.user.account_name;
-      this.form.account_number = this.user.account_number;
-      this.form.sort_code = this.user.sort_code;
-      this.form.bank_name = this.user.bank_name;
+      this.form.account_name = this.user.account_name
+      this.form.account_number = this.user.account_number
+      this.form.sort_code = this.user.sort_code
+      this.form.bank_name = this.user.bank_name
     // }
   },
   methods: {
-    checkValidation(name, limit) {
-      let fieldName = name.replace(/ /g, "_").toLowerCase();
+    checkValidation (name, limit) {
+      let fieldName = name.replace(/ /g, "_").toLowerCase()
 			let field = this.form.reference_locum_compliance_documents.find(
 				item => item.compliance_document_name === name
-      );
+      )
       let index = this.formError.findIndex(err => err.field === fieldName && err.type === 'limit')
       let requiredIndex = this.formError.findIndex(err => err.field === fieldName && !err.type)
       if (field.reference) {
@@ -848,7 +858,7 @@ export default {
               field: fieldName,
               type: 'limit',
               message: `${name} must be ${limit} characters.`
-            });
+            })
           }
         }else {
           if (index > -1) {
@@ -862,7 +872,7 @@ export default {
         }
       }
     },
-    save() {
+    save () {
       let notRequired = [
         "nhs_smart_card_id_number",
         "headline",
@@ -883,63 +893,63 @@ export default {
         "max_rate_per_half_day_session",
         "max_rate_per_whole_day_session",
         "mpl_or_npl_number"
-      ];
-      this.form.max_rate_per_hour = 999999999;
-      this.form.max_rate_per_half_day_session = 999999999;
-      this.form.max_rate_per_whole_day_session = 999999999;
+      ]
+      this.form.max_rate_per_hour = 999999999
+      this.form.max_rate_per_half_day_session = 999999999
+      this.form.max_rate_per_whole_day_session = 999999999
 
       if (this.form.employment_type === "Self-Employed") {
-        notRequired.push("company_registration_number");
+        notRequired.push("company_registration_number")
       } else if (this.form.employment_type === "Limited Company") {
-        notRequired.push("utr_number");
+        notRequired.push("utr_number")
       }
 
       if (this.professionCategoryId === 2) {
-        this.form.claim_nhs = false;
+        this.form.claim_nhs = false
       }
 
       if (["false", false].includes(this.form.claim_nhs)) {
-        notRequired.push("nhs_number");
-        this.form.nhs_number = null;
+        notRequired.push("nhs_number")
+        this.form.nhs_number = null
       }
 
       if (["false", false].includes(this.form.paid_under_payroll)) {
-        this.form.payroll_account_name = "";
-        this.form.payroll_account_number = "";
-        this.form.payroll_sort_code = "";
-        this.form.payroll_bank_name = "";
+        this.form.payroll_account_name = ""
+        this.form.payroll_account_number = ""
+        this.form.payroll_sort_code = ""
+        this.form.payroll_bank_name = ""
         notRequired.push(
           "payroll_account_name",
           "payroll_bank_name",
           "payroll_sort_code",
           "payroll_account_number"
-        );
+        )
       }
 
       if (["true", true].includes(this.form.paid_under_payroll)) {
-        this.form.account_name = "";
-        this.form.account_number = "";
-        this.form.sort_code = "";
-        this.form.bank_name = "";
+        this.form.account_name = ""
+        this.form.account_number = ""
+        this.form.sort_code = ""
+        this.form.bank_name = ""
         notRequired.push(
           "account_name",
           "bank_name",
           "sort_code",
           "account_number"
-        );
+        )
       }
 
       if (
         ["true", true].includes(this.form.view_locum_jobs) ||
         ["true", true].includes(this.form.view_permanent_jobs)
       ) {
-        notRequired.push("view_locum_jobs", "view_permanent_jobs");
+        notRequired.push("view_locum_jobs", "view_permanent_jobs")
       }
 
       if (this.form.profession_id) {
 				let profession = this.professions.find(
 					item => item.value === parseInt(this.form.profession_id)
-				);
+				)
 				profession.reference_compliance_documents.forEach(
 					item => {
 						if (
@@ -952,61 +962,61 @@ export default {
 								reference: this.form[
 									item.compliance_document_name.replace(/ /g, "_").toLowerCase()
 								]
-							});
+							})
 						} else {
 							this.formError.push({
 								field: item.compliance_document_name
 									.replace(/ /g, "_")
 									.toLowerCase(),
 								message: `${item.compliance_document_name} is required`
-							});
+							})
 						}
 					}
-				);
+				)
 			}
 
-      this.formError = [];
+      this.formError = []
 
-      this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired)
 
       if (!this.formError.length) {
-        this.loading = true;
-        this.selectedClinicalSystem = [...this.form.clinical_system_id];
+        this.loading = true
+        this.selectedClinicalSystem = [...this.form.clinical_system_id]
         this.form.clinical_system_id = this.form.clinical_system_id.length
           ? this.form.clinical_system_id.map(item => item.value)
-          : [];
-        this.selectedQualification = [...this.form.qualification_id];
+          : []
+        this.selectedQualification = [...this.form.qualification_id]
         this.form.qualification_id = this.form.qualification_id.length
           ? this.form.qualification_id.map(item => item.value)
-          : [];
-        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
+          : []
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id]
         this.form.spoken_language_id = this.form.spoken_language_id.length
           ? this.form.spoken_language_id.map(item => item.value)
-          : [];
-        this.form.profession_id = this.form.profession_id.toString();
+          : []
+        this.form.profession_id = this.form.profession_id.toString()
         this.form.ir35 =
-          this.professionCategoryId === 1 ? this.form.ir35 : false;
+          this.professionCategoryId === 1 ? this.form.ir35 : false
 
         this.$axios
           .$put(`/api/v1/locum/me/profile`, this.form)
           .then(res => {
-            this.form.clinical_system_id = this.selectedClinicalSystem;
-            this.form.qualification_id = this.selectedQualification;
-            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            this.form.clinical_system_id = this.selectedClinicalSystem
+            this.form.qualification_id = this.selectedQualification
+            this.form.spoken_language_id = this.selectedSpokenLanguage
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
-            });
+            })
             this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
             this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
-            this.CheckUserVerification();
+            this.CheckUserVerification()
           })
           .catch(err => {
-            console.log("err", err.response || err);
-            this.form.clinical_system_id = this.selectedClinicalSystem;
-            this.form.qualification_id = this.selectedQualification;
-            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            console.log("err", err.response || err)
+            this.form.clinical_system_id = this.selectedClinicalSystem
+            this.form.qualification_id = this.selectedQualification
+            this.form.spoken_language_id = this.selectedSpokenLanguage
             if (
               err.response &&
               err.response.data &&
@@ -1016,7 +1026,7 @@ export default {
                 enabled: true,
                 status: "danger",
                 text: [`${err.response.data.message}`]
-              });
+              })
             }
             if (
               err.response &&
@@ -1024,27 +1034,27 @@ export default {
               err.response.data.error_messages
             ) {
               err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+                this.formError.push(error)
+              })
             }
-            throw err;
+            throw err
           })
           .finally(() => {
-            this.loading = false;
-            this.scrollToTop();
-          });
+            this.loading = false
+            this.scrollToTop()
+          })
       } else {
         // this.$store.commit("SET_NOTIFICATION", {
         //   enabled: true,
         //   status: "danger",
         //   text: ["Please fill up all the forms"]
         // });
-        this.form;
-        this.scrollToTop();
+        this.form
+        this.scrollToTop()
       }
     }
   }
-};
+}
 </script>
 
 

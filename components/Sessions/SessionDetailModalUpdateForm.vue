@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full">
     <AppFormError v-if="formError.length > 0" :formError="formError" />
-    <div class="relative  bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4" >
-    <AppLoading :loading="dataLoading" spinner/>
-      <div class="flex flex-row flex-wrap" v-if="!dataLoading">
+    <div class="relative  bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+      <AppLoading :loading="dataLoading" spinner />
+      <div v-if="!dataLoading" class="flex flex-row flex-wrap">
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">
             Job number
@@ -469,7 +469,7 @@
             </template>
           </template>
 
-          <template v-if="selectedProfession && selectedProfession.profession_category.id === 1">
+          <template v-if="selectedProfession && selectedProfession.profession_category.name === 'GP'">
             <AppInput
               v-model="form.ir35"
               :type="'select'"
@@ -580,7 +580,7 @@
           </div>
         </div>
       </div>
-      <div class="mb-8" v-if="!dataLoading">
+      <div v-if="!dataLoading" class="mb-8">
         <AppButton
           :label="'Save changes'"
           :inStyle="'padding:8px'"
@@ -658,7 +658,14 @@
 
     mixins: [clickaway],
 
-    props: ["job"],
+    props: {
+      
+      job: {
+        type: Object,
+        required: true,
+      },
+
+    },
 
     data () {
       return {
@@ -782,12 +789,12 @@
       },
 
       selectedProfession () {
-        if (!this.form.role) {
+        if (!this.form.profession_id) {
           return null
         }
 
         const profession = this.professions_categories
-          .find(profession => profession.id.toString() === this.form.role.toString())
+          .find(profession => profession.id.toString() === this.form.profession_id.toString())
         
         if (!profession) {
           return null
@@ -1432,7 +1439,7 @@
             this.form.unpaid_breaks_in_minutes = ""
           }
 
-          this.form.ir35 = this.selectedProfession && this.selectedProfession.profession_category.id === 1
+          this.form.ir35 = this.selectedProfession && this.selectedProfession.profession_category.name === 'GP'
             ? this.form.ir35
             : false
 
