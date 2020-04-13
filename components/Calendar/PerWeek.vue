@@ -82,12 +82,12 @@
           AM
         </div>
         <template v-for="({id, date, day}, index) in daysInWeek">
-          <div
+          <!-- <div
             v-if="hasPracticeOngoingJobs(date, 'AM', day)"
             :key="`${date}-${index}-${id}-${id}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'AM')"
-          />
+          /> -->
           <!-- <div
             v-if="hasPracticeCompletedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -95,7 +95,7 @@
             @click="selectDateShift(date, 'AM')"
           ></div> -->
           <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'AM', day)"
+            v-if="hasPracticeAllocatedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
@@ -144,12 +144,12 @@
           PM
         </div>
         <template v-for="({id, date, day}, index) in daysInWeek">
-          <div
+          <!-- <div
             v-if="hasPracticeOngoingJobs(date, 'PM', day)"
             :key="`${date}-${index}-${id}-${id}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'PM')"
-          />
+          /> -->
           <!-- <div
             v-if="hasPracticeCompletedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -158,7 +158,7 @@
           ></div>
           -->
           <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'PM', day)"
+            v-if="hasPracticeAllocatedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
@@ -207,12 +207,12 @@
           OOH
         </div>
         <template v-for="({id, date, day}, index) in daysInWeek">
-          <div
+          <!-- <div
             v-if="hasPracticeOngoingJobs(date, 'OOH', day)"
             :key="`${date}-${index}-${id}-${id}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
-          />
+          /> -->
           <!-- <div
             v-if="hasPracticeCompletedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -221,7 +221,7 @@
           ></div>
            -->
            <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'OOH', day)"
+            v-if="hasPracticeAllocatedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
@@ -270,12 +270,12 @@
           Whole Day
         </div>
         <template v-for="({id, date, day}, index) in daysInWeek">
-          <div
+          <!-- <div
             v-if="hasPracticeOngoingJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}-${id}-${id}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
-          />
+          /> -->
           <!-- <div
             v-if="hasPracticeCompletedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -284,7 +284,7 @@
           ></div>
            -->
            <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'Whole Day', day)"
+            v-if="hasPracticeAllocatedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
