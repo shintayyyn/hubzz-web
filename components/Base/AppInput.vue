@@ -56,7 +56,7 @@
                   :value="value"
                   :type="type"
                   :placeholder="placeholder"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
                   :class="error ? 'border-red-500' : ''"
                   :style="inStyle"
                   :checked="value"

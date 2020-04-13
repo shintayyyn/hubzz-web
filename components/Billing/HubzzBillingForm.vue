@@ -2,47 +2,47 @@
 	<div class="text-black">
 		<!-- HEADER -->
 		<div class="flex flex-wrap overflow-hidden md:mx-1 md:pl-3 mb-1 pb-1 text-sm">
-      <AppButton
-        v-if="forViewing == true" 
+			<AppButton
+				v-if="forViewing == true"
 				class="mr-2"
 				:label="'Export As PDF'"
 				:icon="'cloud-download'"
 				@click="toPDF()"
 			/>
-      <!-- <AppButton
+			<!-- <AppButton
         v-if="forViewing == true" 
 				class="mr-2"
 				:label="'Test HTML'"
 				:icon="'cloud-download'"
 				@click="testHtml()"
-			/> -->
-      <!-- <AppButton
+			/>-->
+			<!-- <AppButton
         v-if="forViewing == true" 
 				class="mr-2"
 				:label="'Test Multiple Page'"
 				:icon="'cloud-download'"
 				@click="testMultiplePage()"
-			/> -->
-      <AppButton 
-        v-if="forViewing == false" 
-        class="m-2"
-        :label="'Save as Final'" 
-        :icon="'save-icon'"
-        @click="createInvoice()"
-      />
-      <!-- <AppButton
+			/>-->
+			<AppButton
+				v-if="forViewing == false"
+				class="m-2"
+				:label="'Save as Final'"
+				:icon="'save-icon'"
+				@click="createInvoice()"
+			/>
+			<!-- <AppButton
         v-if="forViewing == false"
         class="m-2" 
         :label="'Save as Draft'" 
         :icon="'save-icon'"
-      /> -->
+			/>-->
 			<!-- <AppButton
         v-if="forViewing == false"
         class="m-2" 
         :label="'Clear Entries'" 
         :icon="'save-icon'"
         @click="clearEntries()"
-       /> -->
+			/>-->
 		</div>
 		<!-- HEADER ENDS HERE -->
 
@@ -66,7 +66,7 @@
 							<p>10832559</p>
 						</div>
 					</div>
-          <div class="flex">
+					<div class="flex">
 						<div class="w-full md:w-2/3">
 							<div
 								class="border-2 border-gray-300 rounded-lg p-4 text-sm"
@@ -76,26 +76,30 @@
 									<div>To: Accounts Department</div>
 									<div class="w-full m-2">
 										<p>{{practice.name}}</p>
-                    <div class="mx-2 text-sm font-light">
-                      <p>{{practice.address_line_1}}</p>
-                      <p>{{practice.address_line_2}}</p>
-                      <p>{{practice.address_line_3}}</p>
-                    </div>
-										
-                     <div class="mt-2 flex flex-col">
-                      <div>For the period</div>
-                      <div>
-                        <span>{{dateStart + " to " + dateEnd}}</span>
-                      </div>
-                    </div>
+										<div class="mx-2 text-sm font-light">
+											<p>{{practice.address_line_1}}</p>
+											<p>{{practice.address_line_2}}</p>
+											<p>{{practice.address_line_3}}</p>
+										</div>
+
+										<div class="mt-2 flex flex-col">
+											<div>For the period</div>
+											<div>
+												<span>{{dateStart + " to " + dateEnd}}</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-        <!-- FOR INVOICES -->
-				<div v-if="invoiceItems && invoiceItems.length > 0" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
+				<!-- FOR INVOICES -->
+				<div
+					v-if="invoiceItems && invoiceItems.length > 0"
+					class="flex flex-col overflow-x-auto"
+					:class="doNotShow && 'mx-4'"
+				>
 					<div
 						:class="!doNotShow && 'px-4'"
 						:ref="'items-header'"
@@ -118,7 +122,7 @@
 										@click="addInvoiceItem()"
 										class="bg-gray-900 hover:bg-gray-800 w-6 h-6 cursor-pointer font-semibold flex items-center justify-center rounded-full text-white"
 									>+</span>
-								</div> -->
+								</div>-->
 							</div>
 						</div>
 					</div>
@@ -138,7 +142,10 @@
 									class="border-b-2 border-gray-300 w-full h-full focus:outline-none resize-none py-1 px-4"
 									placeholder="Enter Description"
 								></textarea>
-								<p v-else class="text-left px-2 py-1">{{ item.description ? item.description : "No Description" }}</p>
+								<p
+									v-else
+									class="text-left px-2 py-1"
+								>{{ item.description ? item.description : "No Description" }}</p>
 							</div>
 							<div v-else class="w-full max-w px-2 py-1">{{item.description}}</div>
 							<div class="w-1/3 text-sm mx-1">
@@ -146,7 +153,7 @@
 									<input
 										v-if="doNotShow"
 										v-model="item.total"
-										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right"
+										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right shadow-none"
 										:class="!doNotShow && 'pr-3'"
 										type="number"
 										min="0"
@@ -167,8 +174,12 @@
 					</div>
 				</div>
 
-        <!-- FOR DISPUTED -->
-				<div v-if="disputedItems && disputedItems.length > 0" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
+				<!-- FOR DISPUTED -->
+				<div
+					v-if="disputedItems && disputedItems.length > 0"
+					class="flex flex-col overflow-x-auto"
+					:class="doNotShow && 'mx-4'"
+				>
 					<div
 						:class="!doNotShow && 'px-4'"
 						:ref="'items-header'"
@@ -192,7 +203,7 @@
 										class="bg-gray-900 hover:bg-gray-800 w-6 h-6 cursor-pointer font-semibold flex items-center justify-center rounded-full text-white"
 									>+</span>
 								</div>
-							</div> -->
+							</div>-->
 						</div>
 					</div>
 					<div
@@ -203,7 +214,7 @@
 						:style="`min-width: ${doNotShow ? '733px' : ''}`"
 					>
 						<div class="flex w-full justify-center border-b border-gray-500 py-1">
-							<div v-if="forViewing == false" class=" w-2/3 text-sm mx-1">
+							<div v-if="forViewing == false" class="w-2/3 text-sm mx-1">
 								<textarea
 									v-if="doNotShow"
 									v-model="item.description"
@@ -211,7 +222,10 @@
 									class="border-b-2 border-gray-300 w-full h-full focus:outline-none resize-none py-1 px-4"
 									placeholder="Enter Description"
 								></textarea>
-								<p v-else class="text-left px-2 py-1">{{ item.description ? item.description : "No Description" }}</p>
+								<p
+									v-else
+									class="text-left px-2 py-1"
+								>{{ item.description ? item.description : "No Description" }}</p>
 							</div>
 							<div v-else class="w-full max-w px-2 py-1">{{item.description}}</div>
 							<div class="w-1/3 text-sm mx-1">
@@ -219,7 +233,7 @@
 									<input
 										v-if="doNotShow"
 										v-model="item.total"
-										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right"
+										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right shadow-none"
 										:class="!doNotShow && 'pr-3'"
 										type="number"
 										min="0"
@@ -239,9 +253,9 @@
 						</div>
 					</div>
 				</div>
-        
-        <!-- FOR DEBITS -->
-        <div v-if="!locumInvoice" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
+
+				<!-- FOR DEBITS -->
+				<div v-if="!locumInvoice" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
 					<div
 						:class="!doNotShow && 'px-4'"
 						:ref="'items-header'"
@@ -276,16 +290,19 @@
 						:style="`min-width: ${doNotShow ? '733px' : ''}`"
 					>
 						<div class="flex w-full justify-center border-b border-gray-500 py-1">
-							<div v-if="forViewing == false" class=" w-2/3 text-sm mx-1">
+							<div v-if="forViewing == false" class="w-2/3 text-sm mx-1">
 								<textarea
 									v-if="doNotShow"
 									v-model="item.description"
-                  :maxlength="maxChars"
+									:maxlength="maxChars"
 									rows="2"
 									class="border-b-2 border-gray-300 w-full h-full focus:outline-none resize-none py-1 px-4"
 									placeholder="Enter Description"
 								></textarea>
-								<p v-else class="text-left px-2 py-1">{{ item.description ? item.description : "No Description" }}</p>
+								<p
+									v-else
+									class="text-left px-2 py-1"
+								>{{ item.description ? item.description : "No Description" }}</p>
 							</div>
 							<div v-else class="w-full max-w px-2 py-1">{{item.description}}</div>
 							<div class="w-1/3 text-sm mx-1">
@@ -293,7 +310,7 @@
 									<input
 										v-if="doNotShow"
 										v-model="item.total"
-										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right"
+										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right shadow-none"
 										:class="!doNotShow && 'pr-3'"
 										type="number"
 										min="0"
@@ -314,8 +331,8 @@
 					</div>
 				</div>
 
-        <!-- FOR CREDITS -->
-        <div v-if="!locumInvoice" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
+				<!-- FOR CREDITS -->
+				<div v-if="!locumInvoice" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
 					<div
 						:class="!doNotShow && 'px-4'"
 						:ref="'items-header'"
@@ -350,7 +367,7 @@
 						:style="`min-width: ${doNotShow ? '733px' : ''}`"
 					>
 						<div class="flex w-full justify-center border-b border-gray-500 py-1">
-							<div v-if="forViewing == false" class=" w-2/3 text-sm mx-1">
+							<div v-if="forViewing == false" class="w-2/3 text-sm mx-1">
 								<textarea
 									v-if="doNotShow"
 									v-model="item.description"
@@ -358,7 +375,10 @@
 									class="border-b-2 border-gray-300 w-full h-full focus:outline-none resize-none py-1 px-4"
 									placeholder="Enter Description"
 								></textarea>
-								<p v-else class="text-left px-2 py-1">{{ item.description ? item.description : "No Description" }}</p>
+								<p
+									v-else
+									class="text-left px-2 py-1"
+								>{{ item.description ? item.description : "No Description" }}</p>
 							</div>
 							<div v-else class="w-full max-w px-2 py-1">{{item.description}}</div>
 							<div class="w-1/3 text-sm mx-1">
@@ -366,7 +386,7 @@
 									<input
 										v-if="doNotShow"
 										v-model="item.total"
-										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right"
+										class="border-b-2 border-gray-300 w-full h-full focus:outline-none text-right shadow-none"
 										:class="!doNotShow && 'pr-3'"
 										type="number"
 										min="0"
@@ -386,7 +406,7 @@
 						</div>
 					</div>
 				</div>
-        
+
 				<div ref="items-total" class="flex justify-betwen px-4 pt-2">
 					<div class="my-1 px-1 w-3/4 font-bold">Total</div>
 					<div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">{{ "£ " + amountTotal }}</div>
@@ -401,7 +421,7 @@
 					<br />Account number: XXX
 					<br />
 				</div>
-			</div> -->
+			</div>-->
 		</div>
 		<!-- FIRST PAGE ENDS HERE -->
 		<!-- BODY ENDS HERE-->
@@ -413,21 +433,21 @@ import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
 export default {
 	props: [
-    "forViewing",
-    "practice",
-    "practiceInvoice",
-    "locumInvoice",
-    "invoiceItems",
-    "disputedItems",
-    "debitItems",
-    "creditItems",
-    "dateStart",
-    "dateEnd",
-    "byLocum"
-    ],
+		"forViewing",
+		"practice",
+		"practiceInvoice",
+		"locumInvoice",
+		"invoiceItems",
+		"disputedItems",
+		"debitItems",
+		"creditItems",
+		"dateStart",
+		"dateEnd",
+		"byLocum"
+	],
 	components: {
 		AppLoading,
-		AppButton,
+		AppButton
 	},
 	data() {
 		return {
@@ -437,104 +457,110 @@ export default {
 				date_end: "",
 				items: [],
 				total_amount: ""
-      },
-      // createdInvoiceItems: [],
-      // createdDisputedItems: [],
-      createdDebitItems: [],
-      createdCreditItems: [],
+			},
+			// createdInvoiceItems: [],
+			// createdDisputedItems: [],
+			createdDebitItems: [],
+			createdCreditItems: [],
 			invoice: {},
 			doNotShow: true,
 			practices: [],
 			chosenPractice: [],
-      loading: false,
-      
-      maxChars: 100
+			loading: false,
+
+			maxChars: 100
 		};
 	},
 	created() {
-    // if (this.invoiceItems) {
-    //   this.createdInvoiceItems = this.invoiceItems
-    // }
-    // if (this.disputeditems) {
-    //   this.createdDisputedItems = this.createdDisputedItems
-    // }
-    if (this.debitItems) {
-      this.createdDebitItems = this.debitItems
-    }
-    if(this.creditItems) {
-      this.createdCreditItems = this.creditItems
-    }
+		// if (this.invoiceItems) {
+		//   this.createdInvoiceItems = this.invoiceItems
+		// }
+		// if (this.disputeditems) {
+		//   this.createdDisputedItems = this.createdDisputedItems
+		// }
+		if (this.debitItems) {
+			this.createdDebitItems = this.debitItems;
+		}
+		if (this.creditItems) {
+			this.createdCreditItems = this.creditItems;
+		}
 	},
 	computed: {
 		amountTotal: function() {
-      let grossSum = 0
-      let invoiceItemTotal = 0
-      let disputedItemTotal = 0
-      let debitTotal = 0 
-      let creditTotal = 0
-      const reducer = (accumulator, currentValue) => accumulator + currentValue;
-      
-      if(this.invoiceItems && this.invoiceItems.length > 0) {
-        let invoiceItems = this.invoiceItems.map(invoiceItem => parseFloat(invoiceItem.total));
-        invoiceItemTotal = invoiceItems.reduce(reducer)
-      }
+			let grossSum = 0;
+			let invoiceItemTotal = 0;
+			let disputedItemTotal = 0;
+			let debitTotal = 0;
+			let creditTotal = 0;
+			const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
-      if(this.disputedItems && this.disputedItems.length > 0) {
-        let disputedItems = this.disputedItems.map(disputedItem => parseFloat(disputedItem.total))
-        disputedItemTotal = disputedItems.reduce(reducer)
-      }
+			if (this.invoiceItems && this.invoiceItems.length > 0) {
+				let invoiceItems = this.invoiceItems.map(invoiceItem =>
+					parseFloat(invoiceItem.total)
+				);
+				invoiceItemTotal = invoiceItems.reduce(reducer);
+			}
 
-      grossSum = parseFloat(invoiceItemTotal + disputedItemTotal);
-      
-      if (this.createdDebitItems && this.createdDebitItems.length > 0) {
-        let createdDebitItems = this.createdDebitItems.map(debitItem => parseFloat(debitItem.total))
-        debitTotal = createdDebitItems.reduce(reducer);
-      }
-      
-      if (this.createdCreditItems && this.createdCreditItems.length > 0) {
-        let createdCreditItems = this.createdCreditItems.map(creditItem => parseFloat(creditItem.total))
-        creditTotal = createdCreditItems.reduce(reducer)
-      }
-      const netSum = parseFloat((grossSum + debitTotal) - creditTotal).toFixed(2)
-      return netSum;
+			if (this.disputedItems && this.disputedItems.length > 0) {
+				let disputedItems = this.disputedItems.map(disputedItem =>
+					parseFloat(disputedItem.total)
+				);
+				disputedItemTotal = disputedItems.reduce(reducer);
+			}
+
+			grossSum = parseFloat(invoiceItemTotal + disputedItemTotal);
+
+			if (this.createdDebitItems && this.createdDebitItems.length > 0) {
+				let createdDebitItems = this.createdDebitItems.map(debitItem =>
+					parseFloat(debitItem.total)
+				);
+				debitTotal = createdDebitItems.reduce(reducer);
+			}
+
+			if (this.createdCreditItems && this.createdCreditItems.length > 0) {
+				let createdCreditItems = this.createdCreditItems.map(creditItem =>
+					parseFloat(creditItem.total)
+				);
+				creditTotal = createdCreditItems.reduce(reducer);
+			}
+			const netSum = parseFloat(grossSum + debitTotal - creditTotal).toFixed(2);
+			return netSum;
 		}
 	},
 	methods: {
-    async testHtml() {
-      window.open(
-        `${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/html`
-      );
-    },
+		async testHtml() {
+			window.open(
+				`${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/html`
+			);
+		},
 
-    async testMultiplePage() {
-      window.open(
-        `${process.env.API_URL}/practice-invoices/test/pdf`
-      )
-    },
+		async testMultiplePage() {
+			window.open(`${process.env.API_URL}/practice-invoices/test/pdf`);
+		},
 
-    // async testHubzzInvoice() {
-    //   window.open(
-    //     `${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/pdf`
-    //   );
-    // },
+		// async testHubzzInvoice() {
+		//   window.open(
+		//     `${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/pdf`
+		//   );
+		// },
 
-    // async testLocumInvoice() {
-    //   window.open(
-    //     `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
-    //   )
-    // },
+		// async testLocumInvoice() {
+		//   window.open(
+		//     `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
+		//   )
+		// },
 
-    toPDF(){
-      if(this.locumInvoice){
-        window.open(
-          `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
-        )
-      }else if(this.practiceInvoice){
-        window.open(
-          `${process.env.API_URL}/api/v1/practice-invoices/${this.practiceInvoice.id}/pdf`
-        );
-      }
-    },
+		toPDF() {
+			if (this.locumInvoice) {
+				window.open(
+					`${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
+				);
+			} else if (this.practiceInvoice) {
+				window.open(
+					`${process.env.API_URL}/api/v1/practice-invoices/${this.practiceInvoice.id}/pdf`
+				);
+			}
+		},
 		async addInvoiceItem() {
 			// deduct 1 when dealing with ID for array
 			const newItem = {
@@ -545,92 +571,100 @@ export default {
 			};
 			newItem.id = this.invoiceItems.length + 1;
 			await this.invoiceItems.push(newItem);
-    },
+		},
 
-    async deductInvoiceItem(itemId) {
+		async deductInvoiceItem(itemId) {
 			const mapInvoiceItems = this.invoiceItems.map(
 				invoiceItem => invoiceItem.id
 			);
 			await this.invoiceItems.splice(mapInvoiceItems.indexOf(itemId), 1);
-    },
+		},
 
-    async deductDisputedItem(itemId) {
+		async deductDisputedItem(itemId) {
 			const mapDisputedItems = this.disputedItems.map(
 				disputedItem => disputedItem.id
 			);
 			await this.disputedItems.splice(mapDisputedItems.indexOf(itemId), 1);
-    },
-    
-    async addDebitItem() {
-      const newItem = {
-        type: "Debit",
-        description: "",
-        amount: 0
-      }
-      newItem.id = this.createdDebitItems.length + 1;
-      await this.createdDebitItems.push(newItem)
-    },
+		},
 
-    async deductDebitItem(itemId) {
+		async addDebitItem() {
+			const newItem = {
+				type: "Debit",
+				description: "",
+				amount: 0
+			};
+			newItem.id = this.createdDebitItems.length + 1;
+			await this.createdDebitItems.push(newItem);
+		},
+
+		async deductDebitItem(itemId) {
 			const mapDebitItems = this.createdDebitItems.map(
 				debitItem => debitItem.id
 			);
 			await this.createdDebitItems.splice(mapDebitItems.indexOf(itemId), 1);
-    },
+		},
 
-    async addCreditItem() {
-      const newItem = {
-        type: "Credit",
-        description: "",
-        amount: 0
-      }
-      newItem.id = this.createdCreditItems.length + 1
-      await this.createdCreditItems.push(newItem)
-    },
+		async addCreditItem() {
+			const newItem = {
+				type: "Credit",
+				description: "",
+				amount: 0
+			};
+			newItem.id = this.createdCreditItems.length + 1;
+			await this.createdCreditItems.push(newItem);
+		},
 
-    async deductCreditItem(itemId) {
+		async deductCreditItem(itemId) {
 			const mapCreditItems = this.createdCreditItems.map(
 				creditItem => creditItem.id
 			);
 			await this.createdCreditItems.splice(mapCreditItems.indexOf(itemId), 1);
-    },
+		},
 
 		async createInvoice() {
-      this.toPostPracticeInvoice.practice_id = await this.practice.id ? this.practice.id : null
-      this.toPostPracticeInvoice.date_start = await this.dateStart ? this.dateStart : null
-      this.toPostPracticeInvoice.date_end = await this.dateEnd ? this.dateEnd : null
-      this.toPostPracticeInvoice.items = await this.invoiceItems.concat(this.disputedItems,this.createdDebitItems,this.createdCreditItems)
-      this.toPostPracticeInvoice.total_amount = await this.amountTotal
+			this.toPostPracticeInvoice.practice_id = (await this.practice.id)
+				? this.practice.id
+				: null;
+			this.toPostPracticeInvoice.date_start = (await this.dateStart)
+				? this.dateStart
+				: null;
+			this.toPostPracticeInvoice.date_end = (await this.dateEnd)
+				? this.dateEnd
+				: null;
+			this.toPostPracticeInvoice.items = await this.invoiceItems.concat(
+				this.disputedItems,
+				this.createdDebitItems,
+				this.createdCreditItems
+			);
+			this.toPostPracticeInvoice.total_amount = await this.amountTotal;
 
-      if(this.toPostPracticeInvoice.items.length > 0){
-      await this.$axios
-        .post(`/api/v1/admin/practice-invoices`, this.toPostPracticeInvoice)
-        .then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: "Invoice Posted"
-          });
-        })
-        .catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: err.response.data.message
-          });
-        });
-      } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: "Items to be invoiced is required"
-        });
-      }
-    },
-    
-    async clearEntries() {
+			if (this.toPostPracticeInvoice.items.length > 0) {
+				await this.$axios
+					.post(`/api/v1/admin/practice-invoices`, this.toPostPracticeInvoice)
+					.then(res => {
+						this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "success",
+							text: "Invoice Posted"
+						});
+					})
+					.catch(err => {
+						this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "danger",
+							text: err.response.data.message
+						});
+					});
+			} else {
+				this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "danger",
+					text: "Items to be invoiced is required"
+				});
+			}
+		},
 
-    }
+		async clearEntries() {}
 	}
 };
 </script>
