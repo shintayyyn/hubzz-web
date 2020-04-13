@@ -694,6 +694,32 @@
           />
         </template>
       </div>
+      <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
+        <div class="w-full text-left my-auto" style="min-width: 60px">
+          Interview
+        </div>
+        <template v-for="({id, date, day}, index) in daysInWeek">
+          <div
+            v-if="hasLocumPermanentJobs(date, day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            :class="currentDate(date) ? 'currentDate' : ''"
+            @click="selectDateShift(date, 'Available')"
+          />
+          <div
+            v-else-if="currentDate(date)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300 hover:bg-gray-400"
+            @click="selectDateShift(date, 'Available')"
+          />
+          <div
+            v-else
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            @click="selectDateShift(date, 'Available')"
+          />
+        </template>
+      </div>
     </template>
     <AppLoading :loading="$store.state.calendar.loading" />
   </section>
@@ -777,6 +803,9 @@ export default {
     },
     getLocumPrivateJobParts () {
       return this.$store.getters["jobs/getLocumPrivateJobParts"]
+    },
+    getLocumPermanentJobs() {
+      return this.$store.getters["jobs/getLocumPermanentJobs"];
     },
     // UNAVAILABILITIES
     getLocumUnavailabilities () {
@@ -1121,6 +1150,27 @@ export default {
               limit: 100000000,
             }
           }),
+          this.$axios
+            .$get("/api/v1/locum/permanent-job-applications", {
+              params: {
+                application_status: 'For Interview',
+                calendar_date_start: `${this.$moment(
+                this.firstDayOfTheWeek,
+                "YYYY-MM-DD"
+              )
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
+              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+                limit: 100000000
+              }
+            })
+            .then(res => {
+              if (this.$auth.user.view_permanent_jobs) {
+                return res.data.permanent_job_applications
+              }else {
+                return []
+              };
+            })
           // this.$axios.$get("/api/v1/locum/jobs", {
           //   params: {
           //     type: ["Private"],
@@ -1148,6 +1198,7 @@ export default {
             ([
               responseAllocatedAndAppliedAndAvailable,
               responseOngoingAndCompleted,
+              responsePermanentJobs
               // responsePrivate,
               // responseUnavailabilities
             ]) => {
@@ -1161,6 +1212,10 @@ export default {
                 "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
                 responseOngoingAndCompleted.data.job_parts.filter(jobPart => jobPart.job.type === 'Private')
               )
+              this.$store.commit(
+                "jobs/SET_LOCUM_PERMANENT_JOBS",
+                responsePermanentJobs
+              );
               // this.$store.commit(
               //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
               //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
@@ -1448,7 +1503,7 @@ export default {
       ) {
         return this.getPracticeAvailableJobs.find(
           job =>
-            job.dates.includes(date) &&
+            job.dates[0] === date &&
             job.shift.name === type
         )
       }
@@ -1573,6 +1628,9 @@ export default {
             job_part.job.shift.name === type 
         )
     },
+    hasLocumPermanentJobs(date, day) {
+      return this.getLocumPermanentJobs.find(job => this.$moment(job.invitation_schedule).format('YYYY-MM-DD') === date)
+    }
     // UNAVAILABILITIES
     // hasLocumUnavailabilities (date, type) {
     //   if (
