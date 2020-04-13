@@ -37,15 +37,15 @@ export default {
   },
 
   REMOVE_LOCUM_PERMANENT_JOB_NOTIFICATION (state, payload) {
-    // console.log('payload locum', payload)
-    // console.log('state', state.locum_permanent_job_notifications)
-    state.locum_permanent_job_notifications = state.locum_permanent_job_notifications.filter(permJobNotif => permJobNotif.id !== payload)
+    console.log('payload locum', payload)
+    console.log('state', state.locum_permanent_job_notifications)
+    state.locum_permanent_job_notifications = state.locum_permanent_job_notifications.filter(permJobNotif => permJobNotif.permanent_job.id !== payload)
   },
 
   REMOVE_PRACTICE_PERMANENT_JOB_NOTIFICATION (state, payload) {
-    // console.log('payload practice', payload)
-    // console.log('state', state.practice_permanent_job_notifications)
-    state.practice_permanent_job_notifications = state.practice_permanent_job_notifications.filter(permJobNotif => permJobNotif.id !== payload)
+    console.log('payload practice', payload)
+    console.log('state', state.practice_permanent_job_notifications)
+    state.practice_permanent_job_notifications = state.practice_permanent_job_notifications.filter(permJobNotif => permJobNotif.permanent_job.id !== payload)
   },
 
   CLEAR_LOCUM_PERMANENT_JOB_NOTIFICATION (state) {
