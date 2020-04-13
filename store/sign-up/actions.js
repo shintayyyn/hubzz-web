@@ -1,38 +1,38 @@
 export default {
-    getProfessions({ commit }) {
+    getProfessions ({ commit }) {
         this.$axios.$get(`/api/v1/professions`).then((res) => {
             commit('SET_PROFESSIONS', res.data.professions)
         })
     },
-    getQualifications({ commit }) {
+    getQualifications ({ commit }) {
         this.$axios.$get(`/api/v1/profession-categories`).then((res) => {
-            let gp = res.data.profession_categories.find((category) => category.id === 1)
-            let others = res.data.profession_categories.find((category) => category.id === 2)
+            let gp = res.data.profession_categories.find((category) => category.name === 'GP')
+            let others = res.data.profession_categories.find((category) => category.name !== 'GP')
             commit('SET_GP_QUALIFICATIONS', gp.qualifications)
             commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
         })
     },
-    getClinicalSystems({ commit }) {
+    getClinicalSystems ({ commit }) {
         this.$axios.$get(`/api/v1/clinical-systems`).then((res) => {
             commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
         })
     },
-    getSpokenLanguages({ commit }) {
+    getSpokenLanguages ({ commit }) {
         this.$axios.$get(`/api/v1/spoken-languages`).then((res) => {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
-    getPracticeTypes({ commit }) {
+    getPracticeTypes ({ commit }) {
         this.$axios.$get(`/api/v1/practice-types`).then((res) => {
             commit('SET_PRACTICE_TYPES', res.data.practice_types)
         })
     },
-    getMandatoryTrainings({ commit }) {
+    getMandatoryTrainings ({ commit }) {
         this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
             commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
         })
     },
-    registeredPractice({ state, commit }) {
+    registeredPractice ({ state, commit }) {
         let form = {}
         form = {
             ...state.practice_surgery_details,
@@ -103,7 +103,7 @@ export default {
                 }
             })
     },
-    registeredLocum({ state, commit }) {
+    registeredLocum ({ state, commit }) {
         let form = {}
         form = {
             ...state.account_details,
@@ -219,7 +219,7 @@ export default {
                 }
             })
     },
-    registerCheckFirstPart({ state, commit }, payload) {
+    registerCheckFirstPart ({ commit }, payload) {
         commit("SET_SIGNUP_LOADING", true)
         this.$axios.$post(`/api/v1/locum/register/check-first-part`, payload)
             .then(res => {
@@ -237,7 +237,7 @@ export default {
                 }
             })
     },
-    registerLocum({ state, commit }) {
+    registerLocum ({ state, commit }) {
         let form = {}
 
         form = {
@@ -289,7 +289,7 @@ export default {
         })
 
         this.$axios.$post(`/api/v1/locum/register?referral_code=${state.stage_2_pt_2_details.referral_code ? state.stage_2_pt_2_details.referral_code.toUpperCase() : this.$router.app._route.query.referral_code}`, formData)
-            .then((res) => {
+            .then(() => {
                 commit('CLEAR_LOCUM_REGISTER_FORM')
                 commit('CLEAR_FORM_ERROR_DETAILS')
                 this.$router.push('/sign-up/success')
