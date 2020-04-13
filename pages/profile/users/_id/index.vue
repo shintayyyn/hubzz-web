@@ -237,8 +237,6 @@
 
         const user = response.data && response.data.user ? response.data.user : null
 
-        console.log('suer',user)
-
         const responseRoles = await app.$axios.$get(
           `/api/v1/practice/practice-roles`
         )
