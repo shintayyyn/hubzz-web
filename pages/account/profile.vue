@@ -567,6 +567,7 @@ export default {
         claim_nhs: false,
         nhs_number: ""
       },
+      old_compliances: [],
       profile: {
         avatar: null,
         name: "",
@@ -587,6 +588,20 @@ export default {
       // let findprofession = this.professions.find(
       //   item =>item.value === parseInt(value));
       // this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+    this.form.reference_locum_compliance_documents.forEach(
+      item => {
+        let name = item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+        this.old_compliances.push(name)
+      }
+    )
+    this.formError.forEach(
+      (err, index) => {
+        if (this.old_compliances.includes(err.field)) {
+          this.formError.splice(index, 1)
+        }
+      }
+    )
+
     this.form.reference_locum_compliance_documents = []
     let findprofession = this.professions.find(
       item =>item.value === parseInt(value));
@@ -602,10 +617,13 @@ export default {
 			this.form.reference_locum_compliance_documents.push({
 				compliance_document_id: item.compliance_document_id,
 				compliance_document_name: item.compliance_document_name,
-				reference: foundCompliance ? foundCompliance.reference : ""
+        reference: foundCompliance ? foundCompliance.reference : null,
+        type: "compliance_documents"
 			})
-		})
-    }
+    })
+
+    this.old_compliances = []
+    },
   },
   async asyncData({ app, store, error }) {
     try {
@@ -760,7 +778,8 @@ export default {
 			this.form.reference_locum_compliance_documents.push({
 				compliance_document_id: item.compliance_document_id,
 				compliance_document_name: item.compliance_document_name,
-				reference: foundCompliance ? foundCompliance.reference : ""
+        reference: foundCompliance ? foundCompliance.reference : null,
+        type: "compliance_documents"
 			})
 		})
     console.log(this.form.reference_locum_compliance_documents)
@@ -819,12 +838,29 @@ export default {
 			let field = this.form.reference_locum_compliance_documents.find(
 				item => item.compliance_document_name === name
       );
-			if (field.reference.length < limit) {
-				this.formError.push({
-					field: fieldName,
-					message: `${name} must be ${limit} characters.`
-				});
-			}
+      let index = this.formError.findIndex(err => err.field === fieldName && err.type === 'limit')
+      let requiredIndex = this.formError.findIndex(err => err.field === fieldName && !err.type)
+      if (field.reference) {
+        if (requiredIndex > -1) this.formError.splice(requiredIndex, 1)
+        if (field.reference.length < limit) {
+          if (index < 0) {
+            this.formError.push({
+              field: fieldName,
+              type: 'limit',
+              message: `${name} must be ${limit} characters.`
+            });
+          }
+        }else {
+          if (index > -1) {
+            this.formError.splice(index, 1)
+          }
+        }
+      }else {
+        if (requiredIndex < 0) {
+          if (index > -1) this.formError.splice(index, 1)
+          this.formError.push({ field: fieldName, message: `${name} is required`})
+        }
+      }
     },
     save() {
       let notRequired = [
