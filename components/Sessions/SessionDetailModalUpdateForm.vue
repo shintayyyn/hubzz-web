@@ -91,7 +91,7 @@
                   <input
                     v-model="form.hours"
                     type="number"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
                     :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
                     style="text-align:right;'"
                     min="1"
@@ -113,7 +113,7 @@
                   <input
                     v-model="form.minutes"
                     type="number"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
                     :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
                     style="text-align:right;'"
                     max="60"

@@ -145,18 +145,20 @@
           </div>
         </div> -->
         <div class="text-xs sm:text-sm mb-8">
-          <p class="px-1">{{ $moment(job_part.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.dates[job_part.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+          <p class="px-1">
+            {{ $moment(job_part.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.dates[job_part.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+          </p>
           <div class="flex">
             <div class="px-1">
               <p>Days</p>
               <p>Time</p>
               <p>Shift</p>
             </div>
-          <div class="px-1">
-            <p>{{ job_part.dates.length }}</p>
-            <p>{{ job_part.time_start }} - {{ job_part.time_end }}</p>
-            <p>{{ job_part.job.shift.name }}</p>
-          </div> 
+            <div class="px-1">
+              <p>{{ job_part.dates.length }}</p>
+              <p>{{ job_part.time_start }} - {{ job_part.time_end }}</p>
+              <p>{{ job_part.job.shift.name }}</p>
+            </div> 
           </div>
         </div>
 
@@ -323,7 +325,12 @@
             Final Hours:
           </div>
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.final_hours | hoursMinutes }}
+            <template v-if="job_part.final_hours>0">
+              {{ job_part.final_hours | hoursMinutes }}
+            </template>
+            <template v-else>
+              {{ job_part.final_hours }}
+            </template>
           </div>
         </template>
 

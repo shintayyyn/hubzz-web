@@ -539,54 +539,49 @@
                 </div>
               </div>
 
-              <div class="flex flex-col py-2 mb-3 md:mb-6">
-                <div class="relative flex flex-row flex-no-wrap justify-between">
-                  <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
-                </div>
-
-                <div class="flex flex-row flex-wrap justify-start mt-1">
-                  <div class="flex items-center mr-2">
-                    <div class="flex flex-col">
-                      <input
-                        v-model="form.hours"
-                        type="number"
-                        class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                        :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
-                        style="text-align:right;'"
-                        min="1"
-                        maxlength="8"
-                        @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
-                        @focus="hasValue(form.hours, 'hours')"
-                      >
-                      <div
-                        v-if="formError.find(item => item.field === 'hours')"
-                        class="text-red-500 p-1 text-xs"
-                      >
-                        {{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}
-                      </div>
+              <div class="flex flex-row flex-wrap justify-start mt-1">
+                <div class="flex items-center mr-2">
+                  <div class="flex flex-col">
+                    <input
+                      v-model="form.hours"
+                      type="number"
+                      class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
+                      :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+                      style="text-align:right;'"
+                      min="1"
+                      maxlength="8"
+                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                      @focus="hasValue(form.hours, 'hours')"
+                    >
+                    <div
+                      v-if="formError.find(item => item.field === 'hours')"
+                      class="text-red-500 p-1 text-xs"
+                    >
+                      {{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}
                     </div>
                     <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
                   </div>
-                  <div class="flex items-center">
-                    <div class="flex flex-col">
-                      <input
-                        v-model="form.minutes"
-                        type="number"
-                        class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                        :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
-                        style="text-align:right;'"
-                        max="60"
-                        min="1"
-                        maxlength="2"
-                        @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
-                        @focus="hasValue(form.minutes, 'minutes')"
-                      >
-                      <div
-                        v-if="formError.find(item => item.field === 'minutes')"
-                        class="text-red-500 p-1 text-xs"
-                      >
-                        {{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}
-                      </div>
+                  <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+                </div>
+                <div class="flex items-center">
+                  <div class="flex flex-col">
+                    <input
+                      v-model="form.minutes"
+                      type="number"
+                      class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
+                      :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+                      style="text-align:right;'"
+                      max="60"
+                      min="1"
+                      maxlength="2"
+                      @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                      @focus="hasValue(form.minutes, 'minutes')"
+                    >
+                    <div
+                      v-if="formError.find(item => item.field === 'minutes')"
+                      class="text-red-500 p-1 text-xs"
+                    >
+                      {{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}
                     </div>
                     <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
                   </div>
