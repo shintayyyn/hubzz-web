@@ -306,25 +306,6 @@ export default {
 		// }
 	},
 	watch: {
-		// "form.profession_id"(newValue, oldValue) {
-		// 	// this.CheckEmptyField(newValue, "profession_id");
-		// 	// if (newValue && oldValue) {
-		// 	// 	this.form.qualification_id = [];
-		// 	// }
-		// 	// if (newValue) {
-		// 	// 	this.selectedProfession = this.professions_categories.find(
-		// 	// 		item => item.id == newValue
-		// 	// 	);
-		// 	// 	if (this.selectedProfession.profession_category.id == 1) {
-		// 	// 		this.compliances = this.gp_compliance_documents_lists;
-		// 	// 		return;
-		// 	// 	}
-		// 	// 	if (this.selectedProfession.profession_category.id == 2) {
-		// 	// 		this.compliances = this.others_compliance_documents_lists;
-		// 	// 		return;
-		// 	// 	}
-		// 	// }
-		// },
 		"form.salary_amount" () {
 			this.validateNumber(this.form.salary_amount, "salary_amount")
 		}

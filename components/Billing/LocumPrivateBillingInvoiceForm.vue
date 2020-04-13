@@ -125,7 +125,7 @@
                 <input
                   v-model="form.items[0].total"
                   type="number"
-                  class="border-b-2 focus:outline-none focus:border-yellow-400 w-full h-full text-right"
+                  class="border-b-2 focus:outline-none focus:border-yellow-400 w-full h-full text-right  shadow-none"
                   @keypress="isNumber($event)"
                 >
               </div>

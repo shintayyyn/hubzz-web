@@ -357,7 +357,7 @@ export default {
     getLocumPrivateJobParts() {
       return this.$store.getters["jobs/getLocumPrivateJobParts"];
     },
-     getLocumPermanentJobs() {
+    getLocumPermanentJobs() {
       return this.$store.getters["jobs/getLocumPermanentJobs"];
     },
     // PRACTICE
@@ -395,34 +395,67 @@ export default {
         this.daysInMonth.forEach((days, daysIndex) => {
           if (jobs.length > 0) {
             jobs.forEach(job => {
-              if (job.dates.includes(days.fullDate)) {
-                if (jobsInMonth.length === 0) {
-                  jobsInMonth.push({
-                    date: days.fullDate,
-                    shifts: [job.shift.name],
-                    status: [job.status],
-                    jobs: [job]
-                  });
-                } else {
-                  let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
-                  if (dateExist) {
-                    let findDate = jobsInMonth.find(item => item.date === days.fullDate)
-                    if (!findDate.shifts.includes(job.shift.name)) {
-                      findDate.shifts.push(job.shift.name)
-                    }
-                    if (!findDate.status.includes(job.status)) {
-                      findDate.status.push(job.status)
-                    }
-                    findDate.jobs.push(job)
-                  }else {
+              if (job.status !== 'Live') {
+                if (job.dates.includes(days.fullDate)) {
+                  if (jobsInMonth.length === 0) {
                     jobsInMonth.push({
                       date: days.fullDate,
                       shifts: [job.shift.name],
                       status: [job.status],
                       jobs: [job]
                     });
+                  } else {
+                    let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
+                    if (dateExist) {
+                      let findDate = jobsInMonth.find(item => item.date === days.fullDate)
+                      if (!findDate.shifts.includes(job.shift.name)) {
+                        findDate.shifts.push(job.shift.name)
+                      }
+                      if (!findDate.status.includes(job.status)) {
+                        findDate.status.push(job.status)
+                      }
+                      findDate.jobs.push(job)
+                    }else {
+                      jobsInMonth.push({
+                        date: days.fullDate,
+                        shifts: [job.shift.name],
+                        status: [job.status],
+                        jobs: [job]
+                      });
+                    }
                   }
                 }
+              }else {
+                if (job.dates[0] === days.fullDate) {
+                   if (jobsInMonth.length === 0) {
+                    jobsInMonth.push({
+                      date: days.fullDate,
+                      shifts: [job.shift.name],
+                      status: [job.status],
+                      jobs: [job]
+                    });
+                  } else {
+                    let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
+                    if (dateExist) {
+                      let findDate = jobsInMonth.find(item => item.date === days.fullDate)
+                      if (!findDate.shifts.includes(job.shift.name)) {
+                        findDate.shifts.push(job.shift.name)
+                      }
+                      if (!findDate.status.includes(job.status)) {
+                        findDate.status.push(job.status)
+                      }
+                      findDate.jobs.push(job)
+                    }else {
+                      jobsInMonth.push({
+                        date: days.fullDate,
+                        shifts: [job.shift.name],
+                        status: [job.status],
+                        jobs: [job]
+                      });
+                    }
+                  }
+                }
+                
               }
             });
           }

@@ -218,8 +218,8 @@ export default {
 			// 	);
 			// }
 			if (this.getPracticeAvailableJobs.length > 0) {
-				foundPracticeLiveJobs = this.getPracticeAvailableJobs.filter(job =>
-					job.dates.includes(date)
+				foundPracticeLiveJobs = this.getPracticeAvailableJobs.filter(
+					job => job.dates[0] === date
 				);
 			}
 			if (this.getPracticeAllocatedPartJobs.length > 0) {
@@ -291,7 +291,7 @@ export default {
 			// WHOLE
 			if (this.getPracticeAvailableJobs.length > 0) {
 				foundPracticeLiveJobs = this.getPracticeAvailableJobs.filter(
-					job => job.dates.includes(date) && job.shift.name === shift
+					job => job.dates[0] === date && job.shift.name === shift
 				);
 			}
 			if (this.getPracticeAppliedJobs.length > 0) {
