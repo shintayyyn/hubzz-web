@@ -150,15 +150,18 @@
           </p>
           <div class="flex">
             <div class="px-1">
-              <p>Days</p>
-              <p>Time</p>
-              <p>Shift</p>
+              <p>Days:</p>
+              <p>Time:</p>
+              <p>Shift:</p>
             </div>
             <div class="px-1">
               <p>{{ job_part.dates.length }}</p>
               <p>{{ job_part.time_start }} - {{ job_part.time_end }}</p>
               <p>{{ job_part.job.shift.name }}</p>
             </div> 
+          </div>
+          <div class="overflow-y-auto" style="max-height: 205px;">
+            <div v-for="(date, index) in job_part.dates" :key="index" class="m-1"> {{ $moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</div>
           </div>
         </div>
 
@@ -337,7 +340,7 @@
         <template v-if="job_part.use_variation_terms">
           <template v-if="job_part.variation_terms_file_id">
             <div class="font-bold text-sm sm:text-md">
-              Terms & Condition
+              Terms &amp; Condition
             </div>
             <div class="text-sm sm:text-md">
               Variation Terms
