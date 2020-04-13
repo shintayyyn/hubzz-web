@@ -323,7 +323,8 @@
             Final Hours:
           </div>
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.final_hours | hoursMinutes }}
+            <template v-if="job_part.final_hours>0">{{ job_part.final_hours | hoursMinutes }}</template>
+            <template v-else>{{job_part.final_hours}}</template>
           </div>
         </template>
 

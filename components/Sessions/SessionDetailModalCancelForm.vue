@@ -278,7 +278,8 @@ export default {
 					"absent_days",
 					"absent_days_reason",
 					"late_hours",
-					"late_hours_reason"
+					"late_hours_reason",
+					"final_hours"
 				);
 			} else if (this.job.status === "Ongoing") {
 				if (this.has_absences === "false" || this.has_absences === false) {
@@ -287,23 +288,9 @@ export default {
 				if (this.has_late === "false" || this.has_late === false) {
 					notRequired.push("late_hours", "late_hours_reason");
 				}
-				if (
-					[0, "0"].includes(this.form.final_hours_hour) &&
-					[0, "0"].includes(this.form.final_hours_minute)
-				) {
-					this.formError.push({
-						field: "final_hours_minute",
-						message: "Minutes is required"
-					});
-					// this.formError.push({
-					// 	field: "final_hours_hour",
-					// 	message: "Hours is required"
-					// });
-				} else {
-					this.form.final_hours =
-						this.form.final_hours_hour * 60 +
-						parseInt(this.form.final_hours_minute);
-				}
+				this.form.final_hours =
+					this.form.final_hours_hour * 60 +
+					parseInt(this.form.final_hours_minute);
 				if ([true, "true"].includes(this.has_late)) {
 					if (
 						[0, "0"].includes(this.form.late_hour) &&
