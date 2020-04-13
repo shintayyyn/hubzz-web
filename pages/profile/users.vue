@@ -104,7 +104,7 @@
       <template v-slot:actions="slotProps">
         <div class="flex items-center justify-center">
           <AppButton
-            :disabled="($auth.user.id == slotProps.item.id) || (slotProps.item.practice_detail.role.name === 'Practice User Admin') ? true : false"
+            :disabled="($auth.user.id == slotProps.item.id) || (slotProps.item.practice_detail && slotProps.item.practice_detail.role.name === 'Practice User Admin') ? true : false"
             class="mx-2"
             :label="'View'"
             @click="$router.push({ path: `/profile/users/${slotProps.item.id}`})"
