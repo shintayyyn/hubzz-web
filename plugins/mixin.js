@@ -65,7 +65,7 @@ Vue.mixin({
         displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
       }
 
-      if (!this.formError) {
+      if (!this.formError || this.formError.find(err => err.field === fieldName)) {
         return
       }
 
