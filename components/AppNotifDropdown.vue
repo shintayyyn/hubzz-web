@@ -121,9 +121,7 @@ export default {
 	},
 	created() {
 		this.clearNotifications();
-		this.loading = true;
 		this.$store.dispatch("jobs/fetchNotifications", { limit: 6 });
-		this.loading = false;
 	},
 	methods: {
 		getMessage(notificationType) {
@@ -206,13 +204,15 @@ export default {
 			return message;
 		},
 		goTo(notification) {
+			console.log(notification);
+			let job = notification.payload.job
+				? notification.payload.job
+				: notification.payload;
 			let type = notification.type;
-			let id = notification.payload.id;
+			let id = job.id;
 			let status =
-				this.$auth.user.domain === "Practice"
-					? notification.payload.status
-					: notification.payload.locum_status;
-			let dateStart = notification.payload.date_start;
+				this.$auth.user.domain === "Practice" ? job.status : job.locum_status;
+			let dateStart = job.date_start;
 			let url = "";
 
 			if (type === "Job") {
@@ -220,12 +220,12 @@ export default {
 					? this.$route.path
 					: !this.$route.name.includes("dashboard") &&
 					  this.$auth.user.domain === "Practice" &&
-					  notification.practice_id === this.$auth.user.practice_id
+					  job.practice_id === this.$auth.user.practice_id
 					? `/sessions`
 					: !this.$route.name.includes("dashboard") &&
 					  this.$auth.user.domain === "Practice" &&
-					  notification.practice_id !== this.$auth.user.practice_id
-					? `/hub-surgery-management/${notification.practice_surgery_id}/surgery-sessions`
+					  job.practice_id !== this.$auth.user.practice_id
+					? `/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions`
 					: !this.$route.name.includes("dashboard") &&
 					  this.$auth.user.domain === "Locum"
 					? `/jobs`
@@ -236,7 +236,7 @@ export default {
 					notification.practice_id === this.$auth.user.practice_id
 						? `/practice-billing/invoices-from-locums`
 						: this.$auth.user.domain === "Practice" &&
-						  notification.practice_id !== this.$auth.user.practice_id
+						  job.practice_id !== this.$auth.user.practice_id
 						? `/hub-surgery-management/${notification.practice_surgery_id}/surgery-billings/invoices-from-locums`
 						: this.$auth.user.domain === "Locum" &&
 						  notification.notification_billing_type === "Platform"
@@ -322,7 +322,7 @@ export default {
 						});
 					}
 				}, 500);
-			} else if (type === "Billings") {
+			} else if (type === "Billing") {
 				let routeStatus = "";
 
 				switch (status) {

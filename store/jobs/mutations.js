@@ -389,7 +389,7 @@ export default {
                     case 'Locum Notification Job Unsuccessful':
                         message = 'Your application for this job is unsuccessful'
                         break
-                    case 'Locum Notification Job Current':
+                    case 'Locum Notification Job Allocated':
                         message = 'You have been appointed to this job.'
                         break
                     case 'Locum Notification Job Ongoing':
@@ -447,7 +447,7 @@ export default {
                     case 'Practice Notification Job Application Cancelled':
                         message = 'Someone cancelled his/her application to this job.'
                         break
-                    case 'Practice Notification Job Current':
+                    case 'Practice Notification Job Applied':
                         message = 'A locum has been appointed to this job.'
                         break
                     case 'Practice Notification Job Ongoing':
