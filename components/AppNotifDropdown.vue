@@ -6,6 +6,7 @@
       showAll === true
         ? 'modal top-0 right-0'
         : 'dropdown right-0 mt-2',
+
       notifications_count !== notifications.length
         ? !loading
           ? 'justify-between'
@@ -15,32 +16,36 @@
   >
     <div class="border-b px-2 py-1 flex justify-between" :class="showAll ? '' : 'text-sm'">
       <p class="font-bold">
-        Notifications
+        <span>Notifications</span>
       </p>
+
       <div
         v-if="notifications.length > 0"
         class="flex items-center"
         :class="showAll ? 'text-sm' : 'text-xs'"
       >
         <p class="cursor-pointer hover:text-gray-700" @click="markAllAsRead">
-          Mark all as read
+          <span>Mark all as read</span>
         </p>
         <span v-if="showAll" class="px-1 font-bold">·</span>
         <span v-if="showAll" class="cursor-pointer" @click="close">Close</span>
       </div>
     </div>
+
     <p
-      v-if="!loading && !notifications.length"
+      v-if="!loading && notifications.length === 0"
       class="text-center text-sm py-2"
     >
-      You don't have notifications at the moment.
+      <span>You don't have notifications at the moment.</span>
     </p>
+
     <span
-      v-if="loading || (showAll && !notifications.length && loading)"
+      v-if="loading || (showAll && notifications.length === 0 && loading)"
       class="flex justify-center items-center py-1 h-full"
     >
       <svgicon name="loader" :width="showAll ? '55' : '30'" :height="showAll ? '55' : '30'" />
     </span>
+
     <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
       <transition-group name="fade" mode="in-out">
         <div
@@ -53,15 +58,15 @@
           <p
             class="font-bold block truncate"
           >
-            {{ item.payload.title ? item.payload.title : `Untitled ${item.type}` }}
+            <span>{{ getNotificationTitle(item) }}</span>
           </p>
           <p class="text-sm pt-1">
-            {{ item.message }}
+            <span>{{ getNotificationMessage(item) }}</span>
           </p>
           <div
             class="leading-tight text-xs pt-1 text-gray-600"
           >
-            {{ $moment(item.created_at).format("DD/MM/YYYY | HH:mm") }}
+            <span>{{ $moment(item.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}</span>
           </div>
         </div>
       </transition-group>
@@ -71,19 +76,21 @@
 				v-if="notifications_count !== notifications.length"
 				class="cursor-pointer text-sm text-center py-1 w-full bg-gray-100 border-t"
 				@click="loadMore"
-		>Load More</p>-->
+    >Load More</p>-->
+    
     <div v-if="!loading">
       <transition name="fade">
         <span v-if="loadMoreLoader" class="flex justify-center py-1">
           <svgicon name="loader" width="30" height="30" />
         </span>
       </transition>
+
       <p
         v-if="!showAll && notifications.length > 0"
         class="cursor-pointer text-sm text-center py-1"
         @click="seeAllNotifications"
       >
-        See All
+        <span>See All</span>
       </p>
     </div>
   </div>
@@ -105,6 +112,99 @@
     },
 
     computed: {
+      getNotificationDisplay () {
+        return (notification) => {
+          const {
+            notification_type: notificationType,
+            payload,
+          } = notification
+
+          const {
+            name: notificationTypeName,
+          } = notificationType
+
+          if (notificationTypeName === 'Locum Notification Compliance Approved') {
+            const {
+              compliance_document: complianceDocument,
+            } = payload
+
+            const {
+              name: complianceDocumentName,
+              compliance_document_type: complianceDocumentType,
+            } = complianceDocument
+
+            const {
+              name: complianceDocumentTypeName,
+            } = complianceDocumentType
+
+            if (complianceDocumentTypeName === 'Reference') {
+              return {
+                title: 'Compliance Verified',
+                message: complianceDocumentName,
+              }
+            } else {
+              return {
+                title: 'Compliance Approved',
+                message: complianceDocumentName,
+              }
+            }
+          } else if (notificationTypeName === 'Locum Notification Compliance Rejected') {
+            const {
+              compliance_document: complianceDocument,
+            } = payload
+
+            const {
+              name: complianceDocumentName,
+            } = complianceDocument
+
+            return {
+              title: 'Compliance Rejected',
+              message: complianceDocumentName,
+            }
+          } else if (notificationTypeName === 'Locum Notification Compliance Pending') {
+            const {
+              compliance_document: complianceDocument,
+            } = payload
+
+            const {
+              name: complianceDocumentName,
+            } = complianceDocument
+
+            return {
+              title: 'Compliance Pending',
+              message: complianceDocumentName,
+            }
+          } else {
+            return {
+              title: notification.payload.title
+                ? notification.payload.title
+                : `Untitled ${notification.type}`,
+              message: notification.message,
+            }
+          }
+        }
+      },
+
+      getNotificationTitle () {
+        return (notification) => {
+          const {
+            title,
+          } = this.getNotificationDisplay(notification)
+
+          return title
+        }
+      },
+
+      getNotificationMessage () {
+        return (notification) => {
+          const {
+            message,
+          } = this.getNotificationDisplay(notification)
+
+          return message
+        }
+      },
+
       url () {
         return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
       },
@@ -216,6 +316,52 @@
       },
 
       goTo (notification) {
+        const {
+          id: notificationId,
+          notification_type: notificationType,
+          payload,
+          seen,
+        } = notification
+
+        const {
+          name: notificationTypeName,
+        } = notificationType
+
+        if (
+          notificationTypeName === 'Locum Notification Compliance Approved'
+          || notificationTypeName === 'Locum Notification Compliance Rejected'
+          || notificationTypeName === 'Locum Notification Compliance Pending'
+        ) {
+          const {
+            id: locumComplianceDocumentId,
+            compliance_document: complianceDocument,
+          } = payload
+
+          const {
+            compliance_document_type: complianceDocumentType,
+          } = complianceDocument
+
+          const {
+            name: complianceDocumentTypeName,
+          } = complianceDocumentType
+
+          if (complianceDocumentTypeName === 'Reference') {
+            this.$router.push('/compliance')
+          } else {
+            this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+          }
+
+          this.close()
+
+          if (!seen) {
+            this.seenNotification(notificationId)
+          }
+        } else {
+          this.oldGoTo(notification)
+        }
+      },
+
+      oldGoTo (notification) {
         console.log(notification)
 
         let job = notification.payload.job
@@ -268,24 +414,26 @@
           url = `/permanent-jobs`
         }
 
-        // for dashboard viewing, moves the date according to the job
-        if (url && url.includes("/dashboard")) {
-          let selectedMonth =
-            this.$moment()
+        if (type === 'Job') {
+          // for dashboard viewing, moves the date according to the job
+          if (url && url.includes("/dashboard")) {
+            let selectedMonth =
+              this.$moment()
+                .month(dateStart)
+                .format("M") - 1
+
+            let selectedYear = this.$moment()
               .month(dateStart)
-              .format("M") - 1
+              .format("YYYY")
 
-          let selectedYear = this.$moment()
-            .month(dateStart)
-            .format("YYYY")
-
-          this.$store.commit(
-            "calendar/SELECT_DATE",
-            this.$moment(dateStart, "YYYY-MM-DD")
-              .set("month", selectedMonth)
-              .set("year", selectedYear)
-              .format("YYYY-MM-DD")
-          )
+            this.$store.commit(
+              "calendar/SELECT_DATE",
+              this.$moment(dateStart, "YYYY-MM-DD")
+                .set("month", selectedMonth)
+                .set("year", selectedYear)
+                .format("YYYY-MM-DD")
+            )
+          }
         }
 
         // query
@@ -312,9 +460,7 @@
               routeStatus = status
           }
 
-          if (url === null) {
-            if (!notification.seen) this.seenNotification(notification.id)
-          } else if (url) {
+          if (url) {
             this.$router.push({
               path: `${url}`,
               query: {
@@ -325,12 +471,14 @@
                 status: !url.includes("surgery-management") ? routeStatus : null
               }
             })
+          } else {
+            if (!notification.seen) {
+              this.seenNotification(notification.id)
+            }
           }
           
           setTimeout(() => {
-            if (url === null) {
-              this.seenNotification(notification.id)
-            } else if (url) {
+            if (url) {
               this.$router.push({
                 path: `${url}/${id}`,
                 query: {
@@ -341,8 +489,11 @@
                   status: !url.includes("surgery-management") ? routeStatus : null
                 }
               })
+            } else {
+              this.seenNotification(notification.id)
             }
           }, 500)
+
         } else if (type === "Billing") {
           let routeStatus = ""
 
@@ -364,8 +515,11 @@
 
           if (id !== this.$route.params.id) {
             this.$router.push({
-              path: `${url}`,
-              query: { ...this.$route.query, status: routeStatus }
+              path: url,
+              query: {
+                ...this.$route.query,
+                status: routeStatus,
+              }
             })
           }
 
@@ -382,7 +536,9 @@
           })
         }
 
-        if (!notification.seen) this.seenNotification(notification.id)
+        if (!notification.seen) {
+          this.seenNotification(notification.id)
+        }
       },
       
       seenNotification (notification_id) {
