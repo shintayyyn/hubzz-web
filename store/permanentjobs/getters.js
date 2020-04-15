@@ -50,6 +50,12 @@ export default {
         case 'Practice Notification Permanent Job Invited': 
           message = 'You have invited a Locum for a Permanent Job Position'
           break
+        case 'Practice Notification Permanent Job Approved':
+          message = 'Your job posting has been approved by your Hub'
+          break
+        case 'Practice Notification Permanent Job Rejected':
+          message =  'Your job posting has been rejected by your Hub'
+          break
         default:
           message = ''
       }
@@ -58,8 +64,8 @@ export default {
         ...notif,
         id: notif.permanent_job.id,
         status: notif.permanent_job.job_posting_status,
-        application_status: notif.permanent_job_application.application_status,
-        permanent_job_app_id: notif.permanent_job_application.id,
+        application_status: notif.permanent_job_application ? notif.permanent_job_application.application_status : null,
+        permanent_job_app_id: notif.permanent_job_application ? notif.permanent_job_application.id : null,
         notification_type: notif.notificationType,
         type: 'Permanent Jobs',
         message,
