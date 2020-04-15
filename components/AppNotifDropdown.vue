@@ -2,7 +2,7 @@
 	<div
 		v-on-clickaway="close"
 		class="absolute bg-white border shadow container transition-hover flex flex-col"
-		:class="[showAll === true ? 'modal top-0 right-0' : 'dropdown right-0 mt-2', notifications_count !== this.notifications.length ? 'justify-between' : '']"
+		:class="[showAll === true ? 'modal top-0 right-0' : 'dropdown right-0 mt-2', notifications_count !== this.notifications.length ? !loading ? 'justify-between' : '' : '']"
 	>
 		<div class="border-b px-2 py-1 flex justify-between" :class="showAll ? '' : 'text-sm'">
 			<p class="font-bold">Notifications</p>
@@ -17,11 +17,14 @@
 			</div>
 		</div>
 		<p
-			v-if="!notifications.length"
+			v-if="!loading && !notifications.length"
 			class="text-center text-sm py-2"
 		>You don't have notifications at the moment.</p>
-		<span class="flex justify-center py-1" v-if="loading">
-			<svgicon name="loader" width="30" height="30" />
+		<span
+			class="flex justify-center items-center py-1 h-full"
+			v-if="loading || (showAll && !notifications.length && loading)"
+		>
+			<svgicon name="loader" :width="showAll ? '55' : '30'" :height="showAll ? '55' : '30'" />
 		</span>
 		<div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
 			<transition-group name="fade" mode="in-out">
@@ -38,25 +41,28 @@
 					<p class="text-sm pt-1">{{ item.message }}</p>
 					<div
 						class="leading-tight text-xs pt-1 text-gray-600"
-					>{{$moment(item.created_at).format("YYYY-MM-DD HH:mm")}}</div>
+					>{{$moment(item.created_at).format("DD/MM/YYYY | HH:mm")}}</div>
 				</div>
 			</transition-group>
 		</div>
-		<transition name="fade">
-			<span class="flex justify-center py-1" v-if="loadMoreLoader">
-				<svgicon name="loader" width="30" height="30" />
-			</span>
-		</transition>
+
 		<!-- <p
 				v-if="notifications_count !== notifications.length"
 				class="cursor-pointer text-sm text-center py-1 w-full bg-gray-100 border-t"
 				@click="loadMore"
 		>Load More</p>-->
-		<p
-			v-if="!showAll && notifications.length > 0"
-			class="cursor-pointer text-sm text-center py-1"
-			@click="seeAllNotifications"
-		>See All</p>
+		<div v-if="!loading">
+			<transition name="fade">
+				<span class="flex justify-center py-1" v-if="loadMoreLoader">
+					<svgicon name="loader" width="30" height="30" />
+				</span>
+			</transition>
+			<p
+				v-if="!showAll && notifications.length > 0"
+				class="cursor-pointer text-sm text-center py-1"
+				@click="seeAllNotifications"
+			>See All</p>
+		</div>
 	</div>
 </template>
 <script>
@@ -67,11 +73,8 @@ export default {
 		return {
 			showAll: false,
 			// notifications: [],
-			billing_types: [],
-			notifications_count: 0,
-			limit: 7,
-			offset: 0,
-			loadMoreLoader: false
+			limit: 6,
+			offset: 0
 		};
 	},
 	computed: {
@@ -80,6 +83,15 @@ export default {
 		},
 		notifications() {
 			return this.$store.getters["jobs/getNotifications"];
+		},
+		notifications_count() {
+			return this.$store.getters["jobs/getNotificationCount"];
+		},
+		loadMoreLoader() {
+			return this.$store.state.jobs.load_more_loading;
+		},
+		loading() {
+			return this.$store.state.jobs.notification_loading;
 		}
 	},
 	watch: {
@@ -359,21 +371,17 @@ export default {
 				this.$store.dispatch("jobs/seenAllNotifications");
 		},
 		loadMore() {
-			this.loadMoreLoader = true;
 			let params = {
 				limit: 3,
 				offset: this.notifications.length
 			};
 			this.$store.dispatch("jobs/fetchMoreNotifications", params);
-			this.loadMoreLoader = false;
 		},
 		seeAllNotifications() {
 			this.clearNotifications();
-			this.showAll = true;
-			this.loading = true;
 			this.limit = 13;
+			this.showAll = true;
 			this.$store.dispatch("jobs/fetchNotifications", { limit: this.limit });
-			this.loading = false;
 		},
 		close() {
 			this.showAll = false;

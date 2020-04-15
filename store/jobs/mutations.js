@@ -357,9 +357,6 @@ export default {
         state.locum_notifications = payload
     },
     ADD_NOTIFICATION(state, payload) {
-        let hasAdded = state.locum_notifications.find(item => item.id === payload.id)
-        console.log("hasAdded", hasAdded)
-        if (hasAdded) return
         let billing_types = [
             `${state.domain} Notification Locum Invoice Created`,
             `${state.domain} Notification Locum Invoice Updated`,
@@ -496,19 +493,31 @@ export default {
                         break
                 }
             }
-            state.locum_notifications.push(
-                {
-                    ...notif,
-                    message: message,
-                    type: billing_types.includes(notif.notification_type.name)
-                        ? "Billing"
-                        : "Job"
-                }
-            )
-
+            let hasAdded = state.locum_notifications.find(item => item.id === notif.id)
+            if (!hasAdded) {
+                state.locum_notifications.push(
+                    {
+                        ...notif,
+                        message: message,
+                        type: billing_types.includes(notif.notification_type.name)
+                            ? "Billing"
+                            : "Job"
+                    }
+                )
+            }
         })
         state.locum_notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     },
+    SET_NOTIFICATIONS_COUNT(state, payload) {
+        state.notifications_count = payload
+    },
+    SET_LOAD_MORE_LOADING(state, payload) {
+        state.load_more_loading = payload
+    },
+    SET_NOTIFICATIONS_LOADING(state, payload) {
+        state.notification_loading = payload
+    },
+    // ---- //
     REMOVE_LOCUM_NOTIFICATION(state, payload) {
         state.locum_notifications = state.locum_notifications.filter(job => job.id !== payload)
     },

@@ -2,6 +2,15 @@ export default () => ({
     loading_jobs: false,
     domain: "",
     // PRACTICE
+
+    // NOTIF
+    locum_notifications: [],
+    notifications_count: 0,
+    locum_job_notifications: [],
+    unseen_notification: 0,
+    load_more_loading: false,
+    notification_loading: false,
+
     // NOTIF
     practice_job_notifications: [],
     // PARTS
@@ -58,11 +67,7 @@ export default () => ({
 
 
     // LOCUM
-    // NOTIF
-    locum_notifications: [],
-    locum_notifications_count: 0,
-    locum_job_notifications: [],
-    unseen_notification: 0,
+
     // PARTS
     locum_allocated_job_parts: [],
     locum_allocated_job_parts_count: 0,
