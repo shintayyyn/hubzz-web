@@ -45,6 +45,7 @@
                     :items="professions"
                     :error="formError.find(item => item.field === 'role')"
                     @blur="CheckEmptyField(form.role,'role')"
+                  required
                   />
 
                   <template v-if="form.role">
@@ -60,6 +61,7 @@
                         : null
                       "
                       :error="formError.find(item => item.field === 'specialty')"
+                  required
                     />
 
                     <AppFilterSearch
@@ -70,6 +72,7 @@
                       :info="'Choose at least one IT system'"
                       :url="'/api/v1/clinical-systems'"
                       :error="formError.find(item => item.field === 'clinical_system')"
+                  required
                     />
 
                     <AppFilterSearch
@@ -208,6 +211,7 @@
                       is-after
                       multipleSelection
                       @blur="CheckEmptyField(form.dates,'dates')"
+                    required
                     />
                   </div>
                   <div class="flex flex-row flex-wrap justify-between">
@@ -229,6 +233,7 @@
                         :label="'Start Time'"
                         :error="formError.find(item => item.field === 'time_start')"
                         @blur="CheckEmptyField(form.time_start,'time_start')"
+                        required
                       />
                     </div>
                     <!-- <div class="px-1 w-full md:w-1/2">
@@ -250,6 +255,7 @@
                         :label="'End Time'"
                         :error="formError.find(item => item.field === 'time_end')"
                         @blur="CheckEmptyField(form.time_end,'time_end')"
+                        required
                       />
                     </div>
                   </div>
@@ -275,6 +281,7 @@
                     :name="'unpaid_breaks'"
                     :label="'Unpaid break'"
                     :items="[ {value: false, label: 'No'}, {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
+                    required
                   />
 
                   <AppInput
@@ -282,11 +289,14 @@
                     v-model="form.unpaid_breaks_in_minutes"
                     :type="'text'"
                     :name="'unpaid_breaks_in_minutes'"
+                    :info="'Unpaid breaks in minutes'"
                     :label="'Other'"
                     :placeholder="''"
                     :in-style="'text-align:right;'"
                     :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
                     @blur="CheckEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
+                    @keydown="inputNumberOnly($event)"
+                    required
                   />
                   <AppInput
                     v-model="form.shift"
@@ -297,6 +307,7 @@
                     :items="shifts"
                     :error="formError.find(item => item.field === 'shift')"
                     @blur="CheckEmptyField(form.shift, 'shift')"
+                    required
                   />
 
                   <AppInput
@@ -327,6 +338,7 @@
                           :label="'Date'"
                           is-after
                           :error="formError.find(item => item.field === 'selection_date')"
+                          required
                         />
                       </div>
                       <div class="px-1 w-full md:w-1/2">
@@ -336,6 +348,7 @@
                           :name="'time_end'"
                           :label="'Time'"
                           :error="formError.find(item => item.field === 'selection_date')"
+                          required
                         />
                       </div>
                     </div>
@@ -348,6 +361,7 @@
                       :name="'bank_only'"
                       :label="'Make this Job available for Bank Only?'"
                       :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                      required
                     />
                     <template v-if="['false', false].includes(bank_only)">
                       <AppInput
@@ -356,6 +370,7 @@
                         :name="'bank_first'"
                         :label="'Make this Job available for Bank First?'"
                         :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                        required
                       />
                       <div
                         v-if="bank_first === true || bank_first === 'true'"
@@ -369,6 +384,7 @@
                             :label="'Date'"
                             is-after
                             :error="formError.find(item => item.field === 'favorite_only_until')"
+                            required
                           />
                         </div>
                         <div class="px-1 w-full md:w-1/2">
@@ -378,6 +394,7 @@
                             :name="'time_end'"
                             :label="'Time'"
                             :error="formError.find(item => item.field === 'favorite_only_until')"
+                            required
                           />
                         </div>
                       </div>
@@ -399,8 +416,6 @@
                 :type="'text'"
                 :name="'title'"
                 :label="'Title'"
-                :error="formError.find(item => item.field === 'title')"
-                @blur="CheckEmptyField(form.title,'title')"
               />
 
               <AppInput
@@ -409,8 +424,6 @@
                 :name="'description'"
                 :label="'Description'"
                 :resize="false"
-                :error="formError.find(item => item.field === 'description')"
-                @blur="CheckEmptyField(form.description,'description')"
               />
 
               <AppInput
@@ -421,6 +434,7 @@
                 :placeholder="''"
                 :error="formError.find(item => item.field === 'report_to')"
                 @blur="CheckEmptyField(form.report_to,'report_to')"
+                required
               />
 
               <AppInput
@@ -431,6 +445,7 @@
                 :placeholder="''"
                 :error="formError.find(item => item.field === 'email')"
                 @blur="CheckEmptyField(form.email,'email')"
+                required
               />
 
               <AppInput
@@ -458,6 +473,7 @@
                 :in-style="'text-align:right;'"
                 :error="formError.find(item => item.field === 'number_of_patients')"
                 @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
+                required
               />
 
               <AppInput
@@ -469,6 +485,7 @@
                 :in-style="'text-align:right;'"
                 :error="formError.find(item => item.field === 'duration_for_each_appointment')"
                 @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
+                required
               />
 
               <AppInput
@@ -525,6 +542,7 @@
                     :limit="8"
                     @blur="CheckEmptyField(form.rate,'rate')"
                     @keydown="isNumber($event)"
+                    required
                   />
                 </div>
 
@@ -535,10 +553,12 @@
                     :name="'locum_detail_rate_type_id'"
                     :label="'per'"
                     :items="rate_lists"
+                    required
                   />
                 </div>
               </div>
 
+              <label class="text-sm">Total hours <span class="text-red-500">*</span></label>
               <div class="flex flex-row flex-wrap justify-start mt-1">
                 <div class="flex items-center mr-2">
                   <div class="flex flex-col">
@@ -561,7 +581,7 @@
                     </div>
                     <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
                   </div>
-                  <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+                  <!-- <label for="hours" class="text-xs sm:text-sm mt-2">hours</label> -->
                 </div>
                 <div class="flex items-center">
                   <div class="flex flex-col">

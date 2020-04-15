@@ -12,7 +12,7 @@
           Job description
         </div>
         <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ job.description }}
+          {{ job && job.description ? job.description : '(none)' }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Rate
@@ -32,7 +32,7 @@
         <div
           class="text-xs sm:text-sm mb-8 break-words"
         >
-          {{ job.platform_job.extra_information?job.platform_job.extra_information:`(none)` }}
+          {{ job.platform_job && job.platform_job.extra_information?job.platform_job.extra_information:`(none)` }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Report to
@@ -89,7 +89,7 @@
         <div class="font-bold text-sm sm:text-md">
           Session requirements:
         </div>
-        <div v-if="!session_requirements.length">
+        <div class="text-xs sm:text-sm" v-if="!session_requirements.length">
           (none)
         </div>
         <div
@@ -106,7 +106,7 @@
           Session structure information
         </div>
         <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ job.platform_job.session_structure_information }}
+          {{ job.platform_job && job.platform_job.session_structure_information ? job.platform_job.session_structure_information : '(none)' }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Update Remarks
@@ -256,7 +256,7 @@
           Mandatory training
         </div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="job.platform_job.mandatory_trainings.length === 0" class="mt-1">
+          <div v-if="job.platform_job.mandatory_trainings.length === 0" class="mt-1 text-xs sm:text-sm">
             (none)
           </div>
           <div
@@ -272,7 +272,7 @@
         <template v-if="job.use_variation_terms">
           <template v-if="job.variation_terms_file_id">
             <div class="font-bold text-sm sm:text-md">
-              Terms & Condition
+              Terms &amp; Condition
             </div>
             <div class="text-sm sm:text-md">
               Variation Terms
@@ -302,7 +302,7 @@
           </template>
           <template v-else-if="job.standard_terms_file_id">
             <div class="font-bold text-sm sm:text-md">
-              Terms & Condition
+              Terms &amp; Condition
             </div>
             <div class="text-sm sm:text-md">
               Standard Terms
@@ -335,7 +335,7 @@
         <template v-if="!job.use_variation_terms">
           <template v-if="job.standard_terms_file_id">
             <div class="font-bold text-sm sm:text-md">
-              Terms & Condition
+              Terms &amp; Condition
             </div>
             <div class="text-sm sm:text-md">
               Standard Terms
@@ -365,7 +365,7 @@
           </template>
           <template v-else-if="job.variation_terms_file_id">
             <div class="font-bold text-sm sm:text-md">
-              Terms & Condition
+              Terms &amp; Condition
             </div>
             <div class="text-sm sm:text-md">
               Variation Terms

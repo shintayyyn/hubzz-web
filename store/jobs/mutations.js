@@ -329,9 +329,189 @@ export default {
         state.practice_applied_jobs_reminder = state.practice_applied_jobs_reminder.filter(job => job.id !== payload)
     },
 
-
     // LOCUM
     // NOTIF
+    SET_AUTH_DOMAIN(state, payload) {
+        state.domain = payload
+    },
+    SET_UNSEEN_NOTIFICATIONS(state, payload) {
+        state.unseen_notification = payload
+    },
+    ADD_UNSEEN_NOTIFICATIONS(state, payload) {
+        state.unseen_notification += 1
+    },
+    REMOVE_UNSEEN_NOTIFICATIONS(state, payload) {
+        state.unseen_notification -= payload ? payload : 1
+    },
+    SEEN_NOTIFICATION(state, payload) {
+        let notification = state.locum_notifications.find(item => item.id === payload)
+        notification.seen = true
+        state.unseen_notification -= 1
+    },
+    READ_ALL_NOTIFICATION(state, payload) {
+        let unread_notifications = state.locum_notifications.filter(item => !item.seen)
+        unread_notifications.forEach(notif => notif.seen = true)
+        state.unseen_notification = 0
+    },
+    SET_NOTIFICATIONS(state, payload) {
+        state.locum_notifications = payload
+    },
+    ADD_NOTIFICATION(state, payload) {
+        let hasAdded = state.locum_notifications.find(item => item.id === payload.id)
+        console.log("hasAdded", hasAdded)
+        if (hasAdded) return
+        let billing_types = [
+            `${state.domain} Notification Locum Invoice Created`,
+            `${state.domain} Notification Locum Invoice Updated`,
+            `${state.domain} ${state.domain === 'Locum' ? 'Notification' : ''} Locum Invoice Paid`
+        ];
+        payload.forEach(notif => {
+            let message = ""
+            if (state.domain === "Locum") {
+                switch (notif.notification_type.name) {
+                    case 'Locum Notification Job Reminder':
+                        if (days > 0) {
+                            message = `This Job will start in ${days} ${days === 1 ? 'day' : 'days'}.`
+                        } else if (days <= 0 && hours > 0) {
+                            message = `This Job will start in ${hours} ${hours === 1 ? 'hour' : 'hours'}.`
+                        } else if (hours <= 0 && minutes > 0) {
+                            message = `This Job will start in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`
+                        } else {
+                            message = `This Job will start later.`
+                        }
+                        break
+                    case 'Locum Notification Job Available':
+                        message = 'There is a new available job for you.'
+                        break
+                    case 'Locum Notification Job Applied':
+                        message = 'Successfully applied for this Job.'
+                        break
+                    case 'Locum Notification Job Matched':
+                        message = 'There is a new job that matched your qualifications.'
+                        break
+                    case 'Locum Notification Job Unsuccessful':
+                        message = 'Your application for this job is unsuccessful'
+                        break
+                    case 'Locum Notification Job Current':
+                        message = 'You have been appointed to this job.'
+                        break
+                    case 'Locum Notification Job Ongoing':
+                        message = 'Your Job has started.'
+                        break
+                    case 'Locum Notification Job Part Completed':
+                        message = 'This part of your job has been completed'
+                        break
+                    case 'Locum Notification Job Completed':
+                        message = 'This job has been completed'
+                        break
+                    case 'Locum Notification Job Approved':
+                        message = 'This part of your job has been approved'
+                        break
+                    case 'Locum Notification Job Disputed':
+                        message = 'This part of your job has been disputed'
+                        break
+                    case 'Locum Notification Job Cancelled':
+                        message = 'Your job has been cancelled by your practice'
+                        break
+                    case 'Locum Notification Job Amended':
+                        message = 'This job has been updated by your practice'
+                        break
+                    case 'Locum Notification Job Declined':
+                        message = 'You successfully leave this job.'
+                        break
+                    case 'Locum Notification Job Terminated':
+                        message = 'This Job has been terminated.'
+                        break
+                    case 'Locum Notification Job Unqualified':
+                        message = 'You are not qualified anymore on this job.'
+                        break
+                    default:
+                        message = ''
+                }
+            } else if (state.domain === 'Practice') {
+                switch (notif.notification_type.name) {
+                    case 'Practice Notification Job Reminder':
+                        if (days > 0) {
+                            message = `This Job will start in ${days} ${days === 1 ? 'day' : 'days'}.`
+                        } else if (days <= 0 && hours > 0) {
+                            message = `This Job will start in ${hours} ${hours === 1 ? 'hour' : 'hours'}.`
+                        } else if (hours <= 0 && minutes > 0) {
+                            message = `This Job will start in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`
+                        } else {
+                            message = `This Job will start later.`
+                        }
+                        break
+                    case 'Practice Notification Job Live':
+                        message = 'This job is now live.'
+                        break
+                    case 'Practice Notification Job Application':
+                        message = 'Someone applied to this job.'
+                        break
+                    case 'Practice Notification Job Application Cancelled':
+                        message = 'Someone cancelled his/her application to this job.'
+                        break
+                    case 'Practice Notification Job Current':
+                        message = 'A locum has been appointed to this job.'
+                        break
+                    case 'Practice Notification Job Ongoing':
+                        message = 'This Job has started.'
+                        break
+                    case 'Practice Notification Job Part Completed':
+                        message = 'This part of your job has been completed'
+                        break
+                    case 'Practice Notification Job Completed':
+                        message = 'This job has been completed'
+                        break
+                    case 'Practice Notification Job Approved':
+                        message = 'This part of your job has been approved'
+                        break
+                    case 'Practice Notification Job Disputed':
+                        message = 'This part of your job has been disputed'
+                        break
+                    case 'Practice Notification Job Cancelled':
+                        message = 'This job has been cancelled.'
+                        break
+                    case 'Practice Notification Job Amended':
+                        message = 'This job has been updated'
+                        break
+                    case 'Practice Notification Job Declined':
+                        message = 'The locum leave this job.'
+                        break
+                    case 'Practice Notification Job Update Accept':
+                        message = 'The locum accepted your changes on this job.'
+                        break
+                    case 'Practice Notification Job Unfilled Warning':
+                        if (days > 0) {
+                            message = `This Job will start in ${days} ${days === 1 ? 'day' : 'days'}.`
+                        } else if (days <= 0 && hours > 0) {
+                            message = `This Job will start in ${hours} ${hours === 1 ? 'hour' : 'hours'}.`
+                        } else if (hours <= 0 && minutes > 0) {
+                            message = `This Job will start in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`
+                        } else {
+                            message = `This Job will start later.`
+                        }
+                        break
+                    case 'Practice Notification Job Unfilled':
+                        message = 'This job is unfilled.'
+                        break
+                }
+            }
+            state.locum_notifications.push(
+                {
+                    ...notif,
+                    message: message,
+                    type: billing_types.includes(notif.notification_type.name)
+                        ? "Billing"
+                        : "Job"
+                }
+            )
+
+        })
+        state.locum_notifications.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    },
+    REMOVE_LOCUM_NOTIFICATION(state, payload) {
+        state.locum_notifications = state.locum_notifications.filter(job => job.id !== payload)
+    },
     ADD_LOCUM_JOB_NOTIFICATION(state, payload) {
         let index = state.locum_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
         if (index < 0) {

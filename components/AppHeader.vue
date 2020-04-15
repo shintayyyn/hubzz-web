@@ -57,9 +57,9 @@
 									@click="$router.push('/messages')"
 								/>
 								<span
-									v-if="this.unreadMessages > 0"
-									class="-m-2 absolute bg-yellow-500 block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-								>{{ this.unreadMessages }}</span>
+									v-if="unreadMessages > 0"
+									class="-m-2 absolute bg-red-600 text-white block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
+								>{{ unreadMessages }}</span>
 							</div>
 							<button
 								v-if="
@@ -71,20 +71,30 @@
 							>
 								<svgicon name="chat" color="#888 #555 #fff" width="21" height="21" />
 								<span
-									v-if="this.unreadMessages > 0"
-									class="-m-2 absolute bg-yellow-500 block border bottom-0 flex h-5 w-5 text-xs p-1 items-center justify-center right-0 rounded-full"
-								>{{ this.unreadMessages }}</span>
+									v-if="unreadMessages > 0"
+									class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
+								>{{ unreadMessages }}</span>
 							</button>
 						</div>
-						<!-- <div :class="showAllNotif ? '' : 'sm:relative'">
+						<div>
 							<button
-								class="button rounded-lg p-2 focus:outline-none cursor-pointer"
+								class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
 								@click="view_notif=!view_notif"
 							>
 								<svgicon name="bell" width="21" height="21"></svgicon>
+								<p
+									v-if="notification_count>0"
+									class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
+								>{{ notification_count }}</p>
 							</button>
-							<AppNotifDropdown v-if="view_notif" @showAll="showAllNotif=!showAllNotif" />
-						</div>-->
+							<transition name="drop-down">
+								<AppNotifDropdown
+									v-if="view_notif"
+									@showAll="showAllNotif=!showAllNotif"
+									@viewNotif="view_notif=!view_notif"
+								/>
+							</transition>
+						</div>
 						<!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
 							<AppButton
 								:label="'Expenses'"
@@ -134,6 +144,9 @@ export default {
 		};
 	},
 	computed: {
+		notification_count() {
+			return this.$store.getters["jobs/getUnreadNotifications"];
+		},
 		create_job_modal() {
 			return this.$store.state.calendar.create_job_modal;
 		},
@@ -171,6 +184,7 @@ export default {
 		}
 
 		this.$store.dispatch("chat/fetchTotalUnreadMessages");
+		this.$store.dispatch("jobs/fetchNotifications", { limit: 6 });
 	},
 	methods: {
 		toggle() {

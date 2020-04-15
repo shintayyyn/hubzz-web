@@ -314,6 +314,7 @@ export default {
         })
     },
     async add () {
+      this.formError = []
       this.Validate(this.form, [
         "coordinate_x",
         "coordinate_y",
