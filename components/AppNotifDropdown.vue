@@ -363,7 +363,7 @@
 
               setTimeout(() => {
                 this.$router.push(`/compliance/${locumComplianceDocumentId}`)
-              }, 500)
+              }, 750)
             }
           }
 
