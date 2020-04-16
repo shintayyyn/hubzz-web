@@ -66,7 +66,7 @@ export default {
       }
     })
 
-    this.$socket.on('Locum Notification Permanent Job Application unsuccessful', async (permanentJob) => {
+    this.$socket.on('Locum Notification Permanent Job Application Unsuccessful', async (permanentJob) => {
       let permanent_job = null
       let permanent_job_application = null
       

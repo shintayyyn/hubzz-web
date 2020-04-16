@@ -1,5 +1,5 @@
 export default {
-  getLocumPermanentJobNotifications(state) {
+  getLocumPermanentJobNotifications (state) {
     let notifications = []
     state.locum_permanent_job_notifications.forEach(notif => {
       let message = ''
@@ -37,7 +37,7 @@ export default {
     return notifications
   },
 
-  getPracticePermanentJobNotifications(state) {
+  getPracticePermanentJobNotifications (state) {
     let notifications = []
     state.practice_permanent_job_notifications.forEach(notif => {
       let message = ''
