@@ -331,8 +331,6 @@
           extra_information: "",
           practice_type_id: [],
           mandatory_training_id: [],
-          gp_compliance_document_id: [],
-          others_compliance_document_id: [],
           use_variation_terms: false,
           vat_registered: false,
           vat_number: null,
@@ -501,12 +499,6 @@
       this.practice.mandatory_trainings.forEach(item => {
         this.form.mandatory_training_id.push(item.id)
       })
-      this.practice.gp_compliance_documents.forEach(item => {
-        this.form.gp_compliance_document_id.push(item.id)
-      })
-      this.practice.others_compliance_documents.forEach(item => {
-        this.form.others_compliance_document_id.push(item.id)
-      })
       this.form.use_variation_terms = this.practice.use_variation_terms
       this.form.vat_registered = this.practice.vat_registered
       this.form.vat_number = this.practice.vat_number
@@ -623,8 +615,6 @@
         let notRequired = [
           "mandatory_training_id",
           "extra_information",
-          "gp_compliance_document_id",
-          "others_compliance_document_id",
           "vat_registered",
           "practice_profession_compliance_category_compliance_documents"
         ]

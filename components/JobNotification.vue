@@ -4,7 +4,7 @@
       v-if="jobNotifications.length > 0 || billingNotifications.length > 0 || permanentJobNotifications.length > 0"
       class="job-notification"
     >
-      <div
+      <!-- <div
         class="my-2 mt-1 flex items-center"
         :class="toggleNotification ? 'justify-between' : 'justify-end'"
       >
@@ -20,7 +20,7 @@
           :class="toggleNotification ? 'opacity-100' : 'opacity-50 hover:opacity-100 transition-hover'"
           @click="toggleNotification = !toggleNotification"
         />
-      </div>
+      </div> -->
       <transition name="slide">
         <template v-if="toggleNotification">
           <div class="notifications overflow-y-auto">
@@ -61,12 +61,12 @@
                         v-else
                         class="font-bold md:text-md leading-tight mr-1 uppercase pt-4 truncate-title"
                         style="-webkit-box-orient: vertical;"
-                      >{{ notification.title }}</div>
+                      >{{ notification.title ? notification.title : `Untitled ${notification.type === 'Jobs' ? 'Job' : 'Billing'}` }}</div>
                     </div>
                     <div class="w-full">
                       <div class="leading-tight pt-1">{{ notification.message }}</div>
                       <div
-                        v-if="notification.type === 'Jobs' && notification.platform_job"
+                        v-if="notification.type === 'Jobs' && (notification.platform_job && notification.platform_job.extra_information)"
                         class="leading-tight mt-2"
                       >
                         <div class="font-bold">Extra Information:</div>
@@ -99,10 +99,8 @@ export default {
   computed: {
     jobNotifications () {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-        console.log('practice job notifs', this.$store.getters["jobs/getPracticeJobNotifications"])
         return this.$store.getters["jobs/getPracticeJobNotifications"]
       }
-      console.log('locum job notifs', this.$store.getters["jobs/getLocumJobNotifications"])
       return this.$store.getters["jobs/getLocumJobNotifications"]
     },
     billingNotifications () {
@@ -113,17 +111,14 @@ export default {
     },
     permanentJobNotifications () {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-        console.log('practice perm job notifs', this.$store.getters["permanentjobs/getPracticePermanentJobNotifications"])
         return this.$store.getters["permanentjobs/getPracticePermanentJobNotifications"]
       }
-      console.log('locum perm job notifs', this.$store.getters["permanentjobs/getLocumPermanentJobNotifications"])
       return this.$store.getters["permanentjobs/getLocumPermanentJobNotifications"]
     },
     url () {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
     },
     notifications () {
-      console.log('notifs', this.permanentJobNotifications)
       return [...this.jobNotifications, ...this.billingNotifications, ...this.permanentJobNotifications].sort(
         (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
       )
@@ -178,6 +173,9 @@ export default {
       this.notifications.sort(
         (a, b) => new Date(b.notif_date) - new Date(a.notif_date)
       )
+      setTimeout(() => {
+        this.clearNotifications()
+      }, 120000);
     }
   },
   methods: {
@@ -200,7 +198,6 @@ export default {
       let dateStart = notification.date_start
 
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
-      console.log('notificaiton', notification)
       // path url
       let url = ""
       if (type === "Jobs") {
@@ -238,7 +235,6 @@ export default {
             ? `/locum-billing/private-invoices`
             : null
       } else if (type === "Permanent Jobs") {
-        console.log('notificaiton', notification)
         url = `/permanent-jobs`
       }
 
@@ -285,9 +281,6 @@ export default {
           default:
             routeStatus = status
         }
-
-        // console.log(url, status, routeStatus, notification)
-        // return
 
         if (url === null) {
           this.close(id, type, notification.notification_type)
@@ -336,9 +329,6 @@ export default {
             routeStatus = status
         }
 
-        // console.log(url, status, routeStatus, notification)
-        // return
-
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
@@ -362,9 +352,6 @@ export default {
       this.close(id, type, notification.notification_type)
     },
     close (id, type, notificationType) {
-      console.log('id', id)
-      console.log('type', type)
-      console.log('notification type', notificationType)
       if (type === "Jobs") {
         if (
           [
@@ -507,7 +494,7 @@ export default {
 <style>
 .job-notification {
   position: fixed;
-  top: 0;
+  bottom: 0;
   right: 0;
   z-index: 700;
   display: flex;

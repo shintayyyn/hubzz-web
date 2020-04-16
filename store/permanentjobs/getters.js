@@ -18,7 +18,7 @@ export default {
         case 'Locum Notification Permanent Job Unsuccessful':
           message = 'Your application for a Permanent Job position has been Unsuccessful'
           break
-        default: 
+        default:
           message = ''
       }
 
@@ -30,12 +30,10 @@ export default {
         permanent_job_app_id: notif.permanent_job_application ? notif.permanent_job_application.id : null,
         notification_type: notif.notificationType,
         type: 'Permanent Jobs',
-        message: `${message}. ${notif.locum_status === 'Pending'? 'This Permanent Job is no longer available.' : ''}`
+        message: `${message}. ${notif.locum_status === 'Pending' ? 'This Permanent Job is no longer available.' : ''}`
       }
       notifications.push(notifObj)
     })
-
-    console.log('notif', notifications)
     return notifications
   },
 
@@ -49,8 +47,14 @@ export default {
         case 'Practice Notification Permanent Job Applied':
           message = 'A Locum has applied to a Permanent Job'
           break
-        case 'Practice Notification Permanent Job Invited': 
+        case 'Practice Notification Permanent Job Invited':
           message = 'You have invited a Locum for a Permanent Job Position'
+          break
+        case 'Practice Notification Permanent Job Approved':
+          message = 'Your job posting has been approved by your Hub'
+          break
+        case 'Practice Notification Permanent Job Rejected':
+          message =  'Your job posting has been rejected by your Hub'
           break
         default:
           message = ''
@@ -60,8 +64,8 @@ export default {
         ...notif,
         id: notif.permanent_job.id,
         status: notif.permanent_job.job_posting_status,
-        application_status: notif.permanent_job_application.application_status,
-        permanent_job_app_id: notif.permanent_job_application.id,
+        application_status: notif.permanent_job_application ? notif.permanent_job_application.application_status : null,
+        permanent_job_app_id: notif.permanent_job_application ? notif.permanent_job_application.id : null,
         notification_type: notif.notificationType,
         type: 'Permanent Jobs',
         message,

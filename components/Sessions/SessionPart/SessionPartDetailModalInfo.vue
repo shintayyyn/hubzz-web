@@ -12,7 +12,7 @@
           Job description
         </div>
         <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ job_part.job.description }}
+          {{ job_part.job && job_part.job.description ? job_part.job.description : '(none)' }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Rate
@@ -116,7 +116,7 @@
         <div
           class="text-xs sm:text-sm mb-8 break-words"
         >
-          {{ job_part.job.platform_job.session_structure_information }}
+          {{ job_part.job.platform_job && job_part.job.platform_job.session_structure_information ? job_part.job.platform_job.session_structure_information : '(none)' }}
         </div>
         <div class="font-bold text-sm sm:text-md">
           Update Remarks

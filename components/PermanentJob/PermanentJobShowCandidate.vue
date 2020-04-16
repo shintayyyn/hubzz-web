@@ -85,13 +85,13 @@
               Headline
             </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8">
-              {{ user.locum_detail.headline }}
+              {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
             </div>
             <div class="font-bold text-sm sm:text-md">
               Biography
             </div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8">
-              {{ user.locum_detail.short_biography }}
+              {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
             </div>
             <div class="font-bold text-sm sm:text-md">
               GMC / NMC Number
@@ -189,11 +189,11 @@
               Others documents
             </div>
             <div class="flex flex-col mb-4 md:mb-8">
-              <div v-for="item in optional" :key="item.id" class="flex flex-row mt-2 cursor-pointer hover:underline">
+              <div v-for="item in optional" :key="item.id" class="flex flex-row items-center mt-2 cursor-pointer hover:underline">
                 <span>
                   <svgicon name="cloud-download" height="24" width="24" />
                 </span>
-                <a class="px-2" :href="item.file.url" :download="item.file.filename" target="_blank"
+                <a class="px-2 text-sm leading-tight" :href="item.file.url" :download="item.file.filename" target="_blank"
                    @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 >{{ item.compliance_document.name }}</a>
               </div>
@@ -205,22 +205,17 @@
             <div class="font-bold text-sm sm:text-md">
               Mandatory Trainings
             </div>
-            <div class="flex flex-col mb-8">
-              <div v-for="item in mandatoryTrainings" :key="item.id"
-                class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+            <div class="flex flex-col mb-4 md:mb-8">
+              <div v-for="item in mandatoryTrainings.filter(item => item.file)" :key="item.id"
+                class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
               >
-                <div 
-                  class="flex flex-row flex-no-wrap"
-                  v-if="item.file"
-                >
-                  <div class="w-5 h-5">
-                    <svgicon name="cloud-download" height="24" width="24" />
-                  </div>
-                  <a :href="item.file.url" :download="item.file.filename"
-                    class="break-words leading-loose mx-2 text-xs md:text-sm"
-                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-                  >{{ item.mandatory_training.name }}</a>
-                </div>
+                <span>
+                  <svgicon name="cloud-download" height="24" width="24" />
+                </span>
+                <a :href="item.file.url" :download="item.file.filename"
+                  class="px-2 text-sm leading-tight"
+                  @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.mandatory_training.name }}</a>
               </div>
               <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
                 <span class="text-sm">(none)</span>
@@ -242,7 +237,7 @@
             </div>
             <div v-if="user.locum_detail.referees.length > 0">
               <div v-for="item in user.locum_detail.referees" :key="item.id"
-                   class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
+							  :class="item && item.name ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
               >
                 <div class="text-xs sm:text-sm">
                   {{ item ? item.name:null }}
@@ -255,11 +250,10 @@
                 </div>
               </div>
             </div>
-            <div v-else>
-              <div class="text-xs sm:text-sm">
-                (none)
-              </div>
-            </div>
+            <div
+              v-if="!user.locum_detail.referees.map(item => item.name !== null).includes(true)"
+              class="text-xs md:text-sm"
+            >(none)</div>
           </div>
           <!-- <AppButton
             v-if="permanentJobApp.invitation_schedule && permanentJobApp.application_status === 'For Interview'"
