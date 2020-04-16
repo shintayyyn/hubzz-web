@@ -470,6 +470,7 @@ export default {
       }
     }
   },
+
   async asyncData ({ app, query }) {
     try {
       let [hasFormA, hasFormB] = await Promise.all([
@@ -653,14 +654,15 @@ export default {
               : jobPart.locum_details_nhs_claimable
           }
         })
-      } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
+      }
+      
+      if (url === `/api/v1/locum/locum-invoices-form-b`) {
         job_parts.forEach(item => {
           locum_form_bs.push({
             ...item,
             date_created: app
               .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
-              .utc()
-              .format("DD/MM/YYYY HH:mm:ss"),
+              .format('DD/MM/YYYY | HH:mm'),
             practice: item.forms[0].practice_name
           })
         })
@@ -677,6 +679,7 @@ export default {
       console.log("err", err.response || err)
     }
   },
+
   mounted () {
     this.$socket.on(
       "Locum Notification Locum Invoice Created",
@@ -691,9 +694,11 @@ export default {
       this.getLocumInvoiceRealTime
     )
   },
+
   destroyed () {
     this.removeListener()
   },
+
   methods: {
     viewAsPdf (formId, type) {
       let url =
@@ -704,6 +709,7 @@ export default {
           : `/api/v1/locum-form-b`
       window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
     },
+
     generateFormA () {
       this.$axios
         .$post(`/api/v1/locum/locum-invoices-form-a`, {
@@ -740,6 +746,7 @@ export default {
           this.generate_form_a_modal = false
         })
     },
+
     getJobPartsPromiseAll () {
       let url = `/api/v1/locum/job-parts`
       let invoice_status = []
@@ -884,12 +891,8 @@ export default {
             this.locum_form_bs = response.data.locum_form_bs.map(item => {
               return {
                 ...item,
-                date_created: this.$moment(
-                  item.date_created,
-                  "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-                )
-                  .utc()
-                  .format("DD/MM/YYYY HH:mm:ss"),
+                date_created: this.$moment(item.date_created, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+                  .format('DD/MM/YYYY | HH:mm'),
                 practice: item.forms[0].practice_name
               }
             })
@@ -913,6 +916,7 @@ export default {
       this.initialLoading = false
       this.filterModal = false
     },
+    
     getJobParts () {
       let url = `/api/v1/locum/job-parts`
       let invoice_status = []
@@ -1043,12 +1047,8 @@ export default {
             this.locum_form_bs = res.data.locum_form_bs.map(item => {
               return {
                 ...item,
-                date_created: this.$moment(
-                  item.date_created,
-                  "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-                )
-                  .utc()
-                  .format("DD/MM/YYYY HH:mm:ss"),
+                date_created: this.$moment(item.date_created, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
+                  .format('DD/MM/YYYY | HH:mm'),
                 practice: item.forms[0].practice_name
               }
             })
