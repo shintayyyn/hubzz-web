@@ -416,9 +416,10 @@
             v-model="form.miles"
             :type="'number'"
             :name="'miles'"
-            :label="`I will travel up to ${form.miles ? form.miles : 'n'} miles from this postcode`"
+            :label="`I will travel up to ${form.miles ? form.miles : 0} miles from this postcode`"
             :error="formError.find(item => item.field === 'miles')"
             :inStyle="'text-align:right;'"
+            :limit="8"
             required
             @blur="CheckEmptyField(form.miles, 'miles')"
           />
@@ -554,7 +555,7 @@ export default {
         mandatory_training_id: [],
         practice_type_id: [],
         post_code: "",
-        miles: "",
+        miles: 0,
         referee_1_contact_name: "",
         referee_1_phone_number: "",
         referee_1_email: "",

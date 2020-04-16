@@ -97,7 +97,7 @@
 </template>
 
 <script>
-  import { mixin as clickaway } from "vue-clickaway"
+  import { mixin as clickaway } from 'vue-clickaway'
 
   export default {
     mixins: [clickaway],
@@ -112,6 +112,7 @@
     },
 
     computed: {
+
       getNotificationDisplay () {
         return (notification) => {
           const {
@@ -208,24 +209,31 @@
       url () {
         return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
       },
+
       notifications () {
         return this.$store.getters["jobs/getNotifications"]
       },
+
       notifications_count () {
         return this.$store.getters["jobs/getNotificationCount"]
       },
+
       loadMoreLoader () {
         return this.$store.state.jobs.load_more_loading
       },
+
       loading () {
         return this.$store.state.jobs.notification_loading
-      }
+      },
+
     },
 
     watch: {
+
       showAll () {
         this.$emit("showAll")
       },
+
     },
 
     created () {
@@ -348,7 +356,15 @@
           if (complianceDocumentTypeName === 'Reference') {
             this.$router.push('/compliance')
           } else {
-            this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+            if (this.$route.name.includes('compliance')) {
+              this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+            } else {
+              this.$router.push('/compliance')
+
+              setTimeout(() => {
+                this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+              }, 750)
+            }
           }
 
           this.close()
