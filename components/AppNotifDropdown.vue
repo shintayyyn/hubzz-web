@@ -301,15 +301,25 @@
           name: notificationTypeName,
         } = notificationType
 
-        if (
-          notificationTypeName === 'Locum Notification Compliance Approved'
-          || notificationTypeName === 'Locum Notification Compliance Rejected'
-          || notificationTypeName === 'Locum Notification Compliance Pending'
-        ) {
+        const locumComplianceDocumentNotifications = [
+          'Locum Notification Compliance Approved',
+          'Locum Notification Compliance Rejected',
+          'Locum Notification Compliance Pending',
+        ]
+
+        const jobNotifications = [
+          'Locum Notification Job Matched',
+          'Locum Notification Job Available',
+          'Locum Notification Job Unqualified',
+        ]
+
+        if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
+          const locumComplianceDocument = payload
+
           const {
             id: locumComplianceDocumentId,
             compliance_document: complianceDocument,
-          } = payload
+          } = locumComplianceDocument
 
           const {
             compliance_document_type: complianceDocumentType,
@@ -337,6 +347,29 @@
 
           if (!seen) {
             this.seenNotification(notificationId)
+          }
+        } else if (jobNotifications.includes(notificationTypeName)) {
+          const job = payload
+
+          const {
+            id: jobId,
+            original_job_id: originalJobId,
+          } = job
+
+          let routeParamId = jobId
+
+          if (notificationTypeName === 'Locum Notification Job Unqualified' && originalJobId) {
+            routeParamId = originalJobId
+          }
+
+          if (this.$route.name.includes('/jobs')) {
+            this.$router.push(`/jobs/${routeParamId}`)
+          } else {
+            this.$router.push('/jobs')
+
+            setTimeout(() => {
+              this.$router.push(`/jobs/${routeParamId}`)
+            }, 750)
           }
         } else {
           this.oldGoTo(notification)

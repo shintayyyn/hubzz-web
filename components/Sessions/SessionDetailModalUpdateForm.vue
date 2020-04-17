@@ -844,15 +844,76 @@
           return []
         }
 
+        const complianceDocuments = this.professionComplianceCategories
+          .reduce((compliances, professionComplianceCategory) => {
+            const {
+              reference_compliance_documents: referenceComplianceDocuments,
+              mandatory_compliance_documents: mandatoryComplianceDocuments,
+              optional_compliance_documents: optionalComplianceDocuments,
+            } = professionComplianceCategory
+
+            if (professionComplianceCategory.id === this.selectedProfessionComplianceCategory.id) {
+              [
+                referenceComplianceDocuments,
+                mandatoryComplianceDocuments,
+                optionalComplianceDocuments,
+              ].forEach((complianceDocuments) => {
+                complianceDocuments.forEach((complianceDocument) => {
+                  const {
+                    id,
+                    name,
+                    compliance_document_type_name: complianceDocumentTypeName,
+                    child_compliance_documents: childComplianceDocuments,
+                  } = complianceDocument
+
+                  if (complianceDocumentTypeName === 'Safeguarding') {
+                    childComplianceDocuments.forEach((childComplianceDocument) => {
+                      const {
+                        id,
+                        name,
+                      } = childComplianceDocument
+
+                      compliances.push({
+                        label: name,
+                        value: id
+                      })
+                    })
+                  } else {
+                    compliances.push({
+                      label: name,
+                      value: id
+                    })
+                  }
+                })
+              })
+            }
+
+            return compliances
+          }, [])
+
+        const complianceDocumentIds = complianceDocuments.map(({ value }) => value)
+
         return this.practiceProfessionComplianceCategoryComplianceDocuments
-          .filter(practiceProfessionComplianceCategoryComplianceDocument =>
-            practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-              === this.selectedProfessionComplianceCategory.id
-          )
-          .map(practiceProfessionComplianceCategoryComplianceDocument => ({
-            label: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_name,
-            value: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
-          }))
+          .filter((practiceProfessionComplianceCategoryComplianceDocument) => {
+            const {
+              compliance_document_id: complianceDocumentId,
+              profession_compliance_category_id: professionComplianceCategoryId,
+            } = practiceProfessionComplianceCategoryComplianceDocument
+
+            return professionComplianceCategoryId === this.selectedProfessionComplianceCategory.id
+              && complianceDocumentIds.includes(complianceDocumentId)
+          })
+          .map((practiceProfessionComplianceCategoryComplianceDocument) => {
+            const {
+              compliance_document_id: complianceDocumentId,
+              compliance_document_name: complianceDocumentName,
+            } = practiceProfessionComplianceCategoryComplianceDocument
+
+            return {
+              label: complianceDocumentName,
+              value: complianceDocumentId
+            }
+          })
       },
 
     },

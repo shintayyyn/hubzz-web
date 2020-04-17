@@ -44,8 +44,8 @@
                     :placeholder="'Select...'"
                     :items="professions"
                     :error="formError.find(item => item.field === 'role')"
+                    required
                     @blur="CheckEmptyField(form.role,'role')"
-                  required
                   />
 
                   <template v-if="form.role">
@@ -61,7 +61,7 @@
                         : null
                       "
                       :error="formError.find(item => item.field === 'specialty')"
-                  required
+                      required
                     />
 
                     <AppFilterSearch
@@ -72,7 +72,7 @@
                       :info="'Choose at least one IT system'"
                       :url="'/api/v1/clinical-systems'"
                       :error="formError.find(item => item.field === 'clinical_system')"
-                  required
+                      required
                     />
 
                     <AppFilterSearch
@@ -210,8 +210,8 @@
                       :error="formError.find(item => item.field === 'dates')"
                       is-after
                       multipleSelection
-                      @blur="CheckEmptyField(form.dates,'dates')"
                       required
+                      @blur="CheckEmptyField(form.dates,'dates')"
                     />
                     <!-- <AppMultipleDates
                       v-model="form.dates"
@@ -242,8 +242,8 @@
                         :name="'time_start'"
                         :label="'Start Time'"
                         :error="formError.find(item => item.field === 'time_start')"
-                        @blur="CheckEmptyField(form.time_start,'time_start')"
                         required
+                        @blur="CheckEmptyField(form.time_start,'time_start')"
                       />
                     </div>
                     <!-- <div class="px-1 w-full md:w-1/2">
@@ -264,8 +264,8 @@
                         :name="'time_end'"
                         :label="'End Time'"
                         :error="formError.find(item => item.field === 'time_end')"
-                        @blur="CheckEmptyField(form.time_end,'time_end')"
                         required
+                        @blur="CheckEmptyField(form.time_end,'time_end')"
                       />
                     </div>
                   </div>
@@ -304,9 +304,9 @@
                     :placeholder="''"
                     :in-style="'text-align:right;'"
                     :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
+                    required
                     @blur="CheckEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
                     @keydown="inputNumberOnly($event)"
-                    required
                   />
                   <AppInput
                     v-model="form.shift"
@@ -316,8 +316,8 @@
                     :placeholder="'Select...'"
                     :items="shifts"
                     :error="formError.find(item => item.field === 'shift')"
-                    @blur="CheckEmptyField(form.shift, 'shift')"
                     required
+                    @blur="CheckEmptyField(form.shift, 'shift')"
                   />
 
                   <AppInput
@@ -443,8 +443,8 @@
                 :label="'Report to'"
                 :placeholder="''"
                 :error="formError.find(item => item.field === 'report_to')"
-                @blur="CheckEmptyField(form.report_to,'report_to')"
                 required
+                @blur="CheckEmptyField(form.report_to,'report_to')"
               />
 
               <AppInput
@@ -454,8 +454,8 @@
                 :label="'Email'"
                 :placeholder="''"
                 :error="formError.find(item => item.field === 'email')"
-                @blur="CheckEmptyField(form.email,'email')"
                 required
+                @blur="CheckEmptyField(form.email,'email')"
               />
 
               <AppInput
@@ -482,8 +482,8 @@
                 :placeholder="''"
                 :in-style="'text-align:right;'"
                 :error="formError.find(item => item.field === 'number_of_patients')"
-                @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
                 required
+                @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
               />
 
               <AppInput
@@ -494,8 +494,8 @@
                 :placeholder="''"
                 :in-style="'text-align:right;'"
                 :error="formError.find(item => item.field === 'duration_for_each_appointment')"
-                @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
                 required
+                @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
               />
 
               <AppInput
@@ -550,9 +550,9 @@
                     :error="formError.find(item => item.field === 'rate')"
                     :in-style="'text-align:right'"
                     :limit="8"
+                    required
                     @blur="CheckEmptyField(form.rate,'rate')"
                     @keydown="isNumber($event)"
-                    required
                   />
                 </div>
 
@@ -667,7 +667,7 @@
   import AppFilterSearch from "@/components/Base/AppFilterSearch"
   import AppDate from "@/components/Base/AppDate"
   import AppMultipleDates from "@/components/Base/AppMultipleDates"
-  import AppSchedule from "@/components/Base/AppSchedule"
+  // import AppSchedule from "@/components/Base/AppSchedule"
   import AppButton from "@/components/Base/AppButton"
   import AppTime from "@/components/Base/AppTime"
   import AppLoading from "@/components/Base/AppLoading"
@@ -683,7 +683,7 @@
       AppInput,
       AppFilterSearch,
       AppMultipleDates,
-      AppSchedule,
+      // AppSchedule,
       AppDate,
       AppButton,
       AppTime,
@@ -847,15 +847,76 @@
           return []
         }
 
+        const complianceDocuments = this.professionComplianceCategories
+          .reduce((compliances, professionComplianceCategory) => {
+            const {
+              reference_compliance_documents: referenceComplianceDocuments,
+              mandatory_compliance_documents: mandatoryComplianceDocuments,
+              optional_compliance_documents: optionalComplianceDocuments,
+            } = professionComplianceCategory
+
+            if (professionComplianceCategory.id === this.selectedProfessionComplianceCategory.id) {
+              [
+                referenceComplianceDocuments,
+                mandatoryComplianceDocuments,
+                optionalComplianceDocuments,
+              ].forEach((complianceDocuments) => {
+                complianceDocuments.forEach((complianceDocument) => {
+                  const {
+                    id,
+                    name,
+                    compliance_document_type_name: complianceDocumentTypeName,
+                    child_compliance_documents: childComplianceDocuments,
+                  } = complianceDocument
+
+                  if (complianceDocumentTypeName === 'Safeguarding') {
+                    childComplianceDocuments.forEach((childComplianceDocument) => {
+                      const {
+                        id,
+                        name,
+                      } = childComplianceDocument
+
+                      compliances.push({
+                        label: name,
+                        value: id
+                      })
+                    })
+                  } else {
+                    compliances.push({
+                      label: name,
+                      value: id
+                    })
+                  }
+                })
+              })
+            }
+
+            return compliances
+          }, [])
+
+        const complianceDocumentIds = complianceDocuments.map(({ value }) => value)
+
         return this.practiceProfessionComplianceCategoryComplianceDocuments
-          .filter(practiceProfessionComplianceCategoryComplianceDocument =>
-            practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-              === this.selectedProfessionComplianceCategory.id
-          )
-          .map(practiceProfessionComplianceCategoryComplianceDocument => ({
-            label: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_name,
-            value: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
-          }))
+          .filter((practiceProfessionComplianceCategoryComplianceDocument) => {
+            const {
+              compliance_document_id: complianceDocumentId,
+              profession_compliance_category_id: professionComplianceCategoryId,
+            } = practiceProfessionComplianceCategoryComplianceDocument
+
+            return professionComplianceCategoryId === this.selectedProfessionComplianceCategory.id
+              && complianceDocumentIds.includes(complianceDocumentId)
+          })
+          .map((practiceProfessionComplianceCategoryComplianceDocument) => {
+            const {
+              compliance_document_id: complianceDocumentId,
+              compliance_document_name: complianceDocumentName,
+            } = practiceProfessionComplianceCategoryComplianceDocument
+
+            return {
+              label: complianceDocumentName,
+              value: complianceDocumentId
+            }
+          })
       },
 
     },
