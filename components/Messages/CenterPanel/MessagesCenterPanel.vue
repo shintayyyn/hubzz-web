@@ -46,7 +46,7 @@ export default {
 				this.$store.commit("IS_MOBILE", false);
 			}
 			if (this.$route.name === "messages-slug") {
-				this.$router.push(`/messages/new`);
+				this.$router.push(`/messages/create`);
 			}
 		},
 		show() {

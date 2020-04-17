@@ -211,8 +211,18 @@
                       is-after
                       multipleSelection
                       @blur="CheckEmptyField(form.dates,'dates')"
-                    required
+                      required
                     />
+                    <!-- <AppMultipleDates
+                      v-model="form.dates"
+                      :name="'dates'"
+                      :label="'Job Dates'"
+                      :error="formError.find(item => item.field === 'dates')"
+                      is-after
+                      multipleSelection
+                      @blur="CheckEmptyField(form.dates,'dates')"
+                      required
+                    /> -->
                   </div>
                   <div class="flex flex-row flex-wrap justify-between">
                     <!-- <div class="px-1 w-full md:w-1/2">
@@ -657,6 +667,7 @@
   import AppFilterSearch from "@/components/Base/AppFilterSearch"
   import AppDate from "@/components/Base/AppDate"
   import AppMultipleDates from "@/components/Base/AppMultipleDates"
+  import AppSchedule from "@/components/Base/AppSchedule"
   import AppButton from "@/components/Base/AppButton"
   import AppTime from "@/components/Base/AppTime"
   import AppLoading from "@/components/Base/AppLoading"
@@ -672,6 +683,7 @@
       AppInput,
       AppFilterSearch,
       AppMultipleDates,
+      AppSchedule,
       AppDate,
       AppButton,
       AppTime,
