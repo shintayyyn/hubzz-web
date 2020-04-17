@@ -69,6 +69,9 @@
         if (this.$socket) {
           this.$socket.on('Locum Notification Job Available', this.getLocumStats)
           this.$socket.on('Locum Notification Job Matched', this.getLocumStats)
+          this.$socket.on('Locum Notification Job Applied', this.getLocumStats)
+          this.$socket.on('Locum Notification Job Application Cancelled', this.getLocumStats)
+          this.$socket.on('Locum Notification Job Application Auto Cancelled', this.getLocumStats)
           this.$socket.on('Locum Notification Job Unsuccessful', this.getLocumStats)
           this.$socket.on('Locum Notification Job Current', this.getLocumStats)
           this.$socket.on('Locum Notification Job Ongoing', this.getLocumStats)
@@ -90,6 +93,9 @@
         if (this.$socket) {
           this.$socket.removeListener('Locum Notification Job Available', this.getLocumStats)
           this.$socket.removeListener('Locum Notification Job Matched', this.getLocumStats)
+          this.$socket.removeListener('Locum Notification Job Applied', this.getLocumStats)
+          this.$socket.removeListener('Locum Notification Job Application Cancelled', this.getLocumStats)
+          this.$socket.removeListener('Locum Notification Job Application Auto Cancelled', this.getLocumStats)
           this.$socket.removeListener('Locum Notification Job Unsuccessful', this.getLocumStats)
           this.$socket.removeListener('Locum Notification Job Current', this.getLocumStats)
           this.$socket.removeListener('Locum Notification Job Ongoing', this.getLocumStats)
