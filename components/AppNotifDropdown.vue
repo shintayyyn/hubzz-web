@@ -117,70 +117,36 @@
         return (notification) => {
           const {
             notification_type: notificationType,
+            type,
             payload,
+            title,
+            message,
+            description,
           } = notification
 
           const {
             name: notificationTypeName,
           } = notificationType
 
-          if (notificationTypeName === 'Locum Notification Compliance Approved') {
-            const {
-              compliance_document: complianceDocument,
-            } = payload
+          const fixedNotifications = [
+            'Locum Notification Compliance Approved',
+            'Locum Notification Compliance Rejected',
+            'Locum Notification Compliance Pending',
+          ]
 
-            const {
-              name: complianceDocumentName,
-              compliance_document_type: complianceDocumentType,
-            } = complianceDocument
-
-            const {
-              name: complianceDocumentTypeName,
-            } = complianceDocumentType
-
-            if (complianceDocumentTypeName === 'Reference') {
-              return {
-                title: 'Compliance Verified',
-                message: complianceDocumentName,
-              }
-            } else {
-              return {
-                title: 'Compliance Approved',
-                message: complianceDocumentName,
-              }
-            }
-          } else if (notificationTypeName === 'Locum Notification Compliance Rejected') {
-            const {
-              compliance_document: complianceDocument,
-            } = payload
-
-            const {
-              name: complianceDocumentName,
-            } = complianceDocument
-
+          if (fixedNotifications.includes(notificationTypeName)) {
             return {
-              title: 'Compliance Rejected',
-              message: complianceDocumentName,
-            }
-          } else if (notificationTypeName === 'Locum Notification Compliance Pending') {
-            const {
-              compliance_document: complianceDocument,
-            } = payload
-
-            const {
-              name: complianceDocumentName,
-            } = complianceDocument
-
-            return {
-              title: 'Compliance Pending',
-              message: complianceDocumentName,
+              title,
+              message: description,
             }
           } else {
             return {
-              title: notification.payload.title
-                ? notification.payload.title
-                : `Untitled ${notification.type}`,
-              message: notification.message,
+              title: payload.title
+                ? payload.title
+                : type
+                  ? `Untitled ${type}`
+                  : title,
+              message: message || description,
             }
           }
         }
