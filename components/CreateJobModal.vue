@@ -526,8 +526,6 @@
                 :label="'Session structure information'"
                 :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
                 :resize="false"
-                :error="formError.find(item => item.field === 'session_structure_information')"
-                @blur="CheckEmptyField(form.session_structure_information, 'session_structure_information')"
               />
 
               <AppInput
@@ -1360,9 +1358,7 @@
         }
 
         this.validateNumber(this.form.rate, "rate")
-
         this.Validate(this.form, notRequired)
-
         if (!this.formError.length) {
           this.form.profession_id = this.form.role
           this.form.shift_id = this.form.shift
