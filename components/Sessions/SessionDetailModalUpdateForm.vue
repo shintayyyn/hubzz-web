@@ -1521,32 +1521,57 @@
             })
             .catch(err => {
               console.log("err", err.response || err)
+
               this.form.clinical_system_id = this.selectedClinicalSystem
+
               this.form.qualification_id = this.selectedQualification
+
               this.form.spoken_language_id = this.selectedSpokenLanguage
 
               this.form.session_requirements = this.form.session_requirements
                 ? this.form.session_requirements.split(",")
                 : []
 
-              if (err.response.status === 500) {
-                this.formError.push({
-                  field: err.response.statusText,
-                  message: "Please check your inputs"
-                })
-              } else if (err.response.status === 400) {
-                // this.formError.push({
-                //   field: "date_start",
-                //   message: err.response.data.message
-                // })
-                // this.formError.push({
-                //   field: "date_end",
-                //   message: err.response.data.message
-                // })
+              let message = null
+
+              if (err.response) {
+                if (err.response.status === 400 || err.response.data.error_messages) {
+                  this.formError = err.response.data.error_messages
+                } else {
+                  message = err.response.data.message
+                }
+              } else if (err.request) {
+                message = 'Something weng wrong!'
               } else {
-                this.formError = err.response.data.error_messages
+                message = err.message
               }
-              throw err
+
+              if (message) {
+                this.$store.commit('SET_NOTIFICATION', {
+                  enabled: true,
+                  status: 'danger',
+                  text: [`${message}`],
+                })
+              }
+
+              // if (err.response.status === 500) {
+              //   this.formError.push({
+              //     field: err.response.statusText,
+              //     message: "Please check your inputs"
+              //   })
+              // } else if (err.response.status === 400) {
+              //   // this.formError.push({
+              //   //   field: "date_start",
+              //   //   message: err.response.data.message
+              //   // })
+              //   // this.formError.push({
+              //   //   field: "date_end",
+              //   //   message: err.response.data.message
+              //   // })
+              // } else {
+              //   this.formError = err.response.data.error_messages
+              // }
+              // throw err
             })
             .finally(() => {
               this.loading = false

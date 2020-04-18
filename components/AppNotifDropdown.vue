@@ -58,15 +58,15 @@
           <p
             class="font-bold block truncate"
           >
-            <span>{{ getNotificationTitle(item) }}</span>
+            <span>{{ getNotificationTitle(item) }}&nbsp;</span>
           </p>
           <p class="text-sm pt-1">
-            <span>{{ getNotificationMessage(item) }}</span>
+            <span>{{ getNotificationMessage(item) }}&nbsp;</span>
           </p>
           <div
             class="leading-tight text-xs pt-1 text-gray-600"
           >
-            <span>{{ $moment(item.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}</span>
+            <span>{{ $moment(item.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}&nbsp;</span>
           </div>
         </div>
       </transition-group>
@@ -132,6 +132,20 @@
             'Locum Notification Compliance Approved',
             'Locum Notification Compliance Rejected',
             'Locum Notification Compliance Pending',
+
+            'Locum Notification Job Available',
+            'Locum Notification Job Matched',
+            'Locum Notification Job Applied',
+            'Locum Notification Job Application Cancelled',
+            'Locum Notification Job Unqualified',
+            'Locum Notification Job Unavailable',
+            'Locum Notification Job Amended',
+
+            'Practice Notification Job Live',
+            'Practice Notification Job Pending',
+            'Practice Notification Job Applied',
+            'Practice Notification Job Application',
+            'Practice Notification Job Application Cancelled',
           ]
 
           if (fixedNotifications.includes(notificationTypeName)) {
@@ -307,10 +321,11 @@
           'Locum Notification Compliance Pending',
         ]
 
-        const jobNotifications = [
+        const locumJobNotifications = [
           'Locum Notification Job Matched',
           'Locum Notification Job Available',
           'Locum Notification Job Unqualified',
+          'Locum Notification Job Unavailable',
         ]
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
@@ -348,7 +363,7 @@
           if (!seen) {
             this.seenNotification(notificationId)
           }
-        } else if (jobNotifications.includes(notificationTypeName)) {
+        } else if (locumJobNotifications.includes(notificationTypeName)) {
           const job = payload
 
           const {
@@ -359,6 +374,10 @@
           let routeParamId = jobId
 
           if (notificationTypeName === 'Locum Notification Job Unqualified' && originalJobId) {
+            routeParamId = originalJobId
+          }
+
+          if (notificationTypeName === 'Locum Notification Job Unavailable' && originalJobId) {
             routeParamId = originalJobId
           }
 

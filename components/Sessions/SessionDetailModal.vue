@@ -187,9 +187,6 @@
           (this.job.status === "Applied" &&
             this.job.applied_update_accepted_until &&
             this.job.applied_update_accepted === false)
-          // 		&&
-          // this.job.original === false &&
-          // this.job.update_accepted_until
         )
       },
 
