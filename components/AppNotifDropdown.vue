@@ -210,11 +210,9 @@
     },
 
     watch: {
-
       showAll () {
         this.$emit("showAll")
       },
-
     },
 
     created () {
@@ -697,11 +695,28 @@
       },
 
       loadMore () {
-        let params = {
-          limit: 3,
-          offset: this.notifications.length
-        }
-        this.$store.dispatch("jobs/fetchMoreNotifications", params)
+        this.$store.commit('jobs/SET_LOAD_MORE_LOADING', true)
+
+        let domain = this.$auth.user.domain.toLowerCase()
+
+        Promise.all([
+          // this.$axios.get(`/api/v1/${domain}/notifications/count`).then((response) => {
+          //   const count = response.data.data.count
+          //   this.$store.commit('SET_NOTIFICATIONS_COUNT', count)
+          // }),
+          this.$axios.get(`/api/v1/${domain}/notifications`, {
+            params: {
+              order_by: 'created_at:desc',
+              limit: 3,
+              offset: this.notifications.length,
+            }
+          }).then((response) => {
+            const notifications = response.data.data.notifications
+            this.$store.commit('jobs/ADD_NOTIFICATION', notifications)
+          }),
+        ]).finally(() => {
+          this.$store.commit('jobs/SET_LOAD_MORE_LOADING', false)
+        })
       },
 
       seeAllNotifications () {
