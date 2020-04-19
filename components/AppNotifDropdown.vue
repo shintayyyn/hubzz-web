@@ -144,6 +144,7 @@
             'Practice Notification Job Live',
             'Practice Notification Job Pending',
             'Practice Notification Job Applied',
+            'Practice Notification Job Cancelled',
             'Practice Notification Job Application',
             'Practice Notification Job Application Cancelled',
           ]
@@ -324,8 +325,23 @@
         const locumJobNotifications = [
           'Locum Notification Job Matched',
           'Locum Notification Job Available',
+          'Locum Notification Job Applied',
+          'Locum Notification Job Application Cancelled',
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unavailable',
+          'Locum Notification Job Amended',
+        ]
+
+        const practiceJobNotifications = [
+          'Practice Notification Job Live',
+          'Practice Notification Job Pending',
+          'Practice Notification Job Applied',
+          'Practice Notification Job Cancelled',
+        ]
+
+        const jobApplicationNotifications = [
+          'Practice Notification Job Application',
+          'Practice Notification Job Application Cancelled',
         ]
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
@@ -354,7 +370,7 @@
 
               setTimeout(() => {
                 this.$router.push(`/compliance/${locumComplianceDocumentId}`)
-              }, 750)
+              }, 500)
             }
           }
 
@@ -363,7 +379,11 @@
           if (!seen) {
             this.seenNotification(notificationId)
           }
-        } else if (locumJobNotifications.includes(notificationTypeName)) {
+
+          return
+        }
+        
+        if (locumJobNotifications.includes(notificationTypeName)) {
           const job = payload
 
           const {
@@ -381,18 +401,110 @@
             routeParamId = originalJobId
           }
 
-          if (this.$route.name.includes('/jobs')) {
+          if (this.$route.name === 'jobs-index') {
             this.$router.push(`/jobs/${routeParamId}`)
           } else {
             this.$router.push('/jobs')
 
             setTimeout(() => {
               this.$router.push(`/jobs/${routeParamId}`)
-            }, 750)
+            }, 500)
           }
-        } else {
-          this.oldGoTo(notification)
+
+          this.close()
+
+          if (!seen) {
+            this.seenNotification(notificationId)
+          }
+
+          return
         }
+        
+        if (practiceJobNotifications.includes(notificationTypeName)) {
+          const job = payload
+
+          const {
+            id: jobId,
+            practice_id: jobPracticeId,
+            practice_surgery_id: practiceSurgeryId,
+          } = job
+
+          let routeParamId = jobId
+
+          if (
+            jobPracticeId !== this.$auth.user.practice_id
+            && practiceSurgeryId
+          ) {
+            this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions`)
+
+            setTimeout(() => {
+              this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions/${routeParamId}`)
+            }, 500)
+          } else {
+            if (this.$route.name === 'sessions-index') {
+              this.$router.push(`/sessions/${routeParamId}`)
+            } else {
+              this.$router.push('/sessions')
+
+              setTimeout(() => {
+                this.$router.push(`/sessions/${routeParamId}`)
+              }, 500)
+            }
+          }
+
+          this.close()
+
+          if (!seen) {
+            this.seenNotification(notificationId)
+          }
+
+          return
+        }        
+
+        if (jobApplicationNotifications.includes(notificationTypeName)) {
+          const {
+            job,
+          } = payload
+
+          const {
+            id: jobId,
+            practice_id: jobPracticeId,
+            practice_surgery_id: practiceSurgeryId,
+          } = job
+
+          let routeParamId = jobId
+
+          if (
+            jobPracticeId !== this.$auth.user.practice_id
+            && practiceSurgeryId
+          ) {
+            this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions`)
+
+            setTimeout(() => {
+              this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions/${routeParamId}`)
+            }, 500)
+          } else {
+            if (this.$route.name === 'sessions-index') {
+              this.$router.push(`/sessions/${routeParamId}`)
+            } else {
+              this.$router.push('/sessions')
+
+              setTimeout(() => {
+                this.$router.push(`/sessions/${routeParamId}`)
+              }, 500)
+            }
+          }
+
+          this.close()
+
+          if (!seen) {
+            this.seenNotification(notificationId)
+          }
+
+          return
+        }
+
+        this.oldGoTo(notification)
       },
 
       oldGoTo (notification) {
