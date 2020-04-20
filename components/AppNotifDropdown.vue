@@ -1,98 +1,116 @@
 <template>
-  <div
-    v-on-clickaway="close"
-    class="absolute bg-white border shadow container transition-hover flex flex-col"
-    :class="[
-      showAll === true
-        ? 'modal top-0 right-0'
-        : 'dropdown right-0 mt-2',
-
-      notifications_count !== notifications.length
-        ? !loading
-          ? 'justify-between'
-          : ''
-        : ''
-    ]"
-  >
-    <div class="border-b px-2 py-1 flex justify-between" :class="showAll ? '' : 'text-sm'">
-      <p class="font-bold">
-        <span>Notifications</span>
-      </p>
-
-      <div
-        v-if="notifications.length > 0"
-        class="flex items-center"
-        :class="showAll ? 'text-sm' : 'text-xs'"
+  <div>
+    <button
+      class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
+      @click="showNotificationsDropdown = !showNotificationsDropdown"
+    >
+      <svgicon name="bell" width="21" height="21" />
+      <p
+        v-if="unseenNotificationCount > 0"
+        class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
       >
-        <p class="cursor-pointer hover:text-gray-700" @click="markAllAsRead">
-          <span>Mark all as read</span>
-        </p>
-        <span v-if="showAll" class="px-1 font-bold">·</span>
-        <span v-if="showAll" class="cursor-pointer" @click="close">Close</span>
-      </div>
-    </div>
+        {{ unseenNotificationCount }}
+      </p>
+    </button>
+    
+    <transition name="drop-down">
+      <div
+        v-if="showNotificationsDropdown"
+        v-on-clickaway="close"
+        class="absolute bg-white border shadow container transition-hover flex flex-col"
+        :class="[
+          largeView === true
+            ? 'modal top-0 right-0'
+            : 'dropdown right-0 mt-2',
 
-    <p
-      v-if="!loading && notifications.length === 0"
-      class="text-center text-sm py-2"
-    >
-      <span>You don't have notifications at the moment.</span>
-    </p>
-
-    <span
-      v-if="loading || (showAll && notifications.length === 0 && loading)"
-      class="flex justify-center items-center py-1 h-full"
-    >
-      <svgicon name="loader" :width="showAll ? '55' : '30'" :height="showAll ? '55' : '30'" />
-    </span>
-
-    <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
-      <transition-group name="fade" mode="in-out">
-        <div
-          v-for="(item, index) in notifications"
-          :key="index"
-          class="p-2 border-b leading-tight cursor-pointer transition-hover"
-          :class="item.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-400'"
-          @click="goTo(item)"
-        >
-          <p
-            class="font-bold block truncate"
-          >
-            <span>{{ getNotificationTitle(item) }}&nbsp;</span>
+          notificationCount !== notifications.length
+            ? !loading
+              ? 'justify-between'
+              : ''
+            : ''
+        ]"
+      >
+        <div class="border-b px-2 py-1 flex justify-between" :class="largeView ? '' : 'text-sm'">
+          <p class="font-bold">
+            <span>Notifications</span>
           </p>
-          <p class="text-sm pt-1">
-            <span>{{ getNotificationMessage(item) }}&nbsp;</span>
-          </p>
+
           <div
-            class="leading-tight text-xs pt-1 text-gray-600"
+            v-if="notifications.length > 0"
+            class="flex items-center"
+            :class="largeView ? 'text-sm' : 'text-xs'"
           >
-            <span>{{ $moment(item.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}&nbsp;</span>
+            <p class="cursor-pointer hover:text-gray-700" @click="markAllAsRead">
+              <span>Mark all as read</span>
+            </p>
+            <span v-if="largeView" class="px-1 font-bold">·</span>
+            <span v-if="largeView" class="cursor-pointer" @click="close">Close</span>
           </div>
         </div>
-      </transition-group>
-    </div>
 
-    <!-- <p
-				v-if="notifications_count !== notifications.length"
-				class="cursor-pointer text-sm text-center py-1 w-full bg-gray-100 border-t"
-				@click="loadMore"
-    >Load More</p>-->
-    
-    <div v-if="!loading">
-      <transition name="fade">
-        <span v-if="loadMoreLoader" class="flex justify-center py-1">
-          <svgicon name="loader" width="30" height="30" />
+        <p
+          v-if="!loading && notifications.length === 0"
+          class="text-center text-sm py-2"
+        >
+          <span>You don't have notifications at the moment.</span>
+        </p>
+
+        <span
+          v-if="loading || (largeView && notifications.length === 0 && loading)"
+          class="flex justify-center items-center py-1 h-full"
+        >
+          <svgicon name="loader" :width="largeView ? '55' : '30'" :height="largeView ? '55' : '30'" />
         </span>
-      </transition>
 
-      <p
-        v-if="!showAll && notifications.length > 0"
-        class="cursor-pointer text-sm text-center py-1"
-        @click="seeAllNotifications"
-      >
-        <span>See All</span>
-      </p>
-    </div>
+        <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
+          <transition-group name="fade" mode="in-out">
+            <div
+              v-for="(notification, index) in sortedNotifications"
+              :key="index"
+              class="p-2 border-b leading-tight cursor-pointer transition-hover"
+              :class="notification.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-400'"
+              @click="goTo(notification)"
+            >
+              <p
+                class="font-bold block truncate"
+              >
+                <span>{{ getNotificationTitle(notification) }}&nbsp;</span>
+              </p>
+              <p class="text-sm pt-1">
+                <span>{{ getNotificationMessage(notification) }}&nbsp;</span>
+              </p>
+              <div
+                class="leading-tight text-xs pt-1 text-gray-600"
+              >
+                <span>{{ $moment(notification.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}&nbsp;</span>
+              </div>
+            </div>
+          </transition-group>
+        </div>
+
+        <!-- <p
+            v-if="notificationCount !== notifications.length"
+            class="cursor-pointer text-sm text-center py-1 w-full bg-gray-100 border-t"
+            @click="loadMore"
+        >Load More</p>-->
+        
+        <div v-if="!loading">
+          <transition name="fade">
+            <span v-if="loadingLoadMore" class="flex justify-center py-1">
+              <svgicon name="loader" width="30" height="30" />
+            </span>
+          </transition>
+
+          <p
+            v-if="!largeView && notifications.length > 0"
+            class="cursor-pointer text-sm text-center py-1"
+            @click="largeView = true"
+          >
+            <span>See All</span>
+          </p>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -104,14 +122,21 @@
 
     data () {
       return {
-        showAll: false,
-        // notifications: [],
-        limit: 6,
-        offset: 0
+        showNotificationsDropdown: false,
+        largeView: false,
+        unseenNotificationCount: 0,
+        notificationCount: 0,
+        notifications: [],
+        limit: 20,
+        loading: false,
+        loadingLoadMore: false,
       }
     },
 
     computed: {
+      domain () {
+        return this.$auth.user.domain.toLowerCase()
+      },
 
       getNotificationDisplay () {
         return (notification) => {
@@ -188,118 +213,203 @@
       },
 
       url () {
-        return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
+        return this.$auth.user.domain === 'Practice' ? '/sessions' : '/jobs'
       },
 
-      notifications () {
-        return this.$store.getters["jobs/getNotifications"]
-      },
+      sortedNotifications () {
+        let billing_types = [
+          'Locum Notification Locum Invoice Created',
+          'Locum Notification Locum Invoice Updated',
+          'Locum Notification Locum Invoice Paid',
+          'Practice Notification Locum Invoice Created',
+          'Practice Notification Locum Invoice Updated',
+          'Practice Notification Locum Invoice Paid',
+        ]
 
-      notifications_count () {
-        return this.$store.getters["jobs/getNotificationCount"]
-      },
+        return this.notifications
+          .map((notification) => {
+            let message = ""
 
-      loadMoreLoader () {
-        return this.$store.state.jobs.load_more_loading
-      },
+            if (this.domain === "locum") {
+              switch (notification.notification_type.name) {
+                case 'Locum Notification Job Reminder':
+                  message = `This Job will start later.`
+                  break
+                case 'Locum Notification Job Unsuccessful':
+                  message = 'Your application for this job is unsuccessful'
+                  break
+                case 'Locum Notification Job Allocated':
+                  message = 'You have been appointed to this job.'
+                  break
+                case 'Locum Notification Job Ongoing':
+                  message = 'Your Job has started.'
+                  break
+                case 'Locum Notification Job Part Completed':
+                  message = 'This part of your job has been completed'
+                  break
+                case 'Locum Notification Job Completed':
+                  message = 'This job has been completed'
+                  break
+                case 'Locum Notification Job Approved':
+                  message = 'This part of your job has been approved'
+                  break
+                case 'Locum Notification Job Disputed':
+                  message = 'This part of your job has been disputed'
+                  break
+                case 'Locum Notification Job Cancelled':
+                  message = 'Your job has been cancelled by your practice'
+                  break
+                case 'Locum Notification Job Amended':
+                  message = 'This job has been updated by your practice'
+                  break
+                case 'Locum Notification Job Declined':
+                  message = 'You successfully leave this job.'
+                  break
+                case 'Locum Notification Job Terminated':
+                  message = 'This Job has been terminated.'
+                  break
+                case 'Locum Notification Job Unqualified':
+                  message = 'You are not qualified anymore on this job.'
+                  break
+                default:
+                  message = ''
+              }
+            } else if (this.domain === 'practice') {
+              switch (notification.notification_type.name) {
+                case 'Practice Notification Job Reminder':
+                  message = `This Job will start later.`
+                  break
+                case 'Practice Notification Job Applied':
+                  message = 'A locum has been appointed to this job.'
+                  break
+                case 'Practice Notification Job Ongoing':
+                  message = 'This Job has started.'
+                  break
+                case 'Practice Notification Job Part Completed':
+                  message = 'This part of your job has been completed'
+                  break
+                case 'Practice Notification Job Completed':
+                  message = 'This job has been completed'
+                  break
+                case 'Practice Notification Job Approved':
+                  message = 'This part of your job has been approved'
+                  break
+                case 'Practice Notification Job Disputed':
+                  message = 'This part of your job has been disputed'
+                  break
+                case 'Practice Notification Job Amended':
+                  message = 'This job has been updated'
+                  break
+                case 'Practice Notification Job Declined':
+                  message = 'The locum leave this job.'
+                  break
+                case 'Practice Notification Job Update Accept':
+                  message = 'The locum accepted your changes on this job.'
+                  break
+                case 'Practice Notification Job Unfilled Warning':
+                  message = `This Job will start later.`
+                  break
+                case 'Practice Notification Job Unfilled':
+                  message = 'This job is unfilled.'
+                  break
+              }
+            }
 
-      loading () {
-        return this.$store.state.jobs.notification_loading
+            return {
+              ...notification,
+              message: message,
+              type: billing_types.includes(notification.notification_type.name)
+                ? "Billing"
+                : "Job"
+            }
+          })
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       },
-
     },
 
     watch: {
-      showAll () {
-        this.$emit("showAll")
-      },
+      showNotificationsDropdown () {
+        if (this.showNotificationsDropdown) {
+          this.clearNotifications()
+        }
+      }
     },
 
-    created () {
-      this.clearNotifications()
-      this.$store.dispatch("jobs/fetchNotifications", { limit: 6 })
+    mounted () {
+      this.loading = true
+      Promise.all([
+        this.$axios.get(`/api/v1/${this.domain}/notifications/count`, {
+          params: {
+            seen: false,
+          }
+        }).then((response) => {
+          const unseenNotificationCount = response.data.data.count
+          this.unseenNotificationCount = unseenNotificationCount
+        }),
+
+        this.$axios.get(`/api/v1/${this.domain}/notifications/count`).then((response) => {
+          const count = response.data.data.count
+          this.notificationCount = count
+        }),
+
+        this.$axios.get(`/api/v1/${this.domain}/notifications`, {
+          params: {
+            order_by: 'created_at:desc',
+            limit: this.limit,
+          }
+        }).then((response) => {
+          const notifications = response.data.data.notifications
+          this.notifications = notifications
+        }),
+      ]).finally(() => {
+        this.loading = false
+      })
+
+      this.setSocketNotificationListener()
+    },
+
+    destroyed () {
+      this.removeSocketNotificationListener()
     },
 
     methods: {
-      getMessage (notificationType) {
-        let message = ""
-        switch (notificationType) {
-          case "Locum Notification Job Reminder":
-            // if (days > 0) {
-            //   message = `This Job will start in ${days} ${
-            //     days === 1 ? "day" : "days"
-            //   }.`
-            // } else if (days <= 0 && hours > 0) {
-            //   message = `This Job will start in ${hours} ${
-            //     hours === 1 ? "hour" : "hours"
-            //   }.`
-            // } else if (hours <= 0 && minutes > 0) {
-            //   message = `This Job will start in ${minutes} ${
-            //     minutes === 1 ? "minute" : "minutes"
-            //   }.`
-            // } else {
-            //   message = `This Job will start later.`
-            // }
-            message = `This Job will start.`
-            break
-          case "Locum Notification Job Available":
-            message = "There is a new available job for you."
-            break
-          case "Locum Notification Job Applied":
-            message = "Successfully applied for this Job."
-            break
-          case "Locum Notification Job Matched":
-            message = "There is a new job that matched your qualifications."
-            break
-          case "Locum Notification Job Unsuccessful":
-            message = "Your application for this job is unsuccessful"
-            break
-          case "Locum Notification Job Current":
-            message = "You have been appointed to this job."
-            break
-          case "Locum Notification Job Ongoing":
-            message = "Your Job has started."
-            break
-          case "Locum Notification Job Part Completed":
-            message = "This part of your job has been completed"
-            break
-          case "Locum Notification Job Completed":
-            message = "This job has been completed"
-            break
-          case "Locum Notification Job Approved":
-            message = "This part of your job has been approved"
-            break
-          case "Locum Notification Job Disputed":
-            message = "This part of your job has been disputed"
-            break
-          case "Locum Notification Job Cancelled":
-            message = "Your job has been cancelled by your practice"
-            break
-          case "Locum Notification Job Amended":
-            message = "This job has been updated by your practice"
-            break
-          case "Locum Notification Job Declined":
-            message = "You successfully leave this job."
-            break
-          case "Locum Notification Job Terminated":
-            message = "This Job has been terminated."
-            break
-          case "Locum Notification Job Unqualified":
-            message = "You are not qualified anymore on this job."
-            break
-          case "Practice Notification Locum Invoice Created":
-            message = "This invoice has been Created"
-            break
-          case "Practice Notification Locum Invoice Updated":
-            message = "This invoice has been Updated"
-            break
-          case "Practice Notification Locum Invoice Paid":
-            message = "This invoice has been Paid"
-            break
-          default:
-            message = ""
+      setSocketNotificationListener () {
+        this.$socket.on('Locum Notification Job Available', this.newNotificationHandler)
+        this.$socket.on('Locum Notification Job Matched', this.newNotificationHandler)
+        this.$socket.on('Locum Notification Job Applied', this.newNotificationHandler)
+        this.$socket.on('Locum Notification Job Application Cancelled', this.newNotificationHandler)
+        this.$socket.on('Locum Notification Job Unavailable', this.newNotificationHandler)
+        this.$socket.on('Locum Notification Job Unqualified', this.newNotificationHandler)
+      },
+
+      removeSocketNotificationListener () {
+        this.$socket.removeListener('Locum Notification Job Available', this.newNotificationHandler)
+        this.$socket.removeListener('Locum Notification Job Matched', this.newNotificationHandler)
+        this.$socket.removeListener('Locum Notification Job Applied', this.newNotificationHandler)
+        this.$socket.removeListener('Locum Notification Job Application Cancelled', this.newNotificationHandler)
+        this.$socket.removeListener('Locum Notification Job Unavailable', this.newNotificationHandler)
+        this.$socket.removeListener('Locum Notification Job Unqualified', this.newNotificationHandler)
+      },
+
+      newNotificationHandler (payload) {
+        const {
+          notification_id: notificationId,
+        } = payload
+
+        if (notificationId) {
+          this.$axios.get(`/api/v1/locum/notifications/${notificationId}`).then((response) => {
+            const notification = response.data.data.notification
+            const index = this.notifications.findIndex(({ id }) => id === notification.id)
+            if (index > -1) {
+              this.notifications.splice(index, 1, notification)
+            } else {
+              this.notifications.push(notification)
+            }
+            if (!notification.seen) {
+              this.unseenNotificationCount++
+            }
+          })
         }
-        return message
       },
 
       goTo (notification) {
@@ -685,54 +795,59 @@
         }
       },
       
-      seenNotification (notification_id) {
-        this.$store.dispatch("jobs/seenNotification", { id: notification_id })
-      },
-
-      markAllAsRead () {
-        if (this.notifications.map(item => item.seen).includes(false))
-          this.$store.dispatch("jobs/seenAllNotifications")
-      },
-
-      loadMore () {
-        this.$store.commit('jobs/SET_LOAD_MORE_LOADING', true)
-
-        let domain = this.$auth.user.domain.toLowerCase()
-
-        Promise.all([
-          // this.$axios.get(`/api/v1/${domain}/notifications/count`).then((response) => {
-          //   const count = response.data.data.count
-          //   this.$store.commit('SET_NOTIFICATIONS_COUNT', count)
-          // }),
-          this.$axios.get(`/api/v1/${domain}/notifications`, {
-            params: {
-              order_by: 'created_at:desc',
-              limit: 3,
-              offset: this.notifications.length,
-            }
-          }).then((response) => {
-            const notifications = response.data.data.notifications
-            this.$store.commit('jobs/ADD_NOTIFICATION', notifications)
-          }),
-        ]).finally(() => {
-          this.$store.commit('jobs/SET_LOAD_MORE_LOADING', false)
+      seenNotification (notificationId) {
+        this.$axios.put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`).then(() => {
+          const notification = this.notifications.find(({ id }) => id === notificationId)
+          if (notification) {
+            notification.seen = true
+          }
+          this.unseenNotificationCount--
         })
       },
 
-      seeAllNotifications () {
-        this.clearNotifications()
-        this.limit = 13
-        this.showAll = true
-        this.$store.dispatch("jobs/fetchNotifications", { limit: this.limit })
+      markAllAsRead () {
+        if (this.unseenNotificationCount > 0) {
+          this.$axios.put(`/api/v1/${this.domain}/notifications/seen-all`).then(() => {
+            this.notifications
+              .filter(notification => !notification.seen)
+              .forEach(notification => notification.seen = true)
+            this.unseenNotificationCount = 0
+          })
+        }
+      },
+
+      loadMore () {
+        this.loadingLoadMore = true
+        this.$axios.get(`/api/v1/${this.domain}/notifications`, {
+          params: {
+            order_by: 'created_at:desc',
+            limit: this.limit,
+            offset: this.notifications.length,
+          }
+        }).then((response) => {
+          const notifications = response.data.data.notifications
+
+          notifications.forEach((notification) => {
+            const index = this.notifications.findIndex(({ id }) => id === notification.id)
+
+            if (index > -1) {
+              this.notifications.splice(index, 1, notification)
+            } else {
+              this.notifications.push(notification)
+            }
+          })
+        }).finally(() => {
+          this.loadingLoadMore = false
+        })
       },
 
       close () {
-        this.showAll = false
-        this.$emit("viewNotif")
+        this.largeView = false
+        this.showNotificationsDropdown = false
       },
 
       scrollHandler ({ target: { scrollTop, offsetHeight, scrollHeight } }) {
-        if (this.notifications_count !== this.notifications.length) {
+        if (this.notificationCount !== this.notifications.length) {
           let scroll = Math.round(offsetHeight + scrollTop)
           if (scroll === scrollHeight) {
             this.loadMore()

@@ -83,28 +83,7 @@
               </button>
             </div>
             
-            <div>
-              <button
-                class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
-                @click="view_notif = !view_notif"
-              >
-                <svgicon name="bell" width="21" height="21" />
-                <p
-                  v-if="notification_count > 0"
-                  class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-                >
-                  {{ notification_count }}
-                </p>
-              </button>
-              
-              <transition name="drop-down">
-                <AppNotifDropdown
-                  v-if="view_notif"
-                  @showAll="showAllNotif = !showAllNotif"
-                  @viewNotif="view_notif = !view_notif"
-                />
-              </transition>
-            </div>
+            <AppNotifDropdown />
             
             <!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
 							<AppButton
@@ -155,15 +134,10 @@
       return {
         notAllowed: false,
         expense_modal: false,
-        view_notif: false,
-        showAllNotif: false
       }
     },
 
     computed: {
-      notification_count () {
-        return this.$store.getters["jobs/getUnreadNotifications"]
-      },
       create_job_modal () {
         return this.$store.state.calendar.create_job_modal
       },
@@ -195,7 +169,6 @@
         && !this.$auth.user.practice_detail.practice.allow_surgery_create_sessions
 
       this.$store.dispatch('chat/fetchTotalUnreadMessages')
-      this.$store.dispatch('jobs/fetchNotifications', { limit: 6 })
     },
 
     methods: {
