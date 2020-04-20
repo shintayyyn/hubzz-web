@@ -145,6 +145,7 @@
           'Locum Notification Job Unsuccessful',
 
           'Practice Notification Job Allocated',
+          'Practice Notification Job Amended',
           'Practice Notification Job Application',
           'Practice Notification Job Application Cancelled',
           'Practice Notification Job Applied',
@@ -303,9 +304,6 @@
                   break
                 case 'Practice Notification Job Disputed':
                   message = 'This part of your job has been disputed'
-                  break
-                case 'Practice Notification Job Amended':
-                  message = 'This job has been updated'
                   break
                 case 'Practice Notification Job Declined':
                   message = 'The locum leave this job.'
