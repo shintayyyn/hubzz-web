@@ -425,25 +425,29 @@
 
         const locumComplianceDocumentNotifications = [
           'Locum Notification Compliance Approved',
-          'Locum Notification Compliance Rejected',
           'Locum Notification Compliance Pending',
+          'Locum Notification Compliance Rejected',
         ]
 
         const locumJobNotifications = [
-          'Locum Notification Job Matched',
-          'Locum Notification Job Available',
-          'Locum Notification Job Applied',
-          'Locum Notification Job Application Cancelled',
-          'Locum Notification Job Unqualified',
-          'Locum Notification Job Unavailable',
+          'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
+          'Locum Notification Job Application Cancelled',
+          'Locum Notification Job Applied',
+          'Locum Notification Job Available',
+          'Locum Notification Job Matched',
+          'Locum Notification Job Unavailable',
+          'Locum Notification Job Unqualified',
+          'Locum Notification Job Unsuccessful',
         ]
 
         const practiceJobNotifications = [
-          'Practice Notification Job Live',
-          'Practice Notification Job Pending',
+          'Practice Notification Job Allocated',
+          'Practice Notification Job Amended',
           'Practice Notification Job Applied',
           'Practice Notification Job Cancelled',
+          'Practice Notification Job Live',
+          'Practice Notification Job Pending',
         ]
 
         const jobApplicationNotifications = [
