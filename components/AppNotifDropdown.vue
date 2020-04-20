@@ -139,6 +139,7 @@
           'Locum Notification Job Application Cancelled',
           'Locum Notification Job Applied',
           'Locum Notification Job Available',
+          'Locum Notification Job Cancelled',
           'Locum Notification Job Matched',
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
@@ -272,9 +273,6 @@
                   break
                 case 'Locum Notification Job Disputed':
                   message = 'This part of your job has been disputed'
-                  break
-                case 'Locum Notification Job Cancelled':
-                  message = 'Your job has been cancelled by your practice'
                   break
                 case 'Locum Notification Job Declined':
                   message = 'You successfully leave this job.'
@@ -434,6 +432,7 @@
           'Locum Notification Job Amended',
           'Locum Notification Job Application Cancelled',
           'Locum Notification Job Applied',
+          'Locum Notification Job Cancelled',
           'Locum Notification Job Available',
           'Locum Notification Job Matched',
           'Locum Notification Job Unavailable',
