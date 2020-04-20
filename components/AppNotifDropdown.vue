@@ -130,6 +130,26 @@
         limit: 20,
         loading: false,
         loadingLoadMore: false,
+        notificationTypeNames: [
+          'Locum Notification Compliance Approved',
+          'Locum Notification Compliance Pending',
+          'Locum Notification Compliance Rejected',
+          'Locum Notification Job Allocated',
+          'Locum Notification Job Amended',
+          'Locum Notification Job Application Cancelled',
+          'Locum Notification Job Applied',
+          'Locum Notification Job Available',
+          'Locum Notification Job Matched',
+          'Locum Notification Job Unavailable',
+          'Locum Notification Job Unqualified',
+
+          'Practice Notification Job Application',
+          'Practice Notification Job Application Cancelled',
+          'Practice Notification Job Applied',
+          'Practice Notification Job Cancelled',
+          'Practice Notification Job Live',
+          'Practice Notification Job Pending',
+        ],
       }
     },
 
@@ -374,21 +394,15 @@
 
     methods: {
       setSocketNotificationListener () {
-        this.$socket.on('Locum Notification Job Available', this.newNotificationHandler)
-        this.$socket.on('Locum Notification Job Matched', this.newNotificationHandler)
-        this.$socket.on('Locum Notification Job Applied', this.newNotificationHandler)
-        this.$socket.on('Locum Notification Job Application Cancelled', this.newNotificationHandler)
-        this.$socket.on('Locum Notification Job Unavailable', this.newNotificationHandler)
-        this.$socket.on('Locum Notification Job Unqualified', this.newNotificationHandler)
+        this.notificationTypeNames.forEach((notificationTypeName) => {
+          this.$socket.on(notificationTypeName, this.newNotificationHandler)
+        })
       },
 
       removeSocketNotificationListener () {
-        this.$socket.removeListener('Locum Notification Job Available', this.newNotificationHandler)
-        this.$socket.removeListener('Locum Notification Job Matched', this.newNotificationHandler)
-        this.$socket.removeListener('Locum Notification Job Applied', this.newNotificationHandler)
-        this.$socket.removeListener('Locum Notification Job Application Cancelled', this.newNotificationHandler)
-        this.$socket.removeListener('Locum Notification Job Unavailable', this.newNotificationHandler)
-        this.$socket.removeListener('Locum Notification Job Unqualified', this.newNotificationHandler)
+        this.notificationTypeNames.forEach((notificationTypeName) => {
+          this.$socket.removeListener(notificationTypeName, this.newNotificationHandler)
+        })
       },
 
       newNotificationHandler (payload) {
@@ -397,7 +411,7 @@
         } = payload
 
         if (notificationId) {
-          this.$axios.get(`/api/v1/locum/notifications/${notificationId}`).then((response) => {
+          this.$axios.get(`/api/v1/${this.domain}/notifications/${notificationId}`).then((response) => {
             const notification = response.data.data.notification
             const index = this.notifications.findIndex(({ id }) => id === notification.id)
             if (index > -1) {
