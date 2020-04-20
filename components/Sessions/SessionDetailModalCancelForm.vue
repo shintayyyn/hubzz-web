@@ -336,20 +336,21 @@ export default {
 
 			this.Validate(this.form, notRequired)
 			if (!this.formError.length) {
+				const jobId = this.job.id
 				this.$axios
-					.$put(`/api/v1/practice/jobs/${this.job.id}/cancel`, this.form)
-					.then(res => {
+					.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form)
+					.then(() => {
 						this.$store.commit(
 							"jobs/REMOVE_PRACTICE_ALLOCATED_JOB",
-							res.data.job.id
+							jobId
 						)
 						this.$store.commit(
 							"jobs/REMOVE_PRACTICE_AVAILABLE_JOB",
-							res.data.job.id
+							jobId
 						)
 						this.$store.commit(
 							"jobs/REMOVE_PRACTICE_APPLIED_JOB",
-							res.data.job.id
+							jobId
 						)
 						this.job.job_parts.forEach(({ id }) => {
 							this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id)
@@ -365,7 +366,7 @@ export default {
 								}`
 							]
 						})
-						this.$emit("cancelled", this.job.id)
+						this.$emit("cancelled", jobId)
 					})
 			}
 			this.confirmation_modal = false
