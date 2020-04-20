@@ -142,7 +142,9 @@
           'Locum Notification Job Matched',
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
+          'Locum Notification Job Unsuccessful',
 
+          'Practice Notification Job Allocated',
           'Practice Notification Job Application',
           'Practice Notification Job Application Cancelled',
           'Practice Notification Job Applied',
@@ -255,12 +257,6 @@
                 case 'Locum Notification Job Reminder':
                   message = `This Job will start later.`
                   break
-                case 'Locum Notification Job Unsuccessful':
-                  message = 'Your application for this job is unsuccessful'
-                  break
-                case 'Locum Notification Job Allocated':
-                  message = 'You have been appointed to this job.'
-                  break
                 case 'Locum Notification Job Ongoing':
                   message = 'Your Job has started.'
                   break
@@ -279,17 +275,11 @@
                 case 'Locum Notification Job Cancelled':
                   message = 'Your job has been cancelled by your practice'
                   break
-                case 'Locum Notification Job Amended':
-                  message = 'This job has been updated by your practice'
-                  break
                 case 'Locum Notification Job Declined':
                   message = 'You successfully leave this job.'
                   break
                 case 'Locum Notification Job Terminated':
                   message = 'This Job has been terminated.'
-                  break
-                case 'Locum Notification Job Unqualified':
-                  message = 'You are not qualified anymore on this job.'
                   break
                 default:
                   message = ''
@@ -298,9 +288,6 @@
               switch (notification.notification_type.name) {
                 case 'Practice Notification Job Reminder':
                   message = `This Job will start later.`
-                  break
-                case 'Practice Notification Job Applied':
-                  message = 'A locum has been appointed to this job.'
                   break
                 case 'Practice Notification Job Ongoing':
                   message = 'This Job has started.'
