@@ -46,7 +46,7 @@ export default {
     this.$socket.on('Locum Notification Job Allocated', async (job) => {
         const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
         if (response.data && response.data.job) {
-            commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Current' })
+            commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Allocated' })
         }
     })
     this.$socket.on('Locum Notification Job Ongoing', async (job) => {
@@ -167,10 +167,10 @@ export default {
             commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Application Cancelled' })
         }
     })
-    this.$socket.on('Practice Notification Job Current', async (job) => {
+    this.$socket.on('Practice Notification Job Allocated', async (job) => {
         const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.id}`)
         if (response.data && response.data.job) {
-            commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Current' })
+            commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Allocated' })
         }
     })
     this.$socket.on('Practice Notification Job Ongoing', async (job) => {

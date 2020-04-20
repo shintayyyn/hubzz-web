@@ -96,10 +96,10 @@
           ></div> -->
           <div
             v-if="hasPracticeAllocatedJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'AM')"
-          ></div>
+          />
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'AM', day)"
             :key="`${date}-${index}-${id}-${id}`"
@@ -159,10 +159,10 @@
           -->
           <div
             v-if="hasPracticeAllocatedJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'PM')"
-          ></div> 
+          /> 
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'PM', day)"
             :key="`${date}-${index}-${id}`"
@@ -220,12 +220,12 @@
             @click="selectDateShift(date, 'OOH')"
           ></div>
            -->
-           <div
+          <div
             v-if="hasPracticeAllocatedJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'OOH')"
-          ></div>
+          />
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'OOH', day)"
             :key="`${date}-${index}-${id}`"
@@ -283,12 +283,12 @@
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
            -->
-           <div
+          <div
             v-if="hasPracticeAllocatedJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'Whole Day')"
-          ></div>
+          />
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}-${id}`"
@@ -389,10 +389,10 @@
           />
           <div
             v-else-if="hasLocumAllocatedJobs(date, 'AM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'AM')"
-          ></div>
+          />
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
@@ -465,10 +465,10 @@
           />
           <div
             v-else-if="hasLocumAllocatedJobs(date, 'PM', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'PM')"
-          ></div>
+          />
 
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'PM', day)"
@@ -542,10 +542,10 @@
           />
           <div
             v-else-if="hasLocumAllocatedJobs(date, 'OOH', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'OOH')"
-          ></div>
+          />
 
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'OOH', day)"
@@ -619,10 +619,10 @@
           />
           <div
             v-else-if="hasLocumAllocatedJobs(date, 'Whole Day', day)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
             @click="selectDateShift(date, 'Whole Day')"
-          ></div>
+          />
 
           <!-- <div
             v-if="hasLocumCompletedJobs(date, 'Whole Day', day)"
@@ -748,8 +748,8 @@ export default {
     getPracticeCompletedJobs () {
       return this.$store.getters["jobs/getPracticeCompletedJobs"]
     },
-    getPracticeAllocatedPartJobs() {
-      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    getPracticeAllocatedPartJobs () {
+      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"]
     },
     // WHOLE
     getPracticeAllocatedJobs () {
@@ -782,8 +782,8 @@ export default {
     getLocumCompletedJobs () {
       return this.$store.getters["jobs/getLocumCompletedJobs"]
     },
-    getLocumAllocatedPartJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
+    getLocumAllocatedPartJobs () {
+      return this.$store.getters["jobs/getLocumAllocatedPartJobs"]
     },
     // WHOLE
     getLocumAllocatedJobs () {
@@ -804,8 +804,8 @@ export default {
     getLocumPrivateJobParts () {
       return this.$store.getters["jobs/getLocumPrivateJobParts"]
     },
-    getLocumPermanentJobs() {
-      return this.$store.getters["jobs/getLocumPermanentJobs"];
+    getLocumPermanentJobs () {
+      return this.$store.getters["jobs/getLocumPermanentJobs"]
     },
     // UNAVAILABILITIES
     getLocumUnavailabilities () {
@@ -855,7 +855,7 @@ export default {
         "Locum Notification Job Unsuccessful",
         this.getJobsRealTime
       )
-      this.$socket.on("Locum Notification Job Current", this.getJobsRealTime)
+      this.$socket.on("Locum Notification Job Allocated", this.getJobsRealTime)
       this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime)
       this.$socket.on(
         "Locum Notification Job Part Completed",
@@ -899,7 +899,7 @@ export default {
         this.getJobsRealTime
       )
       this.$socket.on(
-        "Practice Notification Job Current",
+        "Practice Notification Job Allocated",
         this.getJobsRealTime
       )
       this.$socket.on(
@@ -1095,7 +1095,7 @@ export default {
                 responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.status === "Allocated"
                 )
-              );
+              )
               // this.$store.commit(
               //   "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
               //   responseOngoingAndCompleted.data.job_parts.filter(
@@ -1169,7 +1169,7 @@ export default {
                 return res.data.permanent_job_applications
               }else {
                 return []
-              };
+              }
             })
           // this.$axios.$get("/api/v1/locum/jobs", {
           //   params: {
@@ -1215,7 +1215,7 @@ export default {
               this.$store.commit(
                 "jobs/SET_LOCUM_PERMANENT_JOBS",
                 responsePermanentJobs
-              );
+              )
               // this.$store.commit(
               //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
               //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
@@ -1298,7 +1298,7 @@ export default {
           this.getJobsRealTime
         )
         this.$socket.removeListener(
-          "Locum Notification Job Current",
+          "Locum Notification Job Allocated",
           this.getJobsRealTime
         )
         this.$socket.removeListener(
@@ -1360,7 +1360,7 @@ export default {
           this.getJobsRealTime
         )
         this.$socket.removeListener(
-          "Practice Notification Job Current",
+          "Practice Notification Job Allocated",
           this.getJobsRealTime
         )
         this.$socket.removeListener(
@@ -1407,7 +1407,7 @@ export default {
     },
     // PRACTICE
     // PARTS
-    hasPracticeOngoingJobs (date, type, day) {
+    hasPracticeOngoingJobs (date, type) {
       if (
         this.getPracticeOngoingJobs &&
         this.getPracticeOngoingJobs.length > 0
@@ -1419,7 +1419,7 @@ export default {
         )
       }
     },
-    hasPracticeCompletedJobs (date, type, day) {
+    hasPracticeCompletedJobs (date, type) {
       if (
         this.getPracticeCompletedJobs &&
         this.getPracticeCompletedJobs.length > 0
@@ -1431,7 +1431,7 @@ export default {
         )
       }
     },
-    hasPracticeAllocatedJobs (date, type, day) {
+    hasPracticeAllocatedJobs (date, type) {
       if (
         this.getPracticeAllocatedPartJobs &&
         this.getPracticeAllocatedPartJobs.length > 0
@@ -1460,7 +1460,7 @@ export default {
     //     )
     //   }
     // },
-    hasPracticeAppliedJobs (date, type, day) {
+    hasPracticeAppliedJobs (date, type) {
       if (
         this.getPracticeAppliedJobs &&
         this.getPracticeAppliedJobs.length > 0
@@ -1472,7 +1472,7 @@ export default {
         )
       }
     },
-    hasPracticeUnfilledJobs (date, type, day) {
+    hasPracticeUnfilledJobs (date, type) {
       if (
         this.getPracticeUnfilledJobs &&
         this.getPracticeUnfilledJobs.length > 0
@@ -1484,7 +1484,7 @@ export default {
         )
       }
     },
-    hasPracticeDeclinedJobs (date, type, day) {
+    hasPracticeDeclinedJobs (date, type) {
       if (
         this.getPracticeDeclinedJobs &&
         this.getPracticeDeclinedJobs.length > 0
@@ -1496,7 +1496,7 @@ export default {
         )
       }
     },
-    hasPracticeAvailableJobs (date, type, day) {
+    hasPracticeAvailableJobs (date, type) {
       if (
         this.getPracticeAvailableJobs &&
         this.getPracticeAvailableJobs.length > 0
@@ -1556,7 +1556,7 @@ export default {
     //   }
     // },
     // WHOLE
-    hasLocumAllocatedJobs (date, type, day) {
+    hasLocumAllocatedJobs (date, type) {
       if (this.getLocumAllocatedPartJobs && this.getLocumAllocatedPartJobs.length > 0) {
         return this.getLocumAllocatedPartJobs.find(
           job_part =>
@@ -1604,11 +1604,11 @@ export default {
     //     )
     //   }
     // },
-    hasLocumAppliedJobs (date, day) {
+    hasLocumAppliedJobs (date) {
       return this.getLocumAppliedJobs.find(
         job => job.dates.includes(date))
     },
-    hasLocumPrivateOngoingJobs (date, type, day) {
+    hasLocumPrivateOngoingJobs (date, type) {
       return this.getLocumPrivateJobParts.find(
         job_part =>
           job_part.locum_status === 'Ongoing' && 
@@ -1618,7 +1618,7 @@ export default {
             job_part.job.shift.name === type
         )
     },
-    hasLocumPrivateAllocatedJobs (date, type, day) {
+    hasLocumPrivateAllocatedJobs (date, type) {
       return this.getLocumPrivateJobParts.find(
         job_part =>
           job_part.locum_status === 'Allocated' && 
@@ -1628,7 +1628,7 @@ export default {
             job_part.job.shift.name === type 
         )
     },
-    hasLocumPermanentJobs(date, day) {
+    hasLocumPermanentJobs (date) {
       return this.getLocumPermanentJobs.find(job => this.$moment(job.invitation_schedule).format('YYYY-MM-DD') === date)
     }
     // UNAVAILABILITIES
@@ -1646,45 +1646,46 @@ export default {
   }
 }
 </script>
+
 <style scoped>
-.bg-job-active {
-	background-color: #d5e0eb;
-  	/* background-color: #38b460; */
-}
-.bg-job-active:hover {
-	background-color: #c2cfdd;
-  	/* background-color: #33a055; */
-}
-.bg-job-active.currentYear {
-	background-color: #a4b4c5;
-  	/* background-color: #33a055; */
-}
+  .bg-job-active {
+    background-color: #d5e0eb;
+      /* background-color: #38b460; */
+  }
+  .bg-job-active:hover {
+    background-color: #c2cfdd;
+      /* background-color: #33a055; */
+  }
+  .bg-job-active.currentYear {
+    background-color: #a4b4c5;
+      /* background-color: #33a055; */
+  }
 
-.bg-job-pending {
-	background-color: #d5e0eb;
-  	/* background-color: #ffa901; */
-}
+  .bg-job-pending {
+    background-color: #d5e0eb;
+      /* background-color: #ffa901; */
+  }
 
-.bg-job-pending:hover {
-	background-color: #c2cfdd;
-  	/* background-color: #e69e0f; */
-}
-.bg-job-pending.currentYear {
-	background-color: #a4b4c5;
-  	/* background-color: #33a055; */
-}
+  .bg-job-pending:hover {
+    background-color: #c2cfdd;
+      /* background-color: #e69e0f; */
+  }
+  .bg-job-pending.currentYear {
+    background-color: #a4b4c5;
+      /* background-color: #33a055; */
+  }
 
-.bg-job-unfilled {
-	background-color: #d5e0eb;
-  	/* background-color: #cd1424; */
-}
+  .bg-job-unfilled {
+    background-color: #d5e0eb;
+      /* background-color: #cd1424; */
+  }
 
-.bg-job-unfilled:hover {
-	background-color: #c2cfdd;
-  	/* background-color: #ac111e; */
-}
-.bg-job-unfilled.currentYear {
-	background-color: #c2cfdda4b4c5
-  	/* background-color: #33a055; */
-}
+  .bg-job-unfilled:hover {
+    background-color: #c2cfdd;
+      /* background-color: #ac111e; */
+  }
+  .bg-job-unfilled.currentYear {
+    background-color: #a4b4c5;
+      /* background-color: #33a055; */
+  }
 </style>
