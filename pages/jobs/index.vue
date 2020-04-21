@@ -382,7 +382,7 @@
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            v-if="$route.name === 'jobs-index-id' || $route.name === 'jobs-index-job-parts-jobPartId'"
+            v-if="$route.name === 'jobs-index-id' || $route.name === 'jobs-index-id-job-parts-jobPartId'"
             class="shield"
             :to="{ path: `/jobs?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
           />

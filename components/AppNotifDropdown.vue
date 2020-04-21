@@ -523,8 +523,9 @@
           if (this.$route.name === 'jobs-index') {
             if (routeParamJobPartId) {
               this.$router.push({
-                name: 'jobs-index-job-parts-jobPartId',
+                name: 'jobs-index-id-job-parts-jobPartId',
                 params: {
+                  id: routeParamId,
                   jobPartId: routeParamJobPartId,
                 },
               })
@@ -544,8 +545,9 @@
             setTimeout(() => {
               if (routeParamJobPartId) {
                 this.$router.push({
-                  name: 'jobs-index-job-parts-jobPartId',
+                  name: 'jobs-index-id-job-parts-jobPartId',
                   params: {
+                    id: routeParamId,
                     jobPartId: routeParamJobPartId,
                   },
                 })
@@ -600,9 +602,10 @@
             setTimeout(() => {
               if (routeParamJobPartId) {
                 this.$router.push({
-                  name: 'hub-surgery-management-id-surgery-sessions-index-job-parts-jobPartId',
+                  name: 'hub-surgery-management-id-surgery-sessions-index-id-job-parts-jobPartId',
                   params: {
                     id: practiceSurgeryId,
+                    sessionId: routeParamId,
                     jobPartId: routeParamJobPartId,
                   },
                 })
@@ -620,8 +623,9 @@
             if (this.$route.name === 'sessions-index') {
               if (routeParamJobPartId) {
                 this.$router.push({
-                  name: 'sessions-index-job-parts-jobPartId',
+                  name: 'sessions-index-id-job-parts-jobPartId',
                   params: {
+                    id: routeParamId,
                     jobPartId: routeParamJobPartId,
                   },
                 })
@@ -641,8 +645,9 @@
               setTimeout(() => {
                 if (routeParamJobPartId) {
                   this.$router.push({
-                    name: 'sessions-index-job-parts-jobPartId',
+                    name: 'sessions-index-id-job-parts-jobPartId',
                     params: {
+                      id: routeParamId,
                       jobPartId: routeParamJobPartId,
                     },
                   })

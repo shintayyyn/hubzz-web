@@ -32,7 +32,7 @@ export default {
 
   props: {
     job_id: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     disabledLink: {
@@ -91,7 +91,7 @@ export default {
       if (this.$route.path.includes("related-jobs")) {
         url = `/my-practice/${this.$route.params.practiceId}/related-jobs`
       } else if (this.$route.path.includes("/jobs")) {
-        url = "/jobs/job-parts"
+        url = `/jobs/${this.job_id}/job-parts`
       } else if (this.$route.path.includes("/dashboard")) {
         url = "/dashboard"
       }

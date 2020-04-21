@@ -63,7 +63,7 @@
           <nuxt-link
             v-if="
               $route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId'
-                || $route.name === 'hub-surgery-management-id-surgery-sessions-index-job-parts-jobPartId'
+                || $route.name === 'hub-surgery-management-id-surgery-sessions-index-id-job-parts-jobPartId'
             "
             class="shield"
             :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions`, query: {...$route.query}}"
