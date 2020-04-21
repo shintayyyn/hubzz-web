@@ -1,88 +1,71 @@
 <template>
   <div ref="modalContainer" class="modal-container shadow-lg">
-    <template v-if="job && !job_part">
-      <SessionDetailModal
-        :job="job"
-        @close="close"
-        @appointed="$emit('appointed', $event)"
-        @cancelled="$emit('cancelled', $event)"
-        @scrollToTop="scrollToTop()"
-      />
-    </template>
-    <template v-if="!job && job_part">
-      <SessionPartDetailModal :job-part="job_part" @close="close" />
-    </template>
+    <SessionDetailModal
+      :job="job"
+      @close="close"
+      @appointed="$emit('appointed', $event)"
+      @cancelled="$emit('cancelled', $event)"
+      @scrollToTop="scrollToTop()"
+    />
   </div>
 </template>
 
 <script>
   import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
-  import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 
   export default {
     transition: {
-      name: "slide",
-      mode: "out-in"
+      name: 'slide',
+      mode: 'out-in',
     },
 
     components: {
       SessionDetailModal,
-      SessionPartDetailModal
     },
 
     data () {
       return {
         job: null,
-        job_part: null
       }
     },
 
-    async asyncData ({ app, params, query, error }) {
+    async asyncData ({ app, params, error }) {
       try {
-        let url = `/api/v1/practice/jobs`
+        const {
+          id,
+        } = params
 
-        if (
-          query &&
-          query.status &&
-          ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
-            query.status.toLowerCase()
-          )
-        ) {
-          url = `/api/v1/practice/job-parts`
-        }
+        let response = await app.$axios.get(`/api/v1/practice/jobs/${id}`)
 
-        let response = await app.$axios.get(`${url}/${params.id}`)
-        if (response.data.data.job) {
-          let job = response.data.data.job
-          return {
-            job
-          }
-        }
+        let job = response.data.data.job
 
-        if (response.data.data.job_part) {
-          let job_part = response.data.data.job_part
-          return {
-            job_part
-          }
+        return {
+          job,
         }
       } catch (err) {
         if (err && err.response && err.response.status === 404) {
           return error({
             status: 404,
-            message: "This session could not be found"
+            message: 'This session could not be found.',
           })
         }
+
         throw err
       }
     },
 
     methods: {
       close () {
+        const {
+          query,
+        } = this.$route
+
         this.$router.push({
-          path: `/sessions`,
-          query: { ...this.$route.query }
+          name: 'sessions-index',
+          query,
         })
       },
+
       scrollToTop () {
         this.$nextTick(() => {
           this.$refs.modalContainer.scrollTop = 0
