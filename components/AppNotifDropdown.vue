@@ -528,12 +528,18 @@
                   id: routeParamId,
                   jobPartId: routeParamJobPartId,
                 },
+                query: {
+                  ...this.$route.query,
+                },
               })
             } else {
               this.$router.push({
                 name: 'jobs-index-id',
                 params: {
                   id: routeParamId,
+                },
+                query: {
+                  ...this.$route.query,
                 },
               })
             }
@@ -628,12 +634,18 @@
                     id: routeParamId,
                     jobPartId: routeParamJobPartId,
                   },
+                  query: {
+                    ...this.$route.query,
+                  },
                 })
               } else {
                 this.$router.push({
                   name: 'sessions-index-id',
                   params: {
                     id: routeParamId,
+                  },
+                  query: {
+                    ...this.$route.query,
                   },
                 })
               }
