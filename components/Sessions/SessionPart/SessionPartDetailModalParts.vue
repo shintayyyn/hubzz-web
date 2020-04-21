@@ -33,7 +33,7 @@ export default {
   props: {
     job_id: {
       type: [String, Number],
-      required: true,
+      default: () => null,
     },
     disabledLink: {
       type: Boolean,
@@ -83,24 +83,8 @@ export default {
     totalPages () {
       return Math.ceil(this.total / this.params.limit)
     },
-    routerLink () {
-      if (this.disabledLink) {
-        return null
-      }
-      let url = ""
-      if (this.$route.path.includes("related-jobs")) {
-        url = `/my-banks/${this.$route.params.locumId}/related-jobs`
-      } else if (this.$route.path.includes("/sessions")) {
-        url = `/sessions/${this.job_id}/job-parts`
-      } else if (this.$route.path.includes("/dashboard")) {
-        url = "/dashboard"
-      }
-      // else if (this.$route.path.includes("/surgery-management")) {
-      //   url = "/surgery-management/practice-spokes";
-      // }
-      return url
-    }
   },
+
   async mounted () {
     this.loading = true
     this.params.job_id = this.job_id
@@ -146,7 +130,56 @@ export default {
       throw err
     }
   },
+
   methods: {
+    routerLink (item) {
+      if (this.disabledLink) {
+        return this.$route
+      }
+
+      if (
+        this.$route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId'
+        || this.$route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId'
+      ) {
+        return {
+          name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+          params: {
+            ...this.$route.params,
+            jobPartId: item.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      if (
+        this.$route.name === 'sessions-index-id'
+        || this.$route.name === 'sessions-index-id-job-parts-jobPartId'
+      ) {
+        return {
+          name: 'sessions-index-id-job-parts-jobPartId',
+          params: {
+            ...this.$route.params,
+            jobPartId: item.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      let url = ""
+
+      if (this.$route.path.includes("related-jobs")) {
+        url = `/my-banks/${this.$route.params.locumId}/related-jobs/${item.id}`
+      } else if (this.$route.path.includes("/dashboard")) {
+        url = `/dashboard/${item.id}`
+      }
+
+      return url
+    },
+
     getJobParts (params) {
       this.loading = true
       this.$axios.$get(`/api/v1/practice/job-parts`, { params }).then(res => {

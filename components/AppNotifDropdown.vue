@@ -602,7 +602,7 @@
             setTimeout(() => {
               if (routeParamJobPartId) {
                 this.$router.push({
-                  name: 'hub-surgery-management-id-surgery-sessions-index-id-job-parts-jobPartId',
+                  name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
                   params: {
                     id: practiceSurgeryId,
                     sessionId: routeParamId,

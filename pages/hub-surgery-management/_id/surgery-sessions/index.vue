@@ -31,7 +31,7 @@
           :columns="columns"
           :orderBy="order_by"
           :loading="loading"
-          :routerLink="`/hub-surgery-management/${$route.params.id}/surgery-sessions`"
+          :routerLink="routerLink"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -63,7 +63,7 @@
           <nuxt-link
             v-if="
               $route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId'
-                || $route.name === 'hub-surgery-management-id-surgery-sessions-index-id-job-parts-jobPartId'
+                || $route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId'
             "
             class="shield"
             :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions`, query: {...$route.query}}"
@@ -90,8 +90,8 @@ export default {
 
   props: {
     spokePracticeId: {
-      type: String,
-      required: true,
+      type: [String, Number],
+      default: () => null,
     },
   },
 
@@ -559,6 +559,33 @@ export default {
     }
   },
   methods: {
+    routerLink (jobOrJobPart) {
+      if (this.isJobPart) {
+        return {
+          name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+          params: {
+            ...this.$route.params,
+            sessionId: jobOrJobPart.job_id,
+            jobPartId: jobOrJobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      return {
+        name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
+        params: {
+          ...this.$route.params,
+          sessionId: jobOrJobPart.job_id,
+        },
+        query: {
+          ...this.$route.query,
+        },
+      }
+    },
+
     getJobsPromiseAll () {
       let status = []
       let queryStatus = this.$route.query.jobStatus

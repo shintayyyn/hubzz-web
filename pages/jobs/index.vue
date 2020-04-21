@@ -353,7 +353,7 @@
           :columns="columns"
           :order-by="order_by"
           :loading="loading"
-          :router-link="(jobOrJobPart) => isJobPart ? `/jobs/${jobOrJobPart.job_id}/job-parts/${jobOrJobPart.id}` : `/jobs/${jobOrJobPart.id}`"
+          :routerLink="routerLink"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -946,6 +946,31 @@
     },
 
     methods: {
+      routerLink (jobOrJobPart) {
+        if (this.isJobPart) {
+          return {
+            name: 'jobs-index-id-job-parts-jobPartId',
+            params: {
+              id: jobOrJobPart.job_id,
+              jobPartId: jobOrJobPart.id,
+            },
+            query: {
+              ...this.$route.query,
+            },
+          }
+        }
+
+        return {
+          name: 'jobs-index-id',
+          params: {
+            id: jobOrJobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      },
+
       addSocketListeners () {
         this.$socket.on('Locum Notification Job Available', this.getAvailableJobsRealTime)
         this.$socket.on('Locum Notification Job Matched', this.getMatchedJobsRealTime)

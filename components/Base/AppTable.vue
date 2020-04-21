@@ -33,14 +33,14 @@
           class="row py-2"
         >
           <nuxt-link
-            :to="{
-              path: routerLink && {}.toString.call(routerLink) === '[object Function]'
-                ? routerLink(item)
-                : `${routerLink}/${routerId ? item[routerId] : item.id}`,
-              query: {
-                ...$route.query,
-              },
-            }"
+            :to="routerLink && {}.toString.call(routerLink) === '[object Function]'
+              ? routerLink(item)
+              : {
+                path: `${routerLink}/${routerId ? item[routerId] : item.id}`,
+                query: {
+                  ...$route.query,
+                },
+              }"
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div

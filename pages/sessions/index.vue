@@ -298,7 +298,7 @@
           :columns="columns"
           :order-by="order_by"
           :loading="loading"
-          :router-link="(jobOrJobPart) => isJobPart ? `/sessions/${jobOrJobPart.job_id}/job-parts/${jobOrJobPart.id}` : `/sessions/${jobOrJobPart.id}`"
+          :routerLink="routerLink"
           :min-height="'70vh'"
           :customWidth="1400"
           @pagechanged="pagechanged"
@@ -989,6 +989,31 @@
       this.showRefresh = false
     },
     methods: {
+      routerLink (jobOrJobPart) {
+        if (this.isJobPart) {
+          return {
+            name: 'sessions-index-id-job-parts-jobPartId',
+            params: {
+              id: jobOrJobPart.job_id,
+              jobPartId: jobOrJobPart.id,
+            },
+            query: {
+              ...this.$route.query,
+            },
+          }
+        }
+
+        return {
+          name: 'sessions-index-id',
+          params: {
+            id: jobOrJobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      },
+
       filterJobList (id) {
         this.jobs = this.jobs.filter(item => item.id !== id)
       },

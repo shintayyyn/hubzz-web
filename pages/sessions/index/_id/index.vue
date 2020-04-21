@@ -56,13 +56,11 @@
 
     methods: {
       close () {
-        const {
-          query,
-        } = this.$route
-
         this.$router.push({
           name: 'sessions-index',
-          query,
+          query: {
+            ...this.$route.query,
+          },
         })
       },
 

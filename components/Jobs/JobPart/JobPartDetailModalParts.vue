@@ -33,7 +33,7 @@ export default {
   props: {
     job_id: {
       type: [String, Number],
-      required: true,
+      default: () => null,
     },
     disabledLink: {
       type: Boolean,
