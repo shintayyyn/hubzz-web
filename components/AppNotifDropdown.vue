@@ -499,9 +499,11 @@
           const {
             id: jobId,
             original_job_id: originalJobId,
+            job_parts: jobParts,
           } = job
 
           let routeParamId = jobId
+          let routeParamJobPartId = null
 
           if (notificationTypeName === 'Locum Notification Job Unqualified' && originalJobId) {
             routeParamId = originalJobId
@@ -511,13 +513,50 @@
             routeParamId = originalJobId
           }
 
+          if (notificationTypeName === 'Locum Notification Job Cancelled' && jobParts) {
+            const jobPart = jobParts.find(jobPart => jobPart.status === 'Cancelled')
+            if (jobPart) {
+              routeParamJobPartId = jobPart.id
+            }
+          }
+
           if (this.$route.name === 'jobs-index') {
-            this.$router.push(`/jobs/${routeParamId}`)
+            if (routeParamJobPartId) {
+              this.$router.push({
+                name: 'jobs-index-job-parts-jobPartId',
+                params: {
+                  jobPartId: routeParamJobPartId,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: 'jobs-index-id',
+                params: {
+                  id: routeParamId,
+                },
+              })
+            }
           } else {
-            this.$router.push('/jobs')
+            this.$router.push({
+              name: 'jobs-index',
+            })
 
             setTimeout(() => {
-              this.$router.push(`/jobs/${routeParamId}`)
+              if (routeParamJobPartId) {
+                this.$router.push({
+                  name: 'jobs-index-job-parts-jobPartId',
+                  params: {
+                    jobPartId: routeParamJobPartId,
+                  },
+                })
+              } else {
+                this.$router.push({
+                  name: 'jobs-index-id',
+                  params: {
+                    id: routeParamId,
+                  },
+                })
+              }
             }, 500)
           }
 
