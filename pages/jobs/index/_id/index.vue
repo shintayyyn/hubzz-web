@@ -1,119 +1,100 @@
 <template>
   <div class="modal-container shadow-lg">
-    <template v-if="job && !job_part">
-      <JobDetailModalAppointment
-        :job="job"
-        v-if="!activeJobTypePlatform"
-        @close="close"
-        @appointmentUpdated="$emit('appointmentUpdated')"
-      />
-      <JobDetailModal
-        :job="job"
-        v-if="activeJobTypePlatform"
-        @close="close"
-        @applied="$emit('applied', $event)"
-        @cancelled="$emit('cancelled', $event)"
-        @unassign="$emit('unassign', $event)"
-      />
-    </template>
-    <template v-if="!job && job_part">
-      <JobDetailModalAppointment
-        :job="job_part.job"
-        v-if="!activeJobTypePlatform"
-        @close="close"
-        @appointmentUpdated="$emit('appointmentUpdated')"
-      />
-      <JobPartDetailModal :job_part="job_part" v-if="activeJobTypePlatform" @close="close" />
-    </template>
+    <JobDetailModalAppointment
+      v-if="!activeJobTypePlatform"
+      :job="job"
+      @close="close"
+      @appointmentUpdated="$emit('appointmentUpdated')"
+    />
+    <JobDetailModal
+      v-if="activeJobTypePlatform"
+      :job="job"
+      @close="close"
+      @applied="$emit('applied', $event)"
+      @cancelled="$emit('cancelled', $event)"
+      @unassign="$emit('unassign', $event)"
+    />
   </div>
 </template>
+
 <script>
-import JobDetailModal from "@/components/Jobs/JobDetailModal";
-import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
-import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
-export default {
-  transition: {
-    name: "slide",
-    mode: "out-in"
-  },
-  components: {
-    JobDetailModal,
-    JobPartDetailModal,
-    JobDetailModalAppointment
-  },
-  data() {
-    return {
-      job: null,
-      job_part: null
-    };
-  },
-  computed: {
-    activeJobTypePlatform() {
-      if (this.job) {
-        return this.job.type === "Platform" ? true : false;
-      }
-      if (this.job_part) {
-        return this.job_part.job.type === "Platform" ? true : false;
+  import JobDetailModal from "@/components/Jobs/JobDetailModal"
+  import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
+
+  export default {
+    transition: {
+      name: 'slide',
+      mode: 'out-in',
+    },
+
+    components: {
+      JobDetailModal,
+      JobDetailModalAppointment,
+    },
+
+    data () {
+      return {
+        job: null,
       }
     },
-    jobStatus() {
-      return this.job ? this.job.locum_status : this.job_part.locum_status;
-    }
-  },
-  async asyncData({ app, params, query, redirect, router, error }) {
-    try {
-      let url = `/api/v1/locum/jobs`;
 
-      if (
-        query &&
-        query.status &&
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
-          query.status.toLowerCase()
-        )
-      ) {
-        url = `/api/v1/locum/job-parts`;
-      }
-      let response = await app.$axios.get(`${url}/${params.id}`);
+    computed: {
+      activeJobTypePlatform () {
+        return this.job.type === 'Platform'
+      },
+    },
 
-      if (response.data.data.job) {
-        let job = response.data.data.job;
+    async asyncData ({ app, params, error }) {
+      try {
+        const {
+          id,
+        } = params
+
+        let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`)
+
+        let job = response.data.data.job
+
         return {
-          job
-        };
-      }
+          job,
+        }
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          return error({
+            status: 404,
+            message: 'This job could not be found.',
+          })
+        }
 
-      if (response.data.data.job_part) {
-        let job_part = response.data.data.job_part;
-        return {
-          job_part
-        };
+        throw err
       }
-    } catch (err) {
-      console.log(err, err.response);
-      if (err && err.response && err.response.status === 404) {
-        return error({ status: 404, message: "This job could not be found" });
-      }
-      throw err;
-    }
-  },
-  methods: {
-    close() {
-      this.$router.push({
-        path: `/jobs`,
-        query: { ...this.$route.query }
-      });
-    }
+    },
+
+    methods: {
+
+      close () {
+        const {
+          query,
+        } = this.$route
+
+        this.$router.push({
+          name: 'jobs-index',
+          query,
+        })
+      },
+
+    },
+
   }
-};
 </script>
-<style scoped>
-.modal-container {
-  z-index: 510;
-}
 
-@media screen and (min-width: 1200px) {
+<style scoped>
   .modal-container {
-    width: 80%;
+    z-index: 510;
   }
-}
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 80%;
+    }
+  }
 </style>

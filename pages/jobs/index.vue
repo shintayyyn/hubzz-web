@@ -353,7 +353,7 @@
           :columns="columns"
           :order-by="order_by"
           :loading="loading"
-          :router-link="'/jobs'"
+          :router-link="(jobOrJobPart) => isJobPart ? `/jobs/${jobOrJobPart.job_id}/job-parts/${jobOrJobPart.id}` : `/jobs/${jobOrJobPart.id}`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -506,14 +506,21 @@
 
     computed: {
       isJobPart () {
-        const status = this.$route.query.status
+        const {
+          query,
+        } = this.$route
 
-        return (
-          status &&
-          ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
-            status.toLowerCase()
-          )
-        )
+        const {
+          status = 'Allocated',
+        } = query
+
+        return [
+          'ongoing',
+          'completed',
+          'approved',
+          'cancelled',
+          'withdrawn'
+        ].includes(status.toLowerCase())
       },
 
       noJobsToDisplay () {
@@ -1515,6 +1522,7 @@
         this.initialLoading = false
         this.filterModal = false
       },
+
       async sorted (order_by) {
         let orderBy = order_by.map(item => {
           let order = item.split(":")[1]
@@ -1559,6 +1567,7 @@
         await this.getJobs()
         this.loading = false
       },
+
       async pagechanged (page) {
         this.current_page = page
         this.offset = this.limit * (page - 1)
@@ -1566,6 +1575,7 @@
         await this.getJobs()
         this.loading = false
       },
+      
       async limitchanged (limit) {
         this.current_page = 1
         this.offset = 0
@@ -1574,6 +1584,7 @@
         await this.getJobs()
         this.loading = false
       },
+
       clearFilters () {
         this.search_practice = null
         this.search_private_practice = null
@@ -1608,7 +1619,9 @@
         this.job_title_includes = ""
         this.job_number_includes = ""
         this.job_part_number_includes = ""
-      }
-    }
+      },
+
+    },
+
   }
 </script>
