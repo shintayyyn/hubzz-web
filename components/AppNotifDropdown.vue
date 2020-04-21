@@ -1009,6 +1009,7 @@
       min-width: 350px;
       max-width: 350px;
     }
+    
     .dropdown {
       width: auto;
       max-height: 500px;
