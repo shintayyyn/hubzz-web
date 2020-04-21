@@ -83,21 +83,8 @@ export default {
     totalPages () {
       return Math.ceil(this.total / this.params.limit)
     },
-    routerLink () {
-      if (this.disabledLink) {
-        return null
-      }
-      let url = ""
-      if (this.$route.path.includes("related-jobs")) {
-        url = `/my-practice/${this.$route.params.practiceId}/related-jobs`
-      } else if (this.$route.path.includes("/jobs")) {
-        url = `/jobs/${this.job_id}/job-parts`
-      } else if (this.$route.path.includes("/dashboard")) {
-        url = "/dashboard"
-      }
-      return url
-    }
   },
+
   async mounted () {
     this.loading = true
     this.params.job_id = this.job_id
@@ -148,7 +135,56 @@ export default {
       throw err
     }
   },
+  
   methods: {
+    routerLink (jobPart) {
+      if (this.disabledLink) {
+        return this.$route
+      }
+
+      if (
+        this.$route.name === 'jobs-index-id'
+        || this.$route.name === 'jobs-index-id-job-parts-jobPartId'
+      ) {
+        return {
+          name: 'jobs-index-id-job-parts-jobPartId',
+          params: {
+            ...this.$route.params,
+            jobPartId: jobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      if (
+        this.$route.name === 'my-practice-index-practiceId-index-related-jobs-index'
+        || this.$route.name === 'my-practice-index-practiceId-index-related-jobs-index-jobId'
+      ) {
+        return {
+          name: 'my-practice-index-practiceId-index-related-jobs-index-jobId',
+          params: {
+            ...this.$route.params,
+            jobId: jobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      return {
+        name: 'dashboard-id',
+        params: {
+          id: jobPart.id,
+        },
+        query: {
+          ...this.$route.query,
+        },
+      }
+    },
+
     getJobParts (params) {
       this.loading = true
       this.$axios.$get(`/api/v1/locum/job-parts`, { params }).then(res => {

@@ -132,7 +132,7 @@ export default {
   },
 
   methods: {
-    routerLink (item) {
+    routerLink (jobPart) {
       if (this.disabledLink) {
         return this.$route
       }
@@ -145,7 +145,7 @@ export default {
           name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
           params: {
             ...this.$route.params,
-            jobPartId: item.id,
+            jobPartId: jobPart.id,
           },
           query: {
             ...this.$route.query,
@@ -161,7 +161,7 @@ export default {
           name: 'sessions-index-id-job-parts-jobPartId',
           params: {
             ...this.$route.params,
-            jobPartId: item.id,
+            jobPartId: jobPart.id,
           },
           query: {
             ...this.$route.query,
@@ -169,15 +169,31 @@ export default {
         }
       }
 
-      let url = ""
-
-      if (this.$route.path.includes("related-jobs")) {
-        url = `/my-banks/${this.$route.params.locumId}/related-jobs/${item.id}`
-      } else if (this.$route.path.includes("/dashboard")) {
-        url = `/dashboard/${item.id}`
+      if (
+        this.$route.name === 'my-banks-index-locumId-index-related-jobs-index'
+        || this.$route.name === 'my-banks-index-locumId-index-related-jobs-index-jobId'
+      ) {
+        return {
+          name: 'my-banks-index-locumId-index-related-jobs-index-jobId',
+          params: {
+            ...this.$route.params,
+            jobId: jobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
       }
 
-      return url
+      return {
+        name: 'dashboard-id',
+        params: {
+          id: jobPart.id,
+        },
+        query: {
+          ...this.$route.query,
+        },
+      }
     },
 
     getJobParts (params) {
