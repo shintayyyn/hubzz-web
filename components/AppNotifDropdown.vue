@@ -537,27 +537,84 @@
             id: jobId,
             practice_id: jobPracticeId,
             practice_surgery_id: practiceSurgeryId,
+            job_parts: jobParts,
           } = job
 
           let routeParamId = jobId
+          let routeParamJobPartId = null
 
-          if (
-            jobPracticeId !== this.$auth.user.practice_id
-            && practiceSurgeryId
-          ) {
-            this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions`)
+          if (notificationTypeName === 'Practice Notification Job Cancelled' && jobParts) {
+            const jobPart = jobParts.find(jobPart => jobPart.status === 'Cancelled')
+            if (jobPart) {
+              routeParamJobPartId = jobPart.id
+            }
+          }
+
+          if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-sessions-index',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
 
             setTimeout(() => {
-              this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions/${routeParamId}`)
+              if (routeParamJobPartId) {
+                this.$router.push({
+                  name: 'hub-surgery-management-id-surgery-sessions-index-job-parts-jobPartId',
+                  params: {
+                    id: practiceSurgeryId,
+                    jobPartId: routeParamJobPartId,
+                  },
+                })
+              } else {
+                this.$router.push({
+                  name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
+                  params: {
+                    id: practiceSurgeryId,
+                    sessionId: routeParamId,
+                  },
+                })
+              }
             }, 500)
           } else {
             if (this.$route.name === 'sessions-index') {
-              this.$router.push(`/sessions/${routeParamId}`)
+              if (routeParamJobPartId) {
+                this.$router.push({
+                  name: 'sessions-index-job-parts-jobPartId',
+                  params: {
+                    jobPartId: routeParamJobPartId,
+                  },
+                })
+              } else {
+                this.$router.push({
+                  name: 'sessions-index-id',
+                  params: {
+                    id: routeParamId,
+                  },
+                })
+              }
             } else {
-              this.$router.push('/sessions')
+              this.$router.push({
+                name: 'sessions-index',
+              })
 
               setTimeout(() => {
-                this.$router.push(`/sessions/${routeParamId}`)
+                if (routeParamJobPartId) {
+                  this.$router.push({
+                    name: 'sessions-index-job-parts-jobPartId',
+                    params: {
+                      jobPartId: routeParamJobPartId,
+                    },
+                  })
+                } else {
+                  this.$router.push({
+                    name: 'sessions-index-id',
+                    params: {
+                      id: routeParamId,
+                    },
+                  })
+                }
               }, 500)
             }
           }

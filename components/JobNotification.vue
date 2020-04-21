@@ -422,6 +422,10 @@
         }
       },
 
+      status (status) {
+        return status === "Matched" ? "AVAILABLE" : status.toUpperCase()
+      },
+
       bgStatus (status) {
         let str = ""
         switch (status) {

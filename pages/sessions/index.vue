@@ -329,7 +329,7 @@
         </div>
         <transition name="fade" mode="out-in">
           <nuxt-link
-            v-if="$route.name === 'sessions-index-id'"
+            v-if="$route.name === 'sessions-index-id' || $route.name === 'sessions-index-job-parts-jobPartId'"
             class="shield"
             :to="{ path: `/sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
           />
