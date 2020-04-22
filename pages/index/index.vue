@@ -2,29 +2,30 @@
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
     <div class="w-full flex flex-col">
       <AppInput
-        v-model="form.email"
-        :type="'text'"
-        :name="'email'"
-        :label="'Email address or Username'"
-        :placeholder="''"
-        :error="formError.find(item => item.field === 'email')" @submit="login"
+        v-model="email"
+        type="text"
+        name="email"
+        label="Email address or Username"
+        placeholder=""
+        :error="formErrors.find(formError => formError.field === 'email')"
+        @submit="login"
       />
 
       <div class="flex flex-col">
         <label class="text-xs md:text-sm">Password</label>
         <div class="w-full relative">
           <input
-            v-model="form.password"
-            :type="form.type"
+            v-model="password"
+            :type="passwordInputType"
             class="w-full py-3 border-b-2 focus:border-yellow-400 focus:outline-none text-xs md:text-sm"
-            :class="formError.find(item => item.field === 'password') ? 'border-red-500' : ''"
+            :class="formErrors.find(formError => formError.field === 'password') ? 'border-red-500' : ''"
             @submit="login"
             @keyup.enter="login"
           >
-          <button v-if="form.password" tabindex="-1" class="absolute top-0 right-0 mx-2 h-full focus:outline-none"
-                  @click="form.type === 'password' ? form.type = 'text' : form.type = 'password'"
+          <button v-if="password" tabindex="-1" class="absolute top-0 right-0 mx-2 h-full focus:outline-none"
+                  @click="passwordInputType === 'password' ? passwordInputType = 'text' : passwordInputType = 'password'"
           >
-            <svgicon v-if="form.type === 'password'" name="eye" height="24" width="24"
+            <svgicon v-if="passwordInputType === 'password'" name="eye" height="24" width="24"
                      class="fill-current text-gray-500 hover:text-gray-600"
             />
             <svgicon v-else name="hide-eye" height="24" width="24"
@@ -34,10 +35,10 @@
         </div>
         <transition name="drop-down">
           <div
-            v-if="formError.find(item => item.field === 'password')"
+            v-if="formErrors.find(formError => formError.field === 'password')"
             class="text-red-500 py-1 text-xs text-white"
           >
-            {{ formError.find(item => item.field === 'password').message }}
+            {{ formErrors.find(formError => formError.field === 'password').message }}
           </div>
         </transition>
       </div>
@@ -50,7 +51,7 @@
     </div>
 
     <div class="flex justify-center">
-      <AppButton :label="'Sign In'" :disabled="loggingIn" @click="login" />
+      <AppButton label="Sign In" :disabled="loggingIn" @click="login" />
     </div>
   </div>
 </template>
@@ -62,40 +63,38 @@
 
   export default {
     transition: {
-      name: "fade",
-      mode: "out-in"
+      name: 'fade',
+      mode: 'out-in'
     },
 
-    layout: "auth",
+    layout: 'auth',
 
     components: {
       AppInput,
-      AppButton
+      AppButton,
     },
 
     data () {
       return {
-        form: {
-          email: "",
-          password: "",
-          type: "password"
-        },
-        formError: [],
-        loggingIn: false
+        email: '',
+        password: '',
+        passwordInputType: 'password',
+        formErrors: [],
+        loggingIn: false,
       }
     },
 
     watch: {
-      'form.email' () {
-        const index = this.formError.findIndex((formError) => formError.field === 'email')
+      email () {
+        const index = this.formErrors.findIndex((formError) => formError.field === 'email')
 
-        if (this.form.email) {
+        if (this.email) {
           if (index > -1) {
-            this.formError.splice(index, 1)
+            this.formErrors.splice(index, 1)
           }
         } else {
           if (index === -1) {
-            this.formError.push({
+            this.formErrors.push({
               field: 'email',
               message: 'Email is required.',
               validation: 'required',
@@ -104,16 +103,16 @@
         }
       },
 
-      'form.password' () {
-        const index = this.formError.findIndex((formError) => formError.field === 'password')
+      password () {
+        const index = this.formErrors.findIndex((formError) => formError.field === 'password')
 
-        if (this.form.password) {
+        if (this.password) {
           if (index > -1) {
-            this.formError.splice(index, 1)
+            this.formErrors.splice(index, 1)
           }
         } else {
           if (index === -1) {
-            this.formError.push({
+            this.formErrors.push({
               field: 'password',
               message: 'Password is required.',
               validation: 'required',
@@ -132,13 +131,19 @@
     },
 
     methods: {
+
       login: debounce(async function () {
         try {
           if (this.loggingIn || this.$auth.loggedIn) {
             return
           }
 
-          this.formError = await this.$validator(this.form, {
+          const data = {
+            email: this.email,
+            password: this.password,
+          }
+
+          this.formErrors = await this.$validator(data, {
             email: 'required|string',
             password: 'required|string',
           }, {
@@ -148,13 +153,13 @@
             'password.string': 'Invalid password.',
           }).then(() => []).catch((errors) => errors)
 
-          if (this.formError.length) {
+          if (this.formErrors.length) {
             return
           }
 
           this.loggingIn = true
 
-          const response = await this.$axios.post('/api/v1/login', this.form)
+          const response = await this.$axios.post('/api/v1/login', data)
 
           const token = response.data.data.token.token
 
@@ -170,7 +175,7 @@
 
           if (err.response) {
             if (err.response.status === 400 || err.response.data.error_messages) {
-              this.formError = err.response.data.error_messages
+              this.formErrors = err.response.data.error_messages
             } else {
               message = err.response.data.message
             }
@@ -215,13 +220,8 @@
           console.log('err', err)
         }
       },
+
     },
+
   }
 </script>
-
-<style scoped>
-  a {
-    text-decoration: none;
-    color: black;
-  }
-</style>

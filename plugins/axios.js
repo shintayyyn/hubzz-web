@@ -7,7 +7,6 @@ export default function ({ $axios, app }) {
           app.$loggedOutBroadcastChannel.postMessage()
         }
       })
-      
     }
   })
 }
