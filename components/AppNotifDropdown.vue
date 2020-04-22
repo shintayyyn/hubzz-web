@@ -141,6 +141,7 @@
           'Locum Notification Job Available',
           'Locum Notification Job Cancelled',
           'Locum Notification Job Matched',
+          'Locum Notification Job Reminder',
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unsuccessful',
@@ -153,6 +154,7 @@
           'Practice Notification Job Cancelled',
           'Practice Notification Job Live',
           'Practice Notification Job Pending',
+          'Practice Notification Job Reminder',
           'Practice Notification Job Unfilled Warning',
         ],
       }
@@ -412,6 +414,7 @@
           'Locum Notification Job Cancelled',
           'Locum Notification Job Available',
           'Locum Notification Job Matched',
+          'Locum Notification Job Reminder',
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unsuccessful',
@@ -424,6 +427,7 @@
           'Practice Notification Job Cancelled',
           'Practice Notification Job Live',
           'Practice Notification Job Pending',
+          'Practice Notification Job Reminder',
           'Practice Notification Job Unfilled Warning',
         ]
 
