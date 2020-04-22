@@ -102,7 +102,7 @@
             route: {
               name: 'sessions-index',
               query: {
-                status: undefined,
+                status: 'Allocated',
               },
             },
             active: status.toLowerCase() === ('Allocated').toLowerCase(),

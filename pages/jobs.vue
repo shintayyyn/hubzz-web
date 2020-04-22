@@ -73,7 +73,7 @@
             route: {
               name: 'jobs-index',
               query: {
-                status: undefined,
+                status: 'Allocated',
               },
             },
             active: status.toLowerCase() === ('Allocated').toLowerCase(),

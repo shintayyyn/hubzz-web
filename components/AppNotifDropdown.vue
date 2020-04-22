@@ -155,6 +155,7 @@
           'Practice Notification Job Live',
           'Practice Notification Job Pending',
           'Practice Notification Job Reminder',
+          'Practice Notification Job Selection Date',
           'Practice Notification Job Unfilled Warning',
         ],
       }
@@ -428,6 +429,7 @@
           'Practice Notification Job Live',
           'Practice Notification Job Pending',
           'Practice Notification Job Reminder',
+          'Practice Notification Job Selection Date',
           'Practice Notification Job Unfilled Warning',
         ]
 
