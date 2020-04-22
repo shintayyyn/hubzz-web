@@ -153,6 +153,7 @@
           'Practice Notification Job Cancelled',
           'Practice Notification Job Live',
           'Practice Notification Job Pending',
+          'Practice Notification Job Unfilled Warning',
         ],
       }
     },
@@ -177,28 +178,7 @@
             name: notificationTypeName,
           } = notificationType
 
-          const fixedNotifications = [
-            'Locum Notification Compliance Approved',
-            'Locum Notification Compliance Rejected',
-            'Locum Notification Compliance Pending',
-
-            'Locum Notification Job Available',
-            'Locum Notification Job Matched',
-            'Locum Notification Job Applied',
-            'Locum Notification Job Application Cancelled',
-            'Locum Notification Job Unqualified',
-            'Locum Notification Job Unavailable',
-            'Locum Notification Job Amended',
-
-            'Practice Notification Job Live',
-            'Practice Notification Job Pending',
-            'Practice Notification Job Applied',
-            'Practice Notification Job Cancelled',
-            'Practice Notification Job Application',
-            'Practice Notification Job Application Cancelled',
-          ]
-
-          if (fixedNotifications.includes(notificationTypeName)) {
+          if (this.notificationTypeNames.includes(notificationTypeName)) {
             return {
               title,
               message: description,
@@ -390,22 +370,19 @@
 
       newNotificationHandler (payload) {
         const {
-          notification_id: notificationId,
+          notification,
         } = payload
 
-        if (notificationId) {
-          this.$axios.get(`/api/v1/${this.domain}/notifications/${notificationId}`).then((response) => {
-            const notification = response.data.data.notification
-            const index = this.notifications.findIndex(({ id }) => id === notification.id)
-            if (index > -1) {
-              this.notifications.splice(index, 1, notification)
-            } else {
-              this.notifications.push(notification)
-            }
-            if (!notification.seen) {
-              this.unseenNotificationCount++
-            }
-          })
+        if (notification) {
+          const index = this.notifications.findIndex(({ id }) => id === notification.id)
+          if (index > -1) {
+            this.notifications.splice(index, 1, notification)
+          } else {
+            this.notifications.push(notification)
+          }
+          if (!notification.seen) {
+            this.unseenNotificationCount++
+          }
         }
       },
 
@@ -447,6 +424,7 @@
           'Practice Notification Job Cancelled',
           'Practice Notification Job Live',
           'Practice Notification Job Pending',
+          'Practice Notification Job Unfilled Warning',
         ]
 
         const jobApplicationNotifications = [
