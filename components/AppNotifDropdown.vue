@@ -1103,4 +1103,62 @@
       /* margin-right: 2rem; */
     }
   }
+  
+  .job-notification {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 700;
+    display: flex;
+    flex-direction: column;
+    max-height: 95%;
+    margin: 50px 20px 0;
+    padding: 0 4px 10px;
+  }
+
+  .notifications:hover .cards {
+    opacity: 1;
+  }
+
+  .notifications::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .job-notification {
+      margin-left: 200px;
+    }
+  }
+
+  @media screen and (min-width: 480px) {
+    .job-notification {
+      margin: 50px 5% 0;
+    }
+  }
+
+  @media screen and (min-width: 320px) {
+    .job-notification {
+      margin: 50px 3% 0;
+    }
+  }
+  .truncate-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s linear;
+  }
+  .truncate-title:hover {
+    display: block;
+  }
+
+  .truncate-info {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s linear;
+  }
 </style>
