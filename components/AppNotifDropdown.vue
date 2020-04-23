@@ -6,10 +6,10 @@
     >
       <svgicon name="bell" width="21" height="21" />
       <p
-        v-if="unseenNotificationCount > 0"
+        v-if="unseenNotificationIds.length > 0"
         class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
       >
-        {{ unseenNotificationCount }}
+        {{ unseenNotificationIds.length }}
       </p>
     </button>
     
@@ -40,11 +40,11 @@
             class="flex items-center"
             :class="largeView ? 'text-sm' : 'text-xs'"
           >
-            <p class="cursor-pointer hover:text-gray-700" @click="markAllAsRead">
+            <p class="cursor-pointer hover:text-gray-700" @click="seenAllNotifications">
               <span>Mark all as read</span>
             </p>
             <span v-if="largeView" class="px-1 font-bold">·</span>
-            <span v-if="largeView" class="cursor-pointer" @click="close">Close</span>
+            <span v-if="largeView" class="cursor-pointer" @click="showNotificationsDropdown = false">Close</span>
           </div>
         </div>
 
@@ -111,20 +111,73 @@
         </div>
       </div>
     </transition>
+
+    <transition name="slide">
+      <div v-if="true || popUpNotifications.length > 0" class="job-notification">
+        <!-- <div
+          class="my-2 mt-1 flex items-center"
+          :class="showPopUpNotification ? 'justify-between' : 'justify-end'"
+        >
+          <button
+            v-if="showPopUpNotification"
+            class="bg-yellow-500 px-4 py-1 rounded-lg hover:bg-yellow-400 transition-hover text-xs focus:outline-none"
+            @click="clearPopUpNotifications"
+          >Mark all as read</button>
+          <svgicon
+            name="job-notification"
+            class="w-8 h-8 cursor-pointer"
+            color="#A5DDFF #DFF3FF #FE6663 #000"
+            :class="showPopUpNotification ? 'opacity-100' : 'opacity-50 hover:opacity-100 transition-hover'"
+            @click="showPopUpNotification = !showPopUpNotification"
+          />
+        </div> -->
+        <transition name="slide">
+          <template v-if="showPopUpNotification">
+            <div class="notifications overflow-y-auto">
+              <PopUpNotification
+                v-if="false"
+                :notification="{
+                  id: 1000,
+                  title: 'qweqwe',
+                  description: 'asdasd',
+                  created_at: '2020-04-23 14:30:00.000',
+                  timeoutInSeconds: 30,
+                  maxTimeoutInSeconds: 30,
+                }"
+              />
+              <transition-group name="drop" mode="out-in">
+                <PopUpNotification
+                  v-for="popUpNotification in popUpNotifications"
+                  :key="popUpNotification.id"
+                  :notification="popUpNotification"
+                  @goTo="goTo"
+                  @removePopUpNotification="removePopUpNotification"
+                />
+              </transition-group>
+            </div>
+          </template>
+        </transition>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
   import { mixin as clickaway } from 'vue-clickaway'
+  import PopUpNotification from "@/components/Notifications/PopUpNotification"
 
   export default {
+
+    components: {
+      PopUpNotification,
+    },
     mixins: [clickaway],
 
     data () {
       return {
         showNotificationsDropdown: false,
         largeView: false,
-        unseenNotificationCount: 0,
+        unseenNotificationIds: [],
         notificationCount: 0,
         notifications: [],
         limit: 20,
@@ -158,6 +211,8 @@
           'Practice Notification Job Selection Date',
           'Practice Notification Job Unfilled Warning',
         ],
+        popUpNotifications: [],
+        showPopUpNotification: true,
       }
     },
 
@@ -316,25 +371,38 @@
     watch: {
       showNotificationsDropdown () {
         if (this.showNotificationsDropdown) {
-          this.clearNotifications()
+          this.popUpNotifications = []
+        } else {
+          this.largeView = false
         }
-      }
+      },
     },
 
     mounted () {
+      setInterval(() => {
+        this.popUpNotifications
+          .forEach(popUpNotification => popUpNotification.timeoutInSeconds -= .5)
+        
+        this.popUpNotifications = this.popUpNotifications
+          .filter(popUpNotification => popUpNotification.timeoutInSeconds > 0)
+      }, 1000 * .5)
+
       this.loading = true
       Promise.all([
-        this.$axios.get(`/api/v1/${this.domain}/notifications/count`, {
+        this.$axios.get(`/api/v1/${this.domain}/notifications`, {
           params: {
             seen: false,
+            id_only: true,
           }
         }).then((response) => {
-          const unseenNotificationCount = response.data.data.count
-          this.unseenNotificationCount = unseenNotificationCount
+          const unseenNotificationIds = response.data.data.notifications
+
+          this.unseenNotificationIds = unseenNotificationIds
         }),
 
         this.$axios.get(`/api/v1/${this.domain}/notifications/count`).then((response) => {
           const count = response.data.data.count
+
           this.notificationCount = count
         }),
 
@@ -345,6 +413,7 @@
           }
         }).then((response) => {
           const notifications = response.data.data.notifications
+          
           this.notifications = notifications
         }),
       ]).finally(() => {
@@ -359,6 +428,19 @@
     },
 
     methods: {
+      clearPopUpNotifications () {
+        console.log('clearPopUpNotifications')
+      },
+
+      removePopUpNotification (notificationId) {
+        const index = this.popUpNotifications
+          .findIndex(notification => notification.id === notificationId)
+
+        if (index > -1) {
+          this.popUpNotifications.splice(index, 1)
+        }
+      },
+
       setSocketNotificationListener () {
         this.notificationTypeNames.forEach((notificationTypeName) => {
           this.$socket.on(notificationTypeName, this.newNotificationHandler)
@@ -377,24 +459,80 @@
         } = payload
 
         if (notification) {
-          const index = this.notifications.findIndex(({ id }) => id === notification.id)
+          if (!notification.seen) {
+            this.unseenNotificationIds.push(notification.id)
+          }
+
+          const index = this.popUpNotifications.findIndex(({ id }) => id === notification.id)
+
           if (index > -1) {
-            this.notifications.splice(index, 1, notification)
+            this.popUpNotifications.splice(index, 1, {
+              ...notification,
+              timeoutInSeconds: 60,
+              maxTimeoutInSeconds: 60,
+            })
+          } else {
+            this.popUpNotifications.push({
+              ...notification,
+              timeoutInSeconds: 60,
+              maxTimeoutInSeconds: 60,
+            })
+          }
+
+          const notificationIndex = this.notifications.findIndex(({ id }) => id === notification.id)
+
+          if (notificationIndex > -1) {
+            this.notifications.splice(notificationIndex, 1, notification)
           } else {
             this.notifications.push(notification)
           }
-          if (!notification.seen) {
-            this.unseenNotificationCount++
+        }
+      },
+
+      updateNotificationSeen (notification) {
+        if (!notification.seen) {
+          const notificationId = notification.id
+
+          const popUpNotificationIndex = this.popUpNotifications.findIndex(({ id }) => id === notificationId)
+
+          if (popUpNotificationIndex > -1) {
+            this.popUpNotifications.splice(popUpNotificationIndex, 1)
           }
+          
+          this.$axios.put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`).then((response) => {
+            const updatedNotification = response.data.data.notification
+
+            const index = this.unseenNotificationIds.findIndex(unseenNotificationId => unseenNotificationId === notificationId)
+
+            if (index > -1) {
+              this.unseenNotificationIds.splice(index, 1)
+            }
+
+            const notificationIndex = this.notifications.findIndex(({ id }) => id === notificationId)
+
+            if (notificationIndex > -1) {
+              this.notifications.splice(notificationIndex, 1, updatedNotification)
+            }
+          })
+        }
+      },
+
+      seenAllNotifications () {
+        if (this.unseenNotificationIds.length > 0) {
+          this.$axios.put(`/api/v1/${this.domain}/notifications/seen-all`).then(() => {
+            this.notifications
+              .filter(notification => !notification.seen)
+              .forEach(notification => notification.seen = true)
+
+            this.unseenNotificationIds = []
+          })
         }
       },
 
       goTo (notification) {
         const {
-          id: notificationId,
           notification_type: notificationType,
           payload,
-          seen,
         } = notification
 
         const {
@@ -468,12 +606,8 @@
             }
           }
 
-          this.close()
-
-          if (!seen) {
-            this.seenNotification(notificationId)
-          }
-
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
           return
         }
         
@@ -552,12 +686,8 @@
             }, 500)
           }
 
-          this.close()
-
-          if (!seen) {
-            this.seenNotification(notificationId)
-          }
-
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
           return
         }
         
@@ -659,12 +789,8 @@
             }
           }
 
-          this.close()
-
-          if (!seen) {
-            this.seenNotification(notificationId)
-          }
-
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
           return
         }        
 
@@ -702,12 +828,8 @@
             }
           }
 
-          this.close()
-
-          if (!seen) {
-            this.seenNotification(notificationId)
-          }
-
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
           return
         }
 
@@ -897,22 +1019,17 @@
       seenNotification (notificationId) {
         this.$axios.put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`).then(() => {
           const notification = this.notifications.find(({ id }) => id === notificationId)
+
           if (notification) {
             notification.seen = true
           }
-          this.unseenNotificationCount--
-        })
-      },
 
-      markAllAsRead () {
-        if (this.unseenNotificationCount > 0) {
-          this.$axios.put(`/api/v1/${this.domain}/notifications/seen-all`).then(() => {
-            this.notifications
-              .filter(notification => !notification.seen)
-              .forEach(notification => notification.seen = true)
-            this.unseenNotificationCount = 0
-          })
-        }
+          const index = this.unseenNotificationIds.findIndex(unseenNotificationId => unseenNotificationId === notificationId)
+
+          if (index > -1) {
+            this.unseenNotificationIds.splice(index, 1)
+          }
+        })
       },
 
       loadMore () {
@@ -941,7 +1058,6 @@
       },
 
       close () {
-        this.largeView = false
         this.showNotificationsDropdown = false
       },
 
@@ -952,19 +1068,6 @@
             this.loadMore()
           }
         }
-      },
-
-      clearNotifications () {
-        this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION")
-        this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
-        this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
-        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION")
-        this.$store.commit(
-          "permanentjobs/CLEAR_PRACTICE_PERMANENT_JOB_NOTIFICATION"
-        )
-        this.$store.commit(
-          "permanentjobs/CLEAR_LOCUM_PERMANENT_JOB_NOTIFICATION"
-        )
       },
 
     },
