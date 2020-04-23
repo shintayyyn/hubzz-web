@@ -65,8 +65,8 @@
         <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
           <transition-group name="fade" mode="in-out">
             <div
-              v-for="(notification, index) in sortedNotifications"
-              :key="index"
+              v-for="notification in sortedNotifications"
+              :key="notification.id"
               class="p-2 border-b leading-tight cursor-pointer transition-hover"
               :class="notification.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-400'"
               @click="goTo(notification)"
