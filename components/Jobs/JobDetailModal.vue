@@ -331,10 +331,11 @@ export default {
 				})
 		},
 		cancel () {
+			const jobId = this.job.id
 			this.$axios
-				.$delete(`/api/v1/locum/jobs/${this.job.id}/apply`)
-				.then(res => {
-					this.$store.commit("jobs/REMOVE_LOCUM_APPLIED_JOB", res.data.job.id)
+				.$delete(`/api/v1/locum/jobs/${jobId}/apply`)
+				.then(() => {
+					this.$store.commit("jobs/REMOVE_LOCUM_APPLIED_JOB", jobId)
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
