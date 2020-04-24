@@ -313,8 +313,9 @@ export default {
 			}
 		},
 		accept () {
+			const jobId = this.job.id
 			this.$axios
-				.$post(`/api/v1/locum/jobs/${this.job.id}/update-accept`)
+				.$post(`/api/v1/locum/jobs/${jobId}/update-accept`)
 				.then(res => {
 					this.$emit("close")
 					this.$store.commit("SET_NOTIFICATION", {
@@ -324,7 +325,7 @@ export default {
 					})
 					setTimeout(() => {
 						this.$router.push({
-							path: `/jobs/${res.data.job.id}`,
+							path: `/jobs/${jobId}`,
 							query: { ...this.$route.query }
 						})
 					}, 500)
