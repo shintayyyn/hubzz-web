@@ -247,15 +247,14 @@
           />
 
           <AppInput
-            v-model="session_amendment"
+            v-model="selectedUpdateRemarksValue"
             :type="'select'"
-            :name="'session_amendment'"
+            :name="'selectedUpdateRemarksValue'"
             :label="'Choose one reason for session amendment?'"
-            :items="session_amendment_list"
-            :error="formError.find(item => item.field === 'session_amendment')"
+            :items="updateRemarksOptions"
           />
           <AppInput
-            v-if="session_amendment === 'other'"
+            v-if="!selectedUpdateRemarksValue"
             v-model="form.update_remarks"
             :type="'textarea'"
             :name="'update_remarks'"
@@ -619,29 +618,6 @@
     { label: "Home visits", value: "Home visits" }
   ]
 
-  const session_amendment_list = [
-    {
-      label: "Change job rate",
-      value: "Change job rate"
-    },
-    {
-      label: "Change required compliance levels",
-      value: "Change required compliance levels"
-    },
-    {
-      label: "Change work hours",
-      value: "Change work hours"
-    },
-    {
-      label: "Change work shift",
-      value: "Change work shift"
-    },
-    {
-      label: "Other",
-      value: "other"
-    }
-  ]
-
   export default {
 
     components: {
@@ -691,8 +667,29 @@
         auto_assign_job: false,
         selection_notification: false,
         shifts: [],
-        session_amendment: "other",
-        session_amendment_list,
+        selectedUpdateRemarksValue: null,
+        updateRemarksOptions: [
+          {
+            label: 'Change job rate',
+            value: 'Change job rate'
+          },
+          {
+            label: 'Change required compliance levels',
+            value: 'Change required compliance levels'
+          },
+          {
+            label: 'Change work hours',
+            value: 'Change work hours'
+          },
+          {
+            label: 'Change work shift',
+            value: 'Change work shift'
+          },
+          {
+            label: 'Other',
+            value: null
+          }
+        ],
         bank_first: false,
         bank_only: false,
 
@@ -919,6 +916,10 @@
     },
 
     watch: {
+      selectedUpdateRemarksValue () {
+        this.form.update_remarks = this.selectedUpdateRemarksValue || ''
+      },
+
       selectedProfessionComplianceCategory () {
         if (this.selectedProfessionComplianceCategory) {
           const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
@@ -955,7 +956,7 @@
       //   this.getListofDays(days)
       // },
 
-      // session_amendment (value) {
+      // selectedUpdateRemarksValue (value) {
       //   if (value !== "other") {
       //     this.form.update_remarks = value
       //   }
@@ -1168,21 +1169,11 @@
             this.bank_only = true
           }
 
-          this.form.update_remarks = this.job.update_remarks
+          this.selectedUpdateRemarksValue = this.updateRemarksOptions
+            .map(updateRemarksOption => updateRemarksOption.value)
+            .find(updateRemarksOptionValue => updateRemarksOptionValue === this.job.update_remarks) || null
 
-          if (
-            this.session_amendment_list
-              .map(items => items.value)
-              .includes(this.job.update_remarks)
-          ) {
-            this.session_amendment = this.job.update_remarks
-          } else if (
-            !this.session_amendment_list
-              .map(items => items.value)
-              .includes(this.job.update_remarks)
-          ) {
-            this.session_amendment = "other"
-          }
+          this.form.update_remarks = this.job.update_remarks
 
           if (this.job.platform_job.session_requirements === "") {
             this.form.session_requirements = []
