@@ -1497,17 +1497,19 @@
 
           this.loading = true
 
+          const oldJobId = this.job.id
           this.$axios
-            .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
-            .then(res => {
+            .put(`/api/v1/practice/jobs/${oldJobId}`, this.form)
+            .then((response) => {
+              const newJobId = response.data.data.job.id
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
                 text: ["Successfully updated job"]
               })
               this.$emit("updateJob", {
-                newJob: res.data.new_job,
-                oldJob: res.data.job
+                newJobId,
+                oldJobId,
               })
             })
             .catch(err => {

@@ -811,23 +811,46 @@
 
           let routeParamId = jobId
 
-          if (
-            jobPracticeId !== this.$auth.user.practice_id
-            && practiceSurgeryId
-          ) {
-            this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions`)
+          if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-sessions-index',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
 
             setTimeout(() => {
-              this.$router.push(`/hub-surgery-management/${practiceSurgeryId}/surgery-sessions/${routeParamId}`)
+              this.$router.push({
+                name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
+                params: {
+                  id: practiceSurgeryId,
+                  sessionId: routeParamId,
+                },
+              })
             }, 500)
           } else {
             if (this.$route.name === 'sessions-index') {
-              this.$router.push(`/sessions/${routeParamId}`)
+              this.$router.push({
+                name: 'sessions-index-id',
+                params: {
+                  id: routeParamId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
             } else {
-              this.$router.push('/sessions')
+              this.$router.push({
+                name: 'sessions-index',
+              })
 
               setTimeout(() => {
-                this.$router.push(`/sessions/${routeParamId}`)
+                this.$router.push({
+                  name: 'sessions-index-id',
+                  params: {
+                    id: routeParamId,
+                  },
+                })
               }, 500)
             }
           }
