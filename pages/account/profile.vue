@@ -913,6 +913,7 @@
         this.form.errbo_percentage_rate = this.user.errbo_percentage_rate
         this.form.pcse_or_lhb_ea_code = this.user.pcse_or_lhb_ea_code
         this.form.nhs_registration_number = this.user.nhs_registration_number
+
         this.form.paid_under_payroll = this.user.paid_under_payroll
       // }
       // if (
@@ -968,26 +969,32 @@
 
       save () {
         let notRequired = [
-          "nhs_smart_card_id_number",
-          "headline",
-          "short_biography",
-          "special_requirements",
-          "spoken_language_id",
-          "referee_1_contact_name",
-          "referee_1_phone_number",
-          "referee_1_email",
-          "referee_2_contact_name",
-          "referee_2_phone_number",
-          "referee_2_email",
-          "paid_under_payroll",
-          "mandatory_training_id",
-          "ir35",
-          "claim_nhs",
-          "max_rate_per_hour",
-          "max_rate_per_half_day_session",
-          "max_rate_per_whole_day_session",
-          "mpl_or_npl_number"
+          'nhs_smart_card_id_number',
+          'headline',
+          'short_biography',
+          'special_requirements',
+          'spoken_language_id',
+          'referee_1_contact_name',
+          'referee_1_phone_number',
+          'referee_1_email',
+          'referee_2_contact_name',
+          'referee_2_phone_number',
+          'referee_2_email',
+          'paid_under_payroll',
+          'mandatory_training_id',
+          'ir35',
+          'claim_nhs',
+          'max_rate_per_hour',
+          'max_rate_per_half_day_session',
+          'max_rate_per_whole_day_session',
+          'mpl_or_npl_number',
+          'ay_percentage_rate',
+          'mpavc_percentage_rate',
+          'errbo_percentage_rate',
+          'pcse_or_lhb_ea_code',
+          'nhs_registration_number',
         ]
+
         this.form.max_rate_per_hour = 999999999
         this.form.max_rate_per_half_day_session = 999999999
         this.form.max_rate_per_whole_day_session = 999999999
