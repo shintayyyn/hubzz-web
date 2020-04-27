@@ -3,28 +3,28 @@
     <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-20">
         <button class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
-          @click="close"
+                @click="close"
         >
           X
         </button>
         <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
           <span v-if="`/${$route.path.split('/')[1]}` == item.route"
-            class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full"
+                class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full"
           />
           <nuxt-link v-if="hasPermissions(item.permissions ? item.permissions : [])" :to="item.route"
-            :event="isDisabled(item.route)" class="block no-underline p-4 transition-hover"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+                     :event="isDisabled(item.route)" class="block no-underline p-4 transition-hover"
+                     :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
           >
             <span>{{ item.name }}</span>
           </nuxt-link>
         </div>
         <div class="text-sm relative">
           <span v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
-            class="absolute left-0 border-solid bg-sunglow w-1 h-full"
+                class="absolute left-0 border-solid bg-sunglow w-1 h-full"
           />
           <button class="block no-underline p-4 transition-hover focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
-            @click.prevent="signout_modal = true"
+                  :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+                  @click.prevent="signout_modal = true"
           >
             <span>Sign Out</span>
           </button>
@@ -32,10 +32,10 @@
       </div>
     </div>
     <AppConfirmationModal :label="'Proceed to sign-out?'" :confirmLabel="'Yes'" :cancelLabel="'Cancel'"
-      :modal="signout_modal" @confirm="logout" @cancel="signout_modal = false"
+                          :modal="signout_modal" @confirm="logout" @cancel="signout_modal = false"
     />
     <AppConfirmationModal :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'" :confirmLabel="'Yes'"
-      :modal="confirmation_modal" @confirm="confirm"
+                          :modal="confirmation_modal" @confirm="confirm"
     />
   </section>
 </template>
@@ -90,16 +90,8 @@
             console.log("eligible", this.eligibleToSpoke)
             this.getInit()
 
-            this.$socket.on(
-              "Practice Notification Delete Profile",
-              this.toggleConfirmationModal
-            )
           })
           .finally(
-            this.$socket.on(
-              "Practice Notification Update Profile",
-              this.updatePermissions
-            )
           )
       } else {
         this.getInit()
@@ -111,13 +103,24 @@
 
     mounted () {
       this.$loggedOutBroadcastChannel.addEventListener('message', this.loggedOutHandler)
+      this.addSocketListener()
     },
 
     destroyed () {
       this.$loggedOutBroadcastChannel.removeEventListener('message', this.loggedOutHandler)
-      this.removeListener()
+      this.removeSocketListener()
     },
     methods: {
+      addSocketListener () {
+        this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+        this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+      },
+
+      removeSocketListener () {
+        this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+        this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+      },
+
       toggleConfirmationModal () {
         this.confirmation_modal = true
       },
@@ -136,17 +139,6 @@
         } else {
           this.$store.commit("SET_PERMISSIONS", [])
         }
-      },
-
-      removeListener () {
-        this.$socket.removeListener(
-          "Locum Notification Update Profile",
-          this.updatePermissions
-        )
-        this.$socket.removeListener(
-          "Locum Notification Delete Profile",
-          this.toggleConfirmationModal
-        )
       },
 
       hasPermissions (permissions) {

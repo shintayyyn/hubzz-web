@@ -187,9 +187,6 @@
           (this.job.status === "Applied" &&
             this.job.applied_update_accepted_until &&
             this.job.applied_update_accepted === false)
-          // 		&&
-          // this.job.original === false &&
-          // this.job.update_accepted_until
         )
       },
 
@@ -224,28 +221,16 @@
 
     methods: {
 
-      updateJob ({ newJob, oldJob }) {
+      updateJob ({ newJobId, oldJobId }) {
         this.$emit("close")
         setTimeout(() => {
-          this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", {
-            newJob,
-            oldJob
-          })
-          this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", {
-            newJob,
-            oldJob
-          })
-          this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
-            newJob,
-            oldJob
-          })
-          this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", {
-            newJob,
-            oldJob
-          })
+          this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", oldJobId)
+          this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", oldJobId)
+          this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", oldJobId)
+          this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", oldJobId)
           if (this.$route.name === "sessions-index-id") {
             this.$router.push({
-              path: `/sessions/${newJob.id}`,
+              path: `/sessions/${newJobId}`,
               query: { ...this.$route.query }
             })
           }

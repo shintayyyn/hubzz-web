@@ -1,5 +1,5 @@
 <template>
-	<section class="relative flex flex-col justify-between h-full">
+  <section class="relative flex flex-col justify-between h-full">
     <div>
       <div v-if="showRefresh" class="flex flex-row flex-wrap justify-between mx-1">
         <AppButton
@@ -12,7 +12,9 @@
         <div class="w-2/3 py-1 sm:w-1/3">
           <div
             class="font-bold text-gray-800"
-          >{{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}</div>
+          >
+            {{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}
+          </div>
         </div>
         <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
           <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('previous')">
@@ -36,18 +38,34 @@
         </div>
       </div>
       <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-        <div class="w-full text-center text-gray-500 font-bold">MON</div>
-        <div class="w-full text-center text-gray-500 font-bold">TUE</div>
-        <div class="w-full text-center text-gray-500 font-bold">WED</div>
-        <div class="w-full text-center text-gray-500 font-bold">THU</div>
-        <div class="w-full text-center text-gray-500 font-bold">FRI</div>
-        <div class="w-full text-center text-gray-500 font-bold">SAT</div>
-        <div class="w-full text-center text-gray-500 font-bold">SUN</div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          MON
+        </div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          TUE
+        </div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          WED
+        </div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          THU
+        </div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          FRI
+        </div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          SAT
+        </div>
+        <div class="w-full text-center text-gray-500 font-bold">
+          SUN
+        </div>
       </div>
       <div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5 md:mb-4">
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -65,7 +83,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ (item.date) }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -75,7 +95,9 @@
         </div>
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -93,7 +115,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ item.date }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -103,7 +127,9 @@
         </div>
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -121,7 +147,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ (item.date) }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -131,7 +159,9 @@
         </div>
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -149,7 +179,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ item.date }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -159,7 +191,9 @@
         </div>
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -177,7 +211,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ (item.date) }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ (item.date) }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -187,7 +223,9 @@
         </div>
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -205,7 +243,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ item.date }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -215,7 +255,9 @@
         </div>
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
-            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">&nbsp;</div>
+            <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
+&nbsp;
+            </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
@@ -233,7 +275,9 @@
                   class="fill-current text-blue-500"
                 />
               </template>
-              <div class="text-xs md:text-sm z-10 md:pb-2">{{ item.date }}</div>
+              <div class="text-xs md:text-sm z-10 md:pb-2">
+                {{ item.date }}
+              </div>
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -244,36 +288,48 @@
       </div>
     </div>
     <span class="mt-4 ">
-      <svgicon @click="legendsModal=true" name="info" width="16" height="16" class="fill-current cursor-pointer hover:text-gray-700"/>
+      <svgicon name="info" width="16" height="16" class="fill-current cursor-pointer hover:text-gray-700" @click="legendsModal=true" />
     </span>
     <transition name="fade">
-      <div class="message-modal" v-if="legendsModal">
+      <div v-if="legendsModal" class="message-modal">
         <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
-          <p class="flex items-center justify-between flex-no-wrap font-bold">Legends <span @click="legendsModal=false" class="cursor-pointer hover:text-gray-600"><svgicon name="cancel" width="12" height="12" class="fill-current"/></span></p>
+          <p class="flex items-center justify-between flex-no-wrap font-bold">
+            Legends <span class="cursor-pointer hover:text-gray-600" @click="legendsModal=false"><svgicon name="cancel" width="12" height="12" class="fill-current" /></span>
+          </p>
           <div class="mt-2 flex flex-col md:flex-row">
             <div class="md:w-3/5">
               <p>Job Status</p>
               <div class="flex items-center">
-                <span class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Allocated Jobs</p>
+                <span class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  Allocated Jobs
+                </p>
               </div>
               <div class="flex items-center">
-                <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Applied Jobs</p>
+                <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  Applied Jobs
+                </p>
               </div>
-              <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
-                <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Unfilled Jobs, Withdrawn Jobs</p>
+              <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
+                <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  Unfilled Jobs, Withdrawn Jobs
+                </p>
               </div>
-              <div class="flex items-center" v-if="$auth.user.domain === 'Practice'">
-                <span class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Live Jobs</p>
+              <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
+                <span class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  Live Jobs
+                </p>
               </div>
-              <div class="flex items-center" v-if="$auth.user.domain === 'Locum'">
-                <span class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Ongoing Private Jobs</p>
+              <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+                <span class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  Ongoing Private Jobs
+                </p>
               </div>
-              <div class="flex items-center" v-if="$auth.user.domain === 'Locum'">
+              <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
                 <span>
                   <svgicon
                     name="pushpin"
@@ -282,47 +338,57 @@
                     class="fill-current text-blue-500"
                   />
                 </span>
-                <p class="ml-2">For Interview Permanent Jobs</p>
+                <p class="ml-2">
+                  For Interview Permanent Jobs
+                </p>
               </div>
             </div>
             <div class="md:w-2/5">
               <p>Shifts</p>
               <div class="flex items-center">
-                <span class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">Whole Day</p>
+                <span class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  Whole Day
+                </p>
               </div>
               <div class="flex items-center">
-                <span class="bg-shift-am w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">AM</p>
+                <span class="bg-shift-am w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  AM
+                </p>
               </div>
               <div class="flex items-center">
-                <span class="bg-shift-pm w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">PM</p>
+                <span class="bg-shift-pm w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  PM
+                </p>
               </div>
               <div class="flex items-center">
-                <span class="bg-shift-ooh w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2"/>
-                <p class="ml-2">OOH</p>
+                <span class="bg-shift-ooh w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+                <p class="ml-2">
+                  OOH
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </transition>
-    <div class="shield" v-if="legendsModal" @click="legendsModal=false"></div>
-		<AppLoading :loading="$store.state.calendar.loading" spinner />
-	</section>
+    <div v-if="legendsModal" class="shield" @click="legendsModal=false" />
+    <AppLoading :loading="$store.state.calendar.loading" spinner />
+  </section>
 </template>
 <script>
-import PerMonthInfo from "@/components/Calendar/PerMonthInfo";
-import AppLoading from "@/components/Base/AppLoading";
-import AppButton from "@/components/Base/AppButton";
+import PerMonthInfo from "@/components/Calendar/PerMonthInfo"
+import AppLoading from "@/components/Base/AppLoading"
+import AppButton from "@/components/Base/AppButton"
 export default {
   components: {
     AppLoading,
     AppButton,
     PerMonthInfo,
   },
-  data() {
+  data () {
     return {
       showRefresh: false,
       selectedMonth: null,
@@ -332,67 +398,67 @@ export default {
       endOfMonth: null,
       hasEvent: [],
       legendsModal: false
-    };
+    }
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
-    view_permanent_jobs() {
+    view_permanent_jobs () {
       return this.$store.getters["getViewPermanentJobs"]
     },
-    selectedDate() {
-      return this.$store.state.calendar.selected_date;
+    selectedDate () {
+      return this.$store.state.calendar.selected_date
     },
     // LOCUM
-    getLocumOngoingJobs() {
-      return this.$store.getters["jobs/getLocumOngoingJobs"];
+    getLocumOngoingJobs () {
+      return this.$store.getters["jobs/getLocumOngoingJobs"]
     },
-    getLocumAllocatedPartJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
+    getLocumAllocatedPartJobs () {
+      return this.$store.getters["jobs/getLocumAllocatedPartJobs"]
     },
-    getLocumAppliedJobs() {
-      return this.$store.getters["jobs/getLocumAppliedJobs"];
+    getLocumAppliedJobs () {
+      return this.$store.getters["jobs/getLocumAppliedJobs"]
     },
-    getLocumPrivateJobParts() {
-      return this.$store.getters["jobs/getLocumPrivateJobParts"];
+    getLocumPrivateJobParts () {
+      return this.$store.getters["jobs/getLocumPrivateJobParts"]
     },
-    getLocumPermanentJobs() {
-      return this.$store.getters["jobs/getLocumPermanentJobs"];
+    getLocumPermanentJobs () {
+      return this.$store.getters["jobs/getLocumPermanentJobs"]
     },
     // PRACTICE
-    getPracticeOngoingJobs() {
-      return this.$store.getters["jobs/getPracticeOngoingJobs"];
+    getPracticeOngoingJobs () {
+      return this.$store.getters["jobs/getPracticeOngoingJobs"]
     },
-    getPracticeAvailableJobs() {
-      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    getPracticeAvailableJobs () {
+      return this.$store.getters["jobs/getPracticeAvailableJobs"]
     },
-    getPracticeWithdrawnJobs() {
-      return this.$store.getters["jobs/getPracticeWithdrawnJobs"];
+    getPracticeWithdrawnJobs () {
+      return this.$store.getters["jobs/getPracticeWithdrawnJobs"]
     },
-    getPracticeAppliedJobs() {
-      return this.$store.getters["jobs/getPracticeAppliedJobs"];
+    getPracticeAppliedJobs () {
+      return this.$store.getters["jobs/getPracticeAppliedJobs"]
     },
-    getPracticeUnfilledJobs() {
-      return this.$store.getters["jobs/getPracticeUnfilledJobs"];
+    getPracticeUnfilledJobs () {
+      return this.$store.getters["jobs/getPracticeUnfilledJobs"]
     },
-    getPracticeAllocatedPartJobs() {
-      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    getPracticeAllocatedPartJobs () {
+      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"]
     },
-    jobsInMonth() {
-      let jobsInMonth = [];
+    jobsInMonth () {
+      let jobsInMonth = []
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
         let jobs = [
           ...this.getPracticeAppliedJobs,
           ...this.getPracticeUnfilledJobs,
           ...this.getPracticeAvailableJobs
-        ];
+        ]
         let jobParts = [
           // ...this.getPracticeOngoingJobs,
           ...this.getPracticeWithdrawnJobs,
           ...this.getPracticeAllocatedPartJobs
-        ];
-        this.daysInMonth.forEach((days, daysIndex) => {
+        ]
+        this.daysInMonth.forEach((days) => {
           if (jobs.length > 0) {
             jobs.forEach(job => {
               if (job.status !== 'Live') {
@@ -403,7 +469,7 @@ export default {
                       shifts: [job.shift.name],
                       status: [job.status],
                       jobs: [job]
-                    });
+                    })
                   } else {
                     let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
                     if (dateExist) {
@@ -421,7 +487,7 @@ export default {
                         shifts: [job.shift.name],
                         status: [job.status],
                         jobs: [job]
-                      });
+                      })
                     }
                   }
                 }
@@ -433,7 +499,7 @@ export default {
                       shifts: [job.shift.name],
                       status: [job.status],
                       jobs: [job]
-                    });
+                    })
                   } else {
                     let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
                     if (dateExist) {
@@ -451,13 +517,13 @@ export default {
                         shifts: [job.shift.name],
                         status: [job.status],
                         jobs: [job]
-                      });
+                      })
                     }
                   }
                 }
                 
               }
-            });
+            })
           }
           if (jobParts.length > 0) {
             jobParts.forEach(jobPart => {
@@ -468,7 +534,7 @@ export default {
                     shifts: [jobPart.job.shift.name],
                     status: [jobPart.status],
                     jobs: [jobPart]
-                  });
+                  })
                 } else {
                   let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
                   if (dateExist) {
@@ -486,21 +552,21 @@ export default {
                       shifts: [jobPart.job.shift.name],
                       status: [jobPart.status],
                       jobs: [jobPart]
-                    });
+                    })
                   }
                 }
               }
-            });
+            })
           }
-        });
+        })
       } else if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-        let jobs = [...this.getLocumAppliedJobs];
+        let jobs = [...this.getLocumAppliedJobs]
         let jobParts = [
           // ...this.getLocumOngoingJobs,
           ...this.getLocumAllocatedPartJobs,
           ...this.getLocumPrivateJobParts
-        ];
-        this.daysInMonth.forEach((days, daysIndex) => {
+        ]
+        this.daysInMonth.forEach((days) => {
           if (jobs.length > 0) {
             jobs.forEach(job => {
               if (job.dates.includes(days.fullDate)) {
@@ -510,7 +576,7 @@ export default {
                     shifts: [job.shift.name],
                     status: [job.locum_status],
                     jobs: [job]
-                  });
+                  })
                 }  else {
                   let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
                   if (dateExist) {
@@ -528,11 +594,11 @@ export default {
                       shifts: [job.shift.name],
                       status: [job.locum_status],
                       jobs: [job]
-                    });
+                    })
                   }
                 }
               } 
-            });
+            })
           }
           if (jobParts.length > 0) {
             jobParts.forEach(jobPart => {
@@ -543,7 +609,7 @@ export default {
                     shifts: [jobPart.job.shift.name],
                     status: [jobPart.locum_status],
                     jobs: [jobPart]
-                  });
+                  })
                 } else {
                   let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
                   if (dateExist) {
@@ -561,11 +627,11 @@ export default {
                       shifts: [jobPart.job.shift.name],
                       status: [jobPart.locum_status],
                       jobs: [jobPart]
-                    });
+                    })
                   }
                 }
               } 
-            });
+            })
           }
           if (this.getLocumPermanentJobs.length > 0) {
             this.getLocumPermanentJobs.forEach(item => {
@@ -581,7 +647,7 @@ export default {
                     shifts: [],
                     status: [],
                     jobs: [item]
-                  });
+                  })
                 } 
                  else {
                   let dateExist = jobsInMonth.find(item => item.date === days.fullDate) ? true : false
@@ -594,71 +660,71 @@ export default {
                       shifts: [],
                       status: [],
                       jobs: [item]
-                    });
+                    })
                   }
                 }
               }
-            });
+            })
           }
-        });
+        })
       }
-      return jobsInMonth;
+      return jobsInMonth
     }
   },
   watch: {
-    selectedMonth(value) {
-      this.getDaysInMonth(value, this.selectedYear);
+    selectedMonth (value) {
+      this.getDaysInMonth(value, this.selectedYear)
     },
-    selectedDate(newValue, oldValue) {
+    selectedDate (newValue, oldValue) {
       if (newValue && oldValue) {
-        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M");
-        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M");
+        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M")
+        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M")
 
-        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY");
-        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY");
+        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY")
+        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY")
 
         if (newMonth !== oldMonth || newYear !== oldYear) {
           this.startOfMonth = this.$moment(newValue, "YYYY-MM-DD")
             .startOf("month")
-            .format("YYYY-MM-DD");
+            .format("YYYY-MM-DD")
           this.endOfMonth = this.$moment(newValue, "YYYY-MM-DD")
             .endOf("month")
-            .format("YYYY-MM-DD");
+            .format("YYYY-MM-DD")
 
-          let d = new Date(newValue);
-          this.selectedMonth = d.getMonth();
-          this.selectedYear = d.getFullYear();
+          let d = new Date(newValue)
+          this.selectedMonth = d.getMonth()
+          this.selectedYear = d.getFullYear()
 
-          this.getDaysInMonth(this.selectedMonth, this.selectedYear);
-          this.getJobs();
+          this.getDaysInMonth(this.selectedMonth, this.selectedYear)
+          this.getJobs()
         }
       }
     },
-    view_permanent_jobs(){
+    view_permanent_jobs (){
       if (this.$auth.user.domain === "Locum") {
-          this.getJobs();
+          this.getJobs()
       }
     }
   },
-  beforeDestroy() {
+  beforeDestroy () {
     // this.$store.commit("jobs/CLEAR_JOBS");
   },
-  async created() {
+  async created () {
     this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .startOf("month")
-      .format("YYYY-MM-DD");
+      .format("YYYY-MM-DD")
     this.endOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .endOf("month")
-      .format("YYYY-MM-DD");
+      .format("YYYY-MM-DD")
 
-    let d = new Date(this.selectedDate);
-    this.selectedMonth = d.getMonth();
-    this.selectedYear = d.getFullYear();
+    let d = new Date(this.selectedDate)
+    this.selectedMonth = d.getMonth()
+    this.selectedYear = d.getFullYear()
 
-    this.getDaysInMonth(this.selectedMonth, this.selectedYear);
-    this.getJobs();
+    this.getDaysInMonth(this.selectedMonth, this.selectedYear)
+    this.getJobs()
   },
-  mounted() {
+  mounted () {
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
       // this.$socket.on("Locum Notification Job Available", this.getJobsRealTime)
@@ -667,8 +733,8 @@ export default {
       //   "Locum Notification Job Unsuccessful",
       //   this.getJobsRealTime
       // )
-      this.$socket.on("Locum Notification Job Current", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Allocated", this.getJobsRealTime)
+      this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime)
       // this.$socket.on(
       //   "Locum Notification Job Part Completed",
       //   this.getJobsRealTime
@@ -677,16 +743,16 @@ export default {
       this.$socket.on(
         "Locum Notification Locum Invoice Updated",
         this.getJobsRealTime
-      );
-      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
+      )
+      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime)
 
-      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime)
+      this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime)
+      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime)
       this.$socket.on(
         "Locum Notification Job Auto Declined",
         this.getJobsRealTime
-      );
+      )
       // this.$socket.on(
       //   "Locum Notification Job Unavailable",
       //   this.getJobsRealTime
@@ -694,7 +760,7 @@ export default {
       this.$socket.on(
         "Locum Notification Job Unqualified",
         this.getJobsRealTime
-      );
+      )
     }
     // practice
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
@@ -705,19 +771,19 @@ export default {
       this.$socket.on(
         "Practice Notification Job Application",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Application Cancelled",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
-        "Practice Notification Job Current",
+        "Practice Notification Job Allocated",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Ongoing",
         this.getJobsRealTime
-      );
+      )
       // this.$socket.on(
       //   "Practice Notification Job Part Completed",
       //   this.getJobsRealTime
@@ -729,134 +795,134 @@ export default {
       this.$socket.on(
         "Practice Notification Locum Invoice Updated",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Cancelled",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Amended",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Declined",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Auto Declined",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Update Accept",
         this.getJobsRealTime
-      );
+      )
       this.$socket.on(
         "Practice Notification Job Unfilled",
         this.getJobsRealTime
-      );
+      )
     }
 
-    console.log("jobsInMonth", this.jobsInMonth);
+    console.log("jobsInMonth", this.jobsInMonth)
   },
-  destroyed() {
-    this.removeListener();
+  destroyed () {
+    this.removeListener()
   },
   methods: {
-    async getJobsRealTime(job) {
+    async getJobsRealTime (job) {
       if (!job) {
-        return;
+        return
       }
-      this.showRefresh = true;
+      this.showRefresh = true
     },
-    async refreshJobs() {
-      this.showRefresh = false;
-      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
-      this.getJobs();
+    async refreshJobs () {
+      this.showRefresh = false
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
+      this.getJobs()
     },
-    removeListener() {
+    removeListener () {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
         this.$socket.removeListener(
           "Locum Notification Job Available",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Matched",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Unsuccessful",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
-          "Locum Notification Job Current",
+          "Locum Notification Job Allocated",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Ongoing",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Part Completed",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Completed",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Locum Invoice Updated",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Cancelled",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Amended",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Updated",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Declined",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Auto Declined",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Unavailable",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Locum Notification Job Unqualified",
           this.getJobsRealTime
-        );
+        )
       }
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
         this.$socket.removeListener(
           "Practice Notification Job Available",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Application",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Application Cancelled",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
-          "Practice Notification Job Current",
+          "Practice Notification Job Allocated",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Ongoing",
           this.getJobsRealTime
-        );
+        )
         // this.$socket.removeListener(
         //   "Practice Notification Job Part Completed",
         //   this.getJobsRealTime
@@ -868,41 +934,41 @@ export default {
         this.$socket.removeListener(
           "Practice Notification Locum Invoice Updated",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Cancelled",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Amended",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Declined",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Auto Declined",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Update Accept",
           this.getJobsRealTime
-        );
+        )
         this.$socket.removeListener(
           "Practice Notification Job Unfilled",
           this.getJobsRealTime
-        );
+        )
       }
     },
-    getJobs() {
+    getJobs () {
       // PRACTICE
       if (
         this.$auth.loggedIn &&
         this.$auth.user.domain === "Practice" &&
         this.authPermissions.includes("View Sessions Job")
       ) {
-        this.$store.commit("calendar/TOGGLE_LOADING", true);
+        this.$store.commit("calendar/TOGGLE_LOADING", true)
         Promise.all([
           this.$axios
             .$get("/api/v1/practice/job-parts", {
@@ -914,7 +980,7 @@ export default {
               }
             })
             .then(res => {
-              return res.data.job_parts;
+              return res.data.job_parts
             }),
           this.$axios
             .$get("/api/v1/practice/jobs", {
@@ -926,7 +992,7 @@ export default {
               }
             })
             .then(res => {
-              return res.data.jobs;
+              return res.data.jobs
             })
         ])
           .then(([ongoingAndWithdrawnJobParts, appliedAndUnfilledJobs]) => {
@@ -935,35 +1001,35 @@ export default {
               appliedAndUnfilledJobs.filter(
                 jobPart => jobPart.status === "Live"
               )
-            );
+            )
             this.$store.commit(
               "jobs/SET_PRACTICE_ALLOCATED_JOB_PARTS",
               ongoingAndWithdrawnJobParts.filter(
                 jobPart => jobPart.status === "Allocated"
               )
-            );
+            )
             this.$store.commit(
               "jobs/SET_PRACTICE_WITHDRAWN_JOB_PARTS",
               ongoingAndWithdrawnJobParts.filter(
                 jobPart => jobPart.status === "Withdrawn"
               )
-            );
+            )
             this.$store.commit(
               "jobs/SET_PRACTICE_APPLIED_JOBS",
               appliedAndUnfilledJobs.filter(job => job.status === "Applied")
-            );
+            )
             this.$store.commit(
               "jobs/SET_PRACTICE_UNFILLED_JOBS",
               appliedAndUnfilledJobs.filter(job => job.status === "Unfilled")
-            );
+            )
           })
           .finally(() => {
-            this.$store.commit("calendar/TOGGLE_LOADING", false);
-          });
+            this.$store.commit("calendar/TOGGLE_LOADING", false)
+          })
       }
       // LOCUM
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-        this.$store.commit("calendar/TOGGLE_LOADING", true);
+        this.$store.commit("calendar/TOGGLE_LOADING", true)
         Promise.all([
           this.$axios
             .$get("/api/v1/locum/job-parts", {
@@ -975,7 +1041,7 @@ export default {
               }
             })
             .then(res => {
-              return res.data.job_parts;
+              return res.data.job_parts
             }),
           this.$axios
             .$get("/api/v1/locum/jobs", {
@@ -988,7 +1054,7 @@ export default {
               }
             })
             .then(res => {
-              return res.data.jobs;
+              return res.data.jobs
             }),
           // this.$axios
           //   .$get("/api/v1/locum/job-parts", {
@@ -1017,7 +1083,7 @@ export default {
                 return res.data.permanent_job_applications
               }else {
                 return []
-              };
+              }
             })
         ])
           .then(([ongoingJobParts, appliedJobs, permanent_jobs_invites]) => {
@@ -1028,53 +1094,53 @@ export default {
             this.$store.commit("jobs/SET_LOCUM_ALLOCATED_JOB_PARTS", 
               ongoingJobParts.filter(item => item.job.status === "Allocated" && item.job.type === "Platform"))
 
-            this.$store.commit("jobs/SET_LOCUM_APPLIED_JOBS", appliedJobs);
+            this.$store.commit("jobs/SET_LOCUM_APPLIED_JOBS", appliedJobs)
             this.$store.commit(
               "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
               ongoingJobParts.filter(item => item.job.type === "Private")
-            );
+            )
             this.$store.commit(
               "jobs/SET_LOCUM_PERMANENT_JOBS",
               permanent_jobs_invites
-            );
+            )
           })
           .finally(() => {
-            this.$store.commit("calendar/TOGGLE_LOADING", false);
-          });
+            this.$store.commit("calendar/TOGGLE_LOADING", false)
+          })
       }
     },
-    getDaysInMonth(month, selectedYear) {
-      let date = new Date(selectedYear, month, 1);
-      let days = [];
+    getDaysInMonth (month, selectedYear) {
+      let date = new Date(selectedYear, month, 1)
+      let days = []
       while (date.getMonth() === month) {
-        days.push(new Date(date));
-        date.setDate(date.getDate() + 1);
+        days.push(new Date(date))
+        date.setDate(date.getDate() + 1)
       }
-      let daysInMonth = [];
+      let daysInMonth = []
       days.forEach(day => {
         daysInMonth.push({
           day: day.getDay(),
           date: day.getDate(),
           fullDate: this.$moment(day).format("YYYY-MM-DD")
-        });
-      });
-      this.daysInMonth = daysInMonth;
+        })
+      })
+      this.daysInMonth = daysInMonth
     },
-    adjustMonth(type) {
+    adjustMonth (type) {
       if (type === "previous") {
         if (this.selectedMonth === 0) {
-          this.selectedMonth = 11;
-          this.selectedYear--;
+          this.selectedMonth = 11
+          this.selectedYear--
         } else {
-          this.selectedMonth--;
+          this.selectedMonth--
         }
       }
       if (type === "next") {
         if (this.selectedMonth === 11) {
-          this.selectedMonth = 0;
-          this.selectedYear++;
+          this.selectedMonth = 0
+          this.selectedYear++
         } else {
-          this.selectedMonth++;
+          this.selectedMonth++
         }
       }
 
@@ -1083,14 +1149,14 @@ export default {
         "YYYY-MM"
       )
         .startOf("month")
-        .format("YYYY-MM-DD");
+        .format("YYYY-MM-DD")
 
       this.endOfMonth = this.$moment(
         `${this.selectedYear}-${this.selectedMonth + 1}`,
         "YYYY-MM"
       )
         .endOf("month")
-        .format("YYYY-MM-DD");
+        .format("YYYY-MM-DD")
 
       this.$store.commit(
         "calendar/SELECT_DATE",
@@ -1098,15 +1164,15 @@ export default {
           .set("month", this.selectedMonth)
           .set("year", this.selectedYear)
           .format("YYYY-MM-DD")
-      );
+      )
     },
-    getActivities(date) {
+    getActivities (date) {
       if (!this.hasEvent.includes(date)) {
-        this.hasEvent.push(date);
+        this.hasEvent.push(date)
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>

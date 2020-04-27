@@ -2,19 +2,21 @@
   <div class="app-notification">
     <transition name="drop">
       <div
+        v-if="$store.state.notification.enabled && $store.state.notification.status != 'message'"
         class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
         style="min-width: 200px"
         :class="notificationStatus"
-        v-if="$store.state.notification.enabled && $store.state.notification.status != 'message'"
       >
         <span class="mr-2 inline-block align-middle">
           <svgicon :name="notificationIcon" height="20" width="20" :color="iconSvgColor" />
         </span>
         <div
-          class="font-bold text-sm leading-normal inline-block"
           v-for="(message, index) in $store.state.notification.text"
           :key="index"
-        >{{message}}</div>
+          class="font-bold text-sm leading-normal inline-block"
+        >
+          {{ message }}
+        </div>
       </div>
     </transition>
     <transition name="slide" mode="out-in">
@@ -25,9 +27,9 @@
         @click="view"
       >
         <div
-          class="flex flex-col leading-none"
           v-for="(message, index) in $store.state.notification.text"
           :key="index"
+          class="flex flex-col leading-none"
         >
           <span class="font-bold">New Message from {{ message.title }}</span>
           <span class="text-sm py-1">{{ message.message }}</span>
@@ -35,149 +37,146 @@
         </div>
         <div class="inline-block">
           <div
+            v-if="closable"
             class="inline-block pl-4 text-lg font-bold text-blue-300 hover:text-white cursor-pointer"
             @click="close"
-            v-if="closable"
-          >x</div>
+          >
+            x
+          </div>
         </div>
       </div>
     </transition>
   </div>
 </template>
+
 <script>
-export default {
-  computed: {
-    notificationStatus() {
-      switch (this.$store.state.notification.status) {
-        case "success":
-          return "border border-green-500 bg-green-200 text-green-600";
-          break;
-        case "danger":
-          return "border border-red-500 bg-red-200 text-red-600";
-          break;
-        case "uploading":
-          return "border border-yellow-500 bg-yellow-200 text-yellow-600";
-          break;
-        case "alert":
-          return "border border-orange-500 bg-orange-200 text-orange-600";
-          break;
-        case "info":
-          return "border border-blue-500 bg-blue-100";
-          break;
-        case "message":
-          return "border border-blue-500 bg-blue-100";
-          break;
-        default:
-          return "border border-orange-500 bg-orange-200 text-orange-600";
+  export default {
+    computed: {
+      notificationStatus () {
+        switch (this.$store.state.notification.status) {
+          case "success":
+            return "border border-green-500 bg-green-200 text-green-600"
+          case "danger":
+            return "border border-red-500 bg-red-200 text-red-600"
+          case "uploading":
+            return "border border-yellow-500 bg-yellow-200 text-yellow-600"
+          case "alert":
+            return "border border-orange-500 bg-orange-200 text-orange-600"
+          case "info":
+            return "border border-blue-500 bg-blue-100"
+          case "message":
+            return "border border-blue-500 bg-blue-100"
+          default:
+            return "border border-orange-500 bg-orange-200 text-orange-600"
+        }
+      },
+
+      notificationIcon () {
+        switch (this.$store.state.notification.status) {
+          case "success":
+            return "success-checkmark"
+          case "danger":
+            return "exclamation-mark"
+          case "uploading":
+            return "cloud-upload"
+          case "alert":
+            return "alert"
+          case "info":
+            return "info"
+          case "message":
+            return "chat"
+          default:
+            return "alert"
+        }
+      },
+
+      iconSvgColor () {
+        switch (this.$store.state.notification.status) {
+          case "success":
+            return "#38a169"
+          case "danger":
+            return "#e53e3e"
+          case "uploading":
+            return "#d69e2e"
+          case "info":
+            return "#3182ce"
+          case "message":
+            return "#3182ce"
+          default:
+            return "#fff, #000"
+        }
+      },
+
+      notify () {
+        return this.$store.state.notification.enabled
+      },
+
+      closable () {
+        return this.$store.state.notification.closable
+      },
+
+      conversations () {
+        return this.$store.getters["chat/getConversations"]
+      },
+    },
+
+    watch: {
+      notify () {
+        if (!this.$store.state.notification.closable) {
+          setTimeout(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: false,
+              status: "",
+              text: "",
+              closable: false,
+              duration: ""
+            })
+          }, this.$store.state.notification.duration ? this.$store.state.notification.duration : 2000)
+        }
       }
     },
-    notificationIcon() {
-      switch (this.$store.state.notification.status) {
-        case "success":
-          return "success-checkmark";
-          break;
-        case "danger":
-          return "exclamation-mark";
-          break;
-        case "uploading":
-          return "cloud-upload";
-          break;
-        case "alert":
-          return "alert";
-          break;
-        case "info":
-          return "info";
-          break;
-        case "message":
-          return "chat";
-          break;
-        default:
-          return "alert";
-      }
+
+    methods: {
+      close () {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: false,
+          status: "",
+          text: ""
+          // closable: false
+        })
+      },
+
+      view () {
+        if (this.$store.state.notification.status === "message") {
+          let conversation = this.conversations.find(
+            (conversation, index) => index === 0
+          )
+          this.close()
+          this.$router.push(`/messages/${conversation.id}`)
+          this.$store.commit("chat/DELETE_UNREAD_MESSAGE", conversation.id)
+        }
+      },
     },
-    iconSvgColor() {
-      switch (this.$store.state.notification.status) {
-        case "success":
-          return "#38a169";
-          break;
-        case "danger":
-          return "#e53e3e";
-          break;
-        case "uploading":
-          return "#d69e2e";
-          break;
-        case "info":
-          return "#3182ce";
-          break;
-        case "message":
-          return "#3182ce";
-          break;
-        default:
-          return "#fff, #000";
-      }
-    },
-    notify() {
-      return this.$store.state.notification.enabled;
-    },
-    closable() {
-      return this.$store.state.notification.closable;
-    },
-    conversations() {
-      return this.$store.getters["chat/getConversations"];
-    }
-  },
-  watch: {
-    notify(value) {
-      if (!this.$store.state.notification.closable) {
-        setTimeout(() => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: false,
-            status: "",
-            text: "",
-            closable: false,
-            duration: ""
-          });
-        }, this.$store.state.notification.duration ? this.$store.state.notification.duration : 2000);
-      }
-    }
-  },
-  methods: {
-    close() {
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: false,
-        status: "",
-        text: ""
-        // closable: false
-      });
-    },
-    view() {
-      if (this.$store.state.notification.status === "message") {
-        let conversation = this.conversations.find(
-          (conversation, index) => index === 0
-        );
-        this.close();
-        this.$router.push(`/messages/${conversation.id}`);
-        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", conversation.id);
-      }
-    }
+
   }
-};
 </script>
+
 <style>
-.app-notification {
-  position: fixed;
-  top: 0;
-  left: 40%;
-  z-index: 700;
-  display: flex;
-  justify-content: center;
-  margin-left: -40px;
-}
-@media screen and (max-width: 600px) {
   .app-notification {
-    width: 100%;
-    left: 0;
-    margin-left: 0;
+    position: fixed;
+    top: 0;
+    left: 40%;
+    z-index: 700;
+    display: flex;
+    justify-content: center;
+    margin-left: -40px;
   }
-}
+
+  @media screen and (max-width: 600px) {
+    .app-notification {
+      width: 100%;
+      left: 0;
+      margin-left: 0;
+    }
+  }
 </style>

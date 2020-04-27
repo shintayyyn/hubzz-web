@@ -1,186 +1,256 @@
 <template>
-  <div
-    v-on-clickaway="close"
-    class="absolute bg-white border shadow container transition-hover flex flex-col"
-    :class="[
-      showAll === true
-        ? 'modal top-0 right-0'
-        : 'dropdown right-0 mt-2',
-
-      notifications_count !== notifications.length
-        ? !loading
-          ? 'justify-between'
-          : ''
-        : ''
-    ]"
-  >
-    <div class="border-b px-2 py-1 flex justify-between" :class="showAll ? '' : 'text-sm'">
-      <p class="font-bold">
-        <span>Notifications</span>
-      </p>
-
-      <div
-        v-if="notifications.length > 0"
-        class="flex items-center"
-        :class="showAll ? 'text-sm' : 'text-xs'"
+  <div>
+    <button
+      class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
+      @click="showNotificationsDropdown = !showNotificationsDropdown"
+    >
+      <svgicon name="bell" width="21" height="21" />
+      <p
+        v-if="unseenNotificationIds.length > 0"
+        class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
       >
-        <p class="cursor-pointer hover:text-gray-700" @click="markAllAsRead">
-          <span>Mark all as read</span>
-        </p>
-        <span v-if="showAll" class="px-1 font-bold">·</span>
-        <span v-if="showAll" class="cursor-pointer" @click="close">Close</span>
-      </div>
-    </div>
+        {{ unseenNotificationIds.length }}
+      </p>
+    </button>
+    
+    <transition name="drop-down">
+      <div
+        v-if="showNotificationsDropdown"
+        v-on-clickaway="close"
+        class="absolute bg-white border shadow container transition-hover flex flex-col"
+        :class="[
+          largeView === true
+            ? 'modal top-0 right-0'
+            : 'dropdown right-0 mt-2',
 
-    <p
-      v-if="!loading && notifications.length === 0"
-      class="text-center text-sm py-2"
-    >
-      <span>You don't have notifications at the moment.</span>
-    </p>
-
-    <span
-      v-if="loading || (showAll && notifications.length === 0 && loading)"
-      class="flex justify-center items-center py-1 h-full"
-    >
-      <svgicon name="loader" :width="showAll ? '55' : '30'" :height="showAll ? '55' : '30'" />
-    </span>
-
-    <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
-      <transition-group name="fade" mode="in-out">
-        <div
-          v-for="(item, index) in notifications"
-          :key="index"
-          class="p-2 border-b leading-tight cursor-pointer transition-hover"
-          :class="item.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-400'"
-          @click="goTo(item)"
-        >
-          <p
-            class="font-bold block truncate"
-          >
-            <span>{{ getNotificationTitle(item) }}</span>
+          notificationCount !== notifications.length
+            ? !loading
+              ? 'justify-between'
+              : ''
+            : ''
+        ]"
+      >
+        <div class="border-b px-2 py-1 flex justify-between" :class="largeView ? '' : 'text-sm'">
+          <p class="font-bold">
+            <span>Notifications</span>
           </p>
-          <p class="text-sm pt-1">
-            <span>{{ getNotificationMessage(item) }}</span>
-          </p>
+
           <div
-            class="leading-tight text-xs pt-1 text-gray-600"
+            v-if="notifications.length > 0"
+            class="flex items-center"
+            :class="largeView ? 'text-sm' : 'text-xs'"
           >
-            <span>{{ $moment(item.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}</span>
+            <p class="cursor-pointer hover:text-gray-700" @click="seenAllNotifications">
+              <span>Mark all as read</span>
+            </p>
+            <span v-if="largeView" class="px-1 font-bold">·</span>
+            <span v-if="largeView" class="cursor-pointer" @click="showNotificationsDropdown = false">Close</span>
           </div>
         </div>
-      </transition-group>
-    </div>
 
-    <!-- <p
-				v-if="notifications_count !== notifications.length"
-				class="cursor-pointer text-sm text-center py-1 w-full bg-gray-100 border-t"
-				@click="loadMore"
-    >Load More</p>-->
-    
-    <div v-if="!loading">
-      <transition name="fade">
-        <span v-if="loadMoreLoader" class="flex justify-center py-1">
-          <svgicon name="loader" width="30" height="30" />
+        <p
+          v-if="!loading && notifications.length === 0"
+          class="text-center text-sm py-2"
+        >
+          <span>You don't have notifications at the moment.</span>
+        </p>
+
+        <span
+          v-if="loading || (largeView && notifications.length === 0 && loading)"
+          class="flex justify-center items-center py-1 h-full"
+        >
+          <svgicon name="loader" :width="largeView ? '55' : '30'" :height="largeView ? '55' : '30'" />
         </span>
-      </transition>
 
-      <p
-        v-if="!showAll && notifications.length > 0"
-        class="cursor-pointer text-sm text-center py-1"
-        @click="seeAllNotifications"
-      >
-        <span>See All</span>
-      </p>
-    </div>
+        <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
+          <transition-group name="fade" mode="in-out">
+            <div
+              v-for="notification in sortedNotifications"
+              :key="notification.id"
+              class="p-2 border-b leading-tight cursor-pointer transition-hover"
+              :class="notification.seen ? 'hover:bg-gray-300' : 'bg-gray-200 hover:bg-gray-400'"
+              @click="goTo(notification)"
+            >
+              <p
+                class="font-bold block truncate"
+              >
+                <span>{{ getNotificationTitle(notification) }}&nbsp;</span>
+              </p>
+              <p class="text-sm pt-1">
+                <span>{{ getNotificationMessage(notification) }}&nbsp;</span>
+              </p>
+              <div
+                class="leading-tight text-xs pt-1 text-gray-600"
+              >
+                <span>{{ $moment(notification.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}&nbsp;</span>
+              </div>
+            </div>
+          </transition-group>
+        </div>
+
+        <!-- <p
+            v-if="notificationCount !== notifications.length"
+            class="cursor-pointer text-sm text-center py-1 w-full bg-gray-100 border-t"
+            @click="loadMore"
+        >Load More</p>-->
+        
+        <div v-if="!loading">
+          <transition name="fade">
+            <span v-if="loadingLoadMore" class="flex justify-center py-1">
+              <svgicon name="loader" width="30" height="30" />
+            </span>
+          </transition>
+
+          <p
+            v-if="!largeView && notifications.length > 0"
+            class="cursor-pointer text-sm text-center py-1"
+            @click="largeView = true"
+          >
+            <span>See All</span>
+          </p>
+        </div>
+      </div>
+    </transition>
+
+    <transition name="slide">
+      <div v-if="true || popUpNotifications.length > 0" class="job-notification">
+        <!-- <div
+          class="my-2 mt-1 flex items-center"
+          :class="showPopUpNotification ? 'justify-between' : 'justify-end'"
+        >
+          <button
+            v-if="showPopUpNotification"
+            class="bg-yellow-500 px-4 py-1 rounded-lg hover:bg-yellow-400 transition-hover text-xs focus:outline-none"
+            @click="clearPopUpNotifications"
+          >Mark all as read</button>
+          <svgicon
+            name="job-notification"
+            class="w-8 h-8 cursor-pointer"
+            color="#A5DDFF #DFF3FF #FE6663 #000"
+            :class="showPopUpNotification ? 'opacity-100' : 'opacity-50 hover:opacity-100 transition-hover'"
+            @click="showPopUpNotification = !showPopUpNotification"
+          />
+        </div> -->
+        <transition name="slide">
+          <template v-if="showPopUpNotification">
+            <div class="notifications overflow-y-auto">
+              <PopUpNotification
+                v-if="false"
+                :notification="{
+                  id: 1000,
+                  title: 'qweqwe',
+                  description: 'asdasd',
+                  created_at: '2020-04-23 14:30:00.000',
+                  timeoutInSeconds: 30,
+                  maxTimeoutInSeconds: 30,
+                }"
+              />
+              <transition-group name="drop" mode="out-in">
+                <PopUpNotification
+                  v-for="popUpNotification in popUpNotifications"
+                  :key="popUpNotification.id"
+                  :notification="popUpNotification"
+                  @goTo="goTo"
+                  @removePopUpNotification="removePopUpNotification"
+                />
+              </transition-group>
+            </div>
+          </template>
+        </transition>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
   import { mixin as clickaway } from 'vue-clickaway'
+  import PopUpNotification from "@/components/Notifications/PopUpNotification"
 
   export default {
+
+    components: {
+      PopUpNotification,
+    },
     mixins: [clickaway],
 
     data () {
       return {
-        showAll: false,
-        // notifications: [],
-        limit: 6,
-        offset: 0
+        showNotificationsDropdown: false,
+        largeView: false,
+        unseenNotificationIds: [],
+        notificationCount: 0,
+        notifications: [],
+        limit: 20,
+        loading: false,
+        loadingLoadMore: false,
+        notificationTypeNames: [
+          'Locum Notification Compliance Approved',
+          'Locum Notification Compliance Pending',
+          'Locum Notification Compliance Rejected',
+          'Locum Notification Job Allocated',
+          'Locum Notification Job Amended',
+          'Locum Notification Job Application Auto Cancelled',
+          'Locum Notification Job Application Cancelled',
+          'Locum Notification Job Applied',
+          'Locum Notification Job Available',
+          'Locum Notification Job Cancelled',
+          'Locum Notification Job Matched',
+          'Locum Notification Job Reminder',
+          'Locum Notification Job Unavailable',
+          'Locum Notification Job Unqualified',
+          'Locum Notification Job Unsuccessful',
+
+          'Practice Notification Job Allocated',
+          'Practice Notification Job Amended',
+          'Practice Notification Job Application',
+          'Practice Notification Job Application Auto Cancelled',
+          'Practice Notification Job Application Cancelled',
+          'Practice Notification Job Applied',
+          'Practice Notification Job Cancelled',
+          'Practice Notification Job Live',
+          'Practice Notification Job Pending',
+          'Practice Notification Job Reminder',
+          'Practice Notification Job Selection Date',
+          'Practice Notification Job Unfilled Warning',
+        ],
+        popUpNotifications: [],
+        showPopUpNotification: true,
       }
     },
 
     computed: {
+      domain () {
+        return this.$auth.user.domain.toLowerCase()
+      },
 
       getNotificationDisplay () {
         return (notification) => {
           const {
             notification_type: notificationType,
+            type,
             payload,
+            title,
+            message,
+            description,
           } = notification
 
           const {
             name: notificationTypeName,
           } = notificationType
 
-          if (notificationTypeName === 'Locum Notification Compliance Approved') {
-            const {
-              compliance_document: complianceDocument,
-            } = payload
-
-            const {
-              name: complianceDocumentName,
-              compliance_document_type: complianceDocumentType,
-            } = complianceDocument
-
-            const {
-              name: complianceDocumentTypeName,
-            } = complianceDocumentType
-
-            if (complianceDocumentTypeName === 'Reference') {
-              return {
-                title: 'Compliance Verified',
-                message: complianceDocumentName,
-              }
-            } else {
-              return {
-                title: 'Compliance Approved',
-                message: complianceDocumentName,
-              }
-            }
-          } else if (notificationTypeName === 'Locum Notification Compliance Rejected') {
-            const {
-              compliance_document: complianceDocument,
-            } = payload
-
-            const {
-              name: complianceDocumentName,
-            } = complianceDocument
-
+          if (this.notificationTypeNames.includes(notificationTypeName)) {
             return {
-              title: 'Compliance Rejected',
-              message: complianceDocumentName,
-            }
-          } else if (notificationTypeName === 'Locum Notification Compliance Pending') {
-            const {
-              compliance_document: complianceDocument,
-            } = payload
-
-            const {
-              name: complianceDocumentName,
-            } = complianceDocument
-
-            return {
-              title: 'Compliance Pending',
-              message: complianceDocumentName,
+              title,
+              message: description,
             }
           } else {
             return {
-              title: notification.payload.title
-                ? notification.payload.title
-                : `Untitled ${notification.type}`,
-              message: notification.message,
+              title: payload.title
+                ? payload.title
+                : type
+                  ? `Untitled ${type}`
+                  : title,
+              message: message || description,
             }
           }
         }
@@ -207,143 +277,316 @@
       },
 
       url () {
-        return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
+        return this.$auth.user.domain === 'Practice' ? '/sessions' : '/jobs'
       },
 
-      notifications () {
-        return this.$store.getters["jobs/getNotifications"]
-      },
+      sortedNotifications () {
+        let billing_types = [
+          'Locum Notification Locum Invoice Created',
+          'Locum Notification Locum Invoice Updated',
+          'Locum Notification Locum Invoice Paid',
+          'Practice Notification Locum Invoice Created',
+          'Practice Notification Locum Invoice Updated',
+          'Practice Notification Locum Invoice Paid',
+        ]
 
-      notifications_count () {
-        return this.$store.getters["jobs/getNotificationCount"]
-      },
+        return this.notifications
+          .map((notification) => {
+            let message = ""
 
-      loadMoreLoader () {
-        return this.$store.state.jobs.load_more_loading
-      },
+            if (this.domain === "locum") {
+              switch (notification.notification_type.name) {
+                case 'Locum Notification Job Reminder':
+                  message = `This Job will start later.`
+                  break
+                case 'Locum Notification Job Ongoing':
+                  message = 'Your Job has started.'
+                  break
+                case 'Locum Notification Job Part Completed':
+                  message = 'This part of your job has been completed'
+                  break
+                case 'Locum Notification Job Completed':
+                  message = 'This job has been completed'
+                  break
+                case 'Locum Notification Job Approved':
+                  message = 'This part of your job has been approved'
+                  break
+                case 'Locum Notification Job Disputed':
+                  message = 'This part of your job has been disputed'
+                  break
+                case 'Locum Notification Job Declined':
+                  message = 'You successfully leave this job.'
+                  break
+                case 'Locum Notification Job Terminated':
+                  message = 'This Job has been terminated.'
+                  break
+                default:
+                  message = ''
+              }
+            } else if (this.domain === 'practice') {
+              switch (notification.notification_type.name) {
+                case 'Practice Notification Job Reminder':
+                  message = `This Job will start later.`
+                  break
+                case 'Practice Notification Job Ongoing':
+                  message = 'This Job has started.'
+                  break
+                case 'Practice Notification Job Part Completed':
+                  message = 'This part of your job has been completed'
+                  break
+                case 'Practice Notification Job Completed':
+                  message = 'This job has been completed'
+                  break
+                case 'Practice Notification Job Approved':
+                  message = 'This part of your job has been approved'
+                  break
+                case 'Practice Notification Job Disputed':
+                  message = 'This part of your job has been disputed'
+                  break
+                case 'Practice Notification Job Declined':
+                  message = 'The locum leave this job.'
+                  break
+                case 'Practice Notification Job Update Accept':
+                  message = 'The locum accepted your changes on this job.'
+                  break
+                case 'Practice Notification Job Unfilled Warning':
+                  message = `This Job will start later.`
+                  break
+                case 'Practice Notification Job Unfilled':
+                  message = 'This job is unfilled.'
+                  break
+              }
+            }
 
-      loading () {
-        return this.$store.state.jobs.notification_loading
+            return {
+              ...notification,
+              message: message,
+              type: billing_types.includes(notification.notification_type.name)
+                ? "Billing"
+                : "Job"
+            }
+          })
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
       },
-
     },
 
     watch: {
-
-      showAll () {
-        this.$emit("showAll")
+      showNotificationsDropdown () {
+        if (this.showNotificationsDropdown) {
+          this.popUpNotifications = []
+        } else {
+          this.largeView = false
+        }
       },
-
     },
 
-    created () {
-      this.clearNotifications()
-      this.$store.dispatch("jobs/fetchNotifications", { limit: 6 })
+    mounted () {
+      setInterval(() => {
+        this.popUpNotifications
+          .forEach(popUpNotification => popUpNotification.timeoutInSeconds -= .5)
+        
+        this.popUpNotifications = this.popUpNotifications
+          .filter(popUpNotification => popUpNotification.timeoutInSeconds > 0)
+      }, 1000 * .5)
+
+      this.loading = true
+      Promise.all([
+        this.$axios.get(`/api/v1/${this.domain}/notifications`, {
+          params: {
+            seen: false,
+            id_only: true,
+          }
+        }).then((response) => {
+          const unseenNotificationIds = response.data.data.notifications
+
+          this.unseenNotificationIds = unseenNotificationIds
+        }),
+
+        this.$axios.get(`/api/v1/${this.domain}/notifications/count`).then((response) => {
+          const count = response.data.data.count
+
+          this.notificationCount = count
+        }),
+
+        this.$axios.get(`/api/v1/${this.domain}/notifications`, {
+          params: {
+            order_by: 'created_at:desc',
+            limit: this.limit,
+          }
+        }).then((response) => {
+          const notifications = response.data.data.notifications
+          
+          this.notifications = notifications
+        }),
+      ]).finally(() => {
+        this.loading = false
+      })
+
+      this.setSocketNotificationListener()
+    },
+
+    destroyed () {
+      this.removeSocketNotificationListener()
     },
 
     methods: {
-      getMessage (notificationType) {
-        let message = ""
-        switch (notificationType) {
-          case "Locum Notification Job Reminder":
-            // if (days > 0) {
-            //   message = `This Job will start in ${days} ${
-            //     days === 1 ? "day" : "days"
-            //   }.`
-            // } else if (days <= 0 && hours > 0) {
-            //   message = `This Job will start in ${hours} ${
-            //     hours === 1 ? "hour" : "hours"
-            //   }.`
-            // } else if (hours <= 0 && minutes > 0) {
-            //   message = `This Job will start in ${minutes} ${
-            //     minutes === 1 ? "minute" : "minutes"
-            //   }.`
-            // } else {
-            //   message = `This Job will start later.`
-            // }
-            message = `This Job will start.`
-            break
-          case "Locum Notification Job Available":
-            message = "There is a new available job for you."
-            break
-          case "Locum Notification Job Applied":
-            message = "Successfully applied for this Job."
-            break
-          case "Locum Notification Job Matched":
-            message = "There is a new job that matched your qualifications."
-            break
-          case "Locum Notification Job Unsuccessful":
-            message = "Your application for this job is unsuccessful"
-            break
-          case "Locum Notification Job Current":
-            message = "You have been appointed to this job."
-            break
-          case "Locum Notification Job Ongoing":
-            message = "Your Job has started."
-            break
-          case "Locum Notification Job Part Completed":
-            message = "This part of your job has been completed"
-            break
-          case "Locum Notification Job Completed":
-            message = "This job has been completed"
-            break
-          case "Locum Notification Job Approved":
-            message = "This part of your job has been approved"
-            break
-          case "Locum Notification Job Disputed":
-            message = "This part of your job has been disputed"
-            break
-          case "Locum Notification Job Cancelled":
-            message = "Your job has been cancelled by your practice"
-            break
-          case "Locum Notification Job Amended":
-            message = "This job has been updated by your practice"
-            break
-          case "Locum Notification Job Declined":
-            message = "You successfully leave this job."
-            break
-          case "Locum Notification Job Terminated":
-            message = "This Job has been terminated."
-            break
-          case "Locum Notification Job Unqualified":
-            message = "You are not qualified anymore on this job."
-            break
-          case "Practice Notification Locum Invoice Created":
-            message = "This invoice has been Created"
-            break
-          case "Practice Notification Locum Invoice Updated":
-            message = "This invoice has been Updated"
-            break
-          case "Practice Notification Locum Invoice Paid":
-            message = "This invoice has been Paid"
-            break
-          default:
-            message = ""
+      clearPopUpNotifications () {
+        console.log('clearPopUpNotifications')
+      },
+
+      removePopUpNotification (notificationId) {
+        const index = this.popUpNotifications
+          .findIndex(notification => notification.id === notificationId)
+
+        if (index > -1) {
+          this.popUpNotifications.splice(index, 1)
         }
-        return message
+      },
+
+      setSocketNotificationListener () {
+        this.notificationTypeNames.forEach((notificationTypeName) => {
+          this.$socket.on(notificationTypeName, this.newNotificationHandler)
+        })
+      },
+
+      removeSocketNotificationListener () {
+        this.notificationTypeNames.forEach((notificationTypeName) => {
+          this.$socket.removeListener(notificationTypeName, this.newNotificationHandler)
+        })
+      },
+
+      newNotificationHandler (payload) {
+        const {
+          notification,
+        } = payload
+
+        if (notification) {
+          if (!notification.seen) {
+            this.unseenNotificationIds.push(notification.id)
+          }
+
+          const index = this.popUpNotifications.findIndex(({ id }) => id === notification.id)
+
+          if (index > -1) {
+            this.popUpNotifications.splice(index, 1, {
+              ...notification,
+              timeoutInSeconds: 60,
+              maxTimeoutInSeconds: 60,
+            })
+          } else {
+            this.popUpNotifications.push({
+              ...notification,
+              timeoutInSeconds: 60,
+              maxTimeoutInSeconds: 60,
+            })
+          }
+
+          const notificationIndex = this.notifications.findIndex(({ id }) => id === notification.id)
+
+          if (notificationIndex > -1) {
+            this.notifications.splice(notificationIndex, 1, notification)
+          } else {
+            this.notifications.push(notification)
+          }
+        }
+      },
+
+      updateNotificationSeen (notification) {
+        if (!notification.seen) {
+          const notificationId = notification.id
+
+          const popUpNotificationIndex = this.popUpNotifications.findIndex(({ id }) => id === notificationId)
+
+          if (popUpNotificationIndex > -1) {
+            this.popUpNotifications.splice(popUpNotificationIndex, 1)
+          }
+          
+          this.$axios.put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`).then((response) => {
+            const updatedNotification = response.data.data.notification
+
+            const index = this.unseenNotificationIds.findIndex(unseenNotificationId => unseenNotificationId === notificationId)
+
+            if (index > -1) {
+              this.unseenNotificationIds.splice(index, 1)
+            }
+
+            const notificationIndex = this.notifications.findIndex(({ id }) => id === notificationId)
+
+            if (notificationIndex > -1) {
+              this.notifications.splice(notificationIndex, 1, updatedNotification)
+            }
+          })
+        }
+      },
+
+      seenAllNotifications () {
+        if (this.unseenNotificationIds.length > 0) {
+          this.$axios.put(`/api/v1/${this.domain}/notifications/seen-all`).then(() => {
+            this.notifications
+              .filter(notification => !notification.seen)
+              .forEach(notification => notification.seen = true)
+
+            this.unseenNotificationIds = []
+          })
+        }
       },
 
       goTo (notification) {
         const {
-          id: notificationId,
           notification_type: notificationType,
           payload,
-          seen,
         } = notification
 
         const {
           name: notificationTypeName,
         } = notificationType
 
-        if (
-          notificationTypeName === 'Locum Notification Compliance Approved'
-          || notificationTypeName === 'Locum Notification Compliance Rejected'
-          || notificationTypeName === 'Locum Notification Compliance Pending'
-        ) {
+        const locumComplianceDocumentNotifications = [
+          'Locum Notification Compliance Approved',
+          'Locum Notification Compliance Pending',
+          'Locum Notification Compliance Rejected',
+        ]
+
+        const locumJobNotifications = [
+          'Locum Notification Job Allocated',
+          'Locum Notification Job Amended',
+          'Locum Notification Job Application Auto Cancelled',
+          'Locum Notification Job Application Cancelled',
+          'Locum Notification Job Applied',
+          'Locum Notification Job Cancelled',
+          'Locum Notification Job Available',
+          'Locum Notification Job Matched',
+          'Locum Notification Job Reminder',
+          'Locum Notification Job Unavailable',
+          'Locum Notification Job Unqualified',
+          'Locum Notification Job Unsuccessful',
+        ]
+
+        const practiceJobNotifications = [
+          'Practice Notification Job Allocated',
+          'Practice Notification Job Amended',
+          'Practice Notification Job Applied',
+          'Practice Notification Job Cancelled',
+          'Practice Notification Job Live',
+          'Practice Notification Job Pending',
+          'Practice Notification Job Reminder',
+          'Practice Notification Job Selection Date',
+          'Practice Notification Job Unfilled Warning',
+        ]
+
+        const jobApplicationNotifications = [
+          'Practice Notification Job Application',
+          'Practice Notification Job Application Auto Cancelled',
+          'Practice Notification Job Application Cancelled',
+        ]
+
+        if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
+          const locumComplianceDocument = payload
+
           const {
             id: locumComplianceDocumentId,
             compliance_document: complianceDocument,
-          } = payload
+          } = locumComplianceDocument
 
           const {
             compliance_document_type: complianceDocumentType,
@@ -363,18 +606,261 @@
 
               setTimeout(() => {
                 this.$router.push(`/compliance/${locumComplianceDocumentId}`)
-              }, 750)
+              }, 500)
             }
           }
 
-          this.close()
-
-          if (!seen) {
-            this.seenNotification(notificationId)
-          }
-        } else {
-          this.oldGoTo(notification)
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
         }
+        
+        if (locumJobNotifications.includes(notificationTypeName)) {
+          const job = payload
+
+          const {
+            id: jobId,
+            original_job_id: originalJobId,
+            job_parts: jobParts,
+          } = job
+
+          let routeParamId = jobId
+          let routeParamJobPartId = null
+
+          if (notificationTypeName === 'Locum Notification Job Unqualified' && originalJobId) {
+            routeParamId = originalJobId
+          }
+
+          if (notificationTypeName === 'Locum Notification Job Unavailable' && originalJobId) {
+            routeParamId = originalJobId
+          }
+
+          if (notificationTypeName === 'Locum Notification Job Cancelled' && jobParts) {
+            const jobPart = jobParts.find(jobPart => jobPart.status === 'Cancelled')
+            if (jobPart) {
+              routeParamJobPartId = jobPart.id
+            }
+          }
+
+          if (this.$route.name === 'jobs-index') {
+            if (routeParamJobPartId) {
+              this.$router.push({
+                name: 'jobs-index-id-job-parts-jobPartId',
+                params: {
+                  id: routeParamId,
+                  jobPartId: routeParamJobPartId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: 'jobs-index-id',
+                params: {
+                  id: routeParamId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            }
+          } else {
+            this.$router.push({
+              name: 'jobs-index',
+            })
+
+            setTimeout(() => {
+              if (routeParamJobPartId) {
+                this.$router.push({
+                  name: 'jobs-index-id-job-parts-jobPartId',
+                  params: {
+                    id: routeParamId,
+                    jobPartId: routeParamJobPartId,
+                  },
+                })
+              } else {
+                this.$router.push({
+                  name: 'jobs-index-id',
+                  params: {
+                    id: routeParamId,
+                  },
+                })
+              }
+            }, 500)
+          }
+
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
+        if (practiceJobNotifications.includes(notificationTypeName)) {
+          const job = payload
+
+          const {
+            id: jobId,
+            practice_id: jobPracticeId,
+            practice_surgery_id: practiceSurgeryId,
+            job_parts: jobParts,
+          } = job
+
+          let routeParamId = jobId
+          let routeParamJobPartId = null
+
+          if (notificationTypeName === 'Practice Notification Job Cancelled' && jobParts) {
+            const jobPart = jobParts.find(jobPart => jobPart.status === 'Cancelled')
+            if (jobPart) {
+              routeParamJobPartId = jobPart.id
+            }
+          }
+
+          if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-sessions-index',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
+
+            setTimeout(() => {
+              if (routeParamJobPartId) {
+                this.$router.push({
+                  name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+                  params: {
+                    id: practiceSurgeryId,
+                    sessionId: routeParamId,
+                    jobPartId: routeParamJobPartId,
+                  },
+                })
+              } else {
+                this.$router.push({
+                  name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
+                  params: {
+                    id: practiceSurgeryId,
+                    sessionId: routeParamId,
+                  },
+                })
+              }
+            }, 500)
+          } else {
+            if (this.$route.name === 'sessions-index') {
+              if (routeParamJobPartId) {
+                this.$router.push({
+                  name: 'sessions-index-id-job-parts-jobPartId',
+                  params: {
+                    id: routeParamId,
+                    jobPartId: routeParamJobPartId,
+                  },
+                  query: {
+                    ...this.$route.query,
+                  },
+                })
+              } else {
+                this.$router.push({
+                  name: 'sessions-index-id',
+                  params: {
+                    id: routeParamId,
+                  },
+                  query: {
+                    ...this.$route.query,
+                  },
+                })
+              }
+            } else {
+              this.$router.push({
+                name: 'sessions-index',
+              })
+
+              setTimeout(() => {
+                if (routeParamJobPartId) {
+                  this.$router.push({
+                    name: 'sessions-index-id-job-parts-jobPartId',
+                    params: {
+                      id: routeParamId,
+                      jobPartId: routeParamJobPartId,
+                    },
+                  })
+                } else {
+                  this.$router.push({
+                    name: 'sessions-index-id',
+                    params: {
+                      id: routeParamId,
+                    },
+                  })
+                }
+              }, 500)
+            }
+          }
+
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }        
+
+        if (jobApplicationNotifications.includes(notificationTypeName)) {
+          const {
+            job,
+          } = payload
+
+          const {
+            id: jobId,
+            practice_id: jobPracticeId,
+            practice_surgery_id: practiceSurgeryId,
+          } = job
+
+          let routeParamId = jobId
+
+          if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-sessions-index',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
+                params: {
+                  id: practiceSurgeryId,
+                  sessionId: routeParamId,
+                },
+              })
+            }, 500)
+          } else {
+            if (this.$route.name === 'sessions-index') {
+              this.$router.push({
+                name: 'sessions-index-id',
+                params: {
+                  id: routeParamId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: 'sessions-index',
+              })
+
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'sessions-index-id',
+                  params: {
+                    id: routeParamId,
+                  },
+                })
+              }, 500)
+            }
+          }
+
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+
+        this.oldGoTo(notification)
       },
 
       oldGoTo (notification) {
@@ -557,55 +1043,58 @@
         }
       },
       
-      seenNotification (notification_id) {
-        this.$store.dispatch("jobs/seenNotification", { id: notification_id })
-      },
+      seenNotification (notificationId) {
+        this.$axios.put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`).then(() => {
+          const notification = this.notifications.find(({ id }) => id === notificationId)
 
-      markAllAsRead () {
-        if (this.notifications.map(item => item.seen).includes(false))
-          this.$store.dispatch("jobs/seenAllNotifications")
+          if (notification) {
+            notification.seen = true
+          }
+
+          const index = this.unseenNotificationIds.findIndex(unseenNotificationId => unseenNotificationId === notificationId)
+
+          if (index > -1) {
+            this.unseenNotificationIds.splice(index, 1)
+          }
+        })
       },
 
       loadMore () {
-        let params = {
-          limit: 3,
-          offset: this.notifications.length
-        }
-        this.$store.dispatch("jobs/fetchMoreNotifications", params)
-      },
+        this.loadingLoadMore = true
+        this.$axios.get(`/api/v1/${this.domain}/notifications`, {
+          params: {
+            order_by: 'created_at:desc',
+            limit: this.limit,
+            offset: this.notifications.length,
+          }
+        }).then((response) => {
+          const notifications = response.data.data.notifications
 
-      seeAllNotifications () {
-        this.clearNotifications()
-        this.limit = 13
-        this.showAll = true
-        this.$store.dispatch("jobs/fetchNotifications", { limit: this.limit })
+          notifications.forEach((notification) => {
+            const index = this.notifications.findIndex(({ id }) => id === notification.id)
+
+            if (index > -1) {
+              this.notifications.splice(index, 1, notification)
+            } else {
+              this.notifications.push(notification)
+            }
+          })
+        }).finally(() => {
+          this.loadingLoadMore = false
+        })
       },
 
       close () {
-        this.showAll = false
-        this.$emit("viewNotif")
+        this.showNotificationsDropdown = false
       },
 
       scrollHandler ({ target: { scrollTop, offsetHeight, scrollHeight } }) {
-        if (this.notifications_count !== this.notifications.length) {
+        if (this.notificationCount !== this.notifications.length) {
           let scroll = Math.round(offsetHeight + scrollTop)
           if (scroll === scrollHeight) {
             this.loadMore()
           }
         }
-      },
-
-      clearNotifications () {
-        this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION")
-        this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
-        this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
-        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION")
-        this.$store.commit(
-          "permanentjobs/CLEAR_PRACTICE_PERMANENT_JOB_NOTIFICATION"
-        )
-        this.$store.commit(
-          "permanentjobs/CLEAR_LOCUM_PERMANENT_JOB_NOTIFICATION"
-        )
       },
 
     },
@@ -634,10 +1123,69 @@
       min-width: 350px;
       max-width: 350px;
     }
+    
     .dropdown {
       width: auto;
       max-height: 500px;
       /* margin-right: 2rem; */
     }
+  }
+  
+  .job-notification {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 700;
+    display: flex;
+    flex-direction: column;
+    max-height: 95%;
+    margin: 50px 20px 0;
+    padding: 0 4px 10px;
+  }
+
+  .notifications:hover .cards {
+    opacity: 1;
+  }
+
+  .notifications::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .job-notification {
+      margin-left: 200px;
+    }
+  }
+
+  @media screen and (min-width: 480px) {
+    .job-notification {
+      margin: 50px 5% 0;
+    }
+  }
+
+  @media screen and (min-width: 320px) {
+    .job-notification {
+      margin: 50px 3% 0;
+    }
+  }
+  .truncate-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s linear;
+  }
+  .truncate-title:hover {
+    display: block;
+  }
+
+  .truncate-info {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s linear;
   }
 </style>

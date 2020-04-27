@@ -1,89 +1,74 @@
 <template>
   <div class="modal-container shadow-lg">
-    <template v-if="job && !job_part">
-      <SessionDetailModal :job="job" @close="close" />
-    </template>
-    <template v-if="!job && job_part">
-      <SessionPartDetailModal :job-part="job_part" @close="close" />
-    </template>
+    <SessionDetailModal :job="job" @close="close" />
   </div>
 </template>
+
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
-import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
-export default {
-  transition: {
-    name: "slide",
-    mode: "out-in"
-  },
-  components: {
-    SessionDetailModal,
-    SessionPartDetailModal
-  },
-  data () {
-    return {
-      job: null,
-      job_part: null
-    }
-  },
-  async asyncData ({ app, params, query, error }) {
-    try {
-      let url = `/api/v1/practice/jobs`
-
-      if (
-        query &&
-        query.jobStatus &&
-        ["ongoing", "completed", "approved", "withdrawn", "cancelled"].includes(
-          query.jobStatus.toLowerCase()
-        )
-      ) {
-        url = `/api/v1/practice/job-parts`
+  import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
+  
+  export default {
+    transition: {
+      name: 'slide',
+      mode: 'out-in'
+    },
+    components: {
+      SessionDetailModal,
+    },
+    data () {
+      return {
+        job: null,
       }
+    },
+    async asyncData ({ app, params, error }) {
+      try {
+        const {
+          sessionId,
+        } = params
 
-      let response = await app.$axios.get(`${url}/${params.sessionId}`)
-      if (response.data.data.job) {
+        let response = await app.$axios.get(`/api/v1/practice/jobs/${sessionId}`)
+
         let job = response.data.data.job
+
         return {
           job
         }
-      }
-
-      if (response.data.data.job_part) {
-        let job_part = response.data.data.job_part
-        return {
-          job_part
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          return error({
+            status: 404,
+            message: 'This session could not be found.',
+          })
         }
+
+        throw err
       }
-    } catch (err) {
-      console.log(err, err.response)
-      if (err && err.response && err.response.status === 404) {
-        return error({
-          status: 404,
-          message: "This session could not be found"
+    },
+
+    methods: {
+      close () {
+        this.$router.push({
+          name: 'hub-surgery-management-id-surgery-sessions',
+          params: {
+            ...this.$route.params,
+          },
+          query: {
+            ...this.$route.query,
+          },
         })
-      }
-      return error({ status: 404, message: "Page Not Found" })
-    }
-  },
-  methods: {
-    close () {
-      this.$router.push({
-        path: `/hub-surgery-management/${
-          this.$route.params.id
-        }/surgery-sessions`,
-        query: { ...this.$route.query }
-      })
-    }
+      },
+    },
+
   }
-}
 </script>
+
 <style scoped>
-.modal-container {
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
   .modal-container {
-    width: 70%;
+    z-index: 510;
   }
-}
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>

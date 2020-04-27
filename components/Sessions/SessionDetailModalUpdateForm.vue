@@ -247,15 +247,14 @@
           />
 
           <AppInput
-            v-model="session_amendment"
+            v-model="selectedUpdateRemarksValue"
             :type="'select'"
-            :name="'session_amendment'"
+            :name="'selectedUpdateRemarksValue'"
             :label="'Choose one reason for session amendment?'"
-            :items="session_amendment_list"
-            :error="formError.find(item => item.field === 'session_amendment')"
+            :items="updateRemarksOptions"
           />
           <AppInput
-            v-if="session_amendment === 'other'"
+            v-if="!selectedUpdateRemarksValue"
             v-model="form.update_remarks"
             :type="'textarea'"
             :name="'update_remarks'"
@@ -619,29 +618,6 @@
     { label: "Home visits", value: "Home visits" }
   ]
 
-  const session_amendment_list = [
-    {
-      label: "Change job rate",
-      value: "Change job rate"
-    },
-    {
-      label: "Change required compliance levels",
-      value: "Change required compliance levels"
-    },
-    {
-      label: "Change work hours",
-      value: "Change work hours"
-    },
-    {
-      label: "Change work shift",
-      value: "Change work shift"
-    },
-    {
-      label: "Other",
-      value: "other"
-    }
-  ]
-
   export default {
 
     components: {
@@ -691,8 +667,29 @@
         auto_assign_job: false,
         selection_notification: false,
         shifts: [],
-        session_amendment: "other",
-        session_amendment_list,
+        selectedUpdateRemarksValue: null,
+        updateRemarksOptions: [
+          {
+            label: 'Change job rate',
+            value: 'Change job rate'
+          },
+          {
+            label: 'Change required compliance levels',
+            value: 'Change required compliance levels'
+          },
+          {
+            label: 'Change work hours',
+            value: 'Change work hours'
+          },
+          {
+            label: 'Change work shift',
+            value: 'Change work shift'
+          },
+          {
+            label: 'Other',
+            value: null
+          }
+        ],
         bank_first: false,
         bank_only: false,
 
@@ -844,20 +841,85 @@
           return []
         }
 
+        const complianceDocuments = this.professionComplianceCategories
+          .reduce((compliances, professionComplianceCategory) => {
+            const {
+              reference_compliance_documents: referenceComplianceDocuments,
+              mandatory_compliance_documents: mandatoryComplianceDocuments,
+              optional_compliance_documents: optionalComplianceDocuments,
+            } = professionComplianceCategory
+
+            if (professionComplianceCategory.id === this.selectedProfessionComplianceCategory.id) {
+              [
+                referenceComplianceDocuments,
+                mandatoryComplianceDocuments,
+                optionalComplianceDocuments,
+              ].forEach((complianceDocuments) => {
+                complianceDocuments.forEach((complianceDocument) => {
+                  const {
+                    id,
+                    name,
+                    compliance_document_type_name: complianceDocumentTypeName,
+                    child_compliance_documents: childComplianceDocuments,
+                  } = complianceDocument
+
+                  if (complianceDocumentTypeName === 'Safeguarding') {
+                    childComplianceDocuments.forEach((childComplianceDocument) => {
+                      const {
+                        id,
+                        name,
+                      } = childComplianceDocument
+
+                      compliances.push({
+                        label: name,
+                        value: id
+                      })
+                    })
+                  } else {
+                    compliances.push({
+                      label: name,
+                      value: id
+                    })
+                  }
+                })
+              })
+            }
+
+            return compliances
+          }, [])
+
+        const complianceDocumentIds = complianceDocuments.map(({ value }) => value)
+
         return this.practiceProfessionComplianceCategoryComplianceDocuments
-          .filter(practiceProfessionComplianceCategoryComplianceDocument =>
-            practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-              === this.selectedProfessionComplianceCategory.id
-          )
-          .map(practiceProfessionComplianceCategoryComplianceDocument => ({
-            label: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_name,
-            value: practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
-          }))
+          .filter((practiceProfessionComplianceCategoryComplianceDocument) => {
+            const {
+              compliance_document_id: complianceDocumentId,
+              profession_compliance_category_id: professionComplianceCategoryId,
+            } = practiceProfessionComplianceCategoryComplianceDocument
+
+            return professionComplianceCategoryId === this.selectedProfessionComplianceCategory.id
+              && complianceDocumentIds.includes(complianceDocumentId)
+          })
+          .map((practiceProfessionComplianceCategoryComplianceDocument) => {
+            const {
+              compliance_document_id: complianceDocumentId,
+              compliance_document_name: complianceDocumentName,
+            } = practiceProfessionComplianceCategoryComplianceDocument
+
+            return {
+              label: complianceDocumentName,
+              value: complianceDocumentId
+            }
+          })
       },
 
     },
 
     watch: {
+      selectedUpdateRemarksValue () {
+        this.form.update_remarks = this.selectedUpdateRemarksValue || ''
+      },
+
       selectedProfessionComplianceCategory () {
         if (this.selectedProfessionComplianceCategory) {
           const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
@@ -894,7 +956,7 @@
       //   this.getListofDays(days)
       // },
 
-      // session_amendment (value) {
+      // selectedUpdateRemarksValue (value) {
       //   if (value !== "other") {
       //     this.form.update_remarks = value
       //   }
@@ -1107,21 +1169,11 @@
             this.bank_only = true
           }
 
-          this.form.update_remarks = this.job.update_remarks
+          this.selectedUpdateRemarksValue = this.updateRemarksOptions
+            .map(updateRemarksOption => updateRemarksOption.value)
+            .find(updateRemarksOptionValue => updateRemarksOptionValue === this.job.update_remarks) || null
 
-          if (
-            this.session_amendment_list
-              .map(items => items.value)
-              .includes(this.job.update_remarks)
-          ) {
-            this.session_amendment = this.job.update_remarks
-          } else if (
-            !this.session_amendment_list
-              .map(items => items.value)
-              .includes(this.job.update_remarks)
-          ) {
-            this.session_amendment = "other"
-          }
+          this.form.update_remarks = this.job.update_remarks
 
           if (this.job.platform_job.session_requirements === "") {
             this.form.session_requirements = []
@@ -1445,47 +1497,74 @@
 
           this.loading = true
 
+          const oldJobId = this.job.id
           this.$axios
-            .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
-            .then(res => {
+            .put(`/api/v1/practice/jobs/${oldJobId}`, this.form)
+            .then((response) => {
+              const newJobId = response.data.data.job.id
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
                 text: ["Successfully updated job"]
               })
               this.$emit("updateJob", {
-                newJob: res.data.new_job,
-                oldJob: res.data.job
+                newJobId,
+                oldJobId,
               })
             })
             .catch(err => {
               console.log("err", err.response || err)
+
               this.form.clinical_system_id = this.selectedClinicalSystem
+
               this.form.qualification_id = this.selectedQualification
+
               this.form.spoken_language_id = this.selectedSpokenLanguage
 
               this.form.session_requirements = this.form.session_requirements
                 ? this.form.session_requirements.split(",")
                 : []
 
-              if (err.response.status === 500) {
-                this.formError.push({
-                  field: err.response.statusText,
-                  message: "Please check your inputs"
-                })
-              } else if (err.response.status === 400) {
-                // this.formError.push({
-                //   field: "date_start",
-                //   message: err.response.data.message
-                // })
-                // this.formError.push({
-                //   field: "date_end",
-                //   message: err.response.data.message
-                // })
+              let message = null
+
+              if (err.response) {
+                if (err.response.status === 400 || err.response.data.error_messages) {
+                  this.formError = err.response.data.error_messages
+                } else {
+                  message = err.response.data.message
+                }
+              } else if (err.request) {
+                message = 'Something weng wrong!'
               } else {
-                this.formError = err.response.data.error_messages
+                message = err.message
               }
-              throw err
+
+              if (message) {
+                this.$store.commit('SET_NOTIFICATION', {
+                  enabled: true,
+                  status: 'danger',
+                  text: [`${message}`],
+                })
+              }
+
+              // if (err.response.status === 500) {
+              //   this.formError.push({
+              //     field: err.response.statusText,
+              //     message: "Please check your inputs"
+              //   })
+              // } else if (err.response.status === 400) {
+              //   // this.formError.push({
+              //   //   field: "date_start",
+              //   //   message: err.response.data.message
+              //   // })
+              //   // this.formError.push({
+              //   //   field: "date_end",
+              //   //   message: err.response.data.message
+              //   // })
+              // } else {
+              //   this.formError = err.response.data.error_messages
+              // }
+              // throw err
             })
             .finally(() => {
               this.loading = false

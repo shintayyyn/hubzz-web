@@ -1,84 +1,13 @@
 <template>
   <section class="jobs-section">
     <div class="flex flex-row justify-start overflow-x-auto py-3">
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Allocated"
+      <div v-for="tab in tabs" :key="tab.title" class="relative">
+        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+                   :to="tab.route"
                    class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'allocated')? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+                   :class="tab.active ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >
-          Allocated
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Ongoing"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'ongoing' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Ongoing
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Available"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase()) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Available
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Applied"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'applied' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Applied
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Unsuccessful"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'unsuccessful' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Unsuccessful
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Withdrawn"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Withdrawn
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Cancelled"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'cancelled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Cancelled
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Completed"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'completed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Completed
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Approved"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Approved
-        </nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'" to="/jobs?status=Private"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'private' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          Private
+          {{ tab.title }}
         </nuxt-link>
       </div>
     </div>
@@ -90,47 +19,158 @@
 </template>
 
 <script>
-  const invoiceStatusList = [
-    {
-      label: "All",
-      value: ""
-    },
-    {
-      label: "To Be Invoice",
-      value: "To Be Invoice"
-    },
-    {
-      label: "Disputed",
-      value: "Disputed"
-    },
-    {
-      label: "Invoiced",
-      value: "Invoiced"
-    }
-  ]
-
-  const practiceTypeList = [
-    {
-      label: "All",
-      value: ""
-    },
-    {
-      label: "Platform",
-      value: "Platform"
-    },
-    {
-      label: "Private",
-      value: "Private"
-    }
-  ]
-
   export default {
-    // middleware: "isVerified",
     data () {
       return {
-        invoiceStatusList,
-        practiceTypeList
+        invoiceStatusList: [
+          {
+            label: 'All',
+            value: '',
+          },
+          {
+            label: 'To Be Invoice',
+            value: 'To Be Invoice',
+          },
+          {
+            label: 'Disputed',
+            value: 'Disputed',
+          },
+          {
+            label: 'Invoiced',
+            value: 'Invoiced',
+          }
+        ],
+        practiceTypeList: [
+          {
+            label: 'All',
+            value: '',
+          },
+          {
+            label: 'Platform',
+            value: 'Platform',
+          },
+          {
+            label: 'Private',
+            value: 'Private',
+          }
+        ],
       }
-    }
+    },
+
+    computed: {
+      tabs () {
+        const {
+          query,
+        } = this.$route
+
+        const {
+          status = 'Allocated',
+        } = query
+
+        return [
+          {
+            title: 'Allocated',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Allocated',
+              },
+            },
+            active: status.toLowerCase() === ('Allocated').toLowerCase(),
+          },
+          {
+            title: 'Ongoing',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Ongoing',
+              },
+            },
+            active: status.toLowerCase() === ('Ongoing').toLowerCase(),
+          },
+          {
+            title: 'Available',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Available',
+              },
+            },
+            active: status.toLowerCase() === ('Available').toLowerCase(),
+          },
+          {
+            title: 'Applied',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Applied',
+              },
+            },
+            active: status.toLowerCase() === ('Applied').toLowerCase(),
+          },
+          {
+            title: 'Unsuccessful',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Unsuccessful',
+              },
+            },
+            active: status.toLowerCase() === ('Unsuccessful').toLowerCase(),
+          },
+          {
+            title: 'Withdrawn',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Withdrawn',
+              },
+            },
+            active: status.toLowerCase() === ('Withdrawn').toLowerCase(),
+          },
+          {
+            title: 'Cancelled',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Cancelled',
+              },
+            },
+            active: status.toLowerCase() === ('Cancelled').toLowerCase(),
+          },
+          {
+            title: 'Completed',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Completed',
+              },
+            },
+            active: status.toLowerCase() === ('Completed').toLowerCase(),
+          },
+          {
+            title: 'Approved',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Approved',
+              },
+            },
+            active: status.toLowerCase() === ('Approved').toLowerCase(),
+          },
+          {
+            title: 'Private',
+            route: {
+              name: 'jobs-index',
+              query: {
+                status: 'Private',
+              },
+            },
+            active: status.toLowerCase() === ('Private').toLowerCase(),
+          },
+        ]
+      },
+    },
+
   }
 </script>

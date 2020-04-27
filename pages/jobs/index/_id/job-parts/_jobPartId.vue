@@ -2,60 +2,54 @@
   <div class="modal-container shadow-lg">
     <JobDetailModalAppointment
       v-if="!activeJobTypePlatform"
-      :job="job"
+      :job="jobPart.job"
       @close="close"
       @appointmentUpdated="$emit('appointmentUpdated')"
     />
-    <JobDetailModal
-      v-if="activeJobTypePlatform"
-      :job="job"
-      @close="close"
-      @applied="$emit('applied', $event)"
-      @cancelled="$emit('cancelled', $event)"
-      @unassign="$emit('unassign', $event)"
-    />
+    <JobPartDetailModal v-if="activeJobTypePlatform" :job_part="jobPart" @close="close" />
   </div>
 </template>
 
 <script>
-  import JobDetailModal from "@/components/Jobs/JobDetailModal"
+  import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
   import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
   export default {
+
     transition: {
       name: 'slide',
       mode: 'out-in',
     },
 
     components: {
-      JobDetailModal,
+      JobPartDetailModal,
       JobDetailModalAppointment,
     },
 
     data () {
       return {
-        job: null,
+        jobPart: null,
       }
     },
 
     computed: {
       activeJobTypePlatform () {
-        return this.job.type === 'Platform'
+        return this.jobPart && this.jobPart.job.type === 'Platform'
       },
     },
 
     async asyncData ({ app, params, error }) {
       try {
         const {
-          id,
+          jobPartId,
         } = params
 
-        let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`)
+        let response = await app.$axios.get(`/api/v1/locum/job-parts/${jobPartId}`)
 
-        let job = response.data.data.job
+        let jobPart = response.data.data.job_part
 
         return {
-          job,
+          jobPart,
         }
       } catch (err) {
         if (err.response && err.response.status === 404) {
