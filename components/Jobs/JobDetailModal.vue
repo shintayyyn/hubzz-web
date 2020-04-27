@@ -313,8 +313,9 @@ export default {
 			}
 		},
 		accept () {
+			const jobId = this.job.id
 			this.$axios
-				.$post(`/api/v1/locum/jobs/${this.job.id}/update-accept`)
+				.$post(`/api/v1/locum/jobs/${jobId}/update-accept`)
 				.then(res => {
 					this.$emit("close")
 					this.$store.commit("SET_NOTIFICATION", {
@@ -324,17 +325,18 @@ export default {
 					})
 					setTimeout(() => {
 						this.$router.push({
-							path: `/jobs/${res.data.job.id}`,
+							path: `/jobs/${jobId}`,
 							query: { ...this.$route.query }
 						})
 					}, 500)
 				})
 		},
 		cancel () {
+			const jobId = this.job.id
 			this.$axios
-				.$delete(`/api/v1/locum/jobs/${this.job.id}/apply`)
-				.then(res => {
-					this.$store.commit("jobs/REMOVE_LOCUM_APPLIED_JOB", res.data.job.id)
+				.$delete(`/api/v1/locum/jobs/${jobId}/apply`)
+				.then(() => {
+					this.$store.commit("jobs/REMOVE_LOCUM_APPLIED_JOB", jobId)
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
