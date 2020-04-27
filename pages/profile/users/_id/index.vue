@@ -343,6 +343,7 @@
     methods: {
 
       save () {
+        this.formError = []
         this.Validate(this.form, ["title", "suffix"])
         if (!this.formError.length) {
           this.loading = true

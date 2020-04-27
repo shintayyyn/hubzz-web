@@ -29,6 +29,7 @@
             v-model="search"
             class="px-1"
             :type="'text'"
+            :placeholder="'Search name, email, username'"
             :name="'search'"
             :label="'Search'"
             :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
@@ -36,23 +37,23 @@
         </div>
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="practice_role"
+            v-model="practiceRole"
             class="px-1"
             :type="'select'"
             :name="'practice_role'"
             :label="'Practice Role'"
-            :items="filterPracticeRoles"
+            :items="practiceRoles"
             :disabled="loading"
           />
         </div>
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="role_id"
+            v-model="practiceUserRoleId"
             class="px-1"
             :type="'select'"
             :name="'role_id'"
             :label="'User Role'"
-            :items="filterUserRoles"
+            :items="practiceUserRoles"
             :disabled="loading"
           />
         </div>
@@ -155,23 +156,23 @@
         loading: false,
         current_page: 1,
         // app table filter
-        filterUserRoles: [],
-        filterPracticeRoles: [
+        practiceUserRoles: [],
+        practiceRoles: [
           {
-            label: "All",
-            value: null
+            label: 'All',
+            value: null,
           },
           {
-            label: "Practice Staff",
-            value: "Practice Staff"
+            label: 'Practice Staff',
+            value: 'Practice Staff',
           },
           {
-            label: "Practice Manager",
-            value: "Practice Manager"
+            label: 'Practice Manager',
+            value: 'Practice Manager',
           },
           {
-            label: "Partner",
-            value: "Partner"
+            label: 'Partner',
+            value: 'Partner',
           }
         ],
         // app table params
@@ -179,8 +180,8 @@
         limit: 5,
         order_by: ["created_at:desc"],
         search: "",
-        role_id: null,
-        practice_role: null,
+        practiceUserRoleId: null,
+        practiceRole: null,
 
         // app table column
         columns: [
@@ -320,27 +321,50 @@
         }
       }
     },
+
     mounted () {
-      this.$axios.$get(`/api/v1/practice/practice-roles`).then(res => {
-        this.filterUserRoles.push({ label: "All", value: null })
-        res.data.roles.forEach(role => {
-          this.filterUserRoles.push({ label: role.name, value: role.id })
+      this.practiceUserRoles = []
+      this.$axios.get(`/api/v1/practice/practice-roles`, {
+        params: {
+          limit: 1000000,
+        },
+      }).then((response) => {
+        const practiceUserRoles = response.data.data.roles
+
+        this.practiceUserRoles.push({
+          label: 'All',
+          value: null,
+        })
+
+        practiceUserRoles.forEach((practiceUserRole) => {
+          this.practiceUserRoles.push({
+            label: practiceUserRole.name,
+            value: practiceUserRole.id,
+          })
         })
       })
     },
+
     methods: {
+
       getUsersPromiseAll () {
+        const params = {
+          search: this.search,
+          practice_role: this.practiceRole,
+          role_id: this.practiceUserRoleId,
+        }
+
         return Promise.all([
           this.$axios.$get(`/api/v1/practice/practice-users/count`, {
             params: {
-              search: this.search
+              ...params,
             }
           }),
           this.$axios.$get(`/api/v1/practice/practice-users`, {
             params: {
+              ...params,
               offset: 0,
               limit: 5,
-              search: this.search
             }
           })
         ]).then(([responseCount, responseUsers]) => {
@@ -376,13 +400,20 @@
           })
         })
       },
+
       getUsers () {
+        const params = {
+          search: this.search,
+          practice_role: this.practiceRole,
+          role_id: this.practiceUserRoleId,
+        }
+
         return this.$axios
           .$get(`/api/v1/practice/practice-users`, {
             params: {
+              ...params,
               offset: this.offset,
               limit: 5,
-              search: this.search
             }
           })
           .then(res => {
@@ -426,6 +457,7 @@
             }
           })
       },
+
       async filterUsers () {
         this.current_page = 1
         this.offset = 0
@@ -434,6 +466,7 @@
         this.loading = false
         this.filterModal = false
       },
+
       async sorted (order_by) {
         this.current_page = 1
         this.offset = 0
@@ -442,6 +475,7 @@
         await this.getUsers()
         this.loading = false
       },
+
       async pagechanged (page) {
         this.current_page = page
         this.offset = this.limit * (page - 1)
@@ -449,6 +483,7 @@
         await this.getUsers()
         this.loading = false
       },
+
       async limitchanged (limit) {
         this.current_page = 1
         this.offset = 0
@@ -457,14 +492,16 @@
         await this.getUsers()
         this.loading = false
       },
+
       clearFilters () {
         this.offset = 0
         this.limit = 5
         this.order_by = ["created_at:desc"]
         this.search = ""
-        this.role_id = null
-        this.practice_role = null
+        this.practiceUserRoleId = null
+        this.practiceRole = null
       },
+
       addUser (user) {
         console.log(user)
         this.getUsers()
