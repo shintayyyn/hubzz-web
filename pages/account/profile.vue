@@ -427,6 +427,14 @@
                 @keypress="inputNumberOnly($event)"
               />
               <AppInput
+                v-model="form.ni_number"
+                :type="'text'"
+                :name="'ni_number'"
+                :label="'NI number'"
+                :error="formError.find(item => item.field === 'ni_number')"
+                required
+              />
+              <AppInput
                 v-model="form.ay_percentage_rate"
                 :type="'number'"
                 :name="'ay_percentage_rate'"
@@ -650,6 +658,7 @@
           ir35: false,
           claim_nhs: false,
           nhs_number: "",
+          ni_number: '',
           ay_percentage_rate: 0,
           mpavc_percentage_rate: 0,
           errbo_percentage_rate: 0,
@@ -908,6 +917,7 @@
         // claim nhs
         this.form.claim_nhs = this.user.claim_nhs
         this.form.nhs_number = this.user.nhs_number
+        this.form.ni_number = this.user.ni_number
         this.form.ay_percentage_rate = this.user.ay_percentage_rate
         this.form.mpavc_percentage_rate = this.user.mpavc_percentage_rate
         this.form.errbo_percentage_rate = this.user.errbo_percentage_rate
@@ -1012,6 +1022,8 @@
         if (["false", false].includes(this.form.claim_nhs)) {
           notRequired.push("nhs_number")
           this.form.nhs_number = null
+          notRequired.push("ni_number")
+          this.form.ni_number = null
         }
 
         if (["false", false].includes(this.form.paid_under_payroll)) {

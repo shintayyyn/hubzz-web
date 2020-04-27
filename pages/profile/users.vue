@@ -500,6 +500,7 @@
         this.search = ""
         this.practiceUserRoleId = null
         this.practiceRole = null
+        this.filterUsers()
       },
 
       addUser (user) {
