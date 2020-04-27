@@ -16,7 +16,7 @@
           </nuxt-link>
         </div>
 
-        <div v-if="authPermissions.includes('Update Profile Users')" class="relative">
+        <div v-if="authPermissions.includes('Update Profile Users') && practiceUser && practiceUser.status !== 'Deactivated'" class="relative">
           <nuxt-link
             :to="`/profile/users/${$route.params.id}/change-password`"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -28,7 +28,7 @@
       </div>
 
       <div class="w-full mt-5">
-        <nuxt-child @updateUser="$emit('updateUser', $event)" />
+        <nuxt-child :user="practiceUser" @updateUser="$emit('updateUser', $event)" />
       </div>
     </div>
   </div>
@@ -37,12 +37,36 @@
 <script>
   export default {
 
+    data () {
+      return {
+        practiceUser: null,
+      }
+    },
+
     computed: {
 
       authPermissions () {
         return this.$store.getters["permissions"]
       },
 
+    },
+
+    async asyncData ({ app, params, error }) {
+      try {
+        const {
+          id: practiceUserId,
+        } = params
+
+        const practiceUser = await app.$axios.get(`/api/v1/practice/practice-users/${practiceUserId}`)
+          .then(response => response.data.data.user)
+
+        return {
+          practiceUser,
+        }
+      } catch (err) {
+        console.log("err", err || err.response)
+        return error({ status: 404, message: "Page Not Found" })
+      }
     },
 
   }
