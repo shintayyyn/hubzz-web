@@ -262,10 +262,16 @@
       mode: "out-in"
     },
 
+    props: {
+      user: {
+        type: Object,
+        required: true,
+      }
+    },
+
     data () {
       return {
         practice_roles,
-        user: null,
         user_roles: [],
         roles: [],
         form: {
@@ -295,30 +301,18 @@
       },
     },
 
-    async asyncData ({ app, params, error }) {
+    async asyncData ({ app, error }) {
       try {
-        const response = await app.$axios.$get(
-          `/api/v1/practice/practice-users/${params.id}`
-        )
+        const practiceRoles = await app.$axios.get(`/api/v1/practice/practice-roles`)
+          .then(response => response.data.data.roles)
 
-        const user = response.data && response.data.user ? response.data.user : null
-
-        const responseRoles = await app.$axios.$get(
-          `/api/v1/practice/practice-roles`
-        )
-        const roles =
-          responseRoles.data && responseRoles.data.roles
-            ? responseRoles.data.roles.map(item => {
-                return {
-                  label: item.name,
-                  value: item.id
-                }
-              })
-            : []
+        const roles = practiceRoles.map(practiceRole => ({
+          label: practiceRole.name,
+          value: practiceRole.id
+        }))
 
         return {
-          user,
-          roles
+          roles,
         }
       } catch (err) {
         console.log("err", err || err.response)
@@ -410,6 +404,6 @@
       },
 
     },
-  }
 
+  }
 </script>
