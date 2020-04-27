@@ -338,7 +338,7 @@ export default {
         {
           name: "Date Created",
           dataIndex: "date_created",
-          class: "text-center"
+          class: "text-center localDate"
         },
         {
           name: "Actions",
@@ -660,9 +660,6 @@ export default {
         job_parts.forEach(item => {
           locum_form_bs.push({
             ...item,
-            date_created: app
-              .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
-              .format('DD/MM/YYYY | HH:mm'),
             practice: item.forms[0].practice_name
           })
         })
@@ -891,8 +888,6 @@ export default {
             this.locum_form_bs = response.data.locum_form_bs.map(item => {
               return {
                 ...item,
-                date_created: this.$moment(item.date_created, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
-                  .format('DD/MM/YYYY | HH:mm'),
                 practice: item.forms[0].practice_name
               }
             })
