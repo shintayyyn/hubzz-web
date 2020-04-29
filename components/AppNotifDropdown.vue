@@ -620,19 +620,19 @@
 
           const {
             id: jobId,
-            original_job_id: originalJobId,
+            old_job_id: oldJobId,
             job_parts: jobParts,
           } = job
 
           let routeParamId = jobId
           let routeParamJobPartId = null
 
-          if (notificationTypeName === 'Locum Notification Job Unqualified' && originalJobId) {
-            routeParamId = originalJobId
+          if (notificationTypeName === 'Locum Notification Job Unqualified' && oldJobId) {
+            routeParamId = oldJobId
           }
 
-          if (notificationTypeName === 'Locum Notification Job Unavailable' && originalJobId) {
-            routeParamId = originalJobId
+          if (notificationTypeName === 'Locum Notification Job Unavailable' && oldJobId) {
+            routeParamId = oldJobId
           }
 
           if (notificationTypeName === 'Locum Notification Job Cancelled' && jobParts) {
