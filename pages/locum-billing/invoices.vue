@@ -1042,8 +1042,6 @@ export default {
             this.locum_form_bs = res.data.locum_form_bs.map(item => {
               return {
                 ...item,
-                date_created: this.$moment(item.date_created, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
-                  .format('DD/MM/YYYY | HH:mm'),
                 practice: item.forms[0].practice_name
               }
             })
