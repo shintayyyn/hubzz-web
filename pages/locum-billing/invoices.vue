@@ -233,6 +233,14 @@
                   View Form B
                 </div>
               </div>
+              <!-- <div class="flex justify-center">
+                <div
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="showTest(slotProps.item.id, 'form-b')"
+                >
+                  Show Test Form B
+                </div>
+              </div> -->
             </template>
           </AppTable>
           <div
@@ -697,6 +705,11 @@ export default {
   },
 
   methods: {
+    // showTest(id) {
+    //   this.$axios.$get(`/api/v1/locum/locum-invoices-form-b/${id}`).then(res => {
+    //     console.log(res.data.locum_invoice_form_b)
+    //   })
+    // },
     viewAsPdf (formId, type) {
       let url =
         type === "form-a"
