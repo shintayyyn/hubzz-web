@@ -199,6 +199,7 @@
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unsuccessful',
+          'Locum Notification Job Withdrawn',
 
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -212,6 +213,7 @@
           'Practice Notification Job Reminder',
           'Practice Notification Job Selection Date',
           'Practice Notification Job Unfilled Warning',
+          'Practice Notification Job Withdrawn',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -560,6 +562,7 @@
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unsuccessful',
+          'Locum Notification Job Withdrawn',
         ]
 
         const practiceJobNotifications = [
@@ -572,6 +575,7 @@
           'Practice Notification Job Reminder',
           'Practice Notification Job Selection Date',
           'Practice Notification Job Unfilled Warning',
+          'Practice Notification Job Withdrawn',
         ]
 
         const jobApplicationNotifications = [
