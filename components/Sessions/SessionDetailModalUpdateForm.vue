@@ -421,15 +421,15 @@
 
           <template v-if="hasBanks">
             <AppInput
-              v-model="bank_only"
+              v-model="form.favorite_only"
               :type="'select'"
-              :name="'bank_only'"
+              :name="'favorite_only'"
               :label="'Make this Job available for Bank Only?'"
               :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
               :disabled="job.status === 'Allocated'"
             />
-            <template v-if="['false', false].includes(bank_only)">
+            <template v-if="['false', false].includes(form.favorite_only)">
               <AppInput
                 v-model="bank_first"
                 :type="'select'"
@@ -691,7 +691,6 @@
           }
         ],
         bank_first: false,
-        bank_only: false,
 
         selection_date: {
           date: null,
@@ -743,6 +742,7 @@
           shift_id: "",
           auto_assign_at: null,
           selection_date: null,
+          favorite_only: false,
           favorite_only_until: null,
           update_accepted_until: null
         },
@@ -1143,7 +1143,9 @@
             this.selection_notification = true
           }
 
-          if (
+          if (this.job.favorite_only) {
+            this.form.favorite_only = true
+          } else if (
             this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
               this.job.platform_job.favorite_only_until,
               "seconds"
@@ -1160,13 +1162,6 @@
               this.job.platform_job.favorite_only_until,
               "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
             ).format("HH:mm")
-          } else if (
-            this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
-              this.job.platform_job.favorite_only_until,
-              "seconds"
-            ) <= 0
-          ) {
-            this.bank_only = true
           }
 
           this.selectedUpdateRemarksValue = this.updateRemarksOptions
@@ -1319,16 +1314,16 @@
           "include_saturday",
           "include_sunday",
           "compliance_document_id",
-          "bank_only",
           "auto_assign_at",
           "session_requirements",
           "session_structure_information",
           "hours",
-          "minutes"
+          "minutes",
+          "favorite_only",
         ]
 
         if (!this.hasBanks) {
-          this.bank_only = false
+          this.form.favorite_only = false
           this.bank_first = false
           this.favorite_only_until.date = null
           this.favorite_only_until.time = null
@@ -1360,7 +1355,7 @@
           notRequired.push("selection_date")
         }
 
-        if (["true", true].includes(this.bank_only)) {
+        if (["true", true].includes(this.form.favorite_only)) {
           this.bank_first = false
         }
 
@@ -1468,15 +1463,6 @@
               this.favorite_only_until.date,
               "YYYY-MM-DD"
             ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
-          }
-
-          if (["true", true].includes(this.bank_only)) {
-            this.form.favorite_only_until = `${this.$moment(
-              this.form.date_start,
-              "YYYY-MM-DD"
-            )
-              .add(1, "days")
-              .format("YYYY-MM-DD HH:mm")}`
           }
 
           if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {

@@ -366,14 +366,14 @@
 
                   <template v-if="hasBanks">
                     <AppInput
-                      v-model="bank_only"
+                      v-model="form.favorite_only"
                       :type="'select'"
-                      :name="'bank_only'"
+                      :name="'favorite_only'"
                       :label="'Make this Job available for Bank Only?'"
                       :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
                       required
                     />
-                    <template v-if="['false', false].includes(bank_only)">
+                    <template v-if="['false', false].includes(form.favorite_only)">
                       <AppInput
                         v-model="bank_first"
                         :type="'select'"
@@ -575,7 +575,7 @@
                       type="number"
                       class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
                       :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
-                      style="text-align:right;'"
+                      style="text-align:right;"
                       min="1"
                       maxlength="8"
                       @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
@@ -598,7 +598,7 @@
                       type="number"
                       class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
                       :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
-                      style="text-align:right;'"
+                      style="text-align:right;"
                       max="60"
                       min="1"
                       maxlength="2"
@@ -651,7 +651,7 @@
               class="ml-auto"
               :label="'Save and publish Job'"
               :disabled="loading"
-              @click="publish"
+              @click="createJob"
             />
           </div>
         </template>
@@ -713,7 +713,6 @@
         auto_assign_job: false,
         selection_notification: false,
         bank_first: false,
-        bank_only: false,
         shifts: [],
 
         selection_date: {
@@ -765,6 +764,7 @@
           shift: "",
           auto_assign_at: null,
           selection_date: null,
+          favorite_only: false,
           favorite_only_until: null
         },
         formError: []
@@ -1219,7 +1219,9 @@
               : null
           }
 
-          if (
+          if (this.repostJob.favorite_only) {
+            this.form.favorite_only = true
+          } else if (
             this.$moment(this.repostJob.date_start, "YYYY-MM-DD").diff(
               this.repostJob.platform_job.favorite_only_until,
               "seconds"
@@ -1234,13 +1236,6 @@
               this.repostJob.platform_job.favorite_only_until,
               "YYYY-MM-DDTHH:mm:ss:sssZ"
             ).format("HH:mm")
-          } else if (
-            this.$moment(this.repostJob.date_start, "YYYY-MM-DD").diff(
-              this.repostJob.platform_job.favorite_only_until,
-              "seconds"
-            ) <= 0
-          ) {
-            this.bank_only = true
           }
         }
       }).finally(() => {
@@ -1333,7 +1328,7 @@
         }
       },
 
-      publish () {
+      createJob () {
         this.formError = []
 
         let notRequired = [
@@ -1353,11 +1348,12 @@
           "compliance_document_id",
           "auto_assign_at",
           "hours",
-          "minutes"
+          "minutes",
+          "favorite_only",
         ]
 
         if (!this.hasBanks) {
-          this.bank_only = false
+          this.form.favorite_only = false
           this.bank_first = false
           this.favorite_only_until.date = null
           this.favorite_only_until.time = null
@@ -1385,7 +1381,7 @@
           notRequired.push("selection_date")
         }
 
-        if (["true", true].includes(this.bank_only)) {
+        if (["true", true].includes(this.form.favorite_only)) {
           this.bank_first = false
         }
 
@@ -1419,7 +1415,9 @@
         }
 
         this.validateNumber(this.form.rate, "rate")
+
         this.Validate(this.form, notRequired)
+
         if (!this.formError.length) {
           this.form.profession_id = this.form.role
           this.form.shift_id = this.form.shift
@@ -1475,14 +1473,6 @@
               this.favorite_only_until.date,
               "YYYY-MM-DD"
             ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
-          }
-          if (["true", true].includes(this.bank_only)) {
-            this.form.favorite_only_until = `${this.$moment(
-              this.form.date_end,
-              "YYYY-MM-DD"
-            )
-              .add(1, "days")
-              .format("YYYY-MM-DD HH:mm")}`
           }
 
           if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {

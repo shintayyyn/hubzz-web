@@ -168,13 +168,15 @@ export default {
 	},
 	computed: {
 		hasNewChanges () {
-			return (
-				["Allocated", "Applied"].includes(this.job.locum_status) &&
-				((this.job.applied_update_accepted === false &&
-					this.job.applied_update_accepted_until) ||
-					(this.job.update_accepted === false &&
-						this.job.update_accepted_until))
-			)
+      if (this.job.locum_status === 'Allocated') {
+        return this.job.update_accepted_until && !this.job.update_accepted
+      }
+
+      if (this.job.locum_status === 'Applied') {
+        return this.job.applied_update_accepted_until && !this.job.applied_update_accepted
+      }
+
+      return false
 		},
 		updateDeadline () {
 			if (this.job.locum_status === "Allocated") {
