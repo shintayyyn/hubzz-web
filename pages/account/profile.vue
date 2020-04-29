@@ -418,6 +418,15 @@
 
             <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
               <AppInput
+                v-model="form.section_scheme_year"
+                :type="'select'"
+                :name="'section_scheme_year'"
+                :label="'NHS Pension Scheme Year?'"
+                :items="[{ label: '1995/2008', value: '1995/2008' }, { label: '2015', value: '2015' }]"
+                required
+              />
+
+              <AppInput
                 v-model="form.nhs_number"
                 :type="'text'"
                 :name="'nhs_number'"
@@ -447,6 +456,13 @@
                 :name="'mpavc_percentage_rate'"
                 :label="'Money Purchase AVC % Rate'"
                 :error="formError.find(item => item.field === 'mpavc_percentage_rate')"
+              />
+              <AppInput
+                v-model="form.apc_percentage_rate"
+                :type="'number'"
+                :name="'apc_percentage_rate'"
+                :label="'Additional Pension Contribution'"
+                :error="formError.find(item => item.field === 'apc_percentage_rate')"
               />
               <AppInput
                 v-model="form.errbo_percentage_rate"
@@ -657,10 +673,12 @@
           account_number: "",
           ir35: false,
           claim_nhs: false,
+          section_scheme_year: false,
           nhs_number: "",
           ni_number: '',
           ay_percentage_rate: 0,
           mpavc_percentage_rate: 0,
+          apc_percentage_rate: 0,
           errbo_percentage_rate: 0,
           pcse_or_lhb_ea_code: '',
           nhs_registration_number: '',
@@ -916,10 +934,12 @@
         this.form.ir35 = this.user.ir35
         // claim nhs
         this.form.claim_nhs = this.user.claim_nhs
+        this.form.section_scheme_year = this.user.section_scheme_year
         this.form.nhs_number = this.user.nhs_number
         this.form.ni_number = this.user.ni_number
         this.form.ay_percentage_rate = this.user.ay_percentage_rate
         this.form.mpavc_percentage_rate = this.user.mpavc_percentage_rate
+        this.form.apc_percentage_rate = this.user.apc_percentage_rate
         this.form.errbo_percentage_rate = this.user.errbo_percentage_rate
         this.form.pcse_or_lhb_ea_code = this.user.pcse_or_lhb_ea_code
         this.form.nhs_registration_number = this.user.nhs_registration_number
@@ -994,12 +1014,14 @@
           'mandatory_training_id',
           'ir35',
           'claim_nhs',
+          'section_scheme_year',
           'max_rate_per_hour',
           'max_rate_per_half_day_session',
           'max_rate_per_whole_day_session',
           'mpl_or_npl_number',
           'ay_percentage_rate',
           'mpavc_percentage_rate',
+          'apc_percentage_rate',
           'errbo_percentage_rate',
           'pcse_or_lhb_ea_code',
           'nhs_registration_number',
