@@ -151,5 +151,47 @@ export default {
       }
       
     })
+
+    this.$socket.on('Practice Notification Hub Created Permanent Job for Spoke', async (permanentJob) => {
+      console.log('permanentJob', permanentJob.id)
+      
+      let permanent_job = null
+
+      let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanentJob.id}`)
+
+      if(response.data && response.data.permanent_job) {
+        permanent_job = await response.data.permanent_job
+      }
+
+      if(permanent_job) {
+        commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {
+          permanent_job,
+          notificationType: 'Practice Notification Hub Posted Permanent Job Posting'
+        })
+      }
+      
+    })
+
+    this.$socket.on('Practice Notification Spoke Created Pending Permanent Job', async (permanentJob) => {
+      console.log('permanentJob', permanentJob.id)
+      
+      let permanent_job = null
+
+      let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanentJob.id}`)
+
+      if(response.data && response.data.permanent_job) {
+        permanent_job = await response.data.permanent_job
+      }
+
+      if(permanent_job) {
+        commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {
+          permanent_job,
+          notificationType: 'Practice Notification Spoke Posted Pending Permanent Job'
+        })
+      }
+      
+    })
+
+
   }
 }

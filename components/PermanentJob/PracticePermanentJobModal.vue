@@ -141,7 +141,7 @@
                   $route.name.includes('hub-surgery-management') && 
                     $auth.user.practice_detail.practice.type === 'Hub' &&
                     permanent_job.job_posting_status === 'Pending'"
-                    class="w-full"
+                class="w-full"
               >
                 <AppButton
                   class="font-semibold"
@@ -155,7 +155,7 @@
                   :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
                   @click="showCancel = true"
                 />
-                <div class="mt-2 w-full" v-if="showCancel === true">
+                <div v-if="showCancel === true" class="mt-2 w-full">
                   <AppInput
                     v-if="showCancel === true"
                     v-model="approve_or_reject.rejection_reason"
@@ -506,9 +506,11 @@ export default {
 			if (value === false) {
 				this.getPermanentJob()
 			} else {
-        console.log(this.permanent_job)
         this.form.practice_id = this.permanent_job.practice_id
-        this.form.parent_practice_id = this.permanent_job.parent_practice_id ? this.permanent_job.parent_practice_id : null
+        this.form.parent_practice_id = this.permanent_job.parent_practice_id 
+          || this.$auth.user.practice_detail.practice.parent_practice_id 
+          ? this.permanent_job.parent_practice_id
+            || this.$auth.user.practice_detail.practice.parent_practice_id : null
 				this.form.title = this.permanent_job.title
 				this.form.description = this.permanent_job.description
 				this.form.date_posted = this.$moment().format("YYYY-MM-DD"),
@@ -557,9 +559,9 @@ export default {
 		}
 	},
 	created () {
+    console.log('me practice', this.$auth.user.practice_detail.practice)
     console.log('practice',this.$auth.user.practice_detail.practice.type)
 		this.loading = true
-
 		Promise.all([
       this.getPermanentJob(),
 			this.$axios.$get("api/v1/practice/me/practice-job-practices"),
@@ -569,7 +571,6 @@ export default {
 		])
 			.then(
 				([
-          getPermanentJob,
 					responsePracticeLists,
 					responseRateLists,
 					responseShifts,
@@ -612,7 +613,11 @@ export default {
 				this.form.salary_amount = this.permanent_job.salary_amount
 				this.form.salary_description_2 = this.permanent_job.salary_description_2
 				this.form.work_hours = this.permanent_job.work_hours
-				this.form.practice_id = this.permanent_job.practice_id
+        this.form.practice_id = this.permanent_job.practice_id
+        this.form.parent_practice_id = this.permanent_job.parent_practice_id 
+          || this.$auth.user.practice_detail.practice.parent_practice_id 
+          ? this.permanent_job.parent_practice_id
+            || this.$auth.user.practice_detail.practice.parent_practice_id : null
 				this.form.profession_id = this.permanent_job.profession_id
 				this.loading = false
 			})
@@ -798,7 +803,8 @@ export default {
             ...this.form,
             salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
           })
-					.then(() => {
+					.then((res) => {
+            console.log('res', res)
             let goToRoute = this.$route.name.includes("hub-surgery-management") 
               ? `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs`
               :`/permanent-jobs`

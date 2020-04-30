@@ -189,7 +189,6 @@
           'Locum Notification Compliance Rejected',
           'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
-          'Locum Notification Job Application Auto Cancelled',
           'Locum Notification Job Application Cancelled',
           'Locum Notification Job Applied',
           'Locum Notification Job Auto Withdrawn',
@@ -205,7 +204,6 @@
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
           'Practice Notification Job Application',
-          'Practice Notification Job Application Auto Cancelled',
           'Practice Notification Job Application Cancelled',
           'Practice Notification Job Applied',
           'Practice Notification Job Auto Withdrawn',
@@ -534,7 +532,6 @@
         const locumJobNotifications = [
           'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
-          'Locum Notification Job Application Auto Cancelled',
           'Locum Notification Job Application Cancelled',
           'Locum Notification Job Applied',
           'Locum Notification Job Auto Withdrawn',
@@ -565,7 +562,6 @@
 
         const jobApplicationNotifications = [
           'Practice Notification Job Application',
-          'Practice Notification Job Application Auto Cancelled',
           'Practice Notification Job Application Cancelled',
         ]
 
