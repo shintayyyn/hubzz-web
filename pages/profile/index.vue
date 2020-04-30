@@ -128,6 +128,55 @@
                         :error="formError.find(item => item.field === 'email')" required
                         @submit="save" @blur="CheckEmptyField(form.email, 'email')"
               />
+              <template v-if="isOOH">
+                <AppInput v-model="form.national_insurance_number" :type="'text'" :name="'national_insurance_number'" :label="'National Insurance number'"
+                        :error="formError.find(item => item.field === 'national_insurance_number')" required
+                        @submit="save" @blur="CheckEmptyField(form.national_insurance_number, 'national_insurance_number')"
+                        @keypress="inputNumberOnly($event)"
+                />
+                <AppInput v-model="form.sd_number" :type="'text'" :name="'sd_number'" :label="'NHS Pension Scheme Membership number'"
+                        :error="formError.find(item => item.field === 'sd_number')" required
+                        @submit="save" @blur="CheckEmptyField(form.sd_number, 'sd_number')"
+                        @keypress="inputNumberOnly($event)"
+                />
+                <AppInput v-model="form.paying_reference" :type="'text'" :name="'paying_reference'" :label="'Paying reference number'"
+                        :error="formError.find(item => item.field === 'paying_reference')" required
+                        @submit="save" @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
+                        @keypress="inputNumberOnly($event)"
+                />
+                <AppInput v-model="form.ea_code" :type="'text'" :name="'ea_code'" :label="'EA Code'"
+                        :error="formError.find(item => item.field === 'ea_code')" required
+                        @submit="save" @blur="CheckEmptyField(form.ea_code, 'ea_code')"
+                />
+                <AppInput
+                  v-model="form.section_scheme_year"
+                  :type="'select'"
+                  :name="'section_scheme_year'"
+                  :label="'NHS Pension Scheme Year?'"
+                  :items="[{ label: '1995/2008', value: '1995/2008' }, { label: '2015', value: '2015' }]"
+                  required
+                />
+                <AppInput v-model="form.professional_nhs_expenses" :type="'text'" :name="'professional_nhs_expenses'" :label="'Professional NHS Expense'"
+                        :error="formError.find(item => item.field === 'professional_nhs_expenses')" required
+                        @submit="save" @blur="CheckEmptyField(form.professional_nhs_expenses, 'professional_nhs_expenses')"
+                />
+                <AppInput v-model="form.added_year_contributions" :type="'text'" :name="'added_year_contributions'" :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
+                        :error="formError.find(item => item.field === 'added_year_contributions')" required
+                        @submit="save" @blur="CheckEmptyField(form.added_year_contributions, 'added_year_contributions')"
+                />
+                <AppInput v-model="form.added_early_retirement_contributions" :type="'text'" :name="'added_early_retirement_contributions'" :label="'Additional contributions for Early Retirement Reduction Buy Out'"
+                        :error="formError.find(item => item.field === 'added_early_retirement_contributions')" required
+                        @submit="save" @blur="CheckEmptyField(form.added_early_retirement_contributions, 'added_early_retirement_contributions')"
+                />
+                <AppInput v-model="form.nhsps_employer_contributions" :type="'text'" :name="'nhsps_employer_contributions'" :label="'NHSPS employer contributions'"
+                        :error="formError.find(item => item.field === 'nhsps_employer_contributions')" required
+                        @submit="save" @blur="CheckEmptyField(form.nhsps_employer_contributions, 'nhsps_employer_contributions')"
+                />
+                <AppInput v-model="form.nhs_pension_scheme_employing_authority_name" :type="'text'" :name="'nhs_pension_scheme_employing_authority_name'" :label="'NHSPS employing authority name'"
+                        :error="formError.find(item => item.field === 'nhs_pension_scheme_employing_authority_name')" required
+                        @submit="save" @blur="CheckEmptyField(form.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
+                />
+              </template>
             </div>
             <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput v-model="form.practice_type_id" :type="'multi-checkbox'"
@@ -320,6 +369,7 @@
     data () {
       return {
         // surgery: null,
+        isOOH: false,
         modal: false,
         loading: false,
         input_file_loading: false,
@@ -339,7 +389,17 @@
           bank_name: "",
           sort_code: "",
           account_number: "",
-          practice_profession_compliance_category_compliance_documents: []
+          practice_profession_compliance_category_compliance_documents: [],
+          national_insurance_number: null,
+          sd_number: null,
+          paying_reference: null,
+          ea_code: null,
+          professional_nhs_expenses: null,
+          section_scheme_year: null,
+          added_year_contributions: null,
+          added_early_retirement_contributions: null,
+          nhsps_employer_contributions: null,
+          nhs_pension_scheme_employing_authority_name: null,
         },
         name: "",
         formError: []
@@ -387,6 +447,9 @@
         value
           ? (document.body.style.overflow = "hidden")
           : (document.body.style.overflow = "auto")
+      },
+      'form.practice_type_id'(newValue, oldValue) {
+        this.isOOH = newValue.includes(8) ? true : false
       }
     },
     async asyncData ({ app, store, redirect, error }) {
@@ -496,6 +559,7 @@
       this.practice.practice_types.forEach(item => {
         this.form.practice_type_id.push(item.id)
       })
+      this.isOOH = this.form.practice_type_id.includes(8) ? true : false
       this.practice.mandatory_trainings.forEach(item => {
         this.form.mandatory_training_id.push(item.id)
       })
@@ -516,6 +580,16 @@
           }
         }
       )
+      this.form.national_insurance_number = this.practice.national_insurance_number
+      this.form.sd_number = this.practice.sd_number
+      this.form.paying_reference = this.practice.paying_reference
+      this.form.ea_code = this.practice.ea_code
+      this.form.professional_nhs_expenses = this.practice.professional_nhs_expenses
+      this.form.section_scheme_year = this.practice.section_scheme_year
+      this.form.added_year_contributions = this.practice.added_year_contributions
+      this.form.added_early_retirement_contributions = this.practice.added_early_retirement_contributions
+      this.form.nhsps_employer_contributions = this.practice.nhsps_employer_contributions
+      this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name
     },
     methods: {
       async onFileInput (e) {
@@ -618,6 +692,21 @@
           "vat_registered",
           "practice_profession_compliance_category_compliance_documents"
         ]
+
+        if (!this.form.practice_type_id.includes(8)) {
+          notRequired.push(
+            "national_insurance_number",
+            "sd_number",
+            "paying_reference",
+            "ea_code",
+            "professional_nhs_expenses",
+            "section_scheme_year",
+            "added_year_contributions",
+            "added_early_retirement_contributions",
+            "nhsps_employer_contributions",
+            "nhs_pension_scheme_employing_authority_name",
+          )
+        }
 
         if (
           this.form.use_variation_terms === false ||
