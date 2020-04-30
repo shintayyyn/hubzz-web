@@ -233,6 +233,14 @@
                   View Form B
                 </div>
               </div>
+              <!-- <div class="flex justify-center">
+                <div
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="showTest(slotProps.item.id, 'form-b')"
+                >
+                  Show Test Form B
+                </div>
+              </div> -->
             </template>
           </AppTable>
           <div
@@ -338,7 +346,7 @@ export default {
         {
           name: "Date Created",
           dataIndex: "date_created",
-          class: "text-center"
+          class: "text-center localDate"
         },
         {
           name: "Actions",
@@ -660,9 +668,6 @@ export default {
         job_parts.forEach(item => {
           locum_form_bs.push({
             ...item,
-            date_created: app
-              .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
-              .format('DD/MM/YYYY | HH:mm'),
             practice: item.forms[0].practice_name
           })
         })
@@ -700,6 +705,11 @@ export default {
   },
 
   methods: {
+    // showTest(id) {
+    //   this.$axios.$get(`/api/v1/locum/locum-invoices-form-b/${id}`).then(res => {
+    //     console.log(res.data.locum_invoice_form_b)
+    //   })
+    // },
     viewAsPdf (formId, type) {
       let url =
         type === "form-a"
@@ -891,8 +901,6 @@ export default {
             this.locum_form_bs = response.data.locum_form_bs.map(item => {
               return {
                 ...item,
-                date_created: this.$moment(item.date_created, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
-                  .format('DD/MM/YYYY | HH:mm'),
                 practice: item.forms[0].practice_name
               }
             })
@@ -1047,8 +1055,6 @@ export default {
             this.locum_form_bs = res.data.locum_form_bs.map(item => {
               return {
                 ...item,
-                date_created: this.$moment(item.date_created, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]')
-                  .format('DD/MM/YYYY | HH:mm'),
                 practice: item.forms[0].practice_name
               }
             })

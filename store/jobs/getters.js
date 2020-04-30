@@ -426,11 +426,11 @@ export default {
                 let rate_name = ''
                 let rate_type_name = ''
                 let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -458,11 +458,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let assigned_to = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 assigned_to = job.platform_job.appointed_to_locum.user.personal_detail.name
                 jobs.push({
@@ -491,11 +491,11 @@ export default {
                 let rate_name = ''
                 let rate_type_name = ''
                 let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -522,11 +522,11 @@ export default {
                 let rate_name = ''
                 let rate_type_name = ''
                 let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -553,11 +553,11 @@ export default {
                 let rate_name = ''
                 let rate_type_name = ''
                 let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -584,11 +584,11 @@ export default {
                 let rate_name = ''
                 let rate_type_name = ''
                 let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -625,11 +625,11 @@ export default {
                 // let rate_name = ''
                 // let rate_type_name = ''
                 // let shift_name = ''
-                // surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                // surgery_name = job.practice_name
                 // date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 // date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 // rate_name = job.rate
-                // rate_type_name = job.locum_detail_rate_type.name
+                // rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 // shift_name = job.shift.name
                 // jobs.push({
                 //     ...job,
@@ -938,11 +938,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -971,11 +971,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1005,11 +1005,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1039,11 +1039,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1073,11 +1073,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1108,11 +1108,11 @@ export default {
                     let rate_type_name = ''
                     let shift_name = ''
                     let completed_at = ''
-                    surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                    surgery_name = job.practice_name
                     date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                     date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                     rate_name = job.rate
-                    rate_type_name = job.locum_detail_rate_type.name
+                    rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                     shift_name = job.shift.name
                     completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                     jobs.push({
@@ -1143,11 +1143,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1177,11 +1177,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1211,11 +1211,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1245,11 +1245,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1279,11 +1279,11 @@ export default {
                 let rate_type_name = ''
                 let shift_name = ''
                 let completed_at = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                surgery_name = job.practice_name
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
+                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1344,7 +1344,7 @@ export default {
             date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
             date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
             rate_name = job.rate
-            rate_type_name = job.locum_detail_rate_type.name
+            rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
             shift_name = job.shift.name
             completed_at = job.date_end
             jobs.push({
@@ -1391,4 +1391,4 @@ export default {
         })
         return jobs
     },
-}   
+}

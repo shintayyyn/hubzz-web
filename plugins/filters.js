@@ -2,11 +2,15 @@ import Vue from 'vue'
 import moment from 'moment'
 
 Vue.filter('localDate', function (date, dateOnly) {
+  const formattedDate = moment(date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY')
+
   if (dateOnly) {
-    return `${moment(date).format('L')}`
+    return formattedDate
   }
+  
   if (date) {
-    return `${moment(date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').utc().format('DD/MM/YYYY')} | ${moment(date).utc().format('HH:mm:ss')}`
+    const formattedTime = moment(date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')
+    return `${formattedDate} | ${formattedTime}`
   }
 })
 
@@ -30,13 +34,13 @@ Vue.filter('fileSize', function (fileSize, sizeType) {
   switch (sizeType) {
     case 'KB':
       sizeDivider = 1024
-      break;
+      break
     case 'MB':
       sizeDivider = 1048576
-      break;
+      break
     case 'GB':
       sizeDivider = 1073741824
-      break;
+      break
     default:
       sizeDivider = 1048576
   }
@@ -63,6 +67,6 @@ Vue.filter('hoursMinutes', function (num) {
 })
 
 Vue.filter('trim', function (text) {
-  return text.replace(/^\s*/, "").replace(/\s*$/, "");
+  return text.replace(/^\s*/, "").replace(/\s*$/, "")
 })
 

@@ -100,6 +100,9 @@ export default {
       src: '@/plugins/validator.js',
       mode: 'client',
     },
+    {
+      src: '@/plugins/axios.js',
+    },
   ],
 
   modules: [

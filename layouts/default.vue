@@ -11,7 +11,7 @@
       "
     >
       <AppNotification />
-      <JobNotification />
+      <!-- <JobNotification /> -->
       <AppConfirmationModal
         :label="`User account ${user_verification.status ? user_verification.status : ''}`"
         :confirmLabel="'OK'"
@@ -39,7 +39,7 @@
 import AppSideBar from "@/components/AppSideBar"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppNotification from "@/components/AppNotification"
-import JobNotification from "@/components/JobNotification"
+// import JobNotification from "@/components/JobNotification"
 import AppHeader from "@/components/AppHeader"
 
 export default {
@@ -48,7 +48,7 @@ export default {
     AppSideBar,
     AppConfirmationModal,
     AppNotification,
-    JobNotification,
+    // JobNotification,
     AppHeader
   },
   data () {

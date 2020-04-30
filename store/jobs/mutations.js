@@ -45,7 +45,7 @@ export default {
         console.log('test', index, state.practice_job_notifications, payload)
         if (index < 0) {
             state.practice_job_notifications.unshift(payload)
-        } else if (index >= 0) {
+        } else if (index > -1) {
             state.practice_job_notifications.splice(index, 1, payload)
         }
     },
@@ -166,10 +166,10 @@ export default {
         state.practice_pending_jobs = state.practice_pending_jobs.filter(job => job.id !== payload)
         state.practice_pending_jobs_count = state.practice_pending_jobs_count - 1
     },
-    UPDATE_PRACTICE_PENDING_JOB (state, { newJob, oldJob }) {
-        let index = state.practice_pending_jobs.findIndex(pendingJob => pendingJob.id === oldJob.id)
-        if (index >= 0) {
-            state.practice_pending_jobs.splice(index, 1, newJob)
+    UPDATE_PRACTICE_PENDING_JOB (state, oldJobId) {
+        let index = state.practice_pending_jobs.findIndex(pendingJob => pendingJob.id === oldJobId)
+        if (index > -1) {
+            state.practice_pending_jobs.splice(index, 1)
         }
     },
 
@@ -190,10 +190,10 @@ export default {
         state.practice_available_jobs = state.practice_available_jobs.filter(job => job.id !== payload)
         state.practice_available_jobs_count = state.practice_available_jobs_count - 1
     },
-    UPDATE_PRACTICE_AVAILABLE_JOB (state, { newJob, oldJob }) {
-        let index = state.practice_available_jobs.findIndex(availableJob => availableJob.id === oldJob.id)
-        if (index >= 0) {
-            state.practice_available_jobs.splice(index, 1, newJob)
+    UPDATE_PRACTICE_AVAILABLE_JOB (state, oldJobId) {
+        let index = state.practice_available_jobs.findIndex(availableJob => availableJob.id === oldJobId)
+        if (index > -1) {
+            state.practice_available_jobs.splice(index, 1)
         }
     },
 
@@ -211,10 +211,10 @@ export default {
         state.practice_applied_jobs.push(payload)
         state.practice_applied_jobs_count = state.practice_applied_jobs_count + 1
     },
-    UPDATE_PRACTICE_APPLIED_JOB (state, { newJob, oldJob }) {
-        let index = state.practice_applied_jobs.findIndex(appliedJob => appliedJob.id === oldJob.id)
-        if (index >= 0) {
-            state.practice_applied_jobs.splice(index, 1, newJob)
+    UPDATE_PRACTICE_APPLIED_JOB (state, oldJobId) {
+        let index = state.practice_applied_jobs.findIndex(appliedJob => appliedJob.id === oldJobId)
+        if (index > -1) {
+            state.practice_applied_jobs.splice(index, 1)
         }
     },
 
@@ -228,10 +228,10 @@ export default {
         state.practice_allocated_jobs.push(payload)
         state.practice_allocated_jobs_count = state.practice_allocated_jobs_count + 1
     },
-    UPDATE_PRACTICE_ALLOCATED_JOB (state, { newJob, oldJob }) {
-        let index = state.practice_allocated_jobs.findIndex(allocatedJob => allocatedJob.id === oldJob.id)
-        if (index >= 0) {
-            state.practice_allocated_jobs.splice(index, 1, newJob)
+    UPDATE_PRACTICE_ALLOCATED_JOB (state, oldJobId) {
+        let index = state.practice_allocated_jobs.findIndex(allocatedJob => allocatedJob.id === oldJobId)
+        if (index > -1) {
+            state.practice_allocated_jobs.splice(index, 1)
         }
     },
     REMOVE_PRACTICE_ALLOCATED_JOB (state, payload) {
@@ -392,7 +392,7 @@ export default {
     },
     // UPDATE_LOCUM_ONGOING_JOB_PART (state, payload) {
     //     let index = state.locum_ongoing_job_parts.findIndex(jobPart => jobPart.id === payload.id)
-    //     if (index >= 0) {
+    //     if (index > -1) {
     //         state.locum_ongoing_job_parts.splice(index, 1, payload)
     //     }
     // },
@@ -411,7 +411,7 @@ export default {
     },
     // UPDATE_LOCUM_COMPLETED_JOB_PART (state, payload) {
     //     let index = state.locum_completed_job_parts.findIndex(jobPart => jobPart.id === payload.id)
-    //     if (index >= 0) {
+    //     if (index > -1) {
     //         state.locum_completed_job_parts = state.locum_completed_job_parts.splice(index, 1, payload)
     //     }
     // },
@@ -452,7 +452,7 @@ export default {
     },
     UPDATE_LOCUM_ALLOCATED_JOB (state, payload) {
         let index = state.locum_allocated_jobs.findIndex(allocatedJob => allocatedJob.id === payload.id)
-        if (index >= 0) {
+        if (index > -1) {
             state.locum_allocated_jobs.splice(index, 1, payload)
         }
     },

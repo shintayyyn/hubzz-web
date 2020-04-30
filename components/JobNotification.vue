@@ -110,7 +110,7 @@
     data () {
       return {
         toggleNotification: true,
-        showFocus: false
+        showFocus: false,
       }
     },
 
@@ -422,6 +422,10 @@
         }
       },
 
+      status (status) {
+        return status === "Matched" ? "AVAILABLE" : status.toUpperCase()
+      },
+
       bgStatus (status) {
         let str = ""
         switch (status) {
@@ -482,9 +486,11 @@
     margin: 50px 20px 0;
     padding: 0 4px 10px;
   }
+
   .notifications:hover .cards {
     opacity: 1;
   }
+
   .notifications::-webkit-scrollbar {
     display: none;
   }

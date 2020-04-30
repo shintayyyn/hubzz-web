@@ -19,16 +19,16 @@ export default (ctx, inject) => {
       status: '',
       text: [],
       closable: false,
-    });
+    })
   })
 
-  socket.on('connect_error', reason => {
+  socket.on('connect_error', () => {
     ctx.store.commit("SET_NOTIFICATION", {
       enabled: true,
       status: "danger",
       text: ['Server offline'],
       closable: true
-    });
+    })
   })
 
   socket.on('disconnect', reason => {
@@ -45,14 +45,14 @@ export default (ctx, inject) => {
         status: "danger",
         text: ['Server shut down'],
         closable: true
-      });
+      })
     }
   })
 
   ctx.$socket = socket
   inject('socket', socket)
   ctx.store.dispatch('socket/init')
-  ctx.store.dispatch('jobs/initializeJobListener')
+  // ctx.store.dispatch('jobs/initializeJobListener')
   ctx.store.dispatch('billing/initializeBillingListener')
   ctx.store.dispatch('permanentjobs/initializePermanentJobListener')
   ctx.store.dispatch('chat/initializeChatListener')

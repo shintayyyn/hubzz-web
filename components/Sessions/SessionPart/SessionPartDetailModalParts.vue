@@ -1,7 +1,9 @@
 <template>
   <div class="relative flex flex-col w-full my-5">
-    <div class="text-md font-bold">Job Parts</div>
-    <div class="relative flex w-full" v-if="parts.length === 0 && loading" style="min-height:80px">
+    <div class="text-md font-bold">
+      Job Parts
+    </div>
+    <div v-if="parts.length === 0 && loading" class="relative flex w-full" style="min-height:80px">
       <AppLoading :loading="loading" spinner />
     </div>
     <AppTable
@@ -20,15 +22,26 @@
   </div>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable";
-import AppLoading from "@/components/Base/AppLoading";
+import AppTable from "@/components/Base/AppTable"
+import AppLoading from "@/components/Base/AppLoading"
 export default {
   components: {
     AppTable,
     AppLoading
   },
-  props: ["job_id", "disabledLink"],
-  data() {
+  
+  props: {
+    job_id: {
+      type: [String, Number],
+      default: () => null,
+    },
+    disabledLink: {
+      type: Boolean,
+      default: false,
+    }
+  },
+  
+  data () {
     return {
       loading: false,
       total: 0,
@@ -63,34 +76,18 @@ export default {
           class: "text-center"
         }
       ]
-    };
+    }
   },
 
   computed: {
-    totalPages() {
-      return Math.ceil(this.total / this.params.limit);
+    totalPages () {
+      return Math.ceil(this.total / this.params.limit)
     },
-    routerLink() {
-      if (this.disabledLink) {
-        return null;
-      }
-      let url = "";
-      if (this.$route.path.includes("related-jobs")) {
-        url = `/my-banks/${this.$route.params.locumId}/related-jobs`;
-      } else if (this.$route.path.includes("/sessions")) {
-        url = "/sessions";
-      } else if (this.$route.path.includes("/dashboard")) {
-        url = "/dashboard";
-      }
-      // else if (this.$route.path.includes("/surgery-management")) {
-      //   url = "/surgery-management/practice-spokes";
-      // }
-      return url;
-    }
   },
-  async mounted() {
-    this.loading = true;
-    this.params.job_id = this.job_id;
+
+  async mounted () {
+    this.loading = true
+    this.params.job_id = this.job_id
     try {
       Promise.all([
         this.$axios.$get(`/api/v1/practice/job-parts/count`, {
@@ -101,8 +98,8 @@ export default {
         })
       ])
         .then(([responseCount, responseJobParts]) => {
-          this.total = responseCount.data.count;
-          let parts = responseJobParts.data.job_parts;
+          this.total = responseCount.data.count
+          let parts = responseJobParts.data.job_parts
           parts = parts.map(part => {
             return {
               ...part,
@@ -113,32 +110,97 @@ export default {
                 "DD-MM-YYYY"
               ),
               status: part.status === "Declined" ? "Withdrawn" : part.status
-            };
-          });
-          this.parts = parts;
+            }
+          })
+          this.parts = parts
         })
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     } catch (err) {
-      console.log("err", err.response || err);
+      console.log("err", err.response || err)
       if (err.response && err.response.data && err.response.data.message) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
           text: [`${err.response.data.message}`]
-        });
+        })
       }
-      this.loading = false;
-      throw err;
+      this.loading = false
+      throw err
     }
   },
+
   methods: {
-    getJobParts(params) {
-      this.loading = true;
+    routerLink (jobPart) {
+      if (this.disabledLink) {
+        return this.$route
+      }
+
+      if (
+        this.$route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId'
+        || this.$route.name === 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId'
+      ) {
+        return {
+          name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+          params: {
+            ...this.$route.params,
+            jobPartId: jobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      if (
+        this.$route.name === 'sessions-index-id'
+        || this.$route.name === 'sessions-index-id-job-parts-jobPartId'
+      ) {
+        return {
+          name: 'sessions-index-id-job-parts-jobPartId',
+          params: {
+            ...this.$route.params,
+            jobPartId: jobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      if (
+        this.$route.name === 'my-banks-index-locumId-index-related-jobs-index'
+        || this.$route.name === 'my-banks-index-locumId-index-related-jobs-index-jobId'
+      ) {
+        return {
+          name: 'my-banks-index-locumId-index-related-jobs-index-jobId',
+          params: {
+            ...this.$route.params,
+            jobId: jobPart.id,
+          },
+          query: {
+            ...this.$route.query,
+          },
+        }
+      }
+
+      return {
+        name: 'dashboard-id',
+        params: {
+          id: jobPart.id,
+        },
+        query: {
+          ...this.$route.query,
+        },
+      }
+    },
+
+    getJobParts (params) {
+      this.loading = true
       this.$axios.$get(`/api/v1/practice/job-parts`, { params }).then(res => {
-        this.loading = false;
-        let parts = res.data.job_parts;
+        this.loading = false
+        let parts = res.data.job_parts
         parts = parts.map(part => {
           return {
             ...part,
@@ -148,24 +210,24 @@ export default {
             date_end: this.$moment(part.date_end, "YYYY-MM-DD").format(
               "DD-MM-YYYY"
             )
-          };
-        });
-        this.parts = parts;
-      });
+          }
+        })
+        this.parts = parts
+      })
     },
-    pagechanged(page) {
-      this.current_page = page;
-      this.params.offset = this.params.limit * (page - 1);
-      this.getJobParts(this.params);
+    pagechanged (page) {
+      this.current_page = page
+      this.params.offset = this.params.limit * (page - 1)
+      this.getJobParts(this.params)
     },
-    limitchanged(limit) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = limit;
-      this.getJobParts(this.params);
+    limitchanged (limit) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.limit = limit
+      this.getJobParts(this.params)
     }
   }
-};
+}
 </script>
 <style scoped>
 .shield {

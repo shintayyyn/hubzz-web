@@ -247,15 +247,14 @@
           />
 
           <AppInput
-            v-model="session_amendment"
+            v-model="selectedUpdateRemarksValue"
             :type="'select'"
-            :name="'session_amendment'"
+            :name="'selectedUpdateRemarksValue'"
             :label="'Choose one reason for session amendment?'"
-            :items="session_amendment_list"
-            :error="formError.find(item => item.field === 'session_amendment')"
+            :items="updateRemarksOptions"
           />
           <AppInput
-            v-if="session_amendment === 'other'"
+            v-if="!selectedUpdateRemarksValue"
             v-model="form.update_remarks"
             :type="'textarea'"
             :name="'update_remarks'"
@@ -422,15 +421,15 @@
 
           <template v-if="hasBanks">
             <AppInput
-              v-model="bank_only"
+              v-model="form.favorite_only"
               :type="'select'"
-              :name="'bank_only'"
+              :name="'favorite_only'"
               :label="'Make this Job available for Bank Only?'"
               :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
               :disabled="job.status === 'Allocated'"
             />
-            <template v-if="['false', false].includes(bank_only)">
+            <template v-if="['false', false].includes(form.favorite_only)">
               <AppInput
                 v-model="bank_first"
                 :type="'select'"
@@ -619,29 +618,6 @@
     { label: "Home visits", value: "Home visits" }
   ]
 
-  const session_amendment_list = [
-    {
-      label: "Change job rate",
-      value: "Change job rate"
-    },
-    {
-      label: "Change required compliance levels",
-      value: "Change required compliance levels"
-    },
-    {
-      label: "Change work hours",
-      value: "Change work hours"
-    },
-    {
-      label: "Change work shift",
-      value: "Change work shift"
-    },
-    {
-      label: "Other",
-      value: "other"
-    }
-  ]
-
   export default {
 
     components: {
@@ -691,10 +667,30 @@
         auto_assign_job: false,
         selection_notification: false,
         shifts: [],
-        session_amendment: "other",
-        session_amendment_list,
+        selectedUpdateRemarksValue: null,
+        updateRemarksOptions: [
+          {
+            label: 'Change job rate',
+            value: 'Change job rate'
+          },
+          {
+            label: 'Change required compliance levels',
+            value: 'Change required compliance levels'
+          },
+          {
+            label: 'Change work hours',
+            value: 'Change work hours'
+          },
+          {
+            label: 'Change work shift',
+            value: 'Change work shift'
+          },
+          {
+            label: 'Other',
+            value: null
+          }
+        ],
         bank_first: false,
-        bank_only: false,
 
         selection_date: {
           date: null,
@@ -746,6 +742,7 @@
           shift_id: "",
           auto_assign_at: null,
           selection_date: null,
+          favorite_only: false,
           favorite_only_until: null,
           update_accepted_until: null
         },
@@ -919,6 +916,10 @@
     },
 
     watch: {
+      selectedUpdateRemarksValue () {
+        this.form.update_remarks = this.selectedUpdateRemarksValue || ''
+      },
+
       selectedProfessionComplianceCategory () {
         if (this.selectedProfessionComplianceCategory) {
           const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
@@ -955,7 +956,7 @@
       //   this.getListofDays(days)
       // },
 
-      // session_amendment (value) {
+      // selectedUpdateRemarksValue (value) {
       //   if (value !== "other") {
       //     this.form.update_remarks = value
       //   }
@@ -1142,7 +1143,9 @@
             this.selection_notification = true
           }
 
-          if (
+          if (this.job.favorite_only) {
+            this.form.favorite_only = true
+          } else if (
             this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
               this.job.platform_job.favorite_only_until,
               "seconds"
@@ -1159,30 +1162,13 @@
               this.job.platform_job.favorite_only_until,
               "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
             ).format("HH:mm")
-          } else if (
-            this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
-              this.job.platform_job.favorite_only_until,
-              "seconds"
-            ) <= 0
-          ) {
-            this.bank_only = true
           }
+
+          this.selectedUpdateRemarksValue = this.updateRemarksOptions
+            .map(updateRemarksOption => updateRemarksOption.value)
+            .find(updateRemarksOptionValue => updateRemarksOptionValue === this.job.update_remarks) || null
 
           this.form.update_remarks = this.job.update_remarks
-
-          if (
-            this.session_amendment_list
-              .map(items => items.value)
-              .includes(this.job.update_remarks)
-          ) {
-            this.session_amendment = this.job.update_remarks
-          } else if (
-            !this.session_amendment_list
-              .map(items => items.value)
-              .includes(this.job.update_remarks)
-          ) {
-            this.session_amendment = "other"
-          }
 
           if (this.job.platform_job.session_requirements === "") {
             this.form.session_requirements = []
@@ -1328,16 +1314,16 @@
           "include_saturday",
           "include_sunday",
           "compliance_document_id",
-          "bank_only",
           "auto_assign_at",
           "session_requirements",
           "session_structure_information",
           "hours",
-          "minutes"
+          "minutes",
+          "favorite_only",
         ]
 
         if (!this.hasBanks) {
-          this.bank_only = false
+          this.form.favorite_only = false
           this.bank_first = false
           this.favorite_only_until.date = null
           this.favorite_only_until.time = null
@@ -1369,7 +1355,7 @@
           notRequired.push("selection_date")
         }
 
-        if (["true", true].includes(this.bank_only)) {
+        if (["true", true].includes(this.form.favorite_only)) {
           this.bank_first = false
         }
 
@@ -1479,15 +1465,6 @@
             ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
           }
 
-          if (["true", true].includes(this.bank_only)) {
-            this.form.favorite_only_until = `${this.$moment(
-              this.form.date_start,
-              "YYYY-MM-DD"
-            )
-              .add(1, "days")
-              .format("YYYY-MM-DD HH:mm")}`
-          }
-
           if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
             this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
           }
@@ -1506,17 +1483,19 @@
 
           this.loading = true
 
+          const oldJobId = this.job.id
           this.$axios
-            .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
-            .then(res => {
+            .put(`/api/v1/practice/jobs/${oldJobId}`, this.form)
+            .then((response) => {
+              const newJobId = response.data.data.job.id
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
                 text: ["Successfully updated job"]
               })
               this.$emit("updateJob", {
-                newJob: res.data.new_job,
-                oldJob: res.data.job
+                newJobId,
+                oldJobId,
               })
             })
             .catch(err => {

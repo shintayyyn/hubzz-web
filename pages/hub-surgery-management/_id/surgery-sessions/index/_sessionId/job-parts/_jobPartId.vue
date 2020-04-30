@@ -1,18 +1,11 @@
 <template>
-  <div ref="modalContainer" class="modal-container shadow-lg">
-    <SessionDetailModal
-      :job="job"
-      @close="close"
-      @appointed="$emit('appointed', $event)"
-      @cancelled="$emit('cancelled', $event)"
-      @scrollToTop="scrollToTop()"
-    />
+  <div class="modal-container shadow-lg">
+    <SessionPartDetailModal :job-part="jobPart" @close="close" />
   </div>
 </template>
 
 <script>
-  import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
-
+  import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
   export default {
     transition: {
       name: 'slide',
@@ -20,27 +13,27 @@
     },
 
     components: {
-      SessionDetailModal,
+      SessionPartDetailModal,
     },
 
     data () {
       return {
-        job: null,
+        jobPart: null,
       }
     },
 
     async asyncData ({ app, params, error }) {
       try {
         const {
-          id,
+          jobPartId,
         } = params
 
-        let response = await app.$axios.get(`/api/v1/practice/jobs/${id}`)
-
-        let job = response.data.data.job
+        let response = await app.$axios.get(`/api/v1/practice/job-parts/${jobPartId}`)
+        
+        let jobPart = response.data.data.job_part
 
         return {
-          job,
+          jobPart,
         }
       } catch (err) {
         if (err && err.response && err.response.status === 404) {
@@ -56,17 +49,21 @@
 
     methods: {
       close () {
-        this.$router.push({
-          name: 'sessions-index',
-          query: {
-            ...this.$route.query,
-          },
-        })
-      },
+        const {
+          params,
+          query,
+        } = this.$route
 
-      scrollToTop () {
-        this.$nextTick(() => {
-          this.$refs.modalContainer.scrollTop = 0
+        const {
+          id: practiceSurgeryId,
+        } = params
+
+        this.$router.push({
+          name: 'hub-surgery-management-id-surgery-sessions-index',
+          params: {
+            id: practiceSurgeryId,
+          },
+          query,
         })
       },
     },
@@ -80,7 +77,7 @@
   }
   @media screen and (min-width: 1200px) {
     .modal-container {
-      width: 80%;
+      width: 70%;
     }
   }
 </style>
