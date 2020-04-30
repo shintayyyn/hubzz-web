@@ -212,6 +212,7 @@
           'Practice Notification Job Pending',
           'Practice Notification Job Reminder',
           'Practice Notification Job Selection Date',
+          'Practice Notification Job Unfilled',
           'Practice Notification Job Unfilled Warning',
           'Practice Notification Job Withdrawn',
         ],
@@ -298,9 +299,6 @@
 
             if (this.domain === "locum") {
               switch (notification.notification_type.name) {
-                case 'Locum Notification Job Reminder':
-                  message = `This Job will start later.`
-                  break
                 case 'Locum Notification Job Ongoing':
                   message = 'Your Job has started.'
                   break
@@ -316,9 +314,6 @@
                 case 'Locum Notification Job Disputed':
                   message = 'This part of your job has been disputed'
                   break
-                case 'Locum Notification Job Declined':
-                  message = 'You successfully leave this job.'
-                  break
                 case 'Locum Notification Job Terminated':
                   message = 'This Job has been terminated.'
                   break
@@ -327,9 +322,6 @@
               }
             } else if (this.domain === 'practice') {
               switch (notification.notification_type.name) {
-                case 'Practice Notification Job Reminder':
-                  message = `This Job will start later.`
-                  break
                 case 'Practice Notification Job Ongoing':
                   message = 'This Job has started.'
                   break
@@ -345,17 +337,8 @@
                 case 'Practice Notification Job Disputed':
                   message = 'This part of your job has been disputed'
                   break
-                case 'Practice Notification Job Declined':
-                  message = 'The locum leave this job.'
-                  break
                 case 'Practice Notification Job Update Accept':
                   message = 'The locum accepted your changes on this job.'
-                  break
-                case 'Practice Notification Job Unfilled Warning':
-                  message = `This Job will start later.`
-                  break
-                case 'Practice Notification Job Unfilled':
-                  message = 'This job is unfilled.'
                   break
               }
             }
@@ -574,6 +557,7 @@
           'Practice Notification Job Pending',
           'Practice Notification Job Reminder',
           'Practice Notification Job Selection Date',
+          'Practice Notification Job Unfilled',
           'Practice Notification Job Unfilled Warning',
           'Practice Notification Job Withdrawn',
         ]
