@@ -57,6 +57,17 @@ export default {
         state.practice_account_details.vat_number = payload.vat_number
         state.practice_account_details.tax_year_end_date = payload.tax_year_end_date
         state.practice_account_details.referral_code = payload.referral_code
+
+        state.practice_account_details.national_insurance_number = payload.national_insurance_number
+        state.practice_account_details.sd_number = payload.sd_number
+        state.practice_account_details.paying_reference = payload.paying_reference
+        state.practice_account_details.ea_code = payload.ea_code
+        state.practice_account_details.professional_nhs_expenses = payload.professional_nhs_expenses
+        state.practice_account_details.section_scheme_year = payload.section_scheme_year
+        state.practice_account_details.added_year_contributions = payload.added_year_contributions
+        state.practice_account_details.added_early_retirement_contributions = payload.added_early_retirement_contributions
+        state.practice_account_details.nhsps_employer_contributions = payload.nhsps_employer_contributions
+        state.practice_account_details.nhs_pension_scheme_employing_authority_name = payload.nhs_pension_scheme_employing_authority_name
     },
     CLEAR_REGISTER_PRACTICE_FORM (state) {
         state.search_results = []
@@ -100,6 +111,17 @@ export default {
         state.practice_account_details.vat_registered = ''
         state.practice_account_details.vat_number = ''
         state.practice_account_details.tax_year_end_date = ''
+
+        state.practice_account_details.national_insurance_number = null
+        state.practice_account_details.sd_number = null
+        state.practice_account_details.paying_reference = null
+        state.practice_account_details.ea_code = null
+        state.practice_account_details.professional_nhs_expenses = null
+        state.practice_account_details.section_scheme_year = null
+        state.practice_account_details.added_year_contributions = null
+        state.practice_account_details.added_early_retirement_contributions = null
+        state.practice_account_details.nhsps_employer_contributions = null
+        state.practice_account_details.nhs_pension_scheme_employing_authority_name = null
     },
     SET_PRACTICE_DETAIL_FORM_ERROR (state, payload) {
         state.practice_detail_form_error = payload
