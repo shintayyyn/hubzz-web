@@ -255,12 +255,12 @@ export default {
           dataIndex: "practice_name",
           class: "text-center"
         },
-        {
-          name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
-          sortable: true
-        },
+        // {
+        //   name: "Issued",
+        //   dataIndex: "issued_at",
+        //   class: "text-center localDate",
+        //   sortable: true
+        // },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number"
@@ -296,6 +296,20 @@ export default {
           dataIndex: "paid",
           class: "text-center"
         });
+      }
+      if (queryStatus === 'approved') {
+        columns.push({
+          name: "Approved At",
+          dataIndex: "approved_at",
+          class: "text-center localDate"
+        })
+      }else {
+        columns.push({
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        })
       }
       columns.push({
         name: "Actions",
