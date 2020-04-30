@@ -5,7 +5,7 @@
     <AppSideBar @modal="signout_modal = $event" />
     <div
       :class="
-        $route.name === 'messages-slug' || $route.name === 'messages-new'
+        $route.name === 'messages-slug' || $route.name === 'messages-create'
           ? 'content-message'
           : 'content'
       "
@@ -27,7 +27,7 @@
       <nuxt
         class="mb-4"
         :class="
-          $route.name === 'messages-slug' || $route.name === 'messages-new'
+          $route.name === 'messages-slug' || $route.name === 'messages-create'
             ? 'md:mt-20'
             : 'mt-16'
         "
