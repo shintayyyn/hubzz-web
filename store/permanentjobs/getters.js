@@ -56,6 +56,12 @@ export default {
         case 'Practice Notification Permanent Job Rejected':
           message =  'Your job posting has been rejected by your Hub'
           break
+        case 'Practice Notification Hub Posted Permanent Job Posting':
+          message =  'Your Hub created a permanent job posting'
+          break
+        case 'Practice Notification Spoke Posted Pending Permanent Job':
+            message = 'Your Spoke has posted a pending permanent job'
+            break
         default:
           message = ''
       }

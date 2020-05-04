@@ -91,7 +91,18 @@ export default {
                             errorMessage.field === 'account_number' ||
                             errorMessage.field === 'vat_registered' ||
                             errorMessage.field === 'vat_number' ||
-                            errorMessage.field === 'tax_year_end_date'
+                            errorMessage.field === 'tax_year_end_date' ||
+                            
+                            errorMessage.field === 'national_insurance_number' ||
+                            errorMessage.field === 'sd_number' ||
+                            errorMessage.field === 'paying_reference' ||
+                            errorMessage.field === 'ea_code' ||
+                            errorMessage.field === 'professional_nhs_expenses' ||
+                            errorMessage.field === 'section_scheme_year' ||
+                            errorMessage.field === 'added_year_contributions' ||
+                            errorMessage.field === 'added_early_retirement_contributions' ||
+                            errorMessage.field === 'nhsps_employer_contributions' ||
+                            errorMessage.field === 'nhs_pension_scheme_employing_authority_name'
                         )
                     })
                     commit('SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR', practiceAccountDetailError)

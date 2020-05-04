@@ -208,6 +208,7 @@ export default {
 			}
 		},
 		messages(value) {
+			console.log("value", value);
 			let atBottom =
 				Math.round(
 					this.$refs.messagesContainer.offsetHeight +
@@ -252,8 +253,10 @@ export default {
 		},
 		userFullname(item) {
 			let fullName;
-			if (item.user.email) {
+			if (item.user.personal_detail) {
 				fullName = `${item.user.personal_detail.first_name} ${item.user.personal_detail.last_name}`;
+			} else if (item.user.email) {
+				fullName = `${item.user.email}`;
 			} else {
 				fullName = "Hubzz User";
 			}

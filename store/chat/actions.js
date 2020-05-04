@@ -1,11 +1,11 @@
 import * as chatApi from "@/api/chat"
 export default {
-	async initializeChatListener ({ state, commit, dispatch }) {
+	async initializeChatListener({ state, commit, dispatch }) {
 		this.$socket.on("newMessage", message => {
 			// dispatch("setConversation")
 			dispatch("fetchTotalUnreadMessages")
 			let findMessage = state.messages.find(
-				item => item.id == message.latest_conversation_message.id
+				item => item.id == message.latest_conversation_message_id
 			)
 			let findConversation = state.conversations.find(
 				item => item.id == message.id
@@ -14,7 +14,7 @@ export default {
 				this.$auth.user.id === message.latest_conversation_message.user.id
 			if (!findConversation) {
 				commit("ADD_CONVERSATION", message)
-				if (user && this.$router.app._route.name === "messages-new") {
+				if (user && this.$router.app._route.name === "messages-create") {
 					this.$router.push(`/messages/${message.id}`)
 					commit("SET_ACTIVE_CONVERSATION", message.id)
 				}
@@ -30,6 +30,10 @@ export default {
 						// }
 						commit("ADD_MESSAGE", message)
 					}
+				} else if (user) {
+					if (!findMessage) {
+						commit("ADD_MESSAGE", message)
+					}
 				}
 			}
 		})
@@ -37,7 +41,7 @@ export default {
 			commit("DELETE_MESSAGE", message)
 		})
 	},
-	async initializeUsersOnline ({ commit }) {
+	async initializeUsersOnline({ commit }) {
 		this.$socket.on("presence-in", users => {
 			commit("ADD_USER_ONLINE", users.user.id)
 		})
@@ -46,16 +50,17 @@ export default {
 		})
 	},
 
-	async fetchTotalUnreadMessages ({ state, commit }, payload) {
+	async fetchTotalUnreadMessages({ state, commit }, payload) {
 		const response = await chatApi.getUnreadMessages(this.$axios)
 		commit("GET_TOTAL_UNREAD_MESSAGES", response.data.total)
 	},
-	async setConversation ({ commit }) {
+
+	async setConversation({ commit }) {
 		const response = await chatApi.fetchConversations(this.$axios, 0, 0)
 		commit("SET_CONVERSATIONS", response.data.conversations)
 	},
 
-	async fetchMoreConversation ({ state, commit }, payload) {
+	async fetchMoreConversation({ state, commit }, payload) {
 		const response = await chatApi.fetchConversations(
 			this.$axios,
 			payload.offset,
@@ -64,7 +69,7 @@ export default {
 		commit("GET_CONVERSATIONS", response.data.conversations)
 	},
 
-	async fetchMoreMessage ({ state, commit }, payload) {
+	async fetchMoreMessage({ state, commit }, payload) {
 		const response = await chatApi.fetchActiveConversationMessages(
 			this.$axios,
 			payload.offset,
@@ -80,7 +85,7 @@ export default {
 		}
 	},
 
-	async setActiveConversation ({ state, commit }, payload) {
+	async setActiveConversation({ state, commit }, payload) {
 		const response = await chatApi.fetchActiveConversationMessages(
 			this.$axios,
 			0,
@@ -97,22 +102,22 @@ export default {
 		commit("SET_ACTIVE_CONVERSATION", payload)
 	},
 
-	async sendMessage ({ state, commit }, payload) {
-		if (payload.type === "messages-new") {
+	async sendMessage({ state, commit }, payload) {
+		if (payload.type === "messages-create") {
 			payload.user_id = state.newMessageUser.id
 		} else if (payload.type.includes("messages")) {
 			let foundConversation = state.conversations.find(
 				conversation => conversation.id == state.activeConversationId
 			)
 			if (
-				foundConversation.conversation_member_users[0].user.id ==
+				foundConversation.conversation_member_users[0].id ==
 				this.$auth.user.id
 			) {
 				payload.user_id =
-					foundConversation.conversation_member_users[1].user.id
+					foundConversation.conversation_member_users[1].id
 			} else {
 				payload.user_id =
-					foundConversation.conversation_member_users[0].user.id
+					foundConversation.conversation_member_users[0].id
 			}
 		} else {
 			commit("MESSAGE_SENT_TIMEOUT", true)
@@ -123,7 +128,7 @@ export default {
 		const response = await chatApi.sendMessage(this.$axios, payload)
 		commit("ADD_MESSAGE", response.data.conversation)
 	},
-	async deleteMessage ({ state, commit }, payload) {
+	async deleteMessage({ state, commit }, payload) {
 		// let receiver_user_id = null;
 		// let foundConversation = state.conversations.find(conversation => conversation.conversation_id == state.activeConversationId);
 		// if (foundConversation.receiver_id == this.$auth.user.id) {

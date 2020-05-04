@@ -37,7 +37,7 @@ export default {
 		$route(to, from) {
 			if (window.innerWidth > 768) {
 				if (this.conversations.length === 0) {
-					this.$router.push(`/messages/create`);
+					// this.$router.push(`/messages/create`);
 				} else {
 					this.$store.commit("IS_MOBILE", false);
 					this.showLeftPanel = true;
@@ -75,8 +75,18 @@ export default {
 	},
 	async asyncData({ app, store, route, params, redirect }) {
 		const response = await chatApi.fetchConversations(app.$axios, 0, 10);
+		const responseCount = await chatApi.fetchConversations(
+			app.$axios,
+			0,
+			10,
+			true
+		);
 		const conversations = response.data.conversations;
 		store.commit("chat/SET_CONVERSATIONS", conversations);
+		store.commit(
+			"chat/SET_TOTAL_CONVERSATIONS_COUNT",
+			responseCount.data.count
+		);
 	},
 	beforeDestroy() {
 		this.$store.dispatch("leaveRoom", {

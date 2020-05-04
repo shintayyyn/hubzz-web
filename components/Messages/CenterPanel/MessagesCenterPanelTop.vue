@@ -61,24 +61,34 @@ export default {
 				);
 				if (active_conversation) {
 					let user = active_conversation.conversation_member_users.find(
-						member => member.user.id !== this.$auth.user.id
+						member => member.id !== this.$auth.user.id
 					);
-					let detail;
-					if (user.user.email) {
-						detail = {
-							name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
-							profession: user.user.practice_detail
-								? user.user.practice_detail.practice_role
-								: user.user.locum_detail.profession.name,
-							status: user.user.is_online
-						};
-					} else {
-						detail = {
-							name: "Hubzz User",
-							profession: null,
-							status: null
-						};
+					let detail = {
+						name: `${user.first_name} ${user.last_name}`,
+						profession: user.locum_detail_profession_name
+								? user.locum_detail_profession_name
+								: user.practice_detail_practice_role
+								? user.practice_detail_practice_role
+								: null,
+						status: user.is_online
+								? user.is_online
+								: null
 					}
+					// if (user.email) {
+					// 	detail = {
+					// 		name: `${user.first_name} ${user.last_name}`,
+					// 		profession: user.locum_detail_profession_name
+					// 			? user.locum_detail_profession_name
+					// 			: user.practice_detail_practice_role,
+					// 		status: user.is_online
+					// 	};
+					// } else {
+					// 	detail = {
+					// 		name: "Hubzz User",
+					// 		profession: null,
+					// 		status: null
+					// 	};
+					// }
 					return detail;
 				}
 			} else {
