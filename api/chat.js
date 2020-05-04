@@ -1,9 +1,9 @@
-export function fetchConversations(axios, offset, limit = 20) {
+export function fetchConversations(axios, offset, limit = 20, count) {
   let params = {}
 
   limit ? params.limit = limit : null
   offset ? params.offset = offset : null
-  return axios.$get(`/api/v1/conversations`, {
+  return axios.$get(`/api/v1/conversations${count ? '/count' : ''}`, {
     params: params
   })
 }

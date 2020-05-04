@@ -136,7 +136,7 @@ export default {
 			this.showLists = false;
 			if (this.keyword === "practices") {
 				this.$axios
-					.$get(`/api/v1/conversations?user_id=${selectedSurgery.id}`)
+					.$get(`/api/v1/conversations/search?user_id=${selectedSurgery.id}`)
 					.then(res => {
 						if (res.data.user) {
 							this.$emit("newConversation", res.data.user);
