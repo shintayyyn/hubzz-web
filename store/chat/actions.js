@@ -5,7 +5,7 @@ export default {
 			// dispatch("setConversation")
 			dispatch("fetchTotalUnreadMessages")
 			let findMessage = state.messages.find(
-				item => item.id == message.latest_conversation_message.id
+				item => item.id == message.latest_conversation_message_id
 			)
 			let findConversation = state.conversations.find(
 				item => item.id == message.id
@@ -28,6 +28,10 @@ export default {
 						// if (findConversation.latest_conversation_message.seen_by_receiver) {
 						// 	commit("ADD_TOTAL_UNREAD_MESSAGES")
 						// }
+						commit("ADD_MESSAGE", message)
+					}
+				} else if (user) {
+					if (!findMessage) {
 						commit("ADD_MESSAGE", message)
 					}
 				}
