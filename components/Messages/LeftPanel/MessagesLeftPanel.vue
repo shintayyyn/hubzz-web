@@ -209,16 +209,15 @@ export default {
 				: `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
 		},
 		userFullname(item) {
-			console.log(item)
 			let user = item.conversation_member_users.find(
 				item => item.id != this.$auth.user.id
 			);
 			let fullName;
-			if (user.email) {
-				fullName = `${user.first_name} ${user.last_name}`;
-			} else {
-				fullName = "Hubzz User";
-			}
+			fullName = `${user.first_name} ${user.last_name}`;
+			// if (user.email) {
+			// } else {
+			// 	fullName = "Hubzz User";
+			// }
 			return fullName;
 		},
 		userAvatar(item) {
