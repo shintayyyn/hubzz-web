@@ -125,11 +125,6 @@ export default {
           dataIndex: "paid_at",
           class: "text-center localDate"
         },
-        {
-          name: "Created At",
-          dataIndex: "date_created",
-          class: "text-center localDate"
-        }
         // {
         //   name: "Actions",
         //   dataIndex: "actions",
