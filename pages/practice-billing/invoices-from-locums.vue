@@ -313,6 +313,20 @@ export default {
           class: "text-center"
         });
       }
+      if (queryStatus === 'approved') {
+        columns.push({
+          name: "Approved At",
+          dataIndex: "approved_at",
+          class: "text-center localDate"
+        })
+      }else {
+        columns.push({
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        })
+      }
       columns.push({
         name: "Actions",
         dataIndex: "actions",

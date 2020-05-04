@@ -409,7 +409,7 @@
     display: block;
   }
 
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1280px) {
     .sidebar {
       z-index: 49;
       margin-left: 0;
