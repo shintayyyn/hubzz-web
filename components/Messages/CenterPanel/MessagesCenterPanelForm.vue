@@ -73,7 +73,7 @@ export default {
 				item => item.id === parseInt(value.params.slug)
 			);
 			let conversation_members = findConversation.conversation_member_users.map(
-				item => item.user.email !== null
+				item => item.email !== null
 			);
 			if (conversation_members.includes(false)) {
 				this.hasDeactiveUser = true;

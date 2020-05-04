@@ -290,6 +290,22 @@ export default {
           class: "text-center"
         }
       );
+      if (!["approved", "pension-form-a"].includes(queryStatus)) {
+        columns.push({
+           name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        });
+      }
+      if (["approved"].includes(queryStatus)) {
+        columns.push({
+           name: "Approved",
+          dataIndex: "approved_at",
+          class: "text-center localDate",
+          sortable: true
+        });
+      }
       if (["approved", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",

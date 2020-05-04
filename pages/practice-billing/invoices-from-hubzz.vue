@@ -66,82 +66,77 @@ import AppTable from "@/components/Base/AppTable";
 // import AppDate from "@/components/Base/AppDate"
 import { mixin as clickaway } from "vue-clickaway";
 export default {
-	components: {
-		AppTable
-		// AppDate,
-		// AppButton
-	},
-	mixins: [clickaway],
-	transition: {
-		name: "fade",
-		mode: "out-in"
-	},
-	data() {
-		return {
-			totalInvoices: 0,
-			invoices: [],
-			loading: false,
-			current_page: 1,
-			modal: false,
-			// payment
-			paymentModal: false,
-			selectedInvoiceId: null,
-			form: {
-				paid_at: null
-			},
-			formError: [],
-			// app table params
-			params: {
-				offset: 0,
-				limit: 5,
-				order_by: []
-			},
-			// app table column
-			columns: [
-				{
-					name: "Practice / Surgery",
-					dataIndex: "practice.name",
-					class: "text-left"
-				},
-				{
-					name: "Issued",
-					dataIndex: "date_created",
-					class: "text-center localDate"
-				},
-				{
-					name: "Invoice Number",
-					dataIndex: "invoice_number",
-					class: "text-left"
-				},
-				{
-					name: "£ Amount",
-					dataIndex: "total_amount",
-					class: "text-center currency"
-				},
-				{
-					name: "Paid At",
-					dataIndex: "paid_at",
-					class: "text-center localDate"
-				}
-				// {
-				//   name: "Created At",
-				//   dataIndex: "date_created",
-				//   class: "text-center localDate"
-				// }
-				// {
-				//   name: "Actions",
-				//   dataIndex: "actions",
-				//   class: "text-center"
-				// }
-			]
-		};
-	},
-	async asyncData({ app, error }) {
-		try {
-			const params = {
-				offset: 0,
-				limit: 5
-			};
+  components: {
+    AppTable
+    // AppDate,
+    // AppButton
+  },
+  mixins: [clickaway],
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  data () {
+    return {
+      totalInvoices: 0,
+      invoices: [],
+      loading: false,
+      current_page: 1,
+      modal: false,
+      // payment
+      paymentModal: false,
+      selectedInvoiceId: null,
+      form: {
+        paid_at: null
+      },
+      formError: [],
+      // app table params
+      params: {
+        offset: 0,
+        limit: 5,
+        order_by: []
+      },
+      // app table column
+      columns: [
+        {
+          name: "Practice / Surgery",
+          dataIndex: "practice.name",
+          class: "text-left"
+        },
+        {
+          name: "Issued",
+          dataIndex: "date_created",
+          class: "text-center localDate"
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number",
+          class: "text-left"
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center currency"
+        },
+        {
+          name: "Paid At",
+          dataIndex: "paid_at",
+          class: "text-center localDate"
+        },
+        // {
+        //   name: "Actions",
+        //   dataIndex: "actions",
+        //   class: "text-center"
+        // }
+      ]
+    }
+  },
+  async asyncData ({ app, error }) {
+    try {
+      const params = {
+        offset: 0,
+        limit: 5
+      }
 
 			const responseCount = await app.$axios.get(
 				"/api/v1/practice/practice-invoices/count"
