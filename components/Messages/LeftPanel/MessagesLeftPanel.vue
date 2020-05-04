@@ -24,7 +24,11 @@
 				</span>
 			</div>
 			<div class="relative flex flex-col justify-between h-full border-t">
-				<div class="chat-list w-full h-full overflow-y-auto overflow-x-hidden" @scroll="scrollHandler">
+				<div
+					class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
+					@scroll="scrollHandler"
+					ref="chatlist"
+				>
 					<template v-if="showResult === false || $route.params.slug == '/messages'">
 						<transition-group name="slide" tag="p">
 							<div
@@ -109,6 +113,12 @@
 							<span v-else>No messages</span>
 						</div>
 					</template>
+					<transition name="fade">
+						<div
+							v-if="nothingToLoad"
+							class="text-center py-1 w-full text-sm text-gray-700"
+						>That's all we got for you</div>
+					</transition>
 				</div>
 			</div>
 			<!-- <button
@@ -132,12 +142,16 @@ export default {
 			messages: [],
 			showResult: false,
 			loadMore: false,
-			unread: false
+			unread: false,
+			nothingToLoad: false
 		};
 	},
 	computed: {
 		conversations() {
 			return this.$store.getters["chat/getConversations"];
+		},
+		conversationsCount() {
+			return this.$store.state.chat.conversations_count;
 		},
 		activeConversationId() {
 			return this.$store.state.chat.activeConversationId;
@@ -148,6 +162,7 @@ export default {
 	},
 	watch: {
 		search_text(value) {
+			this.nothingToLoad = false;
 			if (!value) {
 				this.showResult = false;
 			} else {
@@ -194,12 +209,13 @@ export default {
 				: `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
 		},
 		userFullname(item) {
+			console.log(item)
 			let user = item.conversation_member_users.find(
-				item => item.user.id != this.$auth.user.id
+				item => item.id != this.$auth.user.id
 			);
 			let fullName;
-			if (user.user.email) {
-				fullName = `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`;
+			if (user.email) {
+				fullName = `${user.first_name} ${user.last_name}`;
 			} else {
 				fullName = "Hubzz User";
 			}
@@ -207,9 +223,10 @@ export default {
 		},
 		userAvatar(item) {
 			let user_detail = item.conversation_member_users.find(
-				item => item.user.id != this.$auth.user.id
+				item => item.id != this.$auth.user.id
 			);
-			return user_detail.user.avatar ? user_detail.user.avatar.file.url : "";
+			console.log(user_detail)
+			return user_detail.avatar ? user_detail.avatar.file.url : "";
 		},
 		createMessage() {
 			if (window.innerWidth < 768) {
@@ -220,7 +237,16 @@ export default {
 		scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
 			let scroll = Math.round(offsetHeight + scrollTop);
 			if (scroll === scrollHeight) {
-				this.loadMoreConversation();
+				if (this.conversations.length !== this.conversationsCount) {
+					this.loadMoreConversation();
+				} else {
+					if (!this.showResult) {
+						this.nothingToLoad = true;
+						this.$nextTick(() => {
+							this.$refs.chatlist.scrollTop = this.$refs.chatlist.scrollHeight;
+						});
+					}
+				}
 			}
 		},
 		loadMoreConversation() {

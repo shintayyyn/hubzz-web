@@ -208,6 +208,7 @@ export default {
 			}
 		},
 		messages(value) {
+			console.log("value", value);
 			let atBottom =
 				Math.round(
 					this.$refs.messagesContainer.offsetHeight +
