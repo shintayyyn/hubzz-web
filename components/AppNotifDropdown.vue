@@ -195,6 +195,7 @@
           'Locum Notification Job Available',
           'Locum Notification Job Cancelled',
           'Locum Notification Job Matched',
+          'Locum Notification Job Ongoing',
           'Locum Notification Job Reminder',
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
@@ -209,6 +210,7 @@
           'Practice Notification Job Auto Withdrawn',
           'Practice Notification Job Cancelled',
           'Practice Notification Job Live',
+          'Practice Notification Job Ongoing',
           'Practice Notification Job Pending',
           'Practice Notification Job Reminder',
           'Practice Notification Job Selection Date',
@@ -299,9 +301,6 @@
 
             if (this.domain === "locum") {
               switch (notification.notification_type.name) {
-                case 'Locum Notification Job Ongoing':
-                  message = 'Your Job has started.'
-                  break
                 case 'Locum Notification Job Part Completed':
                   message = 'This part of your job has been completed'
                   break
@@ -322,9 +321,6 @@
               }
             } else if (this.domain === 'practice') {
               switch (notification.notification_type.name) {
-                case 'Practice Notification Job Ongoing':
-                  message = 'This Job has started.'
-                  break
                 case 'Practice Notification Job Part Completed':
                   message = 'This part of your job has been completed'
                   break
@@ -538,6 +534,7 @@
           'Locum Notification Job Cancelled',
           'Locum Notification Job Available',
           'Locum Notification Job Matched',
+          'Locum Notification Job Ongoing',
           'Locum Notification Job Reminder',
           'Locum Notification Job Unavailable',
           'Locum Notification Job Unqualified',
@@ -552,6 +549,7 @@
           'Practice Notification Job Auto Withdrawn',
           'Practice Notification Job Cancelled',
           'Practice Notification Job Live',
+          'Practice Notification Job Ongoing',
           'Practice Notification Job Pending',
           'Practice Notification Job Reminder',
           'Practice Notification Job Selection Date',
@@ -604,6 +602,7 @@
           const job = payload
 
           const {
+            type: jobType,
             id: jobId,
             old_job_id: oldJobId,
             job_parts: jobParts,
@@ -636,6 +635,13 @@
 
           if (notificationTypeName === 'Locum Notification Job Cancelled' && jobParts) {
             const jobPart = jobParts.find(jobPart => jobPart.status === 'Cancelled')
+            if (jobPart) {
+              routeParamJobPartId = jobPart.id
+            }
+          }
+
+          if (jobType === 'Platform' && notificationTypeName === 'Locum Notification Job Ongoing' && jobParts) {
+            const jobPart = jobParts.find(jobPart => jobPart.status === 'Ongoing')
             if (jobPart) {
               routeParamJobPartId = jobPart.id
             }
@@ -723,6 +729,13 @@
 
           if (notificationTypeName === 'Practice Notification Job Cancelled' && jobParts) {
             const jobPart = jobParts.find(jobPart => jobPart.status === 'Cancelled')
+            if (jobPart) {
+              routeParamJobPartId = jobPart.id
+            }
+          }
+
+          if (notificationTypeName === 'Practice Notification Job Ongoing' && jobParts) {
+            const jobPart = jobParts.find(jobPart => jobPart.status === 'Ongoing')
             if (jobPart) {
               routeParamJobPartId = jobPart.id
             }
