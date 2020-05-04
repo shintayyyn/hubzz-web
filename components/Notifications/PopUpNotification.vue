@@ -13,7 +13,7 @@
       <div class="flex flex-col items-start my-1 w-full">
         <div class="flex flex-wrap">
           <div
-            v-if="notification.payload_type === 'job'"
+            v-if="notification.payload_type === 'job' || notification.payload_type === 'job_part'"
             class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
             :class="payloadJobClass[notification.payload.status]"
           >
@@ -21,7 +21,7 @@
           </div>
 
           <div
-            v-if="notification.payload_type === 'locum_job'"
+            v-if="notification.payload_type === 'locum_job' || notification.payload_type === 'locum_job_part'"
             class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
             :class="payloadLocumJobClass[notification.payload.locum_status]"
           >

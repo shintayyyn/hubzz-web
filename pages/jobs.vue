@@ -76,7 +76,7 @@
                 status: 'Allocated',
               },
             },
-            active: status.toLowerCase() === ('Allocated').toLowerCase(),
+            active: status && status.toLowerCase() === ('Allocated').toLowerCase(),
           },
           {
             title: 'Ongoing',
@@ -86,7 +86,7 @@
                 status: 'Ongoing',
               },
             },
-            active: status.toLowerCase() === ('Ongoing').toLowerCase(),
+            active: status && status.toLowerCase() === ('Ongoing').toLowerCase(),
           },
           {
             title: 'Available',
@@ -96,7 +96,7 @@
                 status: 'Available',
               },
             },
-            active: status.toLowerCase() === ('Available').toLowerCase(),
+            active: status && status.toLowerCase() === ('Available').toLowerCase(),
           },
           {
             title: 'Applied',
@@ -106,7 +106,7 @@
                 status: 'Applied',
               },
             },
-            active: status.toLowerCase() === ('Applied').toLowerCase(),
+            active: status && status.toLowerCase() === ('Applied').toLowerCase(),
           },
           {
             title: 'Unsuccessful',
@@ -116,7 +116,7 @@
                 status: 'Unsuccessful',
               },
             },
-            active: status.toLowerCase() === ('Unsuccessful').toLowerCase(),
+            active: status && status.toLowerCase() === ('Unsuccessful').toLowerCase(),
           },
           {
             title: 'Withdrawn',
@@ -126,7 +126,7 @@
                 status: 'Withdrawn',
               },
             },
-            active: status.toLowerCase() === ('Withdrawn').toLowerCase(),
+            active: status && status.toLowerCase() === ('Withdrawn').toLowerCase(),
           },
           {
             title: 'Cancelled',
@@ -136,7 +136,7 @@
                 status: 'Cancelled',
               },
             },
-            active: status.toLowerCase() === ('Cancelled').toLowerCase(),
+            active: status && status.toLowerCase() === ('Cancelled').toLowerCase(),
           },
           {
             title: 'Completed',
@@ -146,7 +146,7 @@
                 status: 'Completed',
               },
             },
-            active: status.toLowerCase() === ('Completed').toLowerCase(),
+            active: status && status.toLowerCase() === ('Completed').toLowerCase(),
           },
           {
             title: 'Approved',
@@ -156,7 +156,7 @@
                 status: 'Approved',
               },
             },
-            active: status.toLowerCase() === ('Approved').toLowerCase(),
+            active: status && status.toLowerCase() === ('Approved').toLowerCase(),
           },
           {
             title: 'Private',
@@ -166,7 +166,7 @@
                 status: 'Private',
               },
             },
-            active: status.toLowerCase() === ('Private').toLowerCase(),
+            active: status && status.toLowerCase() === ('Private').toLowerCase(),
           },
         ]
       },
