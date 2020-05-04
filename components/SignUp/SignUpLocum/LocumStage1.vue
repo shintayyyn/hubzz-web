@@ -81,6 +81,9 @@
 						:type="'text'"
 						:name="'mobile_number'"
 						:label="'Mobile Number'"
+						:limit="10"
+						:format="'mobile'"
+						@keydown="inputNumberOnly($event)"
 					/>
 
 					<AppInput

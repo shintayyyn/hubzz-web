@@ -184,8 +184,11 @@
         :name="'mobile_number'"
         :label="'Mobile Number'"
         :error="formError.find(item => item.field === 'mobile_number')"
+        :limit="10"
+        :format="'mobile'"
         required
         @submit="save"
+        @keydown="inputNumberOnly($event)"
         @blur="CheckEmptyField(locumForm.mobile_number, 'mobile_number')"
       />
       <AppInput
@@ -193,6 +196,8 @@
         :type="'text'"
         :name="'home_number'"
         :label="'Home Number'"
+        @keydown="inputTelephone($event)"
+        :limit="13"
         @submit="save"
       />
       <AppInput
@@ -200,6 +205,8 @@
         :type="'text'"
         :name="'work_number'"
         :label="'Work Number'"
+        @keydown="inputTelephone($event)"
+        :limit="13"
         @submit="save"
       />
       <div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
@@ -365,7 +372,7 @@
           locumForm.suffix = user.personal_detail.suffix
           locumForm.gender = user.personal_detail.gender
           locumForm.date_of_birth = user.personal_detail.date_of_birth
-          locumForm.mobile_number = user.contact_detail.mobile_number
+          locumForm.mobile_number = user.contact_detail.mobile_number ? user.contact_detail.mobile_number.replace("+44", '') : ''
           locumForm.home_number = user.contact_detail.home_number
           locumForm.work_number = user.contact_detail.work_number
           locumForm.address_line_1 = user.address_detail.address.line_1
@@ -388,6 +395,7 @@
     created () {
       console.log('authpermissions', this.authPermissions)
       console.log('')
+
 
     },
 
@@ -505,6 +513,7 @@
           ])
           if (!this.formError.length) {
             this.loading = true
+            this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}` 
             this.$axios
               .$put(`/api/v1/locum/me/account`, this.locumForm)
               .then(() => {
