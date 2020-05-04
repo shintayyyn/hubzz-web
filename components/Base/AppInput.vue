@@ -56,26 +56,29 @@
           <div class="flex flex-row justify-start mt-1">
             <template v-if="['text','time','email', 'number'].includes(type)">
               <div class="flex flex-col w-full mt-1">
-                <input
-                  :value="value"
-                  :type="type"
-                  :placeholder="placeholder"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-                  :class="error ? 'border-red-500' : ''"
-                  :style="inStyle"
-                  :checked="value"
-                  :readonly="disabled"
-                  :min="type === 'number' && 1"
-                  :maxlength="limit"
-                  :max="maxInput"
-                  step="any"
-                  @focus="$emit('focus', $event.target.value)"
-                  @input="$emit('input', $event.target.value)"
-                  @keypress.enter="$emit('submit')"
-                  @blur="$emit('blur')"
-                  @keypress="type === 'number' ? isNumber($event) : $emit('keypress')"
-                  @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
-                >
+                <div class="flex items-center justify-start">
+                  <p class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent" v-if="format && format === 'mobile'">+44</p>
+                  <input
+                    :value="value"
+                    :type="type"
+                    :placeholder="placeholder"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
+                    :class="error ? 'border-red-500' : ''"
+                    :style="inStyle"
+                    :checked="value"
+                    :readonly="disabled"
+                    :min="type === 'number' && 1"
+                    :maxlength="limit"
+                    :max="maxInput"
+                    step="any"
+                    @focus="$emit('focus', $event.target.value)"
+                    @input="$emit('input', $event.target.value)"
+                    @keypress.enter="$emit('submit')"
+                    @blur="$emit('blur')"
+                    @keypress="type === 'number' ? isNumber($event) : $emit('keypress')"
+                    @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
+                  >
+                </div>
                 <!-- @keypress="type === 'number' ? isNumber($event) : $emit('keypress')" -->
                 <transition name="drop-down">
                   <div
@@ -337,6 +340,7 @@ export default {
     inStyle: String,
     inClass: String,
     limit: Number,
+    format: String,
     required: {
       type: Boolean,
       default: false

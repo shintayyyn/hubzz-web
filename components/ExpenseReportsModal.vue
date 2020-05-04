@@ -48,7 +48,7 @@
       <div v-if="modal" class="shield" @click="modal = false" />
     </transition>
 
-    <AppConfirmationModal :label="'Proceed to add delete this expense report?'" :confirmLabel="'Delete'"
+    <AppConfirmationModal :label="'Proceed to delete this expense report?'" :confirmLabel="'Delete'"
                           :cancelLabel="'Cancel'" :modal="delete_modal" @confirm="remove" @cancel="delete_modal = false"
     />
 

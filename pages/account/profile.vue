@@ -108,7 +108,8 @@
             :type="'text'"
             :name="'nhs_smart_card_id_number'"
             :label="'Your NHS Smart Card ID number'"
-            @keypress="inputNumberOnly($event)"
+            :limit="12"
+            @keydown="inputNumberOnly($event)"
             @submit="save"
           />
 
@@ -303,9 +304,10 @@
               :name="'utr_number'"
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
-              :placeholder="''"
+              :placeholder="'AZ000000D'"
+              :limit="9"
               required
-              @keypress="inputNumberOnly($event)"
+              @keydown="alphaNumeric($event)"
             />
           </template>
 
@@ -998,6 +1000,7 @@
       },
 
       save () {
+        this.formError = []
         let notRequired = [
           'nhs_smart_card_id_number',
           'headline',
@@ -1033,6 +1036,17 @@
 
         if (this.form.employment_type === "Self-Employed") {
           notRequired.push("company_registration_number")
+          let pre = this.form.utr_number.substring(0,2)
+          let num = this.form.utr_number.substring(2,8)
+          let post = this.form.utr_number.substring(8,9)
+          if (!this.form.utr_number.substring(0,2).match(/[A-Z]/g) || 
+          this.form.utr_number.substring(0,2).match(/[A-Z]/g).length !== 2 || 
+          !this.form.utr_number.substring(2,8).match(/[0-9]/g) || 
+          this.form.utr_number.substring(2,8).match(/[0-9]/g).length !== 6 || 
+          !this.form.utr_number.substring(8,9).match(/[A-D]/g) || 
+          !this.form.utr_number.substring(8,9).match(/[A-D]/g).length) {
+            this.formError.push({ field: 'utr_number', message: 'UTR Number is invalid.'})
+          }
         } else if (this.form.employment_type === "Limited Company") {
           notRequired.push("utr_number")
         }
@@ -1110,7 +1124,6 @@
           )
         }
 
-        this.formError = []
 
         this.Validate(this.form, notRequired)
 

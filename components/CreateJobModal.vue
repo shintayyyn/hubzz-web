@@ -1170,18 +1170,18 @@
           // this.form.include_saturday = this.repostJob.include_saturday
           // this.form.include_sunday = this.repostJob.include_sunday
 
-          this.form.time_start = this.$moment().isBefore(
-            this.repostJob.dates[0])
-            ? this.repostJob.time_start
-            : null
-            this.form.time_end = this.$moment().isBefore(
-          this.repostJob.dates[this.repostJob.dates.length-1])
-            ? this.repostJob.time_end
-            : null
+          // this.form.time_start = this.$moment().isBefore(
+          //   this.repostJob.dates[0])
+          //   ? this.repostJob.time_start
+          //   : null
+          //   this.form.time_end = this.$moment().isBefore(
+          // this.repostJob.dates[this.repostJob.dates.length-1])
+          //   ? this.repostJob.time_end
+          //   : null
 
-          if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
-            this.repostJob.dates.forEach(date => this.form.dates.push(date))
-          }
+          // if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
+          //   this.repostJob.dates.forEach(date => this.form.dates.push(date))
+          // }
           if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
             this.unpaid_breaks = false
           } else if (
