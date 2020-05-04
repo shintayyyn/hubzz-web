@@ -209,12 +209,13 @@ export default {
 				: `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
 		},
 		userFullname(item) {
+			console.log(item)
 			let user = item.conversation_member_users.find(
-				item => item.user.id != this.$auth.user.id
+				item => item.id != this.$auth.user.id
 			);
 			let fullName;
-			if (user.user.email) {
-				fullName = `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`;
+			if (user.email) {
+				fullName = `${user.first_name} ${user.last_name}`;
 			} else {
 				fullName = "Hubzz User";
 			}
@@ -222,9 +223,10 @@ export default {
 		},
 		userAvatar(item) {
 			let user_detail = item.conversation_member_users.find(
-				item => item.user.id != this.$auth.user.id
+				item => item.id != this.$auth.user.id
 			);
-			return user_detail.user.avatar ? user_detail.user.avatar.file.url : "";
+			console.log(user_detail)
+			return user_detail.avatar ? user_detail.avatar.file.url : "";
 		},
 		createMessage() {
 			if (window.innerWidth < 768) {

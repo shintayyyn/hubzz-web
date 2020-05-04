@@ -70,10 +70,10 @@ export default {
 		)
 		if (conversation) {
 			let user = conversation.conversation_member_users.find(
-				member => member.user.id == payload
+				member => member.id == payload
 			)
 			if (user) {
-				user.user.is_online = true
+				user.is_online = true
 				conversation.conversation_member_users.splice(
 					conversation.conversation_member_users.findIndex(
 						item => item.user.id == payload

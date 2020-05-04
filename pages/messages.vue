@@ -37,7 +37,7 @@ export default {
 		$route(to, from) {
 			if (window.innerWidth > 768) {
 				if (this.conversations.length === 0) {
-					this.$router.push(`/messages/create`);
+					// this.$router.push(`/messages/create`);
 				} else {
 					this.$store.commit("IS_MOBILE", false);
 					this.showLeftPanel = true;

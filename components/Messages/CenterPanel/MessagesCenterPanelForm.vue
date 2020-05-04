@@ -86,7 +86,7 @@ export default {
 		);
 		let conversation_members = findConversation
 			? findConversation.conversation_member_users.map(
-					item => item.user.email !== null
+					item => item.email !== null
 			  )
 			: [];
 		if (conversation_members.includes(false)) {
