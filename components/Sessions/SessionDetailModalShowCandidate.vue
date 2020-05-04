@@ -200,8 +200,16 @@
 			:confirmLabel="'Yes'"
 			:cancelLabel="'Cancel'"
 			:modal="confirmation_modal"
-			@confirm="appoint"
+			@confirm="checkIfLocumAlreadyAppointed"
 			@cancel="confirmation_modal = false"
+		/>
+		<AppConfirmationModal
+			:label="`This Locum is already appointed on one of your Job. ${jobNumbers}, Are you sure you want to continue?`"
+			:confirmLabel="'Yes'"
+			:cancelLabel="'Cancel'"
+			:modal="warning_modal"
+			@confirm="appoint"
+			@cancel="warning_modal = false"
 		/>
 	</section>
 </template>
@@ -229,6 +237,9 @@ export default {
 	},
 	data() {
 		return {
+			warning_modal: false,
+			jobNumbers: [],
+			// 
 			confirmation_modal: false,
 			mandatory: [],
 			optional: [],
@@ -294,6 +305,21 @@ export default {
 					);
 				});
 		},
+		checkIfLocumAlreadyAppointed() {
+			this.$axios.$get(`/api/v1/practice/jobs?appointed_locum_user_id=${this.user.id}`, {
+				params: {
+					status: ["Allocated", "Ongoing"]
+				}
+			}).then(res => {
+				this.jobNumbers = res.data.jobs.map(job => job.job_number)
+				if (res.data.jobs.length > 0) {
+					this.warning_modal = true
+					this.confirmation_modal = false
+				} else if (res.data.jobs.length === 0) {
+					this.appoint()
+				}
+			})
+		},
 		appoint() {
 			this.$axios
 				.$put(
@@ -338,7 +364,7 @@ export default {
 					}
 				})
 				.finally(() => {
-					this.confirmation_modal = false;
+					this.warning_modal = false;
 				});
 		},
 		downloadItem(fileUrl, fileName) {
