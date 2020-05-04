@@ -106,14 +106,14 @@ export default {
 				conversation => conversation.id == state.activeConversationId
 			)
 			if (
-				foundConversation.conversation_member_users[0].user.id ==
+				foundConversation.conversation_member_users[0].id ==
 				this.$auth.user.id
 			) {
 				payload.user_id =
-					foundConversation.conversation_member_users[1].user.id
+					foundConversation.conversation_member_users[1].id
 			} else {
 				payload.user_id =
-					foundConversation.conversation_member_users[0].user.id
+					foundConversation.conversation_member_users[0].id
 			}
 		} else {
 			commit("MESSAGE_SENT_TIMEOUT", true)
