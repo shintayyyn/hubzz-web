@@ -489,11 +489,11 @@
           this.form.sd_number = null
           this.form.paying_reference = null
           this.form.ea_code = null
-          this.form.professional_nhs_expenses = null
+          this.form.professional_nhs_expenses = 0
           this.form.section_scheme_year = null
-          this.form.added_year_contributions = null
-          this.form.added_early_retirement_contributions = null
-          this.form.nhsps_employer_contributions = null
+          this.form.added_year_contributions = 0
+          this.form.added_early_retirement_contributions = 0
+          this.form.nhsps_employer_contributions = 0
           this.form.nhs_pension_scheme_employing_authority_name = null
         }
 
