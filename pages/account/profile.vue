@@ -908,7 +908,6 @@
           type: "compliance_documents"
         })
       })
-      console.log(this.form.reference_locum_compliance_documents)
 
       this.form.referee_1_contact_name = this.user.referee_1_contact_name
       this.form.referee_1_phone_number = this.user.referee_1_phone_number
@@ -1113,12 +1112,13 @@
                   ]
                 })
               } else {
-                this.formError.push({
-                  field: item.compliance_document_name
-                    .replace(/ /g, "_")
-                    .toLowerCase(),
-                  message: `${item.compliance_document_name} is required`
-                })
+                // this.formError.push({
+                //   field: item.compliance_document_name
+                //     .replace(/ /g, "_")
+                //     .toLowerCase(),
+                //   message: `${item.compliance_document_name} is required`
+                // })
+                this.checkValidation(item.compliance_document_name, parseInt(this.form.profession_id) !== 1 && parseInt(this.form.profession_id) <=5 ? 8 : 7)
               }
             }
           )
@@ -1146,7 +1146,10 @@
             this.professionCategoryId === 1 ? this.form.ir35 : false
 
           this.$axios
-            .$put(`/api/v1/locum/me/profile`, this.form)
+            .$put(`/api/v1/locum/me/profile`, {
+              ...this.form,
+              reference_locum_compliance_documents: this.form.reference_locum_compliance_documents
+            })
             .then(res => {
               this.form.clinical_system_id = this.selectedClinicalSystem
               this.form.qualification_id = this.selectedQualification
@@ -1158,6 +1161,14 @@
               })
               this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
               this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
+
+              res.data.user.reference_locum_compliance_documents.forEach(item => {
+                let foundItem = this.form.reference_locum_compliance_documents.find(formItem => formItem.compliance_document_name === item.compliance_document.name)
+                if (foundItem) {
+                  foundItem.reference = item.reference
+                }
+              })
+
               this.CheckUserVerification()
             })
             .catch(err => {
@@ -1197,7 +1208,6 @@
           //   status: "danger",
           //   text: ["Please fill up all the forms"]
           // });
-          this.form
           this.scrollToTop()
         }
       },
