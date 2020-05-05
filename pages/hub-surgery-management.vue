@@ -8,6 +8,12 @@
         >
           Invite Spoke
         </nuxt-link>
+        <AppButton
+          :label="'Shared my banks'"
+          class="bg-yellow-500 text-sm"
+          :inStyle="'padding:5px 14px;margin-left:5px;'"
+          @click="shareMyBanks"
+        />
       </div>
     </div>
 
@@ -50,6 +56,19 @@
             :customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
             @click="toCancelInvitation(slotProps.item.id)"
           />
+        </div>
+      </template>
+      <template v-slot:shared="slotProps">
+        <div
+          v-if="true"
+          class="flex flex-row flex-wrap justify-center"
+          @click="checkItem(slotProps.item.id)"
+        >
+          <input
+            type="checkbox"
+            :checked="selectedItems.includes(slotProps.item.id)"
+          />
+          <label class="text-xs sm:text-sm py-1 flex items-center"></label>
         </div>
       </template>
     </AppTable>
@@ -96,6 +115,9 @@ export default {
 
   data () {
     return {
+      selectedItems: [],
+      showToggleShareMyBanks: false,
+
       modal: false,
       selectedSurgeryId: "",
       //
@@ -114,6 +136,11 @@ export default {
       },
       // for app table component
       columns: [
+        {
+          name: "Share my banks",
+          dataIndex: "shared",
+          class: "text-center"
+        },
         {
           name: "Surgery",
           dataIndex: "child_practice.surgery.name",
@@ -136,7 +163,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center"
-        }
+        },
       ]
     }
   },
@@ -208,6 +235,12 @@ export default {
       "Practice Notification Delete Surgery",
       this.getSurgeriesRealTime
     )
+
+    this.surgeries.forEach(surgery => {
+      if (surgery.share_my_banks === true) {
+        this.selectedItems.push(surgery.id)
+      }
+    })
   },
   async created () {
     await this.surgeries.map(surgery => {
@@ -215,6 +248,25 @@ export default {
     })
   },
   methods: {
+    shareMyBanks() {
+      this.$axios.$put(`/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`, { surgeryIds: this.selectedItems }).then(res => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`Sharing MyBanks Update Success`]
+        })
+      })
+    },
+    checkItem(childPracticeId) {
+      let index = this.selectedItems.findIndex(item => item === childPracticeId);
+      if (index >= 0) {
+        this.selectedItems = this.selectedItems.filter(
+          item => item !== childPracticeId
+        );
+      } else if (index < 0) {
+        this.selectedItems.push(childPracticeId);
+      }
+    },
     getSurgeriesRealTime () {
       this.getSurgeriesCount(this.params)
     },
@@ -255,6 +307,12 @@ export default {
             surgery.status = this.getStatus(surgery)
             this.surgeries.push(surgery)
             // this.surgeries.push({ ...surgery, removable: true });
+          })
+          this.selectedItems = []
+          this.surgeries.forEach(surgery => {
+            if (surgery.share_my_banks === true) {
+              this.selectedItems.push(surgery.id)
+            }
           })
         })
         .catch(err => {

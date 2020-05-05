@@ -172,6 +172,16 @@
 						</span>
 						<p class="font-semibold">Is this Spoke's Banks shared to other Spokes?</p>
 					</div>
+					<div class="flex items-center py-1">
+						<span class="mr-3 md:mx-2">
+							<svgicon
+								:name="practice_surgery.share_my_banks === true ? 'success-checkmark' : 'times-solid'"
+								class="fill-current w-5 h-5"
+								:class="practice_surgery.share_my_banks ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
+							/>
+						</span>
+						<p class="font-semibold">Is My Banks shared to this Surgery?</p>
+					</div>
 				</template>
 				<!--------------EDIT PERMISSIONS------------------>
 				<template v-if="editPayForSurgery === true">
@@ -283,6 +293,16 @@
 								:items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
 							/>
 						</div>
+						<div class="w-full p-1">
+							<AppInput
+								v-model="form.share_my_banks"
+								:type="'select'"
+								:name="'share_my_banks'"
+								:label="'Share My Banks'"
+								:error="formError.find(item => item.field === 'share_my_banks')"
+								:items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+							/>
+						</div>
 					</div>
 					<div class="flex flex-row justify-start">
 						<AppButton :label="'Save'" @click="save" :inStyle="'padding:5px 16px'" />
@@ -320,7 +340,8 @@ export default {
 				max_excess_hours: "",
 				allow_surgery_bill_locum: "",
 				allow_surgery_bill_hubzz: "",
-				share_banks_to_other_surgeries: ""
+				share_banks_to_other_surgeries: "",
+				share_my_banks: ""
 			},
 			formError: [],
 			practice_surgery: []
@@ -339,6 +360,7 @@ export default {
 		this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum;
 		this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz;
 		this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries;
+		this.form.share_my_banks = this.practice_surgery.share_my_banks;
 		this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions;
 	},
 	watch: {
@@ -360,6 +382,7 @@ export default {
 				this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum;
 				this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz;
 				this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries;
+				this.form.share_my_banks = this.practice_surgery.share_my_banks;
 				this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions;
 			}
 		},
@@ -372,12 +395,14 @@ export default {
 				});
 		},
 		save() {
+			this.form.share_my_banks = [true, 'true'].includes(this.form.share_my_banks) ? true : false
 			this.$axios
 				.$put(
 					`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
 					this.form
 				)
 				.then(res => {
+					console.log(res)
 					this.$emit("updateSurgery", res.data.practice_surgery);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,

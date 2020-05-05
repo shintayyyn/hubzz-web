@@ -1,0 +1,249 @@
+<template>
+	<div class="p-4">
+		<div
+			v-if="practice.share_my_banks === false"
+		>Your Hub Banks are not shared.</div>
+		<div
+			v-if="practice.share_my_banks === true"
+			class="flex flex-row flex-wrap justify-start"
+		>
+			<div v-if="locums.length < 1">Your hub has no banks.</div>
+			<div
+				v-else
+				class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
+				v-for="locum in locums"
+				:key="locum.id"
+			>
+				<div class="h-full w-full flex flex-row flex-wrap justify-start">
+					<div class="h-full w-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
+						<nuxt-link
+							:to="{ path: `/spoke-surgery-management/hub-banks/${locum.id}` }"
+						>
+							<div
+							class="flex justify-end z-50"
+							v-if="authPermissions.includes('Favorite MyBanks Locum')"
+							>
+							<template v-if="locum.is_favorite">
+								<svgicon
+								name="on-star"
+								height="32"
+								width="32"
+								class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+								@click.prevent.stop="unfavorite(locum.id)"
+								/>
+							</template>
+							<template v-else-if="!locum.is_favorite">
+								<svgicon
+								name="off-star"
+								height="32"
+								width="32"
+								class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+								@click.prevent.stop="favorite(locum.id)"
+								/>
+							</template>
+							</div>
+
+							<div class="flex flex-wrap text-center mt-4 cursor-pointer">
+							<div class="w-full flex justify-center">
+								<AppAvatar
+								:src="locum.avatar && locum.avatar.file && locum.avatar.file.url ? locum.avatar.file.url : ''"
+								/>
+							</div>
+							<div
+								class="w-full font-bold text-sm sm:text-lg mt-4 leading-tight"
+							>{{locum.personal_detail.name}}</div>
+							<div
+								class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
+							>{{ locum.email }}</div>
+							<div
+								class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
+							>{{locum.locum_detail.profession.name}}</div>
+							</div>
+						</nuxt-link>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
+			<AppPagination
+			:total="total"
+			:totalPages="totalPages"
+			:currentPage="current_page"
+			:perPage="perPage"
+			@pagechanged="pagechanged"
+			/>
+		</div>
+		<transition name="fade" mode="out-in">
+			<nuxt-link
+				:to="`/spoke-surgery-management/hub-banks/${$route.params.id}`"
+				class="shield"
+				v-if="['spoke-surgery-management-hub-banks-id',].includes($route.name)"
+			></nuxt-link>
+		</transition>
+		<nuxt-child />
+		<AppConfirmationModal
+			:label="confirmation_text"
+			:confirmLabel="'Yes'"
+			:cancelLabel="'Cancel'"
+			:modal="confirmation_modal"
+			@confirm="confirm"
+			@cancel="confirmation_modal = false"
+		/>
+	</div>
+</template>
+
+<script>
+import AppAvatar from "@/components/Base/AppAvatar";
+import AppTable from "@/components/Base/AppTable";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+export default {
+	transition: {
+		name: "fade",
+		mode: "out-in"
+	},
+	components: {
+		AppAvatar,
+		AppConfirmationModal,
+		AppTable
+	},
+	data() {
+		return {
+			total: 0,
+			current_page: 1,
+			loading: false,
+			locums: [],
+
+			confirmation_text: "",
+			confirmation_modal: false,
+			
+			practice: null,
+			parentPracticeId: null
+		};
+	},
+	computed: {
+		authPermissions() {
+			return this.$store.getters["permissions"];
+		},
+		offset() {
+			return this.perPage * (this.current_page - 1);
+		},
+		perPage() {
+			return 8;
+		},
+		totalPages() {
+			return Math.ceil(this.total / this.perPage);
+		},
+	},
+	async asyncData({ app, route, store }) {
+		try {
+			let responseParentSurgery = await app.$axios.$get(
+				`/api/v1/practice/me/parent-surgery`
+			)
+			console.log(responseParentSurgery)
+			const parentPracticeId = responseParentSurgery.data 
+				&& responseParentSurgery.data.practice 
+				&& responseParentSurgery.data.practice.parent_practice
+				? responseParentSurgery.data.practice.parent_practice.id : null
+
+			let responseCount = await app.$axios.$get(
+				`/api/v1/practice/locums/count`, {
+					params: {
+						favorite_by_practice_id: parentPracticeId
+					}
+				}
+			)
+
+			let response = await app.$axios.$get(
+				`/api/v1/practice/locums`, {
+					params: {
+						favorite_by_practice_id: parentPracticeId
+					}
+				}
+			)
+			
+			return {
+				practice: responseParentSurgery.data.practice,
+				parentPracticeId: parentPracticeId,
+				total: responseCount.data.count,
+				locums: response.data.users
+			}
+			
+		} catch (err) {
+			console.log("get locum error!", err);
+		}
+	},
+	methods: {
+		favorite(id) {
+			this.user_id = id;
+			this.confirmation_text = "Add this Locum to MyBanks?";
+			this.confirmation_modal = true;
+		},
+		unfavorite(id) {
+			this.user_id = id;
+			this.confirmation_text = "Remove this Locum to MyBanks?";
+			this.confirmation_modal = true;
+		},
+		confirm() {
+			let locum = this.locums.find(item => item.id === this.user_id);
+			if (!locum.is_favorite) {
+				this.$axios
+				.$post(`/api/v1/practice/locums/${locum.id}/favorite`)
+				.then(res => {
+					this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "success",
+					text: ["Added to favourites"]
+					});
+					locum.is_favorite = true;
+				})
+				.catch(err => {
+					console.log("err", err.response || err);
+				})
+				.finally(() => {
+					this.confirmation_modal = false;
+				});
+			} else if (locum.is_favorite) {
+				this.$axios
+				.$delete(`/api/v1/practice/locums/${locum.id}/favorite`)
+				.then(res => {
+					this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "success",
+					text: ["Remove to favourites"]
+					});
+					locum.is_favorite = false;
+				})
+				.catch(err => {
+					console.log("err", err.response || err);
+				})
+				.finally(() => {
+					this.confirmation_modal = false;
+				});
+			}
+		},
+		getLocums(page) {
+			let params = {
+				limit: this.perPage,
+				offset: this.offset,
+				favorite_by_practice_id: this.parentPracticeId,
+				detailed: true
+			};
+			this.current_page = page;
+			this.$axios
+				.$get(`/api/v1/practice/locums`, { params })
+				.then(res => {
+					this.locums = res.data.users;
+					this.toggleTable = true;
+					this.loading = false;
+				})
+				.catch(err => {
+					console.log("err", err);
+				});
+		},
+		pagechanged(e) {
+			this.current_page = e;
+			this.getLocums(this.current_page);
+		}
+	}
+};
+</script>

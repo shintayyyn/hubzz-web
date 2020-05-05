@@ -11,6 +11,11 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('spoke-surgery-management-spoke-siblings') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >My Spoke Siblings</nuxt-link>
+      <nuxt-link
+        :to="{ name: 'spoke-surgery-management-hub-banks'}"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('spoke-surgery-management-hub-banks') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >My Hub Banks</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
       <div

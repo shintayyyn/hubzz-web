@@ -47,7 +47,7 @@
 					:class="$route.name === 'hub-surgery-management-id-request-for-termination' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
 				>Request For Termination</nuxt-link>
 			</div>
-			<nuxt-child :practiceSurgery="practice_surgery" />
+			<nuxt-child :practiceSurgery="practice_surgery" @updateSurgery="$emit('updateSurgery', $event)" />
 		</div>
 	</div>
 </template>
