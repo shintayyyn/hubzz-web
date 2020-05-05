@@ -1,10 +1,10 @@
 export default {
-    getProfessions ({ commit }) {
+    getProfessions({ commit }) {
         this.$axios.$get(`/api/v1/professions`).then((res) => {
             commit('SET_PROFESSIONS', res.data.professions)
         })
     },
-    getQualifications ({ commit }) {
+    getQualifications({ commit }) {
         this.$axios.$get(`/api/v1/profession-categories`).then((res) => {
             let gp = res.data.profession_categories.find((category) => category.name === 'GP')
             let others = res.data.profession_categories.find((category) => category.name !== 'GP')
@@ -12,27 +12,27 @@ export default {
             commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
         })
     },
-    getClinicalSystems ({ commit }) {
+    getClinicalSystems({ commit }) {
         this.$axios.$get(`/api/v1/clinical-systems`).then((res) => {
             commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
         })
     },
-    getSpokenLanguages ({ commit }) {
+    getSpokenLanguages({ commit }) {
         this.$axios.$get(`/api/v1/spoken-languages`).then((res) => {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
-    getPracticeTypes ({ commit }) {
+    getPracticeTypes({ commit }) {
         this.$axios.$get(`/api/v1/practice-types`).then((res) => {
             commit('SET_PRACTICE_TYPES', res.data.practice_types)
         })
     },
-    getMandatoryTrainings ({ commit }) {
+    getMandatoryTrainings({ commit }) {
         this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
             commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
         })
     },
-    registeredPractice ({ state, commit }) {
+    registeredPractice({ state, commit }) {
         let form = {}
         form = {
             ...state.practice_surgery_details,
@@ -92,7 +92,7 @@ export default {
                             errorMessage.field === 'vat_registered' ||
                             errorMessage.field === 'vat_number' ||
                             errorMessage.field === 'tax_year_end_date' ||
-                            
+
                             errorMessage.field === 'national_insurance_number' ||
                             errorMessage.field === 'sd_number' ||
                             errorMessage.field === 'paying_reference' ||
@@ -114,7 +114,7 @@ export default {
                 }
             })
     },
-    registeredLocum ({ state, commit }) {
+    registeredLocum({ state, commit }) {
         let form = {}
         form = {
             ...state.account_details,
@@ -230,7 +230,7 @@ export default {
                 }
             })
     },
-    registerCheckFirstPart ({ commit }, payload) {
+    registerCheckFirstPart({ commit }, payload) {
         commit("SET_SIGNUP_LOADING", true)
         this.$axios.$post(`/api/v1/locum/register/check-first-part`, payload)
             .then(res => {
@@ -248,7 +248,7 @@ export default {
                 }
             })
     },
-    registerLocum ({ state, commit }) {
+    registerLocum({ state, commit }) {
         let form = {}
 
         form = {
@@ -272,6 +272,8 @@ export default {
 
         form.reference_locum_compliance_documents = form.reference_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
         form.mandatory_locum_compliance_documents = form.mandatory_locum_compliance_documents.map(item => JSON.stringify(item)).join(',')
+
+        form.mobile_number = form.mobile_number ? `+44${form.mobile_number}` : ''
 
         const formData = new FormData()
 

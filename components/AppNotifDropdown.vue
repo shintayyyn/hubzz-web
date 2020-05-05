@@ -187,6 +187,7 @@
           'Locum Notification Compliance Approved',
           'Locum Notification Compliance Pending',
           'Locum Notification Compliance Rejected',
+
           'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
           'Locum Notification Job Application Cancelled',
@@ -201,6 +202,8 @@
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unsuccessful',
           'Locum Notification Job Withdrawn',
+
+          'Locum Notification Job Part Completed',
 
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -217,6 +220,8 @@
           'Practice Notification Job Unfilled',
           'Practice Notification Job Unfilled Warning',
           'Practice Notification Job Withdrawn',
+
+          'Practice Notification Job Part Completed',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -301,32 +306,17 @@
 
             if (this.domain === "locum") {
               switch (notification.notification_type.name) {
-                case 'Locum Notification Job Part Completed':
-                  message = 'This part of your job has been completed'
-                  break
-                case 'Locum Notification Job Completed':
-                  message = 'This job has been completed'
-                  break
                 case 'Locum Notification Job Approved':
                   message = 'This part of your job has been approved'
                   break
                 case 'Locum Notification Job Disputed':
                   message = 'This part of your job has been disputed'
                   break
-                case 'Locum Notification Job Terminated':
-                  message = 'This Job has been terminated.'
-                  break
                 default:
                   message = ''
               }
             } else if (this.domain === 'practice') {
               switch (notification.notification_type.name) {
-                case 'Practice Notification Job Part Completed':
-                  message = 'This part of your job has been completed'
-                  break
-                case 'Practice Notification Job Completed':
-                  message = 'This job has been completed'
-                  break
                 case 'Practice Notification Job Approved':
                   message = 'This part of your job has been approved'
                   break
@@ -542,6 +532,10 @@
           'Locum Notification Job Withdrawn',
         ]
 
+        const locumJobPartNotifications = [
+          'Locum Notification Job Part Completed',
+        ]
+
         const practiceJobNotifications = [
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -556,6 +550,10 @@
           'Practice Notification Job Unfilled',
           'Practice Notification Job Unfilled Warning',
           'Practice Notification Job Withdrawn',
+        ]
+
+        const practiceJobPartNotifications = [
+          'Practice Notification Job Part Completed',
         ]
 
         const jobApplicationNotifications = [
@@ -700,6 +698,46 @@
           return
         }
         
+        if (locumJobPartNotifications.includes(notificationTypeName)) {
+          const jobPart = payload
+
+          const {
+            id: jobPartId,
+            job_id: jobId,
+          } = jobPart
+
+          if (this.$route.name === 'jobs-index') {
+            this.$router.push({
+              name: 'jobs-index-id-job-parts-jobPartId',
+              params: {
+                id: jobId,
+                jobPartId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: 'jobs-index',
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'jobs-index-id-job-parts-jobPartId',
+                params: {
+                  id: jobId,
+                  jobPartId,
+                },
+              })
+            }, 500)
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
         if (practiceJobNotifications.includes(notificationTypeName)) {
           const job = payload
 
@@ -822,7 +860,69 @@
           this.showNotificationsDropdown = false
           this.updateNotificationSeen(notification)
           return
-        }        
+        }
+        
+        if (practiceJobPartNotifications.includes(notificationTypeName)) {
+          const jobPart = payload
+
+          const {
+            id: jobPartId,
+            job_id: jobId,
+            practice_id: jobPracticeId,
+            practice_surgery_id: practiceSurgeryId,
+          } = jobPart
+
+          if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-sessions-index',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+                params: {
+                  id: practiceSurgeryId,
+                  sessionId: jobId,
+                  jobPartId,
+                },
+              })
+            }, 500)
+          } else {
+            if (this.$route.name === 'sessions-index') {
+              this.$router.push({
+                name: 'sessions-index-id-job-parts-jobPartId',
+                params: {
+                  id: jobId,
+                  jobPartId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: 'sessions-index',
+              })
+
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'sessions-index-id-job-parts-jobPartId',
+                  params: {
+                    id: jobId,
+                    jobPartId,
+                  },
+                })
+              }, 500)
+            }
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
 
         if (jobApplicationNotifications.includes(notificationTypeName)) {
           const {
