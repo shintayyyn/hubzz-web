@@ -213,7 +213,19 @@
                 />
               </span>
               <p class="font-semibold leading-tight">
-                Bank Sharing
+                Spoke Siblings Bank Sharing
+              </p>
+            </div>
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon
+                  :name="practiceSpoke.share_my_banks === true ? 'success-checkmark' : 'times-solid'"
+                  class="fill-current w-5 h-5"
+                  :class="practiceSpoke.share_my_banks ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
+                />
+              </span>
+              <p class="font-semibold leading-tight">
+                Hub Bank Sharing
               </p>
             </div>
           </div>
