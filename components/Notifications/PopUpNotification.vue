@@ -37,6 +37,14 @@
           </div>
 
           <div
+            v-if="notification.payload_type === 'locum_invoice' && notification.payload.status"
+            class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+            :class="payloadLocumInvoiceStatusClass[notification.payload.status]"
+          >
+            {{ notification.payload.status }}
+          </div>
+
+          <div
             v-if="notification.payload_type === 'job_locum_user' && notification.payload.job"
             class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
             :class="payloadJobClass[notification.payload.job.status]"
@@ -157,6 +165,15 @@
           Cancelled: 'bg-red-500 text-white',
           Completed: 'bg-green-500 text-white',
           Approved: 'bg-green-500 text-white',
+        }
+      },
+
+      payloadLocumInvoiceStatusClass () {
+        return {
+          Issued: 'bg-green-500 text-white',
+          Disputed: 'bg-red-500 text-white',
+          Approved: 'bg-green-500 text-white',
+          Paid: 'bg-green-500 text-white',
         }
       },
     },
