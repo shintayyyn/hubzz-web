@@ -69,6 +69,9 @@
                   <template v-if="column.dataIndex === 'actions'">
                     <slot name="actions" :item="item" @click="$emit('click', item)" />
                   </template>
+                  <template v-if="column.dataIndex === 'shared'">
+                    <slot name="shared" :item="item" @click="$emit('click', item)" />
+                  </template>
                   <template v-if="column.dataIndex === 'actions-button'">
                     <slot name="actions-button" :item="item" />
                   </template>

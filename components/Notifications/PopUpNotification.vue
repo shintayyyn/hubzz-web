@@ -13,7 +13,7 @@
       <div class="flex flex-col items-start my-1 w-full">
         <div class="flex flex-wrap">
           <div
-            v-if="notification.payload_type === 'job'"
+            v-if="notification.payload_type === 'job' || notification.payload_type === 'job_part'"
             class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
             :class="payloadJobClass[notification.payload.status]"
           >
@@ -21,7 +21,7 @@
           </div>
 
           <div
-            v-if="notification.payload_type === 'locum_job'"
+            v-if="notification.payload_type === 'locum_job' || notification.payload_type === 'locum_job_part'"
             class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
             :class="payloadLocumJobClass[notification.payload.locum_status]"
           >
@@ -32,6 +32,14 @@
             v-if="notification.payload_type === 'locum_compliance_document' && notification.payload.status"
             class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
             :class="payloadLocumComplianceDocumentStatusClass[notification.payload.status]"
+          >
+            {{ notification.payload.status }}
+          </div>
+
+          <div
+            v-if="notification.payload_type === 'locum_invoice' && notification.payload.status"
+            class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+            :class="payloadLocumInvoiceStatusClass[notification.payload.status]"
           >
             {{ notification.payload.status }}
           </div>
@@ -157,6 +165,15 @@
           Cancelled: 'bg-red-500 text-white',
           Completed: 'bg-green-500 text-white',
           Approved: 'bg-green-500 text-white',
+        }
+      },
+
+      payloadLocumInvoiceStatusClass () {
+        return {
+          Issued: 'bg-green-500 text-white',
+          Disputed: 'bg-red-500 text-white',
+          Approved: 'bg-green-500 text-white',
+          Paid: 'bg-green-500 text-white',
         }
       },
     },

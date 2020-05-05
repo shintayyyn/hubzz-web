@@ -797,7 +797,7 @@
                 if (err.response.data.message) {
                   this.$store.commit("SET_NOTIFICATION", {
                     enabled: true,
-                    status: "success",
+                    status: "error",
                     text: [`${err.response.data.message}`]
                   })
                 } else if (err.response.data.error_messages) {

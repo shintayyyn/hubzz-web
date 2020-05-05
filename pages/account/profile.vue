@@ -108,7 +108,8 @@
             :type="'text'"
             :name="'nhs_smart_card_id_number'"
             :label="'Your NHS Smart Card ID number'"
-            @keypress="inputNumberOnly($event)"
+            :limit="12"
+            @keydown="inputNumberOnly($event)"
             @submit="save"
           />
 
@@ -303,9 +304,10 @@
               :name="'utr_number'"
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
-              :placeholder="''"
+              :placeholder="'AZ000000D'"
+              :limit="9"
               required
-              @keypress="inputNumberOnly($event)"
+              @keydown="alphaNumeric($event)"
             />
           </template>
 
@@ -906,7 +908,6 @@
           type: "compliance_documents"
         })
       })
-      console.log(this.form.reference_locum_compliance_documents)
 
       this.form.referee_1_contact_name = this.user.referee_1_contact_name
       this.form.referee_1_phone_number = this.user.referee_1_phone_number
@@ -998,6 +999,7 @@
       },
 
       save () {
+        this.formError = []
         let notRequired = [
           'nhs_smart_card_id_number',
           'headline',
@@ -1033,6 +1035,17 @@
 
         if (this.form.employment_type === "Self-Employed") {
           notRequired.push("company_registration_number")
+          let pre = this.form.utr_number.substring(0,2)
+          let num = this.form.utr_number.substring(2,8)
+          let post = this.form.utr_number.substring(8,9)
+          if (!this.form.utr_number.substring(0,2).match(/[A-Z]/g) || 
+          this.form.utr_number.substring(0,2).match(/[A-Z]/g).length !== 2 || 
+          !this.form.utr_number.substring(2,8).match(/[0-9]/g) || 
+          this.form.utr_number.substring(2,8).match(/[0-9]/g).length !== 6 || 
+          !this.form.utr_number.substring(8,9).match(/[A-D]/g) || 
+          !this.form.utr_number.substring(8,9).match(/[A-D]/g).length) {
+            this.formError.push({ field: 'utr_number', message: 'UTR Number is invalid.'})
+          }
         } else if (this.form.employment_type === "Limited Company") {
           notRequired.push("utr_number")
         }
@@ -1099,18 +1112,18 @@
                   ]
                 })
               } else {
-                this.formError.push({
-                  field: item.compliance_document_name
-                    .replace(/ /g, "_")
-                    .toLowerCase(),
-                  message: `${item.compliance_document_name} is required`
-                })
+                // this.formError.push({
+                //   field: item.compliance_document_name
+                //     .replace(/ /g, "_")
+                //     .toLowerCase(),
+                //   message: `${item.compliance_document_name} is required`
+                // })
+                this.checkValidation(item.compliance_document_name, parseInt(this.form.profession_id) !== 1 && parseInt(this.form.profession_id) <=5 ? 8 : 7)
               }
             }
           )
         }
 
-        this.formError = []
 
         this.Validate(this.form, notRequired)
 
@@ -1133,7 +1146,10 @@
             this.professionCategoryId === 1 ? this.form.ir35 : false
 
           this.$axios
-            .$put(`/api/v1/locum/me/profile`, this.form)
+            .$put(`/api/v1/locum/me/profile`, {
+              ...this.form,
+              reference_locum_compliance_documents: this.form.reference_locum_compliance_documents
+            })
             .then(res => {
               this.form.clinical_system_id = this.selectedClinicalSystem
               this.form.qualification_id = this.selectedQualification
@@ -1145,6 +1161,14 @@
               })
               this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
               this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
+
+              res.data.user.reference_locum_compliance_documents.forEach(item => {
+                let foundItem = this.form.reference_locum_compliance_documents.find(formItem => formItem.compliance_document_name === item.compliance_document.name)
+                if (foundItem) {
+                  foundItem.reference = item.reference
+                }
+              })
+
               this.CheckUserVerification()
             })
             .catch(err => {
@@ -1184,7 +1208,6 @@
           //   status: "danger",
           //   text: ["Please fill up all the forms"]
           // });
-          this.form
           this.scrollToTop()
         }
       },

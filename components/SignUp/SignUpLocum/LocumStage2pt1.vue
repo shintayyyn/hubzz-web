@@ -26,6 +26,7 @@
 						:type="'text'"
 						:name="'nhs_smart_card_id_number'"
 						:label="'NHS Smart Card ID number'"
+						:limit="12"
 						@keydown="inputNumberOnly($event)"
 					/>
 

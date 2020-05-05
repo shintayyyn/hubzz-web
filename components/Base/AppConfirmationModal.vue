@@ -6,9 +6,15 @@
         <div
           class="w-full md:w-auto border-solid rounded-b-lg bg-yellow-500 py-2 px-4 md:px-24 shadow-lg"
         >
-          <div class="flex justify-center py-4">
+          <div class="flex justify-center">
             <svgicon class="mr-1" :name="status" height="20" width="20" v-if="status" />
             <div class="text-sm md:text-base font-bold">{{label}}</div>
+          </div>
+          <div class="flex justify-center">
+            <div class="text-sm md:text-base font-bold">{{label2}}</div>
+          </div>
+          <div class="flex justify-center">
+            <div class="text-sm md:text-base font-bold">{{label3}}</div>
           </div>
           <div class="flex justify-center my-2">
             <div class="mx-2">
@@ -45,6 +51,12 @@ export default {
     label: {
       type: String,
       required: true
+    },
+    label2: {
+      type: String,
+    },
+    label3: {
+      type: String,
     },
     confirmLabel: {
       type: String

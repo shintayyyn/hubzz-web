@@ -187,6 +187,7 @@
           'Locum Notification Compliance Approved',
           'Locum Notification Compliance Pending',
           'Locum Notification Compliance Rejected',
+
           'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
           'Locum Notification Job Application Cancelled',
@@ -201,6 +202,13 @@
           'Locum Notification Job Unqualified',
           'Locum Notification Job Unsuccessful',
           'Locum Notification Job Withdrawn',
+
+          'Locum Notification Job Part Completed',
+          'Locum Notification Job Part Approved',
+
+          'Locum Notification Locum Invoice Issued',
+          'Locum Notification Locum Invoice Disputed',
+          'Locum Notification Locum Invoice Approved',
 
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -217,6 +225,13 @@
           'Practice Notification Job Unfilled',
           'Practice Notification Job Unfilled Warning',
           'Practice Notification Job Withdrawn',
+
+          'Practice Notification Job Part Completed',
+          'Practice Notification Job Part Approved',
+
+          'Practice Notification Locum Invoice Issued',
+          'Practice Notification Locum Invoice Disputed',
+          'Practice Notification Locum Invoice Approved',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -301,32 +316,17 @@
 
             if (this.domain === "locum") {
               switch (notification.notification_type.name) {
-                case 'Locum Notification Job Part Completed':
-                  message = 'This part of your job has been completed'
-                  break
-                case 'Locum Notification Job Completed':
-                  message = 'This job has been completed'
-                  break
                 case 'Locum Notification Job Approved':
                   message = 'This part of your job has been approved'
                   break
                 case 'Locum Notification Job Disputed':
                   message = 'This part of your job has been disputed'
                   break
-                case 'Locum Notification Job Terminated':
-                  message = 'This Job has been terminated.'
-                  break
                 default:
                   message = ''
               }
             } else if (this.domain === 'practice') {
               switch (notification.notification_type.name) {
-                case 'Practice Notification Job Part Completed':
-                  message = 'This part of your job has been completed'
-                  break
-                case 'Practice Notification Job Completed':
-                  message = 'This job has been completed'
-                  break
                 case 'Practice Notification Job Approved':
                   message = 'This part of your job has been approved'
                   break
@@ -542,6 +542,17 @@
           'Locum Notification Job Withdrawn',
         ]
 
+        const locumJobPartNotifications = [
+          'Locum Notification Job Part Completed',
+          'Locum Notification Job Part Approved',
+        ]
+
+        const locumLocumInvoiceNotifications = [
+          'Locum Notification Locum Invoice Issued',
+          'Locum Notification Locum Invoice Disputed',
+          'Locum Notification Locum Invoice Approved',
+        ]
+
         const practiceJobNotifications = [
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -558,9 +569,21 @@
           'Practice Notification Job Withdrawn',
         ]
 
+        const practiceJobPartNotifications = [
+          'Practice Notification Job Part Completed',
+          'Practice Notification Job Part Approved',
+        ]
+
         const jobApplicationNotifications = [
           'Practice Notification Job Application',
+          'Practice Notification Job Application Auto Cancelled',
           'Practice Notification Job Application Cancelled',
+        ]
+
+        const practiceLocumInvoiceNotifications = [
+          'Practice Notification Locum Invoice Issued',
+          'Practice Notification Locum Invoice Disputed',
+          'Practice Notification Locum Invoice Approved',
         ]
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
@@ -700,6 +723,83 @@
           return
         }
         
+        if (locumJobPartNotifications.includes(notificationTypeName)) {
+          const jobPart = payload
+
+          const {
+            id: jobPartId,
+            job_id: jobId,
+          } = jobPart
+
+          if (this.$route.name === 'jobs-index') {
+            this.$router.push({
+              name: 'jobs-index-id-job-parts-jobPartId',
+              params: {
+                id: jobId,
+                jobPartId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: 'jobs-index',
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'jobs-index-id-job-parts-jobPartId',
+                params: {
+                  id: jobId,
+                  jobPartId,
+                },
+              })
+            }, 500)
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
+        if (locumLocumInvoiceNotifications.includes(notificationTypeName)) {
+          const locumInvoice = payload
+
+          const {
+            id: locumInvoiceId,
+          } = locumInvoice
+
+          if (this.$route.name === 'locum-billing-invoices') {
+            this.$router.push({
+              name: 'locum-billing-invoices-id',
+              params: {
+                id: locumInvoiceId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: 'locum-billing-invoices',
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'locum-billing-invoices-id',
+                params: {
+                  id: locumInvoiceId,
+                },
+              })
+            }, 500)
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
         if (practiceJobNotifications.includes(notificationTypeName)) {
           const job = payload
 
@@ -822,7 +922,69 @@
           this.showNotificationsDropdown = false
           this.updateNotificationSeen(notification)
           return
-        }        
+        }
+        
+        if (practiceJobPartNotifications.includes(notificationTypeName)) {
+          const jobPart = payload
+
+          const {
+            id: jobPartId,
+            job_id: jobId,
+            practice_id: jobPracticeId,
+            practice_surgery_id: practiceSurgeryId,
+          } = jobPart
+
+          if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-sessions-index',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+                params: {
+                  id: practiceSurgeryId,
+                  sessionId: jobId,
+                  jobPartId,
+                },
+              })
+            }, 500)
+          } else {
+            if (this.$route.name === 'sessions-index') {
+              this.$router.push({
+                name: 'sessions-index-id-job-parts-jobPartId',
+                params: {
+                  id: jobId,
+                  jobPartId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: 'sessions-index',
+              })
+
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'sessions-index-id-job-parts-jobPartId',
+                  params: {
+                    id: jobId,
+                    jobPartId,
+                  },
+                })
+              }, 500)
+            }
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
 
         if (jobApplicationNotifications.includes(notificationTypeName)) {
           const {
@@ -881,6 +1043,64 @@
             }
           }
 
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
+        if (practiceLocumInvoiceNotifications.includes(notificationTypeName)) {
+          const locumInvoice = payload
+
+          const {
+            id: locumInvoiceId,
+            practice_id: locumInvoicePracticeId,
+            practice_surgery_id: practiceSurgeryId,
+          } = locumInvoice
+
+          if (locumInvoicePracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
+            this.$router.push({
+              name: 'hub-surgery-management-id-surgery-billings-invoices-from-locums',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'hub-surgery-management-id-surgery-billings-invoices-from-locums-invoiceId',
+                params: {
+                  id: practiceSurgeryId,
+                  invoiceId: locumInvoiceId,
+                },
+              })
+            }, 500)
+          } else {
+            if (this.$route.name === 'practice-billing-invoices-from-locums') {
+              this.$router.push({
+                name: 'practice-billing-invoices-from-locums-id',
+                params: {
+                  id: locumInvoiceId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: 'practice-billing-invoices-from-locums',
+              })
+
+              setTimeout(() => {
+                this.$router.push({
+                  name: 'practice-billing-invoices-from-locums-id',
+                  params: {
+                    id: locumInvoiceId,
+                  },
+                })
+              }, 500)
+            }
+          }
+        
           this.showNotificationsDropdown = false
           this.updateNotificationSeen(notification)
           return
