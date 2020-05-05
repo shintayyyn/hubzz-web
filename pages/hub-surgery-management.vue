@@ -67,8 +67,8 @@
           <input
             type="checkbox"
             :checked="selectedItems.includes(slotProps.item.id)"
-          />
-          <label class="text-xs sm:text-sm py-1 flex items-center"></label>
+          >
+          <label class="text-xs sm:text-sm py-1 flex items-center" />
         </div>
       </template>
     </AppTable>
@@ -248,7 +248,7 @@ export default {
     })
   },
   methods: {
-    shareMyBanks() {
+    shareMyBanks () {
       this.$axios.$put(`/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`, { surgeryIds: this.selectedItems }).then(res => {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
@@ -257,14 +257,14 @@ export default {
         })
       })
     },
-    checkItem(childPracticeId) {
-      let index = this.selectedItems.findIndex(item => item === childPracticeId);
+    checkItem (childPracticeId) {
+      let index = this.selectedItems.findIndex(item => item === childPracticeId)
       if (index >= 0) {
         this.selectedItems = this.selectedItems.filter(
           item => item !== childPracticeId
-        );
+        )
       } else if (index < 0) {
-        this.selectedItems.push(childPracticeId);
+        this.selectedItems.push(childPracticeId)
       }
     },
     getSurgeriesRealTime () {

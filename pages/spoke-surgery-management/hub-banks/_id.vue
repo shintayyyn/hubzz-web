@@ -1,5 +1,5 @@
 <template>
-    <div class="modal-container p-4">
+  <div class="modal-container p-4">
     <div class="my-2">
       <nuxt-link :to="{ path: `/spoke-surgery-management/hub-banks` }" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
