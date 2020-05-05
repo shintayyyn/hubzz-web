@@ -204,7 +204,9 @@
 			@cancel="confirmation_modal = false"
 		/>
 		<AppConfirmationModal
-			:label="`This Locum is already appointed on one of your Job. ${jobNumbers}, Are you sure you want to continue?`"
+			:label="`This Locum is already appointed on one of your Job.`"
+			:label2="`${jobNumbers.length > 1 ? `${jobNumbers.slice(0,2)},etc..` : `${jobNumbers}`}`"
+			:label3="`Are you sure you want to continue?`"
 			:confirmLabel="'Yes'"
 			:cancelLabel="'Cancel'"
 			:modal="warning_modal"
