@@ -2,7 +2,7 @@
   <div class="relative">
     <div class="__report_table w-full flex text-xs whitespace-no-wrap overflow-x-auto mt-1">
       <div v-for="columnDetail in columnDetails" :key="`columnDetail_${columnDetail.key}`" :style="columnStyle(columnDetail)">
-        <div class="flex bg-waterloo text-white font-bold">
+        <div class="flex bg-waterloo font-bold">
           <div class="flex-1 p-2 flex justify-between items-center">
             <div class="whitespace-no-wrap">
               {{ columnDetail.title }}

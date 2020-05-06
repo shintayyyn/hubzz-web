@@ -110,9 +110,9 @@
     </div>
 
     <nuxt-link
-      v-if="$route.name !== 'index-reports'"
+      v-if="$route.name !== 'practice-reports'"
       class="bg-shield z-511 fixed inset-0 opacity-50"
-      to="/reports"
+      to="/practice-reports"
     />
 
     <nuxt-child />
@@ -127,160 +127,160 @@
 					{
 						title: 'REP-001',
 						subtitle: 'Tax and NI Deductions',
-						url: '/reports/deductions',
+						url: '/practice-reports/deductions',
 					},
 					{
 						title: 'REP-002',
 						subtitle: 'Payments',
-						url: '/reports/payments',
+						url: '/practice-reports/payments',
 					},
 					{
 						title: 'REP-003',
 						subtitle: 'Pension Contributions',
-						url: '/reports/pension-contributions',
+						url: '/practice-reports/pension-contributions',
 					},
 					{
 						title: 'REP-004',
 						subtitle: 'Locums on System',
-						url: '/reports/locums',
+						url: '/practice-reports/locums',
 					},
           {
             title: 'REP-005',
             subtitle: 'Locums Used/Bank',
-            url: '/reports/practice-locums',
+            url: '/practice-reports/practice-locums',
           },
           {
             title: 'REP-006',
             subtitle: 'Locums Not Successful',
-            url: '/reports/practice-unsuccessful-locums',
+            url: '/practice-reports/practice-unsuccessful-locums',
           },
           {
             title: 'REP-007',
             subtitle: 'Locums that have Declined',
-            url: '/reports/practice-declined-locums',
+            url: '/practice-reports/practice-declined-locums',
           },
           {
             title: 'REP-008',
             subtitle: 'Compliance - Expiring',
-            url: '/reports/locum-compliance-documents',
+            url: '/practice-reports/locum-compliance-documents',
           },
           {
             title: 'REP-009',
             subtitle: 'Locums that Arrive Late',
-            url: '/reports/practice-late-locums',
+            url: '/practice-reports/practice-late-locums',
           },
           {
             title: 'REP-010',
             subtitle: 'Hubzz Invoices',
-            url: '/reports/practice-invoices',
+            url: '/practice-reports/practice-invoices',
           },
 				],
         locumReports: [
           {
             title: 'REP-011',
             subtitle: 'NHS Pension Contributions',
-            url: '/reports/locum-pension-contributions',
+            url: '/practice-reports/locum-pension-contributions',
           },
           {
             title: 'REP-012',
             subtitle: 'Tax Reporting - Money Earnt and Tax and NI Paid',
-            url: '/reports/locum-invoices',
+            url: '/practice-reports/locum-invoices',
           },
           {
             title: 'REP-013',
             subtitle: 'Practices Worked',
-            url: '/reports/locum-practices',
+            url: '/practice-reports/locum-practices',
           },
           {
             title: 'REP-014',
             subtitle: 'Expenses',
-            url: '/reports',
+            url: '/practice-reports',
           },
         ],
         complianceReports: [
           {
             title: 'REP-015',
             subtitle: 'Onboarding - Documents Uploaded',
-            url: '/reports/locum-uploaded-documents',
+            url: '/practice-reports/locum-uploaded-documents',
           },
           {
             title: 'REP-016',
             subtitle: 'Expiry Report',
-            url: '/reports/locum-expiring-compliance-documents',
+            url: '/practice-reports/locum-expiring-compliance-documents',
           },
           {
             title: 'REP-017',
             subtitle: 'Locum Lead Time for Compliance Completed',
-            url: '/reports/locum-completed-compliances',
+            url: '/practice-reports/locum-completed-compliances',
           },
           {
             title: 'REP-018',
             subtitle: 'Practice Lead Time for Activation',
-            url: '/reports/activated-practices',
+            url: '/practice-reports/activated-practices',
           },
         ],
         hqAnalyticsReports: [
           {
             title: 'REP-019',
             subtitle: 'Locums in an Area',
-            url: '/reports/locums-in-an-area',
+            url: '/practice-reports/locums-in-an-area',
           },
           {
             title: 'REP-020',
             subtitle: 'Locum Referrals',
-            url: '/reports/locum-referrals',
+            url: '/practice-reports/locum-referrals',
           },
           {
             title: 'REP-021',
             subtitle: 'Locum Practice Referrals',
-            url: '/reports/locum-practice-referrals',
+            url: '/practice-reports/locum-practice-referrals',
           },
           {
             title: 'REP-023',
             subtitle: 'Locums Declined',
-            url: '/reports/declined-jobs',
+            url: '/practice-reports/declined-jobs',
           },
           {
             title: 'REP-024',
             subtitle: 'Practice Cancellations',
-            url: '/reports/cancelled-jobs',
+            url: '/practice-reports/cancelled-jobs',
           },
           {
             title: 'REP-025',
             subtitle: 'Jobs not Filled',
-            url: '/reports/unfilled-jobs',
+            url: '/practice-reports/unfilled-jobs',
           },
           {
             title: 'REP-026',
             subtitle: 'Sign Ups Locums',
-            url: '/reports/registered-locums',
+            url: '/practice-reports/registered-locums',
           },
           {
             title: 'REP-027',
             subtitle: 'Sign Ups Practice',
-            url: '/reports/registered-practices',
+            url: '/practice-reports/registered-practices',
           },
           {
             title: 'REP-028',
             subtitle: 'Session Notifications',
-            url: '/reports/job-parts',
+            url: '/practice-reports/job-parts',
           },
           {
             title: 'REP-029',
             subtitle: 'Locum Usage',
-            url: '/reports/locum-usages',
+            url: '/practice-reports/locum-usages',
           },
         ],
         pricingReports: [
           {
             title: 'REP-030',
             subtitle: 'Hours Approved',
-            url: '/reports/locum-invoice-job-parts',
+            url: '/practice-reports/locum-invoice-job-parts',
           },
           {
             title: 'REP-031',
             subtitle: 'Invoices',
-            url: '/reports/practice-invoice-items',
+            url: '/practice-reports/practice-invoice-items',
           },
         ],
 			}
