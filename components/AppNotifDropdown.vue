@@ -209,6 +209,7 @@
           'Locum Notification Locum Invoice Issued',
           'Locum Notification Locum Invoice Disputed',
           'Locum Notification Locum Invoice Approved',
+          'Locum Notification Locum Invoice Paid',
 
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -232,6 +233,7 @@
           'Practice Notification Locum Invoice Issued',
           'Practice Notification Locum Invoice Disputed',
           'Practice Notification Locum Invoice Approved',
+          'Practice Notification Locum Invoice Paid',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -551,6 +553,7 @@
           'Locum Notification Locum Invoice Issued',
           'Locum Notification Locum Invoice Disputed',
           'Locum Notification Locum Invoice Approved',
+          'Locum Notification Locum Invoice Paid',
         ]
 
         const practiceJobNotifications = [
@@ -584,6 +587,7 @@
           'Practice Notification Locum Invoice Issued',
           'Practice Notification Locum Invoice Disputed',
           'Practice Notification Locum Invoice Approved',
+          'Practice Notification Locum Invoice Paid',
         ]
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {

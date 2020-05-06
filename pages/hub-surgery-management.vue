@@ -9,7 +9,7 @@
           Invite Spoke
         </nuxt-link>
         <AppButton
-          :label="'Shared my banks'"
+          :label="'Share my banks'"
           class="bg-yellow-500 text-sm"
           :inStyle="'padding:5px 14px;margin-left:5px;'"
           @click="shareMyBanks"
@@ -137,7 +137,7 @@ export default {
       // for app table component
       columns: [
         {
-          name: "Share my banks",
+          name: "Shared my banks",
           dataIndex: "shared",
           class: "text-center"
         },
@@ -183,6 +183,7 @@ export default {
           : null
 
       let surgeries = []
+      let selectedItems = []
       let parent_surgery = null
       let totalSurgeries = 0
 
@@ -201,6 +202,9 @@ export default {
       if (response.data && response.data.practice_surgeries) {
         response.data.practice_surgeries.forEach(surgery => {
           surgeries.push(surgery)
+          if (surgery.share_my_banks === true) {
+            selectedItems.push(surgery.id)
+          }
           // surgeries.push({ ...surgery, removable: true });
         })
       }
@@ -208,6 +212,7 @@ export default {
       return {
         practice,
         surgeries,
+        selectedItems,
         totalSurgeries
       }
     } catch (err) {
