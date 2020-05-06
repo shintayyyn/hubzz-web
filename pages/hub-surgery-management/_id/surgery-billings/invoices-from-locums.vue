@@ -682,6 +682,8 @@ export default {
       let status = []
       let invoice_status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -705,6 +707,13 @@ export default {
           status.push("Approved")
           locum_invoiceable = true
           break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
+          break
         default:
           invoice_status.push("To Be Invoice")
           status = ["Completed", "Declined", "Cancelled"]
@@ -725,6 +734,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+             nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_practice_id: [this.childPracticeId],
             offset: this.offset,
