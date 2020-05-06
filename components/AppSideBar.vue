@@ -2,40 +2,50 @@
   <section>
     <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-20">
-        <button class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
-                @click="close"
+        <button 
+          class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
+          @click="close"
         >
           X
         </button>
         <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
-          <span v-if="`/${$route.path.split('/')[1]}` == item.route"
-                class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full"
+          <span 
+            v-if="`/${$route.path.split('/')[1]}` == item.route"
+            class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full"
           />
-          <nuxt-link v-if="hasPermissions(item.permissions ? item.permissions : [])" :to="item.route"
-                     :event="isDisabled(item.route)" class="block no-underline p-4 transition-hover"
-                     :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+          <nuxt-link 
+            v-if="hasPermissions(item.permissions ? item.permissions : [])" :to="item.route"
+            :event="isDisabled(item.route)" class="block no-underline p-4 transition-hover"
+            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
           >
             <span>{{ item.name }}</span>
           </nuxt-link>
         </div>
         <div class="text-sm relative">
-          <span v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
-                class="absolute left-0 border-solid bg-sunglow w-1 h-full"
+          <span 
+            v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
+            class="absolute left-0 border-solid bg-sunglow w-1 h-full"
           />
-          <button class="block no-underline p-4 transition-hover focus:outline-none"
-                  :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
-                  @click.prevent="signout_modal = true"
+          <button 
+            class="block no-underline p-4 transition-hover focus:outline-none"
+            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+            @click.prevent="signout_modal = true"
           >
             <span>Sign Out</span>
           </button>
         </div>
       </div>
     </div>
-    <AppConfirmationModal :label="'Proceed to sign-out?'" :confirmLabel="'Yes'" :cancelLabel="'Cancel'"
-                          :modal="signout_modal" @confirm="logout" @cancel="signout_modal = false"
+    <AppConfirmationModal 
+      :label="'Proceed to sign-out?'" 
+      :confirmLabel="'Yes'" 
+      :cancelLabel="'Cancel'"
+      :modal="signout_modal" @confirm="logout" @cancel="signout_modal = false"
     />
-    <AppConfirmationModal :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'" :confirmLabel="'Yes'"
-                          :modal="confirmation_modal" @confirm="confirm"
+    <AppConfirmationModal 
+      :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'" 
+      :confirmLabel="'Yes'"
+      :modal="confirmation_modal" @confirm="confirm"
     />
   </section>
 </template>
@@ -262,12 +272,21 @@
                 order: 8
               })
             }
-            addedLists.push({ name: "Invite", route: "/invite", order: 9 })
+            addedLists.push({ 
+              name: "Reports", 
+              route: "/pratice-reports", 
+              order: 9 
+            })
+            addedLists.push({ 
+              name: "Invite", 
+              route: "/invite", 
+              order: 10 
+            })
             addedLists.push({
               name: "Roles and Permissions",
               route: "/roles-and-permissions",
               permissions: ["View Role"],
-              order: 10
+              order: 11
             })
           }
         }
@@ -293,7 +312,11 @@
                 route: "/my-practice",
                 order: 5
               })
-              addedLists.push({ name: "Jobs", route: "/jobs", order: 6 })
+              addedLists.push({ 
+                name: "Jobs", 
+                route: "/jobs", 
+                order: 6 
+              })
               addedLists.push({
                 name: "Billing",
                 route: "/locum-billing",
@@ -307,7 +330,16 @@
                 order: 7
               })
             }
-            addedLists.push({ name: "Invite", route: "/invite", order: 9 })
+            addedLists.push({ 
+              name: "Reports", 
+              route: "/locum-reports", 
+              order: 9 
+            })
+            addedLists.push({ 
+              name: "Invite", 
+              route: "/invite", 
+              order: 10 
+            })
           }
         }
 

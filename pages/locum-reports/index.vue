@@ -1,6 +1,5 @@
 <template>
   <div>
-    locum reports
   </div>
 </template>
 

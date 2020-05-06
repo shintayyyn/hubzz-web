@@ -1,6 +1,5 @@
 <template>
   <div>
-    practice reports
   </div>
 </template>
 
