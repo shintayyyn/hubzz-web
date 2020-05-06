@@ -9,7 +9,7 @@
           Invite Spoke
         </nuxt-link>
         <AppButton
-          :label="'Shared my banks'"
+          :label="'Share my banks'"
           class="bg-yellow-500 text-sm"
           :inStyle="'padding:5px 14px;margin-left:5px;'"
           @click="shareMyBanks"
@@ -137,7 +137,7 @@ export default {
       // for app table component
       columns: [
         {
-          name: "Share my banks",
+          name: "Shared my banks",
           dataIndex: "shared",
           class: "text-center"
         },
