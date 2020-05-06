@@ -31,7 +31,7 @@
           :name="'paid_at'"
           :label="'Payment made on'"
           :error="formError.find(item => item.field === 'paid_at')"
-          isAfter
+          isBefore
         />
         <div class="flex flex-row flex-no-wrap justify-center">
           <AppButton
