@@ -116,14 +116,27 @@
                 Edit
               </div>
               <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && $route.query.status !== 'pension-form-a'"
                 class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
               >
                 View
               </div>
+
+              <div
+                v-if="
+                  $route.query.status && $route.query.status === 'pension-form-a'
+                    && slotProps.item.locum_form_a_id
+                "
+                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
+              >
+                View Form A
+              </div>
+
               <button
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
+                && $route.query.status !== 'pension-form-a'"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
@@ -340,7 +353,7 @@ export default {
           class: "text-center"
         })
       }
-      if (queryStatus === 'approved') {
+      if (queryStatus === 'approved' || queryStatus === 'pension-form-a') {
         columns.push({
           name: "Approved At",
           dataIndex: "approved_at",
@@ -610,6 +623,15 @@ export default {
     this.removeListener()
   },
   methods: {
+    viewAsPdf (formId, type) {
+      let url =
+        type === "form-a"
+          ? `/api/v1/locum-form-a`
+          : type === "solo-form"
+          ? `/api/v1/locum-solo-form`
+          : `/api/v1/locum-form-b`
+      window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
+    },
     getJobPartsPromiseAll () {
       let status = []
       let invoice_status = []
