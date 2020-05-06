@@ -149,7 +149,6 @@ export default {
 			let responseParentSurgery = await app.$axios.$get(
 				`/api/v1/practice/me/parent-surgery`
 			)
-			console.log(responseParentSurgery)
 			const parentPracticeId = responseParentSurgery.data 
 				&& responseParentSurgery.data.practice 
 				&& responseParentSurgery.data.practice.parent_practice
@@ -182,7 +181,56 @@ export default {
 			console.log("get locum error!", err)
 		}
 	},
+	mounted() {
+		this.$socket.on(
+      "Practice Notification Update Surgery",
+      this.getHubBanksRealTime
+    )
+	},
+	destroyed () {
+    this.removeListener()
+  },
 	methods: {
+		getHubBanksPromiseAll() {
+			this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
+				this.parentPracticeId = res.data 
+					&& res.data.practice 
+					&& res.data.practice.parent_practice
+					? res.data.practice.parent_practice.id : null
+
+				this.practice = res.data.practice
+
+				this.$axios
+					.$get(`/api/v1/practice/locums/count`, { 
+						params: {
+							favorite_by_practice_id: this.parentPracticeId
+						}
+					}).then(res => {
+						this.total = res.data.count
+					})
+
+				this.$axios
+					.$get(`/api/v1/practice/locums`, { 
+						params: {
+							favorite_by_practice_id: this.parentPracticeId
+						}
+					}).then(res => {
+						this.locums = res.data.users
+					})
+
+			})
+		},
+		getHubBanksRealTime(payload) {
+			if (payload.length > 0 && payload[0].child_practice_id === this.practice.id) {
+				this.getHubBanksPromiseAll()
+			}
+		},
+		removeListener () {
+      this.$socket.removeListener(
+        "Practice Notification Update Surgery",
+        this.getHubBanksRealTime
+			)
+		},
 		favorite (id) {
 			this.user_id = id
 			this.confirmation_text = "Add this Locum to MyBanks?"
