@@ -29,6 +29,13 @@
       >
         Approved Invoices
       </nuxt-link>
+      <nuxt-link
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'pension-form-a' } }"
+        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >
+        NHS Pension Form A
+      </nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
@@ -109,14 +116,27 @@
                 Edit
               </div>
               <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && $route.query.status !== 'pension-form-a'"
                 class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
               >
                 View
               </div>
+
+              <div
+                v-if="
+                  $route.query.status && $route.query.status === 'pension-form-a'
+                    && slotProps.item.locum_form_a_id
+                "
+                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
+              >
+                View Form A
+              </div>
+
               <button
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
+                  && $route.query.status !== 'pension-form-a'"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
@@ -310,22 +330,22 @@ export default {
           class: "text-center"
         }
       )
-      if (!["approved", "pension-form-a"].includes(queryStatus)) {
-        columns.push({
-           name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
-          sortable: true
-        })
-      }
-      if (["approved"].includes(queryStatus)) {
-        columns.push({
-           name: "Approved",
-          dataIndex: "approved_at",
-          class: "text-center localDate",
-          sortable: true
-        })
-      }
+      // if (!["approved", "pension-form-a"].includes(queryStatus)) {
+      //   columns.push({
+      //      name: "Issued",
+      //     dataIndex: "issued_at",
+      //     class: "text-center localDate",
+      //     sortable: true
+      //   });
+      // }
+      // if (["approved"].includes(queryStatus)) {
+      //   columns.push({
+      //      name: "Approved",
+      //     dataIndex: "approved_at",
+      //     class: "text-center localDate",
+      //     sortable: true
+      //   });
+      // }
       if (["approved", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",
@@ -333,7 +353,7 @@ export default {
           class: "text-center"
         })
       }
-      if (queryStatus === 'approved') {
+      if (queryStatus === 'approved' || queryStatus === 'pension-form-a') {
         columns.push({
           name: "Approved At",
           dataIndex: "approved_at",
@@ -427,6 +447,8 @@ export default {
       let invoice_status = []
       let status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -450,6 +472,13 @@ export default {
           status.push("Approved")
           locum_invoiceable = true
           break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
+          break
         default:
           invoice_status.push("To Be Invoice")
           status = ["Completed", "Declined", "Cancelled"]
@@ -463,6 +492,8 @@ export default {
               invoice_status,
               status,
               locum_invoiceable,
+              nhs_claimable,
+              sent_to_practice,
               type: "Platform",
               job_practice_id: [app.$auth.user.practice_id]
             }
@@ -477,6 +508,8 @@ export default {
               invoice_status,
               status,
               locum_invoiceable,
+              nhs_claimable,
+              sent_to_practice,
               type: "Platform",
               job_practice_id: [app.$auth.user.practice_id],
               offset: 0,
@@ -590,10 +623,21 @@ export default {
     this.removeListener()
   },
   methods: {
+    viewAsPdf (formId, type) {
+      let url =
+        type === "form-a"
+          ? `/api/v1/locum-form-a`
+          : type === "solo-form"
+          ? `/api/v1/locum-solo-form`
+          : `/api/v1/locum-form-b`
+      window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
+    },
     getJobPartsPromiseAll () {
       let status = []
       let invoice_status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -617,6 +661,13 @@ export default {
           status.push("Approved")
           locum_invoiceable = true
           break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
+          break
         default:
           invoice_status.push("To Be Invoice")
           status = ["Completed", "Declined", "Cancelled"]
@@ -629,6 +680,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+            nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_ir35: this.job_ir35,
             job_practice_id: [this.$auth.user.practice_id]
@@ -639,6 +692,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+            nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_ir35: this.job_ir35,
             job_practice_id: [this.$auth.user.practice_id],
@@ -728,6 +783,8 @@ export default {
       let status = []
       let invoice_status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = this.$route.query.status
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
@@ -750,6 +807,13 @@ export default {
           status.push("Approved")
           locum_invoiceable = true
           break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
+          break
         default:
           invoice_status.push("To Be Invoice")
           status = ["Completed", "Declined", "Cancelled"]
@@ -762,6 +826,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+            nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_ir35: this.job_ir35,
             job_practice_id: [this.$auth.user.practice_id],

@@ -29,6 +29,13 @@
       >
         Approved Invoices
       </nuxt-link>
+      <nuxt-link
+        :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=pension-form-a` }"
+        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >
+        NHS Pension Form A
+      </nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
@@ -64,14 +71,25 @@
                 Edit
               </div>
               <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && $route.query.status !== 'pension-form-a'"
                 class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
               >
                 View
               </div>
+              <div
+                v-if="
+                  $route.query.status && $route.query.status === 'pension-form-a'
+                    && slotProps.item.locum_form_a_id
+                "
+                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
+              >
+                View Form A
+              </div>
+
               <button
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at && $route.query.status !== 'pension-form-a'"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
@@ -219,12 +237,12 @@ export default {
           dataIndex: "practice_name",
           class: "text-center"
         },
-        {
-          name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
-          sortable: true
-        },
+        // {
+        //   name: "Issued",
+        //   dataIndex: "issued_at",
+        //   class: "text-center localDate",
+        //   sortable: true
+        // },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number"
@@ -239,17 +257,41 @@ export default {
           class: "text-center",
           sortable: true
         },
+        // {
+        //   name: "NHS Claimable",
+        //   dataIndex: "nhs_claimable",
+        //   class: "text-center"
+        // }
         {
-          name: "NHS Claimable",
-          dataIndex: "nhs_claimable",
+          name: "Under IR35",
+          dataIndex: "job_ir35",
           class: "text-center"
-        }
+        },
+        // {
+        //   name: "Under Parent Practice",
+        //   dataIndex: "under_parent_practice",
+        //   class: "text-center"
+        // }
       )
       if (["approved", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",
           dataIndex: "paid",
           class: "text-center"
+        })
+      }
+      if (queryStatus === 'approved' || queryStatus === 'pension-form-a') {
+        columns.push({
+          name: "Approved At",
+          dataIndex: "approved_at",
+          class: "text-center localDate"
+        })
+      }else {
+        columns.push({
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
         })
       }
       columns.push({
@@ -328,6 +370,8 @@ export default {
       let status = []
       let invoice_status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -351,6 +395,13 @@ export default {
           status.push("Approved")
           locum_invoiceable = true
           break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
+          break
         default:
           invoice_status.push("To Be Invoice")
           status = ["Completed", "Declined", "Cancelled"]
@@ -364,6 +415,8 @@ export default {
               invoice_status,
               status,
               locum_invoiceable,
+              nhs_claimable,
+              sent_to_practice,
               type: "Platform",
               job_practice_id: [childPracticeId]
             }
@@ -378,6 +431,8 @@ export default {
               invoice_status,
               status,
               locum_invoiceable,
+              nhs_claimable,
+              sent_to_practice,
               type: "Platform",
               job_practice_id: [childPracticeId],
               offset: 0,
@@ -391,11 +446,38 @@ export default {
       ])
 
       job_parts = job_parts.map(jobPart => {
-        let total = jobPart.locum_invoice_id
-          ? jobPart.locum_invoice_item.total
-          : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-          ? jobPart.job.rate * jobPart.final_hours
-          : (jobPart.job.rate / jobPart.job.total_hours) * jobPart.final_hours
+        // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
+        // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
+
+        let type
+        let finalHours
+        let totalHours
+        let total
+
+        if (jobPart.locum_invoice_item) {
+          total = jobPart.locum_invoice_item.locum_invoice.total_amount
+
+          if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+            total =
+              total -
+              jobPart.locum_invoice_item.locum_invoice.ni_amount -
+              jobPart.locum_invoice_item.locum_invoice.paye_amount
+          }
+        } else if (!jobPart.locum_invoice_item) {
+          type = jobPart.job.locum_detail_rate_type.name
+          finalHours = jobPart.final_hours / 60
+          totalHours = jobPart.job.total_hours / 60
+          total = 0
+
+          switch (type) {
+            case "Per Hour":
+              total = finalHours * jobPart.job.rate
+              break
+            default:
+              total = finalHours * (jobPart.job.rate / totalHours)
+              break
+          }
+        }
 
         return {
           ...jobPart,
@@ -409,17 +491,15 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount: total
-            .toFixed(2)
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          total_amount: total,
           paid:
             jobPart.status === "Approved" &&
             jobPart.locum_invoice_item.locum_invoice.paid_at
               ? "Yes"
               : "No",
-          nhs_claimable: jobPart.locum_invoice_id
-            ? jobPart.locum_invoices_nhs_claimable
-            : jobPart.locum_details_nhs_claimable
+          // nhs_claimable: jobPart.locum_invoice_id
+          //   ? jobPart.locum_invoices_nhs_claimable
+          //   : jobPart.locum_details_nhs_claimable
         }
       })
 
@@ -456,10 +536,21 @@ export default {
     this.removeListener()
   },
   methods: {
+    viewAsPdf (formId, type) {
+      let url =
+        type === "form-a"
+          ? `/api/v1/locum-form-a`
+          : type === "solo-form"
+          ? `/api/v1/locum-solo-form`
+          : `/api/v1/locum-form-b`
+      window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
+    },
     getJobPartsPromiseAll () {
       let status = []
       let invoice_status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -483,6 +574,13 @@ export default {
           status.push("Approved")
           locum_invoiceable = true
           break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
+          break
         default:
           invoice_status.push("To Be Invoice")
           status = ["Completed", "Declined", "Cancelled"]
@@ -495,6 +593,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+            nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_practice_id: [this.childPracticeId]
           }
@@ -504,6 +604,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+            nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_practice_id: [this.childPracticeId],
             offset: 0,
@@ -516,12 +618,35 @@ export default {
           let job_parts = responseJobParts.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let total = jobPart.locum_invoice_id
-              ? jobPart.locum_invoice_item.total
-              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-              ? jobPart.job.rate * jobPart.final_hours
-              : (jobPart.job.rate / jobPart.job.total_hours) *
-                jobPart.final_hours
+            let type
+            let finalHours
+            let totalHours
+            let total
+
+            if (jobPart.locum_invoice_item) {
+              total = jobPart.locum_invoice_item.locum_invoice.total_amount
+
+              if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                total =
+                  total -
+                  jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                  jobPart.locum_invoice_item.locum_invoice.paye_amount
+              }
+            } else if (!jobPart.locum_invoice_item) {
+              type = jobPart.job.locum_detail_rate_type.name
+              finalHours = jobPart.final_hours / 60
+              totalHours = jobPart.job.total_hours / 60
+              total = 0
+
+              switch (type) {
+                case "Per Hour":
+                  total = finalHours * jobPart.job.rate
+                  break
+                default:
+                  total = finalHours * (jobPart.job.rate / totalHours)
+                  break
+              }
+            }
 
             return {
               ...jobPart,
@@ -543,9 +668,6 @@ export default {
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
-              nhs_claimable: jobPart.locum_invoice_id
-                ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable
             }
           })
         })
@@ -560,6 +682,8 @@ export default {
       let status = []
       let invoice_status = []
       let locum_invoiceable
+      let nhs_claimable
+      let sent_to_practice
       let queryStatus = this.$route.query.status
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -582,6 +706,13 @@ export default {
           invoice_status.push("Invoiced")
           status.push("Approved")
           locum_invoiceable = true
+          break
+        case "pension-form-a":
+          invoice_status.push("Invoiced")
+          status.push("Approved")
+          locum_invoiceable = true
+          nhs_claimable = true
+          sent_to_practice = true
           break
         default:
           invoice_status.push("To Be Invoice")
@@ -603,6 +734,8 @@ export default {
             invoice_status,
             status,
             locum_invoiceable,
+             nhs_claimable,
+            sent_to_practice,
             type: "Platform",
             job_practice_id: [this.childPracticeId],
             offset: this.offset,
@@ -614,12 +747,35 @@ export default {
           let job_parts = res.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let total = jobPart.locum_invoice_id
-              ? jobPart.locum_invoice_item.total
-              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-              ? jobPart.job.rate * jobPart.final_hours
-              : (jobPart.job.rate / jobPart.job.total_hours) *
-                jobPart.final_hours
+            let type
+            let finalHours
+            let totalHours
+            let total
+
+            if (jobPart.locum_invoice_item) {
+              total = jobPart.locum_invoice_item.locum_invoice.total_amount
+
+              if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                total =
+                  total -
+                  jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                  jobPart.locum_invoice_item.locum_invoice.paye_amount
+              }
+            } else if (!jobPart.locum_invoice_item) {
+              type = jobPart.job.locum_detail_rate_type.name
+              finalHours = jobPart.final_hours / 60
+              totalHours = jobPart.job.total_hours / 60
+              total = 0
+
+              switch (type) {
+                case "Per Hour":
+                  total = finalHours * jobPart.job.rate
+                  break
+                default:
+                  total = finalHours * (jobPart.job.rate / totalHours)
+                  break
+              }
+            }
 
             return {
               ...jobPart,
@@ -641,9 +797,6 @@ export default {
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
-              nhs_claimable: jobPart.locum_invoice_id
-                ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable
             }
           })
         })
