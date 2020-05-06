@@ -176,7 +176,7 @@
               </div>
             </div>
             <!-- disputed invoice update form -->
-            <div v-if="form.items[0].dispute && isApproved === false" class="flex justify-start mt-2 px-2">
+            <div v-if="form.items[0].dispute && (isApproved === false || isApproved === true && form.items[0].remarks.length > 0)" class="flex justify-start mt-2 px-2">
               <div class="flex flex-col w-full px-2">
                 <label for="remarks">Update remarks</label>
                 <textarea v-model="form.items[0].remarks" rows="3" name="remarks"
