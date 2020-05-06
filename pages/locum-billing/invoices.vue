@@ -458,7 +458,7 @@ export default {
         })
       }
 
-      if (queryStatus === 'approved') {
+      if (queryStatus === 'approved' || queryStatus === 'pension-form-a') {
         columns.push({
           name: "Approved At",
           dataIndex: "approved_at",
