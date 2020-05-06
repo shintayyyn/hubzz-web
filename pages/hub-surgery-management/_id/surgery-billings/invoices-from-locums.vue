@@ -109,7 +109,7 @@
               :name="'paid_at'"
               :label="'Payment made on'"
               :error="formError.find(item => item.field === 'paid_at')"
-              is-after
+              isBefore
             />
             <AppInput
               v-model="form.ni"
