@@ -189,6 +189,19 @@
 
                 <div
                   v-if="
+                    $route.query.status && $route.query.status === 'pension-form-a'
+                      && slotProps.item.nhs_claimable
+                      && slotProps.item.locum_form_a_id
+                  "
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? '' : 'cursor-pointer'"
+                  @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_form_a_sent_to_practice)"
+                >
+                  {{ `${slotProps.item.locum_form_a_sent_to_practice === 1 ? 'Already Sent' : 'Send Form to Practice'}` }}
+                </div>
+
+                <div
+                  v-if="
                     $route.query.status && $route.query.status === 'solo-form'
                       && slotProps.item.ooh
                       && slotProps.item.locum_solo_form_id
@@ -269,6 +282,15 @@
       :modal="generate_form_a_modal"
       @confirm="generateFormA"
       @cancel="generate_form_a_modal = false"
+    />
+
+    <AppConfirmationModal
+      :label="'Send this Form A to Practice?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="send_form_a_modal"
+      @confirm="sendForm"
+      @cancel="send_form_a_modal = false"
     />
 
     <transition name="fade" mode="out-in">
@@ -357,6 +379,7 @@ export default {
 
       delete_invoice_modal: false,
       generate_form_a_modal: false,
+      send_form_a_modal: false,
       invoice_id: null
     }
   },
@@ -409,23 +432,23 @@ export default {
         }
       )
 
-      if (!["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
-        columns.push({
-          name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
-          sortable: true
-        })
-      }
+      // if (!["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
+      //   columns.push({
+      //     name: "Issued",
+      //     dataIndex: "issued_at",
+      //     class: "text-center localDate",
+      //     sortable: true
+      //   })
+      // }
 
-      if (["approved"].includes(queryStatus)) {
-        columns.push({
-          name: "Approved",
-          dataIndex: "approved_at",
-          class: "text-center localDate",
-          sortable: true
-        })
-      }
+      // if (["approved"].includes(queryStatus)) {
+      //   columns.push({
+      //     name: "Approved",
+      //     dataIndex: "approved_at",
+      //     class: "text-center localDate",
+      //     sortable: true
+      //   })
+      // }
 
       if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
         columns.push({
@@ -738,6 +761,23 @@ export default {
   },
 
   methods: {
+    toggleSendFormAModal (locumInvoiceId, alreadySent) {
+      if (alreadySent) return
+      this.send_form_a_modal = true
+      this.invoice_id = locumInvoiceId
+    },
+    sendForm () {
+      this.$axios.$put(`/api/v1/locum/locum-invoices-form-a/${this.invoice_id}/send-to-practice`).then(res => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`${res.message}`]
+        })
+        this.send_form_a_modal = false
+        let updatedFormA = this.job_parts.find(jobPart => jobPart.locum_invoice_id === res.data.locum_form_a.locum_invoice_id)
+        updatedFormA.locum_form_a_sent_to_practice = 1
+      })
+    },
     // showTest(id) {
     //   this.$axios.$get(`/api/v1/locum/locum-invoices-form-b/${id}`).then(res => {
     //     console.log(res.data.locum_invoice_form_b)
