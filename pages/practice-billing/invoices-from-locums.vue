@@ -136,7 +136,7 @@
 
               <button
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
-                && $route.query.status !== 'pension-form-a'"
+                  && $route.query.status !== 'pension-form-a'"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
@@ -934,7 +934,7 @@ export default {
       this.invoice_id = id
     },
     updateInvoice (invoice) {
-      let queryStatus = this.$route.query.status.toLowerCase()
+      let queryStatus = this.$route.query.status ? this.$route.query.status.toLowerCase() : null
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id

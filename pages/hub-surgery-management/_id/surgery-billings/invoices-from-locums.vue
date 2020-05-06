@@ -29,7 +29,7 @@
       >
         Approved Invoices
       </nuxt-link>
-       <nuxt-link
+      <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=pension-form-a` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -844,7 +844,7 @@ export default {
       this.invoice_id = id
     },
     updateInvoice (invoice) {
-      let queryStatus = this.$route.query.status.toLowerCase()
+      let queryStatus = this.$route.query.status ? this.$route.query.status.toLowerCase() : null
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
