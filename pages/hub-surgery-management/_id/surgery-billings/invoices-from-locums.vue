@@ -689,7 +689,7 @@ export default {
       this.invoice_id = id
     },
     updateInvoice (invoice) {
-      let queryStatus = this.$route.query.status.toLowerCase()
+      let queryStatus = this.$route.query.status ? this.$route.query.status.toLowerCase() : null
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
