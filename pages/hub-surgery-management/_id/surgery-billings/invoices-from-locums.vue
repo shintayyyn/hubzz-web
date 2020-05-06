@@ -109,7 +109,7 @@
               :name="'paid_at'"
               :label="'Payment made on'"
               :error="formError.find(item => item.field === 'paid_at')"
-              is-after
+              isBefore
             />
             <AppInput
               v-model="form.ni"
@@ -491,7 +491,9 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount: total,
+          total_amount: total
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           paid:
             jobPart.status === "Approved" &&
             jobPart.locum_invoice_item.locum_invoice.paid_at

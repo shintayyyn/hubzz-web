@@ -195,7 +195,10 @@
             </div>
 
             <div
-              v-if="(form.items[0].dispute && propJobPart) || (form.items[0].dispute && propInvoice && !['Approved', 'Paid'].includes(propInvoice.items[0].status)) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(form.items[0].dispute && propJobPart) 
+                || (form.items[0].dispute && propInvoice && !['Approved', 'Paid'].includes(propInvoice.items[0].status)) 
+                || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')
+                || (propInvoice && propInvoice.items[0].approved === true && propInvoice.items[0].remarks.length > 0)"
               class="flex justify-start mt-2 px-2"
             >
               <div class="flex flex-col w-full px-2">
