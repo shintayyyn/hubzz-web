@@ -896,14 +896,7 @@
       },
 
       waitingForPracticeReply (item) {
-        let count = this.$moment(item.disputed_by_practice_at).diff(
-          item.disputed_by_locum_at,
-          "seconds"
-        )
-        if (count < 0) {
-          return true
-        }
-        return false
+        return !item.disputed_by_practice_at || this.$moment(item.disputed_by_practice_at).diff(item.disputed_by_locum_at, 'seconds') < 0
       },
 
       viewAsPdf (invoiceId) {
