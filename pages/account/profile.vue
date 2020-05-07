@@ -1062,10 +1062,10 @@
         }
 
         if (["false", false].includes(this.form.paid_under_payroll)) {
-          this.form.payroll_account_name = ""
-          this.form.payroll_account_number = ""
-          this.form.payroll_sort_code = ""
-          this.form.payroll_bank_name = ""
+          // this.form.payroll_account_name = ""
+          // this.form.payroll_account_number = ""
+          // this.form.payroll_sort_code = ""
+          // this.form.payroll_bank_name = ""
           notRequired.push(
             "payroll_account_name",
             "payroll_bank_name",
@@ -1075,10 +1075,10 @@
         }
 
         if (["true", true].includes(this.form.paid_under_payroll)) {
-          this.form.account_name = ""
-          this.form.account_number = ""
-          this.form.sort_code = ""
-          this.form.bank_name = ""
+          // this.form.account_name = ""
+          // this.form.account_number = ""
+          // this.form.sort_code = ""
+          // this.form.bank_name = ""
           notRequired.push(
             "account_name",
             "bank_name",
@@ -1124,6 +1124,27 @@
           )
         }
 
+        if (['true', true].includes(this.form.paid_under_payroll)) {
+          if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
+            this.formError.push({
+              field: "payroll_sort_code",
+              message: "Sort Code should be at least 6 numbers"
+            })
+          }
+        } else if (['false', false].includes(this.form.paid_under_payroll)) {
+          if (this.form.sort_code && this.form.sort_code.length < 6) {
+            this.formError.push({
+              field: "sort_code",
+              message: "Sort Code should be at least 6 numbers"
+            })
+          }
+          if (this.form.account_number && this.form.account_number.length < 8) {
+            this.formError.push({
+              field: "account_number",
+              message: "Account number should be at least 8 numbers"
+            })
+          }
+        }
 
         this.Validate(this.form, notRequired)
 
