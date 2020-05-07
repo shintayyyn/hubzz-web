@@ -93,9 +93,27 @@
               v-model="job_ir35"
               class="px-1"
               :type="'select'"
-              :name="'type'"
+              :name="'job_ir35'"
               :label="'Inside ir35'"
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="invoice_number"
+              class="px-1"
+              :type="'text'"
+              :name="'invoice_number'"
+              :label="'Invoice number'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_part_number_includes"
+              class="px-1"
+              :type="'text'"
+              :name="'job_part_number_includes'"
+              :label="'Job Part number'"
             />
           </div>
           <div class="md:px-1 flex w-full">
@@ -186,15 +204,14 @@
                 >
                   View Form A
                 </div>
-
                 <div
                   v-if="
                     $route.query.status && $route.query.status === 'pension-form-a'
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
                   "
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
-                  :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? '' : 'cursor-pointer'"
+                  class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
+                  :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
                   @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_form_a_sent_to_practice)"
                 >
                   {{ `${slotProps.item.locum_form_a_sent_to_practice === 1 ? 'Already Sent' : 'Send Form to Practice'}` }}
@@ -355,6 +372,8 @@ export default {
       limit: 5,
       order_by: [],
       job_ir35: null,
+      invoice_number: null,
+      job_part_number_includes: null,
 
       form_bs_columns: [
         {
@@ -407,7 +426,7 @@ export default {
           dataIndex: "invoice_number"
         },
         {
-          name: "Job Number",
+          name: "Job Part Number",
           dataIndex: "job_part_number"
         },
         {
@@ -892,6 +911,8 @@ export default {
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
+            invoice_number: this.invoice_number,
+            job_part_number_includes: this.job_part_number_includes,
             viewing_locum_user_id: this.$auth.user.id
           }
         }),
@@ -905,6 +926,8 @@ export default {
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
+            invoice_number: this.invoice_number,
+            job_part_number_includes: this.job_part_number_includes,
             viewing_locum_user_id: this.$auth.user.id,
             offset: 0,
             limit: 5
@@ -1063,6 +1086,8 @@ export default {
             offset: this.offset,
             limit: this.limit,
             job_ir35: this.job_ir35,
+            invoice_number: this.invoice_number,
+            job_part_number_includes: this.job_part_number_includes,
             order_by: this.order_by
           }
         })
@@ -1334,6 +1359,8 @@ export default {
       this.limit = 5
       this.order_by = []
       this.job_ir35 = null
+      this.invoice_number = null
+      this.job_part_number_includes = null
     }
   }
 }
