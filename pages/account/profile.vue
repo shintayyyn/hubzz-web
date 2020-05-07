@@ -1135,14 +1135,14 @@
         if (this.form.referee_1_phone_number && this.form.referee_1_phone_number.length < 10) {
           this.formError.push({
             field: "referee_1_phone_number",
-            message: "Telephone number should be at 10 digits"
+            message: "Telephone number should be 10 digits"
           })
         }
 
         if (this.form.referee_2_phone_number && this.form.referee_2_phone_number.length < 10) {
           this.formError.push({
             field: "referee_2_phone_number",
-            message: "Telephone number should be at 10 digits"
+            message: "Telephone number should be 10 digits"
           })
         }
 
@@ -1150,20 +1150,20 @@
           if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
             this.formError.push({
               field: "payroll_sort_code",
-              message: "Sort Code should be at 6 digits"
+              message: "Sort Code should be 6 digits"
             })
           }
         } else if (['false', false].includes(this.form.paid_under_payroll)) {
           if (this.form.sort_code && this.form.sort_code.length < 6) {
             this.formError.push({
               field: "sort_code",
-              message: "Sort Code should be at 6 digits"
+              message: "Sort Code should be 6 digits"
             })
           }
           if (this.form.account_number && this.form.account_number.length < 8) {
             this.formError.push({
               field: "account_number",
-              message: "Account number should be at 8 digits"
+              message: "Account number should be 8 digits"
             })
           }
         }
