@@ -234,6 +234,8 @@
           'Practice Notification Locum Invoice Disputed',
           'Practice Notification Locum Invoice Approved',
           'Practice Notification Locum Invoice Paid',
+
+          'Practice Notification Practice Invoice Issued',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -588,6 +590,10 @@
           'Practice Notification Locum Invoice Disputed',
           'Practice Notification Locum Invoice Approved',
           'Practice Notification Locum Invoice Paid',
+        ]
+
+        const practiceInvoiceNotifications = [
+          'Practice Notification Practice Invoice Issued',
         ]
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
@@ -1103,6 +1109,43 @@
                 })
               }, 500)
             }
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
+        if (practiceInvoiceNotifications.includes(notificationTypeName)) {
+          const practiceInvoice = payload
+
+          const {
+            id: practiceInvoiceId,
+          } = practiceInvoice
+
+          if (this.$route.name === 'practice-billing-invoices-from-hubzz') {
+            this.$router.push({
+              name: 'practice-billing-invoices-from-hubzz-id',
+              params: {
+                id: practiceInvoiceId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: 'practice-billing-invoices-from-hubzz',
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'practice-billing-invoices-from-hubzz-id',
+                params: {
+                  id: practiceInvoiceId,
+                },
+              })
+            }, 500)
           }
         
           this.showNotificationsDropdown = false
