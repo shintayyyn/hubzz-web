@@ -236,6 +236,7 @@
           'Practice Notification Locum Invoice Paid',
 
           'Practice Notification Practice Invoice Issued',
+          'Practice Notification Practice Invoice Paid',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -594,6 +595,7 @@
 
         const practiceInvoiceNotifications = [
           'Practice Notification Practice Invoice Issued',
+          'Practice Notification Practice Invoice Paid',
         ]
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {

@@ -606,104 +606,122 @@
 
       //   return 0
       // }
+
+      dispute () {
+        return this.form && this.form.items && this.form.items.length > 0 && this.form.items[0].dispute
+      }
+    },
+
+    watch: {
+      dispute () {
+        // console.log('dispute', this.dispute)
+        if (!this.dispute) {
+          this.setInitialState()
+          this.form.items[0].dispute = false
+        }
+      },
     },
 
     mounted () {
-      if (this.propJobPart && !this.propInvoice) {
-        this.form.type = this.propJobPart.job.type
-        this.form.practice_id = this.propJobPart.job.practice_id
-        this.form.date_start = this.propJobPart.date_start
-        this.form.date_end = this.propJobPart.date_end
-
-        // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
-        // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
-
-        let type = this.propJobPart.job.locum_detail_rate_type.name
-
-        let finalHours = this.propJobPart.final_hours / 60
-
-        let totalHours = this.propJobPart.job.total_hours / 60
-
-        let total = 0
-
-        switch (type) {
-          case "Per Hour":
-            total = finalHours * this.propJobPart.job.rate
-            break
-          default:
-            total = finalHours * (this.propJobPart.job.rate / totalHours)
-            break
-        }
-
-        const jobPartNumber = this.propJobPart.job_part_number
-        const jobType = this.propJobPart.job.type
-        const jobRate = this.propJobPart.job.rate
-        const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
-        const formattedDateStart = this.$moment(this.propJobPart.date_start).format('DD/MM/YYYY')
-        const formattedDateEnd = this.$moment(this.propJobPart.date_end).format('DD/MM/YYYY')
-        const shiftName = this.propJobPart.job.shift.name
-        const finalHoursInMinutesHours = Math.floor(this.propJobPart.final_hours / 60)
-        const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
-        const finalHoursInMinutesMinutes = Math.floor(this.propJobPart.final_hours % 60)
-        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
-        const hasMinutes = finalHoursInMinutesMinutes > 0
-          ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
-          : ''
-        const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
-          + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
-          + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
-
-        this.form.items = [
-          {
-            type: "Job Part",
-            job_part_id: this.propJobPart.id,
-            description,
-            total: total,
-            dispute: this.propJobPart.disputed,
-            absent_days: this.propJobPart.absent_days,
-            final_hours: this.propJobPart.final_hours.toFixed(2),
-            late_hours: this.propJobPart.late_hours,
-            remarks: ""
-          }
-        ]
-
-        this.form.total_amount = total
-        this.form.final = false
-        this.form.ir35 = this.propJobPart.job_ir35
-      }
-
-      if (this.propInvoice && !this.propJobPart) {
-        this.form.locum_invoice_id = this.propInvoice.id
-        this.form.date_start = this.propInvoice.date_start
-        this.form.date_end = this.propInvoice.date_end
-
-        this.form.items = [
-          {
-            type: "Job Part",
-            job_part_id: this.propInvoice.items[0].job_part.id,
-            description: this.propInvoice.items[0].description,
-            total: this.propInvoice.items[0].total,
-
-            dispute: this.propInvoice.items[0].disputed,
-            absent_days: this.propInvoice.items[0].absent_days,
-            final_hours: this.propInvoice.items[0].final_hours,
-            late_hours: this.propInvoice.items[0].late_hours,
-            remarks: this.propInvoice.items[0].remarks
-          }
-        ]
-
-        this.form.total_amount = this.propInvoice.total_amount
-        this.form.final = false
-        this.form.ir35 = this.propInvoice.ir35
-      }
-
-      this.form.hours = Math.floor(this.form.items[0].final_hours / 60)
-      this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
-      this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
-      this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
+      this.setInitialState()
     },
 
     methods: {
+      setInitialState () {
+        if (this.propJobPart && !this.propInvoice) {
+          this.form.type = this.propJobPart.job.type
+          this.form.practice_id = this.propJobPart.job.practice_id
+          this.form.date_start = this.propJobPart.date_start
+          this.form.date_end = this.propJobPart.date_end
+
+          // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
+          // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
+
+          let type = this.propJobPart.job.locum_detail_rate_type.name
+
+          let finalHours = this.propJobPart.final_hours / 60
+
+          let totalHours = this.propJobPart.job.total_hours / 60
+
+          let total = 0
+
+          switch (type) {
+            case "Per Hour":
+              total = finalHours * this.propJobPart.job.rate
+              break
+            default:
+              total = finalHours * (this.propJobPart.job.rate / totalHours)
+              break
+          }
+
+          const jobPartNumber = this.propJobPart.job_part_number
+          const jobType = this.propJobPart.job.type
+          const jobRate = this.propJobPart.job.rate
+          const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
+          const formattedDateStart = this.$moment(this.propJobPart.date_start).format('DD/MM/YYYY')
+          const formattedDateEnd = this.$moment(this.propJobPart.date_end).format('DD/MM/YYYY')
+          const shiftName = this.propJobPart.job.shift.name
+          const finalHoursInMinutesHours = Math.floor(this.propJobPart.final_hours / 60)
+          const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
+          const finalHoursInMinutesMinutes = Math.floor(this.propJobPart.final_hours % 60)
+          const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
+          const hasMinutes = finalHoursInMinutesMinutes > 0
+            ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
+            : ''
+          const description = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+            + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+            + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+
+          this.form.items = [
+            {
+              type: "Job Part",
+              job_part_id: this.propJobPart.id,
+              description,
+              total: total,
+              dispute: this.propJobPart.disputed,
+              absent_days: this.propJobPart.absent_days,
+              final_hours: this.propJobPart.final_hours.toFixed(2),
+              late_hours: this.propJobPart.late_hours,
+              remarks: ""
+            }
+          ]
+
+          this.form.total_amount = total
+          this.form.final = false
+          this.form.ir35 = this.propJobPart.job_ir35
+        }
+
+        if (this.propInvoice && !this.propJobPart) {
+          this.form.locum_invoice_id = this.propInvoice.id
+          this.form.date_start = this.propInvoice.date_start
+          this.form.date_end = this.propInvoice.date_end
+
+          this.form.items = [
+            {
+              type: "Job Part",
+              job_part_id: this.propInvoice.items[0].job_part.id,
+              description: this.propInvoice.items[0].description,
+              total: this.propInvoice.items[0].total,
+
+              dispute: this.propInvoice.items[0].disputed,
+              absent_days: this.propInvoice.items[0].absent_days,
+              final_hours: this.propInvoice.items[0].final_hours,
+              late_hours: this.propInvoice.items[0].late_hours,
+              remarks: this.propInvoice.items[0].remarks
+            }
+          ]
+
+          this.form.total_amount = this.propInvoice.total_amount
+          this.form.final = false
+          this.form.ir35 = this.propInvoice.ir35
+        }
+
+        this.form.hours = Math.floor(this.form.items[0].final_hours / 60)
+        this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
+        this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
+        this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
+      },
+ 
       handleKeyDownEvent (e, formField, limit) {
         let acceptedKeys = [
           "Backspace",
@@ -878,14 +896,7 @@
       },
 
       waitingForPracticeReply (item) {
-        let count = this.$moment(item.disputed_by_practice_at).diff(
-          item.disputed_by_locum_at,
-          "seconds"
-        )
-        if (count < 0) {
-          return true
-        }
-        return false
+        return !item.disputed_by_practice_at || this.$moment(item.disputed_by_practice_at).diff(item.disputed_by_locum_at, 'seconds') < 0
       },
 
       viewAsPdf (invoiceId) {
