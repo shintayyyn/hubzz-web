@@ -75,7 +75,7 @@
               :name="'date_closing'"
               :label="'Date Closing'"
               is-after
-              :start-date="form.date_posted"
+              :start-date="$moment(form.date_posted).add(1, 'days').format('YYYY-MM-DD')"
               :error="formError.find(item => item.field === 'date_closing')"
               @blur="CheckEmptyField(form.date_closing, 'date_closing')"
             />
