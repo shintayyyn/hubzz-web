@@ -578,7 +578,7 @@ export default {
         name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
         params: {
           ...this.$route.params,
-          sessionId: jobOrJobPart.job_id,
+          sessionId: jobOrJobPart.id,
         },
         query: {
           ...this.$route.query,
