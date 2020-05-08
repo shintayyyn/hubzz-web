@@ -17,7 +17,7 @@
 							:limit="parseInt(profession_id) !== 1 && parseInt(profession_id) <=5 ? 8 : 7"
 							required
 							@blur="CheckEmptyField(form.reference_locum_compliance_documents[index].reference, item.name.replace(/ /g, '_').toLowerCase()), checkValidation(item.name, parseInt(profession_id) !== 1 && parseInt(profession_id) <=5 ? 8 : 7)"
-							@keydown="[1, 10, '1','10'].includes(profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
+							@keydown="[1, 10, 16, '1','10', '16'].includes(profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
 						/>
 					</div>
 
@@ -26,8 +26,10 @@
 						:type="'text'"
 						:name="'nhs_smart_card_id_number'"
 						:label="'NHS Smart Card ID number'"
+						:error="formError.find(error => error.field === 'nhs_smart_card_id_number')"
 						:limit="12"
 						@keydown="inputNumberOnly($event)"
+						@blur="inputLimit('nhs_smart_card_id_number', 'NHS Smart Card ID', 12)"
 					/>
 
 					<AppPostCode
@@ -166,6 +168,21 @@ export default {
 				});
 			}
 		},
+		inputLimit(field, label, limit) {
+			const formEntries = Object.entries(this.form)
+
+			for (let [key, value] of formEntries) {
+				if (key === field && value && value.length < limit) {
+					this.formError.push({
+						field: field,
+						message: `${label} should be ${limit} digits`
+					});
+				} else if (key === field && value && value.length === limit) {
+					let index = this.formError.findIndex(formField => formField.field === field)
+					this.formError.splice(index, 1)
+				}
+			}
+		},
 		checkCoordinates(postcode) {
 			return this.$axios
 				.$get(`${process.env.POSTCODES_IO_URL}/postcodes/${postcode}/validate`)
@@ -193,6 +210,29 @@ export default {
 		next() {
 			this.formError = [];
 			let notRequired = ["nhs_smart_card_id_number", "address_line_2"];
+			
+			if (this.form.nhs_smart_card_id_number && this.form.nhs_smart_card_id_number.length < 12) {
+				this.formError.push({
+					field: "nhs_smart_card_id_number",
+					message: "NHS Smart Card ID should be 12 digits"
+				})
+			}
+			
+			let limitError = []
+			const referenceLocumComplianceDocs = this.form.reference_locum_compliance_documents.forEach(formItems => {
+				if (formItems.name === 'NMC reference check' && formItems.reference.length < 8) {
+					limitError.push({field: formItems.name, limit: 8})
+				} else if (formItems.name !== 'NMC reference check' && formItems.reference.length < 7) {
+					limitError.push({field: formItems.name, limit: 7})
+				}
+			})
+			
+			limitError.forEach(item => {
+				this.formError.push({
+					field: item.field.replace(/ /g, "_").toLowerCase(),
+					message: `${item.field} should be ${item.limit} digits`
+				})
+			})
 			this.Validate(this.form, notRequired, [
 				{ field: "address_line_3", display: "City / Town / District" }
 			]);

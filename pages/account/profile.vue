@@ -39,7 +39,7 @@
                   parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7
                 )
               "
-              @keydown="[1, 10, '1','10'].includes(form.profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
+              @keydown="[1, 10, 16, '1','10', '16'].includes(form.profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
             />
           </div>
 
@@ -108,6 +108,7 @@
             :type="'text'"
             :name="'nhs_smart_card_id_number'"
             :label="'Your NHS Smart Card ID number'"
+            :error="formError.find(item => item.field === 'nhs_smart_card_id_number')"
             :limit="12"
             @keydown="inputNumberOnly($event)"
             @submit="save"
@@ -1143,6 +1144,13 @@
           this.formError.push({
             field: "referee_2_phone_number",
             message: "Telephone number should be 10 digits"
+          })
+        }
+
+        if (this.form.nhs_smart_card_id_number && this.form.nhs_smart_card_id_number.length < 12) {
+          this.formError.push({
+            field: "nhs_smart_card_id_number",
+            message: "NHS Smart Card ID should be 12 digits"
           })
         }
 
