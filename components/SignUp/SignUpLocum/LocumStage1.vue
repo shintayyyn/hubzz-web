@@ -176,6 +176,9 @@ export default {
 		this.form.suffix = this.stage1Details.suffix
 			? this.stage1Details.suffix
 			: "";
+		this.form.mobile_number = this.stage1Details.mobile_number
+			? this.stage1Details.mobile_number
+			: "";
 		this.form.profession_id = this.stage1Details.profession_id
 			? this.stage1Details.profession_id
 			: "";

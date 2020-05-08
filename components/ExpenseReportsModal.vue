@@ -36,6 +36,7 @@
                     @input="CheckEmptyField(form.total, 'total')"
           />
           <AppDate v-model="form.date" :name="'date'" :label="'Date'"
+                   :isBefore="true"
                    :error="formError.find(item => item.field === 'date')" @input="CheckEmptyField(form.date, 'date')"
           />
           <AppLoading :loading="loading" spinner />
