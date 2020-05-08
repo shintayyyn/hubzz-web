@@ -13,13 +13,13 @@
         v-for="practiceReport in practiceReports"
         :key="`practiceReports-${practiceReport.title}`"
         :to="practiceReport.url"
-        class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg bg-waterloo hover:bg-waterloo-light transition-hover my-2"
+        class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
       >
         <div class="flex flex-no-wrap items-center text-sm w-full">
           <span class="px-2 whitespace-no-wrap font-semibold">{{ practiceReport.title }}</span>
           <span class="px-2 w-full leading-tight flex items-center">{{ practiceReport.subtitle }}</span>
           <div class="flex items-center px-1 md:px-0">
-            <svgicon name="arrow-right" width="21" height="21" color="white" />
+            <svgicon name="arrow-right" width="21" height="21" color="black" />
           </div>
         </div>
       </nuxt-link>
@@ -88,7 +88,7 @@
       </nuxt-link>
     </div> -->
 
-    <div class="text-sm md:text-xl">
+    <!-- <div class="text-sm md:text-xl">
       Pricing Reports
     </div>
 
@@ -107,11 +107,11 @@
           </div>
         </div>
       </nuxt-link>
-    </div>
+    </div> -->
 
     <nuxt-link
       v-if="$route.name !== 'practice-reports'"
-      class="bg-shield z-511 fixed inset-0 opacity-50"
+      class="shield z-511 fixed inset-0 opacity-50"
       to="/practice-reports"
     />
 
@@ -300,7 +300,7 @@
     overflow: auto;
     border-left: solid 2px #ffc72c;
     transition: all 0.3s ease-in-out;
-    background-color: #505561;
+    background-color:whitesmoke;
     z-index: 512;
   }
 

@@ -34,19 +34,19 @@
         v-for="locumReport in locumReports"
         :key="`locumReports-${locumReport.title}`"
         :to="locumReport.url"
-        class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg bg-waterloo hover:bg-waterloo-light transition-hover my-2"
+        class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
       >
         <div class="flex flex-no-wrap items-center text-sm w-full">
           <span class="px-2 whitespace-no-wrap font-semibold">{{ locumReport.title }}</span>
           <span class="px-2 w-full leading-tight flex items-center">{{ locumReport.subtitle }}</span>
           <div class="flex items-center px-1 md:px-0">
-            <svgicon name="arrow-right" width="21" height="21" color="white" />
+            <svgicon name="arrow-right" width="21" height="21" color="black" />
           </div>
         </div>
       </nuxt-link>
     </div>
 
-    <div class="text-sm md:text-xl">
+    <!-- <div class="text-sm md:text-xl">
       Compliance Reports
     </div>
 
@@ -55,17 +55,17 @@
         v-for="complianceReport in complianceReports"
         :key="`complianceReports-${complianceReport.title}`"
         :to="complianceReport.url"
-        class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg bg-waterloo hover:bg-waterloo-light transition-hover my-2"
+        class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
       >
         <div class="flex flex-no-wrap items-center text-sm w-full">
           <span class="px-2 whitespace-no-wrap font-semibold">{{ complianceReport.title }}</span>
           <span class="px-2 w-full leading-tight flex items-center">{{ complianceReport.subtitle }}</span>
           <div class="flex items-center px-1 md:px-0">
-            <svgicon name="arrow-right" width="21" height="21" color="white" />
+            <svgicon name="arrow-right" width="21" height="21" color="black" />
           </div>
         </div>
       </nuxt-link>
-    </div>
+    </div> -->
 
     <!-- <div class="text-sm md:text-xl">
       HQ Analytics
@@ -193,7 +193,7 @@
           {
             title: 'REP-014',
             subtitle: 'Expenses',
-            url: '/locum-reports',
+            url: '/locum-reports/locum-expenses',
           },
         ],
         complianceReports: [

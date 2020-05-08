@@ -270,12 +270,18 @@
       getLocumPractices () {
         this.loading = true
         this.locumPractices = []
+        let params = {
+          locum_user_id: this.$auth.user.id,
+        }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/locum-practices/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/locum-practices/count', {
+            params
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/locum-practices', {
             params: {
+              locum_user_id: this.$auth.user.id,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
