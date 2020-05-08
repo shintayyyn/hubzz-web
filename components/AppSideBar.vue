@@ -274,7 +274,7 @@
             }
             addedLists.push({ 
               name: "Reports", 
-              route: "/pratice-reports", 
+              route: "/practice-reports", 
               order: 9 
             })
             addedLists.push({ 

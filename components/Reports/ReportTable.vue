@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
-    <div class="__report_table w-full flex text-xs whitespace-no-wrap overflow-x-auto mt-1">
+    <div class="__report_table flex w-full bg-white-smoke shadow-lg  text-xs whitespace-no-wrap overflow-x-auto mt-1">
       <div v-for="columnDetail in columnDetails" :key="`columnDetail_${columnDetail.key}`" :style="columnStyle(columnDetail)">
-        <div class="flex bg-waterloo text-white font-bold">
+        <div class="flex font-bold">
           <div class="flex-1 p-2 flex justify-between items-center">
             <div class="whitespace-no-wrap">
               {{ columnDetail.title }}
@@ -33,16 +33,16 @@
           <span class="whitespace-no-wrap p-2">&nbsp;{{ columnDetail.column(item, index) }}</span>
         </div>
         <div v-if="loading && items.length === 0">
-          <div v-for="(item, index) in limit"  :key="`limit_${index}`" class="flex bg-white">
+          <div v-for="(item, index) in limit"  :key="`limit_${index}`" class="flex bg-white-smoke">
             <span class="whitespace-no-wrap p-2">&nbsp;</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="loading" class="absolute inset-0 flex flex-col items-center justify-center shadow-md bg-gray-800">
-      <svgicon name="loader" color="white" width="60" height="60" />
-      <span class="text-white text-2xl">Loading...</span>
+    <div v-if="loading" class="absolute inset-0 flex flex-col items-center justify-center shadow-md bg-white-smoke">
+      <svgicon name="loader" color="black" width="60" height="60" />
+      <span class="text-black text-2xl">Loading...</span>
     </div>
   </div>
 </template>

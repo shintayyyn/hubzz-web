@@ -1,4 +1,3 @@
-
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
@@ -9,11 +8,43 @@
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Hours Approved
+        Locum - Expenses (WIP)
       </div>
   
       <div class="text-sm md:text-lg ">
-        Rep-030
+        Rep-014
+      </div>
+
+      <!-- <div
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+      >
+        <div class="md:px-1 w-full">
+          <label class="text-md md:text-lg text-bold">Filters</label>
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="locumNameIncludes"
+            placeholder="Search locum"
+            type="text"
+            label="Locum"
+          />
+        </div>
+
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <AppButton
+            label="Reset"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterReset"
+          />
+
+          <AppButton
+            class="mx-2"
+            label="Submit"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterSearch"
+          />
+        </div>
       </div>
 
       <div v-if="false">
@@ -37,8 +68,8 @@
 
       <ReportTable
         :limit="limit"
-        :items="locumInvoiceJobParts"
-        :getItemKey="(item) => item.job_part_id"
+        :items="locumComplianceDocuments"
+        :getItemKey="(item) => item.locum_compliance_document_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -52,32 +83,35 @@
         @page="setPage" 
       />
 
-      <div v-if="false" class=""> 
+      <div v-if="true" class=""> 
         <span>Count: {{ count }}</span>
         <br>
         <span>Order By: {{ orderBy.join(',') }}</span>
         <br>
         <span>Page {{ activePage }} of {{ pages }} pages</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script>
-  import ReportTable from '@/components/Reports/ReportTable'
-  import ReportPagination from '@/components/Reports/ReportPagination'
-
+  // import ReportTable from '@/components/Reports/ReportTable'
+  // import ReportPagination from '@/components/Reports/ReportPagination'
+  // import AppButton from '@/components/Base/AppButton'
+  // import AppInput from '@/components/Base/AppInput'
   export default {
     components: {
-      ReportTable,
-      ReportPagination,
+      // ReportTable,
+      // ReportPagination,
+      // AppButton,
+      // AppInput,
     },
 
     data () {
       return {
         loading: false,
         count: 0,
-        locumInvoiceJobParts: [],
+        locumComplianceDocuments: [],
         orderBy: [],
         orderBys: [
           {
@@ -124,56 +158,29 @@
             flexShrink: 0,
           },
           {
-            title: 'Practice',
-            key: 'practice_name',
-            sort_key: 'practice_name',
-            column: (item) => item.practice_name,
+            title: 'Locum',
+            key: 'locum_user_name',
+            sort_key: 'locum_user_name',
+            column: (item) => item.locum_user_name,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
           {
-            title: 'Job Number',
-            key: 'job_part_number',
-            sort_key: 'job_part_number',
-            column: (item) => item.job_part_number,
+            title: 'Compliance',
+            key: 'compliance_document_name',
+            sort_key: 'compliance_document_name',
+            column: (item) => item.compliance_document_name,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
           {
-            title: 'Date Start',
-            key: 'date_start',
-            sort_key: 'date_start',
-            column: (item) => item.date_start ? this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
+            title: 'Expiry Date',
+            key: 'expired_at',
+            sort_key: 'expired_at',
+            column: (item) => item.expired_at ? this.$moment(item.expired_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
             justify: 'center',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Date End',
-            key: 'date_end',
-            sort_key: 'date_end',
-            column: (item) => item.date_end ? this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
-            justify: 'center',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Total Hours',
-            key: 'final_hours',
-            sort_key: 'final_hours',
-            column: (item) => item.final_hours.toFixed(2),
-            justify: 'end',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Invoice Status',
-            key: 'invoice_status',
-            sort_key: 'invoice_status',
-            column: (item) => item.invoice_status,
-            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -187,16 +194,16 @@
 
     watch: {
       orderBy () {
-        this.getLocumInvoiceJobParts()
+        this.getLocumComplianceDocuments()
       },
 
       limit () {
         this.page = 1
-        this.getLocumInvoiceJobParts()
+        this.getLocumComplianceDocuments()
       },
 
       activePage () {
-        this.getLocumInvoiceJobParts()
+        this.getLocumComplianceDocuments()
       },
     },
 
@@ -209,10 +216,32 @@
       // this.orderBy = orderBy
       // this.activePage = page ? Number.parseInt(page) : 1
 
-      this.getLocumInvoiceJobParts()
+      this.getLocumComplianceDocuments()
     },
 
     methods: {
+      filterReset () {
+        this.locumNameIncludes = ''
+
+        this.filterSearch()
+      },
+
+      filterSearch () {
+        this.activePage = 1
+
+        const query = {
+          ...this.$route.query,
+          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+          page: undefined,
+        }
+
+        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+          this.$router.replace({ query })
+        }
+        
+        this.getLocumComplianceDocuments()
+      },
+
       setPage (page) {
         this.activePage = page
 
@@ -232,7 +261,7 @@
           })
         }
 
-        this.getLocumInvoiceJobParts()
+        this.getLocumComplianceDocuments()
       },
 
       setOrderBy (orderBy) {
@@ -247,34 +276,34 @@
           }
         })
 
-        this.getLocumInvoiceJobParts()
+        this.getLocumComplianceDocuments()
       },
 
-      getLocumInvoiceJobParts () {
+      getLocumComplianceDocuments () {
         this.loading = true
-        this.locumInvoiceJobParts = []
+        this.locumComplianceDocuments = []
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/locum-invoice-job-parts/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/locum-compliance-documents/count').then((responses) => {
             return responses.data.data.count
           }),
-          this.$axios.get('/api/v1/admin/reports/locum-invoice-job-parts', {
+          this.$axios.get('/api/v1/admin/reports/locum-compliance-documents', {
             params: {
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
             },
           }).then((responses) => {
-            return responses.data.data.locum_invoice_job_parts
+            return responses.data.data.locum_compliance_documents
           }),
           new Promise((resolve) => setTimeout(resolve, 500))
         ]).then((results) => {
           const [
             count,
-            locumInvoiceJobParts,
+            locumComplianceDocuments,
           ] = results
 
           this.count = count
-          this.locumInvoiceJobParts = locumInvoiceJobParts
+          this.locumComplianceDocuments = locumComplianceDocuments
         }).catch((err) => {
           console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
           this.$nuxt.error(err.response ? err.response.data : err)

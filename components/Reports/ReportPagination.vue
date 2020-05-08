@@ -170,8 +170,8 @@
   }
 
   .__pagination_button.active:disabled {
-      color: #f2d024;
-      box-shadow: inset 0px 0px 0px 2px #dbb013;
+      color: #999999;
+      /* box-shadow: inset 0px 0px 0px 2px #dbb013; */
       cursor: default;
   }
 
@@ -186,8 +186,8 @@
 
   .__pagination_button:disabled,
   .__pagination_button:disabled svg {
-      background: #696c71;
-      color: #999999;
+      background: #bdbdbd;
+      color: #0000;
       fill: #999999;
       box-shadow: 0 0 0 transparent;
   }

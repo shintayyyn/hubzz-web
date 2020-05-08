@@ -7,17 +7,16 @@
         </nuxt-link>
       </div>
 
-      <div class="text-lg md:text-2xl ">
-        Pension Contributions
+      <div class="text-lg md:text-2xl">
+        Payments
       </div>
   
-      <div class="text-sm md:text-lg ">
-        Rep-003
+      <div class="text-sm md:text-lg">
+        Rep-002
       </div>
 
-      <!-- FILTER -->
       <div
-        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2"
       >
         <div class="md:px-1 w-full">
           <label class="text-md md:text-lg text-bold">Filters</label>
@@ -43,19 +42,10 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="minPensionAmount"
-            placeholder="0.00"
-            type="number"
-            label="Min £ Paid"
-          />
-        </div>
-
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="maxPensionAmount"
-            placeholder="0.00"
-            type="number"
-            label="Max £ Paid"
+            v-model="professionNameIncludes"
+            placeholder="Search profession"
+            type="text"
+            label="Profession"
           />
         </div>
 
@@ -74,6 +64,24 @@
             placeholder="Search job part number"
             type="text"
             label="Job Part Number"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="minTotalAmount"
+            placeholder="0.00"
+            type="number"
+            label="Min £ Paid"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="maxTotalAmount"
+            placeholder="0.00"
+            type="number"
+            label="Max £ Paid"
           />
         </div>
 
@@ -108,11 +116,10 @@
           />
         </div>
       </div>
-      <!-- FILTER ENDS HERE -->
 
       <div v-if="false">
         <div>
-          <label class="">Limit: </label>
+          <label class="text-white">Limit: </label>
           <select v-model="limit">
             <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
               {{ limit }}
@@ -120,7 +127,7 @@
           </select>
         </div>
         <div>
-          <label class="">Page: </label>
+          <label class="text-white">Page: </label>
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -155,7 +162,7 @@
           :count="count" 
           :pages="pages" 
           :page="activePage" 
-          @page="setPage"
+          @page="setPage" 
         />
       </div>
 
@@ -174,7 +181,7 @@
         </div>
       </div>
 
-      <div v-if="false" class=""> 
+      <div v-if="false" class="text-white"> 
         <span>Count: {{ count }}</span>
         <br>
         <span>Order By: {{ orderBy.join(',') }}</span>
@@ -241,8 +248,8 @@
         professionNameIncludes: '',
         jobPartNumberIncludes: '',
         maxNiAmount: '',
-        minPensionAmount: '',
-        maxPensionAmount: '',
+        minTotalAmount: '',
+        maxTotalAmount: '',
         calendarDateStart: '',
         calendarDateEnd: '',
         paidDateStart: '',
@@ -292,11 +299,11 @@
             flexShrink: 0,
           },
           {
-            title: '£ Paid',
-            key: 'pension_amount',
-            sort_key: 'pension_amount',
-            column: (item) => item.pension_amount ? '£ ' + item.pension_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '£ 0.00',
-            justify: 'end',
+            title: 'Profession',
+            key: 'profession_name',
+            sort_key: 'profession_name',
+            column: (item) => item.profession_name,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -317,11 +324,21 @@
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
-          },          {
+          },
+          {
+            title: '£ Paid',
+            key: 'total_amount',
+            sort_key: 'total_amount',
+            column: (item) => item.total_amount ? '£ ' + item.total_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '£ 0.00',
+            justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
             title: 'Date Paid',
             key: 'paid_at',
             sort_key: 'paid_at',
-            column: (item) => item.paid_at ? this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : 'N/A',
+            column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
             justify: 'center',
             flexGrow: 1,
             flexShrink: 0,
@@ -337,7 +354,7 @@
     watch: {
       limit () {
         this.page = 1
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportPayments()
       },
     },
 
@@ -348,8 +365,8 @@
         practice_name_includes: practiceNameIncludes,
         profession_name_includes: professionNameIncludes,
         job_part_number_includes: jobPartNumberIncludes,
-        min_pension_amount: minPensionAmount,
-        max_pension_amount: maxPensionAmount,
+        min_total_amount: minTotalAmount,
+        max_total_amount: maxTotalAmount,
         calendar_date_start: calendarDateStart,
         calendar_date_end: calendarDateEnd,
         paid_date_start: paidDateStart,
@@ -357,14 +374,14 @@
         order_by: orderBy = [],
         page,
       } = this.$route.query
-
+      
       this.invoiceNumberIncludes = invoiceNumberIncludes ? invoiceNumberIncludes : ''
       this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
       this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
       this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
       this.jobPartNumberIncludes = jobPartNumberIncludes ? jobPartNumberIncludes : ''
-      this.minPensionAmount = minPensionAmount ? minPensionAmount : ''
-      this.maxPensionAmount = maxPensionAmount ? maxPensionAmount : ''
+      this.minTotalAmount = minTotalAmount ? minTotalAmount : ''
+      this.maxTotalAmount = maxTotalAmount ? maxTotalAmount : ''
       this.calendarDateStart = calendarDateStart ? calendarDateStart : ''
       this.calendarDateEnd = calendarDateEnd ? calendarDateEnd : ''
       this.paidDateStart = paidDateStart ? paidDateStart : ''
@@ -374,7 +391,7 @@
 
       this.activePage = page ? Number.parseInt(page) : 1
 
-      this.getLocumInvoiceReportPensionContributions()
+      this.getLocumInvoiceReportPayments()
     },
 
     methods: {
@@ -384,8 +401,8 @@
         this.practiceNameIncludes = ''
         this.professionNameIncludes = ''
         this.jobPartNumberIncludes = ''
-        this.minPensionAmount = ''
-        this.maxPensionAmount = ''
+        this.minTotalAmount = ''
+        this.maxTotalAmount = ''
         this.calendarDateStart = ''
         this.calendarDateEnd = ''
         this.paidDateStart = ''
@@ -404,8 +421,8 @@
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+          min_total_amount: this.minTotalAmount ? this.minTotalAmount : undefined,
+          max_total_amount: this.maxTotalAmount ? this.maxTotalAmount : undefined,
           calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
           calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
           paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -418,7 +435,7 @@
           this.$router.replace({ query })
         }
         
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportPayments()
       },
 
       setPage (page) {
@@ -440,7 +457,7 @@
           })
         }
 
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportPayments()
       },
 
       setOrderBy (orderBy) {
@@ -455,10 +472,10 @@
           }
         })
 
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportPayments()
       },
 
-      getLocumInvoiceReportPensionContributions () {
+      getLocumInvoiceReportPayments () {
         this.loading = true
         this.locumInvoiceReports = []
 
@@ -468,8 +485,8 @@
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+          min_total_amount: this.minTotalAmount ? this.minTotalAmount : undefined,
+          max_total_amount: this.maxTotalAmount ? this.maxTotalAmount : undefined,
           calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
           calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
           paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -477,22 +494,24 @@
         }
 
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/pension-contributions/count', {
+          this.$axios.get('/api/v1/admin/reports/payments/count', {
             params: {
               ...params,
+              practice_id: this.$auth.user.practice_detail.practice.id,
             },
           }).then((responses) => {
             return responses.data.data.count
           }),
-          this.$axios.get('/api/v1/admin/reports/pension-contributions', {
+          this.$axios.get('/api/v1/admin/reports/payments', {
             params: {
               ...params,
+              practice_id: this.$auth.user.practice_detail.practice.id,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
             },
           }).then((responses) => {
-            return responses.data.data.pension_contributions
+            return responses.data.data.payments
           }),
           new Promise((resolve) => setTimeout(resolve, 200))
         ]).then((results) => {
@@ -519,8 +538,8 @@
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+          min_total_amount: this.minTotalAmount ? this.minTotalAmount : undefined,
+          max_total_amount: this.maxTotalAmount ? this.maxTotalAmount : undefined,
           calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
           calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
           paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -530,16 +549,17 @@
           offset: 0,
         }
 
-        this.$axios.post('/api/v1/admin/reports/pension-contributions/generate-key', {
-          filename: `pension-contributions.csv`,
+        this.$axios.post('/api/v1/admin/reports/payments/generate-key', {
+          filename: `payments.csv`,
         }, {
           params: {
             ...params,
+            practice_id: this.$auth.user.practice_detail.practice.id,
           },
         }).then((responses) => {
           const token = responses.data.data.token
 
-          window.open(`${process.env.API_URL}/api/v1/admin/reports/pension-contributions/csv?token=${token}`)
+          window.open(`${process.env.API_URL}/api/v1/admin/reports/payments/csv?token=${token}`)
         }).catch((err) => {
           console.log('err', err)
           this.$nuxt.error(err.response ? err.response.data : err)

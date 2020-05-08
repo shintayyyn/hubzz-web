@@ -1,23 +1,22 @@
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
-    <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
+    <div class="page-overlap flex-1 flex flex-col self-end ">
       <div class="flex justify-between text-sm">
         <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
-      <div class="text-lg md:text-2xl ">
-        Pension Contributions
+      <div class="text-lg md:text-2xl">
+        Tax and NI Deductions
       </div>
   
-      <div class="text-sm md:text-lg ">
-        Rep-003
+      <div class="text-sm md:text-lg">
+        Rep-001
       </div>
 
-      <!-- FILTER -->
       <div
-        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2"
       >
         <div class="md:px-1 w-full">
           <label class="text-md md:text-lg text-bold">Filters</label>
@@ -34,6 +33,15 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
+            v-model="invoiceNumberIncludes"
+            placeholder="Search invoice number"
+            type="text"
+            label="Invoice Number"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
             v-model="locumNameIncudes"
             placeholder="Search locum"
             type="text"
@@ -43,44 +51,69 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="minPensionAmount"
-            placeholder="0.00"
-            type="number"
-            label="Min £ Paid"
-          />
-        </div>
-
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="maxPensionAmount"
-            placeholder="0.00"
-            type="number"
-            label="Max £ Paid"
-          />
-        </div>
-
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="invoiceNumberIncludes"
-            placeholder="Search invoice number"
+            v-model="taxNumberIncludes"
+            placeholder="Search utr or company reg number"
             type="text"
-            label="Invoice Number"
+            label="UTR or Company Reg number"
           />
         </div>
         
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="jobPartNumberIncludes"
-            placeholder="Search job part number"
-            type="text"
-            label="Job Part Number"
+            v-model="minNiAmount"
+            placeholder="0.00"
+            type="number"
+            label="Min NI Amount"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="maxNiAmount"
+            placeholder="0.00"
+            type="number"
+            label="Max NI Amount"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="minPayeAmount"
+            placeholder="0.00"
+            type="number"
+            label="Min PAYE Amount"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="maxPayeAmount"
+            placeholder="0.00"
+            type="number"
+            label="Max PAYE Amount"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="calendarDateStart"
+            label="Date Start"
+            format="YYYY-MM-DD"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="calendarDateEnd"
+            label="Date End"
+            format="YYYY-MM-DD"
           />
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="paidDateStart"
-            label="Date Paid Start"
+            label="Deduction Date Start"
             format="YYYY-MM-DD"
           />
         </div>
@@ -88,7 +121,7 @@
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="paidDateEnd"
-            label="Date Paid End"
+            label="Deduction Date End"
             format="YYYY-MM-DD"
           />
         </div>
@@ -108,11 +141,10 @@
           />
         </div>
       </div>
-      <!-- FILTER ENDS HERE -->
 
       <div v-if="false">
         <div>
-          <label class="">Limit: </label>
+          <label class="text-white">Limit: </label>
           <select v-model="limit">
             <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
               {{ limit }}
@@ -120,7 +152,7 @@
           </select>
         </div>
         <div>
-          <label class="">Page: </label>
+          <label class="text-white">Page: </label>
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -151,12 +183,7 @@
           </div>
         </div>
   
-        <ReportPagination 
-          :count="count" 
-          :pages="pages" 
-          :page="activePage" 
-          @page="setPage"
-        />
+        <ReportPagination :count="count" :pages="pages" :page="activePage" @page="setPage" />
       </div>
 
       <div
@@ -174,7 +201,7 @@
         </div>
       </div>
 
-      <div v-if="false" class=""> 
+      <div v-if="false" class="text-white"> 
         <span>Count: {{ count }}</span>
         <br>
         <span>Order By: {{ orderBy.join(',') }}</span>
@@ -238,11 +265,11 @@
         invoiceNumberIncludes: '',
         locumNameIncudes: '',
         practiceNameIncludes: '',
-        professionNameIncludes: '',
-        jobPartNumberIncludes: '',
+        taxNumberIncludes: '',
+        minNiAmount: '',
         maxNiAmount: '',
-        minPensionAmount: '',
-        maxPensionAmount: '',
+        minPayeAmount: '',
+        maxPayeAmount: '',
         calendarDateStart: '',
         calendarDateEnd: '',
         paidDateStart: '',
@@ -283,24 +310,6 @@
             flexShrink: 0,
           },
           {
-            title: 'Locum',
-            key: 'locum_user_name',
-            sort_key: 'locum_user_name',
-            column: (item) => item.locum_user_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: '£ Paid',
-            key: 'pension_amount',
-            sort_key: 'pension_amount',
-            column: (item) => item.pension_amount ? '£ ' + item.pension_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '£ 0.00',
-            justify: 'end',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
             title: 'Invoice Number',
             key: 'invoice_number',
             sort_key: 'invoice_number',
@@ -310,18 +319,64 @@
             flexShrink: 0,
           },
           {
-            title: 'Job Number',
-            key: 'job_part_number',
-            sort_key: 'job_part_number',
-            column: (item) => item.job_part_number,
+            title: 'Locum',
+            key: 'locum_user_name',
+            sort_key: 'locum_user_name',
+            column: (item) => item.locum_user_name,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
-          },          {
-            title: 'Date Paid',
+          },
+          {
+            title: 'UTR or Company Reg number',
+            key: 'tax_number',
+            sort_key: 'tax_number',
+            column: (item) => item.tax_number,
+            justify: 'center',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'NI Amount',
+            key: 'ni_amount',
+            sort_key: 'ni_amount',
+            column: (item) => item.ni ? '£ ' + item.ni_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A',
+            justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'PAYE Amount',
+            key: 'paye_amount',
+            sort_key: 'paye_amount',
+            column: (item) => item.paye ? '£ ' + item.paye_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A',
+            justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Date Start',
+            key: 'date_start',
+            sort_key: 'date_start',
+            column: (item) => this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+            justify: 'center',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Date End',
+            key: 'date_end',
+            sort_key: 'date_end',
+            column: (item) => this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+            justify: 'center',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Date deductions made',
             key: 'paid_at',
             sort_key: 'paid_at',
-            column: (item) => item.paid_at ? this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : 'N/A',
+            column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
             justify: 'center',
             flexGrow: 1,
             flexShrink: 0,
@@ -337,7 +392,7 @@
     watch: {
       limit () {
         this.page = 1
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportDeductions()
       },
     },
 
@@ -346,10 +401,11 @@
         invoice_number_includes: invoiceNumberIncludes,
         locum_name_incudes: locumNameIncudes,
         practice_name_includes: practiceNameIncludes,
-        profession_name_includes: professionNameIncludes,
-        job_part_number_includes: jobPartNumberIncludes,
-        min_pension_amount: minPensionAmount,
-        max_pension_amount: maxPensionAmount,
+        tax_number_includes: taxNumberIncludes,
+        min_ni_amount: minNiAmount,
+        max_ni_amount: maxNiAmount,
+        min_paye_amount: minPayeAmount,
+        max_paye_amount: maxPayeAmount,
         calendar_date_start: calendarDateStart,
         calendar_date_end: calendarDateEnd,
         paid_date_start: paidDateStart,
@@ -357,14 +413,14 @@
         order_by: orderBy = [],
         page,
       } = this.$route.query
-
       this.invoiceNumberIncludes = invoiceNumberIncludes ? invoiceNumberIncludes : ''
       this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
       this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-      this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
-      this.jobPartNumberIncludes = jobPartNumberIncludes ? jobPartNumberIncludes : ''
-      this.minPensionAmount = minPensionAmount ? minPensionAmount : ''
-      this.maxPensionAmount = maxPensionAmount ? maxPensionAmount : ''
+      this.taxNumberIncludes = taxNumberIncludes ? taxNumberIncludes : ''
+      this.minNiAmount = minNiAmount ? minNiAmount : ''
+      this.maxNiAmount = maxNiAmount ? maxNiAmount : ''
+      this.minPayeAmount = minPayeAmount ? minPayeAmount : ''
+      this.maxPayeAmount = maxPayeAmount ? maxPayeAmount : ''
       this.calendarDateStart = calendarDateStart ? calendarDateStart : ''
       this.calendarDateEnd = calendarDateEnd ? calendarDateEnd : ''
       this.paidDateStart = paidDateStart ? paidDateStart : ''
@@ -374,7 +430,7 @@
 
       this.activePage = page ? Number.parseInt(page) : 1
 
-      this.getLocumInvoiceReportPensionContributions()
+      this.getLocumInvoiceReportDeductions()
     },
 
     methods: {
@@ -382,10 +438,11 @@
         this.invoiceNumberIncludes = ''
         this.locumNameIncudes = ''
         this.practiceNameIncludes = ''
-        this.professionNameIncludes = ''
-        this.jobPartNumberIncludes = ''
-        this.minPensionAmount = ''
-        this.maxPensionAmount = ''
+        this.taxNumberIncludes = ''
+        this.minNiAmount = ''
+        this.maxNiAmount = ''
+        this.minPayeAmount = ''
+        this.maxPayeAmount = ''
         this.calendarDateStart = ''
         this.calendarDateEnd = ''
         this.paidDateStart = ''
@@ -402,10 +459,11 @@
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
           locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+          tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
+          min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
+          max_ni_amount: this.maxNiAmount ? this.maxNiAmount : undefined,
+          min_paye_amount: this.minPayeAmount ? this.minPayeAmount : undefined,
+          max_paye_amount: this.maxPayeAmount ? this.maxPayeAmount : undefined,
           calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
           calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
           paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -418,7 +476,7 @@
           this.$router.replace({ query })
         }
         
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportDeductions()
       },
 
       setPage (page) {
@@ -440,7 +498,7 @@
           })
         }
 
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportDeductions()
       },
 
       setOrderBy (orderBy) {
@@ -455,10 +513,10 @@
           }
         })
 
-        this.getLocumInvoiceReportPensionContributions()
+        this.getLocumInvoiceReportDeductions()
       },
 
-      getLocumInvoiceReportPensionContributions () {
+      getLocumInvoiceReportDeductions () {
         this.loading = true
         this.locumInvoiceReports = []
 
@@ -466,10 +524,11 @@
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
           locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+          tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
+          min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
+          max_ni_amount: this.maxNiAmount ? this.maxNiAmount : undefined,
+          min_paye_amount: this.minPayeAmount ? this.minPayeAmount : undefined,
+          max_paye_amount: this.maxPayeAmount ? this.maxPayeAmount : undefined,
           calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
           calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
           paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -477,22 +536,23 @@
         }
 
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/pension-contributions/count', {
+          this.$axios.get('/api/v1/admin/reports/deductions/count', {
             params: {
               ...params,
             },
           }).then((responses) => {
             return responses.data.data.count
           }),
-          this.$axios.get('/api/v1/admin/reports/pension-contributions', {
+          this.$axios.get('/api/v1/admin/reports/deductions', {
             params: {
               ...params,
+              practice_id: this.$auth.user.practice_detail.practice.id,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
             },
           }).then((responses) => {
-            return responses.data.data.pension_contributions
+            return responses.data.data.deductions
           }),
           new Promise((resolve) => setTimeout(resolve, 200))
         ]).then((results) => {
@@ -517,10 +577,11 @@
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
           locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+          tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
+          min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
+          max_ni_amount: this.maxNiAmount ? this.maxNiAmount : undefined,
+          min_paye_amount: this.minPayeAmount ? this.minPayeAmount : undefined,
+          max_paye_amount: this.maxPayeAmount ? this.maxPayeAmount : undefined,
           calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
           calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
           paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -530,16 +591,17 @@
           offset: 0,
         }
 
-        this.$axios.post('/api/v1/admin/reports/pension-contributions/generate-key', {
-          filename: `pension-contributions.csv`,
+        this.$axios.post('/api/v1/admin/reports/deductions/generate-key', {
+          filename: `deductions.csv`,
         }, {
           params: {
             ...params,
+            practice_id: this.$auth.user.practice_detail.practice.id,
           },
         }).then((responses) => {
           const token = responses.data.data.token
 
-          window.open(`${process.env.API_URL}/api/v1/admin/reports/pension-contributions/csv?token=${token}`)
+          window.open(`${process.env.API_URL}/api/v1/admin/reports/deductions/csv?token=${token}`)
         }).catch((err) => {
           console.log('err', err)
           this.$nuxt.error(err.response ? err.response.data : err)

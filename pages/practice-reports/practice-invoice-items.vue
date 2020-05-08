@@ -2,23 +2,23 @@
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm text-white">
-        <nuxt-link to="/reports" class="text-white hover:text-sunglow p-1">
-          <svgicon name="arrow-left-solid" height="32" width="32" class="fill-current" />
+      <div class="flex justify-between text-sm">
+        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+          <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
-      <div class="text-lg md:text-2xl text-white">
+      <div class="text-lg md:text-2xl ">
         Invoices
       </div>
   
-      <div class="text-sm md:text-lg text-white">
+      <div class="text-sm md:text-lg ">
         Rep-031
       </div>
 
       <div v-if="false">
         <div>
-          <label class="text-white">Limit: </label>
+          <label class="">Limit: </label>
           <select v-model="limit">
             <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
               {{ limit }}
@@ -26,7 +26,7 @@
           </select>
         </div>
         <div>
-          <label class="text-white">Page: </label>
+          <label class="">Page: </label>
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -52,7 +52,7 @@
         @page="setPage" 
       />
 
-      <div v-if="false" class="text-white"> 
+      <div v-if="false" class=""> 
         <span>Count: {{ count }}</span>
         <br>
         <span>Order By: {{ orderBy.join(',') }}</span>

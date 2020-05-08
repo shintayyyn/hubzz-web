@@ -1,23 +1,23 @@
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm text-white">
-        <nuxt-link to="/reports" class="text-white hover:text-sunglow p-1">
-          <svgicon name="arrow-left-solid" height="32" width="32" class="fill-current" />
+      <div class="flex justify-between text-sm ">
+        <nuxt-link to="/locum-reports" class=" hover:text-sunglow p-1">
+          <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
-      <div class="text-lg md:text-2xl text-white">
+      <div class="text-lg md:text-2xl ">
         NHS Pension Contributions
       </div>
   
-      <div class="text-sm md:text-lg text-white">
+      <div class="text-sm md:text-lg ">
         Rep-011
       </div>
 
       <div v-if="false">
         <div>
-          <label class="text-white">Limit: </label>
+          <label class="">Limit: </label>
           <select v-model="limit">
             <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
               {{ limit }}
@@ -25,7 +25,7 @@
           </select>
         </div>
         <div>
-          <label class="text-white">Page: </label>
+          <label class="">Page: </label>
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -51,7 +51,7 @@
         @page="setPage" 
       />
 
-      <div v-if="false" class="text-white"> 
+      <div v-if="false" class=""> 
         <span>Count: {{ count }}</span>
         <br>
         <span>Order By: {{ orderBy.join(',') }}</span>
@@ -252,12 +252,18 @@
       getLocumPensionContributions () {
         this.loading = true
         this.locumPensionContributions = []
+        let params = {
+          locum_user_id: this.$auth.user.id,
+        }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/locum-pension-contributions/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/locum-pension-contributions/count',{
+            params
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/locum-pension-contributions', {
             params: {
+              locum_user_id: this.$auth.user.id,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
