@@ -136,6 +136,8 @@
             <p
               class="text-sm mx-6"
             >{{specificInvitation.share_banks_to_other_surgeries === true ? 'Yes':'No'}}</p>
+            <p class="font-semibold">Does Hub share its banks?</p>
+            <p class="text-sm mx-6">{{specificInvitation.share_my_banks === true ? 'Yes':'No'}}</p>
           </div>
         </div>
       </div>
