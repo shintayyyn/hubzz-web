@@ -237,6 +237,8 @@
 
           'Practice Notification Practice Invoice Issued',
           'Practice Notification Practice Invoice Paid',
+
+          'Practice Notification Practice Surgery Updated',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -559,6 +561,7 @@
           'Locum Notification Locum Invoice Paid',
         ]
 
+
         const practiceJobNotifications = [
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -597,6 +600,11 @@
           'Practice Notification Practice Invoice Issued',
           'Practice Notification Practice Invoice Paid',
         ]
+
+        const practicePracticeSurgeryNotifications = [
+          'Practice Notification Practice Surgery Updated',
+        ]
+
 
         if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
           const locumComplianceDocument = payload
@@ -812,6 +820,7 @@
           return
         }
         
+
         if (practiceJobNotifications.includes(notificationTypeName)) {
           const job = payload
 
@@ -1148,6 +1157,55 @@
                 },
               })
             }, 500)
+          }
+        
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
+        
+        if (practicePracticeSurgeryNotifications.includes(notificationTypeName)) {
+          const practiceSurgery = payload
+
+          const {
+            id: practiceSurgeryId,
+            practice_id: practiceId,
+            invitation_accepted: invitationAccepted,
+          } = practiceSurgery
+
+          if (practiceId === this.$auth.user.practice_id) {
+            this.$router.push({
+              name: 'hub-surgery-management-id',
+              params: {
+                id: practiceSurgeryId,
+              },
+            })
+          } else {
+            if (this.$route.name === 'spoke-surgery-management-index') {
+              if (!invitationAccepted) {
+                this.$router.push({
+                  name: 'spoke-surgery-management-index-hub-invitationId',
+                  params: {
+                    invitationId: practiceSurgeryId,
+                  },
+                })
+              }
+            } else {
+              this.$router.push({
+                name: 'spoke-surgery-management-index',
+              })
+
+              if (!invitationAccepted) {
+                setTimeout(() => {
+                  this.$router.push({
+                    name: 'spoke-surgery-management-index-hub-invitationId',
+                    params: {
+                      invitationId: practiceSurgeryId,
+                    },
+                  })
+                }, 500)
+              }
+            }
           }
         
           this.showNotificationsDropdown = false
