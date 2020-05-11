@@ -239,6 +239,7 @@
           'Practice Notification Practice Invoice Paid',
 
           'Practice Notification Practice Surgery Updated',
+          'Practice Notification Practice Surgery Termination Requested',
         ],
         popUpNotifications: [],
         showPopUpNotification: true,
@@ -603,6 +604,7 @@
 
         const practicePracticeSurgeryNotifications = [
           'Practice Notification Practice Surgery Updated',
+          'Practice Notification Practice Surgery Termination Requested',
         ]
 
 
