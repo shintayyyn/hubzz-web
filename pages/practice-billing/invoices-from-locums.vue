@@ -286,19 +286,11 @@ export default {
         ? this.$route.query.status.toLowerCase()
         : "to-be-invoiced";
 
-      columns.push(
-        {
-          name: "Practice / Surgery",
-          dataIndex: "practice_name",
-          class: "text-center"
-        }
-        // {
-        //   name: "Issued",
-        //   dataIndex: "issued_at",
-        //   class: "text-center localDate",
-        //   sortable: true
-        // },
-      );
+      columns.push({
+        name: "Practice / Surgery",
+        dataIndex: "practice_name",
+        class: "text-center"
+      });
 
       if (queryStatus !== "to-be-invoiced") {
         columns.push({
@@ -333,22 +325,7 @@ export default {
           class: "text-center"
         }
       );
-      // if (!["approved", "pension-form-a"].includes(queryStatus)) {
-      //   columns.push({
-      //      name: "Issued",
-      //     dataIndex: "issued_at",
-      //     class: "text-center localDate",
-      //     sortable: true
-      //   });
-      // }
-      // if (["approved"].includes(queryStatus)) {
-      //   columns.push({
-      //      name: "Approved",
-      //     dataIndex: "approved_at",
-      //     class: "text-center localDate",
-      //     sortable: true
-      //   });
-      // }
+
       if (["approved", "pension-form-a"].includes(queryStatus)) {
         columns.push({
           name: "Paid",
@@ -613,11 +590,7 @@ export default {
             jobPart.locum_invoice_item.locum_invoice.paid_at
               ? "Yes"
               : "No",
-          under_parent_practice:
-            jobPart.locum_invoice_id &&
-            jobPart.locum_invoice_item.locum_invoice.parent_practice_id
-              ? "Yes"
-              : "No"
+          under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
         };
       });
 
@@ -797,11 +770,7 @@ export default {
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
-              under_parent_practice:
-                jobPart.locum_invoice_id &&
-                jobPart.locum_invoice_item.locum_invoice.parent_practice_id
-                  ? "Yes"
-                  : "No"
+              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
             };
           });
         })
@@ -933,11 +902,7 @@ export default {
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
-              under_parent_practice:
-                jobPart.locum_invoice_id &&
-                jobPart.locum_invoice_item.locum_invoice.parent_practice_id
-                  ? "Yes"
-                  : "No"
+              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
             };
           });
         })
