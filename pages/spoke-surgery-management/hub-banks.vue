@@ -104,7 +104,6 @@
 
 <script>
 import AppAvatar from "@/components/Base/AppAvatar"
-import AppTable from "@/components/Base/AppTable"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
 	transition: {
@@ -114,7 +113,6 @@ export default {
 	components: {
 		AppAvatar,
 		AppConfirmationModal,
-		AppTable
 	},
 	data () {
 		return {
@@ -144,7 +142,7 @@ export default {
 			return Math.ceil(this.total / this.perPage)
 		},
 	},
-	async asyncData ({ app, route, store }) {
+	async asyncData ({ app }) {
 		try {
 			let responseParentSurgery = await app.$axios.$get(
 				`/api/v1/practice/me/parent-surgery`
@@ -181,9 +179,9 @@ export default {
 			console.log("get locum error!", err)
 		}
 	},
-	mounted() {
+	mounted () {
 		this.$socket.on(
-      "Practice Notification Update Surgery",
+      "Practice Notification Practice Surgery Updated",
       this.getHubBanksRealTime
     )
 	},
@@ -191,7 +189,7 @@ export default {
     this.removeListener()
   },
 	methods: {
-		getHubBanksPromiseAll() {
+		getHubBanksPromiseAll () {
 			this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
 				this.parentPracticeId = res.data 
 					&& res.data.practice 
@@ -220,14 +218,14 @@ export default {
 
 			})
 		},
-		getHubBanksRealTime(payload) {
+		getHubBanksRealTime (payload) {
 			if (payload.length > 0 && payload[0].child_practice_id === this.practice.id) {
 				this.getHubBanksPromiseAll()
 			}
 		},
 		removeListener () {
       this.$socket.removeListener(
-        "Practice Notification Update Surgery",
+        "Practice Notification Practice Surgery Updated",
         this.getHubBanksRealTime
 			)
 		},
@@ -246,7 +244,7 @@ export default {
 			if (!locum.is_favorite) {
 				this.$axios
 				.$post(`/api/v1/practice/locums/${locum.id}/favorite`)
-				.then(res => {
+				.then(() => {
 					this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "success",
@@ -263,7 +261,7 @@ export default {
 			} else if (locum.is_favorite) {
 				this.$axios
 				.$delete(`/api/v1/practice/locums/${locum.id}/favorite`)
-				.then(res => {
+				.then(() => {
 					this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "success",

@@ -9,6 +9,7 @@
           Invite Spoke
         </nuxt-link>
         <AppButton
+          v-if="surgeries && surgeries.length > 0"
           :label="'Share my banks'"
           class="bg-yellow-500 text-sm"
           :inStyle="'padding:5px 14px;margin-left:5px;'"
@@ -64,10 +65,7 @@
           class="flex flex-row flex-wrap justify-center"
           @click="checkItem(slotProps.item.id)"
         >
-          <input
-            type="checkbox"
-            :checked="selectedItems.includes(slotProps.item.id)"
-          >
+          <input type="checkbox" :checked="selectedItems.includes(slotProps.item.id)">
           <label class="text-xs sm:text-sm py-1 flex items-center" />
         </div>
       </template>
@@ -93,9 +91,8 @@
     <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
   </section>
 </template>
+
 <script>
-import AddSurgeryModal from "@/components/Profile/AddSurgeryModal"
-import RemoveSurgeryConfirmationModal from "@/components/Profile/RemoveSurgeryConfirmationModal"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppTable from "@/components/Base/AppTable"
 import AppButton from "@/components/Base/AppButton"
@@ -106,8 +103,6 @@ export default {
     mode: "out-in"
   },
   components: {
-    // AddSurgeryModal,
-    // RemoveSurgeryConfirmationModal,
     AppConfirmationModal,
     AppTable,
     AppButton
@@ -163,7 +158,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center"
-        },
+        }
       ]
     }
   },
@@ -172,7 +167,7 @@ export default {
       return this.$store.getters["permissions"]
     }
   },
-  async asyncData ({ app, store, error }) {
+  async asyncData ({ app, error }) {
     try {
       const responsePracticeType = await app.$axios.$get(
         `/api/v1/practice/me/practice-type`
@@ -184,7 +179,6 @@ export default {
 
       let surgeries = []
       let selectedItems = []
-      let parent_surgery = null
       let totalSurgeries = 0
 
       const responseCount = await app.$axios.$get(
@@ -233,7 +227,7 @@ export default {
       this.getSurgeriesRealTime
     )
     this.$socket.on(
-      "Practice Notification Update Surgery",
+      "Practice Notification Practice Surgery Updated",
       this.getSurgeriesRealTime
     )
     this.$socket.on(
@@ -254,16 +248,23 @@ export default {
   },
   methods: {
     shareMyBanks () {
-      this.$axios.$put(`/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`, { surgeryIds: this.selectedItems }).then(res => {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [`Sharing MyBanks Update Success`]
+      this.$axios
+        .$put(
+          `/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`,
+          { surgeryIds: this.selectedItems }
+        )
+        .then(() => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`Sharing MyBanks Update Success`]
+          })
         })
-      })
     },
     checkItem (childPracticeId) {
-      let index = this.selectedItems.findIndex(item => item === childPracticeId)
+      let index = this.selectedItems.findIndex(
+        item => item === childPracticeId
+      )
       if (index >= 0) {
         this.selectedItems = this.selectedItems.filter(
           item => item !== childPracticeId
@@ -278,19 +279,19 @@ export default {
     removeListener () {
       this.$socket.removeListener(
         "Practice Notification Accept Surgery",
-        getSurgeriesRealTime
+        this.getSurgeriesRealTime
       )
       this.$socket.removeListener(
         "Practice Notification Create Surgery",
-        getSurgeriesRealTime
+        this.getSurgeriesRealTime
       )
       this.$socket.removeListener(
-        "Practice Notification Update Surgery",
-        getSurgeriesRealTime
+        "Practice Notification Practice Surgery Updated",
+        this.getSurgeriesRealTime
       )
       this.$socket.removeListener(
         "Practice Notification Delete Surgery",
-        getSurgeriesRealTime
+        this.getSurgeriesRealTime
       )
     },
     getSurgeriesCount (params) {
@@ -346,7 +347,7 @@ export default {
         this.surgeries.push(payload)
       }
     },
-    updateSurgery (payload) {
+    updateSurgery () {
       this.getSurgeriesCount(this.params)
       // let index = this.surgeries.findIndex(
       // 	surgery => surgery.id === payload.id
@@ -361,7 +362,11 @@ export default {
     },
     async remove () {
       this.loading = true
-      if (!this.authPermissions.includes("Invitation Processes Surgery Management")) {
+      if (
+        !this.authPermissions.includes(
+          "Invitation Processes Surgery Management"
+        )
+      ) {
         return
       }
       console.log(this.selectedSurgeryId, this.practice.type)
@@ -394,7 +399,9 @@ export default {
       }
     },
     show (item) {
-      if (this.authPermissions.includes("Invitation Processes Surgery Management")) {
+      if (
+        this.authPermissions.includes("Invitation Processes Surgery Management")
+      ) {
         if (this.practice.type === "Hub") {
           this.$router.push(`/profile/practice-spokes/${item.id}`)
         } else if (this.practice.type === "Spoke") {
@@ -427,16 +434,12 @@ export default {
       switch (this.getStatus(surgery)) {
         case "Active":
           return "bg-green-500 text-white"
-          break
         case "Rejected":
           return "bg-red-600 text-white"
-          break
         case "Termination Requested":
           return "bg-orange-500 text-white"
-          break
         case "Terminated":
           return "bg-red-700 text-white"
-          break
         default:
           return "bg-yellow-400 text-black"
       }

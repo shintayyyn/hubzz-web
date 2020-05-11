@@ -2,15 +2,15 @@ import moment from 'moment'
 
 export default {
 
-  // NOTIF
-  getNotificationCount (state) {
-      return state.notifications_count
-  },
+    // NOTIF
+    getNotificationCount(state) {
+        return state.notifications_count
+    },
 
     // practice
 
     // NOTIF
-    getPracticeJobNotifications (state) {
+    getPracticeJobNotifications(state) {
         let notifications = []
         state.practice_job_notifications.forEach(notif => {
             let message = ''
@@ -137,7 +137,7 @@ export default {
     },
 
     // PARTS
-    getPracticeAppliedJobParts (state) {
+    getPracticeAppliedJobParts(state) {
         let jobs = []
         if (state.practice_applied_job_parts) {
             state.practice_applied_job_parts.forEach(jobPart => {
@@ -171,7 +171,7 @@ export default {
         return []
     },
 
-    getPracticeUnfilledJobParts (state) {
+    getPracticeUnfilledJobParts(state) {
         let jobs = []
         if (state.practice_unfilled_job_parts) {
             state.practice_unfilled_job_parts.forEach(jobPart => {
@@ -205,7 +205,7 @@ export default {
         return []
     },
 
-    getPracticeOngoingJobs (state) {
+    getPracticeOngoingJobs(state) {
         let jobs = []
         if (state.practice_ongoing_job_parts) {
             state.practice_ongoing_job_parts.forEach(jobPart => {
@@ -239,7 +239,7 @@ export default {
         return []
     },
 
-    getPracticeCompletedJobs (state) {
+    getPracticeCompletedJobs(state) {
         let jobs = []
         if (state.practice_completed_job_parts) {
             state.practice_completed_job_parts.forEach(jobPart => {
@@ -276,7 +276,7 @@ export default {
         return []
     },
 
-    getPracticeApprovedJobs (state) {
+    getPracticeApprovedJobs(state) {
         let jobs = []
         if (state.practice_approved_job_parts) {
             state.practice_approved_job_parts.forEach(jobPart => {
@@ -313,7 +313,7 @@ export default {
         return []
     },
 
-    getPracticeAllocatedPartJobs (state) {
+    getPracticeAllocatedPartJobs(state) {
         let jobs = []
         if (state.practice_allocated_job_parts) {
             state.practice_allocated_job_parts.forEach(jobPart => {
@@ -347,7 +347,7 @@ export default {
         return []
     },
 
-    getPracticeCancelledJobs (state) {
+    getPracticeCancelledJobs(state) {
         let jobs = []
         if (state.practice_cancelled_job_parts) {
             state.practice_cancelled_job_parts.forEach(jobPart => {
@@ -381,7 +381,7 @@ export default {
         return []
     },
 
-    getPracticeWithdrawnJobs (state) {
+    getPracticeWithdrawnJobs(state) {
         let jobs = []
         if (state.practice_withdrawn_job_parts) {
             state.practice_withdrawn_job_parts.forEach(jobPart => {
@@ -416,7 +416,7 @@ export default {
     },
 
     // WHOLE
-    getPracticePendingJobs (state) {
+    getPracticePendingJobs(state) {
         let jobs = []
         if (state.practice_pending_jobs) {
             state.practice_pending_jobs.forEach(job => {
@@ -430,7 +430,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -447,7 +447,7 @@ export default {
         return []
     },
 
-    getPracticeAllocatedJobs (state) {
+    getPracticeAllocatedJobs(state) {
         let jobs = []
         if (state.practice_allocated_jobs) {
             state.practice_allocated_jobs.forEach(job => {
@@ -462,7 +462,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 assigned_to = job.platform_job.appointed_to_locum.user.personal_detail.name
                 jobs.push({
@@ -481,7 +481,7 @@ export default {
         return []
     },
 
-    getPracticeAvailableJobs (state) {
+    getPracticeAvailableJobs(state) {
         let jobs = []
         if (state.practice_available_jobs) {
             state.practice_available_jobs.forEach(job => {
@@ -495,7 +495,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -512,7 +512,7 @@ export default {
         return []
     },
 
-    getPracticeAppliedJobs (state) {
+    getPracticeAppliedJobs(state) {
         let jobs = []
         if (state.practice_applied_jobs) {
             state.practice_applied_jobs.forEach(job => {
@@ -526,7 +526,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -543,7 +543,7 @@ export default {
         return []
     },
 
-    getPracticeUnfilledJobs (state) {
+    getPracticeUnfilledJobs(state) {
         let jobs = []
         if (state.practice_unfilled_jobs) {
             state.practice_unfilled_jobs.forEach(job => {
@@ -557,8 +557,8 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
-                shift_name = job.shift.name
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
+                shift_name = job.shift_name
                 jobs.push({
                     ...job,
                     surgery_name,
@@ -574,7 +574,7 @@ export default {
         return []
     },
 
-    getPracticeDeclinedJobs (state) {
+    getPracticeDeclinedJobs(state) {
         let jobs = []
         if (state.practice_declined_jobs) {
             state.practice_declined_jobs.forEach(job => {
@@ -588,7 +588,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 jobs.push({
                     ...job,
@@ -606,15 +606,15 @@ export default {
     },
 
     // REMINDERS
-    getPracticeAvailableJobsReminder (state) {
+    getPracticeAvailableJobsReminder(state) {
         return state.practice_available_jobs_reminder
     },
 
-    getPracticeAppliedJobsReminder (state) {
+    getPracticeAppliedJobsReminder(state) {
         return state.practice_applied_jobs_reminder
     },
 
-    getPracticeHubSpokeJobs (state) {
+    getPracticeHubSpokeJobs(state) {
         let jobs = []
         if (state.practice_hub_spoke_jobs) {
             state.practice_hub_spoke_jobs.forEach(job => {
@@ -649,7 +649,7 @@ export default {
 
     // locum
 
-    getLocumJobNotifications (state) {
+    getLocumJobNotifications(state) {
         let notifications = []
         state.locum_job_notifications.forEach(notif => {
             let message = ''
@@ -750,7 +750,7 @@ export default {
     },
 
     // PARTS
-    getLocumAllocatedPartJobs (state) {
+    getLocumAllocatedPartJobs(state) {
         let jobs = []
         if (state.locum_allocated_job_parts) {
             state.locum_allocated_job_parts.forEach(jobPart => {
@@ -784,7 +784,7 @@ export default {
         return []
     },
 
-    getLocumOngoingJobs (state) {
+    getLocumOngoingJobs(state) {
         let jobs = []
         if (state.locum_ongoing_job_parts) {
             state.locum_ongoing_job_parts.forEach(jobPart => {
@@ -818,7 +818,7 @@ export default {
         return []
     },
 
-    getLocumCompletedJobs (state) {
+    getLocumCompletedJobs(state) {
         let jobs = []
         if (state.locum_completed_job_parts) {
             state.locum_completed_job_parts.forEach(jobPart => {
@@ -855,7 +855,7 @@ export default {
         return []
     },
 
-    getLocumApprovedJobs (state) {
+    getLocumApprovedJobs(state) {
         let jobs = []
         if (state.locum_approved_job_parts) {
             state.locum_approved_job_parts.forEach(jobPart => {
@@ -892,7 +892,7 @@ export default {
         return []
     },
 
-    getLocumAppliedJobParts (state) {
+    getLocumAppliedJobParts(state) {
         let jobs = []
         if (state.locum_applied_job_parts) {
             state.locum_applied_job_parts.forEach(jobPart => {
@@ -927,7 +927,7 @@ export default {
     },
 
     // WHOLE
-    getLocumAllocatedJobs (state) {
+    getLocumAllocatedJobs(state) {
         let jobs = []
         if (state.locum_allocated_jobs) {
             state.locum_allocated_jobs.forEach(job => {
@@ -942,7 +942,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -960,7 +960,7 @@ export default {
         return jobs
     },
 
-    getLocumAllocatedPrivateJobs (state) {
+    getLocumAllocatedPrivateJobs(state) {
         let jobs = []
         if (state.locum_allocated_jobs) {
             state.locum_allocated_jobs.forEach(job => {
@@ -975,7 +975,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -994,7 +994,7 @@ export default {
         return jobs
     },
 
-    getLocumAllocatedPlatformJobs (state) {
+    getLocumAllocatedPlatformJobs(state) {
         let jobs = []
         if (state.locum_allocated_jobs) {
             state.locum_allocated_jobs.forEach(job => {
@@ -1009,7 +1009,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1028,7 +1028,7 @@ export default {
         return jobs
     },
 
-    getLocumAvailableJobs (state) {
+    getLocumAvailableJobs(state) {
         let jobs = []
         if (state.locum_available_jobs) {
             state.locum_available_jobs.forEach(job => {
@@ -1043,7 +1043,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1062,7 +1062,7 @@ export default {
         return []
     },
 
-    getLocumMatchedJobs (state) {
+    getLocumMatchedJobs(state) {
         let jobs = []
         if (state.locum_matched_jobs) {
             state.locum_matched_jobs.forEach(job => {
@@ -1077,7 +1077,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1096,7 +1096,7 @@ export default {
         return []
     },
 
-    getLocumBankJobs (state) {
+    getLocumBankJobs(state) {
         let jobs = []
         if (state.locum_matched_jobs) {
             state.locum_matched_jobs.forEach(job => {
@@ -1112,7 +1112,7 @@ export default {
                     date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                     date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                     rate_name = job.rate
-                    rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                    rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                     shift_name = job.shift.name
                     completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                     jobs.push({
@@ -1132,7 +1132,7 @@ export default {
         return []
     },
 
-    getLocumAppliedJobs (state) {
+    getLocumAppliedJobs(state) {
         let jobs = []
         if (state.locum_applied_jobs) {
             state.locum_applied_jobs.forEach(job => {
@@ -1147,7 +1147,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1166,7 +1166,7 @@ export default {
         return []
     },
 
-    getLocumUnsuccessfulJobs (state) {
+    getLocumUnsuccessfulJobs(state) {
         let jobs = []
         if (state.locum_unsuccessful_jobs) {
             state.locum_unsuccessful_jobs.forEach(job => {
@@ -1181,7 +1181,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1200,7 +1200,7 @@ export default {
         return []
     },
 
-    getLocumDeclinedJobs (state) {
+    getLocumDeclinedJobs(state) {
         let jobs = []
         if (state.locum_declined_jobs) {
             state.locum_declined_jobs.forEach(job => {
@@ -1215,7 +1215,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1234,7 +1234,7 @@ export default {
         return []
     },
 
-    getLocumCancelledJobs (state) {
+    getLocumCancelledJobs(state) {
         let jobs = []
         if (state.locum_cancelled_jobs) {
             state.locum_cancelled_jobs.forEach(job => {
@@ -1249,7 +1249,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1268,7 +1268,7 @@ export default {
         return []
     },
 
-    getLocumWithdrawnJobs (state) {
+    getLocumWithdrawnJobs(state) {
         let jobs = []
         if (state.locum_withdrawn_jobs) {
             state.locum_withdrawn_jobs.forEach(job => {
@@ -1283,7 +1283,7 @@ export default {
                 date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
                 date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
                 rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+                rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
                 shift_name = job.shift.name
                 completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
                 jobs.push({
@@ -1302,7 +1302,7 @@ export default {
         return []
     },
 
-    getLocumPermanentJobs (state) {
+    getLocumPermanentJobs(state) {
         let jobs = []
         if (state.locum_permanent_jobs) {
             state.locum_permanent_jobs.forEach(job => {
@@ -1325,12 +1325,12 @@ export default {
     },
 
     // UNAVAILABILITIES
-    getLocumUnavailabilities (state) {
+    getLocumUnavailabilities(state) {
         return state.locum_unavailabilities
     },
 
     // PARTS
-    getLocumPrivateJobs (state) {
+    getLocumPrivateJobs(state) {
         let jobs = []
         state.locum_private_jobs.forEach(job => {
             let surgery_name = ''
@@ -1344,7 +1344,7 @@ export default {
             date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
             date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
             rate_name = job.rate
-            rate_type_name = job.locum_detail_rate_type ?  job.locum_detail_rate_type.name : ''
+            rate_type_name = job.locum_detail_rate_type ? job.locum_detail_rate_type.name : ''
             shift_name = job.shift.name
             completed_at = job.date_end
             jobs.push({
@@ -1361,7 +1361,7 @@ export default {
         return jobs
     },
 
-    getLocumPrivateJobParts (state) {
+    getLocumPrivateJobParts(state) {
         let jobs = []
         state.locum_private_job_parts.forEach(job_part => {
             let surgery_name = ''
