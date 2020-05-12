@@ -187,6 +187,8 @@
           'Locum Notification Compliance Approved',
           'Locum Notification Compliance Pending',
           'Locum Notification Compliance Rejected',
+          'Locum Notification Compliance Expired',
+          'Locum Notification Compliance Expiring',
 
           'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
@@ -210,6 +212,8 @@
           'Locum Notification Locum Invoice Disputed',
           'Locum Notification Locum Invoice Approved',
           'Locum Notification Locum Invoice Paid',
+
+          'Practice Notification Locum Compliance Expired',
 
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -531,6 +535,8 @@
           'Locum Notification Compliance Approved',
           'Locum Notification Compliance Pending',
           'Locum Notification Compliance Rejected',
+          'Locum Notification Compliance Expired',
+          'Locum Notification Compliance Expiring',
         ]
 
         const locumJobNotifications = [
@@ -562,6 +568,10 @@
           'Locum Notification Locum Invoice Paid',
         ]
 
+
+        const practiceComplianceDocumentNotifications = [
+          'Practice Notification Locum Compliance Expired',
+        ]
 
         const practiceJobNotifications = [
           'Practice Notification Job Allocated',
@@ -625,15 +635,29 @@
           } = complianceDocumentType
 
           if (complianceDocumentTypeName === 'Reference') {
-            this.$router.push('/compliance')
+            this.$router.push({
+              name: 'compliance',
+            })
           } else {
-            if (this.$route.name.includes('compliance')) {
-              this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+            if (this.$route.name === 'compliance') {
+              this.$router.push({
+                name: 'compliance-id',
+                params: {
+                  id: locumComplianceDocumentId,
+                },
+              })
             } else {
-              this.$router.push('/compliance')
+              this.$router.push({
+                name: 'compliance',
+              })
 
               setTimeout(() => {
-                this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+                this.$router.push({
+                  name: 'compliance-id',
+                  params: {
+                    id: locumComplianceDocumentId,
+                  },
+                })
               }, 500)
             }
           }
@@ -822,6 +846,53 @@
           return
         }
         
+
+        if (practiceComplianceDocumentNotifications.includes(notificationTypeName)) {
+          const locumComplianceDocument = payload
+
+          const {
+            locum_user: locumUser,
+          } = locumComplianceDocument
+
+          const {
+            id: locumUserId,
+          } = locumUser
+
+          if (this.$route.name === 'my-banks-index') {
+            this.$router.push({
+              name: 'my-banks-index-locumId-index',
+              params: {
+                locumId: locumUserId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: 'my-banks-index',
+              query: {
+                status: 'Appointed',
+              },
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'my-banks-index-locumId-index',
+                params: {
+                  locumId: locumUserId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            }, 500)
+          }
+
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
 
         if (practiceJobNotifications.includes(notificationTypeName)) {
           const job = payload
