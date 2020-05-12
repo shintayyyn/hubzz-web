@@ -8,28 +8,28 @@
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Locums Used / Bank
+        Locums on System
       </div>
   
       <div class="text-sm md:text-lg ">
-        Rep-005
+        Rep-004
       </div>
 
       <div class="flex text-sm ">
         <nuxt-link
-          to="/practice-reports/practice-locums"
+          to="/practice-reports/locums"
           class=" hover:text-sunglow p-1"
           :class="[
-            $route.name === 'index-practice-reports-practice-locums' ? 'text-sunglow' : ''
+            $route.name === 'index-practice-reports-locums' ? 'text-sunglow' : ''
           ]"
         >
           <span class="text-2xl">Table</span>
         </nuxt-link>
         <nuxt-link
-          to="/practice-reports/practice-locums/map"
+          to="/practice-reports/locums/map"
           class=" hover:text-sunglow p-1"
           :class="[
-            $route.name === 'index-practice-reports-practice-locums-map' ? 'text-sunglow' : ''
+            $route.name === 'index-practice-reports-locums-map' ? 'text-sunglow' : ''
           ]"
         >
           <span class="text-2xl">Map</span>

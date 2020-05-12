@@ -363,12 +363,15 @@
         this.practiceLocums = []
 
         const params = {
+          practice_id: this.$auth.user.practice_detail.practice.id,
           locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
           profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/practice-locums/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/practice-locums/count',{
+            params
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/practice-locums', {
