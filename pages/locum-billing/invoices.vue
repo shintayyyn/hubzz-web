@@ -57,7 +57,7 @@
 
       <div v-if="!initialLoading">
         <AppButton
-          v-if="!['pension-form-a', 'pension-form-b'].includes($route.query.status)"
+          v-if="!['pension-form-b'].includes($route.query.status)"
           :label="'Filter'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="filterModal = !filterModal"
@@ -82,7 +82,10 @@
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
+          >
             <AppInput
               v-model="invoice_number"
               class="px-1"
