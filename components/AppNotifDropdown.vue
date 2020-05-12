@@ -213,6 +213,8 @@
           'Locum Notification Locum Invoice Approved',
           'Locum Notification Locum Invoice Paid',
 
+          'Practice Notification Locum Compliance Expired',
+
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
           'Practice Notification Job Application',
@@ -567,6 +569,10 @@
         ]
 
 
+        const practiceComplianceDocumentNotifications = [
+          'Practice Notification Locum Compliance Expired',
+        ]
+
         const practiceJobNotifications = [
           'Practice Notification Job Allocated',
           'Practice Notification Job Amended',
@@ -629,15 +635,29 @@
           } = complianceDocumentType
 
           if (complianceDocumentTypeName === 'Reference') {
-            this.$router.push('/compliance')
+            this.$router.push({
+              name: 'compliance',
+            })
           } else {
-            if (this.$route.name.includes('compliance')) {
-              this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+            if (this.$route.name === 'compliance') {
+              this.$router.push({
+                name: 'compliance-id',
+                params: {
+                  id: locumComplianceDocumentId,
+                },
+              })
             } else {
-              this.$router.push('/compliance')
+              this.$router.push({
+                name: 'compliance',
+              })
 
               setTimeout(() => {
-                this.$router.push(`/compliance/${locumComplianceDocumentId}`)
+                this.$router.push({
+                  name: 'compliance-id',
+                  params: {
+                    id: locumComplianceDocumentId,
+                  },
+                })
               }, 500)
             }
           }
@@ -826,6 +846,53 @@
           return
         }
         
+
+        if (practiceComplianceDocumentNotifications.includes(notificationTypeName)) {
+          const locumComplianceDocument = payload
+
+          const {
+            locum_user: locumUser,
+          } = locumComplianceDocument
+
+          const {
+            id: locumUserId,
+          } = locumUser
+
+          if (this.$route.name === 'my-banks-index') {
+            this.$router.push({
+              name: 'my-banks-index-locumId-index',
+              params: {
+                locumId: locumUserId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: 'my-banks-index',
+              query: {
+                status: 'Appointed',
+              },
+            })
+
+            setTimeout(() => {
+              this.$router.push({
+                name: 'my-banks-index-locumId-index',
+                params: {
+                  locumId: locumUserId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            }, 500)
+          }
+
+          this.showNotificationsDropdown = false
+          this.updateNotificationSeen(notification)
+          return
+        }
 
         if (practiceJobNotifications.includes(notificationTypeName)) {
           const job = payload
