@@ -241,6 +241,7 @@
 
           'Practice Notification Practice Invoice Issued',
           'Practice Notification Practice Invoice Paid',
+          'Practice Notification Practice Invoice Past Due',
 
           'Practice Notification Practice Surgery Updated',
           'Practice Notification Practice Surgery Termination Requested',
@@ -610,6 +611,7 @@
         const practiceInvoiceNotifications = [
           'Practice Notification Practice Invoice Issued',
           'Practice Notification Practice Invoice Paid',
+          'Practice Notification Practice Invoice Past Due',
         ]
 
         const practicePracticeSurgeryNotifications = [
