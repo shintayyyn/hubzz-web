@@ -375,23 +375,11 @@ export default {
         ? this.$route.query.status.toLowerCase()
         : "to-be-invoiced";
 
-      columns.push(
-        {
-          name: "Practice / Surgery",
-          dataIndex: "practice_name",
-          class: "text-center"
-        }
-        // {
-        //   name: "Issued",
-        //   dataIndex: "issued_at",
-        //   class: "text-center localDate",
-        //   sortable: true
-        // },
-        // {
-        //   name: "Invoice Number",
-        //   dataIndex: "invoice_number"
-        // },
-      );
+      columns.push({
+        name: "Practice / Surgery",
+        dataIndex: "practice_name",
+        class: "text-center"
+      });
 
       if (queryStatus !== "to-be-invoiced") {
         columns.push({
@@ -426,24 +414,6 @@ export default {
           class: "text-center"
         }
       );
-
-      // if (!["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
-      //   columns.push({
-      //     name: "Issued",
-      //     dataIndex: "issued_at",
-      //     class: "text-center localDate",
-      //     sortable: true
-      //   })
-      // }
-
-      // if (["approved"].includes(queryStatus)) {
-      //   columns.push({
-      //     name: "Approved",
-      //     dataIndex: "approved_at",
-      //     class: "text-center localDate",
-      //     sortable: true
-      //   })
-      // }
 
       if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
         columns.push({
