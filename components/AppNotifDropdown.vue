@@ -187,6 +187,8 @@
           'Locum Notification Compliance Approved',
           'Locum Notification Compliance Pending',
           'Locum Notification Compliance Rejected',
+          'Locum Notification Compliance Expired',
+          'Locum Notification Compliance Expiring',
 
           'Locum Notification Job Allocated',
           'Locum Notification Job Amended',
@@ -531,6 +533,8 @@
           'Locum Notification Compliance Approved',
           'Locum Notification Compliance Pending',
           'Locum Notification Compliance Rejected',
+          'Locum Notification Compliance Expired',
+          'Locum Notification Compliance Expiring',
         ]
 
         const locumJobNotifications = [
