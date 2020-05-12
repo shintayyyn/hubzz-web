@@ -9,13 +9,13 @@
             </div>
             <button v-if="columnDetail.sort_key" class="px-1 ml-2" @click="setOrderBy(columnDetail.sort_key)">
               <span v-if="getColumnOrderByDirection(columnDetail.sort_key) === null">
-                <svgicon name="sort" height="12" width="12" color="white" />
+                <svgicon name="sort" height="12" width="12" color="black" />
               </span>
               <span v-if="getColumnOrderByDirection(columnDetail.sort_key) === 'asc'">
-                <svgicon name="sort-ascend" height="12" width="12" color="white" />
+                <svgicon name="sort-ascend" height="12" width="12" color="black" />
               </span>
               <span v-if="getColumnOrderByDirection(columnDetail.sort_key) === 'desc'">
-                <svgicon name="sort-descend" height="12" width="12" color="white" />
+                <svgicon name="sort-descend" height="12" width="12" color="black" />
               </span>
             </button>
           </div>

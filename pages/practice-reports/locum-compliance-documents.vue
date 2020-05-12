@@ -2,7 +2,7 @@
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
       <div class="flex justify-between text-sm ">
-        <nuxt-link to="/locum-reports" class=" hover:text-sunglow p-1">
+        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
@@ -29,6 +29,15 @@
             placeholder="Search locum"
             type="text"
             label="Locum"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="professionNameIncludes"
+            placeholder="Search profession"
+            type="text"
+            label="Profession"
           />
         </div>
 
@@ -140,6 +149,8 @@
           25,
         ],
         activePage: 1,
+        locumNameIncludes:'',
+        professionNameIncludes:'',
       }
     },
 
@@ -218,12 +229,21 @@
       // this.orderBy = orderBy
       // this.activePage = page ? Number.parseInt(page) : 1
 
+      const {
+        locum_name_includes: locumNameIncludes,
+        profession_name_includes: professionNameIncludes,
+      } = this.$route.query
+
+      this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+      this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+
       this.getLocumComplianceDocuments()
     },
 
     methods: {
       filterReset () {
         this.locumNameIncludes = ''
+        this.professionNameIncludes = ''
 
         this.filterSearch()
       },
@@ -233,7 +253,8 @@
 
         const query = {
           ...this.$route.query,
-          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+          locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           page: undefined,
         }
 
@@ -284,18 +305,26 @@
       getLocumComplianceDocuments () {
         this.loading = true
         this.locumComplianceDocuments = []
+        const params = {
+          practice_id: this.$auth.user.practice_detail.practice.id,
+          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+          profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/locum-compliance-documents/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents/count', {
+            params
+          }).then((responses) => {
             return responses.data.data.count
           }),
-          this.$axios.get('/api/v1/admin/reports/locum-compliance-documents', {
+          this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents', {
             params: {
+              ...params,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
             },
           }).then((responses) => {
-            return responses.data.data.locum_compliance_documents
+            return responses.data.data.locum_expiring_compliance_documents
           }),
           new Promise((resolve) => setTimeout(resolve, 500))
         ]).then((results) => {

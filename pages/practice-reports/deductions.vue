@@ -539,6 +539,7 @@
           this.$axios.get('/api/v1/admin/reports/deductions/count', {
             params: {
               ...params,
+              practice_id: this.$auth.user.practice_detail.practice.id,
             },
           }).then((responses) => {
             return responses.data.data.count
