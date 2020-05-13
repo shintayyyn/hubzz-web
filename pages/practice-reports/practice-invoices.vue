@@ -15,6 +15,49 @@
         Rep-010
       </div>
 
+      <!-- FILTER -->
+      <div
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+      >
+        <div class="md:px-1 w-full">
+          <label class="text-md md:text-lg text-bold">Filters</label>
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="dateStart"
+            placeholder="Date From"
+            type="text"
+            label="Date From"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="dateEnd"
+            placeholder="Date To"
+            type="text"
+            label="Date To"
+          />
+        </div>
+
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <AppButton
+            label="Reset"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterReset"
+          />
+
+          <AppButton
+            class="mx-2"
+            label="Submit"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterSearch"
+          />
+        </div>
+      </div>
+      <!-- FILTER ENDS HERE -->
+
       <div v-if="false">
         <div>
           <label class="">Limit: </label>
@@ -65,11 +108,14 @@
 <script>
   import ReportTable from '@/components/Reports/ReportTable'
   import ReportPagination from '@/components/Reports/ReportPagination'
-
+  import AppButton from '@/components/Base/AppButton'
+  import AppDate from '@/components/Base/AppDate'
   export default {
     components: {
       ReportTable,
       ReportPagination,
+      AppButton,
+      AppDate,
     },
 
     data () {
@@ -103,6 +149,8 @@
           25,
         ],
         activePage: 1,
+        dateStart: '',
+        dateEnd: '',
       }
     },
 
@@ -210,17 +258,50 @@
 
     mounted () {      
       // const {
-      //   order_by: orderBy = [],
-      //   page,
+   
       // } = this.$route.query
 
-      // this.orderBy = orderBy
-      // this.activePage = page ? Number.parseInt(page) : 1
+      
+      const {
+        order_by: orderBy = [],
+        page,
+        date_start: dateStart,
+        date_end: dateEnd,
+      } = this.$route.query
+
+      this.orderBy = orderBy
+      this.activePage = page ? Number.parseInt(page) : 1
+      this.dateStart = dateStart ? dateStart : ''
+      this.dateEnd = dateEnd ? dateEnd : ''
 
       this.getPracticeInvoices()
     },
 
     methods: {
+      filterReset () {
+        this.dateStart = ''
+        this.dateEnd = ''
+
+        this.filterSearch()
+      },
+
+      filterSearch () {
+        this.activePage = 1
+
+        const query = {
+          ...this.$route.query,
+          date_start: this.dateStart ? this.dateStart : undefined,
+          dateEnd: this.dateEnd ? this.dateEnd : undefined,
+          page: undefined,
+        }
+
+        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+          this.$router.replace({ query })
+        }
+        
+        this.getPracticeInvoices()
+      },
+
       setPage (page) {
         this.activePage = page
 
@@ -261,12 +342,20 @@
       getPracticeInvoices () {
         this.loading = true
         this.practiceInvoices = []
+        let params = {
+          practice_id: this.$auth.user.practice_detail.practice.id,
+          date_start: this.dateStart ? this.dateStart : undefined,
+          date_end: this.dateEnd ? this.dateEnd : undefined,
+        }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/practice-invoices/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/practice-invoices/count', {
+            params
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/practice-invoices', {
             params: {
+              ...params,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,

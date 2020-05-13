@@ -480,6 +480,7 @@
           this.$axios.get('/api/v1/admin/reports/pension-contributions/count', {
             params: {
               ...params,
+              practice_id: this.$auth.user.practice_detail.practice.id,
             },
           }).then((responses) => {
             return responses.data.data.count
@@ -487,6 +488,7 @@
           this.$axios.get('/api/v1/admin/reports/pension-contributions', {
             params: {
               ...params,
+              practice_id: this.$auth.user.practice_detail.practice.id,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
