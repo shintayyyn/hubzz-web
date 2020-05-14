@@ -73,7 +73,7 @@
           {{ job.platform_job.number_of_patients }}
         </div>
         <div class="font-bold text-sm sm:text-md">
-          Duration of eact appointment?
+          Duration of each appointment?
         </div>
         <div class="text-xs sm:text-sm mb-8">
           {{ job.platform_job.duration_for_each_appointment }}
@@ -87,7 +87,7 @@
           {{ job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}
         </div>
         <div class="font-bold text-sm sm:text-md">
-          Session requirements:
+          Session requirements
         </div>
         <div class="text-xs sm:text-sm" v-if="!session_requirements.length">
           (none)

@@ -30,6 +30,28 @@
 						class="text-red-500 py-1 text-xs text-white"
 					>{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
 				</transition>
+				<div class="px-1 w-full md:w-1/2">
+					<AppTime
+						v-model="form.time_start"
+						:type="'time'"
+						:name="'time_start'"
+						:label="'Start Time'"
+						:error="formError.find(item => item.field === 'time_start')"
+						required
+						@blur="CheckEmptyField(form.time_start,'time_start')"
+					/>
+				</div>
+				<div class="px-1 w-full md:w-1/2">
+					<AppTime
+						v-model="form.time_end"
+						:type="'time'"
+						:name="'time_end'"
+						:label="'End Time'"
+						:error="formError.find(item => item.field === 'time_end')"
+						required
+						@blur="CheckEmptyField(form.time_end,'time_end')"
+					/>
+				</div>
 			</div>
 		</div>
 		<transition name="fade">
@@ -166,7 +188,7 @@
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
 								</div>
-								<transition name="fade">
+								<!-- <transition name="fade">
 									<div
 										class="hover-details absolute bg-white border px-1 text-xs z-50 flex flex-col items-center"
 										v-if="item.fullDate === $moment().format('MM-DD-YYYY') && showDetail"
@@ -177,7 +199,7 @@
 											<div>Time out: 24:59</div>
 										</div>
 									</div>
-								</transition>
+								</transition>-->
 							</div>
 						</div>
 						<div class="flex flex-col w-full">
@@ -250,6 +272,8 @@
 	</div>
 </template>
 <script>
+import AppInput from "@/components/Base/AppInput";
+import AppTime from "@/components/Base/AppTime";
 import { mixin as clickaway } from "vue-clickaway";
 let months = [
 	{ label: "Jan", value: "1" },
@@ -266,6 +290,10 @@ let months = [
 	{ label: "Dec", value: "12" }
 ];
 export default {
+	components: {
+		AppInput,
+		AppTime
+	},
 	mixins: [clickaway],
 	props: {
 		value: Array,

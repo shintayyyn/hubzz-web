@@ -13,6 +13,164 @@
       <div class="relative flex flex-row flex-wrap justify-start mt-8">
         <AppLoading :loading="dataLoading" spinner />
         <template v-if="!dataLoading">
+          <!-- <div class="w-full ">
+            <p class="font-bold">Schedule</p>
+            <div class="p-4 md:px-8 mb-4 shadow-lg bg-white rounded-lg relative">
+              <div v-if="error_modal" class="absolute m-auto z-50 left-0 right-0 top-0 bottom-0 err-shield flex items-center justify-center rounded-lg">
+                <div class="bg-white border rounded-lg mx-2 md:mx-0 md:w-1/3">
+                  <p class="px-4 py-2 border-b">Time overlaps</p>
+                  <div class="px-4 py-2 flex flex-col">
+                    <p>{{ error_message }}</p>
+                    <AppButton :label="'Okay'" class="mx-4 md:mx-16 my-2" @click="error_modal = false"/>
+                  </div>
+                </div>
+              </div>
+              <div class="flex">
+                <div class="px-1 w-full md:w-1/3">
+                  <AppMultipleDates
+                    v-model="schedule_dates"
+                    :name="'dates'"
+                    :label="'Job Dates'"
+                    :error="formError.find(item => item.field === 'dates')"
+                    is-after
+                    multipleSelection
+                    required
+                    :isOpen="select_dates"
+                    notOnClick
+                    :disableSelection="select_dates && !selected_sched_shift"
+                    :overlayData="overlayData"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/3">
+                  <AppInput
+                    v-model="form.locum_detail_rate_type_id"
+                    :type="'select'"
+                    :name="'locum_detail_rate_type_id'"
+                    :label="'Rate type'"
+                    :items="rate_lists"
+                    required
+                  />
+                </div>
+                <div class="py-2 w-full md:w-1/3">
+                  <label class="text-sm">Total hours <span class="text-red-500">*</span></label>
+                  <div class="flex flex-row flex-wrap justify-start mt-1">
+                    <div class="flex items-center">
+                      <div class="flex flex-col mx-1">
+                        <input
+                          v-model="form.hours"
+                          type="number"
+                          class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm shadow-none"
+                          :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+                          style="text-align:right;'"
+                          min="1"
+                          maxlength="8"
+                          @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                          @focus="hasValue(form.hours, 'hours')"
+                        >
+                        <div
+                          v-if="formError.find(item => item.field === 'hours')"
+                          class="text-red-500 p-1 text-xs"
+                        >
+                          {{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}
+                        </div>
+                        <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+                      </div>
+                    </div>
+                    <div class="flex items-center">
+                      <div class="flex flex-col ml-1">
+                        <input
+                          v-model="form.minutes"
+                          type="number"
+                          class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm shadow-none"
+                          :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+                          style="text-align:right;'"
+                          max="60"
+                          min="1"
+                          maxlength="2"
+                          @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                          @focus="hasValue(form.minutes, 'minutes')"
+                        >
+                        <div
+                          v-if="formError.find(item => item.field === 'minutes')"
+                          class="text-red-500 p-1 text-xs"
+                        >
+                          {{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}
+                        </div>
+                        <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div  class="border-b-2 pt-2 pb-4" v-for="(item, index) in shift_schedule" :key="index">
+                <div class="flex flex-row flex-wrap justify-between items-end">
+                <div class="px-1 w-full md:w-1/4">
+                    <AppInput
+                      v-model="item.shift"
+                      :type="'select'"
+                      :name="'shift'"
+                      :label="'Shifts'"
+                      :placeholder="'Select...'"
+                      :items="shifts"
+                      :error="formError.find(item => item.field === 'shift')"
+                      required
+                      @blur="CheckEmptyField(item.shift, 'shift')"
+                    />
+                </div>
+                <div class="px-1 w-full md:w-1/4">
+                  <AppTime
+                    v-model="item.time_start"
+                    :type="'time'"
+                    :name="'time_start'"
+                    :label="'Start Time'"
+                    :error="formError.find(item => item.field === 'time_start')"
+                    required
+                    @blur="CheckEmptyField(item.time_start,'time_start')"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/4">
+                  <AppTime
+                    v-model="item.time_end"
+                    :type="'time'"
+                    :name="'time_end'"
+                    :label="'End Time'"
+                    :error="formError.find(item => item.field === 'time_end')"
+                    required
+                    @blur="CheckEmptyField(item.time_end,'time_end')"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/4 flex items-center">
+                  <AppInput
+                  class="w-full"
+                    v-model="item.rate"
+                    :type="'text'"
+                    :name="'rate'"
+                    :label="'Rate £'"
+                    :min="1"
+                    :in-style="'text-align:right'"
+                    :limit="8"
+                    :required="[1, '1'].includes(form.locum_detail_rate_type_id)"
+                    @blur="CheckEmptyField(item.rate,'rate')"
+                    @keydown="isNumber($event)"
+                    
+                  />
+                <svgicon v-if="shift_schedule.length > 1" name="minus" width="20" height="20" class="ml-2 text-red-600 hover:text-red-700 fill-current cursor-pointer" @click="removeSchedule(item.id, index)" />
+                </div>
+                </div>
+                <div class="flex justify-end">
+                  <AppButton 
+                    :label="select_dates && selected_sched_shift === item.id ? 'Apply' : 'Select Dates'" 
+                    :inStyle="'padding:5px 14px;'" 
+                    @click="applyToDates(item)"
+                    :disabled="(!item.shift || !item.time_start || !item.time_end) || ([1, '1'].includes(form.locum_detail_rate_type_id) && !item.rate) || ((item.time_start && item.time_end) && item.time_start === item.time_end) || (select_dates && selected_sched_shift !== item.id)"/>
+                </div>
+              </div> 
+              <div class="flex justify-end mt-4">
+                <AppButton :label="'Add Shift'" :inStyle="'padding:5px 14px;'" class="mr-1" @click="addShiftSchedule" :disabled="select_dates"/>
+                <AppButton v-if="schedules.length" :label="'View Schedule'" :inStyle="'padding:5px 14px;'" @click="viewSchedule" :disabled="selected_sched_shift !== ''"/>
+              </div>
+            </div>
+          </div> -->
           <div class="w-full md:w-1/2 md:pr-4 mb-4">
             <div class="flex flex-col">
               <h4 class="font-bold">
@@ -202,89 +360,186 @@
                   Duration
                 </h4>
                 <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
-                  <div class="px-1 w-full">
-                    <AppMultipleDates
-                      v-model="form.dates"
-                      :name="'dates'"
-                      :label="'Job Dates'"
-                      :error="formError.find(item => item.field === 'dates')"
-                      is-after
-                      multipleSelection
-                      required
-                      @blur="CheckEmptyField(form.dates,'dates')"
-                    />
-                    <!-- <AppMultipleDates
-                      v-model="form.dates"
-                      :name="'dates'"
-                      :label="'Job Dates'"
-                      :error="formError.find(item => item.field === 'dates')"
-                      is-after
-                      multipleSelection
-                      @blur="CheckEmptyField(form.dates,'dates')"
-                      required
-                    /> -->
-                  </div>
-                  <div class="flex flex-row flex-wrap justify-between">
-                    <!-- <div class="px-1 w-full md:w-1/2">
-                    <AppDate
-                      v-model="form.date_start"
-                      :name="'date_start'"
-                      :label="'Start Date'"
-                      :error="formError.find(item => item.field === 'date_start')"
-                      is-after
-                      @blur="CheckEmptyField(form.date_start,'date_start')"
-                    />
-                  </div> -->
-                    <div class="px-1 w-full md:w-1/2">
-                      <AppTime
-                        v-model="form.time_start"
-                        :type="'time'"
-                        :name="'time_start'"
-                        :label="'Start Time'"
-                        :error="formError.find(item => item.field === 'time_start')"
-                        required
-                        @blur="CheckEmptyField(form.time_start,'time_start')"
-                      />
+                  <div class="relative pb-4 pt-2">
+                    <div v-if="error_modal" class="absolute m-auto z-50 left-0 right-0 top-0 bottom-0 err-shield flex items-center justify-center">
+                      <div class="bg-white border rounded-lg mx-2 md:mx-0 md:w-1/2">
+                        <p class="px-4 py-2 border-b">Time overlaps</p>
+                        <div class="px-4 py-2 flex flex-col">
+                          <p>{{ error_message }}</p>
+                          <AppButton :label="'Okay'" class="mx-4 md:mx-16 my-2" @click="error_modal = false"/>
+                        </div>
+                      </div>
                     </div>
-                    <!-- <div class="px-1 w-full md:w-1/2">
-                    <AppDate
-                      v-model="form.date_end"
-                      :name="'date_end'"
-                      :label="'End Date'"
-                      :error="formError.find(item => item.field === 'date_end')"
-                      :start-date="form.date_start"
-                      is-after
-                      @blur="CheckEmptyField(form.date_end,'date_end')"
-                    />
-                  </div> -->
-                    <div class="px-1 w-full md:w-1/2">
-                      <AppTime
-                        v-model="form.time_end"
-                        :type="'time'"
-                        :name="'time_end'"
-                        :label="'End Time'"
-                        :error="formError.find(item => item.field === 'time_end')"
-                        required
-                        @blur="CheckEmptyField(form.time_end,'time_end')"
-                      />
+                    <div class="flex flex-col">
+                      <div class="px-1 w-full flex">
+                        <div class="w-full" :class="![1, '1'].includes(form.locum_detail_rate_type_id) ? 'pr-1' : ''">
+                          <AppInput
+                            v-model="form.locum_detail_rate_type_id"
+                            :type="'select'"
+                            :name="'locum_detail_rate_type_id'"
+                            :label="'Rate type'"
+                            :items="rate_lists"
+                            required
+                          />
+                        </div>
+                        <div v-if="![1, '1'].includes(form.locum_detail_rate_type_id)" class="w-full pl-1">
+                          <AppInput
+                            v-model="form.rate"
+                            :type="'text'"
+                            :name="'rate'"
+                            :label="'Rate £'"
+                            :min="1"
+                            :in-style="'text-align:right'"
+                            :limit="8"
+                            required
+                            @blur="CheckEmptyField(form.rate,'rate')"
+                            @keydown="isNumber($event)"
+                          />
+                        </div>
+
+                      </div>
+                      <div class="py-2 w-full">
+                        <label class="text-sm">Total hours <span class="text-red-500">*</span></label>
+                        <div class="flex flex-row flex-wrap justify-start mt-1">
+                          <div class="flex items-center">
+                            <div class="flex flex-col mx-1">
+                              <input
+                                v-model="form.hours"
+                                type="number"
+                                class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm shadow-none"
+                                :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+                                style="text-align:right;'"
+                                min="1"
+                                maxlength="8"
+                                @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+                                @focus="hasValue(form.hours, 'hours')"
+                              >
+                              <div
+                                v-if="formError.find(item => item.field === 'hours')"
+                                class="text-red-500 p-1 text-xs"
+                              >
+                                {{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}
+                              </div>
+                              <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+                            </div>
+                          </div>
+                          <div class="flex items-center">
+                            <div class="flex flex-col ml-1">
+                              <input
+                                v-model="form.minutes"
+                                type="number"
+                                class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm shadow-none"
+                                :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+                                style="text-align:right;'"
+                                max="60"
+                                min="1"
+                                maxlength="2"
+                                @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+                                @focus="hasValue(form.minutes, 'minutes')"
+                              >
+                              <div
+                                v-if="formError.find(item => item.field === 'minutes')"
+                                class="text-red-500 p-1 text-xs"
+                              >
+                                {{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}
+                              </div>
+                              <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="px-1 w-full">
+                        <AppMultipleDates
+                          v-model="schedule_dates"
+                          :name="'dates'"
+                          :label="'Job Dates'"
+                          :error="formError.find(item => item.field === 'dates')"
+                          is-after
+                          multipleSelection
+                          required
+                          :isOpen="select_dates"
+                          notOnClick
+                          :disableSelection="select_dates && !selected_sched_shift"
+                          :overlayData="overlayData"
+                        />
+                          <!-- :disabled="shift_schedule.length === 1 && shift_schedule.map(item => !item.shift || !item.time_start || !item.time_end ||  ([1, '1'].includes(form.locum_detail_rate_type_id) && !item.rate)).includes(true) || !shift_schedule.length" -->
+                      </div>
+                    </div>
+                    <div class="border-b-2" :class="shift_schedule.length >= 4 ? 'overflow-x-hidden overflow-y-auto' : ''" :style="shift_schedule.length >= 4 ? 'max-height: 600px' : ''" ref="scheduleWrapper">
+                      <div  class="pt-2 pb-4" :class="[index%2?'bg-gray-200':'', shift_schedule.length >= 4 ? 'px-1 lg:pl-0 lg:pr-2' : 'px-1']" v-for="(item, index) in shift_schedule" :key="index">
+                        <div class="flex flex-row flex-wrap justify-between items-end">
+                        <div :class="[1, '1'].includes(form.locum_detail_rate_type_id) ? 'lg:w-1/4' : 'lg:w-1/3'" class="px-1 w-full">
+                            <AppInput
+                              v-model="item.shift"
+                              :type="'select'"
+                              :name="'shift'"
+                              :label="'Shifts'"
+                              :placeholder="'Select...'"
+                              :items="shifts"
+                              :error="formError.find(item => item.field === 'shift')"
+                              required
+                              @blur="CheckEmptyField(item.shift, 'shift')"
+                            />
+                        </div>
+                        <div :class="[1, '1'].includes(form.locum_detail_rate_type_id) ? 'lg:w-1/4' : 'lg:w-1/3'" class="px-1 w-full">
+                          <AppTime
+                            v-model="item.time_start"
+                            :type="'time'"
+                            :name="'time_start'"
+                            :label="'Start Time'"
+                            :error="formError.find(item => item.field === 'time_start')"
+                            required
+                            :inClass="index%2?'bg-gray-200':''"
+                            @blur="CheckEmptyField(item.time_start,'time_start')"
+                          />
+                        </div>
+                        <div :class="[1, '1'].includes(form.locum_detail_rate_type_id) ? 'lg:w-1/4' : 'lg:w-1/3'" class="px-1 w-full">
+                          <AppTime
+                            v-model="item.time_end"
+                            :type="'time'"
+                            :name="'time_end'"
+                            :label="'End Time'"
+                            :error="formError.find(item => item.field === 'time_end')"
+                            required
+                            :inClass="index%2?'bg-gray-200':''"
+                            @blur="CheckEmptyField(item.time_end,'time_end')"
+                          />
+                        </div>
+                        <div :class="[1, '1'].includes(form.locum_detail_rate_type_id) ? 'lg:w-1/4' : 'lg:w-1/3'" class="px-1 w-full flex items-center" v-if="[1, '1'].includes(form.locum_detail_rate_type_id)">
+                          <AppInput
+                            class="w-full"
+                            v-model="item.rate"
+                            :type="'text'"
+                            :name="'rate'"
+                            :label="'Rate £'"
+                            :min="1"
+                            :in-style="'text-align:right'"
+                            :limit="8"
+                            :inClass="index%2?'bg-gray-200':''"
+                            :required="[1, '1'].includes(form.locum_detail_rate_type_id)"
+                            @blur="CheckEmptyField(item.rate,'rate'), item.rate === '' ? item.rate = 0 : item.rate"
+                            @focus="item.rate === 0 ? item.rate = '' : item.rate"
+                            @keydown="isNumber($event)"
+                          />
+                        <!-- <svgicon v-if="shift_schedule.length > 1" name="minus" width="20" height="20" class="ml-2 text-red-600 hover:text-red-700 fill-current cursor-pointer"  @click="removeSchedule(item.id, index)"/> -->
+                        </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:justify-end">
+                          <AppButton  v-if="shift_schedule.length > 1"  :label="'Remove'" :inStyle="'padding:5px 14px;'" class="md:mr-1 mb-1 md:mb-0" @click="removeSchedule(item.id, index)" :disabled="select_dates"/>
+                          <AppButton 
+                            :label="select_dates && selected_sched_shift === item.id ? schedules && schedules.length && schedules.find(sched => sched.shift_schedule === item.id) ? 'Update' : 'Apply' : schedules && schedules.length && schedules.find(sched => sched.shift_schedule === item.id) ? 'Edit Dates' : 'Select Dates'" 
+                            :inStyle="'padding:5px 14px;'" 
+                            @click="applyToDates(item, select_dates && selected_sched_shift === item.id ? schedules && schedules.length && schedules.find(sched => sched.shift_schedule === item.id) ? 'update' : 'apply' : schedules && schedules.length && schedules.find(sched => sched.shift_schedule === item.id) ? 'edit' : 'select')"
+                            :disabled="(!item.shift || !item.time_start || !item.time_end) || ([1, '1'].includes(form.locum_detail_rate_type_id) && !item.rate) || ((item.time_start && item.time_end) && item.time_start === item.time_end) || (select_dates && selected_sched_shift !== item.id)"/>
+                        </div>
+                      </div> 
+                    </div>
+                    <div class="flex items-center justify-end mt-4">
+                      <p class="text-gray-700 font-bold text-xs mx-2 px-2 flex items-center justify-center border-b-2">{{ shift_schedule.length }}</p>
+                      <AppButton :label="'Add Shift'" :inStyle="'padding:5px 14px;'" class="mr-1" @click="addShiftSchedule" :disabled="select_dates || (!shift_schedule[shift_schedule.length-1].shift || !shift_schedule[shift_schedule.length-1].time_start || !shift_schedule[shift_schedule.length-1].time_end || ([1, '1'].includes(form.locum_detail_rate_type_id) && !shift_schedule[shift_schedule.length-1].rate) || ((shift_schedule[shift_schedule.length-1].time_start && shift_schedule[shift_schedule.length-1].time_end) && shift_schedule[shift_schedule.length-1].time_start === shift_schedule[shift_schedule.length-1].time_end))"/>
+                      <AppButton v-if="schedules.length" :label="'View Schedule'" :inStyle="'padding:5px 14px;'" @click="viewSchedule" :disabled="selected_sched_shift !== ''"/>
                     </div>
                   </div>
-                  <!-- <AppInput
-                  v-if="show_saturday"
-                  v-model="form.include_saturday"
-                  :type="'select'"
-                  :name="'include_saturday'"
-                  :label="'Include Saturday'"
-                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                /> -->
-                  <!-- <AppInput
-                  v-if="show_sunday"
-                  v-model="form.include_sunday"
-                  :type="'select'"
-                  :name="'include_sunday'"
-                  :label="'Include Sunday'"
-                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                /> -->
                   <AppInput
                     v-model="unpaid_breaks"
                     :type="'select'"
@@ -308,18 +563,6 @@
                     @blur="CheckEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
                     @keydown="inputNumberOnly($event)"
                   />
-                  <AppInput
-                    v-model="form.shift"
-                    :type="'select'"
-                    :name="'shift'"
-                    :label="'Shifts'"
-                    :placeholder="'Select...'"
-                    :items="shifts"
-                    :error="formError.find(item => item.field === 'shift')"
-                    required
-                    @blur="CheckEmptyField(form.shift, 'shift')"
-                  />
-
                   <AppInput
                     v-model="auto_assign_job"
                     :type="'select'"
@@ -410,6 +653,159 @@
                       </div>
                     </template>
                   </template>
+                  <!-- <div class="flex flex-row flex-wrap justify-between">
+                    <div class="px-1 w-full md:w-1/3">
+                       <AppInput
+                          v-model="form.shift"
+                          :type="'select'"
+                          :name="'shift'"
+                          :label="'Shifts'"
+                          :placeholder="'Select...'"
+                          :items="shifts"
+                          :error="formError.find(item => item.field === 'shift')"
+                          required
+                          @blur="CheckEmptyField(form.shift, 'shift')"
+                        />
+                    </div>
+                    <div class="px-1 w-full md:w-1/3">
+                      <AppTime
+                        v-model="form.time_start"
+                        :type="'time'"
+                        :name="'time_start'"
+                        :label="'Start Time'"
+                        :error="formError.find(item => item.field === 'time_start')"
+                        required
+                        @blur="CheckEmptyField(form.time_start,'time_start')"
+                      />
+                    </div>
+                    <div class="px-1 w-full md:w-1/3">
+                      <AppTime
+                        v-model="form.time_end"
+                        :type="'time'"
+                        :name="'time_end'"
+                        :label="'End Time'"
+                        :error="formError.find(item => item.field === 'time_end')"
+                        required
+                        @blur="CheckEmptyField(form.time_end,'time_end')"
+                      />
+                    </div>
+                  </div>  -->
+                  <!-- <p class="text-sm">Schedule</p>
+                  <div v-for="(item, index) in shift_schedule" :key="index">
+                    <div class="flex flex-row flex-wrap justify-between">
+                      <div class="px-1 w-full md:w-1/3">
+                       <AppInput
+                          v-model="item.shift"
+                          :type="'select'"
+                          :name="'shift'"
+                          :label="'Shifts'"
+                          :placeholder="'Select...'"
+                          :items="shifts"
+                          :error="formError.find(item => item.field === 'shift')"
+                          required
+                          @blur="CheckEmptyField(item.shift, 'shift')"
+                        />
+                    </div>
+                    <div class="px-1 w-full md:w-1/3">
+                      <AppTime
+                        v-model="item.time_start"
+                        :type="'time'"
+                        :name="'time_start'"
+                        :label="'Start Time'"
+                        :error="formError.find(item => item.field === 'time_start')"
+                        required
+                        @blur="CheckEmptyField(item.time_start,'time_start')"
+                      />
+                    </div>
+                    <div class="px-1 w-full md:w-1/3">
+                      <AppTime
+                        v-model="item.time_end"
+                        :type="'time'"
+                        :name="'time_end'"
+                        :label="'End Time'"
+                        :error="formError.find(item => item.field === 'time_end')"
+                        required
+                        @blur="CheckEmptyField(item.time_end,'time_end')"
+                      />
+                    </div>
+                    </div>
+                    <div class="flex justify-end">
+                      <AppButton :label="'Remove'" :inStyle="'padding:5px 14px;'" class="mr-2" @click="removeSchedule(item.id, index)" />
+                      <AppButton 
+                        :label="select_dates && selected_sched_shift === item.id ? 'Apply' : 'Select Dates'" 
+                        :inStyle="'padding:5px 14px;'" 
+                        @click="applyToDates(item)" 
+                        :disabled="(!item.shift || !item.time_start || !item.time_end) || (select_dates && selected_sched_shift !== item.id)"/>
+                    </div>
+                  </div> 
+                 <div class="my-2">
+                    <AppButton :label="'Add'" :inStyle="'padding:5px 14px;'" class="mr-1" @click="addShiftSchedule" :disabled="select_dates"/>
+                    <AppButton v-if="schedules.length" :label="'View Schedule'" :inStyle="'padding:5px 14px;'" @click="viewSchedule" :disabled="selected_sched_shift !== ''"/>
+                 </div>
+                  <div class="px-1 w-full">
+                    <AppMultipleDates
+                      v-model="schedule_dates"
+                      :name="'dates'"
+                      :label="'Job Dates'"
+                      :error="formError.find(item => item.field === 'dates')"
+                      is-after
+                      multipleSelection
+                      required
+                      :isOpen="select_dates"
+                      :disabled="shift_schedule.length === 1 && shift_schedule.map(item => !item.shift || !item.time_start || !item.time_end).includes(true)"
+                      notOnClick
+                      :disableSelection="select_dates && !selected_sched_shift"
+                      :overlayData="overlayData"
+                    />
+                  </div> -->
+                    <!-- <AppMultipleDates
+                      v-model="form.dates"
+                      :name="'dates'"
+                      :label="'Job Dates'"
+                      :error="formError.find(item => item.field === 'dates')"
+                      is-after
+                      multipleSelection
+                      required
+                      @blur="CheckEmptyField(form.dates,'dates')"
+                    /> -->
+                    <!-- <AppSchedule
+                      v-model="schedule"
+                      :name="'schedule'"
+                      :label="'Job Schedule'"
+                      :error="formError.find(item => item.field === 'schedule')"
+                      is-after
+                      multipleSelection
+                      required
+                    /> -->
+                  <!-- <AppInput
+                  v-if="show_saturday"
+                  v-model="form.include_saturday"
+                  :type="'select'"
+                  :name="'include_saturday'"
+                  :label="'Include Saturday'"
+                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+                /> -->
+                  <!-- <AppInput
+                  v-if="show_sunday"
+                  v-model="form.include_sunday"
+                  :type="'select'"
+                  :name="'include_sunday'"
+                  :label="'Include Sunday'"
+                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+                /> -->
+                  
+                  <!-- <AppInput
+                    v-model="form.shift"
+                    :type="'select'"
+                    :name="'shift'"
+                    :label="'Shifts'"
+                    :placeholder="'Select...'"
+                    :items="shifts"
+                    :error="formError.find(item => item.field === 'shift')"
+                    required
+                    @blur="CheckEmptyField(form.shift, 'shift')"
+                  /> -->
+                  
                 </div>
               </div>
             </div>
@@ -537,7 +933,7 @@
                 :resize="false"
               />
 
-              <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
+              <!-- <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
                 <div class="px-1 w-full">
                   <AppInput
                     v-model="form.rate"
@@ -564,9 +960,9 @@
                     required
                   />
                 </div>
-              </div>
+              </div> -->
 
-              <label class="text-sm">Total hours <span class="text-red-500">*</span></label>
+              <!-- <label class="text-sm">Total hours <span class="text-red-500">*</span></label>
               <div class="flex flex-row flex-wrap justify-start mt-1">
                 <div class="flex items-center mr-2">
                   <div class="flex flex-col">
@@ -589,7 +985,6 @@
                     </div>
                     <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
                   </div>
-                  <!-- <label for="hours" class="text-xs sm:text-sm mt-2">hours</label> -->
                 </div>
                 <div class="flex items-center">
                   <div class="flex flex-col">
@@ -614,7 +1009,7 @@
                     <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <template v-if="selectedProfession && selectedProfession.profession_category.name === 'GP'">
                 <AppInput
@@ -665,7 +1060,7 @@
   import AppFilterSearch from "@/components/Base/AppFilterSearch"
   import AppDate from "@/components/Base/AppDate"
   import AppMultipleDates from "@/components/Base/AppMultipleDates"
-  // import AppSchedule from "@/components/Base/AppSchedule"
+  import AppSchedule from "@/components/Base/AppSchedule"
   import AppButton from "@/components/Base/AppButton"
   import AppTime from "@/components/Base/AppTime"
   import AppLoading from "@/components/Base/AppLoading"
@@ -681,7 +1076,7 @@
       AppInput,
       AppFilterSearch,
       AppMultipleDates,
-      // AppSchedule,
+      AppSchedule,
       AppDate,
       AppButton,
       AppTime,
@@ -693,6 +1088,8 @@
         banksCount: 0,
         loading: false,
         dataLoading: false,
+        error_modal: false,
+        error_message: '',
 
         // show_saturday: false,
         // show_sunday: false,
@@ -724,6 +1121,20 @@
           time: null
         },
 
+        schedule_dates: [],
+        shift_schedule: [{
+          id: 1,
+          rate: 0,
+          shift: "",
+          time_start: '',
+          time_end: '',
+        }],
+        select_dates: false,
+        selected_dates: [],
+        schedules: [],
+        selected_sched_shift: '',
+        overlayData: [],
+
         selectedQualification: [],
         selectedClinicalSystem: [],
         selectedSpokenLanguage: [],
@@ -754,6 +1165,7 @@
           spoken_language_id: [],
           compliance_document_id: [],
           dates: [],
+          schedules: [],
           // date_start: null,
           // date_end: null,
           time_start: null,
@@ -772,7 +1184,6 @@
     },
 
     computed: {
-
       authPermissions () {
         return this.$store.getters["permissions"]
       },
@@ -966,6 +1377,26 @@
         this.CheckEmptyField(value, "clinical_system")
       },
 
+      "form.rate" () {
+        this.validateNumber(this.form.rate, "rate")
+      },
+
+      "form.total_hours" () {
+        this.validateNumber(this.form.total_hours, "total_hours")
+      },
+
+      "form.time_start" (value) {
+        console.log(value)
+        // console.log(this.form.date_start, this.form.date_end)
+        // if (this.form.date_start === this.form.date_end) {
+        // console.log(this.form.time_start, this.form.time_end)
+        // let fullDateStart = this.form.date_start
+        // }
+      },
+
+      schedules(value) {
+        console.log("schedules", value)
+      }
       // "form.date_end" (value) {
       //   let end = this.$moment(value, "YYYY-MM-DD")
       //   let days = []
@@ -988,22 +1419,6 @@
       //   this.getListofDays(days)
       // },
 
-      "form.rate" () {
-        this.validateNumber(this.form.rate, "rate")
-      },
-
-      "form.total_hours" () {
-        this.validateNumber(this.form.total_hours, "total_hours")
-      },
-
-      "form.time_start" (value) {
-        console.log(value)
-        // console.log(this.form.date_start, this.form.date_end)
-        // if (this.form.date_start === this.form.date_end) {
-        // console.log(this.form.time_start, this.form.time_end)
-        // let fullDateStart = this.form.date_start
-        // }
-      },
     },
 
     destroyed () {
@@ -1012,8 +1427,6 @@
 
     created () {
       this.dataLoading = true
-
-
       Promise.all([
         this.$axios.get('/api/v1/practice/me/practice-practices')
           .then((response) => response.data.data.practices.map(practice => ({
@@ -1244,6 +1657,187 @@
     },
 
     methods: {
+      viewSchedule() {
+        this.overlayData = []
+        this.schedules.forEach(sched => {
+            if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
+                this.overlayData.push({
+                  date: sched.date,
+                  shift_id: sched.shift_id,
+                  time_start: sched.time_start,
+                  time_end: sched.time_end,
+                  rate: sched.rate
+                })
+            }else {
+               this.overlayData.push({
+                  date: sched.date,
+                  shift_id: sched.shift_id,
+                  time_start: sched.time_start,
+                  time_end: sched.time_end,
+                })
+            }
+          })
+        this.schedules.forEach(item => {
+          if (!this.schedule_dates.includes(item.date)) this.schedule_dates.push(item.date)
+        })
+        this.select_dates = !this.select_dates
+      },
+      removeSchedule(id, index) {
+        let schedule = this.schedules.filter(sched => sched.shift_schedule !== id)
+        this.schedules = schedule
+        this.shift_schedule.splice(index, 1)
+        if (this.select_dates) this.select_dates =false
+      },
+      addShiftSchedule() {
+        this.schedule_dates = []
+        this.shift_schedule.push({
+          id: this.shift_schedule.length + 1,
+          shift: "",
+          time_start: '',
+          time_end: '',
+          rate: 0
+        })
+        // this.shift_schedule.push({
+        //   id: this.shift_schedule.length + 1,
+        //   rate: '',
+        //   shift: "",
+        //   time_start: '',
+        //   time_end: '',
+        // })
+        console.log("qwe", this.$refs.scheduleWrapper.scrollHeight)
+         this.$nextTick(() => {
+					this.$refs.scheduleWrapper.scrollTop = this.$refs.scheduleWrapper.scrollHeight;
+				});
+      },  
+      applyToDates(item, action) {
+        console.log("action", action)
+        this.selected_sched_shift = item.id
+        this.selected_dates = this.schedule_dates
+        if (action == 'select') {
+          this.selected_dates = this.schedule_dates
+          // Nested Format
+          // this.selected_dates.forEach(date => {
+          //   let dateExist = this.schedules.find(sched => sched.date === date)
+          //   if (!dateExist) {
+          //     this.schedules.push({
+          //       shift_schedule: item.id,
+          //       date: date,
+          //       rate: item.rate,
+          //       shifts: [{
+          //         shift_id: item.shift,
+          //         time_start: item.time_start,
+          //         time_end: item.time_end
+          //       }]
+          //     })
+          //   }else {
+          //     dateExist.rate = item.rate
+          //     console.log("dateExist", dateExist)
+          //     console.log("item", item)
+          //     let hasOverlap = false
+          //     dateExist.shifts.forEach(shift => {
+          //       let start_hour = shift.time_start.split(':')[0] 
+          //       let end_hour = shift.time_end.split(':')[0] 
+          //       let item_start_hour = item.time_start.split(':')[0] 
+          //       let item_end_hour = item.time_end.split(':')[0] 
+          //       if (item_start_hour >= item_start_hour && item_start_hour <= end_hour) {
+          //         this.error_modal = true
+          //         this.error_message = `Please check selected date and time.`
+          //         hasOverlap = true
+          //         return
+          //       }else if (item_end_hour < item_start_hour) {
+          //         this.error_modal = true
+          //         this.error_message = `There's an error on time. Kindly check the start and end time.`
+          //         return
+          //       }
+          //       else {
+          //         console.log("---- input didnt overlap existing shift", date)
+                  
+          //       }
+          //       console.log("hour", start_hour, end_hour)
+          //       console.log("item", item_start_hour, item_end_hour)
+          //     })
+          //     if (!hasOverlap) {
+          //       dateExist.shifts.push({
+          //         shift_id: item.shift,
+          //         time_start: item.time_start,
+          //         time_end: item.time_end
+          //       })
+          //     }
+          //   }
+          // })
+
+          // Flat format
+          if (!this.schedules.find(sched => sched.shift_schedule === item.id)) {
+            this.selected_dates.forEach(date => {
+              if (parseInt(this.form.locum_detail_rate_type_id) === 1){
+                this.schedules.push({
+                  shift_schedule: item.id,
+                  date: date,
+                  shift_id: item.shift,
+                  time_start: item.time_start,
+                  time_end: item.time_end,
+                  rate: item.rate
+                })
+              }else {
+                this.schedules.push({
+                  shift_schedule: item.id,
+                  date: date,
+                  shift_id: item.shift,
+                  time_start: item.time_start,
+                  time_end: item.time_end,
+                })
+              }
+            })
+          }else {
+            this.selected_dates.forEach(date => {
+              let existingSched = this.schedules.find(sched => sched.date === item.date)
+              if (existingSched) {
+                existingSched.shift_id = item.shift
+                existingSched.time_start = item.time_start
+                existingSched.time_end = item.time_end
+                if (parseInt(this.form.locum_detail_rate_type_id) === 1){
+                  existingSched.rate = item.rate
+                }
+              }else {
+                if (parseInt(this.form.locum_detail_rate_type_id) === 1){
+                  this.schedules.push({
+                    shift_schedule: item.id,
+                    date: date,
+                    shift_id: item.shift,
+                    time_start: item.time_start,
+                    time_end: item.time_end,
+                    rate: item.rate
+                  })
+                }else {
+                  this.schedules.push({
+                    shift_schedule: item.id,
+                    date: date,
+                    shift_id: item.shift,
+                    time_start: item.time_start,
+                    time_end: item.time_end,
+                  })
+                }
+              }
+            })
+          }
+          console.log("schedules", this.schedules)
+          this.selected_sched_shift = ""
+          this.selected_dates = []
+          this.select_dates = false
+        }else {
+          this.schedule_dates = []
+          let schedByShiftSched = this.schedules.filter(sched => sched.shift_schedule === item.id)
+          this.overlayData = schedByShiftSched
+          if (this.schedules.find(sched => sched.shift_schedule === item.id)) {
+            this.schedules.forEach(sched => {
+              if (sched.shift_schedule === item.id) {
+                if (!this.schedule_dates.includes(sched.date)) this.schedule_dates.push(sched.date)
+              }
+            })
+          }
+          this.select_dates = true
+        }
+      },
       hasValue (value, field) {
         if (value == 0) {
           this.form[field] = ""
@@ -1330,7 +1924,6 @@
 
       createJob () {
         this.formError = []
-
         let notRequired = [
           "title",
           "description",
@@ -1351,7 +1944,6 @@
           "minutes",
           "favorite_only",
         ]
-
         if (!this.hasBanks) {
           this.form.favorite_only = false
           this.bank_first = false
@@ -1413,6 +2005,27 @@
           this.form.total_hours =
             this.form.hours * 60 + parseInt(this.form.minutes)
         }
+
+        this.form.schedules = []
+
+        this.schedules.forEach(sched => {
+            if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
+                this.form.schedules.push({
+                  date: sched.date,
+                  shift_id: sched.shift_id,
+                  time_start: sched.time_start,
+                  time_end: sched.time_end,
+                  rate: sched.rate
+                })
+            }else {
+               this.form.schedules.push({
+                  date: sched.date,
+                  shift_id: sched.shift_id,
+                  time_start: sched.time_start,
+                  time_end: sched.time_end,
+                })
+            }
+          })
 
         this.validateNumber(this.form.rate, "rate")
 
@@ -1567,5 +2180,8 @@
     overflow: hidden auto;
     transition: all 0.3s ease-in-out;
     scroll-behavior: smooth;
+  }
+  .err-shield {
+    background-color: rgba(0, 0, 0, .40)
   }
 </style>

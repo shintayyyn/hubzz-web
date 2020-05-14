@@ -286,7 +286,7 @@ Vue.mixin({
         if (value.includes('.')) {
           e.preventDefault()
         }
-      } else if (key === 'Backspace') {
+      } else if (acceptedKeys.includes(key)) {
         return
       } else {
         e.preventDefault()

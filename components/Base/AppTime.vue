@@ -6,13 +6,13 @@
 				<span v-if="required" class="text-red-500">*</span>
 			</label>
 		</div>
-		<div class="flex flex-col justify-start mt-1">
+		<div class="flex flex-col justify-start">
 			<input
 				:value="value"
 				type="input"
 				placeholder="hh:mm"
 				class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
-				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400']"
+				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass]"
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"
 				:style="inStyle"
@@ -150,7 +150,8 @@ export default {
 		label: String,
 		error: Object,
 		inStyle: String,
-		required: Boolean
+		required: Boolean,
+		inClass: String
 	},
 	data() {
 		return {
