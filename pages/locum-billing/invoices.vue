@@ -57,7 +57,7 @@
 
       <div v-if="!initialLoading">
         <AppButton
-          v-if="!['pension-form-a', 'pension-form-b'].includes($route.query.status)"
+          v-if="!['pension-form-b'].includes($route.query.status)"
           :label="'Filter'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="filterModal = !filterModal"
@@ -82,7 +82,10 @@
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
+          >
             <AppInput
               v-model="invoice_number"
               class="px-1"
@@ -375,23 +378,11 @@ export default {
         ? this.$route.query.status.toLowerCase()
         : "to-be-invoiced";
 
-      columns.push(
-        {
-          name: "Practice / Surgery",
-          dataIndex: "practice_name",
-          class: "text-center"
-        }
-        // {
-        //   name: "Issued",
-        //   dataIndex: "issued_at",
-        //   class: "text-center localDate",
-        //   sortable: true
-        // },
-        // {
-        //   name: "Invoice Number",
-        //   dataIndex: "invoice_number"
-        // },
-      );
+      columns.push({
+        name: "Practice / Surgery",
+        dataIndex: "practice_name",
+        class: "text-center"
+      });
 
       if (queryStatus !== "to-be-invoiced") {
         columns.push({
@@ -426,24 +417,6 @@ export default {
           class: "text-center"
         }
       );
-
-      // if (!["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
-      //   columns.push({
-      //     name: "Issued",
-      //     dataIndex: "issued_at",
-      //     class: "text-center localDate",
-      //     sortable: true
-      //   })
-      // }
-
-      // if (["approved"].includes(queryStatus)) {
-      //   columns.push({
-      //     name: "Approved",
-      //     dataIndex: "approved_at",
-      //     class: "text-center localDate",
-      //     sortable: true
-      //   })
-      // }
 
       if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
         columns.push({

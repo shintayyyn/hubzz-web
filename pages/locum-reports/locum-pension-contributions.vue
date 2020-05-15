@@ -15,6 +15,31 @@
         Rep-011
       </div>
 
+      <div class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2">
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search practice"
+            type="text"
+            label="Practice"
+          />
+        </div>
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <AppButton
+            label="Reset"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterReset"
+          />
+
+          <AppButton
+            class="mx-2"
+            label="Submit"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterSearch"
+          />
+        </div>
+      </div>
+
       <div v-if="false">
         <div>
           <label class="">Limit: </label>
@@ -65,11 +90,14 @@
 <script>
   import ReportTable from '@/components/Reports/ReportTable'
   import ReportPagination from '@/components/Reports/ReportPagination'
-
+  import AppInput from '@/components/Base/AppInput'
+  import AppButton from '@/components/Base/AppButton'
   export default {
     components: {
       ReportTable,
       ReportPagination,
+      AppInput,
+      AppButton
     },
 
     data () {
@@ -103,6 +131,8 @@
           25,
         ],
         activePage: 1,
+
+        practiceNameIncludes: '',
       }
     },
 
@@ -163,16 +193,25 @@
             key: 'paid_at',
             sort_key: 'paid_at',
             column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
-            justify: 'center',
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
           {
-            title: '£ Paid',
+            title: '£ NI Amount',
             key: 'ni_amount',
             sort_key: 'ni_amount',
             column: (item) => item.ni_amount.toFixed(2),
-            justify: 'center',
+            justify: 'start',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Status',
+            key: 'status',
+            sort_key: 'status',
+            column: (item) => item.status,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -200,18 +239,46 @@
     },
 
     mounted () {      
-      // const {
-      //   order_by: orderBy = [],
-      //   page,
-      // } = this.$route.query
+      const {
+        practice_name_includes: practiceNameIncludes,
+        order_by: orderBy = [],
+        page,
+      } = this.$route.query
 
       // this.orderBy = orderBy
       // this.activePage = page ? Number.parseInt(page) : 1
+       this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
+      this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
+
+      this.activePage = page ? Number.parseInt(page) : 1
 
       this.getLocumPensionContributions()
     },
-
+  
     methods: {
+      filterReset () {
+        this.practiceNameIncludes = ''
+
+        this.filterSearch()
+      },
+
+      filterSearch () {
+        this.activePage = 1
+
+        const query = {
+          ...this.$route.query,
+          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+          order_by: this.orderBy ? this.orderBy : undefined,
+          page: undefined,
+        }
+
+        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+          this.$router.replace({ query })
+        }
+        
+        this.getLocumPensionContributions()
+      },
+
       setPage (page) {
         this.activePage = page
 
@@ -254,6 +321,7 @@
         this.locumPensionContributions = []
         let params = {
           locum_user_id: this.$auth.user.id,
+          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         }
         Promise.all([
           this.$axios.get('/api/v1/admin/reports/locum-pension-contributions/count',{
@@ -263,7 +331,7 @@
           }),
           this.$axios.get('/api/v1/admin/reports/locum-pension-contributions', {
             params: {
-              locum_user_id: this.$auth.user.id,
+              ...params,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
