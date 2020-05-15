@@ -29,27 +29,30 @@
           </div>
         </div>
         <template v-if="type === 'multi-checkbox'">
-          <div v-if="!required" class="flex flex-row justify-start items-center mt-1">
-            <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
-            <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
-          </div>
-          <div
-            v-for="(item, index) in lists"
-            :key="index"
-            class="flex flex-row justify-start items-center mt-1"
-          >
-            <input
-              :id="`${name}-${index}`"
-              :value="item.value"
-              type="checkbox"
-              :checked="Array.isArray(value) ? value.includes(item.value) : value"
-              :disabled="disabled"
-              @input="inputMultiCheck"
+          <div :class="isHorizontal ? 'flex flex-row items-center' : ''">
+            <div v-if="!required" class="flex flex-row justify-start items-center mt-1" :class="isHorizontal ? 'mr-3' : ''">
+              <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
+              <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
+            </div>
+            <div
+              v-for="(item, index) in lists"
+              :key="index"
+              class="flex flex-row justify-start items-center mt-1"
+              :class="isHorizontal ? 'mr-3' : ''"
             >
-            <label
-              :for="`${name}-${index}`"
-              class="text-xs sm:text-sm flex items-center"
-            >{{ item.label }}</label>
+              <input
+                :id="`${name}-${index}`"
+                :value="item.value"
+                type="checkbox"
+                :checked="Array.isArray(value) ? value.includes(item.value) : value"
+                :disabled="disabled"
+                @input="inputMultiCheck"
+              >
+              <label
+                :for="`${name}-${index}`"
+                class="text-xs sm:text-sm flex items-center"
+              >{{ item.label }}</label>
+            </div>
           </div>
         </template>
         <template v-else>
@@ -339,6 +342,7 @@ export default {
     info: String,
     inStyle: String,
     inClass: String,
+    wrapperClass: String,
     limit: Number,
     format: String,
     required: {
@@ -367,7 +371,8 @@ export default {
     disabled: {
       type: Boolean,
       default: false
-    }
+    },
+    isHorizontal: Boolean
   },
   data () {
     return {

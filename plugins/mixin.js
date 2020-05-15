@@ -248,6 +248,14 @@ Vue.mixin({
     },
 
     isNumber(e) {
+      let acceptedKeys = [
+        "Backspace",
+        "Tab",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight"
+      ]
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
       // let charCode = (e.which) ? e.which : e.keyCode

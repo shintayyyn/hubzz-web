@@ -539,14 +539,15 @@ export default {
 			let sortedDates;
 			let display;
 			let dates = this.dates;
+			let moments = this.dates.map(d => this.$moment(d));
+			let maxDate = this.$moment.max(moments);
+			let minDate = this.$moment.min(moments);
 			display =
 				this.dates && this.dates.length
 					? dates.length > 1
-						? `${this.$moment(dates[0]).format("DD/MM/YYYY")} - ${this.$moment(
-								dates[dates.length - 1]
-						  ).format("DD/MM/YYYY")} - (${dates.length} day${
-								dates.length > 1 ? "s" : ""
-						  })`
+						? `${minDate.format("DD/MM/YYYY")} - ${maxDate.format(
+								"DD/MM/YYYY"
+						  )} - (${dates.length} day${dates.length > 1 ? "s" : ""})`
 						: `${this.$moment(dates[0]).format("DD/MM/YYYY")} - 1 day`
 					: null;
 			return display;
@@ -758,10 +759,8 @@ export default {
 						}
 					}
 				}
-				this.$emit(
-					"input",
-					this.dates.sort((a, b) => new Date(a) - new Date(b))
-				);
+				this.$emit("input", this.dates);
+				// this.dates.sort((a, b) => new Date(a) - new Date(b))
 			}
 		}
 	}
