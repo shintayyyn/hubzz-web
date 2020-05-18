@@ -457,7 +457,7 @@
                         :error="formError.find(err => err.field === 'dates') ? formError.find(err => err.field === 'dates') : formError.find(err => err.field === 'schedules')"
                       />
                     </div>
-                    <AppButton :label="'Mange Shifts'" @click="showShifts = true" :inStyle="'padding:5px 14px;'" v-if="schedule.length"/>
+                    <AppButton :label="'Manage Shifts'" @click="showShifts = true" :inStyle="'padding:5px 14px;'" v-if="schedule.length"/>
                     <div v-if="schedule.length" class="w-full pt-4">
                       <p class="font-bold">Job Dates</p>
                       <div class="overflow-x-hidden overflow-y-auto" style="max-height: 350px;">
@@ -1496,9 +1496,14 @@
           shift.shift_id.push(e.toString())
         }else if (action === 'unchecked') {
           let shift_id_index = shift.shift_id.findIndex(id => id === e)
+          let selectedShift = this.shift_schedule.find(item => item.value === e)
+          if (selectedShift.appliedToAll) {
+            selectedShift.appliedToAll = false
+          }
           shift.shift_id.splice(shift_id_index, 1)
         }else if (action === 'unCheckAll') {
           shift.shift_id=[]
+          this.shift_schedule.forEach(item => item.appliedToAll = false)
         }
       },
       applyToAll(shift) {
