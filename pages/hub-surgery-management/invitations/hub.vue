@@ -1,12 +1,5 @@
 <template>
-  <div class="py-2">
-    <AppButton
-      v-if="surgeries && surgeries.length > 0"
-      :label="'Share my banks'"
-      class="bg-yellow-500 text-sm"
-      :inStyle="'padding:5px 14px;margin-left:5px;'"
-      @click="shareMyBanks"
-    />
+  <div>
     <AppTable
       v-if="surgeries.length > 0"
       :total="totalSurgeries"
@@ -35,7 +28,7 @@
           <AppButton
             :label="'View'"
             class="m-1"
-            @click="$router.push({ path: `/hub-surgery-management/${slotProps.item.id}`})"
+            @click="$router.push({ path: `/hub-surgery-management/invitations/hub/${slotProps.item.id}`})"
           />
           <AppButton
             v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'"
@@ -46,28 +39,24 @@
           />
         </div>
       </template>
-      <template v-slot:shared="slotProps">
-        <div
-          v-if="true"
-          class="flex flex-row flex-wrap justify-center"
-          @click="slotProps.item.invitation_rejected ? null : checkItem(slotProps.item.id)"
-        >
-          <input
-            type="checkbox"
-            :checked="selectedItems.includes(slotProps.item.id)"
-            :disabled="slotProps.item.invitation_rejected"
-          />
-          <label class="text-xs sm:text-sm py-1 flex items-center" />
-        </div>
-      </template>
     </AppTable>
+    <div v-else class="flex justify-center py-4 text-gray-500">You did not invite any spoke.</div>
+    <AppConfirmationModal
+      :label="'Are you sure you want to cancel your invitation?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="modal"
+      @confirm="remove"
+      @cancel="modal = false"
+    />
     <transition name="fade" mode="out-in">
-      <nuxt-link
-        v-if="$route.name.includes('hub-surgery-management-id')"
-        :to="`/hub-surgery-management`"
+      <div
+        v-if="['hub-surgery-management-invitations-hub-invitationId', 'hub-surgery-management-invitations-hub-create'].includes($route.name)"
         class="shield"
+        @click="$router.push('/hub-surgery-management/invitations/hub')"
       />
     </transition>
+    <nuxt-child @addSurgery="addSurgery" @updateSurgery="updateSurgery" />
   </div>
 </template>
 <script>
@@ -86,26 +75,24 @@ export default {
   },
   data() {
     return {
+      selectedSurgeryId: null,
+      modal: false,
       surgeries: [],
+      totalSurgeries: 0,
+      // selectedItems: [],
       loading: false,
       current_page: 1,
       params: {
         offset: 0,
         limit: 5,
         order_by: [],
-        is_invitation_accepted: true
+        is_invitation_accepted: false
       },
       columns: [
-        {
-          name: "Shared my banks",
-          dataIndex: "shared",
-          class: "text-center"
-        },
         {
           name: "Surgery",
           dataIndex: "child_practice.surgery.name",
           class: "text-left"
-          // sortable: true
         },
         {
           name: "Practice Code",
@@ -127,6 +114,11 @@ export default {
       ]
     };
   },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["permissions"];
+    }
+  },
   async asyncData({ app, error }) {
     try {
       const responsePracticeType = await app.$axios.$get(
@@ -138,14 +130,14 @@ export default {
           : null;
 
       let surgeries = [];
-      let selectedItems = [];
+      // let selectedItems = [];
       let totalSurgeries = 0;
 
       const responseCount = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/count`,
         {
           params: {
-            is_invitation_accepted: true
+            is_invitation_accepted: false
           }
         }
       );
@@ -159,16 +151,16 @@ export default {
         `/api/v1/practice/me/practice-surgeries?limit=5`,
         {
           params: {
-            is_invitation_accepted: true
+            is_invitation_accepted: false
           }
         }
       );
       if (response.data && response.data.practice_surgeries) {
         response.data.practice_surgeries.forEach(surgery => {
           surgeries.push(surgery);
-          if (surgery.share_my_banks === true) {
-            selectedItems.push(surgery.id);
-          }
+          // if (surgery.share_my_banks === true) {
+          //   selectedItems.push(surgery.id);
+          // }
           // surgeries.push({ ...surgery, removable: true });
         });
       }
@@ -176,7 +168,7 @@ export default {
       return {
         practice,
         surgeries,
-        selectedItems,
+        // selectedItems,
         totalSurgeries
       };
     } catch (err) {
@@ -187,32 +179,21 @@ export default {
       throw err;
     }
   },
+  // mounted() {
+  //   this.surgeries.forEach(surgery => {
+  //     if (surgery.share_my_banks === true) {
+  //       this.selectedItems.push(surgery.id);
+  //     }
+  //   });
+  // },
   methods: {
-    shareMyBanks() {
+    getSurgeriesCount(params) {
       this.$axios
-        .$put(
-          `/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`,
-          { surgeryIds: this.selectedItems }
-        )
-        .then(() => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`Sharing MyBanks Update Success`]
-          });
+        .$get(`/api/v1/practice/me/practice-surgeries/count`, { params })
+        .then(res => {
+          this.totalSurgeries = res.data.count;
+          this.getSurgeries(this.params);
         });
-    },
-    checkItem(childPracticeId) {
-      let index = this.selectedItems.findIndex(
-        item => item === childPracticeId
-      );
-      if (index >= 0) {
-        this.selectedItems = this.selectedItems.filter(
-          item => item !== childPracticeId
-        );
-      } else if (index < 0) {
-        this.selectedItems.push(childPracticeId);
-      }
     },
     getSurgeries(params) {
       this.loading = true;
@@ -226,33 +207,65 @@ export default {
             this.surgeries.push(surgery);
             // this.surgeries.push({ ...surgery, removable: true });
           });
-          this.selectedItems = [];
-          this.surgeries.forEach(surgery => {
-            if (surgery.share_my_banks === true) {
-              this.selectedItems.push(surgery.id);
-            }
-          });
+          // this.selectedItems = [];
+          // this.surgeries.forEach(surgery => {
+          //   if (surgery.share_my_banks === true) {
+          //     this.selectedItems.push(surgery.id);
+          //   }
+          // });
         })
         .catch(err => {
           console.log(err);
         });
     },
-    sorted(order_by) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.order_by = order_by;
-      this.getSurgeries(this.params);
+    toCancelInvitation(id) {
+      this.selectedSurgeryId = id;
+      this.modal = true;
     },
-    pagechanged(page) {
-      this.current_page = page;
-      this.params.offset = this.params.limit * (page - 1);
-      this.getSurgeries(this.params);
+    async remove() {
+      this.loading = true;
+      if (
+        !this.authPermissions.includes(
+          "Invitation Processes Surgery Management"
+        )
+      ) {
+        return;
+      }
+      if (this.practice.type === "Hub") {
+        await this.$axios
+          .$delete(
+            `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
+          )
+          .then(() => {
+            this.surgeries = this.surgeries.filter(
+              surgery => surgery.id !== this.selectedSurgeryId
+            );
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Invitation Successfully Deleted"]
+            });
+          })
+          .catch(err => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [err.response.data.message]
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+            this.modal = false;
+          });
+      }
     },
-    limitchanged(limit) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = limit;
-      this.getSurgeries(this.params);
+    addSurgery(payload) {
+      if (!this.surgeries.map(item => item.id).includes(payload.id)) {
+        this.surgeries.push(payload);
+      }
+    },
+    updateSurgery() {
+      this.getSurgeriesCount(this.params);
     },
     getStatus(surgery) {
       let status = "Invited";
@@ -285,6 +298,23 @@ export default {
         default:
           return "bg-yellow-400 text-black";
       }
+    },
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getSurgeries(this.params);
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getSurgeries(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getSurgeries(this.params);
     }
   }
 };
