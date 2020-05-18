@@ -29,8 +29,8 @@
           </div>
         </div>
         <template v-if="type === 'multi-checkbox'">
-          <div :class="isHorizontal ? 'flex flex-row items-center' : ''">
-            <div v-if="!required" class="flex flex-row justify-start items-center mt-1" :class="isHorizontal ? 'mr-3' : ''">
+          <div :class="isHorizontal ? 'flex flex-row items-center flex-wrap' : ''">
+            <div v-if="!required" class="flex flex-row justify-start items-center mt-1" :class="isHorizontal ? 'mr-3 my-1' : ''">
               <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
               <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
             </div>
@@ -38,7 +38,7 @@
               v-for="(item, index) in lists"
               :key="index"
               class="flex flex-row justify-start items-center mt-1"
-              :class="isHorizontal ? 'mr-3' : ''"
+              :class="isHorizontal ? 'mr-3 my-1' : ''"
             >
               <input
                 :id="`${name}-${index}`"

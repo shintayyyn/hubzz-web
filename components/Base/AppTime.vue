@@ -16,6 +16,7 @@
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"
 				:style="inStyle"
+				readonly
 			/>
 			<transition name="drop-down">
 				<div
@@ -192,6 +193,7 @@ export default {
 			if (type === "minute") {
 				this.selectedMinute = value;
 			}
+			console.log(this.selectedHour, this.selectedMinute);
 			this.$emit("input", `${this.selectedHour}:${this.selectedMinute}`);
 		},
 		toggledOff() {
