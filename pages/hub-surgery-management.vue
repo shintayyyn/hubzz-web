@@ -4,7 +4,7 @@
       <nuxt-link
         :to="`/hub-surgery-management`"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'hub-surgery-management-index' || ['hub-surgery-management-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'hub-surgery-management-index' || $route.name.includes('hub-surgery-management-id') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >My Spokes</nuxt-link>
       <nuxt-link
         :to="{ name: 'hub-surgery-management-invitations-spoke'}"
@@ -101,7 +101,8 @@
     <!-- <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" /> -->
     <transition name="fade" mode="out-in">
       <div
-        v-if="['hub-surgery-management-index-invitationId', 'hub-surgery-management-id', 'hub-surgery-management-index-create'].includes($route.name)"
+        v-if="['hub-surgery-management-index-invitationId', 'hub-surgery-management-id', 'hub-surgery-management-index-create'].includes($route.name)
+        || $route.name.includes('hub-surgery-management-id')"
         class="shield"
         @click="$router.push('/hub-surgery-management')"
       />
