@@ -154,7 +154,7 @@
                       :selected="value === item.value"
                       :disabled="item.disabled"
                     >
-                      {{ item.label }}
+                      {{ item.label ? item.label : item.name }}
                     </option>
                   </select>
                   <span class="absolute right-0 h-full" :class="disabled ? 'text-gray-500' : ''">
