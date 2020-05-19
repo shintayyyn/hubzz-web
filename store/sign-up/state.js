@@ -31,6 +31,7 @@ export default () => ({
         coordinate_y: '',
     },
     practice_account_details: {
+        hub_practice_id: null,
         type: '',
         hub_type: '',
         title: '',
