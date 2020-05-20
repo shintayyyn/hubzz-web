@@ -213,7 +213,7 @@
     />
     <AppConfirmationModal
       :label="`This Locum is already appointed on one of your Job.`"
-      :label2="`${jobNumbers.length > 1 ? `${jobNumbers.slice(0,2)},etc..` : `${jobNumbers}`}`"
+      :label2="`${jobNumbers.length > 2 ? `${jobNumbers.slice(0,2)},etc..` : `${jobNumbers}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -342,7 +342,10 @@ export default {
       this.$axios
         .$get(`/api/v1/practice/jobs?appointed_locum_user_id=${this.user.id}`, {
           params: {
-            status: ["Allocated", "Ongoing"]
+            status: ["Allocated", "Ongoing"],
+            date_end: `${this.$moment()
+              .add(1, "days")
+              .format("YYYY-MM-DD")}:gte`
           }
         })
         .then(res => {
