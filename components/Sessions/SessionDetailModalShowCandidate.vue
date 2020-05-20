@@ -343,9 +343,9 @@ export default {
         .$get(`/api/v1/practice/jobs?appointed_locum_user_id=${this.user.id}`, {
           params: {
             status: ["Allocated", "Ongoing"],
-            date_end: `${this.$moment()
-              .add(1, "days")
-              .format("YYYY-MM-DD")}:gte`
+            date_end: `${this.$moment(this.job.date_start, "YYYY-MM-DD").format(
+              "YYYY-MM-DD"
+            )}:gte`
           }
         })
         .then(res => {
