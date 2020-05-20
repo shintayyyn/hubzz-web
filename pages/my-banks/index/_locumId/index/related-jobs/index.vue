@@ -306,7 +306,7 @@ export default {
   props: {
     invoiceStatusList: {
       type: Array,
-      default: () => [],
+      default: () => []
     }
   },
 
@@ -552,13 +552,22 @@ export default {
           class: "text-center localDate"
         })
       }
+      if (["completed"].includes(queryStatus)) {
+        columns.push({
+          name: "Completed At",
+          dataIndex: "completed_at",
+          class: "text-center localDate"
+        })
+      }
+      if (["approved"].includes(queryStatus)) {
+        columns.push({
+          name: "Approved At",
+          dataIndex: "approved_at",
+          class: "text-center localDate"
+        })
+      }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
-          {
-            name: "Completed At",
-            dataIndex: "completed_at",
-            class: "text-center localDate"
-          },
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
