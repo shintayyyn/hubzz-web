@@ -6,11 +6,11 @@
         height="32"
         width="32"
         class="mb-2 cursor-pointer"
-        @click="$router.push('/hub-surgery-management/invitations/spoke')"
+        @click="$router.push('/spoke-surgery-management/invitations/stand-alone')"
       />
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Accept Spoke</div>
 
-      <div class="m-2 text-sm font-semibold">
+      <div class="m-2 font-semibold">
         <div>Surgery: {{spoke.surgery.name}}</div>
       </div>
 
@@ -137,11 +137,23 @@
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
-        </div>
-        <div class="flex flex-row justify-start">
-          <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
+          <div class="w-full p-1">
+            <AppInput
+              v-model="form.hub_type"
+              :type="'select'"
+              :name="'hub_type'"
+              :label="'Hub Type'"
+              :error="formError.find(item => item.field === 'hub_type')"
+              :placeholder="'Select...'"
+              :items="[{ label: 'Type 1', value: 'Type 1' }, { label: 'Type 2', value: 'Type 2' }]"
+            />
+          </div>
         </div>
       </div>
+      <div class="flex flex-row justify-start my-4">
+        <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
+      </div>
+      <div class="ml-2">NOTE: Accepting this spoke will change your practice type to Hub</div>
     </div>
   </div>
 </template>
@@ -170,7 +182,8 @@ export default {
         allow_surgery_bill_locum: "",
         allow_surgery_bill_hubzz: "",
         share_banks_to_other_surgeries: "",
-        share_my_banks: ""
+        share_my_banks: "",
+        hub_type: ""
       },
       formError: []
     };
@@ -194,9 +207,6 @@ export default {
   },
   methods: {
     publish() {
-      // this.$router.push("/hub-surgery-management/invitations/spoke");
-      // this.$emit("acceptSpoke", this.spoke.id);
-      // return;
       this.formError = [];
       let notRequired = [
         "max_hourly_rate_limit",
@@ -227,14 +237,17 @@ export default {
           allow_surgery_bill_hubzz: this.form.allow_surgery_bill_hubzz,
           share_banks_to_other_surgeries: this.form
             .share_banks_to_other_surgeries,
-          share_my_banks: this.form.share_my_banks
+          share_my_banks: this.form.share_my_banks,
+          hub_type: this.form.hub_type
         })
         .then(res => {
+          console.log("test", res);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`Invitation accepted successfully`]
           });
+          // this.$emit("acceptSpoke", this.spoke.id);
           this.$router.push("/hub-surgery-management/invitations/spoke");
         })
         .catch(err => {

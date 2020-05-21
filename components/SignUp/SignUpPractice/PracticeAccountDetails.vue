@@ -209,94 +209,96 @@
             />
           </template>
 
-          <div class="font-bold text-sm mt-4">Your Practice Hub</div>
-          <template v-if="practice_hub">
-            <div class="flex flex-col">
-              <div class="flex justify-start">
-                <div>Name:</div>
-                <div class="ml-2">{{practice_hub.name}}</div>
-              </div>
-              <div class="flex justify-start">
-                <div>CCG:</div>
-                <div class="ml-2">{{practice_hub.clinical_commissioning_group_name}}</div>
-              </div>
-              <div class="flex justify-start">
-                <div>Code:</div>
-                <div class="ml-2">{{practice_hub.code}}</div>
-              </div>
-              <div class="flex justify-start">
-                <div>Hub Type:</div>
-                <div class="ml-2">{{practice_hub.hub_type}}</div>
-              </div>
-            </div>
-            <div
-              class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
-              @click="removePracticeHub"
-            >Select another Hub</div>
-          </template>
-          <template v-if="!practice_hub">
-            <AppInput
-              v-model="search_text"
-              :type="'text'"
-              :name="'search'"
-              :placeholder="'Surgery Name, Surgery Code, or keywords'"
-              @submit="search"
-              :error="formError.find(item => item.field === 'hub_practice_id')"
-            />
-            <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
-
-            <div v-if="showResult && practiceHubs.length === 0" class="mt-5">
-              <div
-                class="text-xs xl:text-base font-bold"
-              >No practice matched that name. Try again with whole words, practice code or CCG.</div>
-            </div>
-            <div
-              class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
-              v-if="showResult && practiceHubs.length > 0"
-            >
-              <div
-                class="text-xs lg:text-base font-bold p-4"
-              >Select by clicking on the practice that you wish to add</div>
-
-              <div
-                class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
-                v-for="(item) in practiceHubs"
-                :key="item.id"
-                @click="select(item)"
-              >
-                <div class="flex flex-col justify-start text-xs xl:text-base">
-                  <div class="flex flex-col font-bold">
-                    <div>
-                      <span>{{item.surgery.name}}</span>
-                      <span
-                        class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
-                        :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
-                      >{{item.type}}</span>
-                      <span
-                        v-if="item.invited === true"
-                        class="justify-right p-1 px-4 text-sm text-white font-semibold rounded-lg bg-green-400"
-                      >Invited</span>
-                    </div>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap mt-1">
-                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
-                    <div
-                      class="flex items-center"
-                    >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap mt-1">
-                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
-                    <div class="flex items-center">{{item.surgery.code}}</div>
-                  </div>
+          <template v-if="['Spoke', 'Stand Alone'].includes(form.type)">
+            <div class="font-bold text-sm mt-4">Your Practice Hub</div>
+            <template v-if="practice_hub">
+              <div class="flex flex-col">
+                <div class="flex justify-start">
+                  <div>Name:</div>
+                  <div class="ml-2">{{practice_hub.name}}</div>
+                </div>
+                <div class="flex justify-start">
+                  <div>CCG:</div>
+                  <div class="ml-2">{{practice_hub.clinical_commissioning_group_name}}</div>
+                </div>
+                <div class="flex justify-start">
+                  <div>Code:</div>
+                  <div class="ml-2">{{practice_hub.code}}</div>
+                </div>
+                <div class="flex justify-start">
+                  <div>Hub Type:</div>
+                  <div class="ml-2">{{practice_hub.hub_type}}</div>
                 </div>
               </div>
-              <div class="border-t-2 p-4 text-xs xl:text-base">
-                <p class="font-bold">These are just top 10 matches from your search term.</p>
-                <p
-                  class="font-bold"
-                >Try again with practice code or its full name if the practice isn't in the result.</p>
+              <div
+                class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
+                @click="removePracticeHub"
+              >Select another Hub</div>
+            </template>
+            <template v-if="!practice_hub">
+              <AppInput
+                v-model="search_text"
+                :type="'text'"
+                :name="'search'"
+                :placeholder="'Surgery Name, Surgery Code, or keywords'"
+                @submit="search"
+                :error="formError.find(item => item.field === 'hub_practice_id')"
+              />
+              <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
+
+              <div v-if="showResult && practiceHubs.length === 0" class="mt-5">
+                <div
+                  class="text-xs xl:text-base font-bold"
+                >No practice matched that name. Try again with whole words, practice code or CCG.</div>
               </div>
-            </div>
+              <div
+                class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
+                v-if="showResult && practiceHubs.length > 0"
+              >
+                <div
+                  class="text-xs lg:text-base font-bold p-4"
+                >Select by clicking on the practice that you wish to add</div>
+
+                <div
+                  class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
+                  v-for="(item) in practiceHubs"
+                  :key="item.id"
+                  @click="select(item)"
+                >
+                  <div class="flex flex-col justify-start text-xs xl:text-base">
+                    <div class="flex flex-col font-bold">
+                      <div>
+                        <span>{{item.surgery.name}}</span>
+                        <span
+                          class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
+                          :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
+                        >{{item.type}}</span>
+                        <span
+                          v-if="item.invited === true"
+                          class="justify-right p-1 px-4 text-sm text-white font-semibold rounded-lg bg-green-400"
+                        >Invited</span>
+                      </div>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap mt-1">
+                      <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
+                      <div
+                        class="flex items-center"
+                      >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap mt-1">
+                      <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
+                      <div class="flex items-center">{{item.surgery.code}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="border-t-2 p-4 text-xs xl:text-base">
+                  <p class="font-bold">These are just top 10 matches from your search term.</p>
+                  <p
+                    class="font-bold"
+                  >Try again with practice code or its full name if the practice isn't in the result.</p>
+                </div>
+              </div>
+            </template>
           </template>
 
           <div class="font-bold text-sm my-4">Bank Details</div>
@@ -645,7 +647,13 @@ export default {
     },
     signUp() {
       this.formError = [];
+
       this.form.hub_practice_id = this.selectedPracticeId;
+      if (["Hub"].includes(this.form.type)) {
+        notRequired.push("hub_practice_id");
+        this.form.hub_practice_id = null;
+      }
+
       let notRequired = ["title", "suffix", "vat_registered"];
       if (["Spoke", "Stand Alone"].includes(this.form.type)) {
         notRequired.push("hub_type");

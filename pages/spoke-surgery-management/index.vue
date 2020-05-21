@@ -159,46 +159,6 @@
       </div>
     </div>
     <div v-else class="py-4 text-center text-gray-500">No Practice Hub</div>
-
-    <!-- <div v-if="!practiceHub">
-      <div class="mt-2">
-        <nuxt-link
-          :to="`/spoke-surgery-management/create`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap border rounded-lg border-yellow-500 bg-yellow-500"
-        >Invite Hub</nuxt-link>
-      </div>
-      <AppTable
-        v-if="totalInvitations > 0"
-        :total="totalInvitations"
-        :items="hubInvitations"
-        :loading="loading"
-        :currentPage="current_page"
-        :perPage="params.limit"
-        :columns="columns"
-        :orderBy="params.order_by"
-        :customWidth="700"
-        @pagechanged="pagechanged"
-        @limitchanged="limitchanged"
-      >
-        <template v-slot:status_slot="slotProps">
-          <div class="flex items-center justify-center">
-            <div
-              class="rounded-full px-6 py-1"
-              :class="statusStyle(slotProps.item)"
-            >{{ getStatus(slotProps.item) }}</div>
-          </div>
-        </template>
-        <template v-slot:actions="slotProps">
-          <div class="flex flex-wrap justify-center">
-            <AppButton
-              :label="'View'"
-              @click="$router.push({ path: `/spoke-surgery-management/hub/${slotProps.item.id}` })"
-            />
-          </div>
-        </template>
-      </AppTable>
-      <div v-else class="py-4 text-center text-gray-500">No Practice Hub at the moment</div>
-    </div>-->
     <transition name="fade" mode="out-in">
       <nuxt-link
         v-if="['spoke-surgery-management-index-hub-invitationId',].includes($route.name)"
@@ -210,7 +170,6 @@
   </div>
 </template>
 <script>
-// import AppTable from "@/components/Base/AppTable";
 import AppButton from "@/components/Base/AppButton";
 
 export default {
@@ -219,56 +178,14 @@ export default {
     mode: "out-in"
   },
   components: {
-    // AppTable,
     AppButton
   },
   data() {
     return {
       practiceSpoke: "",
       practiceHub: "",
-      // totalInvitations: 0,
-      // hubInvitations: [],
-      // app table params (no filter for this one)
-      // current_page: 1,
       loading: false
-      // params: {
-      //   offset: 0,
-      //   limit: 5,
-      //   order_by: []
-      // },
-      // columns: [
-      //   {
-      //     name: "Hub Surgery",
-      //     dataIndex: "practice.surgery.name",
-      //     class: "text-left",
-      //     sortable: false
-      //   },
-      //   {
-      //     name: "Phone Number",
-      //     dataIndex: "practice.phone_number",
-      //     class: "text-left"
-      //   },
-      //   {
-      //     name: "Status",
-      //     slot: true,
-      //     slotName: "status_slot",
-      //     dataIndex: "",
-      //     class: "text-center"
-      //   },
-      //   {
-      //     name: "Actions",
-      //     dataIndex: "actions",
-      //     class: "text-center"
-      //   }
-      // ]
     };
-  },
-  watch: {
-    // $route(to, from) {
-    //   if (!this.practiceHub) {
-    //     this.getHubInvitations(this.params);
-    //   }
-    // }
   },
   async asyncData({ app, route, store }) {
     try {
@@ -277,133 +194,48 @@ export default {
       );
       const practiceSpoke = response.data.practice;
       const practiceHub = response.data.practice.parent_practice;
-
-      // response = await app.$axios.$get(
-      // 	`/api/v1/practice/me/parent-surgery/invitations-count`
-      // );
-      // const totalInvitations = response.data.count;
-
-      // response = await app.$axios.$get(
-      //   `/api/v1/practice/me/parent-surgery/invitations`
-      // );
-      // const hubInvitations = [];
-      // response.data.practice_surgeries.map(invitation => {
-      //   if (invitation.invitation_rejected_at === null) {
-      //     hubInvitations.push(invitation);
-      //   }
-      // });
-
-      // const totalInvitations = hubInvitations.length;
-
-      // let hubInvitations = []
-      // if (response.data && response.data.practice_surgeries) {
-      //   response.data.practice_surgeries.forEach(invitation => {
-      //     hubInvitations.push(invitation)
-      //   })
-      // }
       return {
         practiceSpoke,
         practiceHub
-        // totalInvitations,
-        // hubInvitations
       };
     } catch (err) {
       throw err;
     }
   },
   mounted() {
-    // this.$socket.on(
-    //   "Practice Notification Create Surgery",
-    //   this.getHubInvitations
-    // );
+    this.addSocketListeners();
   },
-  // destroyed() {
-  //   this.removeListener();
-  // },
+  destroyed() {
+    this.removeSocketListener();
+  },
   methods: {
-    // removeListener() {
-    //   this.$socket.removeListener(
-    //     "Practice Notification Create Surgery",
-    //     this.getHubInvitations
-    //   );
-    // },
-    // async getHub(){
-    //   await this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
-    //     this.practiceHub =
-    //   })
-    // },
-    // getHubInvitations(params) {
-    //   this.loading = true;
-    //   this.$axios
-    //     .$get(`/api/v1/practice/me/parent-surgery/invitations`, { params })
-    //     .then(res => {
-    //       (this.loading = false), (this.hubInvitations = []);
-    //       res.data.practice_surgeries.forEach(invitation => {
-    //         console.log(invitation.invitation_rejected_at);
-    //         if (invitation.invitation_rejected_at === null) {
-    //           this.hubInvitations.push(invitation);
-    //         }
-    //         this.totalInvitations = this.hubInvitations.length;
-    //         console.log(this.hubInvitations);
-    //       });
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // },
-    // getStatus(surgery) {
-    //   let status = "Invited";
-    //   if (surgery.terminated_at) {
-    //     status = "Terminated";
-    //   } else if (surgery.termination_requested_at) {
-    //     if (surgery.invitation_accepted_at) {
-    //       status = "Termination Requested";
-    //     } else {
-    //       status = "Cancellation Requested";
-    //     }
-    //   } else if (surgery.invitation_rejected_at) {
-    //     status = "Rejected";
-    //   } else if (surgery.invitation_accepted_at) {
-    //     status = "Active";
-    //   }
-    //   return status;
-    // },
-    // statusStyle(surgery) {
-    //   this.getStatus(surgery);
-    //   switch (this.getStatus(surgery)) {
-    //     case "Active":
-    //       return "bg-green-500 text-white";
-    //       break;
-    //     case "Rejected":
-    //       return "bg-red-600 text-white";
-    //       break;
-    //     case "Termination Requested":
-    //       return "bg-orange-500 text-white";
-    //       break;
-    //     case "Terminated":
-    //       return "bg-red-700 text-white";
-    //       break;
-    //     default:
-    //       return "bg-yellow-400 text-black";
-    //   }
-    // },
-    // limitchanged(limit) {
-    //   this.current_page = 1;
-    //   this.params.offset = 0;
-    //   this.params.limit = limit;
-    //   this.getHubInvitations(this.params);
-    // },
-    // pagechanged(page) {
-    //   this.current_page = page;
-    //   this.params.offset = this.params.limit * (page - 1);
-    //   this.getHubInvitations(this.params);
-    // }
+    addSocketListeners() {
+      this.$socket.on(
+        "Practice Notification Accept Surgery",
+        this.getHubPromiseAll
+      );
+    },
+    removeSocketListener() {
+      this.$socket.removeListener(
+        "Practice Notification Accept Surgery",
+        this.getHubPromiseAll
+      );
+    },
+    getHubPromiseAll() {
+      this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
+        this.practiceHub =
+          res.data && res.data.practice && res.data.practice.hub_practice
+            ? res.data.practice.hub_practice
+            : null;
+        this.hasParentPractice =
+          res &&
+          res.data &&
+          res.data.practice &&
+          res.data.practice.parent_practice_id
+            ? true
+            : false;
+      });
+    }
   }
 };
 </script>
-
-<style>
-/* .shield {
-	z-index: 509;
-} */
-</style>

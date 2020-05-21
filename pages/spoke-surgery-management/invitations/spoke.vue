@@ -61,12 +61,6 @@
           />
         </div>
       </div>
-      <div v-if="!practiceHub" class="py-4 text-center">
-        <nuxt-link
-          :to="'/spoke-surgery-management/invitations/spoke/create'"
-          class="bg-yellow-500 rounded-lg px-4 py-2 font-bold"
-        >Invite Practice Hub</nuxt-link>
-      </div>
     </template>
     <template v-if="hasParentPractice">
       <div class="py-4 text-center text-gray-500">You already have Practice Hub</div>
@@ -86,7 +80,7 @@
         class="shield"
       />
     </transition>
-    <nuxt-child @getPracticeHub="getPracticeHub" />
+    <nuxt-child />
   </div>
 </template>
 <script>
@@ -133,7 +127,64 @@ export default {
       throw err;
     }
   },
+  mounted() {
+    this.addSocketListeners();
+  },
+  destroyed() {
+    this.removeSocketListener();
+  },
   methods: {
+    addSocketListeners() {
+      this.$socket.on(
+        "Practice Notification Create Hub",
+        this.getHubPromiseAll
+      );
+      this.$socket.on(
+        "Practice Notification Delete Hub",
+        this.getHubPromiseAll
+      );
+      this.$socket.on(
+        "Practice Notification Accept Surgery",
+        this.getHubPromiseAll
+      );
+      this.$socket.on(
+        "Practice Notification Reject Hub",
+        this.getHubPromiseAll
+      );
+    },
+    removeSocketListener() {
+      this.$socket.removeListener(
+        "Practice Notification Create Hub",
+        this.getHubPromiseAll
+      );
+      this.$socket.removeListener(
+        "Practice Notification Delete Hub",
+        this.getHubPromiseAll
+      );
+      this.$socket.removeListener(
+        "Practice Notification Accept Surgery",
+        this.getHubPromiseAll
+      );
+      this.$socket.removeListener(
+        "Practice Notification Reject Hub",
+        this.getHubPromiseAll
+      );
+    },
+    getHubPromiseAll() {
+      this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
+        this.practiceHub =
+          res.data && res.data.practice && res.data.practice.hub_practice
+            ? res.data.practice.hub_practice
+            : null;
+        this.hasParentPractice =
+          res &&
+          res.data &&
+          res.data.practice &&
+          res.data.practice.parent_practice_id
+            ? true
+            : false;
+      });
+    },
     remove() {
       this.$axios
         .$delete(`/api/v1/practice/me/parent-surgery/invite`)
@@ -149,11 +200,6 @@ export default {
             text: ["Cancel Invitation Successfully"]
           });
         });
-    },
-    getPracticeHub() {
-      this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
-        this.practiceHub = res.data.practice.hub_practice;
-      });
     }
   }
 };
