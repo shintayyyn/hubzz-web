@@ -193,7 +193,6 @@ export default {
 			if (type === "minute") {
 				this.selectedMinute = value;
 			}
-			console.log(this.selectedHour, this.selectedMinute);
 			this.$emit("input", `${this.selectedHour}:${this.selectedMinute}`);
 		},
 		toggledOff() {

@@ -28,12 +28,12 @@
               <svgicon name="times-solid" width="18" height="18" @click="(shift_schedule && shift_schedule.find(item => item.initial) || editShiftId) ? [confirmClosing = true, confirmation={message: 'Discard Changes?', type: 'close'}] : showShifts=false, shiftError=[]" class="fill-current hover:text-gray-700 cursor-pointer"/>
             </div>
             <div class="px-4">
-              <div class="flex flex-col items-center py-8" v-if="(initial_schedule.length + shift_schedule.length) === 0" >
+              <div class="flex flex-col items-center py-8" v-if="shift_schedule.length === 0" >
                 <AppButton :label="'Add Shift'" :inStyle="'padding:5px 14px;'" class="mb-1" @click="addShiftSchedule" />
                 <p class="text-center text-gray-600 italic">Add Shift to set up schedule.</p>
               </div>
               <transition name="fade">
-              <div :class="(initial_schedule.length + shift_schedule.length) > 1 ? 'overflow-x-hidden overflow-y-auto':''" style="max-height: 600px" ref="scheduleWrapper" v-if="(initial_schedule.length + shift_schedule.length) > 0">
+              <div :class="shift_schedule.length > 1 ? 'overflow-x-hidden overflow-y-auto':''" style="max-height: 600px" ref="scheduleWrapper" v-if="shift_schedule.length > 0">
                 <!-- SAVED SHIFTS -->
                 <div class="relative py-3" :class="[index%2?'bg-gray-200':'', shift_schedule.length >= 4 ? 'px-1 lg:pl-0 lg:pr-2' : 'px-1', index !== (shift_schedule.length-1) ? 'border-b-2 ' : '']" v-for="(item, index) in shift_schedule" :key="index">
                   <transition name="fade">
@@ -59,10 +59,10 @@
                         <p class="w-2/5">Rate</p>
                       </div>
                       <div class="flex font-semibold">
-                        <p class="w-1/5">{{shifts.find(shift => shift.value.toString() === item.shift.toString()).label}}</p>
+                        <p class="w-1/5">{{item.shift ? item.shift.name : shifts.find(shift => shift.value.toString() === item.shift_id.toString()).label}}</p>
                         <p class="w-1/5">{{item.time_start}}</p>
                         <p class="w-1/5">{{item.time_end}}</p>
-                        <p class="w-2/5">{{item.rate}} {{rate_lists.find(rate => rate.value.toString() === item.locum_detail_rate_type_id.toString()).label}}</p>
+                        <p class="w-2/5">{{item.rate}} {{item.locum_detail_rate_type ? item.locum_detail_rate_type.name : rate_lists.find(rate => rate.value.toString() === item.locum_detail_rate_type_id.toString()).label}}</p>
                       </div>
                       
                     </div>
@@ -98,7 +98,7 @@
                       <div class="w-full md:w-1/5 px-1">
                           <AppInput
                           v-if="item.initial"
-                            v-model="item.shift"
+                            v-model="item.shift_id"
                             :type="'select'"
                             :name="`shift-${index}`"
                             :label="'Shifts'"
@@ -890,6 +890,7 @@
           compliance_document_id: [],
           // dates: [],
           schedules: [],
+          schedule_templates: [],
           // date_start: null,
           // date_end: null,
           // time_start: null,
@@ -1266,6 +1267,14 @@
         }))
 
         if (this.repostJob) {
+          this.repostJob.schedule_templates.forEach((shift, i) => {
+            this.shift_schedule.push({...shift, 
+              value: i.toString(),
+              label: shift.name
+            })
+          })
+          console.log("shift_schedule", this.shift_schedule)
+          console.log("rate_lists", this.rate_lists)
           const selectedProfession = this.professions_categories
             .find(profession => profession.id === this.repostJob.platform_job.profession.id)
 
@@ -1447,7 +1456,7 @@
           item.edit_label = item.label
           item.edit_locum_detail_rate_type_id = item.locum_detail_rate_type_id
           item.edit_rate = item.rate
-          item.edit_shift = item.shift
+          item.edit_shift = item.shift_id
           item.edit_time_start = item.time_start
           item.edit_time_end = item.time_end
           this.editShiftId = item.value
@@ -1475,7 +1484,7 @@
           item.label = item.edit_label
             item.locum_detail_rate_type_id = item.edit_locum_detail_rate_type_id
             item.rate = item.edit_rate
-            item.shift = item.edit_shift
+            item.shift_id = item.edit_shift
             item.time_start = item.edit_time_start
             item.time_end = item.edit_time_end
             this.editShiftId = ''
@@ -1555,10 +1564,11 @@
         if (this.select_dates) this.select_dates =false
       },
       addShiftSchedule() {
+        console.log(this.shift_schedule)
         this.shift_schedule.push({
           value: (this.shift_schedule.length + 1).toString(),
           label: '',
-          shift: "",
+          shift_id: "",
           time_start: '',
           time_end: '',
           locum_detail_rate_type_id: 0,
@@ -1591,7 +1601,7 @@
         if (shift.rate === 0) {
           this.shiftError.push({ field: `rate-${index}`, message: 'Rate is required.'})
         }
-        if (!shift.shift) {
+        if (!shift.shift_id) {
           this.shiftError.push({ field: `shift-${index}`, message: 'Shift is required.'})
         }
         if (!shift.time_start) {
@@ -1866,7 +1876,8 @@
           "hours",
           "minutes",
           "favorite_only",
-          "shift_id"
+          "shift_id",
+          "schedule_templates"
         ]
         if (!this.hasBanks) {
           this.form.favorite_only = false
@@ -1930,7 +1941,7 @@
         //     this.form.hours * 60 + parseInt(this.form.minutes)
         // }
 
-        this.form.schedules = []
+        
 
         // this.schedules.forEach(sched => {
         //     if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
@@ -1950,13 +1961,17 @@
         //         })
         //     }
         //   })
+
+        this.form.schedules = []
+        this.form.schedule_templates = []
+
         if (this.schedule) {
           this.schedule.forEach(sched => {
             sched.shift_id.forEach(id => {
               let shift = this.shift_schedule.find(shift => shift.value === id)
               this.form.schedules.push({
                 date: sched.date,
-                shift_id: shift.shift,
+                shift_id: shift.shift_id,
                 time_start: shift.time_start,
                 time_end: shift.time_end,
                 locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
@@ -1964,6 +1979,18 @@
               })
             })
           })
+          this.shift_schedule.forEach(
+            shift => {
+              this.form.schedule_templates.push({
+                name: shift.label,
+                shift_id: shift.shift_id,
+                time_start: shift.time_start,
+                time_end: shift.time_end,
+                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+                rate: shift.rate
+              })
+            }
+          )
         }
 
         this.Validate(this.form, notRequired)

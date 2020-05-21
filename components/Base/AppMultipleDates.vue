@@ -10,7 +10,7 @@
         v-if="error"
 			>{{error.message}}</div>-->
 		</div>
-		<div class="flex flex-row justify-start mt-1">
+		<div class="flex flex-row justify-start mt-1" v-if="!isDisplay">
 			<div class="relative flex flex-col w-full">
 				<input
 					:value="placeholder"
@@ -19,6 +19,8 @@
 					class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
 					:class="{ inClass, 'border-red-500': error}"
 					@click="notOnClick ? '' : modal = true"
+					@focus="$emit('focus')"
+					@blur="$emit('blur')"
 					@keypress="validateInput($event)"
 					:style="inStyle"
 					:format="format"
@@ -34,8 +36,11 @@
 			</div>
 		</div>
 		<transition name="fade">
-			<div class="relative md:static z-10 flex" v-if="isOpen ? isOpen : modal">
-				<div class="absolute border rounded-b-lg calendar bg-white shadow-md">
+			<div class="relative md:static z-10 flex" v-if="!isDisplay ? isOpen ? isOpen : modal : true">
+				<div
+					class="border rounded-b-lg calendar bg-white"
+					:class="isDisplay ? '' : 'absolute shadow-md'"
+				>
 					<div
 						class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500"
 					>
@@ -90,7 +95,6 @@
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
 									@mouseover="showHover(item.fullDate)"
-									@mouseleave="showDetail=false, hoverDate=''"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
@@ -107,20 +111,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 1"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -134,7 +139,6 @@
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
 									@mouseover="showHover(item.fullDate)"
-									@mouseleave="showDetail=false, hoverDate=''"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
@@ -151,20 +155,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 2"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -178,7 +183,6 @@
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
 									@mouseover="showHover(item.fullDate)"
-									@mouseleave="showDetail=false, hoverDate=''"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
@@ -195,20 +199,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 3"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -222,7 +227,6 @@
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
 									@mouseover="showHover(item.fullDate)"
-									@mouseleave="showDetail=false, hoverDate=''"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
@@ -239,20 +243,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 4"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -266,7 +271,6 @@
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
 									@mouseover="showHover(item.fullDate)"
-									@mouseleave="showDetail=false, hoverDate=''"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
@@ -283,20 +287,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 5"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -310,7 +315,6 @@
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
 									@mouseover="showHover(item.fullDate)"
-									@mouseleave="showDetail=false, hoverDate=''"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
@@ -327,20 +331,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 6"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -370,20 +375,21 @@
 								<transition name="fade">
 									<div
 										@mouseleave="showDetail=false, hoverDate=''"
-										class="hover-details absolute bg-white border text-xs z-50 flex flex-col items-center"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
 										v-if="hoverDate===item.fullDate && item.day === 0"
 									>
-										<div>
+										<div class="w-full">
 											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
 											<div
 												class="px-1 border-t bg-gray-100"
 												v-for="(item, index) in scheduleDetails.shifts"
 												:key="index"
 											>
-												<p>Shift: {{ shift(item.shift_id) }}</p>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
 												<p>Start time: {{ item.time_start }}</p>
 												<p>End time: {{ item.time_end }}</p>
-												<p v-if="item.rate">Rate: {{ item.rate }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
 											</div>
 										</div>
 									</div>
@@ -441,7 +447,8 @@ export default {
 		isOpen: Boolean,
 		notOnClick: Boolean,
 		disableSelection: Boolean,
-		overlayData: Array
+		overlayData: Array,
+		isDisplay: Boolean
 	},
 	data() {
 		return {
@@ -554,22 +561,38 @@ export default {
 		}
 	},
 	methods: {
-		shift(shift_id) {
-			switch (shift_id) {
-				case "1":
-					return "AM";
-					break;
-				case "2":
-					return "PM";
-					break;
-				case "3":
-					return "Whole Day";
-					break;
-				case "4":
-					return "OOH";
-					break;
-				default:
-					break;
+		getName(type, id) {
+			if (type === "shift") {
+				switch (id) {
+					case "1":
+						return "AM";
+						break;
+					case "2":
+						return "PM";
+						break;
+					case "3":
+						return "Whole Day";
+						break;
+					case "4":
+						return "OOH";
+						break;
+					default:
+						break;
+				}
+			} else if (type === "rate_type") {
+				switch (id) {
+					case "1":
+						return "Per Hour";
+						break;
+					case "2":
+						return "Per Half Day Session";
+						break;
+					case "3":
+						return "Per Whole Day Session";
+						break;
+					default:
+						break;
+				}
 			}
 		},
 		showHover(fullDate) {
@@ -581,10 +604,11 @@ export default {
 				this.scheduleDetails.shifts = [];
 				details.forEach(item => {
 					this.scheduleDetails.shifts.push({
-						shift_id: item.shift_id,
+						shift_id: item.shift_id.toString(),
 						time_start: item.time_start,
 						time_end: item.time_end,
-						rate: item.rate ? item.rate : null
+						rate: item.rate,
+						rate_type: item.locum_detail_rate_type_id.toString()
 					});
 				});
 				this.hoverDate = fullDate;
@@ -772,7 +796,12 @@ export default {
 	height: auto;
 }
 .hover-details {
-	min-width: 110px;
+	min-width: 200px;
+	max-height: 300px;
+}
+.hover-details > div {
+	max-height: 300px;
+	overflow-y: auto;
 }
 .top.hover-details {
 	margin-top: -32px;
@@ -784,15 +813,20 @@ export default {
 .hover-details::after {
 	content: "";
 	position: absolute;
-	top: 0;
-	left: 20px;
-	width: 0;
-	height: 0;
-	border: 8px solid transparent;
+	top: 2px;
+	left: 23px;
+	width: 12px;
+	height: 12px;
+	/* border: 8px solid transparent;
 	border-bottom-color: #ccc;
-	border-top: 0;
+	border-top: 0; */
+	border-top: 1px solid #cbd5e0;
+	border-left: 1px solid #cbd5e0;
 	margin-left: -8px;
 	margin-top: -8px;
+	z-index: -1;
+	transform: rotate(45deg);
+	background-color: #fff;
 }
 .top.hover-details::after {
 	content: "";

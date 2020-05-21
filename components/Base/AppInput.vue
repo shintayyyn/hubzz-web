@@ -42,16 +42,16 @@
             >
               <input
                 :id="`${name}-${index}`"
-                :value="item.value"
+                :value="item.value ? item.value : item.id"
                 type="checkbox"
-                :checked="Array.isArray(value) ? value.includes(item.value) : value"
+                :checked="Array.isArray(value) ? value.includes(item.value ? item.value : item.id) : value"
                 :disabled="disabled"
                 @input="inputMultiCheck"
               >
               <label
                 :for="`${name}-${index}`"
                 class="text-xs sm:text-sm flex items-center"
-              >{{ item.label }}</label>
+              >{{ item.label ? item.label : item.name }}</label>
             </div>
           </div>
         </template>

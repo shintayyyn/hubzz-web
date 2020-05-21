@@ -1,6 +1,51 @@
 <template>
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap">
+      <div class="w-full">
+        <div class="font-bold text-sm sm:text-md">
+          Duration
+        </div>
+        <div class="text-xs sm:text-sm mb-8">
+          <p class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+            <div class="px-1">
+              <p>Days: {{ job.dates.length }}</p>
+            </div>
+          <div class="px-1">
+            <div class="flex justify-between items-end" :class="!view_calendar ? 'mb-2' : ''">
+              <p class="font-bold text-sm sm:text-md">Schedule</p>
+              <div class="text-sm cursor-pointer bg-gray-300 hover:bg-gray-400 px-2 py-1 rounded transition-hover" @click="view_calendar = !view_calendar">{{ !view_calendar ? 'Calendar' : 'Default'}} View</div>
+            </div>
+            <AppMultipleDates
+              v-if="view_calendar"
+              v-model="job.dates"
+              :name="'dates'"
+              is-after
+              multipleSelection
+              isDisplay
+              disableSelection
+              :overlayData="job.schedules"
+              @focus="toggleCalendar = true"
+              @blur="toggleCalendar = false"
+            />
+            <template v-else>
+              <div class="hidden lg:flex font-bold text-xs">
+                <p class="w-1/6">DATE</p>
+                <p class="w-2/6 text-center">TIME</p>
+                <p class="w-1/6 text-center">SHIFT</p>
+                <p class="w-2/6 text-center">RATE</p>
+              </div>
+              <div class="overflow-y-auto" style="max-height: 205px;">
+                <div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex pb-2">
+                  <p class="lg:w-1/6">{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+                  <p class="lg:w-2/6 lg:text-center">{{ sched.time_start }}-{{ sched.time_end }}</p>
+                  <p class="lg:w-1/6 lg:text-center">{{ sched.shift.name }}</p>
+                  <p class="lg:w-2/6 lg:text-center">${{ sched.rate }} {{ sched.locum_detail_rate_type.name }} </p>
+                </div>
+              </div>
+            </template>
+          </div> 
+        </div>
+      </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">
           Job number
@@ -14,7 +59,7 @@
         <div class="text-xs sm:text-sm mb-8 break-words">
           {{ job && job.description ? job.description : '(none)' }}
         </div>
-        <div class="font-bold text-sm sm:text-md">
+        <!-- <div class="font-bold text-sm sm:text-md">
           Rate
         </div>
         <div class="text-xs sm:text-sm mb-8">
@@ -25,7 +70,7 @@
         </div>
         <div class="text-xs sm:text-sm mb-8">
           {{ job.total_hours | hoursMinutes }}
-        </div>
+        </div> -->
         <div class="font-bold text-sm sm:text-md">
           Extra information
         </div>
@@ -120,10 +165,7 @@
         </div>
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
-        <div class="font-bold text-sm sm:text-md">
-          Duration
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
+        <!-- <div class="text-xs sm:text-sm mb-8">
           <p class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
           <div class="flex">
             <div class="px-1">
@@ -140,7 +182,7 @@
           <div class="overflow-y-auto" style="max-height: 205px;">
             <div v-for="(date, index) in job.dates" :key="index" class="m-1"> {{ $moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</div>
           </div>
-        </div>
+        </div> -->
         <!-- <div class="font-bold text-sm sm:text-md">
           Include Saturday
         </div>
@@ -153,12 +195,12 @@
         <div class="text-xs sm:text-sm mb-8">
           {{ job.include_sunday ? 'Yes' : 'No' }}
         </div> -->
-        <div class="font-bold text-sm sm:text-md">
+        <!-- <div class="font-bold text-sm sm:text-md">
           Unpaid break
         </div>
         <div class="text-xs sm:text-sm mb-8">
           {{ job.platform_job.unpaid_breaks_in_minutes }}
-        </div>
+        </div> -->
 
         <template v-if="job.selection_date">
           <div class="font-bold text-sm sm:text-md">
@@ -418,8 +460,12 @@
 
 <script>
   import { gmapApi } from "vue2-google-maps"
+  import AppMultipleDates from "@/components/Base/AppMultipleDates"
 
   export default {
+    components: {
+      AppMultipleDates
+    },
     props: {
       job: {
         type: Object,
@@ -429,7 +475,8 @@
 
     data () {
       return {
-        modal: false
+        modal: false,
+        view_calendar: false
       }
     },
 

@@ -4,6 +4,11 @@
     <div class="relative  bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <AppLoading :loading="dataLoading" spinner />
       <div v-if="!dataLoading" class="flex flex-row flex-wrap">
+        <div class="w-full">
+          <div class="font-bold text-sm sm:text-md">
+            Duration
+          </div>
+        </div>
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">
             Job number
