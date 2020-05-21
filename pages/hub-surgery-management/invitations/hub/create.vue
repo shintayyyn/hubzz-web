@@ -8,7 +8,7 @@
         class="mb-2 cursor-pointer"
         @click="$router.push('/hub-surgery-management/invitations/hub')"
       />
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke</div>
+      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke / Stand Alone</div>
       <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
         <AppInput
           v-model="search_text"
@@ -78,28 +78,17 @@
         <InviteSpokePermissions @close="toInvite = false" :spoke="selectedSpoke" />
       </div>
     </transition>
-
-    <AppConfirmationModal
-      :label="'Proceed to invite this surgery?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="modal"
-      @confirm="invite"
-      @cancel="modal = false"
-    />
   </div>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import InviteSpokePermissions from "@/components/Practice/InviteSpokePermissions";
 export default {
   components: {
     AppInput,
     AppButton,
-    InviteSpokePermissions,
-    AppConfirmationModal
+    InviteSpokePermissions
   },
   data() {
     return {
@@ -163,114 +152,131 @@ export default {
       });
   },
   methods: {
-    search() {
+    async search() {
       this.filteredPracticeSpokes = [];
       this.practiceSpokesResult = [];
-      if (this.search_text) {
-        this.$axios
-          .$get(
-            `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
-          )
-          .then(res => {
-            if (res.data && res.data.practices) {
-              res.data.practices.forEach(item => {
-                let checkSpoke = this.practiceSpokesResult.find(
-                  spoke => spoke.id == item.id
-                );
-                if (!checkSpoke) {
-                  this.practiceSpokesResult.push(item);
-                } else {
-                  if (
-                    checkSpoke.surgery.name ===
-                      this.search_text.toUpperCase() ||
-                    checkSpoke.surgery.code === this.search_text.toUpperCase()
-                  ) {
-                    this.resultNotice = "This practice is already your spoke.";
-                  }
-                }
-              });
-            }
+      if (!this.search_text) {
+        return;
+      }
+      try {
+        let invitationIds = [];
+        let res = await this.$axios.$get(
+          `/api/v1/practice/me/practice-surgeries/spoke-invitations`
+        );
+        invitationIds = res.data.invitations.map(invitation => invitation.id);
 
-            let invited = "";
-            const loggedInPracticeId = this.$auth.user.practice_detail.practice
-              .id;
+        res = await this.$axios.$get(
+          `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
+        );
 
-            this.practiceSpokesResult.forEach(spoke => {
-              invited = this.practiceSpokeInvitations.find(
-                invitation => invitation.child_practice_id === spoke.id
-              );
-              if (invited) {
-                this.filteredPracticeSpokes.push({
-                  ...spoke,
-                  invited: true
-                });
-              } else {
-                this.filteredPracticeSpokes.push({
-                  ...spoke,
-                  invited: false
-                });
-              }
-            });
-            this.showResult = true;
-          })
-          .catch(err => {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: ["Something went wrong!"]
+        if (res.data && res.data.practices && res.data.practices.length > 0) {
+          res.data.practices.forEach(practice => {
+            this.filteredPracticeSpokes.push({
+              ...practice,
+              invited: invitationIds.includes(practice.id) ? true : false
             });
           });
-      }
-    },
-    async select(item) {
-      this.formError = [];
-      let practiceSpokes = [];
-      await this.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries`)
-        .then(res => {
-          practiceSpokes = res.data.practice_surgeries;
-        });
-
-      const exists = practiceSpokes.findIndex(
-        spoke => spoke.child_practice_id == item.id
-      );
-      if (exists <= -1 && !item.parent_practice_id) {
-        this.selectedSpoke = item;
-        this.toInvite = true;
-      } else {
+        }
+        this.showResult = true;
+      } catch (error) {
+        console.log(error);
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: ["Spoke is Already Invited!"]
+          text: ["Something went wrong!"]
         });
       }
+
+      // if (this.search_text) {
+      //   this.$axios
+      //     .$get(
+      //       `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
+      //     )
+      //     .then(res => {
+      //       if (res.data && res.data.practices) {
+      //         res.data.practices.forEach(item => {
+      //           let checkSpoke = this.practiceSpokesResult.find(
+      //             spoke => spoke.id == item.id
+      //           );
+      //           if (!checkSpoke) {
+      //             this.practiceSpokesResult.push(item);
+      //           } else {
+      //             if (
+      //               checkSpoke.surgery.name ===
+      //                 this.search_text.toUpperCase() ||
+      //               checkSpoke.surgery.code === this.search_text.toUpperCase()
+      //             ) {
+      //               this.resultNotice = "This practice is already your spoke.";
+      //             }
+      //           }
+      //         });
+      //       }
+
+      //       let invited = "";
+      //       const loggedInPracticeId = this.$auth.user.practice_detail.practice
+      //         .id;
+
+      //       this.practiceSpokesResult.forEach(spoke => {
+      //         invited = this.practiceSpokeInvitations.find(
+      //           invitation => invitation.child_practice_id === spoke.id
+      //         );
+      //         if (invited) {
+      //           this.filteredPracticeSpokes.push({
+      //             ...spoke,
+      //             invited: true
+      //           });
+      //         } else {
+      //           this.filteredPracticeSpokes.push({
+      //             ...spoke,
+      //             invited: false
+      //           });
+      //         }
+      //       });
+      //       this.showResult = true;
+      //     })
+      //     .catch(err => {
+      //       this.$store.commit("SET_NOTIFICATION", {
+      //         enabled: true,
+      //         status: "danger",
+      //         text: ["Something went wrong!"]
+      //       });
+      //     });
+      // }
     },
-    invite() {
-      if (this.type === "Hub") {
-        this.$axios
-          .$post(`/api/v1/practice/me/practice-surgeries/invite`, {
-            surgery_id: this.selectedSpoke.surgery.id
-          })
-          .then(res => {
-            this.modal = false;
-            this.emit("addSurgery", res.data.practice_surgery);
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`]
-            });
-            this.$router.push("/hub-surgery-management/invitations/hub");
-          })
-          .catch(err => {
-            this.modal = false;
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [err.response.data.error_messages]
-            });
-            this.formError = err.response.data.error_messages;
-          });
+    async select(item) {
+      this.selectedSpoke = item;
+      if (this.selectedSpoke.invited) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [
+            `This Spoke already invited you. Please check your Spoke invitations`
+          ]
+        });
+        return;
       }
+      this.toInvite = true;
+      // this.formError = [];
+      // let practiceSpokes = [];
+      // await this.$axios
+      //   .$get(`/api/v1/practice/me/practice-surgeries`)
+      //   .then(res => {
+      //     practiceSpokes = res.data.practice_surgeries;
+      //   });
+
+      // const exists = practiceSpokes.findIndex(
+      //   spoke => spoke.child_practice_id == item.id
+      // );
+      // if (exists <= -1 && !item.parent_practice_id) {
+      //   this.selectedSpoke = item;
+      //   this.toInvite = true;
+      // } else {
+      //   this.$store.commit("SET_NOTIFICATION", {
+      //     enabled: true,
+      //     status: "danger",
+      //     text: ["Spoke is Already Invited!"]
+      //   });
+      // }
     }
   }
 };

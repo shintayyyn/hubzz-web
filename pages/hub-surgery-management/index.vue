@@ -61,6 +61,7 @@
         </div>
       </template>
     </AppTable>
+    <div v-else class="flex justify-center py-4 text-gray-500">You do not have any spokes.</div>
     <transition name="fade" mode="out-in">
       <nuxt-link
         v-if="$route.name.includes('hub-surgery-management-id')"
@@ -187,7 +188,25 @@ export default {
       throw err;
     }
   },
+  mounted() {
+    this.addSocketListeners();
+  },
+  destroyed() {
+    this.removeSocketListener();
+  },
   methods: {
+    addSocketListeners() {
+      this.$socket.on(
+        "Practice Notification Accept Surgery",
+        this.getSurgeriesCount
+      );
+    },
+    removeSocketListener() {
+      this.$socket.removeListener(
+        "Practice Notification Accept Surgery",
+        this.getSurgeriesCount
+      );
+    },
     shareMyBanks() {
       this.$axios
         .$put(
@@ -213,6 +232,17 @@ export default {
       } else if (index < 0) {
         this.selectedItems.push(childPracticeId);
       }
+    },
+    getSurgeriesCount(params) {
+      this.$axios
+        .$get(`/api/v1/practice/me/practice-surgeries/count`, { params })
+        .then(res => {
+          this.totalSurgeries = res.data.count;
+          this.getSurgeries(this.params);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     getSurgeries(params) {
       this.loading = true;

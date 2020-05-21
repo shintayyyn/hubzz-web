@@ -171,6 +171,10 @@
         <div class="text-white font-semibold">Reject</div>
       </div>-->
     </div>
+    <div
+      class="ml-2"
+      v-if="isStandAlone"
+    >NOTE: Accepting this hub will change your practice type to Spoke</div>
   </div>
 </template>
 
@@ -193,9 +197,10 @@ export default {
       specificPracticeHub: ""
     };
   },
-  created() {
-    console.log("specific invitation", this.specificInvitation);
-    console.log("specific hub", this.specificPracticeHub);
+  computed: {
+    isStandAlone() {
+      return this.specificInvitation.child_practice.type === "Stand Alone";
+    }
   },
   async asyncData({ app, route, store, error }) {
     try {
@@ -219,7 +224,6 @@ export default {
           practice_surgery_id: this.specificInvitation.id
         })
         .then(res => {
-          // this.$emit("updateSurgery", res.data.practice_surgery);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -252,7 +256,6 @@ export default {
             text: ["Successfully Rejected Practice Spoke Invitation"]
           });
           this.$router.push(`/spoke-surgery-management/invitations/hub`);
-          this.$emit("rejectInvitation");
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {

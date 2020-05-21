@@ -225,14 +225,12 @@ export default {
         })
         .then(res => {
           this.modal = false;
-          this.$emit("close");
-          // this.emit("addSurgery", res.data.practice_surgery)
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.data.message}`]
           });
-          this.$router.push("/hub-surgery-management");
+          this.$router.push(`/hub-surgery-management/invitations/hub`);
         })
         .catch(err => {
           console.log("err", err.response.data.error_messages);
