@@ -67,7 +67,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 1"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -99,7 +99,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 2"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -131,7 +131,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 3"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -163,7 +163,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 4"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -195,7 +195,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 5"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -227,7 +227,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 6"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -259,7 +259,7 @@
               &nbsp;
             </div>
           </div>
-          <div v-for="(item, index) in daysInMonth" :key="index">
+          <div class="w-full flex justify-center" v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 0"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
@@ -1178,7 +1178,7 @@ export default {
 <style scoped>
 .date {
 	min-height: 2em;
-	min-width: 2em;
+	min-width: 90%;
 }
 
 .date-color {
@@ -1192,6 +1192,22 @@ export default {
 	transform: translate(-50%, -50%);
 	z-index: 60;
 }
+@media (min-width: 375px) {
+ .date {
+	  min-width: 2.4em;
+  }
+}
+@media (min-width: 480px) {
+  .date {
+	  min-width: 3em;
+  }
+}
+
+@media (min-width: 640px) {
+  .date {
+	  min-width: 4em;
+  }
+}
 
 @media (min-width: 768px) {
   .message-modal {
@@ -1199,7 +1215,7 @@ export default {
   }
 	.date {
 		min-height: 4em;
-		min-width: 4em;
+		min-width: 5em;
 	}
 }
 </style>
