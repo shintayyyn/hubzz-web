@@ -64,14 +64,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 1"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -96,14 +96,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 2"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -128,14 +128,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 3"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -160,14 +160,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 4"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -192,14 +192,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 5"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -224,14 +224,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 6"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -256,14 +256,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-&nbsp;
+              &nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index">
             <div
               v-if="item.day === 0"
               class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
-              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'text-black' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[jobsInMonth.find(jobDate => jobDate.date === item.fullDate) ? 'date-color' : 'text-gray-500',$store.state.calendar.date_today === item.fullDate ? 'bg-gray-300 font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             >
               <template v-if="$auth.user.domain === 'Locum' && getLocumPermanentJobs.length">
@@ -1179,6 +1179,10 @@ export default {
 .date {
 	min-height: 2em;
 	min-width: 2em;
+}
+
+.date-color {
+  color: #45494d;
 }
 
 .message-modal {
