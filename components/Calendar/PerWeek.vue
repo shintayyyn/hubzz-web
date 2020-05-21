@@ -1648,44 +1648,35 @@ export default {
 </script>
 
 <style scoped>
-  .bg-job-active {
+  /* .bg-job-active {
     background-color: #d5e0eb;
-      /* background-color: #38b460; */
   }
   .bg-job-active:hover {
     background-color: #c2cfdd;
-      /* background-color: #33a055; */
   }
   .bg-job-active.currentYear {
     background-color: #a4b4c5;
-      /* background-color: #33a055; */
   }
 
   .bg-job-pending {
     background-color: #d5e0eb;
-      /* background-color: #ffa901; */
   }
 
   .bg-job-pending:hover {
     background-color: #c2cfdd;
-      /* background-color: #e69e0f; */
   }
   .bg-job-pending.currentYear {
     background-color: #a4b4c5;
-      /* background-color: #33a055; */
   }
 
   .bg-job-unfilled {
     background-color: #d5e0eb;
-      /* background-color: #cd1424; */
   }
 
   .bg-job-unfilled:hover {
     background-color: #c2cfdd;
-      /* background-color: #ac111e; */
   }
   .bg-job-unfilled.currentYear {
     background-color: #a4b4c5;
-      /* background-color: #33a055; */
-  }
+  } */
 </style>
