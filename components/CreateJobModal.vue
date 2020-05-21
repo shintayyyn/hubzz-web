@@ -8,9 +8,10 @@
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">
         Create a new job
       </div>
+
       <transition name="fade">
        <div v-if="showShifts" class="fixed m-auto z-50 left-0 right-0 top-0 bottom-0 err-shield flex items-center justify-center" >
-          <div class="overflow-hidden relative bg-white border rounded mx-2 md:mx-0" :class="(initial_schedule.length + shift_schedule.length) > 0 ? 'md:w-4/5 xl:w-3/5' : 'md:w-1/4'">
+          <div class="overflow-hidden relative bg-white border rounded mx-2 md:mx-0" :class="shift_schedule.length > 0 ? 'md:w-4/5 xl:w-3/5' : 'md:w-1/4'">
            <transition name="drop">
               <AppConfirmationModal
               v-if="confirmClosing"
@@ -79,6 +80,7 @@
                         :info="'Add Shift Name to easily assign the shift to dates'"
                         :error="shiftError.find(item => item.field === `label-${index}`)"
                         required
+                        :limit="25"
                         @blur="CheckEmptyField(item.field,`label-${index}`)"
                       />
                       <AppInput
@@ -91,6 +93,7 @@
                         :info="'Add Shift Name to easily assign the shift to dates'"
                         :error="shiftError.find(item => item.field === `label-${index}`)"
                         required
+                        :limit="25"
                         @blur="CheckEmptyField(item.field,`label-${index}`)"
                       />
                     </div>
@@ -250,7 +253,6 @@
           </div>
         </div>
       </transition>
-
       <div class="relative flex flex-row flex-wrap justify-start mt-8">
         <AppLoading :loading="dataLoading" spinner />
         <template v-if="!dataLoading">
@@ -444,47 +446,56 @@
                 </h4>
                 <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
                   <div class="relative pb-4 pt-2">
-                    <div class="w-full">
-                      <AppMultipleDates
-                        v-model="schedule_dates"
-                        :name="'dates'"
-                        :label="'Job Dates'"
-                        is-after
-                        multipleSelection
-                        required
-                        :disableSelection="select_dates && !selected_sched_shift"
-                        :overlayData="overlayData"
-                        :error="formError.find(err => err.field === 'dates') ? formError.find(err => err.field === 'dates') : formError.find(err => err.field === 'schedules')"
-                      />
-                    </div>
-                    <AppButton :label="'Manage Shifts'" @click="showShifts = true" :inStyle="'padding:5px 14px;'" v-if="schedule.length"/>
-                    <div v-if="schedule.length" class="w-full pt-4">
-                      <p class="font-bold">Job Dates</p>
-                      <div class="overflow-x-hidden overflow-y-auto" style="max-height: 350px;">
-                        <div v-for="(sched, index) in schedule" :key="index">
-                          <p :class="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length ? '-mb-4' : ''">{{ $moment(sched.date).format('DD/MM/YYYY') }}</p>
-                          <AppInput
-                            v-if="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length"
-                            v-model="sched.shift_id"
-                            :type="'multi-checkbox'"
-                            :name="`shift-${index+1}`"
-                            :placeholder="''"
-                            :isHorizontal="true"
-                            :lists="shift_schedule.filter(sched => !sched.initial)"
-                            @checked="shiftCheckAction('checked', sched.shift_id, index, $event)"
-                            @unchecked="shiftCheckAction('unchecked', sched.shift_id, index, $event)"
-                            @uncheckAll="shiftCheckAction('unCheckAll', sched.shift_id, index, $event)"
-                          />
-                          <!-- @checked="sched.shift_id.push($event)"
-                          @unchecked="sched.shift_id.splice(sched.shift_id.findIndex(item => item === $event), 1)"
-                          @uncheckAll="sched.shift_id=[]" -->
+                    <AppSchedule 
+                      :rate_lists="rate_lists"
+                      :shifts="shifts"
+                      :formError="formError"
+                      :scheduleTemplates="repostJob ? repostJob.schedule_templates : []"
+                      @scheduleTemplates="getScheduleTemplates"
+                      @initialSchedule="getInitialSchedule"
+                    />
+                    <template v-if="error_modal">
+                      <div class="w-full">
+                        <AppMultipleDates
+                          v-model="schedule_dates"
+                          :name="'dates'"
+                          :label="'Job Dates'"
+                          is-after
+                          multipleSelection
+                          required
+                          :overlayData="overlayData"
+                          :error="formError.find(err => err.field === 'dates') ? formError.find(err => err.field === 'dates') : formError.find(err => err.field === 'schedules')"
+                        />
+                      </div>
+                      <AppButton :label="'Manage Shifts'" @click="showShifts = true" :inStyle="'padding:5px 14px;'" v-if="schedule.length"/>
+                      <div v-if="schedule.length" class="w-full pt-4">
+                        <p class="font-bold">Job Dates</p>
+                        <div class="overflow-x-hidden overflow-y-auto" style="max-height: 350px;">
+                          <div v-for="(sched, index) in schedule" :key="index">
+                            <p :class="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length ? '-mb-4' : ''">{{ $moment(sched.date).format('DD/MM/YYYY') }}</p>
+                            <AppInput
+                              v-if="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length"
+                              v-model="sched.shift_id"
+                              :type="'multi-checkbox'"
+                              :name="`shift-${index+1}`"
+                              :placeholder="''"
+                              :isHorizontal="true"
+                              :lists="shift_schedule.filter(sched => !sched.initial)"
+                              @checked="shiftCheckAction('checked', sched.shift_id, index, $event)"
+                              @unchecked="shiftCheckAction('unchecked', sched.shift_id, index, $event)"
+                              @uncheckAll="shiftCheckAction('unCheckAll', sched.shift_id, index, $event)"
+                            />
+                            <!-- @checked="sched.shift_id.push($event)"
+                            @unchecked="sched.shift_id.splice(sched.shift_id.findIndex(item => item === $event), 1)"
+                            @uncheckAll="sched.shift_id=[]" -->
+                          </div>
+                        </div>
+                        <div class="flex mt-2" v-if="!shift_schedule.length" >
+                          <svgicon name="exclamation-mark" width="18" height="18" class="fill-current text-orange-500 mr-2" />
+                          <p class="text-sm">It seems like your shifts hasn't been set-up yet.<br/>Click <span class="underline text-blue-500 cursor-pointer hover:text-blue-700" @click="showShifts=true">here</span> to add shift.</p>
                         </div>
                       </div>
-                      <div class="flex mt-2" v-if="!shift_schedule.length" >
-                        <svgicon name="exclamation-mark" width="18" height="18" class="fill-current text-orange-500 mr-2" />
-                        <p class="text-sm">It seems like your shifts hasn't been set-up yet.<br/>Click <span class="underline text-blue-500 cursor-pointer hover:text-blue-700" @click="showShifts=true">here</span> to add shift.</p>
-                      </div>
-                    </div>
+                    </template>
                   </div>
 
                   <AppInput
@@ -844,20 +855,20 @@
         //   rate: 50,
         //   appliedToAll: false,
         // }
-        select_dates: false,
-        selected_dates: [],
-        schedules: [],
+        select_dates: false, //Not used
+        selected_dates: [], //Not used
+        schedules: [], 
         schedule: [],
-        selected_sched_shift: '',
+        selected_sched_shift: '', //Not used
         overlayData: [],
-        applyToAllDates: false,
-        editingDates: false,
+        applyToAllDates: false, //Not used
+        editingDates: false, //Not used
         showShifts: false,
         confirmClosing: false,
         shiftError: [],
         shift_saving:'',
         editShiftId: '',
-        savedShifts: [],
+        // savedShifts: [],
 
         selectedQualification: [],
         selectedClinicalSystem: [],
@@ -1267,14 +1278,12 @@
         }))
 
         if (this.repostJob) {
-          this.repostJob.schedule_templates.forEach((shift, i) => {
-            this.shift_schedule.push({...shift, 
-              value: i.toString(),
-              label: shift.name
-            })
-          })
-          console.log("shift_schedule", this.shift_schedule)
-          console.log("rate_lists", this.rate_lists)
+          // this.repostJob.schedule_templates.forEach((shift, i) => {
+          //   this.shift_schedule.push({...shift, 
+          //     value: i.toString(),
+          //     label: shift.name
+          //   })
+          // })
           const selectedProfession = this.professions_categories
             .find(profession => profession.id === this.repostJob.platform_job.profession.id)
 
@@ -1442,6 +1451,44 @@
     },
 
     methods: {
+      // FOR APP SCHEDULE COMPONENT
+      getScheduleTemplates(shift_schedule) {
+        console.log("shift_schedule", shift_schedule)
+        this.form.schedule_templates = []
+          shift_schedule.forEach(
+            shift => {
+              this.form.schedule_templates.push({
+                name: shift.label,
+                shift_id: shift.shift_id,
+                time_start: shift.time_start,
+                time_end: shift.time_end,
+                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+                rate: shift.rate
+              })
+            }
+          )
+      },
+      getInitialSchedule(payload){
+        this.form.schedules = []
+        if (payload.schedule) {
+          payload.schedule.forEach(sched => {
+            sched.shift_id.forEach(id => {
+              let shift = payload.shift_schedule.find(shift => shift.value === id)
+              let shift_name = 
+              this.form.schedules.push({
+                date: sched.date,
+                shift_id: shift.shift_id,
+                time_start: shift.time_start,
+                time_end: shift.time_end,
+                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+                rate: shift.rate,
+                schedule_template_name: shift.label
+              })
+            })
+          })
+        }
+      },
+      // -- END FOR APP SCHEDULE COMPONENT
       closeShift() {
         if(this.shift_schedule.map(item => item.initial).includes(true)) {
           this.shift_schedule.forEach((shift, index) => {
@@ -1494,7 +1541,6 @@
             }, 1000);
           }
         }
-        
       },
       cancelEditing(item, index) {
         this.editShiftId = ""
@@ -1564,7 +1610,6 @@
         if (this.select_dates) this.select_dates =false
       },
       addShiftSchedule() {
-        console.log(this.shift_schedule)
         this.shift_schedule.push({
           value: (this.shift_schedule.length + 1).toString(),
           label: '',
@@ -1962,36 +2007,36 @@
         //     }
         //   })
 
-        this.form.schedules = []
-        this.form.schedule_templates = []
+        // this.form.schedules = []
+        // this.form.schedule_templates = []
 
-        if (this.schedule) {
-          this.schedule.forEach(sched => {
-            sched.shift_id.forEach(id => {
-              let shift = this.shift_schedule.find(shift => shift.value === id)
-              this.form.schedules.push({
-                date: sched.date,
-                shift_id: shift.shift_id,
-                time_start: shift.time_start,
-                time_end: shift.time_end,
-                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-                rate: shift.rate
-              })
-            })
-          })
-          this.shift_schedule.forEach(
-            shift => {
-              this.form.schedule_templates.push({
-                name: shift.label,
-                shift_id: shift.shift_id,
-                time_start: shift.time_start,
-                time_end: shift.time_end,
-                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-                rate: shift.rate
-              })
-            }
-          )
-        }
+        // if (this.schedule) {
+        //   this.schedule.forEach(sched => {
+        //     sched.shift_id.forEach(id => {
+        //       let shift = this.shift_schedule.find(shift => shift.value === id)
+        //       this.form.schedules.push({
+        //         date: sched.date,
+        //         shift_id: shift.shift_id,
+        //         time_start: shift.time_start,
+        //         time_end: shift.time_end,
+        //         locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+        //         rate: shift.rate
+        //       })
+        //     })
+        //   })
+        //   this.shift_schedule.forEach(
+        //     shift => {
+        //       this.form.schedule_templates.push({
+        //         name: shift.label,
+        //         shift_id: shift.shift_id,
+        //         time_start: shift.time_start,
+        //         time_end: shift.time_end,
+        //         locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+        //         rate: shift.rate
+        //       })
+        //     }
+        //   )
+        // }
 
         this.Validate(this.form, notRequired)
 

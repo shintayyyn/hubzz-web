@@ -596,22 +596,26 @@ export default {
 			}
 		},
 		showHover(fullDate) {
-			let details = this.overlayData.filter(
-				item => item.date === this.$moment(fullDate).format("YYYY-MM-DD")
-			);
-			if (details && details.length) {
-				this.scheduleDetails.date = this.$moment(fullDate).format("YYYY-MM-DD");
-				this.scheduleDetails.shifts = [];
-				details.forEach(item => {
-					this.scheduleDetails.shifts.push({
-						shift_id: item.shift_id.toString(),
-						time_start: item.time_start,
-						time_end: item.time_end,
-						rate: item.rate,
-						rate_type: item.locum_detail_rate_type_id.toString()
+			if (this.overlayData) {
+				let details = this.overlayData.filter(
+					item => item.date === this.$moment(fullDate).format("YYYY-MM-DD")
+				);
+				if (details && details.length) {
+					this.scheduleDetails.date = this.$moment(fullDate).format(
+						"YYYY-MM-DD"
+					);
+					this.scheduleDetails.shifts = [];
+					details.forEach(item => {
+						this.scheduleDetails.shifts.push({
+							shift_id: item.shift_id.toString(),
+							time_start: item.time_start,
+							time_end: item.time_end,
+							rate: item.rate,
+							rate_type: item.locum_detail_rate_type_id.toString()
+						});
 					});
-				});
-				this.hoverDate = fullDate;
+					this.hoverDate = fullDate;
+				}
 			}
 		},
 		getMonthLists() {

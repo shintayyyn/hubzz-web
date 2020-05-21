@@ -4,11 +4,6 @@
     <div class="relative  bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <AppLoading :loading="dataLoading" spinner />
       <div v-if="!dataLoading" class="flex flex-row flex-wrap">
-        <div class="w-full">
-          <div class="font-bold text-sm sm:text-md">
-            Duration
-          </div>
-        </div>
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">
             Job number
@@ -25,7 +20,7 @@
             :placeholder="'Select...'"
             :items="practice_lists"
           />
-          <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap items-center">
+          <!-- <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap items-center">
             <div class="w-full">
               <AppInput
                 v-model="form.rate"
@@ -50,7 +45,7 @@
                 :items="rate_lists"
               />
             </div>
-          </div>
+          </div> -->
           <!-- <AppInput
             v-model="form.total_hours"
             :type="'number'"
@@ -86,7 +81,7 @@
               </div>
             </div>
           </div>-->
-          <div class="flex flex-col py-2 mb-3 md:mb-6">
+          <!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
             <div class="relative flex flex-row flex-no-wrap justify-between">
               <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
             </div>
@@ -137,7 +132,7 @@
                 <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
               </div>
             </div>
-          </div>
+          </div> -->
           <AppInput
             v-model="form.title"
             :type="'text'"
@@ -282,7 +277,7 @@
           <div class="font-bold text-sm sm:text-md">
             Duration
           </div>
-          <div class="px-1 w-full">
+          <!-- <div class="px-1 w-full">
             <AppMultipleDates
               v-model="form.dates"
               :name="'dates'"
@@ -292,9 +287,18 @@
               multipleSelection
               @blur="CheckEmptyField(form.date_start,'date_start')"
             />
-          </div>
-          <div class="flex flex-row flex-wrap justify-between">
-            <!-- <div class="px-1 w-full md:w-1/2">
+          </div> -->
+          <AppSchedule 
+            :rate_lists="rate_lists"
+            :shifts="shifts"
+            :formError="formError"
+            :scheduleTemplates="job && job.schedule_templates ? job.schedule_templates : []"
+            :jobSchedule="job && job.schedules ? job.schedules : []"
+            @scheduleTemplates="getScheduleTemplates"
+            @initialSchedule="getInitialSchedule"
+          />
+          <!-- <div class="flex flex-row flex-wrap justify-between">
+            <div class="px-1 w-full md:w-1/2">
               <AppDate
                 v-model="form.date_start"
                 :name="'date_start'"
@@ -302,7 +306,7 @@
                 :error="formError.find(item => item.field === 'date_start')"
                 isAfter
               />
-            </div> -->
+            </div>
             <div class="px-1 w-full md:w-1/2">
               <AppTime
                 v-model="form.time_start"
@@ -312,7 +316,7 @@
                 :error="formError.find(item => item.field === 'time_start')"
               />
             </div>
-            <!-- <div class="px-1 w-full md:w-1/2">
+            <div class="px-1 w-full md:w-1/2">
               <AppDate
                 v-model="form.date_end"
                 :name="'date_end'"
@@ -321,7 +325,7 @@
                 :startDate="form.date_start"
                 isAfter
               />
-            </div> -->
+            </div>
             <div class="px-1 w-full md:w-1/2">
               <AppTime
                 v-model="form.time_end"
@@ -331,7 +335,7 @@
                 :error="formError.find(item => item.field === 'time_end')"
               />
             </div>
-            <!-- <div class="w-full">
+            <div class="w-full">
               <AppInput
                 v-if="show_saturday"
                 v-model="form.include_saturday"
@@ -348,9 +352,9 @@
                 :label="'Include Sunday'"
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
               />
-            </div> -->
-          </div>
-          <AppInput
+            </div>
+          </div> -->
+          <!-- <AppInput
             v-model="form.shift_id"
             :type="'select'"
             :name="'shift_id'"
@@ -358,8 +362,8 @@
             :placeholder="'Select...'"
             :items="shifts"
             :error="formError.find(item => item.field === 'shift_id')"
-          />
-          <AppInput
+          /> -->
+          <!-- <AppInput
             v-model="unpaid_breaks"
             :type="'select'"
             :name="'unpaid_breaks '"
@@ -374,7 +378,7 @@
             :label="'Other'"
             :inStyle="'text-align:right;'"
             :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
-          />
+          /> -->
 
           <AppInput
             v-model="auto_assign_job"
@@ -616,15 +620,14 @@
   import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
   import AppMultipleDates from "@/components/Base/AppMultipleDates"
   import AppLoading from "@/components/Base/AppLoading"
+  import AppSchedule from "@/components/Base/AppSchedule"
 
   const session_requirements_lists = [
     { label: "Practice admin", value: "Practice admin" },
     { label: "Telephone triage", value: "Telephone triage" },
     { label: "Home visits", value: "Home visits" }
   ]
-
   export default {
-
     components: {
       AppInput,
       AppDate,
@@ -634,7 +637,8 @@
       AppFormError,
       AppConfirmationModal,
       AppMultipleDates,
-      AppLoading
+      AppLoading,
+      AppSchedule
     },
 
     mixins: [clickaway],
@@ -724,11 +728,11 @@
           session_requirements: [],
           session_structure_information: "",
           extra_information: "",
-          rate: "",
-          hours: "",
-          minutes: "",
-          total_hours: "",
-          locum_detail_rate_type_id: 1,
+          // rate: "",
+          // hours: "",
+          // minutes: "",
+          // total_hours: "",
+          // locum_detail_rate_type_id: 1,
           ir35: false,
           mandatory_training_id: [],
           profession_id: null,
@@ -736,20 +740,22 @@
           clinical_system_id: [],
           spoken_language_id: [],
           compliance_document_id: [],
-          dates: [],
+          // dates: [],
           // date_start: null,
           // date_end: null,
-          time_start: null,
-          time_end: null,
-          include_saturday: true,
-          include_sunday: true,
-          unpaid_breaks_in_minutes: "",
-          shift_id: "",
+          // time_start: null,
+          // time_end: null,
+          // include_saturday: true,
+          // include_sunday: true,
+          // unpaid_breaks_in_minutes: "",
+          // shift_id: "",
           auto_assign_at: null,
           selection_date: null,
           favorite_only: false,
           favorite_only_until: null,
-          update_accepted_until: null
+          update_accepted_until: null,
+          schedule_templates: [],
+          schedules: []
         },
         formError: [],
         show_saturday: false,
@@ -1081,23 +1087,23 @@
           this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment
           this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots
           this.form.session_structure_information = this.job.platform_job.session_structure_information
-          this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
-          this.form.rate = this.job.rate
-          this.form.total_hours = this.job.total_hours
+          // this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
+          // this.form.rate = this.job.rate
+          // this.form.total_hours = this.job.total_hours
 
-          this.form.hours = Math.floor(this.form.total_hours / 60)
-          this.form.minutes = Math.floor(this.form.total_hours % 60)
+          // this.form.hours = Math.floor(this.form.total_hours / 60)
+          // this.form.minutes = Math.floor(this.form.total_hours % 60)
 
-          if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
-            this.unpaid_breaks = false
-          } else if (
-            ![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)
-          ) {
-            this.unpaid_breaks = "other"
-            this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes
-          } else {
-            this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes
-          }
+          // if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
+          //   this.unpaid_breaks = false
+          // } else if (
+          //   ![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)
+          // ) {
+          //   this.unpaid_breaks = "other"
+          //   this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes
+          // } else {
+          //   this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes
+          // }
 
           this.form.ir35 = this.job.platform_job.ir35
           this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(
@@ -1121,12 +1127,15 @@
 
           // this.form.date_start = this.job.date_start
           // this.form.date_end = this.job.date_end
-          this.form.time_start = this.job.time_start
-          this.form.time_end = this.job.time_end
-          this.form.shift_id = this.job.shift.id
+          // this.form.time_start = this.job.time_start
+          // this.form.time_end = this.job.time_end
+          // this.form.shift_id = this.job.shift.id
 
-          this.form.include_saturday = this.job.include_saturday
-          this.form.include_sunday = this.job.include_sunday
+          // this.form.include_saturday = this.job.include_saturday
+          // this.form.include_sunday = this.job.include_sunday
+
+          this.form.schedules = this.job.schedules
+          this.form.schedule_templates = this.job.schedule_templates
 
           this.form.auto_assign_at = this.job.platform_job.auto_assign_at
 
@@ -1211,6 +1220,43 @@
     },
     
     methods: {
+      getScheduleTemplates(shift_schedule) {
+        if (shift_schedule) {
+          this.form.schedule_templates = []
+          shift_schedule.forEach(
+            shift => {
+              this.form.schedule_templates.push({
+                name: shift.label,
+                shift_id: shift.shift_id,
+                time_start: shift.time_start,
+                time_end: shift.time_end,
+                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+                rate: shift.rate
+              })
+            }
+          )
+        }
+        
+      },
+      getInitialSchedule(payload){
+        if (payload.schedule) {
+        this.form.schedules = []
+          payload.schedule.forEach(sched => {
+            sched.shift_id.forEach(id => {
+              let shift = payload.shift_schedule.find(shift => shift.value === id.toString())
+              this.form.schedules.push({
+                date: sched.date,
+                shift_id: shift.shift_id,
+                time_start: shift.time_start,
+                time_end: shift.time_end,
+                locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+                rate: shift.rate,
+                schedule_template_name: shift.label
+              })
+            })
+          })
+        }
+      },
 
       hasValue (value, field) {
         if (value == 0) {
@@ -1325,7 +1371,10 @@
           "hours",
           "minutes",
           "favorite_only",
+          "schedule_templates"
         ]
+
+        console.log(this.form)
 
         if (!this.hasBanks) {
           this.form.favorite_only = false
@@ -1338,13 +1387,13 @@
           notRequired.push("update_accepted_until")
         }
 
-        if (
-          ["15", 15, "30", 30, "60", 60, false, "false"].includes(
-            this.unpaid_breaks
-          )
-        ) {
-          notRequired.push("unpaid_breaks_in_minutes")
-        }
+        // if (
+        //   ["15", 15, "30", 30, "60", 60, false, "false"].includes(
+        //     this.unpaid_breaks
+        //   )
+        // ) {
+        //   notRequired.push("unpaid_breaks_in_minutes")
+        // }
 
         if (["true", true].includes(this.auto_assign_job)) {
           this.selection_notification = false
@@ -1374,42 +1423,42 @@
           notRequired.push("favorite_only_until")
         }
 
-        if (
-          [0, "0"].includes(this.form.hours) &&
-          [0, "0"].includes(this.form.minutes)
-        ) {
-          this.formError.push({
-            field: "minutes",
-            message: "Minutes is required"
-          })
-          // this.formError.push({
-          //   field: "hours",
-          //   message: "Hours is required"
-          // });
-        } else {
-          this.form.hours = !this.form.hours ? 0 : this.form.hours
-          this.form.minutes = !this.form.minutes ? 0 : this.form.minutes
-          this.form.total_hours =
-            this.form.hours * 60 + parseInt(this.form.minutes)
-        }
+        // if (
+        //   [0, "0"].includes(this.form.hours) &&
+        //   [0, "0"].includes(this.form.minutes)
+        // ) {
+        //   this.formError.push({
+        //     field: "minutes",
+        //     message: "Minutes is required"
+        //   })
+        //   // this.formError.push({
+        //   //   field: "hours",
+        //   //   message: "Hours is required"
+        //   // });
+        // } else {
+        //   this.form.hours = !this.form.hours ? 0 : this.form.hours
+        //   this.form.minutes = !this.form.minutes ? 0 : this.form.minutes
+        //   this.form.total_hours =
+        //     this.form.hours * 60 + parseInt(this.form.minutes)
+        // }
 
-        this.validateNumber(this.form.rate, "rate")
+        // this.validateNumber(this.form.rate, "rate")
         this.Validate(this.form, notRequired)
-        !this.form.hours ? (this.form.hours = 0) : this.form.hours
+        // !this.form.hours ? (this.form.hours = 0) : this.form.hours
 
-        if (
-          parseInt(this.form.hours) === 0 &&
-          this.form.minutes &&
-          parseInt(this.form.minutes) === 0
-        ) {
-          this.formError.push({
-            field: "minutes",
-            message: "Minutes is invalid"
-          })
-        } else {
-          this.form.total_hours =
-            this.form.hours * 60 + parseInt(this.form.minutes)
-        }
+        // if (
+        //   parseInt(this.form.hours) === 0 &&
+        //   this.form.minutes &&
+        //   parseInt(this.form.minutes) === 0
+        // ) {
+        //   this.formError.push({
+        //     field: "minutes",
+        //     message: "Minutes is invalid"
+        //   })
+        // } else {
+        //   this.form.total_hours =
+        //     this.form.hours * 60 + parseInt(this.form.minutes)
+        // }
 
         if (!this.formError.length) {
           this.selectedClinicalSystem = [...this.form.clinical_system_id]
@@ -1470,17 +1519,17 @@
             ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
           }
 
-          if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
-            this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
-          }
+          // if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
+          //   this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
+          // }
 
-          if (this.unpaid_breaks === "other") {
-            this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
-          }
+          // if (this.unpaid_breaks === "other") {
+          //   this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
+          // }
 
-          if (["false", false].includes(this.unpaid_breaks)) {
-            this.form.unpaid_breaks_in_minutes = ""
-          }
+          // if (["false", false].includes(this.unpaid_breaks)) {
+          //   this.form.unpaid_breaks_in_minutes = ""
+          // }
 
           this.form.ir35 = this.selectedProfession && this.selectedProfession.profession_category.name === 'GP'
             ? this.form.ir35
