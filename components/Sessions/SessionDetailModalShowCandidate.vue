@@ -212,8 +212,8 @@
       @cancel="confirmation_modal = false"
     />
     <AppConfirmationModal
-      :label="`This Locum is already appointed on one of your Job.`"
-      :label2="`${jobNumbers.length > 2 ? `${jobNumbers.slice(0,2)},etc..` : `${jobNumbers}`}`"
+      :label="`This Locum is already appointed on one of ${this.$auth.user.practice_id === this.job.practice_id ? 'your' : 'this Spoke'} Job.`"
+      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.map(conflictJob => conflictJob.job_number).slice(0,2)},etc..` : `${conflictJobs.map(conflictJob => conflictJob.job_number)}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -248,7 +248,7 @@ export default {
   data() {
     return {
       warning_modal: false,
-      jobNumbers: [],
+      conflictJobs: [],
       //
       confirmation_modal: false,
       mandatory: [],
@@ -340,20 +340,39 @@ export default {
     },
     checkIfLocumAlreadyAppointed() {
       this.$axios
-        .$get(`/api/v1/practice/jobs?appointed_locum_user_id=${this.user.id}`, {
+        .$get(`/api/v1/practice/job-parts`, {
           params: {
+            appointed_to_locum_user_id: this.user.id,
             status: ["Allocated", "Ongoing"],
-            date_end: `${this.$moment(this.job.date_start, "YYYY-MM-DD").format(
-              "YYYY-MM-DD"
-            )}:gte`
+            job_practice_id: this.job.practice_id
           }
         })
         .then(res => {
-          this.jobNumbers = res.data.jobs.map(job => job.job_number);
-          if (res.data.jobs.length > 0) {
+          this.conflictJobs = [];
+
+          res.data.job_parts.forEach(jobPart => {
+            if (jobPart.dates.some(date => this.job.dates.includes(date))) {
+              if (jobPart.status === "Ongoing") {
+                this.conflictJobs.push({
+                  job_number: jobPart.job_part_number,
+                  dates: jobPart.dates
+                });
+              } else if (jobPart.status === "Allocated") {
+                this.conflictJobs.push({
+                  job_number: jobPart.job_job_number,
+                  dates: jobPart.dates
+                });
+              }
+            }
+          });
+
+          console.log("Job Dates", this.job.dates);
+          console.log("Job Conflict Dates", this.conflictJobs);
+
+          if (this.conflictJobs.length > 0) {
             this.warning_modal = true;
             this.confirmation_modal = false;
-          } else if (res.data.jobs.length === 0) {
+          } else if (this.conflictJobs.length === 0) {
             this.appoint();
           }
         });
