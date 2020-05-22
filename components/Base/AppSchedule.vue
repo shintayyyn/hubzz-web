@@ -1,11 +1,5 @@
 <template>
 	<div>
-		<p class="text-sm italic">Schedule component on work...</p>
-		<div class="flex">
-			<p class="mr-3 text-xs italic flex items-center text-green-700"><svgicon name="success-checkmark" class="fill-current w-3 h-3 mr-1" />CREATE JOB</p>
-			<p class="mr-3 text-xs italic flex items-center text-green-700"><svgicon name="success-checkmark" class="fill-current w-3 h-3 mr-1" />REPOST JOB</p>
-			<p class="mr-3 text-xs italic flex items-center text-red-600"><svgicon name="loader" class="fill-current w-3 h-3 mr-1" />EDIT JOB</p>
-		</div>
 		<transition name="fade">
        <div v-if="showShifts" class="fixed m-auto z-50 left-0 right-0 top-0 bottom-0 err-shield flex items-center justify-center" >
           <div class="overflow-hidden relative bg-white border rounded mx-2 md:mx-0" :class="shift_schedule.length > 0 ? 'md:w-4/5 xl:w-3/5' : 'md:w-1/4'">
@@ -270,7 +264,7 @@
 		/>
 		<div v-if="schedule.length" class="w-full pt-4">
 			<p class="font-bold">Job Dates</p>
-			<div class="overflow-x-hidden overflow-y-auto" style="max-height: 350px;">
+			<div class="overflow-x-hidden overflow-y-auto" ref="selectionWrapper" style="max-height: 350px;">
 				<div v-for="(sched, index) in schedule" :key="index">
 					<p
 						:class="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length ? '-mb-4' : ''"
@@ -344,7 +338,8 @@ export default {
 			shift_saving: "",
 			confirmClosing: false,
 			shiftError: [],
-			applyLoadedData: true
+			applyLoadedData: false,
+			loadedSchedule: []
 		};
 	},
 	created() {
@@ -357,45 +352,44 @@ export default {
 			})
 		}
 		if (this.jobSchedule) {
-			// DUPLICATE DATE!!!
+			this.loadedSchedule = this.jobSchedule
 			this.jobSchedule.forEach((sched, i) => {
 				let shift_id = this.shift_schedule.findIndex(shift => shift.name === sched.schedule_template_name)
 				let isExistingDate = this.schedule.find(item => item.date === sched.date)
-				if (!this.schedule_dates.includes(sched.date)){
-					this.schedule_dates.push(sched.date)
-				}
 				if (isExistingDate) {
-					console.log("existing", sched.date)
 					isExistingDate.shift_id.push((shift_id).toString())
 				}else {
-					console.log("new", sched.date)
+					this.schedule_dates.push(sched.date)
 					this.schedule.push({
 						date: sched.date,
 						shift_id: [(shift_id).toString()]
 					})
 				}
 			})
-			this.applyLoadedData = false
 		}
 	},
 	watch: {
 		schedule_dates(value) {
-			if(!this.applyLoadedData) {
-				if (value.length) {
-					let removedAnItem = false;
-					this.schedule.forEach((sched, index) => {
-						let dateStillExist = value
-							.map(date => sched.date === date)
-							.includes(true);
+			if (value.length) {
+				let removedAnItem = false;
+				this.schedule.forEach((sched, index) => {
+					let dateStillExist = value
+						.map(date => sched.date === date)
+						.includes(true);
 						if (!dateStillExist) {
 							this.schedule.splice(index, 1);
 							removedAnItem = true;
 						}
 					});
 					if (!removedAnItem) {
-						this.schedule.push({ date: value[value.length - 1], shift_id: [] });
+						let isExisting = this.schedule.find(item => item.date === value[value.length - 1])
+						if (!isExisting){
+							this.schedule.push({ date: value[value.length - 1], shift_id: [] });
+							 this.$nextTick(() => {
+									this.$refs.selectionWrapper.scrollTop = this.$refs.selectionWrapper.scrollHeight;
+								});
+						}
 					}
-				}
 			}
 		}
 	},
@@ -418,9 +412,9 @@ export default {
 				appliedToAll: false,
 				initial: true
 			})
-			// 	this.$nextTick(() => {
-			// 	this.$refs.scheduleWrapper.scrollTop = this.$refs.scheduleWrapper.scrollHeight;
-			// });
+				this.$nextTick(() => {
+				this.$refs.scheduleWrapper.scrollTop = this.$refs.scheduleWrapper.scrollHeight;
+			});
 		},
 		saveShiftSchedule(shift, index) {
 			this.shiftError = []
@@ -529,7 +523,7 @@ export default {
 		},
 		shiftCheckAction(action, shifts, i, e) {
 			let shift = this.schedule.find((item,index) => index === i)
-			console.log(shift)
+			
 			if (action === 'checked') {
 				shift.shift_id.push(e.toString())
 			}else if (action === 'unchecked') {

@@ -1374,8 +1374,6 @@
           "schedule_templates"
         ]
 
-        console.log(this.form)
-
         if (!this.hasBanks) {
           this.form.favorite_only = false
           this.bank_first = false
