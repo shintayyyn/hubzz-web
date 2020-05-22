@@ -253,6 +253,7 @@
 				multipleSelection
 				required
 				:overlayData="overlayData"
+				@focus="setOverlayData"
 				:error="formError.find(err => err.field === 'dates') ? formError.find(err => err.field === 'dates') : formError.find(err => err.field === 'schedules')"
 			/>
 		</div>
@@ -346,7 +347,7 @@ export default {
 		if(this.scheduleTemplates) {
 			this.scheduleTemplates.forEach((shift, i) => {
 			  this.shift_schedule.push({...shift, 
-			    value: i.toString(),
+			    value: (i+1).toString(),
 			    label: shift.name
 			  })
 			})
@@ -362,7 +363,7 @@ export default {
 					this.schedule_dates.push(sched.date)
 					this.schedule.push({
 						date: sched.date,
-						shift_id: [(shift_id).toString()]
+						shift_id: [(shift_id+1).toString()]
 					})
 				}
 			})
@@ -394,6 +395,17 @@ export default {
 		}
 	},
 	methods: {
+		setOverlayData(){
+			console.log(this.schedule)
+			this.schedule.forEach(sched => {
+				sched.shift_id.forEach(id => {
+					let shift = this.shift_schedule.find(item => item.value === id)
+					this.overlayData.push({
+						date: sched.date, ...shift
+					})
+				})
+			})
+		},
 		addShiftSchedule() {
 			this.shift_schedule.push({
 				value: (this.shift_schedule.length + 1).toString(),
@@ -502,10 +514,12 @@ export default {
 			if (this.select_dates) this.select_dates =false
 		},
 		applyToAll(shift) {
+			console.log(shift)
 			shift.appliedToAll = !shift.appliedToAll 
 			// this.applyToAllDates = !this.applyToAllDates
 			// this.selected_dates = this.schedule_dates
 				this.schedule.forEach( item => {
+				console.log(item)
 				if (shift.appliedToAll) {
 					if (!item.shift_id.includes(shift.value.toString())) {
 							item.shift_id.push(shift.value.toString())
@@ -518,7 +532,8 @@ export default {
 				}
 			}) 
 			// BATO MO SA LABAS KABA MAY BAGO!!
-			this.$emit('initialSchedule', {schedule: this.schedule, shift_schedule: this.shift_schedule})
+			console.log(this.schedule)
+			// this.$emit('initialSchedule', {schedule: this.schedule, shift_schedule: this.shift_schedule})
 
 		},
 		shiftCheckAction(action, shifts, i, e) {

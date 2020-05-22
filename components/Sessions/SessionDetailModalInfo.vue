@@ -3,10 +3,16 @@
     <div class="flex flex-row flex-wrap">
       <div class="w-full">
         <div class="font-bold text-sm sm:text-md">
+          Job number
+        </div>
+        <div class="text-xs sm:text-sm mb-8">
+          {{ job.job_number }}
+        </div>
+        <div class="font-bold text-sm sm:text-md">
           Duration
         </div>
         <div class="text-xs sm:text-sm mb-8">
-          <p class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+          <p v-if="job.dates.length>1" class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
             <div class="px-1">
               <p>Days: {{ job.dates.length }}</p>
             </div>
@@ -47,12 +53,6 @@
         </div>
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">
-          Job number
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.job_number }}
-        </div>
         <div class="font-bold text-sm sm:text-md">
           Job description
         </div>
