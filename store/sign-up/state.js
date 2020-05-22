@@ -32,6 +32,7 @@ export default () => ({
     },
     practice_account_details: {
         hub_practice_id: null,
+        surgeries: [],
         type: '',
         hub_type: '',
         title: '',

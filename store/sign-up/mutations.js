@@ -35,6 +35,7 @@ export default {
     },
     SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
         state.practice_account_details.hub_practice_id = payload.hub_practice_id
+        state.practice_account_details.surgeries = payload.surgeries
         state.practice_account_details.type = payload.type
         state.practice_account_details.hub_type = payload.hub_type
         state.practice_account_details.surgery_id = payload.surgery_id

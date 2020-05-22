@@ -124,7 +124,8 @@ export default {
           `/api/v1/practice/me/parent-surgery/invitations-count`,
           {
             params: {
-              is_invitation_accepted: false
+              is_invitation_accepted: false,
+              manual_status: "Active"
             }
           }
         );
@@ -135,7 +136,8 @@ export default {
           {
             params: {
               limit: 5,
-              is_invitation_accepted: false
+              is_invitation_accepted: false,
+              manual_status: "Active"
             }
           }
         );

@@ -209,33 +209,34 @@
             />
           </template>
 
-          <template v-if="['Spoke', 'Stand Alone'].includes(form.type)">
+          <template v-if="form.type === 'Spoke'">
             <div class="font-bold text-sm mt-4">Your Practice Hub</div>
-            <template v-if="practice_hub">
+            <template v-if="displayPracticeHub">
               <div class="flex flex-col">
                 <div class="flex justify-start">
                   <div>Name:</div>
-                  <div class="ml-2">{{practice_hub.name}}</div>
+                  <div class="ml-2">{{displayPracticeHub.name}}</div>
                 </div>
                 <div class="flex justify-start">
                   <div>CCG:</div>
-                  <div class="ml-2">{{practice_hub.clinical_commissioning_group_name}}</div>
+                  <div class="ml-2">{{displayPracticeHub.clinical_commissioning_group_name}}</div>
                 </div>
                 <div class="flex justify-start">
                   <div>Code:</div>
-                  <div class="ml-2">{{practice_hub.code}}</div>
+                  <div class="ml-2">{{displayPracticeHub.code}}</div>
                 </div>
                 <div class="flex justify-start">
-                  <div>Hub Type:</div>
-                  <div class="ml-2">{{practice_hub.hub_type}}</div>
+                  <div>Type:</div>
+                  <div class="ml-2">{{displayPracticeHub.type}}</div>
                 </div>
               </div>
               <div
                 class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
                 @click="removePracticeHub"
-              >Select another Hub</div>
+                v-text="`Select another ${form.type === 'Hub' ? 'Spoke' : 'Hub'}`"
+              ></div>
             </template>
-            <template v-if="!practice_hub">
+            <template v-if="!displayPracticeHub">
               <AppInput
                 v-model="search_text"
                 :type="'text'"
@@ -246,14 +247,14 @@
               />
               <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
 
-              <div v-if="showResult && practiceHubs.length === 0" class="mt-5">
+              <div v-if="showResult && practiceLists.length === 0" class="mt-5">
                 <div
                   class="text-xs xl:text-base font-bold"
                 >No practice matched that name. Try again with whole words, practice code or CCG.</div>
               </div>
               <div
                 class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
-                v-if="showResult && practiceHubs.length > 0"
+                v-if="showResult && practiceLists.length > 0"
               >
                 <div
                   class="text-xs lg:text-base font-bold p-4"
@@ -261,7 +262,7 @@
 
                 <div
                   class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
-                  v-for="(item) in practiceHubs"
+                  v-for="(item) in practiceLists"
                   :key="item.id"
                   @click="select(item)"
                 >
@@ -299,6 +300,94 @@
                 </div>
               </div>
             </template>
+          </template>
+
+          <template v-if="form.type === 'Hub'">
+            <div class="font-bold text-sm mt-4">Your Spokes</div>
+            <template v-if="displaySpokes.length > 0">
+              <div
+                class="flex justify-between mb-2"
+                v-for="spoke in displaySpokes"
+                :key="spoke.child_practice_id"
+              >
+                <div class="flex justify-start">
+                  <div>Surgery:</div>
+                  <div class="ml-2">{{spoke.name}}</div>
+                </div>
+                <div class="flex justify-end">
+                  <div
+                    class="px-2 py-1 rounded-lg shadow-lg font-bold bg-yellow-500 cursor-pointer"
+                    @click="editSpoke(spoke)"
+                  >Edit</div>
+                  <div
+                    class="ml-2 px-2 py-1 rounded-lg shadow-lg font-bold bg-red-400 text-white cursor-pointer"
+                    @click="removeSpoke(spoke)"
+                  >Remove</div>
+                </div>
+              </div>
+            </template>
+            <AppInput
+              v-model="search_text"
+              :type="'text'"
+              :name="'search'"
+              :placeholder="'Surgery Name, Surgery Code, or keywords'"
+              @submit="search"
+              :error="formError.find(item => item.field === 'hub_practice_id')"
+            />
+            <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
+
+            <div v-if="showResult && practiceLists.length === 0" class="mt-5">
+              <div
+                class="text-xs xl:text-base font-bold"
+              >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+            </div>
+            <div
+              class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
+              v-if="showResult && practiceLists.length > 0"
+            >
+              <div
+                class="text-xs lg:text-base font-bold p-4"
+              >Select by clicking on the practice that you wish to add</div>
+
+              <div
+                class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
+                v-for="(item) in spokeLists"
+                :key="item.id"
+                @click="select(item)"
+              >
+                <div class="flex flex-col justify-start text-xs xl:text-base">
+                  <div class="flex flex-col font-bold">
+                    <div>
+                      <span>{{item.surgery.name}}</span>
+                      <span
+                        class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
+                        :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
+                      >{{item.type}}</span>
+                      <span
+                        v-if="item.invited === true"
+                        class="justify-right p-1 px-4 text-sm text-white font-semibold rounded-lg bg-green-400"
+                      >Invited</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-row flex-no-wrap mt-1">
+                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
+                    <div
+                      class="flex items-center"
+                    >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+                  </div>
+                  <div class="flex flex-row flex-no-wrap mt-1">
+                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
+                    <div class="flex items-center">{{item.surgery.code}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="border-t-2 p-4 text-xs xl:text-base">
+                <p class="font-bold">These are just top 10 matches from your search term.</p>
+                <p
+                  class="font-bold"
+                >Try again with practice code or its full name if the practice isn't in the result.</p>
+              </div>
+            </div>
           </template>
 
           <div class="font-bold text-sm my-4">Bank Details</div>
@@ -447,13 +536,23 @@
     </transition>
 
     <AppConfirmationModal
-      :label="'Proceed to invite this Hub?'"
+      :label="`Proceed to invite this ${form.type === 'Hub' ? 'Spoke' : 'Hub'}?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="toggle_invite_modal"
       @confirm="invite"
       @cancel="toggle_invite_modal = false"
     />
+
+    <div class="shield" v-if="toggle_permission_modal"></div>
+    <transition name="slide" mode="out-in">
+      <PracticeInviteSpokePermissions
+        v-if="toggle_permission_modal"
+        :spoke="selectedPracticeSpoke"
+        @close="toggle_permission_modal = false"
+        @addSpoke="addSpoke"
+      />
+    </transition>
   </div>
 </template>
 
@@ -464,6 +563,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import TermsAndConditions from "@/components/TermsAndConditions";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import PracticeInviteSpokePermissions from "@/components/SignUp/SignUpPractice/PracticeInviteSpokePermissions";
 
 const types = [
   { value: "Hub", label: "Hub" },
@@ -489,17 +589,23 @@ export default {
     AppButton,
     AppFormError,
     TermsAndConditions,
-    AppConfirmationModal
+    AppConfirmationModal,
+    PracticeInviteSpokePermissions
   },
 
   data() {
     return {
       search_text: "",
-      practiceHubs: [],
+      practiceLists: [],
       showResult: false,
-      selectedPracticeId: null,
       toggle_invite_modal: false,
-      practice_hub: null,
+      toggle_permission_modal: false,
+
+      selectedPracticeHubId: null,
+      displayPracticeHub: null,
+
+      selectedPracticeSpoke: null,
+      displaySpokes: [],
       //
       isOOH: false,
       types,
@@ -507,6 +613,7 @@ export default {
       practice_roles,
       form: {
         hub_practice_id: null,
+        surgeries: [],
         type: "",
         hub_type: "",
         title: "",
@@ -556,6 +663,21 @@ export default {
 
     practiceAccountFormError() {
       return this.$store.getters["sign-up/practiceAccountFormError"];
+    },
+
+    spokeLists() {
+      let lists = [];
+      this.practiceLists.forEach(practice => {
+        if (this.displaySpokes.length > 0) {
+          let array1 = this.displaySpokes.map(item => item.child_practice_id);
+          if (!array1.includes(practice.id)) {
+            lists.push(practice);
+          }
+        } else {
+          lists.push(practice);
+        }
+      });
+      return lists;
     }
   },
 
@@ -576,6 +698,13 @@ export default {
     },
     "form.practice_type_id"(newValue, oldValue) {
       this.isOOH = newValue.includes("8") ? true : false;
+    },
+    "form.type"(newValue, oldValue) {
+      this.search_text = "";
+      this.displayPracticeHub = null;
+      this.selectedPracticeHubId = null;
+      this.toggle_invite_modal = false;
+      this.showResult = false;
     }
   },
 
@@ -604,39 +733,70 @@ export default {
 
   methods: {
     select(item) {
-      this.selectedPracticeId = item.id;
-      this.toggle_invite_modal = true;
+      if (this.form.type === "Spoke") {
+        this.selectedPracticeHubId = item.id;
+        this.toggle_invite_modal = true;
+      }
+      if (this.form.type === "Hub") {
+        this.selectedPracticeSpoke = item;
+        this.toggle_permission_modal = true;
+      }
     },
     invite() {
-      this.practice_hub = this.practiceHubs.find(
-        practiceHub => practiceHub.id === this.selectedPracticeId
-      );
-      this.toggle_invite_modal = false;
-      this.showResult = false;
+      if (this.form.type === "Spoke") {
+        this.displayPracticeHub = this.practiceLists.find(
+          practiceHub => practiceHub.id === this.selectedPracticeHubId
+        );
+        this.toggle_invite_modal = false;
+        this.showResult = false;
+      }
     },
     removePracticeHub() {
-      this.practice_hub = null;
-      this.selectedPracticeId = null;
+      this.displayPracticeHub = null;
+      this.selectedPracticeHubId = null;
       this.showResult = true;
+    },
+    addSpoke(spoke) {
+      let index = this.displaySpokes.findIndex(
+        item => item.child_practice_id === spoke.child_practice_id
+      );
+      if (index >= 0) {
+        this.displaySpokes.splice(index, 1, spoke);
+      } else {
+        this.displaySpokes.push(spoke);
+      }
+      this.toggle_permission_modal = false;
+    },
+    editSpoke(spoke) {
+      this.selectedPracticeSpoke = spoke;
+      this.toggle_permission_modal = true;
+    },
+    removeSpoke(spoke) {
+      let index = this.displaySpokes.findIndex(
+        item => item.child_practice_id === spoke.child_practice_id
+      );
+      if (index >= 0) {
+        this.displaySpokes.splice(index, 1);
+      }
     },
     search() {
       if (this.search_text) {
+        let params = {
+          search: this.search_text,
+          limit: 10,
+          practice_type:
+            this.form.type === "Spoke"
+              ? ["Hub", "Stand Alone"]
+              : ["Spoke", "Stand Alone"]
+        };
         this.$axios
-          .$get(
-            `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`,
-            {
-              params: {
-                practice_type: "Hub"
-              }
-            }
-          )
+          .$get(`/api/v1/practice/practice-spokes`, { params })
           .then(res => {
-            this.practiceHubs =
+            this.practiceLists =
               res.data && res.data.practices ? res.data.practices : [];
             this.showResult = true;
           })
           .catch(err => {
-            console.log(err);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
@@ -648,13 +808,21 @@ export default {
     signUp() {
       this.formError = [];
 
-      this.form.hub_practice_id = this.selectedPracticeId;
-      if (["Hub"].includes(this.form.type)) {
-        notRequired.push("hub_practice_id");
-        this.form.hub_practice_id = null;
+      if (this.form.type === "Spoke") {
+        this.form.hub_practice_id = this.selectedPracticeHubId;
+      }
+      if (this.form.type === "Hub") {
+        this.form.surgeries = this.displaySpokes;
       }
 
-      let notRequired = ["title", "suffix", "vat_registered"];
+      let notRequired = [
+        "title",
+        "suffix",
+        "vat_registered",
+        "hub_practice_id",
+        "surgeries"
+      ];
+
       if (["Spoke", "Stand Alone"].includes(this.form.type)) {
         notRequired.push("hub_type");
       }
