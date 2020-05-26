@@ -186,62 +186,6 @@ export default {
           text: ["Something went wrong!"]
         });
       }
-
-      // if (this.search_text) {
-      //   this.$axios
-      //     .$get(
-      //       `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
-      //     )
-      //     .then(res => {
-      //       if (res.data && res.data.practices) {
-      //         res.data.practices.forEach(item => {
-      //           let checkSpoke = this.practiceSpokesResult.find(
-      //             spoke => spoke.id == item.id
-      //           );
-      //           if (!checkSpoke) {
-      //             this.practiceSpokesResult.push(item);
-      //           } else {
-      //             if (
-      //               checkSpoke.surgery.name ===
-      //                 this.search_text.toUpperCase() ||
-      //               checkSpoke.surgery.code === this.search_text.toUpperCase()
-      //             ) {
-      //               this.resultNotice = "This practice is already your spoke.";
-      //             }
-      //           }
-      //         });
-      //       }
-
-      //       let invited = "";
-      //       const loggedInPracticeId = this.$auth.user.practice_detail.practice
-      //         .id;
-
-      //       this.practiceSpokesResult.forEach(spoke => {
-      //         invited = this.practiceSpokeInvitations.find(
-      //           invitation => invitation.child_practice_id === spoke.id
-      //         );
-      //         if (invited) {
-      //           this.filteredPracticeSpokes.push({
-      //             ...spoke,
-      //             invited: true
-      //           });
-      //         } else {
-      //           this.filteredPracticeSpokes.push({
-      //             ...spoke,
-      //             invited: false
-      //           });
-      //         }
-      //       });
-      //       this.showResult = true;
-      //     })
-      //     .catch(err => {
-      //       this.$store.commit("SET_NOTIFICATION", {
-      //         enabled: true,
-      //         status: "danger",
-      //         text: ["Something went wrong!"]
-      //       });
-      //     });
-      // }
     },
     async select(item) {
       this.selectedSpoke = item;
@@ -256,27 +200,6 @@ export default {
         return;
       }
       this.toInvite = true;
-      // this.formError = [];
-      // let practiceSpokes = [];
-      // await this.$axios
-      //   .$get(`/api/v1/practice/me/practice-surgeries`)
-      //   .then(res => {
-      //     practiceSpokes = res.data.practice_surgeries;
-      //   });
-
-      // const exists = practiceSpokes.findIndex(
-      //   spoke => spoke.child_practice_id == item.id
-      // );
-      // if (exists <= -1 && !item.parent_practice_id) {
-      //   this.selectedSpoke = item;
-      //   this.toInvite = true;
-      // } else {
-      //   this.$store.commit("SET_NOTIFICATION", {
-      //     enabled: true,
-      //     status: "danger",
-      //     text: ["Spoke is Already Invited!"]
-      //   });
-      // }
     }
   }
 };

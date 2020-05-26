@@ -27,7 +27,10 @@
         </div>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-500">You do not have any invitation.</div>
+    <div
+      v-else
+      class="flex justify-center py-4 text-gray-500"
+    >No Spoke / Stand Alone invitations at the moment</div>
     <AppConfirmationModal
       :label="'Are you sure you want to reject this invitation?'"
       :confirmLabel="'Yes'"
