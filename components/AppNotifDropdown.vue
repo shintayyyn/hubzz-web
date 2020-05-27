@@ -453,8 +453,6 @@ export default {
     },
 
     newNotificationHandler(payload) {
-      console.log("alvin", payload);
-
       const { notification } = payload;
 
       if (notification) {
@@ -844,7 +842,7 @@ export default {
       if (locumLocumInvoiceNotifications.includes(notificationTypeName)) {
         const locumInvoice = payload;
 
-        const { id: locumInvoiceId } = locumInvoice;
+        const { id: locumInvoiceId, status } = locumInvoice;
 
         if (this.$route.name === "locum-billing-invoices") {
           this.$router.push({
@@ -853,7 +851,8 @@ export default {
               id: locumInvoiceId
             },
             query: {
-              ...this.$route.query
+              ...this.$route.query,
+              status: status === "Paid" ? "approved" : status.toLowerCase()
             }
           });
         } else {
@@ -866,6 +865,9 @@ export default {
               name: "locum-billing-invoices-id",
               params: {
                 id: locumInvoiceId
+              },
+              query: {
+                status: status === "Paid" ? "approved" : status.toLowerCase()
               }
             });
           }, 500);
@@ -1196,7 +1198,8 @@ export default {
         const {
           id: locumInvoiceId,
           practice_id: locumInvoicePracticeId,
-          practice_surgery_id: practiceSurgeryId
+          practice_surgery_id: practiceSurgeryId,
+          status
         } = locumInvoice;
 
         if (
@@ -1229,7 +1232,8 @@ export default {
                 id: locumInvoiceId
               },
               query: {
-                ...this.$route.query
+                ...this.$route.query,
+                status: status === "Paid" ? "approved" : status.toLowerCase()
               }
             });
           } else {
@@ -1242,6 +1246,9 @@ export default {
                 name: "practice-billing-invoices-from-locums-id",
                 params: {
                   id: locumInvoiceId
+                },
+                query: {
+                  status: status === "Paid" ? "approved" : status.toLowerCase()
                 }
               });
             }, 500);
@@ -1389,8 +1396,6 @@ export default {
     },
 
     oldGoTo(notification) {
-      console.log(notification);
-
       let job = notification.payload.job
         ? notification.payload.job
         : notification.payload;
