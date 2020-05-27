@@ -361,7 +361,6 @@ export default {
         `/api/v1/practice/me/practice-surgeries/${params.invitationId}`
       );
       let practice_surgery = response.data.practice_surgery;
-      console.log(practice_surgery);
       return {
         practice_surgery
       };
@@ -392,7 +391,6 @@ export default {
         )
         .then(res => {
           this.practice_surgery = res.data.data.practice_surgery;
-          console.log("practice_surgery", this.practice_surgery);
         });
     },
     save() {
@@ -407,8 +405,6 @@ export default {
           this.form
         )
         .then(res => {
-          console.log(res);
-          //   this.$emit("updateSurgery", res.data.practice_surgery);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",

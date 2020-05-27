@@ -89,7 +89,7 @@ export default {
   },
   data() {
     return {
-      selectedPracticeId: null,
+      selectedPractice: null,
       search_text: "",
       showResult: false,
       toggle_invite_modal: false,
@@ -100,40 +100,68 @@ export default {
     };
   },
   methods: {
-    search() {
-      if (this.search_text) {
-        this.$axios
-          .$get(
-            `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`,
-            {
-              params: {
-                practice_type: "Hub"
-              }
+    async search() {
+      if (!this.search_text) {
+        return;
+      }
+      try {
+        let invitationIds = [];
+        let res = await this.$axios.$get(
+          `/api/v1/practice/me/parent-surgery/invitations`,
+          {
+            params: {
+              is_invitation_accepted: false
             }
-          )
-          .then(res => {
-            this.practiceHubs =
-              res.data && res.data.practices ? res.data.practices : [];
-            this.showResult = true;
-          })
-          .catch(err => {
-            console.log(err);
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: ["Something went wrong!"]
+          }
+        );
+        invitationIds = res.data.practice_surgeries.map(
+          practiceSurgery => practiceSurgery.practice_id
+        );
+        res = await this.$axios.$get(
+          `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`,
+          {
+            params: {
+              practice_type: ["Hub", "Stand Alone"]
+            }
+          }
+        );
+
+        if (res.data && res.data.practices && res.data.practices.length > 0) {
+          res.data.practices.forEach(practice => {
+            this.practiceHubs.push({
+              ...practice,
+              invited: invitationIds.includes(practice.id) ? true : false
             });
           });
+        }
+        this.showResult = true;
+      } catch (error) {
+        console.log(error);
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Something went wrong!"]
+        });
       }
     },
     select(item) {
-      this.selectedPracticeId = item.id;
+      this.selectedPractice = item;
+      if (this.selectedPractice.invited) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [
+            `This Hub already invited you. Please check your Hub invitations`
+          ]
+        });
+        return;
+      }
       this.toggle_invite_modal = true;
     },
     invite() {
       this.$axios
         .$post(`/api/v1/practice/me/parent-surgery/invite`, {
-          practice_id: this.selectedPracticeId
+          practice_id: this.selectedPractice.id
         })
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
@@ -142,7 +170,6 @@ export default {
             text: [`${res.message}`]
           });
           this.$router.push(`/spoke-surgery-management/invitations/spoke`);
-          this.$emit("getPracticeHub");
         })
         .catch(err => {
           if (err.response.status === 400 && err.response.data.message) {

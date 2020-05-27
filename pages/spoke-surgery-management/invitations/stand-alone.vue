@@ -18,7 +18,7 @@
         <div class="flex flex-wrap justify-center">
           <button
             class="rounded-lg px-4 py-1 shadow-lg focus:outline-none bg-yellow-500 font-bold m-1"
-            @click="$router.push({ path: `/hub-surgery-management/invitations/spoke/${slotProps.item.id}`})"
+            @click="$router.push({ path: `/spoke-surgery-management/invitations/stand-alone/${slotProps.item.id}`})"
           >Accept</button>
           <button
             class="rounded-lg px-4 py-1 shadow-lg focus:outline-none bg-red-600 text-gray-200 font-bold m-1"
@@ -27,12 +27,9 @@
         </div>
       </template>
     </AppTable>
-    <div
-      v-else
-      class="flex justify-center py-4 text-gray-500"
-    >No Spoke / Stand Alone invitations at the moment</div>
+    <div v-else class="flex justify-center py-4 text-gray-500">You do not have any invitation.</div>
     <AppConfirmationModal
-      :label="'Are you sure you want to reject this invitation?'"
+      :label="'Are you sure you want to cancel your invitation?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="toggle_reject_modal"
@@ -41,12 +38,12 @@
     />
     <transition name="fade" mode="out-in">
       <div
-        v-if="['hub-surgery-management-invitations-spoke-invitationId', 'hub-surgery-management-invitations'].includes($route.name)"
+        v-if="['spoke-surgery-management-invitations-stand-alone-invitationId'].includes($route.name)"
         class="shield"
-        @click="$router.push('/hub-surgery-management/invitations/spoke')"
+        @click="$router.push('/spoke-surgery-management/invitations/stand-alone')"
       />
     </transition>
-    <nuxt-child />
+    <nuxt-child @acceptSpoke="acceptSpoke" />
   </div>
 </template>
 <script>
@@ -134,68 +131,7 @@ export default {
       throw err;
     }
   },
-  mounted() {
-    this.addSocketListeners();
-  },
-  destroyed() {
-    this.removeSocketListener();
-  },
   methods: {
-    addSocketListeners() {
-      this.$socket.on(
-        "Practice Notification Create Hub",
-        this.getInvitationPromiseAll
-      );
-      this.$socket.on(
-        "Practice Notification Delete Hub",
-        this.getInvitationPromiseAll
-      );
-      this.$socket.on(
-        "Practice Notification Accept Surgery",
-        this.getInvitationPromiseAll
-      );
-      this.$socket.on(
-        "Practice Notification Reject Hub",
-        this.getInvitationPromiseAll
-      );
-    },
-    removeSocketListener() {
-      this.$socket.removeListener(
-        "Practice Notification Create Hub",
-        this.getInvitationPromiseAll
-      );
-      this.$socket.removeListener(
-        "Practice Notification Delete Hub",
-        this.getInvitationPromiseAll
-      );
-      this.$socket.removeListener(
-        "Practice Notification Accept Surgery",
-        this.getInvitationPromiseAll
-      );
-      this.$socket.removeListener(
-        "Practice Notification Reject Hub",
-        this.getInvitationPromiseAll
-      );
-    },
-    async getInvitationPromiseAll() {
-      const resCount = await this.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/spoke-invitations/count`
-      );
-
-      this.totalSurgeries =
-        resCount.data && resCount.data.count ? resCount.data.count : 0;
-
-      const res = await this.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/spoke-invitations?limit=5`
-      );
-
-      this.surgeries = [];
-      if (res.data && res.data.invitations) {
-        res.data.invitations.forEach(surgery => {
-          this.surgeries.push(surgery);
-        });
-      }
-    },
     acceptSpoke(id) {
       let index = this.surgeries.findIndex(surgery => surgery.id === id);
       if (index >= 0) {

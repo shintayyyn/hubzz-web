@@ -143,40 +143,28 @@
 			/>
 		</template>
 		<template v-else-if="info && info.shifts.length === 4">
+			<div class="bg-shift-am h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white" />
 			<div
-				:class="shiftType(info && info.shifts[0])"
-				class="h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white"
+				class="bg-shift-am w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-white"
+				style="height:50%"
 			/>
+			<div class="bg-shift-pm h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white" />
 			<div
-				:class="shiftType(info && info.shifts[0])"
-				class="w-1 absolute bottom-0 left-0 rounded-bl border-t-2 border-white"
+				class="bg-shift-pm w-1 absolute top-0 left-0 rounded-tl border-b-2 border-white"
 				style="height:50%"
 			/>
 			<div
-				:class="shiftType(info && info.shifts[1])"
-				class="h-1 w-1/2 absolute left-0 top-0 rounded-tl border-r-2 border-white"
+				class="bg-shift-ooh h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-white"
 			/>
 			<div
-				:class="shiftType(info && info.shifts[1])"
-				class="w-1 absolute top-0 left-0 rounded-tl border-b-2 border-white"
+				class="bg-shift-ooh w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-white"
 				style="height:50%"
 			/>
 			<div
-				:class="shiftType(info && info.shifts[2])"
-				class="h-1 w-1/2 absolute right-0 bottom-0 rounded-br border-l-2 border-white"
+				class="bg-shift-whole-day h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
 			/>
 			<div
-				:class="shiftType(info && info.shifts[2])"
-				class="w-1 absolute bottom-0 right-0 rounded-br border-t-2 border-white"
-				style="height:50%"
-			/>
-			<div
-				:class="shiftType(info && info.shifts[3])"
-				class="h-1 w-1/2 absolute right-0 top-0 rounded-tr border-l-2 border-white"
-			/>
-			<div
-				:class="shiftType(info && info.shifts[3])"
-				class="w-1 absolute top-0 right-0 rounded-tr border-b-2 border-white"
+				class="bg-shift-whole-day w-1 absolute top-0 right-0 rounded-tr border-b-2 border-white"
 				style="height:50%"
 			/>
 		</template>
@@ -210,28 +198,28 @@ export default {
 </script>
 <style>
 .bg-job-active {
-	background-color: #38b460;
+	background-color: #66cc88;
 }
 
 .bg-job-pending {
-	background-color: #ffa901;
+	background-color: #f2df0c;
 }
 
 .bg-job-unfilled {
-	background-color: #cd1424;
+	background-color: #e65c67;
 }
 
 .bg-shift-whole-day {
-	background-color: #fe703e;
+	background-color: #ff9966;
 }
 .bg-shift-am {
-	background-color: #ff59ca;
+	background-color: #ff7fbf;
 }
 .bg-shift-pm {
-	background-color: #34bbff;
+	background-color: #91d2f2;
 }
 .bg-shift-ooh {
-	background-color: #947ffe;
+	background-color: #aca1e5;
 }
 .bottom-right {
 	clip-path: polygon(90% 52%, 90% 90%, 52% 90%, 52% 100%, 100% 100%, 100% 52%);

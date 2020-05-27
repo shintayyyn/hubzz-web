@@ -5,7 +5,7 @@
         :to="'/hub-surgery-management/invitations/spoke'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
         :class="$route.name.includes('hub-surgery-management-invitations-spoke') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Spoke Invitations</nuxt-link>
+      >Spoke / Stand Alone Invitations</nuxt-link>
       <nuxt-link
         :to="'/hub-surgery-management/invitations/hub'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
@@ -16,7 +16,7 @@
           v-if="$route.name.includes('hub-surgery-management-invitations-hub')"
           :to="'/hub-surgery-management/invitations/hub/create'"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-500 bg-yellow-500 hover:text-white"
-        >Invite Spoke</nuxt-link>
+        >Invite</nuxt-link>
       </transition>
     </div>
     <nuxt-child />

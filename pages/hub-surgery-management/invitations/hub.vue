@@ -40,7 +40,7 @@
         </div>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-500">You did not invite any spoke.</div>
+    <div v-else class="flex justify-center py-4 text-gray-500">You did not invite any surgery.</div>
     <AppConfirmationModal
       :label="'Are you sure you want to cancel your invitation?'"
       :confirmLabel="'Yes'"
@@ -56,7 +56,7 @@
         @click="$router.push('/hub-surgery-management/invitations/hub')"
       />
     </transition>
-    <nuxt-child @addSurgery="addSurgery" @updateSurgery="updateSurgery" />
+    <nuxt-child />
   </div>
 </template>
 <script>
@@ -179,20 +179,58 @@ export default {
       throw err;
     }
   },
-  // mounted() {
-  //   this.surgeries.forEach(surgery => {
-  //     if (surgery.share_my_banks === true) {
-  //       this.selectedItems.push(surgery.id);
-  //     }
-  //   });
-  // },
+  mounted() {
+    this.addSocketListeners();
+  },
+  destroyed() {
+    this.removeSocketListener();
+  },
   methods: {
+    addSocketListeners() {
+      this.$socket.on(
+        "Practice Notification Create Surgery",
+        this.getSurgeriesCount
+      );
+      this.$socket.on(
+        "Practice Notification Delete Surgery",
+        this.getSurgeriesCount
+      );
+      this.$socket.on(
+        "Practice Notification Accept Surgery",
+        this.getSurgeriesCount
+      );
+      this.$socket.on(
+        "Practice Notification Reject Surgery",
+        this.getSurgeriesCount
+      );
+    },
+    removeSocketListener() {
+      this.$socket.removeListener(
+        "Practice Notification Create Surgery",
+        this.getSurgeriesCount
+      );
+      this.$socket.removeListener(
+        "Practice Notification Delete Surgery",
+        this.getSurgeriesCount
+      );
+      this.$socket.removeListener(
+        "Practice Notification Accept Surgery",
+        this.getSurgeriesCount
+      );
+      this.$socket.removeListener(
+        "Practice Notification Reject Surgery",
+        this.getSurgeriesCount
+      );
+    },
     getSurgeriesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/me/practice-surgeries/count`, { params })
         .then(res => {
           this.totalSurgeries = res.data.count;
           this.getSurgeries(this.params);
+        })
+        .catch(err => {
+          console.log(err);
         });
     },
     getSurgeries(params) {
@@ -205,14 +243,7 @@ export default {
           res.data.practice_surgeries.forEach(surgery => {
             surgery.status = this.getStatus(surgery);
             this.surgeries.push(surgery);
-            // this.surgeries.push({ ...surgery, removable: true });
           });
-          // this.selectedItems = [];
-          // this.surgeries.forEach(surgery => {
-          //   if (surgery.share_my_banks === true) {
-          //     this.selectedItems.push(surgery.id);
-          //   }
-          // });
         })
         .catch(err => {
           console.log(err);
@@ -258,14 +289,6 @@ export default {
             this.modal = false;
           });
       }
-    },
-    addSurgery(payload) {
-      if (!this.surgeries.map(item => item.id).includes(payload.id)) {
-        this.surgeries.push(payload);
-      }
-    },
-    updateSurgery() {
-      this.getSurgeriesCount(this.params);
     },
     getStatus(surgery) {
       let status = "Invited";

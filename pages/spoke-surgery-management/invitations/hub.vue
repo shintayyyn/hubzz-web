@@ -45,7 +45,7 @@
         class="shield"
       />
     </transition>
-    <nuxt-child @rejectInvitation="getInvitationPromiseAll" />
+    <nuxt-child />
   </section>
 </template>
 <script>
@@ -124,7 +124,8 @@ export default {
           `/api/v1/practice/me/parent-surgery/invitations-count`,
           {
             params: {
-              is_invitation_accepted: false
+              is_invitation_accepted: false,
+              manual_status: "Active"
             }
           }
         );
@@ -134,7 +135,9 @@ export default {
           `/api/v1/practice/me/parent-surgery/invitations`,
           {
             params: {
-              is_invitation_accepted: false
+              limit: 5,
+              is_invitation_accepted: false,
+              manual_status: "Active"
             }
           }
         );
@@ -150,7 +153,49 @@ export default {
       throw err;
     }
   },
+  mounted() {
+    this.addSocketListeners();
+  },
+  destroyed() {
+    this.removeSocketListener();
+  },
   methods: {
+    addSocketListeners() {
+      this.$socket.on(
+        "Practice Notification Create Surgery",
+        this.getInvitationPromiseAll
+      );
+      this.$socket.on(
+        "Practice Notification Delete Surgery",
+        this.getInvitationPromiseAll
+      );
+      this.$socket.on(
+        "Practice Notification Accept Surgery",
+        this.getInvitationPromiseAll
+      );
+      this.$socket.on(
+        "Practice Notification Reject Surgery",
+        this.getInvitationPromiseAll
+      );
+    },
+    removeSocketListener() {
+      this.$socket.removeListener(
+        "Practice Notification Create Surgery",
+        this.getInvitationPromiseAll
+      );
+      this.$socket.removeListener(
+        "Practice Notification Delete Surgery",
+        this.getInvitationPromiseAll
+      );
+      this.$socket.removeListener(
+        "Practice Notification Accept Surgery",
+        this.getInvitationPromiseAll
+      );
+      this.$socket.removeListener(
+        "Practice Notification Reject Surgery",
+        this.getInvitationPromiseAll
+      );
+    },
     getInvitationPromiseAll() {
       return Promise.all([
         this.$axios.$get(
@@ -163,6 +208,8 @@ export default {
         ),
         this.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations`, {
           params: {
+            offset: 0,
+            limit: 5,
             is_invitation_accepted: false
           }
         })
