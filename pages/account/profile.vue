@@ -7,7 +7,9 @@
         <AppFormError v-if="formError.length > 0" :formError="formError" />
 
         <form class="w-full">
-          <AppInput
+          <div>Profession</div>
+          <div class="ml-2 font-bold my-2 mb-4">{{user.profession.name}}</div>
+          <!-- <AppInput
             v-model="form.profession_id"
             :type="'select'"
             :name="'profession_id'"
@@ -15,8 +17,8 @@
             :placeholder="'Select...'"
             :items="professions"
             required
-          />
-
+            disabled
+          />-->
           <div
             v-for="(item, index) in form.reference_locum_compliance_documents"
             :key="item.compliance_document_id"

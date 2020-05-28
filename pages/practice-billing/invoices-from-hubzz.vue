@@ -126,14 +126,14 @@ export default {
           class: "text-left"
         },
         {
-          name: "Issued",
-          dataIndex: "date_created",
-          class: "text-center localDate"
-        },
-        {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left"
+        },
+        {
+          name: "Issued",
+          dataIndex: "date_created",
+          class: "text-center localDate"
         },
         {
           name: "£ Amount",
