@@ -370,6 +370,12 @@
           </div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="flex flex-col w-full md:w-1/2 px-2">
+              <!-- <div class="flex justify-start mt-5">
+                <div
+                  class="bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
+                  @click="$router.push('/profile/create')"
+                >Add mandatory training</div>
+              </div>-->
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
@@ -467,6 +473,14 @@
       @confirm="remove"
       @cancel="modal = false"
     />
+    <transition name="fade" mode="out-in">
+      <div
+        class="shield"
+        v-if="$route.name === 'profile-index-create'"
+        @click="$router.push('/profile')"
+      ></div>
+    </transition>
+    <nuxt-child @addMandatory="addMandatory" />
   </section>
 </template>
 <script>
@@ -587,6 +601,7 @@ export default {
             practice_types,
             mandatory_trainings,
             profession_compliance_categories
+            // practice_other_mandatory_training
           ] = await Promise.all([
             app.$axios
               .$get("/api/v1/practice/me/practice")
@@ -656,12 +671,19 @@ export default {
                     mandatory_compliance_documents: tempArray2
                   });
                 });
-                console.log("alvin", tempArray);
 
                 return tempArray;
               })
+
+            // app.$axios
+            //   .$get(`/api/v1/practice/other-mandatory-training`)
+            //   .then(res => {
+            //     console.log(res);
+            //     // return res.data.practice_other_mandatory_trainings;
+            //   })
           ]);
 
+          // console.log(practice_other_mandatory_training);
           // profession_compliance_categories = profession_compliance_categories.forEach(
           //   item => {
           //     item.mandatory_compliance_documents.map(
@@ -739,6 +761,9 @@ export default {
     this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name;
   },
   methods: {
+    addMandatory(payload) {
+      console.log(payload);
+    },
     async onFileInput(e) {
       if (!e.target.files.length) {
         return;
