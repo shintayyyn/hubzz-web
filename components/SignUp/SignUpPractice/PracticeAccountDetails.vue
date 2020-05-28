@@ -210,7 +210,7 @@
           </template>
 
           <template v-if="form.type === 'Spoke'">
-            <div class="font-bold text-sm mt-4">Your Practice Hub</div>
+            <div class="font-bold text-sm mt-4">Invite Hub</div>
             <template v-if="displayPracticeHub">
               <div class="flex flex-col">
                 <div class="flex justify-start">
@@ -233,7 +233,12 @@
               <div
                 class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
                 @click="removePracticeHub"
-                v-text="`Select another ${form.type === 'Hub' ? 'Spoke' : 'Hub'}`"
+                v-text="`Change ${form.type === 'Hub' ? 'Spoke' : 'Hub'}`"
+              ></div>
+              <div
+                class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
+                @click="cancelInvitation"
+                v-text="`Cancel Invitation`"
               ></div>
             </template>
             <template v-if="!displayPracticeHub">
@@ -303,7 +308,7 @@
           </template>
 
           <template v-if="form.type === 'Hub'">
-            <div class="font-bold text-sm mt-4">Your Spokes</div>
+            <div class="font-bold text-sm mt-4">Invite Spokes</div>
             <template v-if="displaySpokes.length > 0">
               <div
                 class="flex justify-between mb-2"
@@ -325,6 +330,11 @@
                   >Remove</div>
                 </div>
               </div>
+              <div
+                class="text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
+                @click="cancelInvitation"
+                v-text="`Cancel Invitation`"
+              ></div>
             </template>
             <AppInput
               v-model="search_text"
@@ -732,6 +742,13 @@ export default {
   },
 
   methods: {
+    cancelInvitation() {
+      this.displayPracticeHub = null;
+      this.selectedPracticeHubId = null;
+      this.showResult = false;
+      this.search_text = "";
+      this.displaySpokes = [];
+    },
     select(item) {
       if (this.form.type === "Spoke") {
         this.selectedPracticeHubId = item.id;
