@@ -330,11 +330,6 @@
                   >Remove</div>
                 </div>
               </div>
-              <div
-                class="text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
-                @click="cancelInvitation"
-                v-text="`Cancel Invitation`"
-              ></div>
             </template>
             <AppInput
               v-model="search_text"
@@ -780,7 +775,29 @@ export default {
       if (index >= 0) {
         this.displaySpokes.splice(index, 1, spoke);
       } else {
-        this.displaySpokes.push(spoke);
+        this.displaySpokes.push({
+          ...spoke,
+          max_excess_hours:
+            spoke.max_excess_hours.trim().length === 0
+              ? 0
+              : parseInt(spoke.max_excess_hours),
+          max_halfday_rate_limit:
+            spoke.max_halfday_rate_limit.trim().length === 0
+              ? 0
+              : parseInt(spoke.max_halfday_rate_limit),
+          max_hourly_rate_limit:
+            spoke.max_hourly_rate_limit.trim().length === 0
+              ? 0
+              : parseInt(spoke.max_hourly_rate_limit),
+          max_ooh_rate_limit:
+            spoke.max_ooh_rate_limit.trim().length === 0
+              ? 0
+              : parseInt(spoke.max_ooh_rate_limit),
+          max_wholeday_rate_limit:
+            spoke.max_wholeday_rate_limit.trim().length === 0
+              ? 0
+              : parseInt(spoke.max_wholeday_rate_limit)
+        });
       }
       this.toggle_permission_modal = false;
     },
