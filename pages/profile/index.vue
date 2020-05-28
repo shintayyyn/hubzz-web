@@ -370,12 +370,6 @@
           </div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="flex flex-col w-full md:w-1/2 px-2">
-              <!-- <div class="flex justify-start mt-5">
-                <div
-                  class="bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
-                  @click="$router.push('/profile/create')"
-                >Add mandatory training</div>
-              </div>-->
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
@@ -385,6 +379,22 @@
                 @checked="form.mandatory_training_id.push(parseInt($event))"
                 @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
                 @uncheckAll="form.mandatory_training_id = []"
+              />
+            </div>
+            <div class="flex flex-col w-full md:w-1/2 px-2">
+              <AppInput
+                v-model="form.other_mandatory_training_id"
+                :type="'multi-checkbox'"
+                :name="'other_mandatory_training_id'"
+                :label="'Other Mandatory Training:'"
+                :lists="practice_other_mandatory_trainings"
+                @checked="form.other_mandatory_training_id.push(parseInt($event))"
+                @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
+                @uncheckAll="form.other_mandatory_training_id = []"
+                updatable
+                @addList="addList"
+                @updateList="updateList"
+                @remove="toggleRemoveMandatoryModal"
               />
             </div>
             <div class="flex flex-col w-full md:w-1/2 px-2">
@@ -473,6 +483,14 @@
       @confirm="remove"
       @cancel="modal = false"
     />
+    <AppConfirmationModal
+      :label="'Proceed to remove this mandatory traning?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="toggle_remove_mandatory_modal"
+      @confirm="removeMandatory"
+      @cancel="toggle_remove_mandatory_modal = false"
+    />
     <transition name="fade" mode="out-in">
       <div
         class="shield"
@@ -480,7 +498,7 @@
         @click="$router.push('/profile')"
       ></div>
     </transition>
-    <nuxt-child @addMandatory="addMandatory" />
+    <nuxt-child />
   </section>
 </template>
 <script>
@@ -506,12 +524,15 @@ export default {
   data() {
     return {
       // surgery: null,
+      toggle_remove_mandatory_modal: false,
+      selectedMandatory: null,
       isOOH: false,
       modal: false,
       loading: false,
       input_file_loading: false,
       terms: [],
       form: {
+        other_mandatory_training_id: [],
         phone_number: "",
         report_to: "",
         email: "",
@@ -600,18 +621,12 @@ export default {
             [practice],
             practice_types,
             mandatory_trainings,
-            profession_compliance_categories
-            // practice_other_mandatory_training
+            profession_compliance_categories,
+            practice_other_mandatory_trainings
           ] = await Promise.all([
             app.$axios
               .$get("/api/v1/practice/me/practice")
               .then(responsePractice => {
-                // const surgery =
-                //   responsePractice.data &&
-                //   responsePractice.data.practice &&
-                //   responsePractice.data.practice.surgery
-                //     ? responsePractice.data.practice.surgery
-                //     : null;
                 const practice =
                   responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
@@ -657,7 +672,7 @@ export default {
             app.$axios
               .$get(`/api/v1/profession-compliance-categories`)
               .then(res => {
-                let tempArray = [];
+                let profession_compliance_categories = [];
 
                 res.data.profession_compliance_categories.forEach(item => {
                   let tempArray2 = [];
@@ -666,38 +681,33 @@ export default {
                       tempArray2.push(docs);
                     }
                   });
-                  tempArray.push({
+                  profession_compliance_categories.push({
                     ...item,
                     mandatory_compliance_documents: tempArray2
                   });
                 });
 
-                return tempArray;
-              })
+                return profession_compliance_categories;
+              }),
 
-            // app.$axios
-            //   .$get(`/api/v1/practice/other-mandatory-training`)
-            //   .then(res => {
-            //     console.log(res);
-            //     // return res.data.practice_other_mandatory_trainings;
-            //   })
+            app.$axios
+              .$get(`/api/v1/practice/other-mandatory-training`)
+              .then(res => {
+                return res.data.practice_other_mandatory_trainings.map(item => {
+                  return {
+                    label: item.name,
+                    value: item.id
+                  };
+                });
+              })
           ]);
 
-          // console.log(practice_other_mandatory_training);
-          // profession_compliance_categories = profession_compliance_categories.forEach(
-          //   item => {
-          //     item.mandatory_compliance_documents.map(
-          //       docs => docs.name !== "Visa (for non-EU)"
-          //     );
-          //   }
-          // );
-
           return {
-            // surgery,
             practice,
             practice_types,
             mandatory_trainings,
-            profession_compliance_categories
+            profession_compliance_categories,
+            practice_other_mandatory_trainings
           };
         } catch (err) {
           console.log("err", err.response || err);
@@ -732,6 +742,9 @@ export default {
     this.practice.mandatory_trainings.forEach(item => {
       this.form.mandatory_training_id.push(item.id);
     });
+    this.practice.other_mandatory_trainings.forEach(item => {
+      this.form.other_mandatory_training_id.push(item.id);
+    });
     this.form.use_variation_terms = this.practice.use_variation_terms;
     this.form.vat_registered = this.practice.vat_registered;
     this.form.vat_number = this.practice.vat_number;
@@ -761,8 +774,74 @@ export default {
     this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name;
   },
   methods: {
-    addMandatory(payload) {
-      console.log(payload);
+    addList(payload) {
+      this.$axios
+        .$post(`/api/v1/practice/other-mandatory-training`, { name: payload })
+        .then(res => {
+          this.practice_other_mandatory_trainings;
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.practice_other_mandatory_trainings.findIndex(
+            item =>
+              item.value === res.data.practice_other_mandatory_training.id &&
+              item.label === res.data.practice_other_mandatory_training.name
+          );
+          if (index < 0) {
+            this.practice_other_mandatory_trainings.push({
+              label: res.data.practice_other_mandatory_training.name,
+              value: res.data.practice_other_mandatory_training.id
+            });
+          }
+        });
+    },
+    updateList(payload) {
+      this.$axios
+        .$put(`/api/v1/practice/other-mandatory-training/${payload.value}`, {
+          name: payload.label
+        })
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.practice_other_mandatory_trainings.findIndex(
+            item => item.value === payload.value
+          );
+          if (index >= 0) {
+            this.practice_other_mandatory_trainings.splice(index, 1, payload);
+          }
+        });
+    },
+    toggleRemoveMandatoryModal(payload) {
+      this.selectedMandatory = payload;
+      this.toggle_remove_mandatory_modal = true;
+    },
+    removeMandatory() {
+      this.$axios
+        .$delete(
+          `/api/v1/practice/other-mandatory-training/${this.selectedMandatory.value}`
+        )
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.practice_other_mandatory_trainings.findIndex(
+            item => item.value === this.selectedMandatory.value
+          );
+          if (index >= 0) {
+            this.practice_other_mandatory_trainings.splice(index, 1);
+          }
+        })
+        .finally(() => {
+          this.toggle_remove_mandatory_modal = false;
+          this.selectedMandatory = null;
+        });
     },
     async onFileInput(e) {
       if (!e.target.files.length) {
@@ -862,7 +941,8 @@ export default {
         "mandatory_training_id",
         "extra_information",
         "vat_registered",
-        "practice_profession_compliance_category_compliance_documents"
+        "practice_profession_compliance_category_compliance_documents",
+        "other_mandatory_training_id"
       ];
 
       if (!this.form.practice_type_id.includes(8)) {
