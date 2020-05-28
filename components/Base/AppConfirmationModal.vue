@@ -16,12 +16,16 @@
           <div class="flex justify-center">
             <div class="text-sm md:text-base font-bold">{{label3}}</div>
           </div>
-          <div class="flex justify-center my-2">
+          <div class="flex justify-center" v-if="loading">
+            <svgicon v-if="loading" name="loader" width="60" height="60" />
+          </div>
+          <div class="flex justify-center my-2" v-if="!loading">
             <div class="mx-2">
               <button
                 class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 rounded-lg"
                 style="width:100px;"
                 @click.prevent="$emit('confirm')"
+                :disabled="loading"
               >{{confirmLabel}}</button>
             </div>
             <div class="mx-2" v-if="cancelLabel">
@@ -29,6 +33,7 @@
                 class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 rounded-lg"
                 @click.prevent="$emit('cancel')"
                 style="width:100px;"
+                :disabled="loading"
               >{{cancelLabel}}</button>
             </div>
           </div>
@@ -53,16 +58,20 @@ export default {
       required: true
     },
     label2: {
-      type: String,
+      type: String
     },
     label3: {
-      type: String,
+      type: String
     },
     confirmLabel: {
       type: String
     },
     cancelLabel: {
       type: String
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   }
 };

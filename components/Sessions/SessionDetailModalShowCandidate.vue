@@ -210,6 +210,7 @@
       :modal="confirmation_modal"
       @confirm="checkIfLocumAlreadyAppointed"
       @cancel="confirmation_modal = false"
+      :loading="checkLoading"
     />
     <AppConfirmationModal
       :label="`This Locum is already appointed on one of ${this.$auth.user.practice_id === this.job.practice_id ? 'your' : 'this Spoke'} Job.`"
@@ -247,6 +248,7 @@ export default {
   },
   data() {
     return {
+      checkLoading: false,
       warning_modal: false,
       conflictJobs: [],
       //
@@ -339,6 +341,7 @@ export default {
         });
     },
     checkIfLocumAlreadyAppointed() {
+      this.checkLoading = true;
       this.$axios
         .$get(`/api/v1/practice/job-parts`, {
           params: {
@@ -366,15 +369,15 @@ export default {
             }
           });
 
-          console.log("Job Dates", this.job.dates);
-          console.log("Job Conflict Dates", this.conflictJobs);
-
           if (this.conflictJobs.length > 0) {
             this.warning_modal = true;
             this.confirmation_modal = false;
           } else if (this.conflictJobs.length === 0) {
             this.appoint();
           }
+        })
+        .finally(() => {
+          this.checkLoading = false;
         });
     },
     appoint() {
