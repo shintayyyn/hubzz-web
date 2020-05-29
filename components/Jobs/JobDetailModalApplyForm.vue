@@ -115,7 +115,7 @@ export default {
           if (this.conflictJobs.length > 0) {
             this.warning_modal = true;
           } else if (this.conflictJobs.length === 0) {
-            this.appoint();
+            this.apply();
           }
         })
         .finally(() => {

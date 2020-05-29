@@ -838,6 +838,14 @@ export default {
             this.practice_other_mandatory_trainings.splice(index, 1);
           }
         })
+        .catch(err => {
+          console.log("err", err.response || err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        })
         .finally(() => {
           this.toggle_remove_mandatory_modal = false;
           this.selectedMandatory = null;

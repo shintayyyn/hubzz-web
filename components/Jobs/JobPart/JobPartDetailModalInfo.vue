@@ -201,6 +201,19 @@
             class="rounded-lg bg-yellow-500 p-2 m-1"
           >{{ item.name }}</div>
         </div>
+        <div class="font-bold text-sm sm:text-md">Other Mandatory training</div>
+        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+          <div
+            v-if="job_part.job.platform_job.other_mandatory_trainings.length === 0"
+            class="mt-1"
+          >(none)</div>
+          <div
+            v-for="item in job_part.job.platform_job.other_mandatory_trainings"
+            v-else
+            :key="item.id"
+            class="rounded-lg bg-yellow-500 p-2 m-1"
+          >{{ item.name }}</div>
+        </div>
 
         <template
           v-if="['Completed', 'Terminated', 'Approved', 'Cancelled'].includes(job_part.status)"
