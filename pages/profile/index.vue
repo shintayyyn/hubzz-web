@@ -778,7 +778,6 @@ export default {
       this.$axios
         .$post(`/api/v1/practice/other-mandatory-training`, { name: payload })
         .then(res => {
-          this.practice_other_mandatory_trainings;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
