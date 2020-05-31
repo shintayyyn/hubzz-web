@@ -29,7 +29,7 @@
     </AppTable>
     <div v-else class="flex justify-center py-4 text-gray-500">You do not have any invitation.</div>
     <AppConfirmationModal
-      :label="'Are you sure you want to cancel your invitation?'"
+      :label="'Are you sure you want to reject this invitation?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="toggle_reject_modal"

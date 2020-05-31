@@ -42,7 +42,7 @@
     </AppTable>
     <div v-else class="flex justify-center py-4 text-gray-500">You did not invite any surgery.</div>
     <AppConfirmationModal
-      :label="'Are you sure you want to cancel your invitation?'"
+      :label="'Are you sure you want to remove this invitation?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="modal"
