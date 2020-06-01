@@ -315,7 +315,6 @@ Vue.mixin({
       // numbers only [0-9, A-Z, a-z]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
-      console.log(charCode)
       let specialKeys = [8, 9, 46, 36, 35, 37, 38, 39, 40]
       if (e.shiftKey) {
         if ((charCode => 48 || charCode <= 57) && (charCode < 65 || charCode > 122)) {
@@ -351,14 +350,74 @@ Vue.mixin({
     },
 
     limitInput(e, value, limit) {
-      console.log(value.length)
       if (value.length >= limit) {
-        console.log(e)
         // e.quill.emitter._events.preventDefault()
         // e.preventDefault();
       } else {
         return true
       }
+    },
+
+    datesToJobParts(dates) {
+      const datesDays = dates
+        .reduce((datesDays, date) => {
+          datesDays[date] = this.$moment(date, 'YYYY-MM-DD').format('dddd')
+          return datesDays
+        }, {})
+
+      const jobParts = []
+
+      const dayOrder = {
+        Monday: 0,
+        Tuesday: 1,
+        Wednesday: 2,
+        Thursday: 3,
+        Friday: 4,
+        Saturday: 5,
+        Sunday: 6,
+      }
+
+      dates.forEach((date) => {
+        if (jobParts.length === 0) {
+          jobParts.push({
+            dates: [
+              date,
+            ],
+          })
+        } else {
+          const lastJobPart = jobParts[jobParts.length - 1]
+
+          const {
+            dates: jobPartDates,
+          } = lastJobPart
+
+          const lastDate = jobPartDates[jobPartDates.length - 1]
+
+          const lastDateDay = datesDays[lastDate]
+
+          const lastDateDayOrder = dayOrder[lastDateDay]
+
+          const dateDay = datesDays[date]
+
+          const dateDayOrder = dayOrder[dateDay]
+
+          const daysDifference = this.$moment(date, 'YYYY-MM-DD').diff(this.$moment(lastDate, 'YYYY-MM-DD'), 'days')
+
+          const validDaysDifference = dayOrder.Sunday - lastDateDayOrder
+
+          if (lastDateDayOrder <= dateDayOrder && validDaysDifference >= daysDifference) {
+            lastJobPart.dates.push(date)
+          } else {
+            jobParts.push({
+              dates: [
+                date,
+              ],
+            })
+          }
+        }
+      })
+
+      return jobParts
     }
   }
 })

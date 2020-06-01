@@ -1,6 +1,10 @@
 <template>
-	<div class="flex flex-col py-2 mb-3 md:mb-6 leading-normal" v-on-clickaway="toggledOff">
-		<div class="relative flex flex-row flex-no-wrap justify-between">
+	<div
+		class="flex flex-col leading-normal"
+		:class="wrapperClass ? wrapperClass : 'py-2 mb-3 md:mb-6'"
+		v-on-clickaway="toggledOff"
+	>
+		<div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
 			<label :for="name" class="text-xs sm:text-sm py-1">
 				{{ label }}
 				<span v-if="required" class="text-red-500">*</span>
@@ -152,7 +156,8 @@ export default {
 		error: Object,
 		inStyle: String,
 		required: Boolean,
-		inClass: String
+		inClass: String,
+		wrapperClass: String
 	},
 	data() {
 		return {

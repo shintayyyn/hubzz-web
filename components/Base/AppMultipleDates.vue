@@ -36,10 +36,14 @@
 			</div>
 		</div>
 		<transition name="fade">
-			<div class="relative md:static z-10 flex" v-if="!isDisplay ? isOpen ? isOpen : modal : true">
+			<div
+				class="relative md:static flex"
+				:class="isDisplay ? 'z-0' : 'z-10'"
+				v-if="!isDisplay ? isOpen ? isOpen : modal : true"
+			>
 				<div
-					class="border rounded-b-lg calendar bg-white"
-					:class="isDisplay ? '' : 'absolute shadow-md'"
+					class="border bg-white"
+					:class="isDisplay ? 'w-full' : 'rounded-b-lg calendar absolute shadow-md'"
 				>
 					<div
 						class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500"
@@ -497,19 +501,22 @@ export default {
 	},
 	watch: {
 		selectedMonth(value) {
-			this.getDaysInMonth(value.toString(), this.selectedYear);
+			if (value) {
+				this.getDaysInMonth(value.toString(), this.selectedYear);
+			}
 		},
 		selectedYear(value) {
 			// set selected month to this current month if selected year === current year
-			if (value === this.$moment().format("YYYY")) {
+			if (value && value === this.$moment().format("YYYY")) {
 				this.selectedMonth = this.filteredMonths[0].value;
 			}
 			this.getDaysInMonth(this.selectedMonth.toString(), value);
 		},
 		startDate(value) {
+			console.log(value);
 			if (value) {
-				this.selectedMonth = this.$moment(value).format("M");
-				this.selectedYear = this.$moment(value).format("YYYY");
+				this.selectedMonth = this.$moment(value, this.format).format("M");
+				this.selectedYear = this.$moment(value, this.format).format("YYYY");
 			}
 		},
 		value(value) {
@@ -698,14 +705,16 @@ export default {
 			}
 		},
 		toggledOff() {
-			// get to the selected date
-			if (this.lastDate) {
-				let month = this.$moment(this.lastDate, "YYYY-MM-DD").format("M");
-				let year = this.$moment(this.lastDate, "YYYY-MM-DD").format("YYYY");
-				this.selectedMonth = month;
-				this.selectedYear = year;
+			if (!this.isDisplay) {
+				// get to the selected date
+				if (this.lastDate) {
+					let month = this.$moment(this.lastDate, "YYYY-MM-DD").format("M");
+					let year = this.$moment(this.lastDate, "YYYY-MM-DD").format("YYYY");
+					this.selectedMonth = month;
+					this.selectedYear = year;
+				}
+				this.modal = false;
 			}
-			this.modal = false;
 		},
 		adjustMonth(type) {
 			if (type === "previous") {
@@ -853,11 +862,13 @@ export default {
 @media screen and (min-width: 468px) {
 	.date-cell {
 		height: 2.5rem;
+		max-width: 2.5rem;
 	}
 }
 @media screen and (min-width: 640px) {
 	.date-cell {
 		height: 3rem;
+		max-width: 3rem;
 	}
 }
 </style>
