@@ -48,11 +48,15 @@
 								<div>
 									<p class="text-gray-700">
 										Selected:
-										<span class="font-bold">{{ schedule_dates.length }} Dates</span>
+										<span
+											class="font-bold"
+										>{{ schedule_dates.length }} Date{{schedule_dates.length > 1 ? 's' : ''}}</span>
 									</p>
 									<p class="text-gray-700">
 										Job Parts:
-										<span class="font-bold">{{ job_parts.length }} Parts</span>
+										<span
+											class="font-bold"
+										>{{ job_parts.length }} Part{{job_parts.length > 1 ? 's' : ''}}</span>
 									</p>
 								</div>
 							</div>
@@ -85,7 +89,7 @@
 										<p class="w-2/12 text-center">End</p>
 										<p class="w-2/12 text-center">Hours</p>
 										<p class="w-3/12 text-center">Rate Type</p>
-										<p class="w-3/12 text-center">Rate</p>
+										<p class="w-3/12 text-center">Rate £</p>
 									</div>
 									<p class="w-2/12 text-center">Other Options</p>
 								</div>
@@ -116,7 +120,7 @@
 													v-model="shift.time_start"
 													:name="`time_start-${index}${i}`"
 													:wrapperClass="'mb-1 py-1'"
-													:inStyle="'background-color: transparent'"
+													:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 													@change="$emit('getSchedule', schedules)"
 												/>
 											</div>
@@ -125,7 +129,7 @@
 													v-model="shift.time_end"
 													:name="`time_end-${index}${i}`"
 													:wrapperClass="'mb-1 py-1'"
-													:inStyle="'background-color: transparent'"
+													:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 													@change="$emit('getSchedule', schedules)"
 												/>
 											</div>
@@ -134,9 +138,15 @@
 													<p>{{totalHours(shift.time_start, shift.time_end, item.date) | hours}}</p>
 													<p>{{totalHours(shift.time_start, shift.time_end, item.date) | minutes}}</p>
 												</template>
-												<template
-													v-else-if="shift.time_start && shift.time_end"
-												>Shift is less than {{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes}}</template>
+												<template v-else-if="shift.time_start && shift.time_end">
+													<span class="text-red-500 leading-none text-sm">
+														Shift is less than
+														<template
+															v-if="totalHours(shift.time_start, shift.time_end, item.date) !== 0"
+														>{{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes }}</template>
+														<template v-else>a minute</template>
+													</span>
+												</template>
 											</div>
 											<div class="w-3/12 px-1">
 												<AppInput
@@ -313,11 +323,11 @@
 							</div>
 							<div class="flex justify-between">
 								<p>Job Part 1/2 Gross Rate:</p>
-								<p>${{ getJobGrossRate(filteredSchedule) | currency}}</p>
+								<p>£ {{ getJobGrossRate(filteredSchedule) | currency}}</p>
 							</div>
 							<div class="flex justify-between">
 								<p>Total Job Gross Rate:</p>
-								<p>${{ getJobGrossRate(schedules) | currency}}</p>
+								<p>£ {{ getJobGrossRate(schedules) | currency}}</p>
 							</div>
 						</div>
 					</div>
@@ -529,7 +539,8 @@ export default {
 				"getSchedule",
 				this.schedules,
 				this.getJobGrossRate(this.schedules),
-				this.getTotalHours(this.schedules)
+				this.getTotalHours(this.schedules),
+				this.hasShiftError
 			);
 		}
 	},
@@ -570,7 +581,8 @@ export default {
 				"getSchedule",
 				this.schedules,
 				this.getJobGrossRate(this.schedules),
-				this.getTotalHours(this.schedules)
+				this.getTotalHours(this.schedules),
+				this.hasShiftError
 			);
 			let activeJobPart = this.job_parts.find(
 				part => part.value.toString() === this.job_part_id.toString()
@@ -580,6 +592,19 @@ export default {
 					this.$moment(item.date, "DD/MM/YYYY").format("YYYY-MM-DD")
 				)
 			);
+		},
+		hasShiftError() {
+			let errors = 0;
+			this.schedules.forEach(item => {
+				if (item.shifts.length) {
+					item.shifts.forEach(shift => {
+						this.totalHours(shift.time_start, shift.time_end, item.date) <= 0
+							? (errors += 1)
+							: "";
+					});
+				}
+			});
+			return errors > 0 ? true : false;
 		}
 	},
 	methods: {
@@ -659,7 +684,9 @@ export default {
 						shift.time_end,
 						sched.date
 					);
-					hours.push(total_hours);
+					if (total_hours > 0) {
+						hours.push(total_hours);
+					}
 				});
 			});
 			for (let i = 0; i <= hours.length; i++) {
@@ -686,7 +713,8 @@ export default {
 				"getSchedule",
 				this.schedules,
 				this.getJobGrossRate(this.schedules),
-				this.total_working_hours
+				this.total_working_hours,
+				this.hasShiftError
 			);
 		},
 		shiftColor(shift, condition) {

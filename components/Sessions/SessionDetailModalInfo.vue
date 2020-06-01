@@ -42,7 +42,7 @@
 								<p class="lg:w-1/6">{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
 								<p class="lg:w-2/6 lg:text-center">{{ sched.time_start }}-{{ sched.time_end }}</p>
 								<p class="lg:w-1/6 lg:text-center">{{ sched.shift.name }}</p>
-								<p class="lg:w-2/6 lg:text-center">${{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+								<p class="lg:w-2/6 lg:text-center">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
 							</div>
 						</div>
 						<!-- </template> -->

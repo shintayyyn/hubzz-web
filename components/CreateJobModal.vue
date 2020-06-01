@@ -33,11 +33,14 @@
 						</div>
 						<div class="flex justify-between pb-2">
 							<p>Total Gross Locum Wages:</p>
-							<p>{{ total_gross_locum_wages | currency }}</p>
+							<p>£ {{ total_gross_locum_wages | currency }}</p>
 						</div>
 						<div class="flex justify-between pb-2">
-							<p>Hubzz Fee*:</p>
-							<p>{{ hubzz_fee | currency }}</p>
+							<p>
+								Hubzz Fee*
+								<span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
+							</p>
+							<p>£ {{ hubzz_fee | currency }}</p>
 						</div>
 					</div>
 					<div class="flex justify-end items-center text-black mt-3">
@@ -553,7 +556,7 @@
 					<div class="pt-4 pb-8 w-full flex justify-between">
 						<AppButton class="mr-2" :label="'Back'" :disabled="loading" @click="tabActive='details'" />
 						<AppButton
-							:disabled="!form.schedules.length || !total_working_hours || total_gross_locum_wages <= 0"
+							:disabled="!form.schedules.length || !total_working_hours || total_gross_locum_wages <= 0 || this.hasShiftError"
 							v-if="authPermissions.includes('Create Sessions Job')"
 							:label="'Save and publish Job'"
 							@click="toPublish=true"
@@ -639,6 +642,7 @@ export default {
 			},
 
 			tabActive: "details",
+			hasShiftError: false,
 
 			// SPLIT JOBS
 			// schedule_dates: [],
@@ -877,22 +881,25 @@ export default {
 				});
 		},
 
+		practice_rate() {
+			let practice_rates = this.$auth.user.practice_detail.practice
+				.practice_rates;
+			let practice_rate = practice_rates.find(
+				item => item.id.toString() === this.form.role.toString()
+			);
+			let rate = 0;
+			if (practice_rate) {
+				rate = practice_rate.rate;
+			} else {
+				rate = practice_rates[practice_rates.length - 1].rate;
+			}
+			return rate;
+		},
+
 		hubzz_fee() {
-			// 		<!-- HUBZZ FEE = TOTAL HOURS * PRACTICE RATE BASED ON PROFESSION CATEGORY -->
 			if (this.form.role) {
-				let practice_rates = this.$auth.user.practice_detail.practice
-					.practice_rates;
-				let practice_rate = practice_rates.find(
-					item => item.id.toString() === this.form.role.toString()
-				);
-				let hubzz_fee = 0;
-				let rate = 0;
-				if (practice_rate) {
-					rate = practice_rate.rate;
-				} else {
-					rate = practice_rates[practice_rates.length - 1].rate;
-				}
-				return (this.total_working_hours * rate).toFixed(2);
+				let hours = this.total_working_hours / 60;
+				return (hours * this.practice_rate).toFixed(2);
 			}
 			return 0;
 		}
@@ -1342,7 +1349,6 @@ export default {
 			}
 		},
 		// revised app schedule
-
 		next() {
 			this.formError = [];
 			let notRequired = [
@@ -1409,14 +1415,17 @@ export default {
 			if (!this.formError.length) {
 				this.tabActive = "schedule";
 			} else {
-				console.log("errors", this.formError);
 				this.$nextTick(() => {
 					this.$refs.modalContainer.scrollTop = 0;
 				});
 			}
 		},
-
-		getSchedule(schedule, total_gross_locum_wages, total_working_hours) {
+		getSchedule(
+			schedule,
+			total_gross_locum_wages,
+			total_working_hours,
+			hasError
+		) {
 			this.form.schedules = [];
 			schedule.forEach(sched => {
 				if (sched.shifts && sched.shifts.length) {
@@ -1434,393 +1443,9 @@ export default {
 			});
 			this.total_working_hours = total_working_hours;
 			this.total_gross_locum_wages = total_gross_locum_wages;
+			this.hasShiftError = hasError;
 		},
 		// -- END FOR APP SCHEDULE COMPONENT
-		closeShift() {
-			if (this.shift_schedule.map(item => item.initial).includes(true)) {
-				this.shift_schedule.forEach((shift, index) => {
-					if (shift.initial) this.shift_schedule.splice(index, 1);
-				});
-			}
-			this.confirmClosing = false;
-			this.showShifts = false;
-		},
-		editShift(action, item, index) {
-			if (action === "edit") {
-				item.edit_label = item.label;
-				item.edit_locum_detail_rate_type_id = item.locum_detail_rate_type_id;
-				item.edit_rate = item.rate;
-				item.edit_shift = item.shift_id;
-				item.edit_time_start = item.time_start;
-				item.edit_time_end = item.time_end;
-				this.editShiftId = item.value;
-			} else if (action === "save") {
-				this.shiftError = [];
-				if (!item.edit_label) {
-					this.shiftError.push({
-						field: `label-${index}`,
-						message: "Shift Name is required."
-					});
-				}
-				if (item.edit_locum_detail_rate_type_id === 0) {
-					this.shiftError.push({
-						field: `locum_detail_rate_type_id-${index}`,
-						message: "Rate type is required."
-					});
-				}
-				if (item.edit_rate === 0 || item.edit_rate === "") {
-					this.shiftError.push({
-						field: `rate-${index}`,
-						message: "Rate is required."
-					});
-				}
-				if (!item.edit_shift) {
-					this.shiftError.push({
-						field: `shift-${index}`,
-						message: "Shift is required."
-					});
-				}
-				if (!item.edit_time_start) {
-					this.shiftError.push({
-						field: `time_start-${index}`,
-						message: "Start Time is required."
-					});
-				}
-				if (!item.edit_time_end) {
-					this.shiftError.push({
-						field: `time_end-${index}`,
-						message: "End Time is required."
-					});
-				}
-				if (!this.shiftError.length) {
-					item.label = item.edit_label;
-					item.locum_detail_rate_type_id = item.edit_locum_detail_rate_type_id;
-					item.rate = item.edit_rate;
-					item.shift_id = item.edit_shift;
-					item.time_start = item.edit_time_start;
-					item.time_end = item.edit_time_end;
-					this.editShiftId = "";
-					this.shift_saving = index;
-					setTimeout(() => {
-						this.shift_saving = "";
-					}, 1000);
-				}
-			}
-		},
-		cancelEditing(item, index) {
-			this.editShiftId = "";
-		},
-		shiftCheckAction(action, shifts, i, e) {
-			let shift = this.schedule.find((item, index) => index === i);
-			if (action === "checked") {
-				shift.shift_id.push(e.toString());
-			} else if (action === "unchecked") {
-				let shift_id_index = shift.shift_id.findIndex(id => id === e);
-				let selectedShift = this.shift_schedule.find(item => item.value === e);
-				if (selectedShift.appliedToAll) {
-					selectedShift.appliedToAll = false;
-				}
-				shift.shift_id.splice(shift_id_index, 1);
-			} else if (action === "unCheckAll") {
-				shift.shift_id = [];
-				this.shift_schedule.forEach(item => (item.appliedToAll = false));
-			}
-		},
-		applyToAll(shift) {
-			shift.appliedToAll = !shift.appliedToAll;
-			this.applyToAllDates = !this.applyToAllDates;
-			this.selected_dates = this.schedule_dates;
-			this.schedule.forEach(item => {
-				if (shift.appliedToAll) {
-					if (!item.shift_id.includes(shift.value.toString())) {
-						item.shift_id.push(shift.value.toString());
-					}
-				} else {
-					let index = item.shift_id.findIndex(
-						id => id === shift.value.toString()
-					);
-					if (index > -1) {
-						item.shift_id.splice(index, 1);
-					}
-				}
-			});
-		},
-		viewSchedule() {
-			this.overlayData = [];
-			this.schedules.forEach(sched => {
-				if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
-					this.overlayData.push({
-						date: sched.date,
-						shift_id: sched.shift_id,
-						time_start: sched.time_start,
-						time_end: sched.time_end,
-						rate: sched.rate
-					});
-				} else {
-					this.overlayData.push({
-						date: sched.date,
-						shift_id: sched.shift_id,
-						time_start: sched.time_start,
-						time_end: sched.time_end
-					});
-				}
-			});
-			this.schedules.forEach(item => {
-				if (!this.schedule_dates.includes(item.date))
-					this.schedule_dates.push(item.date);
-			});
-			this.select_dates = !this.select_dates;
-		},
-		removeSchedule(id, index) {
-			let schedule = this.schedules.filter(
-				sched => sched.shift_schedule !== id
-			);
-			this.schedules = schedule;
-			this.shift_schedule.splice(index, 1);
-			if (this.select_dates) this.select_dates = false;
-		},
-		addShiftSchedule() {
-			this.shift_schedule.push({
-				value: (this.shift_schedule.length + 1).toString(),
-				label: "",
-				shift_id: "",
-				time_start: "",
-				time_end: "",
-				locum_detail_rate_type_id: 0,
-				rate: 0,
-				edit_label: "",
-				edit_shift: "",
-				edit_time_start: "",
-				edit_time_end: "",
-				edit_locum_detail_rate_type_id: 0,
-				edit_rate: 0,
-				appliedToAll: false,
-				initial: true
-			});
-			this.$nextTick(() => {
-				this.$refs.scheduleWrapper.scrollTop = this.$refs.scheduleWrapper.scrollHeight;
-			});
-		},
-		saveShiftSchedule(shift, index) {
-			this.shiftError = [];
-			if (!shift.label) {
-				this.shiftError.push({
-					field: `label-${index}`,
-					message: "Shift Name is required."
-				});
-			} else {
-				if (
-					this.shift_schedule.find(
-						(item, i) => item.label === shift.label && index !== i
-					)
-				) {
-					this.shiftError.push({
-						field: `label-${index}`,
-						message: "Shift Name already exist."
-					});
-				}
-			}
-			if (shift.locum_detail_rate_type_id === 0) {
-				this.shiftError.push({
-					field: `locum_detail_rate_type_id-${index}`,
-					message: "Rate type is required."
-				});
-			}
-			if (shift.rate === 0) {
-				this.shiftError.push({
-					field: `rate-${index}`,
-					message: "Rate is required."
-				});
-			}
-			if (!shift.shift_id) {
-				this.shiftError.push({
-					field: `shift-${index}`,
-					message: "Shift is required."
-				});
-			}
-			if (!shift.time_start) {
-				this.shiftError.push({
-					field: `time_start-${index}`,
-					message: "Start Time is required."
-				});
-			}
-			if (!shift.time_end) {
-				this.shiftError.push({
-					field: `time_end-${index}`,
-					message: "End Time is required."
-				});
-			}
-			if (!this.shiftError.length) {
-				shift.initial = false;
-				this.shift_saving = index;
-				setTimeout(() => {
-					this.shift_saving = "";
-				}, 1000);
-			}
-		},
-		applyToDates(item, action) {
-			this.selected_sched_shift = item.id;
-			this.selected_dates = this.schedule_dates;
-			if (action == "select") {
-				this.selected_dates = this.schedule_dates;
-				// Nested Format
-				// this.selected_dates.forEach(date => {
-				//   let dateExist = this.schedules.find(sched => sched.date === date)
-				//   if (!dateExist) {
-				//     this.schedules.push({
-				//       shift_schedule: item.id,
-				//       date: date,
-				//       rate: item.rate,
-				//       shifts: [{
-				//         shift_id: item.shift,
-				//         time_start: item.time_start,
-				//         time_end: item.time_end
-				//       }]
-				//     })
-				//   }else {
-				//     dateExist.rate = item.rate
-				//     console.log("dateExist", dateExist)
-				//     console.log("item", item)
-				//     let hasOverlap = false
-				//     dateExist.shifts.forEach(shift => {
-				//       let start_hour = shift.time_start.split(':')[0]
-				//       let end_hour = shift.time_end.split(':')[0]
-				//       let item_start_hour = item.time_start.split(':')[0]
-				//       let item_end_hour = item.time_end.split(':')[0]
-				//       if (item_start_hour >= item_start_hour && item_start_hour <= end_hour) {
-				//         this.error_modal = true
-				//         this.error_message = `Please check selected date and time.`
-				//         hasOverlap = true
-				//         return
-				//       }else if (item_end_hour < item_start_hour) {
-				//         this.error_modal = true
-				//         this.error_message = `There's an error on time. Kindly check the start and end time.`
-				//         return
-				//       }
-				//       else {
-				//         console.log("---- input didnt overlap existing shift", date)
-
-				//       }
-				//       console.log("hour", start_hour, end_hour)
-				//       console.log("item", item_start_hour, item_end_hour)
-				//     })
-				//     if (!hasOverlap) {
-				//       dateExist.shifts.push({
-				//         shift_id: item.shift,
-				//         time_start: item.time_start,
-				//         time_end: item.time_end
-				//       })
-				//     }
-				//   }
-				// })
-
-				// Flat format
-				if (!this.applyToAllDates) {
-					if (!this.schedules.find(sched => sched.shift_schedule === item.id)) {
-						this.selected_dates.forEach(date => {
-							if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
-								this.schedules.push({
-									shift_schedule: item.id,
-									date: date,
-									shift_id: item.shift,
-									time_start: item.time_start,
-									time_end: item.time_end,
-									rate: item.rate
-								});
-							} else {
-								this.schedules.push({
-									shift_schedule: item.id,
-									date: date,
-									shift_id: item.shift,
-									time_start: item.time_start,
-									time_end: item.time_end
-								});
-							}
-						});
-					} else {
-						this.selected_dates.forEach(date => {
-							let existingSched = this.schedules.find(
-								sched => sched.date === item.date
-							);
-							if (existingSched) {
-								existingSched.shift_id = item.shift;
-								existingSched.time_start = item.time_start;
-								existingSched.time_end = item.time_end;
-								if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
-									existingSched.rate = item.rate;
-								}
-							} else {
-								if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
-									this.schedules.push({
-										shift_schedule: item.id,
-										date: date,
-										shift_id: item.shift,
-										time_start: item.time_start,
-										time_end: item.time_end,
-										rate: item.rate
-									});
-								} else {
-									this.schedules.push({
-										shift_schedule: item.id,
-										date: date,
-										shift_id: item.shift,
-										time_start: item.time_start,
-										time_end: item.time_end
-									});
-								}
-							}
-						});
-					}
-				} else {
-					this.selected_dates.forEach(date => {
-						if (parseInt(this.form.locum_detail_rate_type_id) === 1) {
-							this.schedules.push({
-								shift_schedule: item.id,
-								date: date,
-								shift_id: item.shift,
-								time_start: item.time_start,
-								time_end: item.time_end,
-								rate: item.rate
-							});
-						} else {
-							this.schedules.push({
-								shift_schedule: item.id,
-								date: date,
-								shift_id: item.shift,
-								time_start: item.time_start,
-								time_end: item.time_end
-							});
-						}
-					});
-				}
-				console.log("schedules", this.schedules);
-				this.selected_sched_shift = "";
-				this.selected_dates = [];
-				this.select_dates = false;
-			} else {
-				this.schedule_dates = [];
-				let schedByShiftSched = this.schedules.filter(
-					sched => sched.shift_schedule === item.id
-				);
-				this.overlayData = schedByShiftSched;
-				if (this.schedules.find(sched => sched.shift_schedule === item.id)) {
-					this.schedules.forEach(sched => {
-						if (sched.shift_schedule === item.id) {
-							if (!this.schedule_dates.includes(sched.date))
-								this.schedule_dates.push(sched.date);
-						}
-					});
-				}
-				this.select_dates = true;
-			}
-		},
-
-		hasValue(value, field) {
-			if (value == 0) {
-				this.form[field] = "";
-			}
-		},
-
 		handleKeyDownEvent(e, formField, limit) {
 			let acceptedKeys = [
 				"Backspace",
@@ -1837,29 +1462,28 @@ export default {
 				e.preventDefault();
 			}
 		},
-
-		// getListofDays (days) {
-		// if (days.includes(6) && days.length > 1) {
-		//   this.show_saturday = true
-		//   this.form.include_saturday = true
-		// } else if (days.includes(6) && days.length === 1) {
-		//   this.show_saturday = false
-		//   this.form.include_saturday = true
-		// } else if (!days.includes(6)) {
-		//   this.show_saturday = false
-		//   this.form.include_saturday = false
-		// }
-		// if (days.includes(0) && days.length > 1) {
-		//   this.show_sunday = true
-		//   this.form.include_sunday = true
-		// } else if (days.includes(0) && days.length === 1) {
-		//   this.show_sunday = false
-		//   this.form.include_sunday = true
-		// } else if (!days.includes(0)) {
-		//   this.show_sunday = false
-		//   this.form.include_sunday = false
-		// }
-		// },
+		getListofDays(days) {
+			// if (days.includes(6) && days.length > 1) {
+			//   this.show_saturday = true
+			//   this.form.include_saturday = true
+			// } else if (days.includes(6) && days.length === 1) {
+			//   this.show_saturday = false
+			//   this.form.include_saturday = true
+			// } else if (!days.includes(6)) {
+			//   this.show_saturday = false
+			//   this.form.include_saturday = false
+			// }
+			// if (days.includes(0) && days.length > 1) {
+			//   this.show_sunday = true
+			//   this.form.include_sunday = true
+			// } else if (days.includes(0) && days.length === 1) {
+			//   this.show_sunday = false
+			//   this.form.include_sunday = true
+			// } else if (!days.includes(0)) {
+			//   this.show_sunday = false
+			//   this.form.include_sunday = false
+			// }
+		},
 
 		close() {
 			this.$store.commit("calendar/CREATE_JOB_MODAL", false);
