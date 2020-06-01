@@ -266,6 +266,21 @@
           />
 
           <AppInput
+            v-model="form.other_mandatory_training_id"
+            :type="'multi-checkbox'"
+            :name="'other_mandatory_training_id'"
+            :label="'Other mandatory training courses you completed.'"
+            :lists="otherMandatoryTrainings"
+            @checked="form.other_mandatory_training_id.push(parseInt($event))"
+            @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
+            @uncheckAll="form.other_mandatory_training_id = []"
+            updatable
+            @addList="addList"
+            @updateList="updateList"
+            @remove="toggleRemoveMandatoryModal"
+          />
+
+          <AppInput
             v-model="form.practice_type_id"
             :type="'multi-checkbox'"
             :name="'practice_type_id'"
@@ -602,10 +617,19 @@
         </div>
       </div>
     </div>
+    <AppConfirmationModal
+      :label="'Proceed to remove this mandatory traning?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="toggle_remove_mandatory_modal"
+      @confirm="removeMandatory"
+      @cancel="toggle_remove_mandatory_modal = false"
+    />
   </div>
 </template>
 
 <script>
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
@@ -621,6 +645,7 @@ export default {
   },
 
   components: {
+    AppConfirmationModal,
     AppFormError,
     AppLoading,
     AppInput,
@@ -632,6 +657,8 @@ export default {
 
   data() {
     return {
+      selectedMandatory: null,
+      toggle_remove_mandatory_modal: false,
       employmentTypes: [
         {
           label: "Self-Employed",
@@ -649,6 +676,7 @@ export default {
       professions_categories: [],
       reference_locum_compliance_documents_list: [],
       form: {
+        other_mandatory_training_id: [],
         reference_locum_compliance_documents: [],
         // gmc_or_nmc_number: "",
         // mpl_or_npl_number: "",
@@ -774,7 +802,8 @@ export default {
         professions,
         practiceTypes,
         mandatoryTrainings,
-        user
+        user,
+        otherMandatoryTrainings
       ] = await Promise.all([
         app.$axios.$get(`/api/v1/professions`).then(responseProfessions => {
           const professions = [];
@@ -821,7 +850,25 @@ export default {
               ? responseMe.data.user
               : null;
           return user;
-        })
+        }),
+        app.$axios
+          .$get(`/api/v1/locum/other-mandatory-training`, {
+            params: {
+              user_id: app.$auth.user.id
+            }
+          })
+          .then(res => {
+            const other_mandatory_trainings = [];
+            res.data.locum_other_mandatory_trainings.forEach(
+              otherMandatoryTraining => {
+                other_mandatory_trainings.push({
+                  label: otherMandatoryTraining.name,
+                  value: otherMandatoryTraining.id
+                });
+              }
+            );
+            return other_mandatory_trainings;
+          })
       ]);
 
       return {
@@ -829,7 +876,8 @@ export default {
         // professions_categories,
         practiceTypes,
         mandatoryTrainings,
-        user
+        user,
+        otherMandatoryTrainings
       };
     } catch (err) {
       console.log("err", err);
@@ -848,32 +896,11 @@ export default {
     this.profile.avatar = this.user.file_url ? this.user.file_url : null;
     this.profile.name = `${this.user.first_name} ${this.user.last_name}`;
     this.profile.email = this.user.email;
-    // this.form.gmc_or_nmc_number =
-    //   this.user.locum_detail && this.user.locum_detail.gmc_or_nmc_number
-    //     ? this.user.locum_detail.gmc_or_nmc_number.number
-    //     : null;
-    // this.form.mpl_or_npl_number =
-    //   this.user.locum_detail && this.user.locum_detail.mpl_or_npl_number
-    //     ? this.user.locum_detail.mpl_or_npl_number.number
-    //     : null;
-    // if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
-    //   this.formError.push({
-    //     field: "gmc_or_nmc_number",
-    //     message: "Rejected"
-    //   });
-    // }
-    // if (this.user.locum_detail.mpl_or_npl_number.status === "Rejected") {
-    //   this.formError.push({
-    //     field: "mpl_or_npl_number",
-    //     message: "Rejected"
-    //   });
-    // }
     this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number;
     this.form.headline = this.user.headline;
     this.form.short_biography = this.user.short_biography;
     this.form.special_requirements = this.user.special_requirements;
     this.form.profession_id = this.user.profession.id;
-    // this.professionCategoryId = this.user.profession.profession_category.id;
 
     this.form.qualification_id = this.user.qualifications.map(qualification => {
       return { label: qualification.name, value: qualification.id };
@@ -902,6 +929,10 @@ export default {
     this.form.mandatory_training_id = this.user.mandatory_trainings.map(
       mandatoryTraining => mandatoryTraining.mandatory_training.id
     );
+    this.form.other_mandatory_training_id = this.user.other_mandatory_trainings.map(
+      otherMandatoryTraining =>
+        otherMandatoryTraining.locum_other_mandatory_training.id
+    );
     this.form.post_code = this.user.locum_postcode;
     this.form.miles = this.user.miles;
 
@@ -911,18 +942,12 @@ export default {
     this.reference_locum_compliance_documents_list =
       findprofession.reference_compliance_documents;
 
-    // this.reference_locum_compliance_documents_list.forEach(item => {
-    //   this.form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()] = this.user.reference_locum_compliance_documents.find(ref => ref.compliance_document_id === item.compliance_document_id).reference
-    // })
-
     this.reference_locum_compliance_documents_list.forEach(item => {
       let foundCompliance = this.user.reference_locum_compliance_documents.find(
         compliance =>
           compliance.compliance_document_id === item.compliance_document_id
       );
-      // let fieldName = item.compliance_document_name
-      // 	.replace(/ /g, "_")
-      // 	.toLowerCase()
+
       this.form.reference_locum_compliance_documents.push({
         compliance_document_id: item.compliance_document_id,
         compliance_document_name: item.compliance_document_name,
@@ -938,20 +963,6 @@ export default {
     this.form.referee_2_phone_number = this.user.referee_2_phone_number;
     this.form.referee_2_email = this.user.referee_2_email;
 
-    // this.user.referees.forEach((referee, index) => {
-    //   if (index == 0) {
-    //     this.form.referee_1_contact_name = referee.name;
-    //     this.form.referee_1_phone_number = referee.phone_number;
-    //     this.form.referee_1_email = referee.email;
-    //   }
-    //   if (index == 1) {
-    //     this.form.referee_2_contact_name = referee.name;
-    //     this.form.referee_2_phone_number = referee.phone_number;
-    //     this.form.referee_2_email = referee.email;
-    //   }
-    // });
-    // if (this.user.locum_detail.invoice_detail) {
-    this.form.employment_type = this.user.employment_type;
     this.form.utr_number = this.user.utr_number;
     this.form.company_registration_number = this.user.company_registration_number;
     this.form.ir35 = this.user.ir35;
@@ -969,28 +980,95 @@ export default {
     this.form.nhs_registration_number = this.user.nhs_registration_number;
 
     this.form.paid_under_payroll = this.user.paid_under_payroll;
-    // }
-    // if (
-    //   this.user.locum_detail.invoice_detail &&
-    //   this.user.locum_detail.invoice_detail.payroll_detail
-    // ) {
+
     this.form.payroll_account_name = this.user.payroll_account_name;
     this.form.payroll_account_number = this.user.payroll_account_number;
     this.form.payroll_sort_code = this.user.payroll_sort_code;
     this.form.payroll_bank_name = this.user.payroll_bank_name;
-    // }
-    // if (
-    //   this.user.locum_detail.invoice_detail &&
-    //   this.user.locum_detail.invoice_detail.bank_account
-    // ) {
+
     this.form.account_name = this.user.account_name;
     this.form.account_number = this.user.account_number;
     this.form.sort_code = this.user.sort_code;
     this.form.bank_name = this.user.bank_name;
-    // }
   },
 
   methods: {
+    addList(payload) {
+      this.$axios
+        .$post(`/api/v1/locum/other-mandatory-training`, { name: payload })
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.otherMandatoryTrainings.findIndex(
+            item =>
+              item.value === res.data.locum_other_mandatory_training.id &&
+              item.label === res.data.locum_other_mandatory_training.name
+          );
+          if (index < 0) {
+            this.otherMandatoryTrainings.push({
+              label: res.data.locum_other_mandatory_training.name,
+              value: res.data.locum_other_mandatory_training.id
+            });
+          }
+        });
+    },
+    updateList(payload) {
+      this.$axios
+        .$put(`/api/v1/locum/other-mandatory-training/${payload.value}`, {
+          name: payload.label
+        })
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.otherMandatoryTrainings.findIndex(
+            item => item.value === payload.value
+          );
+          if (index >= 0) {
+            this.otherMandatoryTrainings.splice(index, 1, payload);
+          }
+        });
+    },
+    toggleRemoveMandatoryModal(payload) {
+      this.selectedMandatory = payload;
+      this.toggle_remove_mandatory_modal = true;
+    },
+    removeMandatory() {
+      this.$axios
+        .$delete(
+          `/api/v1/locum/other-mandatory-training/${this.selectedMandatory.value}`
+        )
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.otherMandatoryTrainings.findIndex(
+            item => item.value === this.selectedMandatory.value
+          );
+          if (index >= 0) {
+            this.otherMandatoryTrainings.splice(index, 1);
+          }
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        })
+        .finally(() => {
+          this.toggle_remove_mandatory_modal = false;
+          this.selectedMandatory = null;
+        });
+    },
     checkValidation(name, limit) {
       let fieldName = name.replace(/ /g, "_").toLowerCase();
       let field = this.form.reference_locum_compliance_documents.find(
@@ -1027,10 +1105,10 @@ export default {
         }
       }
     },
-
     save() {
       this.formError = [];
       let notRequired = [
+        "other_mandatory_training_id",
         "nhs_smart_card_id_number",
         "headline",
         "short_biography",

@@ -499,6 +499,122 @@
           </table>
         </template>
       </div>
+
+      <div class="mt-10">
+        <div class="font-bold text-xs sm:text-base">Other Mandatory Training</div>
+      </div>
+      <div class="mt-4 overflow-x-auto">
+        <template v-if="!other_mandatory_trainings.length">
+          <span
+            class="text-center font-bold text-gray-500 text-xs md:text-sm"
+            colspan="7"
+          >This section is empty. Update your profile to fill this area.</span>
+        </template>
+        <template v-else>
+          <table>
+            <thead>
+              <tr class="text-sm text-left">
+                <th class="pl-2">Type</th>
+                <th class="pl-2">File</th>
+                <th class="text-center">Date uploaded</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              <template v-for="(item, index) in other_mandatory_trainings">
+                <tr
+                  v-if="activeLoading.includes(item.locum_other_mandatory_training_id)"
+                  :key="item.id"
+                  class="text-left bg-gray-200"
+                >
+                  <td colspan="4" class="loader-message md:text-center text-gray-800">Uploading</td>
+                </tr>
+                <tr
+                  v-else
+                  :key="item.id"
+                  class="text-left"
+                  :class="item.file ? 'text-black' : 'text-gray-600'"
+                >
+                  <td
+                    :class="item && item.file ? 'cursor-pointer' : ''"
+                    class="w-1/3"
+                    @click="show(item, 'other-mandatory')"
+                  >{{ item.name }}</td>
+                  <td v-if="item.file" class="hover:underline">
+                    <div class="flex flex-row flex-no-wrap">
+                      <svgicon name="cloud-download" height="24" width="24" />
+                      <div class="leading-loose mx-2">
+                        <a
+                          target="_blank"
+                          :href="item.file.url"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                        >{{ item.file.filename | StringMaxLength(15) }}</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td v-else />
+                  <td
+                    v-if="item && item.file"
+                    class="text-center"
+                  >{{ item.file.created_at | localDate }}</td>
+                  <td v-else />
+                  <td
+                    v-if="!item.file"
+                    class="hover:underline"
+                    @click.stop="$refs[`${item.id}_file_other_mandatory_training`][0].click()"
+                  >
+                    <div
+                      class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer bg-yellow-500 rounded"
+                    >
+                      <input
+                        :ref="`${item.id}_file_other_mandatory_training`"
+                        type="file"
+                        class="inputfile hidden"
+                        @input="onOtherMandatoryFileInput($event, item.locum_other_mandatory_training_id, index)"
+                        @click.stop
+                      />
+                      <svgicon
+                        class="md:hidden fill-current"
+                        name="cloud-upload"
+                        height="24"
+                        width="24"
+                      />
+                      <label class="hidden md:block leading-loose mx-2 cursor-pointer">Upload</label>
+                    </div>
+                  </td>
+                  <td
+                    v-else
+                    class="hover:underline"
+                    @click.stop="$refs[`${item.id}_file_other_mandatory_training`][0].click()"
+                  >
+                    <div
+                      class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer bg-yellow-500 rounded"
+                    >
+                      <input
+                        :ref="`${item.id}_file_other_mandatory_training`"
+                        type="file"
+                        class="inputfile hidden"
+                        @input="onOtherMandatoryFileInput($event, item.locum_other_mandatory_training_id, index)"
+                        @click.stop
+                      />
+                      <svgicon
+                        class="md:hidden fill-current"
+                        name="cloud-upload"
+                        height="24"
+                        width="24"
+                      />
+                      <label
+                        class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
+                      >Update</label>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+      </div>
     </div>
 
     <transition name="fade" mode="out-in">
@@ -620,6 +736,7 @@ export default {
       mandatoryComplianceDocuments: [],
       optionalComplianceDocuments: [],
       mandatory_trainings: [],
+      other_mandatory_trainings: [],
       modal: false,
       type: null,
       selectedComplianceTypeName: null,
@@ -695,7 +812,8 @@ export default {
 
       return Promise.all([
         this.getAllCompliances(),
-        this.getLocumMandatoryTranings()
+        this.getLocumMandatoryTranings(),
+        this.getLocumOtherMandatoryTranings()
       ]);
     },
 
@@ -803,6 +921,21 @@ export default {
         });
     },
 
+    getLocumOtherMandatoryTranings() {
+      this.$axios
+        .get("/api/v1/locum/other-mandatory-training", {
+          params: {
+            user_id: this.$auth.user.id,
+            is_added_only: true
+          }
+        })
+        .then(response => {
+          this.other_mandatory_trainings = response.data.data.locum_other_mandatory_trainings.sort(
+            (a, b) => a.id - b.id
+          );
+        });
+    },
+
     async uploadCompliance(...args) {
       const [
         id,
@@ -839,8 +972,6 @@ export default {
         if (this.file) {
           notRequired.push("file");
         }
-        console.log(this.selectedComplianceTypeName);
-        console.log(this.form);
         if (this.selectedComplianceTypeName !== "Passport") {
           notRequired.push("country_id");
         }
@@ -1147,6 +1278,127 @@ export default {
     },
 
     onMandatoryFileUpdate(e, id, index, loadingId) {
+      if (!e.target.files.length) {
+        return;
+      }
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format"]
+        });
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(loadingId);
+      this.$axios
+        .$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData)
+        .then(res => {
+          this.mandatory_trainings.splice(
+            index,
+            1,
+            res.data.locum_detail_mandatory_training
+          );
+          this.mandatory_trainings = this.mandatory_trainings.sort(
+            (a, b) => a.id - b.id
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Document uploaded!"]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
+        })
+        .catch(err => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
+        });
+    },
+
+    onOtherMandatoryFileInput(e, id, index) {
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format"]
+        });
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("other_mandatory_training_id", id);
+      // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(id);
+      this.$axios
+        .$patch(`/api/v1/locum/other-mandatory-training/${id}`, formData)
+        .then(res => {
+          this.other_mandatory_trainings.splice(
+            index,
+            1,
+            res.data.locum_other_mandatory_training
+          );
+          this.other_mandatory_trainings = this.other_mandatory_trainings.sort(
+            (a, b) => a.id - b.id
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Document uploaded!"]
+          });
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        })
+        .catch(err => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+
+    onOtherMandatoryFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
         return;
       }
