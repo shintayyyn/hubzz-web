@@ -134,7 +134,7 @@
           const oldEndDate = this.$moment(this.end_date, 'YYYY-MM-DD')
           
           if (newEndDate.isBefore(oldEndDate)) {
-            this.schedule_dates = this.schedule_dates.filter(date => !newEndDate.isBefore(this.$moment(date, 'DD/MM/YYYY')))
+            this.schedule_dates = this.schedule_dates.filter(date => !newEndDate.isSameOrBefore(this.$moment(date, 'DD/MM/YYYY')))
             this.schedule_dates.push(this.$moment(endDate, 'YYYY-MM-DD').format('DD/MM/YYYY'))
             return
           }
