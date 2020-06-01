@@ -8,7 +8,9 @@
       <p
         v-if="unseenNotificationIds.length > 0"
         class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-      >{{ unseenNotificationIds.length }}</p>
+      >
+        {{ unseenNotificationIds.length }}
+      </p>
     </button>
 
     <transition name="drop-down">
@@ -162,8 +164,8 @@
 </template>
 
 <script>
-import { mixin as clickaway } from "vue-clickaway";
-import PopUpNotification from "@/components/Notifications/PopUpNotification";
+import { mixin as clickaway } from "vue-clickaway"
+import PopUpNotification from "@/components/Notifications/PopUpNotification"
 
 export default {
   components: {
@@ -171,7 +173,7 @@ export default {
   },
   mixins: [clickaway],
 
-  data() {
+  data () {
     return {
       showNotificationsDropdown: false,
       largeView: false,
@@ -223,6 +225,7 @@ export default {
         "Practice Notification Job Live",
         "Practice Notification Job Ongoing",
         "Practice Notification Job Pending",
+        "Practice Notification Job Rejected",
         "Practice Notification Job Reminder",
         "Practice Notification Job Selection Date",
         "Practice Notification Job Unfilled",
@@ -248,15 +251,15 @@ export default {
       ],
       popUpNotifications: [],
       showPopUpNotification: true
-    };
+    }
   },
 
   computed: {
-    domain() {
-      return this.$auth.user.domain.toLowerCase();
+    domain () {
+      return this.$auth.user.domain.toLowerCase()
     },
 
-    getNotificationDisplay() {
+    getNotificationDisplay () {
       return notification => {
         const {
           notification_type: notificationType,
@@ -265,15 +268,15 @@ export default {
           title,
           message,
           description
-        } = notification;
+        } = notification
 
-        const { name: notificationTypeName } = notificationType;
+        const { name: notificationTypeName } = notificationType
 
         if (this.notificationTypeNames.includes(notificationTypeName)) {
           return {
             title,
             message: description
-          };
+          }
         } else {
           return {
             title: payload.title
@@ -282,32 +285,32 @@ export default {
               ? `Untitled ${type}`
               : title,
             message: message || description
-          };
+          }
         }
-      };
+      }
     },
 
-    getNotificationTitle() {
+    getNotificationTitle () {
       return notification => {
-        const { title } = this.getNotificationDisplay(notification);
+        const { title } = this.getNotificationDisplay(notification)
 
-        return title;
-      };
+        return title
+      }
     },
 
-    getNotificationMessage() {
+    getNotificationMessage () {
       return notification => {
-        const { message } = this.getNotificationDisplay(notification);
+        const { message } = this.getNotificationDisplay(notification)
 
-        return message;
-      };
+        return message
+      }
     },
 
-    url() {
-      return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+    url () {
+      return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs"
     },
 
-    sortedNotifications() {
+    sortedNotifications () {
       let billing_types = [
         "Locum Notification Locum Invoice Created",
         "Locum Notification Locum Invoice Updated",
@@ -315,31 +318,31 @@ export default {
         "Practice Notification Locum Invoice Created",
         "Practice Notification Locum Invoice Updated",
         "Practice Notification Locum Invoice Paid"
-      ];
+      ]
 
       return this.notifications
         .map(notification => {
-          let message = "";
+          let message = ""
 
           if (this.domain === "locum") {
             switch (notification.notification_type.name) {
               case "Locum Notification Job Approved":
-                message = "This part of your job has been approved";
-                break;
+                message = "This part of your job has been approved"
+                break
               case "Locum Notification Job Disputed":
-                message = "This part of your job has been disputed";
-                break;
+                message = "This part of your job has been disputed"
+                break
               default:
-                message = "";
+                message = ""
             }
           } else if (this.domain === "practice") {
             switch (notification.notification_type.name) {
               case "Practice Notification Job Approved":
-                message = "This part of your job has been approved";
-                break;
+                message = "This part of your job has been approved"
+                break
               case "Practice Notification Job Disputed":
-                message = "This part of your job has been disputed";
-                break;
+                message = "This part of your job has been disputed"
+                break
             }
           }
 
@@ -349,34 +352,34 @@ export default {
             type: billing_types.includes(notification.notification_type.name)
               ? "Billing"
               : "Job"
-          };
+          }
         })
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     }
   },
 
   watch: {
-    showNotificationsDropdown() {
+    showNotificationsDropdown () {
       if (this.showNotificationsDropdown) {
-        this.popUpNotifications = [];
+        this.popUpNotifications = []
       } else {
-        this.largeView = false;
+        this.largeView = false
       }
     }
   },
 
-  mounted() {
+  mounted () {
     setInterval(() => {
       this.popUpNotifications.forEach(
         popUpNotification => (popUpNotification.timeoutInSeconds -= 0.5)
-      );
+      )
 
       this.popUpNotifications = this.popUpNotifications.filter(
         popUpNotification => popUpNotification.timeoutInSeconds > 0
-      );
-    }, 1000 * 0.5);
+      )
+    }, 1000 * 0.5)
 
-    this.loading = true;
+    this.loading = true
     Promise.all([
       this.$axios
         .get(`/api/v1/${this.domain}/notifications`, {
@@ -386,17 +389,17 @@ export default {
           }
         })
         .then(response => {
-          const unseenNotificationIds = response.data.data.notifications;
+          const unseenNotificationIds = response.data.data.notifications
 
-          this.unseenNotificationIds = unseenNotificationIds;
+          this.unseenNotificationIds = unseenNotificationIds
         }),
 
       this.$axios
         .get(`/api/v1/${this.domain}/notifications/count`)
         .then(response => {
-          const count = response.data.data.count;
+          const count = response.data.data.count
 
-          this.notificationCount = count;
+          this.notificationCount = count
         }),
 
       this.$axios
@@ -407,147 +410,147 @@ export default {
           }
         })
         .then(response => {
-          const notifications = response.data.data.notifications;
+          const notifications = response.data.data.notifications
 
-          this.notifications = notifications;
+          this.notifications = notifications
         })
     ]).finally(() => {
-      this.loading = false;
-    });
+      this.loading = false
+    })
 
-    this.setSocketNotificationListener();
+    this.setSocketNotificationListener()
   },
 
-  destroyed() {
-    this.removeSocketNotificationListener();
+  destroyed () {
+    this.removeSocketNotificationListener()
   },
 
   methods: {
-    clearPopUpNotifications() {
-      console.log("clearPopUpNotifications");
+    clearPopUpNotifications () {
+      console.log("clearPopUpNotifications")
     },
 
-    removePopUpNotification(notificationId) {
+    removePopUpNotification (notificationId) {
       const index = this.popUpNotifications.findIndex(
         notification => notification.id === notificationId
-      );
+      )
 
       if (index > -1) {
-        this.popUpNotifications.splice(index, 1);
+        this.popUpNotifications.splice(index, 1)
       }
     },
 
-    setSocketNotificationListener() {
+    setSocketNotificationListener () {
       this.notificationTypeNames.forEach(notificationTypeName => {
-        this.$socket.on(notificationTypeName, this.newNotificationHandler);
-      });
+        this.$socket.on(notificationTypeName, this.newNotificationHandler)
+      })
     },
 
-    removeSocketNotificationListener() {
+    removeSocketNotificationListener () {
       this.notificationTypeNames.forEach(notificationTypeName => {
         this.$socket.removeListener(
           notificationTypeName,
           this.newNotificationHandler
-        );
-      });
+        )
+      })
     },
 
-    newNotificationHandler(payload) {
-      const { notification } = payload;
+    newNotificationHandler (payload) {
+      const { notification } = payload
 
       if (notification) {
         if (!notification.seen) {
-          this.unseenNotificationIds.push(notification.id);
+          this.unseenNotificationIds.push(notification.id)
         }
 
         const index = this.popUpNotifications.findIndex(
           ({ id }) => id === notification.id
-        );
+        )
 
         if (index > -1) {
           this.popUpNotifications.splice(index, 1, {
             ...notification,
             timeoutInSeconds: 60,
             maxTimeoutInSeconds: 60
-          });
+          })
         } else {
           this.popUpNotifications.push({
             ...notification,
             timeoutInSeconds: 60,
             maxTimeoutInSeconds: 60
-          });
+          })
         }
 
         const notificationIndex = this.notifications.findIndex(
           ({ id }) => id === notification.id
-        );
+        )
 
         if (notificationIndex > -1) {
-          this.notifications.splice(notificationIndex, 1, notification);
+          this.notifications.splice(notificationIndex, 1, notification)
         } else {
-          this.notifications.push(notification);
+          this.notifications.push(notification)
         }
       }
     },
 
-    updateNotificationSeen(notification) {
+    updateNotificationSeen (notification) {
       if (!notification.seen) {
-        const notificationId = notification.id;
+        const notificationId = notification.id
 
         const popUpNotificationIndex = this.popUpNotifications.findIndex(
           ({ id }) => id === notificationId
-        );
+        )
 
         if (popUpNotificationIndex > -1) {
-          this.popUpNotifications.splice(popUpNotificationIndex, 1);
+          this.popUpNotifications.splice(popUpNotificationIndex, 1)
         }
 
         this.$axios
           .put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`)
           .then(response => {
-            const updatedNotification = response.data.data.notification;
+            const updatedNotification = response.data.data.notification
 
             const index = this.unseenNotificationIds.findIndex(
               unseenNotificationId => unseenNotificationId === notificationId
-            );
+            )
 
             if (index > -1) {
-              this.unseenNotificationIds.splice(index, 1);
+              this.unseenNotificationIds.splice(index, 1)
             }
 
             const notificationIndex = this.notifications.findIndex(
               ({ id }) => id === notificationId
-            );
+            )
 
             if (notificationIndex > -1) {
               this.notifications.splice(
                 notificationIndex,
                 1,
                 updatedNotification
-              );
+              )
             }
-          });
+          })
       }
     },
 
-    seenAllNotifications() {
+    seenAllNotifications () {
       if (this.unseenNotificationIds.length > 0) {
         this.$axios
           .put(`/api/v1/${this.domain}/notifications/seen-all`)
           .then(() => {
             this.notifications
               .filter(notification => !notification.seen)
-              .forEach(notification => (notification.seen = true));
+              .forEach(notification => (notification.seen = true))
 
-            this.unseenNotificationIds = [];
-          });
+            this.unseenNotificationIds = []
+          })
       }
     },
 
-    goTo(notification) {
-      const { notification_type: notificationType, payload } = notification;
+    goTo (notification) {
+      const { notification_type: notificationType, payload } = notification
 
-      const { name: notificationTypeName } = notificationType;
+      const { name: notificationTypeName } = notificationType
 
       const locumComplianceDocumentNotifications = [
         "Locum Notification Compliance Approved",
@@ -555,7 +558,7 @@ export default {
         "Locum Notification Compliance Rejected",
         "Locum Notification Compliance Expired",
         "Locum Notification Compliance Expiring"
-      ];
+      ]
 
       const locumJobNotifications = [
         "Locum Notification Job Allocated",
@@ -572,23 +575,23 @@ export default {
         "Locum Notification Job Unqualified",
         "Locum Notification Job Unsuccessful",
         "Locum Notification Job Withdrawn"
-      ];
+      ]
 
       const locumJobPartNotifications = [
         "Locum Notification Job Part Completed",
         "Locum Notification Job Part Approved"
-      ];
+      ]
 
       const locumLocumInvoiceNotifications = [
         "Locum Notification Locum Invoice Issued",
         "Locum Notification Locum Invoice Disputed",
         "Locum Notification Locum Invoice Approved",
         "Locum Notification Locum Invoice Paid"
-      ];
+      ]
 
       const practiceComplianceDocumentNotifications = [
         "Practice Notification Locum Compliance Expired"
-      ];
+      ]
 
       const practiceJobNotifications = [
         "Practice Notification Job Allocated",
@@ -599,62 +602,62 @@ export default {
         "Practice Notification Job Live",
         "Practice Notification Job Ongoing",
         "Practice Notification Job Pending",
+        "Practice Notification Job Rejected",
         "Practice Notification Job Reminder",
         "Practice Notification Job Selection Date",
         "Practice Notification Job Unfilled",
         "Practice Notification Job Unfilled Warning",
         "Practice Notification Job Withdrawn"
-      ];
-
+      ]
       const practiceJobPartNotifications = [
         "Practice Notification Job Part Completed",
         "Practice Notification Job Part Approved"
-      ];
+      ]
 
       const jobApplicationNotifications = [
         "Practice Notification Job Application",
         "Practice Notification Job Application Auto Cancelled",
         "Practice Notification Job Application Cancelled"
-      ];
+      ]
 
       const practiceLocumInvoiceNotifications = [
         "Practice Notification Locum Invoice Issued",
         "Practice Notification Locum Invoice Disputed",
         "Practice Notification Locum Invoice Approved",
         "Practice Notification Locum Invoice Paid"
-      ];
+      ]
 
       const practiceInvoiceNotifications = [
         "Practice Notification Practice Invoice Issued",
         "Practice Notification Practice Invoice Paid",
         "Practice Notification Practice Invoice Past Due"
-      ];
+      ]
 
       const practicePracticeSurgeryNotifications = [
         "Practice Notification Practice Surgery Created",
         "Practice Notification Practice Surgery Deleted",
         "Practice Notification Practice Surgery Updated",
         "Practice Notification Practice Surgery Termination Requested"
-      ];
+      ]
 
       if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
-        const locumComplianceDocument = payload;
+        const locumComplianceDocument = payload
 
         const {
           id: locumComplianceDocumentId,
           compliance_document: complianceDocument
-        } = locumComplianceDocument;
+        } = locumComplianceDocument
 
         const {
           compliance_document_type: complianceDocumentType
-        } = complianceDocument;
+        } = complianceDocument
 
-        const { name: complianceDocumentTypeName } = complianceDocumentType;
+        const { name: complianceDocumentTypeName } = complianceDocumentType
 
         if (complianceDocumentTypeName === "Reference") {
           this.$router.push({
             name: "compliance"
-          });
+          })
         } else {
           if (this.$route.name === "compliance") {
             this.$router.push({
@@ -662,11 +665,11 @@ export default {
               params: {
                 id: locumComplianceDocumentId
               }
-            });
+            })
           } else {
             this.$router.push({
               name: "compliance"
-            });
+            })
 
             setTimeout(() => {
               this.$router.push({
@@ -674,41 +677,41 @@ export default {
                 params: {
                   id: locumComplianceDocumentId
                 }
-              });
-            }, 500);
+              })
+            }, 500)
           }
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (locumJobNotifications.includes(notificationTypeName)) {
-        const job = payload;
+        const job = payload
 
         const {
           type: jobType,
           id: jobId,
           old_job_id: oldJobId,
           job_parts: jobParts
-        } = job;
+        } = job
 
-        let routeParamId = jobId;
-        let routeParamJobPartId = null;
+        let routeParamId = jobId
+        let routeParamJobPartId = null
 
         if (
           notificationTypeName === "Locum Notification Job Unqualified" &&
           oldJobId
         ) {
-          routeParamId = oldJobId;
+          routeParamId = oldJobId
         }
 
         if (
           notificationTypeName === "Locum Notification Job Unavailable" &&
           oldJobId
         ) {
-          routeParamId = oldJobId;
+          routeParamId = oldJobId
         }
 
         if (
@@ -718,9 +721,9 @@ export default {
         ) {
           const jobPart = jobParts.find(
             jobPart => jobPart.status === "Withdrawn"
-          );
+          )
           if (jobPart) {
-            routeParamJobPartId = jobPart.id;
+            routeParamJobPartId = jobPart.id
           }
         }
 
@@ -730,9 +733,9 @@ export default {
         ) {
           const jobPart = jobParts.find(
             jobPart => jobPart.status === "Cancelled"
-          );
+          )
           if (jobPart) {
-            routeParamJobPartId = jobPart.id;
+            routeParamJobPartId = jobPart.id
           }
         }
 
@@ -743,9 +746,9 @@ export default {
         ) {
           const jobPart = jobParts.find(
             jobPart => jobPart.status === "Ongoing"
-          );
+          )
           if (jobPart) {
-            routeParamJobPartId = jobPart.id;
+            routeParamJobPartId = jobPart.id
           }
         }
 
@@ -760,7 +763,7 @@ export default {
               query: {
                 ...this.$route.query
               }
-            });
+            })
           } else {
             this.$router.push({
               name: "jobs-index-id",
@@ -770,12 +773,12 @@ export default {
               query: {
                 ...this.$route.query
               }
-            });
+            })
           }
         } else {
           this.$router.push({
             name: "jobs-index"
-          });
+          })
 
           setTimeout(() => {
             if (routeParamJobPartId) {
@@ -785,27 +788,27 @@ export default {
                   id: routeParamId,
                   jobPartId: routeParamJobPartId
                 }
-              });
+              })
             } else {
               this.$router.push({
                 name: "jobs-index-id",
                 params: {
                   id: routeParamId
                 }
-              });
+              })
             }
-          }, 500);
+          }, 500)
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (locumJobPartNotifications.includes(notificationTypeName)) {
-        const jobPart = payload;
+        const jobPart = payload
 
-        const { id: jobPartId, job_id: jobId } = jobPart;
+        const { id: jobPartId, job_id: jobId } = jobPart
 
         if (this.$route.name === "jobs-index") {
           this.$router.push({
@@ -817,11 +820,11 @@ export default {
             query: {
               ...this.$route.query
             }
-          });
+          })
         } else {
           this.$router.push({
             name: "jobs-index"
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -830,19 +833,19 @@ export default {
                 id: jobId,
                 jobPartId
               }
-            });
-          }, 500);
+            })
+          }, 500)
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (locumLocumInvoiceNotifications.includes(notificationTypeName)) {
-        const locumInvoice = payload;
+        const locumInvoice = payload
 
-        const { id: locumInvoiceId, status } = locumInvoice;
+        const { id: locumInvoiceId, status } = locumInvoice
 
         if (this.$route.name === "locum-billing-invoices") {
           this.$router.push({
@@ -854,11 +857,11 @@ export default {
               ...this.$route.query,
               status: status === "Paid" ? "approved" : status.toLowerCase()
             }
-          });
+          })
         } else {
           this.$router.push({
             name: "locum-billing-invoices"
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -869,23 +872,23 @@ export default {
               query: {
                 status: status === "Paid" ? "approved" : status.toLowerCase()
               }
-            });
-          }, 500);
+            })
+          }, 500)
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (
         practiceComplianceDocumentNotifications.includes(notificationTypeName)
       ) {
-        const locumComplianceDocument = payload;
+        const locumComplianceDocument = payload
 
-        const { locum_user: locumUser } = locumComplianceDocument;
+        const { locum_user: locumUser } = locumComplianceDocument
 
-        const { id: locumUserId } = locumUser;
+        const { id: locumUserId } = locumUser
 
         if (this.$route.name === "my-banks-index") {
           this.$router.push({
@@ -896,14 +899,14 @@ export default {
             query: {
               ...this.$route.query
             }
-          });
+          })
         } else {
           this.$router.push({
             name: "my-banks-index",
             query: {
               status: "Appointed"
             }
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -914,27 +917,27 @@ export default {
               query: {
                 ...this.$route.query
               }
-            });
-          }, 500);
+            })
+          }, 500)
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practiceJobNotifications.includes(notificationTypeName)) {
-        const job = payload;
+        const job = payload
 
         const {
           id: jobId,
           practice_id: jobPracticeId,
           practice_surgery_id: practiceSurgeryId,
           job_parts: jobParts
-        } = job;
+        } = job
 
-        let routeParamId = jobId;
-        let routeParamJobPartId = null;
+        let routeParamId = jobId
+        let routeParamJobPartId = null
 
         if (
           (notificationTypeName ===
@@ -944,9 +947,9 @@ export default {
         ) {
           const jobPart = jobParts.find(
             jobPart => jobPart.status === "Withdrawn"
-          );
+          )
           if (jobPart) {
-            routeParamJobPartId = jobPart.id;
+            routeParamJobPartId = jobPart.id
           }
         }
 
@@ -956,9 +959,9 @@ export default {
         ) {
           const jobPart = jobParts.find(
             jobPart => jobPart.status === "Cancelled"
-          );
+          )
           if (jobPart) {
-            routeParamJobPartId = jobPart.id;
+            routeParamJobPartId = jobPart.id
           }
         }
 
@@ -968,9 +971,9 @@ export default {
         ) {
           const jobPart = jobParts.find(
             jobPart => jobPart.status === "Ongoing"
-          );
+          )
           if (jobPart) {
-            routeParamJobPartId = jobPart.id;
+            routeParamJobPartId = jobPart.id
           }
         }
 
@@ -983,7 +986,7 @@ export default {
             params: {
               id: practiceSurgeryId
             }
-          });
+          })
 
           setTimeout(() => {
             if (routeParamJobPartId) {
@@ -995,7 +998,7 @@ export default {
                   sessionId: routeParamId,
                   jobPartId: routeParamJobPartId
                 }
-              });
+              })
             } else {
               this.$router.push({
                 name:
@@ -1004,9 +1007,9 @@ export default {
                   id: practiceSurgeryId,
                   sessionId: routeParamId
                 }
-              });
+              })
             }
-          }, 500);
+          }, 500)
         } else {
           if (this.$route.name === "sessions-index") {
             if (routeParamJobPartId) {
@@ -1019,7 +1022,7 @@ export default {
                 query: {
                   ...this.$route.query
                 }
-              });
+              })
             } else {
               this.$router.push({
                 name: "sessions-index-id",
@@ -1029,12 +1032,12 @@ export default {
                 query: {
                   ...this.$route.query
                 }
-              });
+              })
             }
           } else {
             this.$router.push({
               name: "sessions-index"
-            });
+            })
 
             setTimeout(() => {
               if (routeParamJobPartId) {
@@ -1044,33 +1047,33 @@ export default {
                     id: routeParamId,
                     jobPartId: routeParamJobPartId
                   }
-                });
+                })
               } else {
                 this.$router.push({
                   name: "sessions-index-id",
                   params: {
                     id: routeParamId
                   }
-                });
+                })
               }
-            }, 500);
+            }, 500)
           }
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practiceJobPartNotifications.includes(notificationTypeName)) {
-        const jobPart = payload;
+        const jobPart = payload
 
         const {
           id: jobPartId,
           job_id: jobId,
           practice_id: jobPracticeId,
           practice_surgery_id: practiceSurgeryId
-        } = jobPart;
+        } = jobPart
 
         if (
           jobPracticeId !== this.$auth.user.practice_id &&
@@ -1081,7 +1084,7 @@ export default {
             params: {
               id: practiceSurgeryId
             }
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -1092,8 +1095,8 @@ export default {
                 sessionId: jobId,
                 jobPartId
               }
-            });
-          }, 500);
+            })
+          }, 500)
         } else {
           if (this.$route.name === "sessions-index") {
             this.$router.push({
@@ -1105,11 +1108,11 @@ export default {
               query: {
                 ...this.$route.query
               }
-            });
+            })
           } else {
             this.$router.push({
               name: "sessions-index"
-            });
+            })
 
             setTimeout(() => {
               this.$router.push({
@@ -1118,26 +1121,26 @@ export default {
                   id: jobId,
                   jobPartId
                 }
-              });
-            }, 500);
+              })
+            }, 500)
           }
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (jobApplicationNotifications.includes(notificationTypeName)) {
-        const { job } = payload;
+        const { job } = payload
 
         const {
           id: jobId,
           practice_id: jobPracticeId,
           practice_surgery_id: practiceSurgeryId
-        } = job;
+        } = job
 
-        let routeParamId = jobId;
+        let routeParamId = jobId
 
         if (
           jobPracticeId !== this.$auth.user.practice_id &&
@@ -1148,7 +1151,7 @@ export default {
             params: {
               id: practiceSurgeryId
             }
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -1158,8 +1161,8 @@ export default {
                 id: practiceSurgeryId,
                 sessionId: routeParamId
               }
-            });
-          }, 500);
+            })
+          }, 500)
         } else {
           if (this.$route.name === "sessions-index") {
             this.$router.push({
@@ -1170,11 +1173,11 @@ export default {
               query: {
                 ...this.$route.query
               }
-            });
+            })
           } else {
             this.$router.push({
               name: "sessions-index"
-            });
+            })
 
             setTimeout(() => {
               this.$router.push({
@@ -1182,25 +1185,25 @@ export default {
                 params: {
                   id: routeParamId
                 }
-              });
-            }, 500);
+              })
+            }, 500)
           }
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practiceLocumInvoiceNotifications.includes(notificationTypeName)) {
-        const locumInvoice = payload;
+        const locumInvoice = payload
 
         const {
           id: locumInvoiceId,
           practice_id: locumInvoicePracticeId,
           practice_surgery_id: practiceSurgeryId,
           status
-        } = locumInvoice;
+        } = locumInvoice
 
         if (
           locumInvoicePracticeId !== this.$auth.user.practice_id &&
@@ -1212,7 +1215,7 @@ export default {
             params: {
               id: practiceSurgeryId
             }
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -1222,8 +1225,8 @@ export default {
                 id: practiceSurgeryId,
                 invoiceId: locumInvoiceId
               }
-            });
-          }, 500);
+            })
+          }, 500)
         } else {
           if (this.$route.name === "practice-billing-invoices-from-locums") {
             this.$router.push({
@@ -1235,11 +1238,11 @@ export default {
                 ...this.$route.query,
                 status: status === "Paid" ? "approved" : status.toLowerCase()
               }
-            });
+            })
           } else {
             this.$router.push({
               name: "practice-billing-invoices-from-locums"
-            });
+            })
 
             setTimeout(() => {
               this.$router.push({
@@ -1250,20 +1253,20 @@ export default {
                 query: {
                   status: status === "Paid" ? "approved" : status.toLowerCase()
                 }
-              });
-            }, 500);
+              })
+            }, 500)
           }
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practiceInvoiceNotifications.includes(notificationTypeName)) {
-        const practiceInvoice = payload;
+        const practiceInvoice = payload
 
-        const { id: practiceInvoiceId } = practiceInvoice;
+        const { id: practiceInvoiceId } = practiceInvoice
 
         if (this.$route.name === "practice-billing-invoices-from-hubzz") {
           this.$router.push({
@@ -1274,11 +1277,11 @@ export default {
             query: {
               ...this.$route.query
             }
-          });
+          })
         } else {
           this.$router.push({
             name: "practice-billing-invoices-from-hubzz"
-          });
+          })
 
           setTimeout(() => {
             this.$router.push({
@@ -1286,28 +1289,28 @@ export default {
               params: {
                 id: practiceInvoiceId
               }
-            });
-          }, 500);
+            })
+          }, 500)
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practicePracticeSurgeryNotifications.includes(notificationTypeName)) {
-        const practiceSurgery = payload;
+        const practiceSurgery = payload
 
         const {
           id: practiceSurgeryId,
           practice_id: practiceId,
           invitation_accepted: invitationAccepted
-        } = practiceSurgery;
+        } = practiceSurgery
 
         if (practiceSurgery.isDeleted) {
           this.$router.push({
             name: "spoke-surgery-management-invitations-hub"
-          });
+          })
         } else {
           if (practiceId === this.$auth.user.practice_id) {
             if (!invitationAccepted) {
@@ -1319,11 +1322,11 @@ export default {
                   params: {
                     invitationId: practiceSurgeryId
                   }
-                });
+                })
               } else {
                 this.$router.push({
                   name: "hub-surgery-management-invitations-hub"
-                });
+                })
 
                 setTimeout(() => {
                   this.$router.push({
@@ -1331,8 +1334,8 @@ export default {
                     params: {
                       invitationId: practiceSurgeryId
                     }
-                  });
-                }, 500);
+                  })
+                }, 500)
               }
             } else {
               if (this.$route.name === "hub-surgery-management-index") {
@@ -1341,11 +1344,11 @@ export default {
                   params: {
                     id: practiceSurgeryId
                   }
-                });
+                })
               } else {
                 this.$router.push({
                   name: "hub-surgery-management-index"
-                });
+                })
 
                 setTimeout(() => {
                   this.$router.push({
@@ -1353,8 +1356,8 @@ export default {
                     params: {
                       id: practiceSurgeryId
                     }
-                  });
-                }, 500);
+                  })
+                }, 500)
               }
             }
           } else {
@@ -1365,12 +1368,12 @@ export default {
                   params: {
                     invitationId: practiceSurgeryId
                   }
-                });
+                })
               }
             } else {
               this.$router.push({
                 name: "spoke-surgery-management-index"
-              });
+              })
 
               if (!invitationAccepted) {
                 setTimeout(() => {
@@ -1380,51 +1383,51 @@ export default {
                     params: {
                       invitationId: practiceSurgeryId
                     }
-                  });
-                }, 500);
+                  })
+                }, 500)
               }
             }
           }
         }
 
-        this.showNotificationsDropdown = false;
-        this.updateNotificationSeen(notification);
-        return;
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
-      this.oldGoTo(notification);
+      this.oldGoTo(notification)
     },
 
-    oldGoTo(notification) {
+    oldGoTo (notification) {
       let job = notification.payload.job
         ? notification.payload.job
-        : notification.payload;
+        : notification.payload
 
-      let type = notification.type;
+      let type = notification.type
 
-      let id = job.id;
+      let id = job.id
 
       let status =
-        this.$auth.user.domain === "Practice" ? job.status : job.locum_status;
+        this.$auth.user.domain === "Practice" ? job.status : job.locum_status
 
-      let dateStart = job.date_start;
+      let dateStart = job.date_start
 
-      let url = "";
+      let url = ""
 
       if (type === "Job") {
         if (this.$auth.user.domain === "Locum") {
-          url = "/jobs";
+          url = "/jobs"
         }
 
         if (this.$auth.user.domain === "Practice") {
           if (job.practice_id === this.$auth.user.practice_id) {
             if (this.$route.name.includes("dashboard")) {
-              url = this.$route.path;
+              url = this.$route.path
             } else {
-              url = "/sessions";
+              url = "/sessions"
             }
           } else {
-            url = `/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions`;
+            url = `/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions`
           }
         }
       } else if (type === "Billing") {
@@ -1441,9 +1444,9 @@ export default {
             : this.$auth.user.domain === "Locum" &&
               notification.notification_billing_type === "Private"
             ? `/locum-billing/private-invoices`
-            : null;
+            : null
       } else if (type === "Permanent Jobs") {
-        url = `/permanent-jobs`;
+        url = `/permanent-jobs`
       }
 
       if (type === "Job") {
@@ -1452,11 +1455,11 @@ export default {
           let selectedMonth =
             this.$moment()
               .month(dateStart)
-              .format("M") - 1;
+              .format("M") - 1
 
           let selectedYear = this.$moment()
             .month(dateStart)
-            .format("YYYY");
+            .format("YYYY")
 
           this.$store.commit(
             "calendar/SELECT_DATE",
@@ -1464,32 +1467,32 @@ export default {
               .set("month", selectedMonth)
               .set("year", selectedYear)
               .format("YYYY-MM-DD")
-          );
+          )
         }
       }
 
       // query
       if (type === "Job") {
-        let routeStatus = "";
+        let routeStatus = ""
 
         switch (status) {
           case "Declined":
-            routeStatus = "Withdrawn";
-            break;
+            routeStatus = "Withdrawn"
+            break
           case "Matched":
-            routeStatus = "Available";
-            break;
+            routeStatus = "Available"
+            break
           case "Available":
-            routeStatus = "Public";
-            break;
+            routeStatus = "Public"
+            break
           case "Terminated":
-            routeStatus = "Completed";
-            break;
+            routeStatus = "Completed"
+            break
           case "Updated":
-            routeStatus = null;
-            break;
+            routeStatus = null
+            break
           default:
-            routeStatus = status;
+            routeStatus = status
         }
 
         if (url) {
@@ -1502,10 +1505,10 @@ export default {
                 : null,
               status: !url.includes("surgery-management") ? routeStatus : null
             }
-          });
+          })
         } else {
           if (!notification.seen) {
-            this.seenNotification(notification.id);
+            this.seenNotification(notification.id)
           }
         }
 
@@ -1520,26 +1523,26 @@ export default {
                   : null,
                 status: !url.includes("surgery-management") ? routeStatus : null
               }
-            });
+            })
           } else {
-            this.seenNotification(notification.id);
+            this.seenNotification(notification.id)
           }
-        }, 500);
+        }, 500)
       } else if (type === "Billing") {
-        let routeStatus = "";
+        let routeStatus = ""
 
         switch (status) {
           case "Draft":
-            routeStatus = "to-be-invoiced";
-            break;
+            routeStatus = "to-be-invoiced"
+            break
           case "Issued":
-            routeStatus = "issued";
-            break;
+            routeStatus = "issued"
+            break
           case "Paid":
-            routeStatus = "approved";
-            break;
+            routeStatus = "approved"
+            break
           default:
-            routeStatus = status;
+            routeStatus = status
         }
 
         // return
@@ -1551,51 +1554,51 @@ export default {
               ...this.$route.query,
               status: routeStatus
             }
-          });
+          })
         }
 
         setTimeout(() => {
           this.$router.push({
             path: `${url}/${id}/edit`,
             query: { ...this.$route.query, status: routeStatus }
-          });
-        }, 500);
+          })
+        }, 500)
       } else if (type === "Permanent Jobs") {
         this.$router.push({
           path: `${url}/${id}`,
           query: { ...this.$route.query }
-        });
+        })
       }
 
       if (!notification.seen) {
-        this.seenNotification(notification.id);
+        this.seenNotification(notification.id)
       }
     },
 
-    seenNotification(notificationId) {
+    seenNotification (notificationId) {
       this.$axios
         .put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`)
         .then(() => {
           const notification = this.notifications.find(
             ({ id }) => id === notificationId
-          );
+          )
 
           if (notification) {
-            notification.seen = true;
+            notification.seen = true
           }
 
           const index = this.unseenNotificationIds.findIndex(
             unseenNotificationId => unseenNotificationId === notificationId
-          );
+          )
 
           if (index > -1) {
-            this.unseenNotificationIds.splice(index, 1);
+            this.unseenNotificationIds.splice(index, 1)
           }
-        });
+        })
     },
 
-    loadMore() {
-      this.loadingLoadMore = true;
+    loadMore () {
+      this.loadingLoadMore = true
       this.$axios
         .get(`/api/v1/${this.domain}/notifications`, {
           params: {
@@ -1605,39 +1608,39 @@ export default {
           }
         })
         .then(response => {
-          const notifications = response.data.data.notifications;
+          const notifications = response.data.data.notifications
 
           notifications.forEach(notification => {
             const index = this.notifications.findIndex(
               ({ id }) => id === notification.id
-            );
+            )
 
             if (index > -1) {
-              this.notifications.splice(index, 1, notification);
+              this.notifications.splice(index, 1, notification)
             } else {
-              this.notifications.push(notification);
+              this.notifications.push(notification)
             }
-          });
+          })
         })
         .finally(() => {
-          this.loadingLoadMore = false;
-        });
+          this.loadingLoadMore = false
+        })
     },
 
-    close() {
-      this.showNotificationsDropdown = false;
+    close () {
+      this.showNotificationsDropdown = false
     },
 
-    scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
+    scrollHandler ({ target: { scrollTop, offsetHeight, scrollHeight } }) {
       if (this.notificationCount !== this.notifications.length) {
-        let scroll = Math.round(offsetHeight + scrollTop);
+        let scroll = Math.round(offsetHeight + scrollTop)
         if (scroll === scrollHeight) {
-          this.loadMore();
+          this.loadMore()
         }
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>
