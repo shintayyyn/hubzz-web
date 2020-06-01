@@ -851,18 +851,24 @@ export default {
               : null;
           return user;
         }),
-        app.$axios.$get(`/api/v1/locum/other-mandatory-training`).then(res => {
-          const other_mandatory_trainings = [];
-          res.data.locum_other_mandatory_trainings.forEach(
-            otherMandatoryTraining => {
-              other_mandatory_trainings.push({
-                label: otherMandatoryTraining.name,
-                value: otherMandatoryTraining.id
-              });
+        app.$axios
+          .$get(`/api/v1/locum/other-mandatory-training`, {
+            params: {
+              user_id: app.$auth.user.id
             }
-          );
-          return other_mandatory_trainings;
-        })
+          })
+          .then(res => {
+            const other_mandatory_trainings = [];
+            res.data.locum_other_mandatory_trainings.forEach(
+              otherMandatoryTraining => {
+                other_mandatory_trainings.push({
+                  label: otherMandatoryTraining.name,
+                  value: otherMandatoryTraining.id
+                });
+              }
+            );
+            return other_mandatory_trainings;
+          })
       ]);
 
       return {
@@ -923,9 +929,10 @@ export default {
     this.form.mandatory_training_id = this.user.mandatory_trainings.map(
       mandatoryTraining => mandatoryTraining.mandatory_training.id
     );
-    // this.form.other_mandatory_training_id = this.otherMandatoryTrainings.map(
-    //   otherMandatoryTraining => otherMandatoryTraining.value
-    // );
+    this.form.other_mandatory_training_id = this.user.other_mandatory_trainings.map(
+      otherMandatoryTraining =>
+        otherMandatoryTraining.locum_other_mandatory_training.id
+    );
     this.form.post_code = this.user.locum_postcode;
     this.form.miles = this.user.miles;
 
@@ -1098,7 +1105,6 @@ export default {
         }
       }
     },
-
     save() {
       this.formError = [];
       let notRequired = [
