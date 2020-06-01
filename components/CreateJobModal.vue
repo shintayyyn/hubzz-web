@@ -23,7 +23,9 @@
 					class="message-modal job-notification bg-white p-4 rounded font-bold text-gray-700"
 					v-if="toPublish"
 				>
-					<p class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg">JOB NOTIFICATION SUMMARY</p>
+					<p
+						class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg font-bold"
+					>JOB NOTIFICATION SUMMARY</p>
 					<div class="px-4">
 						<div class="flex justify-between pb-2">
 							<p>Total Working Hours:</p>
@@ -38,8 +40,8 @@
 							<p>{{ hubzz_fee | currency }}</p>
 						</div>
 					</div>
-					<div class="flex justify-end items-center">
-						<AppButton :label="'Cancel'" class="mr-1" @click="toPublish=false" />
+					<div class="flex justify-end items-center text-black mt-3">
+						<AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toPublish=false" />
 						<AppButton :label="'Confirm & Publish'" :disabled="loading" @click="createJob" />
 					</div>
 				</div>
