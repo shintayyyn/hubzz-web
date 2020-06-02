@@ -552,6 +552,7 @@
 						:rate_lists="rate_lists"
 						@getSchedule="getSchedule"
 						:schedule="form.schedules"
+						:error="formError.find(err => err.field === 'schedules')"
 					/>
 					<div class="pt-4 pb-8 w-full flex justify-between">
 						<AppButton class="mr-2" :label="'Back'" :disabled="loading" @click="tabActive='details'" />
@@ -641,7 +642,8 @@ export default {
 				time: null
 			},
 
-			tabActive: "details",
+			// tabActive: "details",
+			tabActive: "schedule",
 			hasShiftError: false,
 
 			// SPLIT JOBS
@@ -1699,6 +1701,26 @@ export default {
 								err.response.data.error_messages
 							) {
 								this.formError = err.response.data.error_messages;
+								let detailsError = [
+									"practice_id",
+									"number_of_patients",
+									"duration_for_each_appointment",
+									"role",
+									"specialty",
+									"clinical_system"
+								];
+								let hasDetailsError = this.formError
+									.map(err => detailsError.includes(err.field))
+									.includes(true);
+								if (hasDetailsError) {
+									this.tabActive = "details";
+								} else if (
+									this.formError
+										.map(err => ["schedules", "dates"].includes(err.field))
+										.includes(true)
+								) {
+									this.tabActive = "schedule";
+								}
 							} else {
 								message = err.response.data.message;
 							}
@@ -1717,10 +1739,26 @@ export default {
 						}
 					})
 					.finally(() => {
+						this.toPublish = false;
 						this.loading = false;
 					});
 			} else {
+				let detailsError = [
+					"practice_id",
+					"number_of_patients",
+					"duration_for_each_appointment",
+					"role",
+					"specialty",
+					"clinical_system"
+				];
+				let hasDetailsError = this.formError
+					.map(err => detailsError.includes(err.field))
+					.includes(true);
+				if (hasDetailsError) {
+					this.tabActive = "details";
+				}
 				console.log("errors", this.formError);
+				this.toPublish = false;
 				this.$nextTick(() => {
 					this.$refs.modalContainer.scrollTop = 0;
 				});

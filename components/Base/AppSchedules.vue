@@ -80,6 +80,9 @@
 									:items="job_parts"
 								/>
 							</div>
+							<div class="flex px-4 mb-4" v-if="error">
+								<p class="py-2 px-4 bg-red-500 text-white text-sm rounded-lg">{{ error.message }}</p>
+							</div>
 							<div class="px-4">
 								<div class="flex text-sm pb-2 font-bold text-gray-700">
 									<p class="w-2/12 px-2">Date</p>
@@ -106,31 +109,35 @@
 											<div class="w-4/12 px-1">
 												<AppInput
 													v-model="shift.shift_id"
-													:name="`shift_id-${index}${i}`"
+													:name="`shift_id-s${index}-${i}`"
 													:type="'select'"
 													:items="shifts_option"
 													class="w-full"
 													:inStyle="'font-size: 13px; padding-left: 8px;'"
 													:wrapperClass="'mb-1 py-1'"
 													@change="changeShiftId(shift.shift_id, item.shifts, i)"
+													:error="formError.find(err => err.name === `shift_id-s${index}-${i}`)"
+													@blur="CheckEmptyField(shift.shift_id,`shift_id-s${index}-${i}`)"
 												/>
 											</div>
 											<div class="w-2/12 px-1">
 												<AppTime
 													v-model="shift.time_start"
-													:name="`time_start-${index}${i}`"
+													:name="`time_start-s${index}-${i}`"
 													:wrapperClass="'mb-1 py-1'"
 													:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 													@change="$emit('getSchedule', schedules)"
+													:error="formError.find(err => err.name === `time_start-s${index}-${i}`)"
 												/>
 											</div>
 											<div class="w-2/12 px-1">
 												<AppTime
 													v-model="shift.time_end"
-													:name="`time_end-${index}${i}`"
+													:name="`time_end-s${index}-${i}`"
 													:wrapperClass="'mb-1 py-1'"
 													:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 													@change="$emit('getSchedule', schedules)"
+													:error="formError.find(err => err.name === `time_end-s${index}-${i}`)"
 												/>
 											</div>
 											<div class="w-2/12 px-2 py-4 text-center">
@@ -151,18 +158,19 @@
 											<div class="w-3/12 px-1">
 												<AppInput
 													v-model="shift.locum_detail_rate_type_id"
-													:name="`locum_detail_rate_type_id-${index}${i}`"
+													:name="`locum_detail_rate_type_id-s${index}-${i}`"
 													:type="'select'"
 													:items="rate_lists"
 													:wrapperClass="'mb-1 py-1'"
 													:inStyle="'font-size: 13px; padding-left: 8px;'"
 													@change="$emit('getSchedule', schedules)"
+													:error="formError.find(err => err.name === `locum_detail_rate_type_id-s${index}-${i}`)"
 												/>
 											</div>
 											<div class="w-3/12 pl-1 pr-3">
 												<AppInput
 													v-model="shift.rate"
-													:name="`rate-${index}${i}`"
+													:name="`rate-s${index}-${i}`"
 													class="w-full"
 													:type="'text'"
 													:min="1"
@@ -173,13 +181,15 @@
 													@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
 													@keydown="isNumber($event)"
 													@change="$emit('getSchedule', schedules)"
+													:error="formError.find(err => err.name === `rate-s${index}-${i}`)"
 												/>
 											</div>
 										</div>
 										<div class="flex items-center mt-2 mb-4">
 											<button
-												class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4"
-												@click="addShift(item.shifts)"
+												class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
+												:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
+												@click="addShift(item.shifts, index)"
 											>
 												<svgicon
 													name="times-solid"
@@ -189,13 +199,13 @@
 													style="transform: rotate(45deg);"
 												/>Add Shift
 											</button>
-											<span v-if="item.shifts.length && item.shifts.length !== 4" class="pl-1">
+											<span v-if="item.shifts.length" class="pl-1">
 												<svgicon
 													name="refresh"
 													width="14"
 													height="14"
 													class="fill-current cursor-pointer"
-													@click="item.shifts = []"
+													@click="clearShifts(item.shifts, index)"
 												/>
 											</span>
 										</div>
@@ -213,102 +223,6 @@
 										</template>
 									</div>
 								</div>
-								<!-- <div
-									v-for="(item, index) in schedules"
-									:key="index"
-									class="flex border rounded-lg pl-2 mb-2 text-sm shifts-rates text-gray-600"
-								>
-									<div class="border-r w-full flex pr-4">
-										<div class="flex pr-4 py-4">
-											<p>{{ item.date }}</p>
-										</div>
-										<div class="flex w-full">
-											<div class="w-full shift flex flex-col items-start">
-												<template v-if="item.shifts.length">
-													<div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full items-end">
-														<div class="w-1/6 flex items-end">
-															<AppInput
-																v-model="shift.shift_id"
-																:type="'select'"
-																:items="shifts"
-																class="w-full"
-																:wrapperClass="'mb-1 py-1'"
-															/>
-														</div>
-														<div class="w-1/6 pl-4">
-															<AppTime v-model="item.time_start" :wrapperClass="'mb-1 py-1'" />
-														</div>
-														<div class="w-1/6 pl-4">
-															<AppTime v-model="item.time_end" :wrapperClass="'mb-1 py-1'" />
-														</div>
-														<div class="w-2/6 pl-4">
-															<AppInput
-																v-model="item.rate_type"
-																:type="'select'"
-																:items="rate_lists"
-																:wrapperClass="'mb-1 py-1'"
-															/>
-														</div>
-														<div class="w-1/6 pl-4">
-															<AppInput
-																class="w-full"
-																v-model="item.rate"
-																:type="'text'"
-																:min="1"
-																:in-style="'text-align:right;'"
-																:wrapperClass="'mb-1 py-1'"
-																:limit="8"
-																@blur="item.rate === '' ? item.rate = 0 : item.rate"
-																@focus="item.rate === 0 ? item.rate = '' : item.rate"
-																@keydown="isNumber($event)"
-															/>
-														</div>
-														<span class="mb-4 ml-2 text-red-500 hover:text-red-600 transition-hover">
-															<svgicon
-																name="times-solid"
-																width="12"
-																height="12"
-																class="fill-current cursor-pointer"
-															/>
-														</span>
-													</div>
-												</template>
-												<div class="flex items-center">
-													<button
-														class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 font-bold bg-white py-1 my-2 rounded-lg w-full text-xs transition-hover px-4"
-														:disabled="item.shifts.length && !item.shifts[item.shifts.length-1].shift_id ? true : false"
-														@click="addShift(item.shifts)"
-													>
-														<svgicon
-															name="times-solid"
-															width="8"
-															height="8"
-															class="fill-current mr-1"
-															style="transform: rotate(45deg);"
-														/>Add Shift
-													</button>
-													<span v-if="item.shifts.length && item.shifts.length !== 4" class="pl-1">
-														<svgicon
-															name="refresh"
-															width="14"
-															height="14"
-															class="fill-current cursor-pointer"
-															@click="item.shifts = []"
-														/>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="flex flex-col justify-end items-center text-xs px-4 py-2">
-										<button
-											class="border border-gray-500 leading-tight px-2 py-1 rounded-lg mb-1"
-										>Apply to Job Part</button>
-										<button
-											class="border border-gray-500 leading-tight px-2 py-1 rounded-lg"
-										>Apply to all dates</button>
-									</div>
-								</div>-->
 							</div>
 						</template>
 						<template v-else>
@@ -318,11 +232,11 @@
 					<div v-if="schedules && schedules.length" class="w-10/12 pl-4 pt-4 flex flex-col items-end">
 						<div class="flex flex-col w-2/4 text-lg text-gray-600 font-bold">
 							<div class="flex justify-between">
-								<p>Job Part 1/2 Total Hours:</p>
-								<p>{{ getTotalHours(this.filteredSchedule) | hoursMinutes }}</p>
+								<p>Job Part {{ job_part_id }}/{{ job_parts.length }} Total Hours:</p>
+								<p>{{ getTotalHours(this.filteredSchedule) <= 0 ? '-' : '' }}{{ getTotalHours(this.filteredSchedule) | hoursMinutes }}</p>
 							</div>
 							<div class="flex justify-between">
-								<p>Job Part 1/2 Gross Rate:</p>
+								<p>Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:</p>
 								<p>£ {{ getJobGrossRate(filteredSchedule) | currency}}</p>
 							</div>
 							<div class="flex justify-between">
@@ -356,11 +270,11 @@ export default {
 		AppLoading,
 		AppConfirmationModal
 	},
-	props: ["shifts", "rate_lists", "schedule"],
+	props: ["shifts", "rate_lists", "schedule", "error"],
 	data() {
 		return {
-			start_date: "",
-			end_date: "",
+			// start_date: "",
+			// end_date: "",
 			schedule_dates: [],
 			selected_dates: [],
 			overlayData: [],
@@ -369,7 +283,8 @@ export default {
 			showSpecialRates: "",
 			// shifts_option: [],
 			job_part_id: 1,
-			confirmApply: ""
+			confirmApply: "",
+			formError: []
 		};
 	},
 	created() {
@@ -409,113 +324,143 @@ export default {
 		}
 	},
 	watch: {
-		start_date(newValue, oldValue) {
-			if (
-				this.start_date &&
-				!this.$moment(this.start_date).isSameOrAfter(
-					this.$moment(this.end_date)
-				)
-			) {
-				let start_date = oldValue;
-				if (this.schedules && this.schedules.length) {
-					let start_date = this.schedules[0];
-					start_date = this.$moment(start_date.date, "DD/MM/YYYY").format(
-						"YYYY-MM-DD"
-					);
-				}
-				if (this.$moment(newValue).isAfter(start_date)) {
-					let overDates = this.schedules.filter(sched =>
-						this.$moment(
-							this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD")
-						).isBefore(newValue)
-					);
-					let schedDates_over = this.schedule_dates.filter(date =>
-						this.$moment(
-							this.$moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
-						).isBefore(newValue)
-					);
-					this.schedule_dates.forEach((d, index) => {
-						let sched_date = this.$moment(d, "DD/MM/YYYY").format("YYYY-MM-DD");
-						if (this.$moment(sched_date).isBefore(newValue)) {
-							this.schedule_dates.splice(index, schedDates_over.length);
-						}
-					});
-					this.schedules.forEach((sched, index) => {
-						let date = this.$moment(sched.date, "DD/MM/YYYY").format(
-							"YYYY-MM-DD"
-						);
-						if (this.$moment(date).isBefore(newValue)) {
-							this.schedules.splice(index, overDates.length);
-						}
-					});
-				}
-				this.generateDates();
-			}
-		},
-		end_date(newValue, oldValue) {
-			if (
-				this.start_date &&
-				!this.$moment(this.start_date).isSameOrAfter(
-					this.$moment(this.end_date)
-				)
-			) {
-				let last_date = oldValue;
-				if (this.schedules && this.schedules.length) {
-					let last_sched = this.schedules[this.schedules.length - 1];
-					last_date = this.$moment(last_sched.date, "DD/MM/YYYY").format(
-						"YYYY-MM-DD"
-					);
-				}
-				if (this.$moment(newValue).isBefore(last_date)) {
-					let overDates = this.schedules.filter(sched =>
-						this.$moment(
-							this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD")
-						).isAfter(newValue)
-					);
-					let schedDates_over = this.schedule_dates.filter(date =>
-						this.$moment(
-							this.$moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
-						).isAfter(newValue)
-					);
-					this.schedule_dates.forEach((d, index) => {
-						let sched_date = this.$moment(d, "DD/MM/YYYY").format("YYYY-MM-DD");
-						if (this.$moment(sched_date).isAfter(newValue)) {
-							this.schedule_dates.splice(index, schedDates_over.length);
-						}
-					});
-					this.schedules.forEach((sched, index) => {
-						let date = this.$moment(sched.date, "DD/MM/YYYY").format(
-							"YYYY-MM-DD"
-						);
-						if (this.$moment(date).isAfter(newValue)) {
-							this.schedules.splice(index, overDates.length);
-						}
-					});
-				}
-				this.generateDates();
-			}
-		},
+		// start_date(newValue, oldValue) {
+		// 	if (
+		// 		this.start_date &&
+		// 		!this.$moment(this.start_date).isSameOrAfter(
+		// 			this.$moment(this.end_date)
+		// 		)
+		// 	) {
+		// 		let start_date = oldValue;
+		// 		if (this.schedules && this.schedules.length) {
+		// 			let start_date = this.schedules[0];
+		// 			start_date = this.$moment(start_date.date, "DD/MM/YYYY").format(
+		// 				"YYYY-MM-DD"
+		// 			);
+		// 		}
+		// 		if (this.$moment(newValue).isAfter(start_date)) {
+		// 			let overDates = this.schedules.filter(sched =>
+		// 				this.$moment(
+		// 					this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD")
+		// 				).isBefore(newValue)
+		// 			);
+		// 			let schedDates_over = this.schedule_dates.filter(date =>
+		// 				this.$moment(
+		// 					this.$moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
+		// 				).isBefore(newValue)
+		// 			);
+		// 			this.schedule_dates.forEach((d, index) => {
+		// 				let sched_date = this.$moment(d, "DD/MM/YYYY").format("YYYY-MM-DD");
+		// 				if (this.$moment(sched_date).isBefore(newValue)) {
+		// 					this.schedule_dates.splice(index, schedDates_over.length);
+		// 				}
+		// 			});
+		// 			this.schedules.forEach((sched, index) => {
+		// 				let date = this.$moment(sched.date, "DD/MM/YYYY").format(
+		// 					"YYYY-MM-DD"
+		// 				);
+		// 				if (this.$moment(date).isBefore(newValue)) {
+		// 					this.schedules.splice(index, overDates.length);
+		// 				}
+		// 			});
+		// 		}
+		// 		this.generateDates();
+		// 	}
+		// },
+		// end_date(newValue, oldValue) {
+		// 	if (
+		// 		this.start_date &&
+		// 		!this.$moment(this.start_date).isSameOrAfter(
+		// 			this.$moment(this.end_date)
+		// 		)
+		// 	) {
+		// 		let last_date = oldValue;
+		// 		if (this.schedules && this.schedules.length) {
+		// 			let last_sched = this.schedules[this.schedules.length - 1];
+		// 			last_date = this.$moment(last_sched.date, "DD/MM/YYYY").format(
+		// 				"YYYY-MM-DD"
+		// 			);
+		// 		}
+		// 		if (this.$moment(newValue).isBefore(last_date)) {
+		// 			let overDates = this.schedules.filter(sched =>
+		// 				this.$moment(
+		// 					this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD")
+		// 				).isAfter(newValue)
+		// 			);
+		// 			let schedDates_over = this.schedule_dates.filter(date =>
+		// 				this.$moment(
+		// 					this.$moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
+		// 				).isAfter(newValue)
+		// 			);
+		// 			this.schedule_dates.forEach((d, index) => {
+		// 				let sched_date = this.$moment(d, "DD/MM/YYYY").format("YYYY-MM-DD");
+		// 				if (this.$moment(sched_date).isAfter(newValue)) {
+		// 					this.schedule_dates.splice(index, schedDates_over.length);
+		// 				}
+		// 			});
+		// 			this.schedules.forEach((sched, index) => {
+		// 				let date = this.$moment(sched.date, "DD/MM/YYYY").format(
+		// 					"YYYY-MM-DD"
+		// 				);
+		// 				if (this.$moment(date).isAfter(newValue)) {
+		// 					this.schedules.splice(index, overDates.length);
+		// 				}
+		// 			});
+		// 		}
+		// 		this.generateDates();
+		// 	}
+		// },
 		schedule_dates(value) {
-			// let i = 1;
-			// value.forEach((date, index) => {
-			// 	let job_parts = 0;
-			// 	let weekday = this.$moment(date, "DD/MM/YYYY").weekday();
-			// 	if (weekday >= 1 || weekday <= 6) {
-			// 	} else {
-			// 	}
-			// 	console.log(date, this.$moment(date, "DD/MM/YYYY").weekday());
-			// });
+			if (!this.schedules.length) {
+				value.forEach(date => {
+					this.schedules.push({
+						date: date,
+						shifts: []
+					});
+				});
+			} else {
+				if (value.length > this.schedules.length) {
+					value.forEach(date => {
+						let dateExist = this.schedules.find(sched => sched.date === date);
+						if (!dateExist) {
+							this.schedules.push({
+								date: date,
+								shifts: []
+							});
+						}
+					});
+				} else {
+					this.schedules.forEach((sched, index) => {
+						let dateToRemove = value.find(date => sched.date === date);
+						if (!dateToRemove) {
+							this.schedules.splice(index, 1);
+						}
+					});
+				}
+			}
+
+			this.schedules.sort(
+				(a, b) =>
+					this.$moment(a.date, "DD/MM/YYYY") -
+					this.$moment(b.date, "DD/MM/YYYY")
+			);
+
+			return;
 			if (value.length) {
+				console.log("value", value);
+				console.log("this.schedules", this.schedules);
 				let removedAnItem = false;
 				this.schedules.forEach((sched, index) => {
 					let dateStillExist = value
 						.map(date => sched.date === date)
 						.includes(true);
+					console.log(dateStillExist);
 					if (!dateStillExist) {
 						this.schedules.splice(index, 1);
 						removedAnItem = true;
 					}
 				});
+				console.log(removedAnItem);
 				if (!removedAnItem) {
 					let isExisting = this.schedules.find(
 						item => item.date === value[value.length - 1]
@@ -533,6 +478,7 @@ export default {
 					this.$moment(a.date, "DD/MM/YYYY") -
 					this.$moment(b.date, "DD/MM/YYYY")
 			);
+			console.log("schedules", this.schedules);
 		},
 		schedules(value) {
 			this.$emit(
@@ -545,6 +491,107 @@ export default {
 		}
 	},
 	computed: {
+		sortedDates() {
+			return [...this.schedule_dates].sort((dateA, dateB) => {
+				const datetimeA = this.$moment(dateA, "DD/MM/YYYY");
+				const datetimeB = this.$moment(dateB, "DD/MM/YYYY");
+				if (datetimeA.isBefore(datetimeB)) {
+					return -1;
+				}
+
+				if (datetimeA.isAfter(datetimeB)) {
+					return 1;
+				}
+
+				return 0;
+			});
+		},
+		start_date: {
+			get() {
+				return this.sortedDates.length > 0
+					? this.$moment(this.sortedDates[0], "DD/MM/YYYY").format("YYYY-MM-DD")
+					: "";
+			},
+			set(startDate) {
+				if (!startDate) {
+					return;
+				}
+				if (!this.start_date) {
+					this.schedule_dates.push(
+						this.$moment(startDate, "YYYY-MM-DD").format("DD/MM/YYYY")
+					);
+					return;
+				}
+				const newStartDate = this.$moment(startDate, "YYYY-MM-DD");
+
+				const oldStartDate = this.$moment(this.start_date, "YYYY-MM-DD");
+
+				if (newStartDate.isBefore(oldStartDate)) {
+					let tempDate = newStartDate;
+					while (tempDate.isBefore(oldStartDate)) {
+						this.schedule_dates.push(tempDate.format("DD/MM/YYYY"));
+						tempDate = tempDate.add(1, "days");
+					}
+					return;
+				}
+
+				if (newStartDate.isAfter(oldStartDate)) {
+					this.schedule_dates = this.schedule_dates.filter(
+						date => !newStartDate.isAfter(this.$moment(date, "DD/MM/YYYY"))
+					);
+					this.schedule_dates.push(
+						this.$moment(startDate, "YYYY-MM-DD").format("DD/MM/YYYY")
+					);
+					return;
+				}
+			}
+		},
+		end_date: {
+			get() {
+				return this.sortedDates.length > 0
+					? this.$moment(
+							this.sortedDates[this.sortedDates.length - 1],
+							"DD/MM/YYYY"
+					  ).format("YYYY-MM-DD")
+					: "";
+			},
+
+			set(endDate) {
+				if (!endDate) {
+					return;
+				}
+
+				if (!this.end_date) {
+					this.schedule_dates.push(
+						this.$moment(endDate, "YYYY-MM-DD").format("DD/MM/YYYY")
+					);
+					return;
+				}
+
+				const newEndDate = this.$moment(endDate, "YYYY-MM-DD");
+
+				const oldEndDate = this.$moment(this.end_date, "YYYY-MM-DD");
+
+				if (newEndDate.isBefore(oldEndDate)) {
+					this.schedule_dates = this.schedule_dates.filter(
+						date => !newEndDate.isSameOrBefore(this.$moment(date, "DD/MM/YYYY"))
+					);
+					this.schedule_dates.push(
+						this.$moment(endDate, "YYYY-MM-DD").format("DD/MM/YYYY")
+					);
+					return;
+				}
+
+				if (newEndDate.isAfter(oldEndDate)) {
+					let tempDate = newEndDate;
+					while (tempDate.isAfter(oldEndDate)) {
+						this.schedule_dates.push(tempDate.format("DD/MM/YYYY"));
+						tempDate = tempDate.subtract(1, "days");
+					}
+					return;
+				}
+			}
+		},
 		shifts_option() {
 			return [...this.shifts, { label: "Remove", value: 5 }];
 		},
@@ -562,11 +609,9 @@ export default {
 				let minDate = this.$moment.min(moments).format("DD/MM/YYYY");
 				job_part.push({
 					dates: item.dates,
-					label: `${index + 1}/${
-						job_part_dates.length
-					} | ${minDate} - ${maxDate} | ${item.dates.length} day${
-						item.dates.length > 1 ? "s" : ""
-					}`,
+					label: `${index + 1}/${job_part_dates.length} | ${
+						item.dates.length > 1 ? `${minDate} - ${maxDate}` : maxDate
+					} | ${item.dates.length} day${item.dates.length > 1 ? "s" : ""}`,
 					id: index + 1,
 					start_date: minDate,
 					end_date: maxDate,
@@ -587,20 +632,30 @@ export default {
 			let activeJobPart = this.job_parts.find(
 				part => part.value.toString() === this.job_part_id.toString()
 			);
-			return this.schedules.filter(item =>
+			if (!activeJobPart) {
+				this.job_part_id -= 1;
+				activeJobPart = this.job_parts.find(
+					part => part.value.toString() === this.job_part_id.toString()
+				);
+			}
+			let job_parts_schedule = this.schedules.filter(item =>
 				activeJobPart.dates.includes(
 					this.$moment(item.date, "DD/MM/YYYY").format("YYYY-MM-DD")
 				)
 			);
+			return job_parts_schedule;
 		},
 		hasShiftError() {
 			let errors = 0;
 			this.schedules.forEach(item => {
 				if (item.shifts.length) {
-					item.shifts.forEach(shift => {
+					item.shifts.forEach((shift, index) => {
 						this.totalHours(shift.time_start, shift.time_end, item.date) <= 0
 							? (errors += 1)
 							: "";
+						!shift.locum_detail_rate_type_id ? (errors += 1) : "";
+						!shift.shift_id ? (errors += 1) : "";
+						shift.rate === 0 ? (errors += 1) : "";
 					});
 				}
 			});
@@ -708,6 +763,15 @@ export default {
 		changeShiftId(id, shifts, index) {
 			if (["5", 5].includes(id)) {
 				shifts.splice(index, 1);
+				let rowError = this.formError.filter(err =>
+					err.name.includes(`s${index}`)
+				);
+				let errNames = rowError.map(err => err.name);
+				this.formError.forEach((err, i) => {
+					if (errNames.includes(err.name)) {
+						this.formError.splice(i, 1);
+					}
+				});
 			}
 			this.$emit(
 				"getSchedule",
@@ -774,42 +838,118 @@ export default {
 				}
 			}
 		},
-		onFocusShift(shifts, options) {
-			console.log("on focus", shifts, options);
-		},
-		isEmpty(rates, index) {
-			if (
-				!rates.time_start ||
-				!rates.time_end ||
-				!rates.rate ||
-				rates.rate === 0
-			) {
-				return true;
+		addShift(shifts, index) {
+			let rowError = [];
+
+			if (shifts.length) {
+				let last_shift = shifts[shifts.length - 1];
+				let i = shifts.length - 1;
+				let errIndex;
+
+				if (!last_shift.shift_id) {
+					rowError.push({
+						name: `shift_id-s${index}-${i}`,
+						message: "Shift is required."
+					});
+				} else {
+					errIndex = rowError.findIndex(
+						err => err.name === `shift_id-s${index}-${i}`
+					);
+					if (errIndex > -1) {
+						rowError.splice(errIndex, 1);
+					}
+				}
+				if (!last_shift.time_start) {
+					rowError.push({
+						name: `time_start-s${index}-${i}`,
+						message: "Start Time is required."
+					});
+				} else {
+					errIndex = rowError.findIndex(
+						err => err.name === `time_start-s${index}-${i}`
+					);
+					if (errIndex > -1) {
+						rowError.splice(errIndex, 1);
+					}
+				}
+
+				if (!last_shift.time_end) {
+					rowError.push({
+						name: `time_end-s${index}-${i}`,
+						message: "End Time is required."
+					});
+				} else {
+					errIndex = rowError.findIndex(
+						err => err.name === `time_end-s${index}-${i}`
+					);
+					if (errIndex > -1) {
+						rowError.splice(errIndex, 1);
+					}
+				}
+
+				if (!last_shift.locum_detail_rate_type_id) {
+					rowError.push({
+						name: `locum_detail_rate_type_id-s${index}-${i}`,
+						message: "Rate type is required."
+					});
+				} else {
+					errIndex = rowError.findIndex(
+						err => err.name === `locum_detail_rate_type_id-s${index}-${i}`
+					);
+					if (errIndex > -1) {
+						rowError.splice(errIndex, 1);
+					}
+				}
+
+				if (!last_shift.rate) {
+					rowError.push({
+						name: `rate-s${index}-${i}`,
+						message: "Rate is required."
+					});
+				} else {
+					errIndex = rowError.findIndex(
+						err => err.name === `rate-s${index}-${i}`
+					);
+					if (errIndex > -1) {
+						rowError.splice(errIndex, 1);
+					}
+				}
 			}
+			this.formError = [...this.formError, ...rowError];
+			if (!rowError.length) {
+				shifts.push({
+					shift_id: 0,
+					time_start: "",
+					time_end: "",
+					locum_detail_rate_type_id: 0,
+					rate: 0
+				});
+			}
+		},
+		rowNotFilled(shifts) {
+			let shift = shifts[shifts.length - 1];
+			// if (
+			// 	!shift.shift_id ||
+			// 	!shift.time_start ||
+			// 	!shift.time_end ||
+			// 	!shift.locum_detail_rate_type_id ||
+			// 	!shift.rate
+			// ) {
+			// 	return true;
+			// }
 			return false;
 		},
-		rowError(rates, index) {
-			let hasTimeStartError = this.specialRatesError.find(
-				err => err.field === `sr_time_start_${index}`
+		clearShifts(shifts, index) {
+			let schedule = this.schedules.find((sched, ind) => ind === index);
+			schedule.shifts = [];
+			let rowError = this.formError.filter(err =>
+				err.name.includes(`s${index}`)
 			);
-			let hasTimeEndError = this.specialRatesError.find(
-				err => err.field === `sr_time_end_${index}`
-			);
-			let hasTimeRateError = this.specialRatesError.find(
-				err => err.field === `sr_rate_${index}`
-			);
-			if (hasTimeStartError || hasTimeStartError || hasTimeRateError) {
-				return true;
-			}
-			return false;
-		},
-		addShift(shifts) {
-			shifts.push({
-				shift_id: 0,
-				time_start: "",
-				time_end: "",
-				locum_detail_rate_type_id: 0,
-				rate: 0
+			let errNames = rowError.map(err => err.name);
+			this.formError.forEach((err, i) => {
+				if (errNames.includes(err.name)) {
+					this.formError.splice(i, 1);
+				}
 			});
 		}
 	}
