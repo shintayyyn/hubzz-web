@@ -1545,7 +1545,10 @@ export default {
         this.loading = true;
 
         this.$axios
-          .$post(`/api/v1/practice/jobs`, this.form)
+          .$post(`/api/v1/practice/jobs`, {
+            ...this.form,
+            old_job_id: this.repostJob ? this.repostJob.id : null
+          })
           .then(res => {
             if (this.$route.name === "dashboard-create") {
               this.$router.push("/dashboard");
