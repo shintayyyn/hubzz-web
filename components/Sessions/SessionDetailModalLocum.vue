@@ -310,7 +310,6 @@ export default {
             res.data.user.locum_detail.profession
               .profession_compliance_category_id
           );
-          console.log("alvin", this.otherMandatoryTrainings);
         })
         .catch(err => {
           console.log("err", err.response || err);
