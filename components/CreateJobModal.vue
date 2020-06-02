@@ -95,9 +95,9 @@
 												:info="'Choose at least one qualification'"
 												:url="'/api/v1/qualifications'"
 												:professionCategoryId="selectedProfession && selectedProfession.profession_category
-                            ? selectedProfession.profession_category.id.toString()
-                            : null
-                          "
+                        ? selectedProfession.profession_category.id.toString()
+                        : null
+                      "
 												:error="formError.find(item => item.field === 'specialty')"
 												required
 											/>
@@ -122,122 +122,6 @@
 												:url="'/api/v1/spoken-languages'"
 												:default-item="'English'"
 											/>
-
-											<template v-if="form.role">
-												<div class="relative flex flex-col pt-2">
-													<div class>Compliance documents</div>
-												</div>
-
-												<div v-if="false" class="flex flex-row flex-wrap justify-bettwen">
-													<template v-if="selectedProfessionComplianceCategory">
-														<div class="flex flex-col w-full px-2">
-															<div>For {{ selectedProfessionComplianceCategory.name }}:</div>
-															<div class="ml-4">
-																<input
-																	:id="`${selectedProfessionComplianceCategory.id}-${selectedProfessionComplianceCategory.name}`"
-																	v-model="emptyComplianceDocumentId"
-																	type="checkbox"
-																	:disabled="emptyComplianceDocumentId"
-																/>
-																<label
-																	:for="`${selectedProfessionComplianceCategory.id}-${selectedProfessionComplianceCategory.name}`"
-																>N/A</label>
-															</div>
-															<div class="ml-2">Reference</div>
-															<template
-																v-for="complianceDocument in selectedProfessionComplianceCategory.reference_compliance_documents"
-															>
-																<div
-																	:key="`${complianceDocument.id}-${complianceDocument.name}`"
-																	class="ml-4 flex flex-row justify-start items-center"
-																>
-																	<input
-																		:id="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																		v-model="form.compliance_document_id"
-																		type="checkbox"
-																		:value="complianceDocument.id"
-																	/>
-																	<label
-																		:for="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																	>{{ complianceDocument.name }}</label>
-																</div>
-															</template>
-															<div class="ml-2">Mandatory</div>
-															<template
-																v-for="complianceDocument in selectedProfessionComplianceCategory.mandatory_compliance_documents"
-															>
-																<div
-																	v-if="complianceDocument.compliance_document_type_name !== 'Safeguarding'"
-																	:key="`${complianceDocument.id}-${complianceDocument.name}`"
-																	class="ml-4 flex flex-row justify-start items-center"
-																>
-																	<input
-																		:id="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																		v-model="form.compliance_document_id"
-																		type="checkbox"
-																		:value="complianceDocument.id"
-																	/>
-																	<label
-																		:for="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																	>{{ complianceDocument.name }}</label>
-																</div>
-																<div
-																	v-for="childComplianceDocument in complianceDocument.child_compliance_documents"
-																	v-if="complianceDocument.compliance_document_type_name === 'Safeguarding'"
-																	:key="`${childComplianceDocument.id}-${childComplianceDocument.name}`"
-																	class="ml-4 flex flex-row justify-start items-center"
-																>
-																	<input
-																		:id="`${childComplianceDocument.id}-${childComplianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																		v-model="form.compliance_document_id"
-																		type="checkbox"
-																		:value="childComplianceDocument.id"
-																	/>
-																	<label
-																		:for="`${childComplianceDocument.id}-${childComplianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																	>{{ childComplianceDocument.name }}</label>
-																</div>
-															</template>
-															<div class="ml-2">Optional</div>
-															<template
-																v-for="complianceDocument in selectedProfessionComplianceCategory.optional_compliance_documents"
-															>
-																<div
-																	:key="`${complianceDocument.id}-${complianceDocument.name}`"
-																	class="ml-4 flex flex-row justify-start items-center"
-																>
-																	<input
-																		:id="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																		v-model="form.compliance_document_id"
-																		type="checkbox"
-																		:value="complianceDocument.id"
-																	/>
-																	<label
-																		:for="`${complianceDocument.id}-${complianceDocument.name}-${selectedProfessionComplianceCategory.id}`"
-																	>{{ complianceDocument.name }}</label>
-																</div>
-															</template>
-														</div>
-													</template>
-												</div>
-
-												<AppInput
-													v-model="form.compliance_document_id"
-													:type="'multi-checkbox'"
-													:error="formError.find(item => item.field === 'compliance_document_id')"
-													:name="'compliance_document_id'"
-													:label="`${complianceListLabel}`"
-													:lists="compliances"
-													:info="'Check all that apply'"
-													@checked="form.compliance_document_id.push(parseInt($event))"
-													@unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === parseInt($event)), 1)"
-													@uncheckAll="form.compliance_document_id = []"
-												/>
-
-												<div v-if="compliances.length === 0" class="mb-6 text-center md:text-left mt-2">
-													<AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
-												</div>
-											</template>
 										</template>
 									</div>
 								</div>
@@ -503,6 +387,83 @@
 									:resize="false"
 								/>
 
+								<!-- <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
+									<div class="px-1 w-full">
+										<AppInput
+											v-model="form.rate"
+											:type="'text'"
+											:name="'rate'"
+											:label="'Rate £'"
+											:min="1"
+											:error="formError.find(item => item.field === 'rate')"
+											:in-style="'text-align:right'"
+											:limit="8"
+											required
+											@blur="CheckEmptyField(form.rate,'rate')"
+											@keydown="isNumber($event)"
+										/>
+									</div>
+
+									<div class="px-1 w-full">
+										<AppInput
+											v-model="form.locum_detail_rate_type_id"
+											:type="'select'"
+											:name="'locum_detail_rate_type_id'"
+											:label="'per'"
+											:items="rate_lists"
+											required
+										/>
+									</div>
+								</div>
+
+								<label class="text-sm">
+									Total hours
+									<span class="text-red-500">*</span>
+								</label> 
+								<div class="flex flex-row flex-wrap justify-start mt-1">
+									<div class="flex items-center mr-2">
+										<div class="flex flex-col">
+											<input
+												v-model="form.hours"
+												type="number"
+												class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
+												:class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
+												style="text-align:right;"
+												min="1"
+												maxlength="8"
+												@keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
+												@focus="hasValue(form.hours, 'hours')"
+											/>
+											<div
+												v-if="formError.find(item => item.field === 'hours')"
+												class="text-red-500 p-1 text-xs"
+											>{{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}</div>
+											<label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
+										</div>
+									</div>
+									<div class="flex items-center">
+										<div class="flex flex-col">
+											<input
+												v-model="form.minutes"
+												type="number"
+												class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
+												:class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
+												style="text-align:right;"
+												max="60"
+												min="1"
+												maxlength="2"
+												@keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
+												@focus="hasValue(form.minutes, 'minutes')"
+											/>
+											<div
+												v-if="formError.find(item => item.field === 'minutes')"
+												class="text-red-500 p-1 text-xs"
+											>{{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}</div>
+											<label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
+										</div>
+									</div>
+								</div>-->
+
 								<template v-if="selectedProfession && selectedProfession.profession_category.name === 'GP'">
 									<AppInput
 										v-model="form.ir35"
@@ -526,7 +487,20 @@
 									@uncheckAll="form.mandatory_training_id = []"
 								/>
 
-								<div v-if="mandatory_training_lists.length === 0" class="mb-6 text-center md:text-left">
+								<AppInput
+									v-model="form.other_mandatory_training_id"
+									:type="'multi-checkbox'"
+									:error="formError.find(item => item.field === 'other_mandatory_training_id')"
+									:name="'other_mandatory_training_id'"
+									:label="'Other Mandatory training required for this job'"
+									:lists="other_mandatory_training_lists"
+									:info="'Check all that apply'"
+									@checked="form.other_mandatory_training_id.push(parseInt($event))"
+									@unchecked="form.other_mandatory_training_id.splice(form.other_mandatory_training_id.findIndex(item => item === parseInt($event)), 1)"
+									@uncheckAll="form.other_mandatory_training_id = []"
+								/>
+
+								<div class="mb-6 text-center md:text-left">
 									<AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
 								</div>
 							</div>
@@ -606,8 +580,6 @@ export default {
 			banksCount: 0,
 			loading: false,
 			dataLoading: false,
-			error_modal: false,
-			error_message: "",
 
 			// show_saturday: false,
 			// show_sunday: false,
@@ -618,6 +590,7 @@ export default {
 			professions: [],
 			session_requirements_lists,
 			mandatory_training_lists: [],
+			other_mandatory_training_lists: [],
 
 			professions_categories: [],
 
@@ -638,6 +611,10 @@ export default {
 				date: null,
 				time: null
 			},
+
+			selectedQualification: [],
+			selectedClinicalSystem: [],
+			selectedSpokenLanguage: [],
 
 			// SPLIT JOBS
 			tabActive: "details",
@@ -674,9 +651,6 @@ export default {
 			// savedShifts: [],
 			toPublish: false,
 
-			selectedQualification: [],
-			selectedClinicalSystem: [],
-			selectedSpokenLanguage: [],
 			form: {
 				practice_id: "",
 				title: "",
@@ -698,6 +672,7 @@ export default {
 				// locum_detail_rate_type_id: 1,
 				ir35: false,
 				mandatory_training_id: [],
+				other_mandatory_training_id: [],
 				role: "",
 				specialty: [],
 				clinical_system: [],
@@ -957,13 +932,13 @@ export default {
 			this.CheckEmptyField(value, "clinical_system");
 		},
 
-		"form.rate"() {
-			this.validateNumber(this.form.rate, "rate");
-		},
+		// "form.rate"() {
+		// 	this.validateNumber(this.form.rate, "rate");
+		// },
 
-		"form.total_hours"() {
-			this.validateNumber(this.form.total_hours, "total_hours");
-		},
+		// "form.total_hours"() {
+		// 	this.validateNumber(this.form.total_hours, "total_hours");
+		// },
 
 		"form.time_start"(value) {
 			console.log(value);
@@ -1058,8 +1033,8 @@ export default {
 	},
 
 	created() {
-		console.log("user", this.$auth.user);
 		this.dataLoading = true;
+
 		Promise.all([
 			this.$axios.get("/api/v1/practice/me/practice-practices").then(response =>
 				response.data.data.practices.map(practice => ({
@@ -1116,7 +1091,8 @@ export default {
 					email,
 					extra_information: extraInformation,
 					practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
-					mandatory_trainings: mandatoryTrainings
+					mandatory_trainings: mandatoryTrainings,
+					other_mandatory_trainings: otherMandatoryTrainings
 				} = profileProfile;
 
 				this.form.report_to = reportTo;
@@ -1131,13 +1107,14 @@ export default {
 					})
 				);
 
+				this.other_mandatory_training_lists = otherMandatoryTrainings.map(
+					otherMandatoryTraining => ({
+						label: otherMandatoryTraining.name,
+						value: otherMandatoryTraining.id
+					})
+				);
+
 				if (this.repostJob) {
-					// this.repostJob.schedule_templates.forEach((shift, i) => {
-					//   this.shift_schedule.push({...shift,
-					//     value: i.toString(),
-					//     label: shift.name
-					//   })
-					// })
 					const selectedProfession = this.professions_categories.find(
 						profession =>
 							profession.id === this.repostJob.platform_job.profession.id
@@ -1446,6 +1423,11 @@ export default {
 			this.hasShiftError = hasError;
 		},
 		// -- END FOR APP SCHEDULE COMPONENT
+		hasValue(value, field) {
+			if (value == 0) {
+				this.form[field] = "";
+			}
+		},
 		handleKeyDownEvent(e, formField, limit) {
 			let acceptedKeys = [
 				"Backspace",
@@ -1587,7 +1569,7 @@ export default {
 
 			if (!this.formError.length) {
 				this.form.profession_id = this.form.role;
-				// this.form.shift_id = this.form.shift
+				this.form.shift_id = this.form.shift;
 				this.selectedClinicalSystem = [...this.form.clinical_system];
 				this.form.clinical_system_id = this.form.clinical_system.map(
 					item => item.value
@@ -1642,15 +1624,15 @@ export default {
 					).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
 				}
 
-				// if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
-				//   this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
-				// }
-				// if (this.unpaid_breaks === "other") {
-				//   this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
-				// }
-				// if (["false", false].includes(this.unpaid_breaks)) {
-				//   this.form.unpaid_breaks_in_minutes = ""
-				// }
+				if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
+					this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
+				}
+				if (this.unpaid_breaks === "other") {
+					this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
+				}
+				if (["false", false].includes(this.unpaid_breaks)) {
+					this.form.unpaid_breaks_in_minutes = "";
+				}
 
 				this.form.ir35 =
 					this.selectedProfession &&

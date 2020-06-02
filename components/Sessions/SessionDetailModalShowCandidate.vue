@@ -148,6 +148,33 @@
               </template>
             </div>
 
+            <div class="font-bold text-sm sm:text-md">Other Mandatory Trainings</div>
+            <div class="flex flex-col mb-8">
+              <div
+                v-for="item in otherMandatoryTrainings"
+                :key="item.id"
+                class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+              >
+                <div
+                  class="flex flex-row flex-no-wrap"
+                  v-if="item.locum_other_mandatory_trainings.file"
+                >
+                  <div class="w-5 h-5">
+                    <svgicon name="cloud-download" height="24" width="24" />
+                  </div>
+                  <a
+                    :href="item.locum_other_mandatory_trainings.file.url"
+                    :download="item.locum_other_mandatory_trainings.file.filename"
+                    class="break-words leading-loose mx-2 text-xs md:text-sm"
+                    @click.stop.prevent="downloadItem(item.locum_other_mandatory_trainings.file.url, item.locum_other_mandatory_trainings.file.filename)"
+                  >{{ item.locum_other_mandatory_trainings.name }}</a>
+                </div>
+              </div>
+              <template v-if="otherMandatoryTrainings && !otherMandatoryTrainings.length">
+                <span class="text-sm">(none)</span>
+              </template>
+            </div>
+
             <div class="font-bold text-sm sm:text-md">Preferred rates</div>
             <div class="flex flex-col mb-4 md:mb-8">
               <div
@@ -210,10 +237,11 @@
       :modal="confirmation_modal"
       @confirm="checkIfLocumAlreadyAppointed"
       @cancel="confirmation_modal = false"
+      :loading="checkLoading"
     />
     <AppConfirmationModal
-      :label="`This Locum is already appointed on one of your Job.`"
-      :label2="`${jobNumbers.length > 1 ? `${jobNumbers.slice(0,2)},etc..` : `${jobNumbers}`}`"
+      :label="`This Locum is already appointed on one of ${this.$auth.user.practice_id === this.job.practice_id ? 'your' : 'this Spoke'} Job.`"
+      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.map(conflictJob => conflictJob.job_number).slice(0,2)},etc..` : `${conflictJobs.map(conflictJob => conflictJob.job_number)}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -247,13 +275,15 @@ export default {
   },
   data() {
     return {
+      checkLoading: false,
       warning_modal: false,
-      jobNumbers: [],
+      conflictJobs: [],
       //
       confirmation_modal: false,
       mandatory: [],
       optional: [],
       mandatoryTrainings: [],
+      otherMandatoryTrainings: [],
       referees: [],
       sendMessageModal: false,
       deadline: {
@@ -283,6 +313,17 @@ export default {
         this.mandatoryTrainings.push(mandatoryTraining);
       }
     });
+    this.otherMandatoryTrainings = [];
+    this.user.locum_detail.other_mandatory_trainings.forEach(
+      otherMandatoryTraining => {
+        if (
+          otherMandatoryTraining.locum_other_mandatory_trainings &&
+          otherMandatoryTraining.locum_other_mandatory_trainings.file !== null
+        ) {
+          this.otherMandatoryTrainings.push(otherMandatoryTraining);
+        }
+      }
+    );
     this.referees = [];
     this.user.locum_detail.referees.forEach(referee => {
       if (
@@ -302,7 +343,6 @@ export default {
     // this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings;
     this.deadline.hours = data._data.hours;
     this.deadline.minutes = data._data.minutes;
-    console.log(this.deadline);
   },
   methods: {
     message(user) {
@@ -319,7 +359,6 @@ export default {
         .then(res => {
           this.mandatory = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
-              console.log(this.user);
               return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
                   mandatory_compliance_document.id ===
@@ -339,20 +378,43 @@ export default {
         });
     },
     checkIfLocumAlreadyAppointed() {
+      this.checkLoading = true;
       this.$axios
-        .$get(`/api/v1/practice/jobs?appointed_locum_user_id=${this.user.id}`, {
+        .$get(`/api/v1/practice/job-parts`, {
           params: {
-            status: ["Allocated", "Ongoing"]
+            appointed_to_locum_user_id: this.user.id,
+            status: ["Allocated", "Ongoing"],
+            job_practice_id: this.job.practice_id
           }
         })
         .then(res => {
-          this.jobNumbers = res.data.jobs.map(job => job.job_number);
-          if (res.data.jobs.length > 0) {
+          this.conflictJobs = [];
+
+          res.data.job_parts.forEach(jobPart => {
+            if (jobPart.dates.some(date => this.job.dates.includes(date))) {
+              if (jobPart.status === "Ongoing") {
+                this.conflictJobs.push({
+                  job_number: jobPart.job_part_number,
+                  dates: jobPart.dates
+                });
+              } else if (jobPart.status === "Allocated") {
+                this.conflictJobs.push({
+                  job_number: jobPart.job_job_number,
+                  dates: jobPart.dates
+                });
+              }
+            }
+          });
+
+          if (this.conflictJobs.length > 0) {
             this.warning_modal = true;
             this.confirmation_modal = false;
-          } else if (res.data.jobs.length === 0) {
+          } else if (this.conflictJobs.length === 0) {
             this.appoint();
           }
+        })
+        .finally(() => {
+          this.checkLoading = false;
         });
     },
     appoint() {

@@ -1,9 +1,9 @@
 export default {
-    SET_ACTIVE_COMPONENT (state, payload) {
+    SET_ACTIVE_COMPONENT(state, payload) {
         state.activeComponent = payload
     },
     // REGISTER PRACTICE
-    SET_PRACTICE_DETAILS (state, payload) {
+    SET_PRACTICE_DETAILS(state, payload) {
         state.search_results = payload.search_results
         state.practice_details.surgery_id = payload.surgery_id
         state.practice_details.name = payload.name
@@ -19,7 +19,7 @@ export default {
         state.practice_details.coordinate_x = payload.coordinate_x
         state.practice_details.coordinate_y = payload.coordinate_y
     },
-    SET_PRACTICE_SURGERY_DETAILS (state, payload) {
+    SET_PRACTICE_SURGERY_DETAILS(state, payload) {
         state.practice_surgery_details.name = payload.name
         state.practice_surgery_details.phone_number = payload.phone_number
         state.practice_surgery_details.code = payload.code
@@ -33,7 +33,9 @@ export default {
         state.practice_surgery_details.coordinate_x = payload.coordinate_x
         state.practice_surgery_details.coordinate_y = payload.coordinate_y
     },
-    SET_PRACTICE_ACCOUNT_DETAILS (state, payload) {
+    SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
+        state.practice_account_details.hub_practice_id = payload.hub_practice_id
+        state.practice_account_details.surgeries = payload.surgeries
         state.practice_account_details.type = payload.type
         state.practice_account_details.hub_type = payload.hub_type
         state.practice_account_details.surgery_id = payload.surgery_id
@@ -69,7 +71,7 @@ export default {
         state.practice_account_details.nhsps_employer_contributions = payload.nhsps_employer_contributions
         state.practice_account_details.nhs_pension_scheme_employing_authority_name = payload.nhs_pension_scheme_employing_authority_name
     },
-    CLEAR_REGISTER_PRACTICE_FORM (state) {
+    CLEAR_REGISTER_PRACTICE_FORM(state) {
         state.search_results = []
         state.practice_details.surgery_id = ''
         state.practice_details.name = ''
@@ -123,55 +125,55 @@ export default {
         state.practice_account_details.nhsps_employer_contributions = null
         state.practice_account_details.nhs_pension_scheme_employing_authority_name = null
     },
-    SET_PRACTICE_DETAIL_FORM_ERROR (state, payload) {
+    SET_PRACTICE_DETAIL_FORM_ERROR(state, payload) {
         state.practice_detail_form_error = payload
     },
-    SET_PRACTICE_SURGERY_DETAIL_FORM_ERROR (state, payload) {
+    SET_PRACTICE_SURGERY_DETAIL_FORM_ERROR(state, payload) {
         state.practice_surgery_detail_form_error = payload
     },
-    SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR (state, payload) {
+    SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.practice_account_detail_form_error = payload
     },
-    CLEAR_PRACTICE_FORM_ERROR (state) {
+    CLEAR_PRACTICE_FORM_ERROR(state) {
         state.practice_detail_form_error = []
         state.practice_surgery_detail_form_error = []
         state.practice_account_detail_form_error = []
     },
     // REGISTER LOCUM
-    SET_PROFESSIONS (state, payload) {
+    SET_PROFESSIONS(state, payload) {
         state.professions = []
         payload.forEach((item) => {
             state.professions.push(item)
         })
     },
-    SET_GP_QUALIFICATIONS (state, payload) {
+    SET_GP_QUALIFICATIONS(state, payload) {
         state.gp_qualifications = payload
     },
-    SET_OTHERS_QUALIFICATIONS (state, payload) {
+    SET_OTHERS_QUALIFICATIONS(state, payload) {
         state.others_qualifications = payload
     },
-    SET_CLINICAL_SYSTEMS (state, payload) {
+    SET_CLINICAL_SYSTEMS(state, payload) {
         state.clinical_systems = []
         payload.forEach((item) => {
             state.clinical_systems.push(item)
         })
     },
-    SET_SPOKEN_LANGUAGES (state, payload) {
+    SET_SPOKEN_LANGUAGES(state, payload) {
         state.spoken_languages = []
         payload.forEach((item) => {
             state.spoken_languages.push(item)
         })
     },
-    SET_PRACTICE_TYPES (state, payload) {
+    SET_PRACTICE_TYPES(state, payload) {
         state.practice_types = []
         payload.forEach((item) => {
             state.practice_types.push(item)
         })
     },
-    SET_MANDATORY_TRAININGS (state, payload) {
+    SET_MANDATORY_TRAININGS(state, payload) {
         state.mandatory_trainings = payload
     },
-    SET_ACCOUNT_DETAILS (state, payload) {
+    SET_ACCOUNT_DETAILS(state, payload) {
         state.account_details.title = payload.title
         state.account_details.first_name = payload.first_name
         state.account_details.last_name = payload.last_name
@@ -182,13 +184,13 @@ export default {
         state.account_details.home_number = payload.home_number
         state.account_details.work_number = payload.work_number
     },
-    SET_ADDRESS_DETAILS (state, payload) {
+    SET_ADDRESS_DETAILS(state, payload) {
         state.address_details.post_code = payload.post_code
         state.address_details.address_line_1 = payload.address_line_1
         state.address_details.address_line_2 = payload.address_line_2
         state.address_details.address_line_3 = payload.address_line_3
     },
-    SET_PROFESSIONAL_DETAILS (state, payload) {
+    SET_PROFESSIONAL_DETAILS(state, payload) {
         state.professional_details.view_locum_jobs = payload.view_locum_jobs
         state.professional_details.view_permanent_jobs = payload.view_permanent_jobs
         state.professional_details.reference_locum_compliance_documents = payload.reference_locum_compliance_documents
@@ -209,7 +211,7 @@ export default {
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
         state.professional_details.profession_category_id = payload.profession_category_id
     },
-    SET_PAYROLL_DETAILS (state, payload) {
+    SET_PAYROLL_DETAILS(state, payload) {
         state.payroll_details.employment_type = payload.employment_type
         state.payroll_details.utr_number = payload.utr_number
         state.payroll_details.company_registration_number = payload.company_registration_number
@@ -226,13 +228,13 @@ export default {
         state.payroll_details.claim_nhs = payload.claim_nhs
         state.payroll_details.nhs_number = payload.nhs_number
     },
-    SET_CREDENTIAL_DETAILS (state, payload) {
+    SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email
         state.credential_details.password = payload.password
         state.credential_details.password_confirmation = payload.password_confirmation
         state.credential_details.referral_code = payload.referral_code
     },
-    CLEAR_FORM_ERROR_DETAILS (state) {
+    CLEAR_FORM_ERROR_DETAILS(state) {
         state.account_detail_form_error = []
         state.address_detail_form_error = []
         state.professional_detail_form_error = []
@@ -242,28 +244,28 @@ export default {
         state.stage_2_pt_1_details_form_error = []
         state.stage_2_pt_2_details_form_error = []
     },
-    SET_ACCOUNT_DETAIL_FORM_ERROR (state, payload) {
+    SET_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.account_detail_form_error = payload
     },
-    SET_ADDRESS_DETAIL_FORM_ERROR (state, payload) {
+    SET_ADDRESS_DETAIL_FORM_ERROR(state, payload) {
         state.address_detail_form_error = payload
     },
-    SET_PROFESSIONAL_DETAIL_FORM_ERROR (state, payload) {
+    SET_PROFESSIONAL_DETAIL_FORM_ERROR(state, payload) {
         state.professional_detail_form_error = payload
     },
-    SET_PAYROLL_DETAIL_FORM_ERROR (state, payload) {
+    SET_PAYROLL_DETAIL_FORM_ERROR(state, payload) {
         state.payroll_detail_form_error = payload
     },
-    SET_CREDENTIAL_DETAIL_FORM_ERROR (state, payload) {
+    SET_CREDENTIAL_DETAIL_FORM_ERROR(state, payload) {
         state.credential_detail_form_error = payload
     },
-    SET_STAGE_1_DETAILS (state, payload) {
+    SET_STAGE_1_DETAILS(state, payload) {
         state.stage_1_details = payload
     },
-    SET_STAGE_1_FORM_ERROR (state, payload) {
+    SET_STAGE_1_FORM_ERROR(state, payload) {
         state.stage_1_details_form_error = payload
     },
-    SET_STAGE_2_PT_1_DETAILS (state, payload) {
+    SET_STAGE_2_PT_1_DETAILS(state, payload) {
         payload.reference_locum_compliance_documents.forEach(item => {
             state.stage_2_pt_1_details.reference_locum_compliance_documents.push({
                 compliance_document_id: item.compliance_document_id,
@@ -276,10 +278,10 @@ export default {
         state.stage_2_pt_1_details.address_line_2 = payload.address_line_2
         state.stage_2_pt_1_details.address_line_3 = payload.address_line_3
     },
-    SET_STAGE_2_PT_1_FORM_ERROR (state, payload) {
+    SET_STAGE_2_PT_1_FORM_ERROR(state, payload) {
         state.stage_2_pt_1_details_form_error = payload
     },
-    SET_STAGE_2_PT_2_DETAILS (state, payload) {
+    SET_STAGE_2_PT_2_DETAILS(state, payload) {
         state.stage_2_pt_2_details.privacy_policy = payload.privacy_policy
         state.stage_2_pt_2_details.referral_code = payload.referral_code
         payload.mandatory_locum_compliance_documents.forEach(item => {
@@ -295,10 +297,10 @@ export default {
             }
         })
     },
-    SET_STAGE_2_PT_2_FORM_ERROR (state, payload) {
+    SET_STAGE_2_PT_2_FORM_ERROR(state, payload) {
         state.stage_2_pt_2_details_form_error = payload
     },
-    CLEAR_LOCUM_REGISTER_FORM (state) {
+    CLEAR_LOCUM_REGISTER_FORM(state) {
         state.stage_1_details.view_locum_jobs = false
         state.stage_1_details.view_permanent_jobs = false
         state.stage_1_details.profession_id = ""
@@ -323,11 +325,11 @@ export default {
         state.stage_2_pt_2_details.mandatory_locum_compliance_documents = []
         state.stage_2_pt_2_details.files = []
     },
-    SET_COMPLIANCE_DOCUMENTS (state, payload) {
+    SET_COMPLIANCE_DOCUMENTS(state, payload) {
         state.reference_compliance_documents = payload.reference_compliance_documents
         state.mandatory_compliance_documents = payload.mandatory_compliance_documents
     },
-    SET_SIGNUP_LOADING (state, payload) {
+    SET_SIGNUP_LOADING(state, payload) {
         console.log(payload)
         state.signup_loading = payload
     }

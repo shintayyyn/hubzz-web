@@ -2,12 +2,7 @@
 	<div>
 		<div class="shield" v-if="modal" @click.prevent="$emit('cancel')"></div>
 		<transition name="drop" mode="out-in">
-			<div
-				class="flex justify-center remove-confirmation-modal"
-				:class="inClass"
-				:style="inStyle"
-				v-if="modal"
-			>
+			<div class="flex justify-center remove-confirmation-modal" v-if="modal">
 				<div
 					class="w-full md:w-auto border-solid rounded-b-lg bg-yellow-500 py-2 px-4 md:px-24 shadow-lg"
 				>
@@ -21,12 +16,16 @@
 					<div class="flex justify-center">
 						<div class="text-sm md:text-base font-bold">{{label3}}</div>
 					</div>
-					<div class="flex justify-center my-2">
+					<div class="flex justify-center" v-if="loading">
+						<svgicon v-if="loading" name="loader" width="60" height="60" />
+					</div>
+					<div class="flex justify-center my-2" v-if="!loading">
 						<div class="mx-2">
 							<button
 								class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 rounded-lg"
 								style="width:100px;"
 								@click.prevent="$emit('confirm')"
+								:disabled="loading"
 							>{{confirmLabel}}</button>
 						</div>
 						<div class="mx-2" v-if="cancelLabel">
@@ -34,6 +33,7 @@
 								class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 rounded-lg"
 								@click.prevent="$emit('cancel')"
 								style="width:100px;"
+								:disabled="loading"
 							>{{cancelLabel}}</button>
 						</div>
 					</div>
@@ -69,11 +69,9 @@ export default {
 		cancelLabel: {
 			type: String
 		},
-		inClass: {
-			type: String
-		},
-		inStyle: {
-			type: String
+		loading: {
+			type: Boolean,
+			default: false
 		}
 	}
 };

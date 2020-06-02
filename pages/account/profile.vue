@@ -7,7 +7,9 @@
         <AppFormError v-if="formError.length > 0" :formError="formError" />
 
         <form class="w-full">
-          <AppInput
+          <div>Profession</div>
+          <div class="ml-2 font-bold my-2 mb-4">{{user.profession.name}}</div>
+          <!-- <AppInput
             v-model="form.profession_id"
             :type="'select'"
             :name="'profession_id'"
@@ -15,8 +17,8 @@
             :placeholder="'Select...'"
             :items="professions"
             required
-          />
-
+            disabled
+          />-->
           <div
             v-for="(item, index) in form.reference_locum_compliance_documents"
             :key="item.compliance_document_id"
@@ -64,7 +66,7 @@
             @submit="save"
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
             @keypress="inputNumberOnly($event)"
-          /> -->
+          />-->
 
           <AppFilterSearch
             v-model="form.qualification_id"
@@ -102,7 +104,7 @@
             :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
           />
-          
+
           <AppInput
             v-model="form.nhs_smart_card_id_number"
             :type="'text'"
@@ -142,7 +144,7 @@
             :resize="false"
             @submit="save"
           />
-          
+
           <div>Select which jobs to view:</div>
 
           <AppInput
@@ -167,9 +169,7 @@
                 Your preferred rates £
                 <small>(minimum)</small>
               </label>
-              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
-                To match available jobs with
-              </div>
+              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">To match available jobs with</div>
             </div>
 
             <div class="flex flex-row flex-wrap justify-between">
@@ -266,6 +266,21 @@
           />
 
           <AppInput
+            v-model="form.other_mandatory_training_id"
+            :type="'multi-checkbox'"
+            :name="'other_mandatory_training_id'"
+            :label="'Other mandatory training courses you completed.'"
+            :lists="otherMandatoryTrainings"
+            @checked="form.other_mandatory_training_id.push(parseInt($event))"
+            @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
+            @uncheckAll="form.other_mandatory_training_id = []"
+            updatable
+            @addList="addList"
+            @updateList="updateList"
+            @remove="toggleRemoveMandatoryModal"
+          />
+
+          <AppInput
             v-model="form.practice_type_id"
             :type="'multi-checkbox'"
             :name="'practice_type_id'"
@@ -322,9 +337,7 @@
           />
 
           <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
-            <div class="font-bold text-sm my-4">
-              Payroll Details
-            </div>
+            <div class="font-bold text-sm my-4">Payroll Details</div>
             <AppInput
               v-model="form.payroll_account_name"
               :type="'text'"
@@ -361,9 +374,7 @@
           </template>
 
           <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
-            <div class="font-bold text-sm my-4">
-              Bank Details
-            </div>
+            <div class="font-bold text-sm my-4">Bank Details</div>
             <AppInput
               v-model="form.account_name"
               :type="'text'"
@@ -420,6 +431,23 @@
             />
 
             <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+              <AppInput
+                v-model="form.epc_percentage_rate"
+                :type="'select'"
+                :name="'epc_percentage_rate'"
+                :label="'Employee pension contribution rate'"
+                :items="[
+                  { label: '5%', value: 5 },
+                  { label: '5.6%', value: 5.6 },
+                  { label: '7.1%', value: 7.1 },
+                  { label: '9.3%', value: 9.3 },
+                  { label: '12.5%', value: 12.5 },
+                  { label: '13.5%', value: 13.5 },
+                  { label: '14.5%', value: 14.5 },
+                ]"
+                required
+              />
+
               <AppInput
                 v-model="form.section_scheme_year"
                 :type="'select'"
@@ -513,9 +541,7 @@
             @blur="CheckEmptyField(form.miles, 'miles')"
           />
 
-          <div class="text-xs sm:text-sm">
-            Referees
-          </div>
+          <div class="text-xs sm:text-sm">Referees</div>
 
           <div class="rounded-lg bg-gray-400 p-8 my-2">
             <AppInput
@@ -574,339 +600,187 @@
               :error="formError.find(item => item.field === 'referee_2_email')"
             />
           </div>
-          
+
           <div class="text-left mt-5">
             <AppButton :label="'Save changes'" @click="save" />
           </div>
         </form>
       </div>
     </div>
-    
+
     <div class="w-full lg:w-auto mb-4 lg:mb-0 p-0 lg:pr-4 order-1 lg:order-2">
       <div class="rounded-lg shadow-lg w-full py-8 px-12">
         <AppAvatar class="m-auto" :type="'update'" :src="profile.avatar ? profile.avatar : ''" />
         <div class="leading-none text-center text-sm pt-4">
-          <p class="font-bold">
-            {{ profile.name }}
-          </p>
+          <p class="font-bold">{{ profile.name }}</p>
           <p>{{ profile.email }}</p>
         </div>
       </div>
     </div>
+    <AppConfirmationModal
+      :label="'Proceed to remove this mandatory traning?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="toggle_remove_mandatory_modal"
+      @confirm="removeMandatory"
+      @cancel="toggle_remove_mandatory_modal = false"
+    />
   </div>
 </template>
 
 <script>
-  import AppFormError from "@/components/Base/AppFormError"
-  import AppLoading from "@/components/Base/AppLoading"
-  import AppInput from "@/components/Base/AppInput"
-  import AppPostCode from "@/components/Base/AppPostCode"
-  import AppFilterSearch from "@/components/Base/AppFilterSearch"
-  import AppButton from "@/components/Base/AppButton"
-  import AppAvatar from "@/components/Base/AppAvatar"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
+import AppInput from "@/components/Base/AppInput";
+import AppPostCode from "@/components/Base/AppPostCode";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppButton from "@/components/Base/AppButton";
+import AppAvatar from "@/components/Base/AppAvatar";
 
-  export default {
+export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
 
-    transition: {
-      name: 'fade',
-      mode: 'out-in',
-    },
+  components: {
+    AppConfirmationModal,
+    AppFormError,
+    AppLoading,
+    AppInput,
+    AppPostCode,
+    AppFilterSearch,
+    AppButton,
+    AppAvatar
+  },
 
-    components: {
-      AppFormError,
-      AppLoading,
-      AppInput,
-      AppPostCode,
-      AppFilterSearch,
-      AppButton,
-      AppAvatar,
-    },
-
-    data () {
-      return {
-        employmentTypes: [
-          {
-            label: 'Self-Employed',
-            value: 'Self-Employed',
-          },
-          {
-            label: 'Limited Company',
-            value: 'Limited Company',
-          }
-        ],
-        professionCategoryId: '',
-        selectedQualification: [],
-        selectedClinicalSystem: [],
-        selectedSpokenLanguage: [],
-        professions_categories: [],
-        reference_locum_compliance_documents_list: [],
-        form: {
-          reference_locum_compliance_documents: [],
-          // gmc_or_nmc_number: "",
-          // mpl_or_npl_number: "",
-          nhs_smart_card_id_number: "",
-          headline: "",
-          short_biography: "",
-          special_requirements: "",
-          profession_id: "",
-          qualification_id: [],
-          clinical_system_id: [],
-          spoken_language_id: [],
-          view_locum_jobs: false,
-          view_permanent_jobs: false,
-          min_rate_per_hour: "",
-          max_rate_per_hour: "",
-          min_rate_per_half_day_session: "",
-          max_rate_per_half_day_session: "",
-          min_rate_per_whole_day_session: "",
-          max_rate_per_whole_day_session: "",
-          mandatory_training_id: [],
-          practice_type_id: [],
-          post_code: "",
-          miles: 0,
-          referee_1_contact_name: "",
-          referee_1_phone_number: "",
-          referee_1_email: "",
-          referee_2_contact_name: "",
-          referee_2_phone_number: "",
-          referee_2_email: "",
-          employment_type: "Self-Employed",
-          company_registration_number: "",
-          utr_number: "",
-          paid_under_payroll: false,
-          payroll_account_name: "",
-          payroll_bank_name: "",
-          payroll_sort_code: "",
-          payroll_account_number: "",
-          account_name: "",
-          bank_name: "",
-          sort_code: "",
-          account_number: "",
-          ir35: false,
-          claim_nhs: false,
-          section_scheme_year: false,
-          nhs_number: "",
-          ni_number: '',
-          ay_percentage_rate: 0,
-          mpavc_percentage_rate: 0,
-          apc_percentage_rate: 0,
-          errbo_percentage_rate: 0,
-          pcse_or_lhb_ea_code: '',
-          nhs_registration_number: '',
+  data() {
+    return {
+      selectedMandatory: null,
+      toggle_remove_mandatory_modal: false,
+      employmentTypes: [
+        {
+          label: "Self-Employed",
+          value: "Self-Employed"
         },
-        old_compliances: [],
-        profile: {
-          avatar: null,
-          name: "",
-          email: ""
-        },
-        formError: [],
-        loading: false,
-      }
-    },
-
-    watch: {
-      "form.profession_id" (value) {
-        let profession = this.professions.find(item => item.value == value)
-
-        if (profession.label === "GP") {
-          this.professionCategoryId = 1
-        } else if (profession.label !== "GP") {
-          this.professionCategoryId = 2
+        {
+          label: "Limited Company",
+          value: "Limited Company"
         }
-
-        // let findprofession = this.professions.find(
-        //   item =>item.value === parseInt(value));
-        // this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
-        this.form.reference_locum_compliance_documents.forEach(
-          item => {
-            let name = item.compliance_document_name.replace(/ /g, "_").toLowerCase()
-            this.old_compliances.push(name)
-          }
-        )
-
-        this.formError.forEach(
-          (err, index) => {
-            if (this.old_compliances.includes(err.field)) {
-              this.formError.splice(index, 1)
-            }
-          }
-        )
-
-        this.form.reference_locum_compliance_documents = []
-
-        let findprofession = this.professions.find(
-          item =>item.value === parseInt(value))
-
-        this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
-          this.reference_locum_compliance_documents_list.forEach(item => {
-          let foundCompliance = this.user.reference_locum_compliance_documents.find(
-            compliance =>
-              compliance.compliance_document_id === item.compliance_document_id
-          )
-          // let fieldName = item.compliance_document_name
-          // 	.replace(/ /g, "_")
-          // 	.toLowerCase()
-          this.form.reference_locum_compliance_documents.push({
-            compliance_document_id: item.compliance_document_id,
-            compliance_document_name: item.compliance_document_name,
-            reference: foundCompliance ? foundCompliance.reference : null,
-            type: "compliance_documents"
-          })
-        })
-
-        this.old_compliances = []
+      ],
+      professionCategoryId: "",
+      selectedQualification: [],
+      selectedClinicalSystem: [],
+      selectedSpokenLanguage: [],
+      professions_categories: [],
+      reference_locum_compliance_documents_list: [],
+      form: {
+        other_mandatory_training_id: [],
+        reference_locum_compliance_documents: [],
+        // gmc_or_nmc_number: "",
+        // mpl_or_npl_number: "",
+        nhs_smart_card_id_number: "",
+        headline: "",
+        short_biography: "",
+        special_requirements: "",
+        profession_id: "",
+        qualification_id: [],
+        clinical_system_id: [],
+        spoken_language_id: [],
+        view_locum_jobs: false,
+        view_permanent_jobs: false,
+        min_rate_per_hour: "",
+        max_rate_per_hour: "",
+        min_rate_per_half_day_session: "",
+        max_rate_per_half_day_session: "",
+        min_rate_per_whole_day_session: "",
+        max_rate_per_whole_day_session: "",
+        mandatory_training_id: [],
+        practice_type_id: [],
+        post_code: "",
+        miles: 0,
+        referee_1_contact_name: "",
+        referee_1_phone_number: "",
+        referee_1_email: "",
+        referee_2_contact_name: "",
+        referee_2_phone_number: "",
+        referee_2_email: "",
+        employment_type: "Self-Employed",
+        company_registration_number: "",
+        utr_number: "",
+        paid_under_payroll: false,
+        payroll_account_name: "",
+        payroll_bank_name: "",
+        payroll_sort_code: "",
+        payroll_account_number: "",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+        ir35: false,
+        claim_nhs: false,
+        epc_percentage_rate: 0,
+        section_scheme_year: false,
+        nhs_number: "",
+        ni_number: "",
+        ay_percentage_rate: 0,
+        mpavc_percentage_rate: 0,
+        apc_percentage_rate: 0,
+        errbo_percentage_rate: 0,
+        pcse_or_lhb_ea_code: "",
+        nhs_registration_number: ""
       },
-    },
-      
-    async asyncData ({ app, store }) {
-      try {
-        const [
-          professions,
-          practiceTypes,
-          mandatoryTrainings,
-          user
-        ] = await Promise.all([
-          app.$axios.$get(`/api/v1/professions`).then(responseProfessions => {
-            const professions = []
-            responseProfessions.data.professions.forEach(profession => {
-              professions.push({ label: profession.name, value: profession.id, reference_compliance_documents: profession.profession_compliance_category.reference_compliance_documents })
-            })
-            return professions
-          }),
-          app.$axios
-            .$get(`/api/v1/practice-types`)
-            .then(responsePracticeTypes => {
-              const practice_types = []
-              responsePracticeTypes.data.practice_types.forEach(practiceType => {
-                practice_types.push({
-                  label: practiceType.name,
-                  value: practiceType.id
-                })
-              })
-              return practice_types
-            }),
-          app.$axios
-            .$get(`/api/v1/mandatory-trainings`)
-            .then(responseMandatoryTrainings => {
-              const mandatory_trainings = []
-              responseMandatoryTrainings.data.mandatory_trainings.forEach(
-                mandatoryTraining => {
-                  mandatory_trainings.push({
-                    label: mandatoryTraining.name,
-                    value: mandatoryTraining.id
-                  })
-                }
-              )
-              return mandatory_trainings
-            }),
-          app.$axios.$get(`/api/v1/locum/me/profile`).then(responseMe => {
-            const user =
-              responseMe.data && responseMe.data.user
-                ? responseMe.data.user
-                : null
-            return user
-          })
-        ])
+      old_compliances: [],
+      profile: {
+        avatar: null,
+        name: "",
+        email: ""
+      },
+      formError: [],
+      loading: false
+    };
+  },
 
-        return {
-          professions,
-          // professions_categories,
-          practiceTypes,
-          mandatoryTrainings,
-          user
-        }
-      } catch (err) {
-        console.log("err", err)
-        if (err.response.data.message) {
-          store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          })
-        }
-        throw err
+  watch: {
+    "form.profession_id"(value) {
+      let profession = this.professions.find(item => item.value == value);
+
+      if (profession.label === "GP") {
+        this.professionCategoryId = 1;
+      } else if (profession.label !== "GP") {
+        this.professionCategoryId = 2;
       }
-    },
 
-    mounted () {
-      this.profile.avatar = this.user.file_url ? this.user.file_url : null
-      this.profile.name = `${this.user.first_name} ${this.user.last_name}`
-      this.profile.email = this.user.email
-      // this.form.gmc_or_nmc_number =
-      //   this.user.locum_detail && this.user.locum_detail.gmc_or_nmc_number
-      //     ? this.user.locum_detail.gmc_or_nmc_number.number
-      //     : null;
-      // this.form.mpl_or_npl_number =
-      //   this.user.locum_detail && this.user.locum_detail.mpl_or_npl_number
-      //     ? this.user.locum_detail.mpl_or_npl_number.number
-      //     : null;
-      // if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
-      //   this.formError.push({
-      //     field: "gmc_or_nmc_number",
-      //     message: "Rejected"
-      //   });
-      // }
-      // if (this.user.locum_detail.mpl_or_npl_number.status === "Rejected") {
-      //   this.formError.push({
-      //     field: "mpl_or_npl_number",
-      //     message: "Rejected"
-      //   });
-      // }
-      this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number
-      this.form.headline = this.user.headline
-      this.form.short_biography = this.user.short_biography
-      this.form.special_requirements = this.user.special_requirements
-      this.form.profession_id = this.user.profession.id
-      // this.professionCategoryId = this.user.profession.profession_category.id;
+      // let findprofession = this.professions.find(
+      //   item =>item.value === parseInt(value));
+      // this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
+      this.form.reference_locum_compliance_documents.forEach(item => {
+        let name = item.compliance_document_name
+          .replace(/ /g, "_")
+          .toLowerCase();
+        this.old_compliances.push(name);
+      });
 
-      this.form.qualification_id = this.user.qualifications.map(
-        qualification => {
-          return { label: qualification.name, value: qualification.id }
+      this.formError.forEach((err, index) => {
+        if (this.old_compliances.includes(err.field)) {
+          this.formError.splice(index, 1);
         }
-      )
-      this.form.clinical_system_id = this.user.clinical_systems.map(
-        clinicalSystem => {
-          return { label: clinicalSystem.name, value: clinicalSystem.id }
-        }
-      )
-      this.form.spoken_language_id = this.user.spoken_languages.map(
-        spokenLanguage => {
-          return { label: spokenLanguage.name, value: spokenLanguage.id }
-        }
-      )
-      this.form.view_locum_jobs = this.user.view_locum_jobs
-      this.form.view_permanent_jobs = this.user.view_permanent_jobs
-      this.form.min_rate_per_hour = this.user.min_rate_per_hour
-      this.form.max_rate_per_hour = this.user.max_rate_per_hour
-      this.form.min_rate_per_half_day_session = this.user.min_rate_per_half_day_session
-      this.form.max_rate_per_half_day_session = this.user.max_rate_per_half_day_session
-      this.form.min_rate_per_whole_day_session = this.user.min_rate_per_whole_day_session
-      this.form.max_rate_per_whole_day_session = this.user.max_rate_per_whole_day_session
-      this.form.practice_type_id = this.user.practice_types.map(
-        practiceType => practiceType.id
-      )
-      this.form.mandatory_training_id = this.user.mandatory_trainings.map(
-        mandatoryTraining => mandatoryTraining.mandatory_training.id
-      )
-      this.form.post_code = this.user.locum_postcode
-      this.form.miles = this.user.miles
+      });
 
+      this.form.reference_locum_compliance_documents = [];
 
       let findprofession = this.professions.find(
-          item =>item.value === parseInt(this.user.profession.id))
-      this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
+        item => item.value === parseInt(value)
+      );
 
-      // this.reference_locum_compliance_documents_list.forEach(item => {
-      //   this.form[item.compliance_document_name.replace(/ /g, '_').toLowerCase()] = this.user.reference_locum_compliance_documents.find(ref => ref.compliance_document_id === item.compliance_document_id).reference
-      // })
-
-
+      this.reference_locum_compliance_documents_list =
+        findprofession.reference_compliance_documents;
       this.reference_locum_compliance_documents_list.forEach(item => {
         let foundCompliance = this.user.reference_locum_compliance_documents.find(
           compliance =>
             compliance.compliance_document_id === item.compliance_document_id
-        )
+        );
         // let fieldName = item.compliance_document_name
         // 	.replace(/ /g, "_")
         // 	.toLowerCase()
@@ -915,355 +789,611 @@
           compliance_document_name: item.compliance_document_name,
           reference: foundCompliance ? foundCompliance.reference : null,
           type: "compliance_documents"
-        })
-      })
+        });
+      });
 
-      this.form.referee_1_contact_name = this.user.referee_1_contact_name
-      this.form.referee_1_phone_number = this.user.referee_1_phone_number
-      this.form.referee_1_email = this.user.referee_1_email
-      this.form.referee_2_contact_name = this.user.referee_2_contact_name
-      this.form.referee_2_phone_number = this.user.referee_2_phone_number
-      this.form.referee_2_email = this.user.referee_2_email
+      this.old_compliances = [];
+    }
+  },
 
-      // this.user.referees.forEach((referee, index) => {
-      //   if (index == 0) {
-      //     this.form.referee_1_contact_name = referee.name;
-      //     this.form.referee_1_phone_number = referee.phone_number;
-      //     this.form.referee_1_email = referee.email;
-      //   }
-      //   if (index == 1) {
-      //     this.form.referee_2_contact_name = referee.name;
-      //     this.form.referee_2_phone_number = referee.phone_number;
-      //     this.form.referee_2_email = referee.email;
-      //   }
-      // });
-      // if (this.user.locum_detail.invoice_detail) {
-        this.form.employment_type = this.user.employment_type
-        this.form.utr_number = this.user.utr_number
-        this.form.company_registration_number = this.user.company_registration_number
-        this.form.ir35 = this.user.ir35
-        // claim nhs
-        this.form.claim_nhs = this.user.claim_nhs
-        this.form.section_scheme_year = this.user.section_scheme_year
-        this.form.nhs_number = this.user.nhs_number
-        this.form.ni_number = this.user.ni_number
-        this.form.ay_percentage_rate = this.user.ay_percentage_rate
-        this.form.mpavc_percentage_rate = this.user.mpavc_percentage_rate
-        this.form.apc_percentage_rate = this.user.apc_percentage_rate
-        this.form.errbo_percentage_rate = this.user.errbo_percentage_rate
-        this.form.pcse_or_lhb_ea_code = this.user.pcse_or_lhb_ea_code
-        this.form.nhs_registration_number = this.user.nhs_registration_number
-
-        this.form.paid_under_payroll = this.user.paid_under_payroll
-      // }
-      // if (
-      //   this.user.locum_detail.invoice_detail &&
-      //   this.user.locum_detail.invoice_detail.payroll_detail
-      // ) {
-        this.form.payroll_account_name = this.user.payroll_account_name
-        this.form.payroll_account_number = this.user.payroll_account_number
-        this.form.payroll_sort_code = this.user.payroll_sort_code
-        this.form.payroll_bank_name = this.user.payroll_bank_name
-      // }
-      // if (
-      //   this.user.locum_detail.invoice_detail &&
-      //   this.user.locum_detail.invoice_detail.bank_account
-      // ) {
-        this.form.account_name = this.user.account_name
-        this.form.account_number = this.user.account_number
-        this.form.sort_code = this.user.sort_code
-        this.form.bank_name = this.user.bank_name
-      // }
-    },
-      
-    methods: {
-      checkValidation (name, limit) {
-        let fieldName = name.replace(/ /g, "_").toLowerCase()
-        let field = this.form.reference_locum_compliance_documents.find(
-          item => item.compliance_document_name === name
-        )
-        let index = this.formError.findIndex(err => err.field === fieldName && err.type === 'limit')
-        let requiredIndex = this.formError.findIndex(err => err.field === fieldName && !err.type)
-        if (field.reference) {
-          if (requiredIndex > -1) this.formError.splice(requiredIndex, 1)
-          if (field.reference.length < limit) {
-            if (index < 0) {
-              this.formError.push({
-                field: fieldName,
-                type: 'limit',
-                message: `${name} must be ${limit} characters.`
-              })
-            }
-          }else {
-            if (index > -1) {
-              this.formError.splice(index, 1)
-            }
-          }
-        }else {
-          if (requiredIndex < 0) {
-            if (index > -1) this.formError.splice(index, 1)
-            this.formError.push({ field: fieldName, message: `${name} is required`})
-          }
-        }
-      },
-
-      save () {
-        this.formError = []
-        let notRequired = [
-          'nhs_smart_card_id_number',
-          'headline',
-          'short_biography',
-          'special_requirements',
-          'spoken_language_id',
-          'referee_1_contact_name',
-          'referee_1_phone_number',
-          'referee_1_email',
-          'referee_2_contact_name',
-          'referee_2_phone_number',
-          'referee_2_email',
-          'paid_under_payroll',
-          'mandatory_training_id',
-          'ir35',
-          'claim_nhs',
-          'section_scheme_year',
-          'max_rate_per_hour',
-          'max_rate_per_half_day_session',
-          'max_rate_per_whole_day_session',
-          'mpl_or_npl_number',
-          'ay_percentage_rate',
-          'mpavc_percentage_rate',
-          'apc_percentage_rate',
-          'errbo_percentage_rate',
-          'pcse_or_lhb_ea_code',
-          'nhs_registration_number',
-        ]
-
-        this.form.max_rate_per_hour = 999999999
-        this.form.max_rate_per_half_day_session = 999999999
-        this.form.max_rate_per_whole_day_session = 999999999
-
-        if (this.form.employment_type === "Self-Employed") {
-          notRequired.push("company_registration_number")
-          let pre = this.form.utr_number.substring(0,2)
-          let num = this.form.utr_number.substring(2,8)
-          let post = this.form.utr_number.substring(8,9)
-          if (!this.form.utr_number.substring(0,2).match(/[A-Z]/g) || 
-          this.form.utr_number.substring(0,2).match(/[A-Z]/g).length !== 2 || 
-          !this.form.utr_number.substring(2,8).match(/[0-9]/g) || 
-          this.form.utr_number.substring(2,8).match(/[0-9]/g).length !== 6 || 
-          !this.form.utr_number.substring(8,9).match(/[A-D]/g) || 
-          !this.form.utr_number.substring(8,9).match(/[A-D]/g).length) {
-            this.formError.push({ field: 'utr_number', message: 'UTR Number is invalid.'})
-          }
-        } else if (this.form.employment_type === "Limited Company") {
-          notRequired.push("utr_number")
-        }
-
-        if (this.professionCategoryId === 2) {
-          this.form.claim_nhs = false
-        }
-
-        if (["false", false].includes(this.form.claim_nhs)) {
-          notRequired.push("nhs_number")
-          this.form.nhs_number = null
-          notRequired.push("ni_number")
-          this.form.ni_number = null
-        }
-
-        if (["false", false].includes(this.form.paid_under_payroll)) {
-          // this.form.payroll_account_name = ""
-          // this.form.payroll_account_number = ""
-          // this.form.payroll_sort_code = ""
-          // this.form.payroll_bank_name = ""
-          notRequired.push(
-            "payroll_account_name",
-            "payroll_bank_name",
-            "payroll_sort_code",
-            "payroll_account_number"
-          )
-        }
-
-        if (["true", true].includes(this.form.paid_under_payroll)) {
-          // this.form.account_name = ""
-          // this.form.account_number = ""
-          // this.form.sort_code = ""
-          // this.form.bank_name = ""
-          notRequired.push(
-            "account_name",
-            "bank_name",
-            "sort_code",
-            "account_number"
-          )
-        }
-
-        if (
-          ["true", true].includes(this.form.view_locum_jobs) ||
-          ["true", true].includes(this.form.view_permanent_jobs)
-        ) {
-          notRequired.push("view_locum_jobs", "view_permanent_jobs")
-        }
-
-        if (this.form.profession_id) {
-          let profession = this.professions.find(
-            item => item.value === parseInt(this.form.profession_id)
-          )
-          profession.reference_compliance_documents.forEach(
-            item => {
-              if (
-                this.form[
-                  item.compliance_document_name.replace(/ /g, "_").toLowerCase()
-                ]
-              ) {
-                this.form.reference_locum_compliance_documents.push({
-                  compliance_document_id: item.compliance_document_id,
-                  reference: this.form[
-                    item.compliance_document_name.replace(/ /g, "_").toLowerCase()
-                  ]
-                })
-              } else {
-                // this.formError.push({
-                //   field: item.compliance_document_name
-                //     .replace(/ /g, "_")
-                //     .toLowerCase(),
-                //   message: `${item.compliance_document_name} is required`
-                // })
-                this.checkValidation(item.compliance_document_name, parseInt(this.form.profession_id) !== 1 && parseInt(this.form.profession_id) <=5 ? 8 : 7)
+  async asyncData({ app, store }) {
+    try {
+      const [
+        professions,
+        practiceTypes,
+        mandatoryTrainings,
+        user,
+        otherMandatoryTrainings
+      ] = await Promise.all([
+        app.$axios.$get(`/api/v1/professions`).then(responseProfessions => {
+          const professions = [];
+          responseProfessions.data.professions.forEach(profession => {
+            professions.push({
+              label: profession.name,
+              value: profession.id,
+              reference_compliance_documents:
+                profession.profession_compliance_category
+                  .reference_compliance_documents
+            });
+          });
+          return professions;
+        }),
+        app.$axios
+          .$get(`/api/v1/practice-types`)
+          .then(responsePracticeTypes => {
+            const practice_types = [];
+            responsePracticeTypes.data.practice_types.forEach(practiceType => {
+              practice_types.push({
+                label: practiceType.name,
+                value: practiceType.id
+              });
+            });
+            return practice_types;
+          }),
+        app.$axios
+          .$get(`/api/v1/mandatory-trainings`)
+          .then(responseMandatoryTrainings => {
+            const mandatory_trainings = [];
+            responseMandatoryTrainings.data.mandatory_trainings.forEach(
+              mandatoryTraining => {
+                mandatory_trainings.push({
+                  label: mandatoryTraining.name,
+                  value: mandatoryTraining.id
+                });
               }
+            );
+            return mandatory_trainings;
+          }),
+        app.$axios.$get(`/api/v1/locum/me/profile`).then(responseMe => {
+          const user =
+            responseMe.data && responseMe.data.user
+              ? responseMe.data.user
+              : null;
+          return user;
+        }),
+        app.$axios
+          .$get(`/api/v1/locum/other-mandatory-training`, {
+            params: {
+              user_id: app.$auth.user.id
             }
-          )
-        }
-
-        if (this.form.referee_1_phone_number && this.form.referee_1_phone_number.length < 10) {
-          this.formError.push({
-            field: "referee_1_phone_number",
-            message: "Telephone number should be 10 digits"
           })
-        }
-
-        if (this.form.referee_2_phone_number && this.form.referee_2_phone_number.length < 10) {
-          this.formError.push({
-            field: "referee_2_phone_number",
-            message: "Telephone number should be 10 digits"
+          .then(res => {
+            const other_mandatory_trainings = [];
+            res.data.locum_other_mandatory_trainings.forEach(
+              otherMandatoryTraining => {
+                other_mandatory_trainings.push({
+                  label: otherMandatoryTraining.name,
+                  value: otherMandatoryTraining.id
+                });
+              }
+            );
+            return other_mandatory_trainings;
           })
-        }
+      ]);
 
-        if (this.form.nhs_smart_card_id_number && this.form.nhs_smart_card_id_number.length < 12) {
+      return {
+        professions,
+        // professions_categories,
+        practiceTypes,
+        mandatoryTrainings,
+        user,
+        otherMandatoryTrainings
+      };
+    } catch (err) {
+      console.log("err", err);
+      if (err.response.data.message) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
+      }
+      throw err;
+    }
+  },
+
+  mounted() {
+    this.profile.avatar = this.user.file_url ? this.user.file_url : null;
+    this.profile.name = `${this.user.first_name} ${this.user.last_name}`;
+    this.profile.email = this.user.email;
+    this.form.nhs_smart_card_id_number = this.user.nhs_smart_card_id_number;
+    this.form.headline = this.user.headline;
+    this.form.short_biography = this.user.short_biography;
+    this.form.special_requirements = this.user.special_requirements;
+    this.form.profession_id = this.user.profession.id;
+
+    this.form.qualification_id = this.user.qualifications.map(qualification => {
+      return { label: qualification.name, value: qualification.id };
+    });
+    this.form.clinical_system_id = this.user.clinical_systems.map(
+      clinicalSystem => {
+        return { label: clinicalSystem.name, value: clinicalSystem.id };
+      }
+    );
+    this.form.spoken_language_id = this.user.spoken_languages.map(
+      spokenLanguage => {
+        return { label: spokenLanguage.name, value: spokenLanguage.id };
+      }
+    );
+    this.form.view_locum_jobs = this.user.view_locum_jobs;
+    this.form.view_permanent_jobs = this.user.view_permanent_jobs;
+    this.form.min_rate_per_hour = this.user.min_rate_per_hour;
+    this.form.max_rate_per_hour = this.user.max_rate_per_hour;
+    this.form.min_rate_per_half_day_session = this.user.min_rate_per_half_day_session;
+    this.form.max_rate_per_half_day_session = this.user.max_rate_per_half_day_session;
+    this.form.min_rate_per_whole_day_session = this.user.min_rate_per_whole_day_session;
+    this.form.max_rate_per_whole_day_session = this.user.max_rate_per_whole_day_session;
+    this.form.practice_type_id = this.user.practice_types.map(
+      practiceType => practiceType.id
+    );
+    this.form.mandatory_training_id = this.user.mandatory_trainings.map(
+      mandatoryTraining => mandatoryTraining.mandatory_training.id
+    );
+    this.form.other_mandatory_training_id = this.user.other_mandatory_trainings.map(
+      otherMandatoryTraining =>
+        otherMandatoryTraining.locum_other_mandatory_training.id
+    );
+    this.form.post_code = this.user.locum_postcode;
+    this.form.miles = this.user.miles;
+
+    let findprofession = this.professions.find(
+      item => item.value === parseInt(this.user.profession.id)
+    );
+    this.reference_locum_compliance_documents_list =
+      findprofession.reference_compliance_documents;
+
+    this.reference_locum_compliance_documents_list.forEach(item => {
+      let foundCompliance = this.user.reference_locum_compliance_documents.find(
+        compliance =>
+          compliance.compliance_document_id === item.compliance_document_id
+      );
+
+      this.form.reference_locum_compliance_documents.push({
+        compliance_document_id: item.compliance_document_id,
+        compliance_document_name: item.compliance_document_name,
+        reference: foundCompliance ? foundCompliance.reference : null,
+        type: "compliance_documents"
+      });
+    });
+
+    this.form.referee_1_contact_name = this.user.referee_1_contact_name;
+    this.form.referee_1_phone_number = this.user.referee_1_phone_number;
+    this.form.referee_1_email = this.user.referee_1_email;
+    this.form.referee_2_contact_name = this.user.referee_2_contact_name;
+    this.form.referee_2_phone_number = this.user.referee_2_phone_number;
+    this.form.referee_2_email = this.user.referee_2_email;
+
+    this.form.utr_number = this.user.utr_number;
+    this.form.company_registration_number = this.user.company_registration_number;
+    this.form.ir35 = this.user.ir35;
+    // claim nhs
+    this.form.claim_nhs = this.user.claim_nhs;
+    this.form.epc_percentage_rate = this.user.epc_percentage_rate;
+    this.form.section_scheme_year = this.user.section_scheme_year;
+    this.form.nhs_number = this.user.nhs_number;
+    this.form.ni_number = this.user.ni_number;
+    this.form.ay_percentage_rate = this.user.ay_percentage_rate;
+    this.form.mpavc_percentage_rate = this.user.mpavc_percentage_rate;
+    this.form.apc_percentage_rate = this.user.apc_percentage_rate;
+    this.form.errbo_percentage_rate = this.user.errbo_percentage_rate;
+    this.form.pcse_or_lhb_ea_code = this.user.pcse_or_lhb_ea_code;
+    this.form.nhs_registration_number = this.user.nhs_registration_number;
+
+    this.form.paid_under_payroll = this.user.paid_under_payroll;
+
+    this.form.payroll_account_name = this.user.payroll_account_name;
+    this.form.payroll_account_number = this.user.payroll_account_number;
+    this.form.payroll_sort_code = this.user.payroll_sort_code;
+    this.form.payroll_bank_name = this.user.payroll_bank_name;
+
+    this.form.account_name = this.user.account_name;
+    this.form.account_number = this.user.account_number;
+    this.form.sort_code = this.user.sort_code;
+    this.form.bank_name = this.user.bank_name;
+  },
+
+  methods: {
+    addList(payload) {
+      this.$axios
+        .$post(`/api/v1/locum/other-mandatory-training`, { name: payload })
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.otherMandatoryTrainings.findIndex(
+            item =>
+              item.value === res.data.locum_other_mandatory_training.id &&
+              item.label === res.data.locum_other_mandatory_training.name
+          );
+          if (index < 0) {
+            this.otherMandatoryTrainings.push({
+              label: res.data.locum_other_mandatory_training.name,
+              value: res.data.locum_other_mandatory_training.id
+            });
+          }
+        });
+    },
+    updateList(payload) {
+      this.$axios
+        .$put(`/api/v1/locum/other-mandatory-training/${payload.value}`, {
+          name: payload.label
+        })
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.otherMandatoryTrainings.findIndex(
+            item => item.value === payload.value
+          );
+          if (index >= 0) {
+            this.otherMandatoryTrainings.splice(index, 1, payload);
+          }
+        });
+    },
+    toggleRemoveMandatoryModal(payload) {
+      this.selectedMandatory = payload;
+      this.toggle_remove_mandatory_modal = true;
+    },
+    removeMandatory() {
+      this.$axios
+        .$delete(
+          `/api/v1/locum/other-mandatory-training/${this.selectedMandatory.value}`
+        )
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.otherMandatoryTrainings.findIndex(
+            item => item.value === this.selectedMandatory.value
+          );
+          if (index >= 0) {
+            this.otherMandatoryTrainings.splice(index, 1);
+          }
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        })
+        .finally(() => {
+          this.toggle_remove_mandatory_modal = false;
+          this.selectedMandatory = null;
+        });
+    },
+    checkValidation(name, limit) {
+      let fieldName = name.replace(/ /g, "_").toLowerCase();
+      let field = this.form.reference_locum_compliance_documents.find(
+        item => item.compliance_document_name === name
+      );
+      let index = this.formError.findIndex(
+        err => err.field === fieldName && err.type === "limit"
+      );
+      let requiredIndex = this.formError.findIndex(
+        err => err.field === fieldName && !err.type
+      );
+      if (field.reference) {
+        if (requiredIndex > -1) this.formError.splice(requiredIndex, 1);
+        if (field.reference.length < limit) {
+          if (index < 0) {
+            this.formError.push({
+              field: fieldName,
+              type: "limit",
+              message: `${name} must be ${limit} characters.`
+            });
+          }
+        } else {
+          if (index > -1) {
+            this.formError.splice(index, 1);
+          }
+        }
+      } else {
+        if (requiredIndex < 0) {
+          if (index > -1) this.formError.splice(index, 1);
           this.formError.push({
-            field: "nhs_smart_card_id_number",
-            message: "NHS Smart Card ID should be 12 digits"
+            field: fieldName,
+            message: `${name} is required`
+          });
+        }
+      }
+    },
+    save() {
+      this.formError = [];
+      let notRequired = [
+        "other_mandatory_training_id",
+        "nhs_smart_card_id_number",
+        "headline",
+        "short_biography",
+        "special_requirements",
+        "spoken_language_id",
+        "referee_1_contact_name",
+        "referee_1_phone_number",
+        "referee_1_email",
+        "referee_2_contact_name",
+        "referee_2_phone_number",
+        "referee_2_email",
+        "paid_under_payroll",
+        "mandatory_training_id",
+        "ir35",
+        "claim_nhs",
+        "epc_percentage_rate",
+        "section_scheme_year",
+        "max_rate_per_hour",
+        "max_rate_per_half_day_session",
+        "max_rate_per_whole_day_session",
+        "mpl_or_npl_number",
+        "ay_percentage_rate",
+        "mpavc_percentage_rate",
+        "apc_percentage_rate",
+        "errbo_percentage_rate",
+        "pcse_or_lhb_ea_code",
+        "nhs_registration_number"
+      ];
+
+      this.form.max_rate_per_hour = 999999999;
+      this.form.max_rate_per_half_day_session = 999999999;
+      this.form.max_rate_per_whole_day_session = 999999999;
+
+      if (this.form.employment_type === "Self-Employed") {
+        notRequired.push("company_registration_number");
+        let pre = this.form.utr_number.substring(0, 2);
+        let num = this.form.utr_number.substring(2, 8);
+        let post = this.form.utr_number.substring(8, 9);
+        if (
+          !this.form.utr_number.substring(0, 2).match(/[A-Z]/g) ||
+          this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2 ||
+          !this.form.utr_number.substring(2, 8).match(/[0-9]/g) ||
+          this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6 ||
+          !this.form.utr_number.substring(8, 9).match(/[A-D]/g) ||
+          !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+        ) {
+          this.formError.push({
+            field: "utr_number",
+            message: "UTR Number is invalid."
+          });
+        }
+      } else if (this.form.employment_type === "Limited Company") {
+        notRequired.push("utr_number");
+      }
+
+      if (this.professionCategoryId === 2) {
+        this.form.claim_nhs = false;
+      }
+
+      if (["false", false].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number");
+        this.form.nhs_number = null;
+        notRequired.push("ni_number");
+        this.form.ni_number = null;
+      }
+
+      if (["false", false].includes(this.form.paid_under_payroll)) {
+        // this.form.payroll_account_name = ""
+        // this.form.payroll_account_number = ""
+        // this.form.payroll_sort_code = ""
+        // this.form.payroll_bank_name = ""
+        notRequired.push(
+          "payroll_account_name",
+          "payroll_bank_name",
+          "payroll_sort_code",
+          "payroll_account_number"
+        );
+      }
+
+      if (["true", true].includes(this.form.paid_under_payroll)) {
+        // this.form.account_name = ""
+        // this.form.account_number = ""
+        // this.form.sort_code = ""
+        // this.form.bank_name = ""
+        notRequired.push(
+          "account_name",
+          "bank_name",
+          "sort_code",
+          "account_number"
+        );
+      }
+
+      if (
+        ["true", true].includes(this.form.view_locum_jobs) ||
+        ["true", true].includes(this.form.view_permanent_jobs)
+      ) {
+        notRequired.push("view_locum_jobs", "view_permanent_jobs");
+      }
+
+      if (this.form.profession_id) {
+        let profession = this.professions.find(
+          item => item.value === parseInt(this.form.profession_id)
+        );
+        profession.reference_compliance_documents.forEach(item => {
+          if (
+            this.form[
+              item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+            ]
+          ) {
+            this.form.reference_locum_compliance_documents.push({
+              compliance_document_id: item.compliance_document_id,
+              reference: this.form[
+                item.compliance_document_name.replace(/ /g, "_").toLowerCase()
+              ]
+            });
+          } else {
+            // this.formError.push({
+            //   field: item.compliance_document_name
+            //     .replace(/ /g, "_")
+            //     .toLowerCase(),
+            //   message: `${item.compliance_document_name} is required`
+            // })
+            this.checkValidation(
+              item.compliance_document_name,
+              parseInt(this.form.profession_id) !== 1 &&
+                parseInt(this.form.profession_id) <= 5
+                ? 8
+                : 7
+            );
+          }
+        });
+      }
+
+      if (
+        this.form.referee_1_phone_number &&
+        this.form.referee_1_phone_number.length < 10
+      ) {
+        this.formError.push({
+          field: "referee_1_phone_number",
+          message: "Telephone number should be 10 digits"
+        });
+      }
+
+      if (
+        this.form.referee_2_phone_number &&
+        this.form.referee_2_phone_number.length < 10
+      ) {
+        this.formError.push({
+          field: "referee_2_phone_number",
+          message: "Telephone number should be 10 digits"
+        });
+      }
+
+      if (
+        this.form.nhs_smart_card_id_number &&
+        this.form.nhs_smart_card_id_number.length < 12
+      ) {
+        this.formError.push({
+          field: "nhs_smart_card_id_number",
+          message: "NHS Smart Card ID should be 12 digits"
+        });
+      }
+
+      if (["true", true].includes(this.form.paid_under_payroll)) {
+        if (
+          this.form.payroll_sort_code &&
+          this.form.payroll_sort_code.length < 6
+        ) {
+          this.formError.push({
+            field: "payroll_sort_code",
+            message: "Sort Code should be 6 digits"
+          });
+        }
+      } else if (["false", false].includes(this.form.paid_under_payroll)) {
+        if (this.form.sort_code && this.form.sort_code.length < 6) {
+          this.formError.push({
+            field: "sort_code",
+            message: "Sort Code should be 6 digits"
+          });
+        }
+        if (this.form.account_number && this.form.account_number.length < 8) {
+          this.formError.push({
+            field: "account_number",
+            message: "Account number should be 8 digits"
+          });
+        }
+      }
+
+      this.Validate(this.form, notRequired);
+
+      if (!this.formError.length) {
+        this.loading = true;
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
+        this.form.clinical_system_id = this.form.clinical_system_id.length
+          ? this.form.clinical_system_id.map(item => item.value)
+          : [];
+        this.selectedQualification = [...this.form.qualification_id];
+        this.form.qualification_id = this.form.qualification_id.length
+          ? this.form.qualification_id.map(item => item.value)
+          : [];
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
+        this.form.spoken_language_id = this.form.spoken_language_id.length
+          ? this.form.spoken_language_id.map(item => item.value)
+          : [];
+        this.form.profession_id = this.form.profession_id.toString();
+        this.form.ir35 =
+          this.professionCategoryId === 1 ? this.form.ir35 : false;
+
+        this.$axios
+          .$put(`/api/v1/locum/me/profile`, {
+            ...this.form,
+            reference_locum_compliance_documents: this.form
+              .reference_locum_compliance_documents
           })
-        }
+          .then(res => {
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+            this.$store.commit(
+              "SET_VIEW_LOCUM_JOBS",
+              this.form.view_locum_jobs
+            );
+            this.$store.commit(
+              "SET_VIEW_PERMANENT_JOBS",
+              this.form.view_permanent_jobs
+            );
 
-        if (['true', true].includes(this.form.paid_under_payroll)) {
-          if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
-            this.formError.push({
-              field: "payroll_sort_code",
-              message: "Sort Code should be 6 digits"
-            })
-          }
-        } else if (['false', false].includes(this.form.paid_under_payroll)) {
-          if (this.form.sort_code && this.form.sort_code.length < 6) {
-            this.formError.push({
-              field: "sort_code",
-              message: "Sort Code should be 6 digits"
-            })
-          }
-          if (this.form.account_number && this.form.account_number.length < 8) {
-            this.formError.push({
-              field: "account_number",
-              message: "Account number should be 8 digits"
-            })
-          }
-        }
+            res.data.user.reference_locum_compliance_documents.forEach(item => {
+              let foundItem = this.form.reference_locum_compliance_documents.find(
+                formItem =>
+                  formItem.compliance_document_name ===
+                  item.compliance_document.name
+              );
+              if (foundItem) {
+                foundItem.reference = item.reference;
+              }
+            });
 
-        this.Validate(this.form, notRequired)
-
-        if (!this.formError.length) {
-          this.loading = true
-          this.selectedClinicalSystem = [...this.form.clinical_system_id]
-          this.form.clinical_system_id = this.form.clinical_system_id.length
-            ? this.form.clinical_system_id.map(item => item.value)
-            : []
-          this.selectedQualification = [...this.form.qualification_id]
-          this.form.qualification_id = this.form.qualification_id.length
-            ? this.form.qualification_id.map(item => item.value)
-            : []
-          this.selectedSpokenLanguage = [...this.form.spoken_language_id]
-          this.form.spoken_language_id = this.form.spoken_language_id.length
-            ? this.form.spoken_language_id.map(item => item.value)
-            : []
-          this.form.profession_id = this.form.profession_id.toString()
-          this.form.ir35 =
-            this.professionCategoryId === 1 ? this.form.ir35 : false
-
-          this.$axios
-            .$put(`/api/v1/locum/me/profile`, {
-              ...this.form,
-              reference_locum_compliance_documents: this.form.reference_locum_compliance_documents
-            })
-            .then(res => {
-              this.form.clinical_system_id = this.selectedClinicalSystem
-              this.form.qualification_id = this.selectedQualification
-              this.form.spoken_language_id = this.selectedSpokenLanguage
+            this.CheckUserVerification();
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.message
+            ) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
-                status: "success",
-                text: [`${res.message}`]
-              })
-              this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
-              this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
-
-              res.data.user.reference_locum_compliance_documents.forEach(item => {
-                let foundItem = this.form.reference_locum_compliance_documents.find(formItem => formItem.compliance_document_name === item.compliance_document.name)
-                if (foundItem) {
-                  foundItem.reference = item.reference
-                }
-              })
-
-              this.CheckUserVerification()
-            })
-            .catch(err => {
-              console.log("err", err.response || err)
-              this.form.clinical_system_id = this.selectedClinicalSystem
-              this.form.qualification_id = this.selectedQualification
-              this.form.spoken_language_id = this.selectedSpokenLanguage
-              if (
-                err.response &&
-                err.response.data &&
-                err.response.data.message
-              ) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                })
-              }
-              if (
-                err.response &&
-                err.response.data &&
-                err.response.data.error_messages
-              ) {
-                err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error)
-                })
-              }
-              throw err
-            })
-            .finally(() => {
-              this.loading = false
-              this.scrollToTop()
-            })
-        } else {
-          // this.$store.commit("SET_NOTIFICATION", {
-          //   enabled: true,
-          //   status: "danger",
-          //   text: ["Please fill up all the forms"]
-          // });
-          this.scrollToTop()
-        }
-      },
-
-    },
-
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
+            throw err;
+          })
+          .finally(() => {
+            this.loading = false;
+            this.scrollToTop();
+          });
+      } else {
+        // this.$store.commit("SET_NOTIFICATION", {
+        //   enabled: true,
+        //   status: "danger",
+        //   text: ["Please fill up all the forms"]
+        // });
+        this.scrollToTop();
+      }
+    }
   }
+};
 </script>

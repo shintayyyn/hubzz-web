@@ -1,7 +1,7 @@
 <template>
 	<div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
 		<div class="flex flex-row flex-wrap">
-			<div class="w-full">
+			<div class="flex flex-col w-full">
 				<div class="font-bold text-sm sm:text-md">Job number</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job.job_number }}</div>
 				<div class="font-bold text-sm sm:text-md">Duration</div>
@@ -14,7 +14,7 @@
 						<p>Days: {{ job.dates.length }}</p>
 					</div>
 					<div class="px-1">
-						<div class="flex justify-between items-end" :class="!view_calendar ? 'mb-2' : ''">
+						<div class="flex justify-between items-end mb-2">
 							<p class="font-bold text-sm sm:text-md">Schedule</p>
 							<!-- <div class="text-sm cursor-pointer bg-gray-300 hover:bg-gray-400 px-2 py-1 rounded transition-hover" @click="view_calendar = !view_calendar">{{ !view_calendar ? 'Calendar' : 'Default'}} View</div> -->
 						</div>
@@ -54,18 +54,10 @@
 				<div
 					class="text-xs sm:text-sm mb-8 break-words"
 				>{{ job && job.description ? job.description : '(none)' }}</div>
-				<!-- <div class="font-bold text-sm sm:text-md">
-          Rate
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}
-        </div>
-        <div class="font-bold text-sm sm:text-md">
-          Total Hours
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.total_hours | hoursMinutes }}
-				</div>-->
+				<div class="font-bold text-sm sm:text-md">Rate</div>
+				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>
+				<div class="font-bold text-sm sm:text-md">Total Hours</div>
+				<div class="text-xs sm:text-sm mb-8">{{ job.total_hours | hoursMinutes }}</div>
 				<div class="font-bold text-sm sm:text-md">Extra information</div>
 				<div
 					class="text-xs sm:text-sm mb-8 break-words"
@@ -84,13 +76,13 @@
 				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.is_nurse_available ? 'Yes' : 'No' }}</div>
 				<div class="font-bold text-sm sm:text-md">Number of patients to be seen during the session?</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.number_of_patients }}</div>
-				<div class="font-bold text-sm sm:text-md">Duration of each appointment?</div>
+				<div class="font-bold text-sm sm:text-md">Duration of eact appointment?</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.duration_for_each_appointment }}</div>
 				<div class="font-bold text-sm sm:text-md">Opportunity for catch up slots?</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 				>{{ job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}</div>
-				<div class="font-bold text-sm sm:text-md">Session requirements</div>
+				<div class="font-bold text-sm sm:text-md">Session requirements:</div>
 				<div v-if="!session_requirements.length" class="text-xs sm:text-sm">(none)</div>
 				<template v-else>
 					<div
@@ -110,24 +102,6 @@
 				<div class="text-xs sm:text-sm mb-8">{{ job.update_remarks?job.update_remarks:`(none)` }}</div>
 			</div>
 			<div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
-				<!-- <div class="text-xs sm:text-sm mb-8">
-          <p class="px-1">{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
-          <div class="flex">
-            <div class="px-1">
-              <p>Days:</p>
-              <p>Time:</p>
-              <p>Shift:</p>
-            </div>
-          <div class="px-1">
-            <p>{{ job.dates.length }}</p>
-            <p>{{ job.time_start }} - {{ job.time_end }}</p>
-            <p>{{ job.shift.name }}</p>
-          </div> 
-          </div>
-          <div class="overflow-y-auto" style="max-height: 205px;">
-            <div v-for="(date, index) in job.dates" :key="index" class="m-1"> {{ $moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</div>
-          </div>
-				</div>-->
 				<!-- <div class="font-bold text-sm sm:text-md">
           Include Saturday
         </div>
@@ -140,12 +114,8 @@
         <div class="text-xs sm:text-sm mb-8">
           {{ job.include_sunday ? 'Yes' : 'No' }}
 				</div>-->
-				<!-- <div class="font-bold text-sm sm:text-md">
-          Unpaid break
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.platform_job.unpaid_breaks_in_minutes }}
-				</div>-->
+				<div class="font-bold text-sm sm:text-md">Unpaid break</div>
+				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.unpaid_breaks_in_minutes }}</div>
 
 				<template v-if="job.selection_date">
 					<div class="font-bold text-sm sm:text-md">
@@ -228,6 +198,17 @@
 					<div v-if="job.platform_job.mandatory_trainings.length === 0" class="mt-1">(none)</div>
 					<div
 						v-for="item in job.platform_job.mandatory_trainings"
+						v-else
+						:key="item.id"
+						class="rounded-lg bg-yellow-500 p-1 m-1"
+					>{{ item.name }}</div>
+				</div>
+
+				<div class="font-bold text-sm sm:text-md">Other Mandatory Trainings</div>
+				<div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+					<div v-if="job.platform_job.other_mandatory_trainings.length === 0" class="mt-1">(none)</div>
+					<div
+						v-for="item in job.platform_job.other_mandatory_trainings"
 						v-else
 						:key="item.id"
 						class="rounded-lg bg-yellow-500 p-1 m-1"
@@ -345,12 +326,8 @@
 
 <script>
 import { gmapApi } from "vue2-google-maps";
-import AppMultipleDates from "@/components/Base/AppMultipleDates";
 
 export default {
-	components: {
-		AppMultipleDates
-	},
 	props: {
 		job: {
 			type: Object,

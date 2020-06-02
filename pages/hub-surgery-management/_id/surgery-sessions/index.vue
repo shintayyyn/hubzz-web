@@ -82,7 +82,6 @@ import AppTable from "@/components/Base/AppTable"
 import AppLoading from "@/components/Base/AppLoading"
 
 export default {
-
   components: {
     AppTable,
     AppLoading
@@ -91,8 +90,8 @@ export default {
   props: {
     spokePracticeId: {
       type: [String, Number],
-      default: () => null,
-    },
+      default: () => null
+    }
   },
 
   middleware ({ query, error }) {
@@ -338,13 +337,22 @@ export default {
           class: "text-center localDate"
         })
       }
+      if (["completed"].includes(queryStatus)) {
+        columns.push({
+          name: "Completed At",
+          dataIndex: "completed_at",
+          class: "text-center localDate"
+        })
+      }
+      if (["approved"].includes(queryStatus)) {
+        columns.push({
+          name: "Approved At",
+          dataIndex: "approved_at",
+          class: "text-center localDate"
+        })
+      }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
-          {
-            name: "Completed At",
-            dataIndex: "completed_at",
-            class: "text-center localDate"
-          },
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
@@ -562,27 +570,28 @@ export default {
     routerLink (jobOrJobPart) {
       if (this.isJobPart) {
         return {
-          name: 'hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId',
+          name:
+            "hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId",
           params: {
             ...this.$route.params,
             sessionId: jobOrJobPart.job_id,
-            jobPartId: jobOrJobPart.id,
+            jobPartId: jobOrJobPart.id
           },
           query: {
-            ...this.$route.query,
-          },
+            ...this.$route.query
+          }
         }
       }
 
       return {
-        name: 'hub-surgery-management-id-surgery-sessions-index-sessionId',
+        name: "hub-surgery-management-id-surgery-sessions-index-sessionId",
         params: {
           ...this.$route.params,
-          sessionId: jobOrJobPart.id,
+          sessionId: jobOrJobPart.id
         },
         query: {
-          ...this.$route.query,
-        },
+          ...this.$route.query
+        }
       }
     },
 

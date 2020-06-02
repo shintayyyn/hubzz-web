@@ -16,119 +16,6 @@
 						:placeholder="'Select...'"
 						:items="practice_lists"
 					/>
-					<!-- <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap items-center">
-            <div class="w-full">
-              <AppInput
-                v-model="form.rate"
-                :type="'text'"
-                :name="'rate'"
-                :label="'Rate £'"
-                :error="formError.find(item => item.field === 'rate')"
-                :in-style="'text-align:right'"
-                :limit="8"
-                @keydown="isNumber($event)"
-                @blur="CheckEmptyField(form.rate,'rate')"
-              />
-            </div>
-            <div class="w-full">
-              <AppInput
-                v-model="form.locum_detail_rate_type_id"
-                :type="'select'"
-                :name="'locum_detail_rate_type_id'"
-                :label="'per'"
-                :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
-                :placeholder="'Select...'"
-                :items="rate_lists"
-              />
-            </div>
-					</div>-->
-					<!-- <AppInput
-            v-model="form.total_hours"
-            :type="'number'"
-            :name="'total_hours'"
-            :label="'Total hours'"
-            :error="formError.find(item => item.field === 'total_hours')"
-            :in-style="'text-align:right'"
-            :limit="8"
-            @blur="CheckEmptyField(form.total_hours,'total_hours')"
-					/>-->
-					<!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
-            <div class="relative flex flex-row flex-no-wrap justify-between">
-              <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
-            </div>
-            <div class="flex flex-row flex-no-wrap justify-start mt-1">
-              <div class="flex flex-col">
-                <input
-                  v-model="form.total_hours"
-                  step="0.5"
-                  type="number"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                  :class="formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
-                  style="text-align:right;'"
-                  @blur="CheckEmptyField(form.total_hours,'total_hours')"
-                  @keypress="isNumber($event), handleKeyDownEventLimit($event, 'total_hours', 8)"
-                >
-                <div
-                  v-if="formError.find(item => item.field === 'total_hours')"
-                  class="text-red-500 p-1 text-xs"
-                >
-                  {{ formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ") }}
-                </div>
-              </div>
-            </div>
-					</div>-->
-					<!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
-            <div class="relative flex flex-row flex-no-wrap justify-between">
-              <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
-            </div>
-            <div class="flex flex-row flex-wrap justify-start mt-1">
-              <div class="flex items-center">
-                <div class="flex flex-col">
-                  <input
-                    v-model="form.hours"
-                    type="number"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
-                    :class="formError.find(item => item.field === 'hours')? 'border-red-500':''"
-                    style="text-align:right;'"
-                    min="1"
-                    maxlength="8"
-                    @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
-                    @focus="hasValue(form.hours, 'hours')"
-                  >
-                  <div
-                    v-if="formError.find(item => item.field === 'hours')"
-                    class="text-red-500 p-1 text-xs"
-                  >
-                    {{ formError.find(item => item.field === 'hours').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'hours').message.slice(1).replace(/_/g, " ") }}
-                  </div>
-                </div>
-                <label for="hours" class="text-xs sm:text-sm mt-2">hours</label>
-              </div>
-              <div class="flex items-center">
-                <div class="flex flex-col">
-                  <input
-                    v-model="form.minutes"
-                    type="number"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1 shadow-none"
-                    :class="formError.find(item => item.field === 'minutes')? 'border-red-500':''"
-                    style="text-align:right;'"
-                    max="60"
-                    min="1"
-                    maxlength="2"
-                    @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
-                    @focus="hasValue(form.minutes, 'minutes')"
-                  >
-                  <div
-                    v-if="formError.find(item => item.field === 'minutes')"
-                    class="text-red-500 p-1 text-xs"
-                  >
-                    {{ formError.find(item => item.field === 'minutes').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'minutes').message.slice(1).replace(/_/g, " ") }}
-                  </div>
-                </div>
-                <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
-              </div>
-            </div>
-					</div>-->
 					<AppInput
 						v-model="form.title"
 						:type="'text'"
@@ -300,43 +187,43 @@
 						</span>
 						{{ formError.find(item => item.field === 'schedules').message }}
 					</p>
+					<div class="shield" style="z-index: 70;" v-if="toSaveSched"></div>
+					<div
+						class="message-modal job-notification-wrapper fixed z-50 bg-white p-4 rounded font-bold text-gray-700"
+						v-if="toSaveSched"
+					>
+						<p
+							class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg font-bold"
+						>JOB NOTIFICATION SUMMARY</p>
+						<div class="px-4">
+							<div class="flex justify-between pb-2">
+								<p>Total Working Hours:</p>
+								<p>{{ total_working_hours | hoursMinutes}}</p>
+							</div>
+							<div class="flex justify-between pb-2">
+								<p>Total Gross Locum Wages:</p>
+								<p>£ {{ total_gross_locum_wages | currency }}</p>
+							</div>
+							<div class="flex justify-between pb-2">
+								<p>
+									Hubzz Fee*
+									<span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
+								</p>
+								<p>£ {{ hubzz_fee | currency }}</p>
+							</div>
+						</div>
+						<div class="flex justify-end items-center text-black mt-3">
+							<AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toSaveSched=false" />
+							<AppButton :label="'Confirm & Save'" :disabled="loading" @click="saveSchedule" />
+						</div>
+					</div>
 					<div class="shield" v-if="editSchedule"></div>
 					<transition name="fade">
 						<div
 							v-if="editSchedule"
-							class="message-modal schedule-wrapper fixed z-50 bg-white px-8 py-4 rounded"
+							class="message-modal schedule-wrapper fixed z-40 bg-white px-8 py-4 rounded"
 						>
 							<p>Edit Schedule</p>
-							<div class="shield" v-if="toSaveSched"></div>
-							<div
-								class="message-modal job-notification-wrapper bg-white p-4 rounded font-bold text-gray-700"
-								v-if="toSaveSched"
-							>
-								<p
-									class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg font-bold"
-								>JOB NOTIFICATION SUMMARY</p>
-								<div class="px-4">
-									<div class="flex justify-between pb-2">
-										<p>Total Working Hours:</p>
-										<p>{{ total_working_hours | hoursMinutes}}</p>
-									</div>
-									<div class="flex justify-between pb-2">
-										<p>Total Gross Locum Wages:</p>
-										<p>£ {{ total_gross_locum_wages | currency }}</p>
-									</div>
-									<div class="flex justify-between pb-2">
-										<p>
-											Hubzz Fee*
-											<span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
-										</p>
-										<p>£ {{ hubzz_fee | currency }}</p>
-									</div>
-								</div>
-								<div class="flex justify-end items-center text-black mt-3">
-									<AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toSaveSched=false" />
-									<AppButton :label="'Confirm & Save'" :disabled="loading" @click="saveSchedule" />
-								</div>
-							</div>
 							<AppSchedules
 								:shifts="shifts"
 								:rate_lists="rate_lists"
@@ -421,7 +308,7 @@
               />
             </div>
 					</div>-->
-					<!-- <AppInput
+					<!--<AppInput
             v-model="form.shift_id"
             :type="'select'"
             :name="'shift_id'"
@@ -429,8 +316,8 @@
             :placeholder="'Select...'"
             :items="shifts"
             :error="formError.find(item => item.field === 'shift_id')"
-					/>-->
-					<!-- <AppInput
+					/>
+				 <AppInput
             v-model="unpaid_breaks"
             :type="'select'"
             :name="'unpaid_breaks '"
@@ -642,12 +529,21 @@
 						@unchecked="uncheckMandatory($event)"
 						@uncheckAll="form.mandatory_training_id = []"
 					/>
-					<div v-if="mandatory_training_lists.length === 0" class="my-3">
-						<AppButton
-							:label="'Go to Profile to add items here'"
-							:inStyle="'padding:4px;'"
-							@click="goToProfile"
-						/>
+					<AppInput
+						v-model="form.other_mandatory_training_id"
+						:type="'multi-checkbox'"
+						:name="'other_mandatory_training_id'"
+						:label="'Other Mandatory training required for this job'"
+						:placeholder="'Select..'"
+						:lists="other_mandatory_training_lists"
+						:info="'Check all that apply'"
+						@checked="form.other_mandatory_training_id.push(parseInt($event))"
+						@unchecked="uncheckOtherMandatory($event)"
+						@uncheckAll="form.other_mandatory_training_id = []"
+					/>
+
+					<div v-if="compliances.length === 0" class="mb-6 text-center md:text-left mt-2">
+						<AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
 					</div>
 				</div>
 			</div>
@@ -691,6 +587,7 @@ const session_requirements_lists = [
 	{ label: "Telephone triage", value: "Telephone triage" },
 	{ label: "Home visits", value: "Home visits" }
 ];
+
 export default {
 	components: {
 		AppInput,
@@ -730,6 +627,7 @@ export default {
 			professions: [],
 			session_requirements_lists,
 			mandatory_training_lists: [],
+			other_mandatory_training_lists: [],
 
 			professions_categories: [],
 
@@ -806,6 +704,7 @@ export default {
 				// locum_detail_rate_type_id: 1,
 				ir35: false,
 				mandatory_training_id: [],
+				other_mandatory_training_id: [],
 				profession_id: null,
 				qualification_id: [],
 				clinical_system_id: [],
@@ -820,13 +719,12 @@ export default {
 				// include_sunday: true,
 				// unpaid_breaks_in_minutes: "",
 				// shift_id: "",
+				schedules: [],
 				auto_assign_at: null,
 				selection_date: null,
 				favorite_only: false,
 				favorite_only_until: null,
-				update_accepted_until: null,
-				schedule_templates: [],
-				schedules: []
+				update_accepted_until: null
 			},
 			formError: [],
 			show_saturday: false,
@@ -1065,7 +963,6 @@ export default {
 				this.form.qualification_id = [];
 			}
 		},
-
 		editSchedule(value) {
 			if (value === true) {
 				this.editedSchedule = this.form.schedules;
@@ -1073,41 +970,6 @@ export default {
 				this.editedSchedule = [];
 			}
 		}
-		// "form.date_end" (value) {
-		//   let end = this.$moment(value, "YYYY-MM-DD")
-		//   let days = []
-		//   let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD")
-		//   while (startDay <= end) {
-		//     days.push(startDay.day())
-		//     startDay = startDay.clone().add(1, "d")
-		//   }
-		//   this.getListofDays(days)
-		// },
-
-		// selectedUpdateRemarksValue (value) {
-		//   if (value !== "other") {
-		//     this.form.update_remarks = value
-		//   }
-		// },
-
-		// "form.date_start" (value) {
-		//   let start = this.$moment(value, "YYYY-MM-DD")
-		//   let days = []
-		//   let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD")
-		//   while (endDay >= start) {
-		//     days.push(endDay.day())
-		//     endDay = endDay.clone().subtract(1, "d")
-		//   }
-		//   this.getListofDays(days)
-		// },
-
-		// "form.rate"() {
-		// 	this.validateNumber(this.form.rate, "rate");
-		// },
-
-		// "form.total_hours"() {
-		// 	this.validateNumber(this.form.total_hours, "total_hours");
-		// }
 	},
 
 	created() {
@@ -1169,7 +1031,8 @@ export default {
 					email,
 					extra_information: extraInformation,
 					practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
-					mandatory_trainings: mandatoryTrainings
+					mandatory_trainings: mandatoryTrainings,
+					other_mandatory_trainings: otherMandatoryTrainings
 				} = profileProfile;
 
 				this.form.report_to = reportTo;
@@ -1183,6 +1046,15 @@ export default {
 						value: mandatoryTraining.id
 					})
 				);
+
+				this.other_mandatory_training_lists = otherMandatoryTrainings.map(
+					otherMandatoryTraining => ({
+						label: otherMandatoryTraining.name,
+						value: otherMandatoryTraining.id
+					})
+				);
+
+				console.log(this.other_mandatory_training_lists);
 
 				if (this.job) {
 					const selectedProfession = this.professions_categories.find(
@@ -1216,26 +1088,34 @@ export default {
 					this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment;
 					this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots;
 					this.form.session_structure_information = this.job.platform_job.session_structure_information;
-					// this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
-					// this.form.rate = this.job.rate
-					// this.form.total_hours = this.job.total_hours
+					// this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id;
+					// this.form.rate = this.job.rate;
+					// this.form.total_hours = this.job.total_hours;
 
-					// this.form.hours = Math.floor(this.form.total_hours / 60)
-					// this.form.minutes = Math.floor(this.form.total_hours % 60)
+					// this.form.hours = Math.floor(this.form.total_hours / 60);
+					// this.form.minutes = Math.floor(this.form.total_hours % 60);
 
-					// if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
-					//   this.unpaid_breaks = false
-					// } else if (
-					//   ![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)
-					// ) {
-					//   this.unpaid_breaks = "other"
-					//   this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes
-					// } else {
-					//   this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes
-					// }
+					this.form.schedules = this.job.schedules;
+
+					if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
+						this.unpaid_breaks = false;
+					} else if (
+						![15, 30, 60].includes(
+							this.job.platform_job.unpaid_breaks_in_minutes
+						)
+					) {
+						this.unpaid_breaks = "other";
+						this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes;
+					} else {
+						this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes;
+					}
 
 					this.form.ir35 = this.job.platform_job.ir35;
 					this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(
+						item => item.id
+					);
+
+					this.form.other_mandatory_training_id = this.job.platform_job.other_mandatory_trainings.map(
 						item => item.id
 					);
 
@@ -1262,15 +1142,12 @@ export default {
 
 					// this.form.date_start = this.job.date_start
 					// this.form.date_end = this.job.date_end
-					// this.form.time_start = this.job.time_start
-					// this.form.time_end = this.job.time_end
-					// this.form.shift_id = this.job.shift.id
+					this.form.time_start = this.job.time_start;
+					this.form.time_end = this.job.time_end;
+					this.form.shift_id = this.job.shift.id;
 
-					// this.form.include_saturday = this.job.include_saturday
-					// this.form.include_sunday = this.job.include_sunday
-
-					this.form.schedules = this.job.schedules;
-					this.form.schedule_templates = this.job.schedule_templates;
+					this.form.include_saturday = this.job.include_saturday;
+					this.form.include_sunday = this.job.include_sunday;
 
 					this.form.auto_assign_at = this.job.platform_job.auto_assign_at;
 
@@ -1360,43 +1237,6 @@ export default {
 	},
 
 	methods: {
-		getScheduleTemplates(shift_schedule) {
-			if (shift_schedule) {
-				this.form.schedule_templates = [];
-				shift_schedule.forEach(shift => {
-					this.form.schedule_templates.push({
-						name: shift.label,
-						shift_id: shift.shift_id,
-						time_start: shift.time_start,
-						time_end: shift.time_end,
-						locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-						rate: shift.rate
-					});
-				});
-			}
-		},
-		getInitialSchedule(payload) {
-			if (payload.schedule) {
-				this.form.schedules = [];
-				payload.schedule.forEach(sched => {
-					sched.shift_id.forEach(id => {
-						let shift = payload.shift_schedule.find(
-							shift => shift.value === id.toString()
-						);
-						this.form.schedules.push({
-							date: sched.date,
-							shift_id: shift.shift_id,
-							time_start: shift.time_start,
-							time_end: shift.time_end,
-							locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-							rate: shift.rate,
-							schedule_template_name: shift.label
-						});
-					});
-				});
-			}
-		},
-
 		getSchedule(
 			schedule,
 			total_gross_locum_wages,
@@ -1498,6 +1338,12 @@ export default {
 			);
 		},
 
+		uncheckOtherMandatory(value) {
+			this.form.other_mandatory_training_id = this.form.other_mandatory_training_id.filter(
+				id => id != value
+			);
+		},
+
 		validateNumber(value, fieldName) {
 			let displayFieldName =
 				fieldName.charAt(0).toUpperCase() +
@@ -1540,6 +1386,7 @@ export default {
 				"spoken_language_id",
 				"ir35",
 				"mandatory_training_id",
+				"other_mandatory_training_id",
 				"include_saturday",
 				"include_sunday",
 				"compliance_document_id",
@@ -1548,8 +1395,7 @@ export default {
 				"session_structure_information",
 				"hours",
 				"minutes",
-				"favorite_only",
-				"schedule_templates"
+				"favorite_only"
 			];
 
 			if (!this.hasBanks) {
@@ -1562,14 +1408,6 @@ export default {
 			if (!["Allocated", "Applied"].includes(this.job.status)) {
 				notRequired.push("update_accepted_until");
 			}
-
-			// if (
-			//   ["15", 15, "30", 30, "60", 60, false, "false"].includes(
-			//     this.unpaid_breaks
-			//   )
-			// ) {
-			//   notRequired.push("unpaid_breaks_in_minutes")
-			// }
 
 			if (["true", true].includes(this.auto_assign_job)) {
 				this.selection_notification = false;
@@ -1599,42 +1437,22 @@ export default {
 				notRequired.push("favorite_only_until");
 			}
 
-			// if (
-			//   [0, "0"].includes(this.form.hours) &&
-			//   [0, "0"].includes(this.form.minutes)
-			// ) {
-			//   this.formError.push({
-			//     field: "minutes",
-			//     message: "Minutes is required"
-			//   })
-			//   // this.formError.push({
-			//   //   field: "hours",
-			//   //   message: "Hours is required"
-			//   // });
-			// } else {
-			//   this.form.hours = !this.form.hours ? 0 : this.form.hours
-			//   this.form.minutes = !this.form.minutes ? 0 : this.form.minutes
-			//   this.form.total_hours =
-			//     this.form.hours * 60 + parseInt(this.form.minutes)
-			// }
-
-			// this.validateNumber(this.form.rate, "rate")
 			this.Validate(this.form, notRequired);
-			// !this.form.hours ? (this.form.hours = 0) : this.form.hours
+			!this.form.hours ? (this.form.hours = 0) : this.form.hours;
 
-			// if (
-			//   parseInt(this.form.hours) === 0 &&
-			//   this.form.minutes &&
-			//   parseInt(this.form.minutes) === 0
-			// ) {
-			//   this.formError.push({
-			//     field: "minutes",
-			//     message: "Minutes is invalid"
-			//   })
-			// } else {
-			//   this.form.total_hours =
-			//     this.form.hours * 60 + parseInt(this.form.minutes)
-			// }
+			if (
+				parseInt(this.form.hours) === 0 &&
+				this.form.minutes &&
+				parseInt(this.form.minutes) === 0
+			) {
+				this.formError.push({
+					field: "minutes",
+					message: "Minutes is invalid"
+				});
+			} else {
+				this.form.total_hours =
+					this.form.hours * 60 + parseInt(this.form.minutes);
+			}
 
 			if (!this.formError.length) {
 				this.selectedClinicalSystem = [...this.form.clinical_system_id];
@@ -1695,17 +1513,17 @@ export default {
 					).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
 				}
 
-				// if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
-				//   this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
-				// }
+				if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
+					this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
+				}
 
-				// if (this.unpaid_breaks === "other") {
-				//   this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
-				// }
+				if (this.unpaid_breaks === "other") {
+					this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
+				}
 
-				// if (["false", false].includes(this.unpaid_breaks)) {
-				//   this.form.unpaid_breaks_in_minutes = ""
-				// }
+				if (["false", false].includes(this.unpaid_breaks)) {
+					this.form.unpaid_breaks_in_minutes = "";
+				}
 
 				this.form.ir35 =
 					this.selectedProfession &&
@@ -1791,7 +1609,6 @@ export default {
 						this.loading = false;
 					});
 			} else {
-				console.log("ERr");
 				this.$emit("scrollToTop");
 			}
 		}
@@ -1805,7 +1622,8 @@ export default {
 	max-height: 90vh;
 	overflow: auto;
 }
-.job-notification-wrapper {
+.message-modal.job-notification-wrapper {
 	min-width: 30vw;
+	z-index: 80;
 }
 </style>

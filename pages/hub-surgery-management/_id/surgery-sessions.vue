@@ -1,5 +1,30 @@
 <template>
 	<section class="surgery-sessions-sections">
+		<div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
+			<AppLoading :loading="loading" spinner />
+			<div class="flex flex-row justify-start overflow-x-auto">
+				<div class="flex flex-col mb-2">
+					<label for="search" class="text-xs sm:text-sm">Job number</label>
+					<div class="flex flex-row justify-start">
+						<input
+							v-model="search"
+							type="text"
+							class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
+						/>
+					</div>
+					<transition name="fade" mode="out-in">
+						<div class="text-xs text-red-500" v-if="noFoundJob">No matching job number</div>
+					</transition>
+				</div>
+			</div>
+			<div class="flex justify-start">
+				<div
+					class="bg-yellow-500 hover:text-white cursor-pointer shadow-lg rounded-lg px-2 py-1 font-bold mb-5 min-w-sm"
+					@click="findJobNumber"
+				>Search</div>
+			</div>
+		</div>
+
 		<div class="flex flex-row justify-start overflow-x-auto py-3 mt-2">
 			<div class="relative">
 				<nuxt-link
@@ -90,6 +115,9 @@
 
 <script>
 import CreateJobModal from "@/components/CreateJobModal";
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 
 export default {
 	transition: {
@@ -98,11 +126,17 @@ export default {
 	},
 
 	components: {
-		CreateJobModal
+		CreateJobModal,
+		AppInput,
+		AppLoading,
+		AppButton
 	},
 
 	data() {
 		return {
+			search: null,
+			noFoundJob: false,
+			loading: false,
 			shifts: [],
 			rates: [],
 			spokePracticeId: null
@@ -148,6 +182,90 @@ export default {
 	methods: {
 		close() {
 			this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false);
+		},
+		async findJobNumber() {
+			if (!this.search) {
+				return;
+			}
+
+			this.loading = true;
+
+			let resJob = await this.findJob();
+			let resJobPart = await this.findJobParts();
+			let job = null;
+			let urlPath = null;
+			this.noFoundJob = false;
+
+			this.loading = false;
+
+			if (resJob.length > 0) {
+				job = resJob[0];
+				urlPath = `/hub-surgery-management/${this.$route.params.id}/surgery-sessions/${job.id}`;
+			}
+
+			if (resJobPart.length > 0) {
+				job = resJobPart[0];
+				urlPath = `/hub-surgery-management/${this.$route.params.id}/surgery-sessions/${job.job.id}/job-parts/${job.id}`;
+			}
+
+			if (resJob.length > 0 || resJobPart.length > 0) {
+				this.$router.push({
+					path: `/hub-surgery-management/${this.$route.params.id}/surgery-sessions`,
+					query: { jobStatus: job.status }
+				});
+
+				setTimeout(() => {
+					this.$router.push({
+						path: urlPath,
+						query: { jobStatus: job.status }
+					});
+				}, 500);
+			}
+
+			if (resJob.length === 0 && resJobPart.length === 0) {
+				this.noFoundJob = true;
+			}
+		},
+		findJob() {
+			return this.$axios
+				.$get(`/api/v1/practice/jobs`, {
+					params: {
+						status: ["Pending", "Allocated", "Live", "Applied", "Unfilled"],
+						job_number: this.search,
+						practice_id: this.spokePracticeId
+					}
+				})
+				.then(res => {
+					return res.data.jobs;
+				})
+				.catch(err => {
+					return [];
+					console.log("job err", err.response);
+				});
+		},
+		findJobParts() {
+			return this.$axios
+				.$get(`/api/v1/practice/job-parts`, {
+					params: {
+						status: [
+							"Ongoing",
+							"Withdrawn",
+							"Cancelled",
+							"Completed",
+							"Approved",
+							"Terminated"
+						],
+						job_part_number: this.search,
+						job_practice_id: this.spokePracticeId
+					}
+				})
+				.then(res => {
+					return res.data.job_parts;
+				})
+				.catch(err => {
+					return [];
+					console.log("job part err", err.response);
+				});
 		}
 	}
 };
@@ -162,7 +280,7 @@ export default {
 }
 @media (min-width: 1200px) {
 	.modal-container {
-		width: 90%;
+		width: 70%;
 	}
 }
 </style>

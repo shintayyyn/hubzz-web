@@ -5,70 +5,67 @@
 </template>
 
 <script>
-  import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
-  
-  export default {
-    transition: {
-      name: 'slide',
-      mode: 'out-in'
-    },
-    components: {
-      SessionDetailModal,
-    },
-    data () {
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
+
+export default {
+  transition: {
+    name: "slide",
+    mode: "out-in"
+  },
+  components: {
+    SessionDetailModal
+  },
+  data() {
+    return {
+      job: null
+    };
+  },
+  async asyncData({ app, params, error }) {
+    try {
+      const { sessionId } = params;
+
+      let response = await app.$axios.get(`/api/v1/practice/jobs/${sessionId}`);
+
+      let job = response.data.data.job;
+
       return {
-        job: null,
+        job
+      };
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        return error({
+          status: 404,
+          message: "This session could not be found."
+        });
       }
-    },
-    async asyncData ({ app, params, error }) {
-      try {
-        const {
-          sessionId,
-        } = params
 
-        let response = await app.$axios.get(`/api/v1/practice/jobs/${sessionId}`)
+      throw err;
+    }
+  },
 
-        let job = response.data.data.job
-
-        return {
-          job
+  methods: {
+    close() {
+      this.$router.push({
+        name: "hub-surgery-management-id-surgery-sessions-index",
+        params: {
+          ...this.$route.params
+        },
+        query: {
+          ...this.$route.query
         }
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          return error({
-            status: 404,
-            message: 'This session could not be found.',
-          })
-        }
-
-        throw err
-      }
-    },
-
-    methods: {
-      close () {
-        this.$router.push({
-          name: 'hub-surgery-management-id-surgery-sessions',
-          params: {
-            ...this.$route.params,
-          },
-          query: {
-            ...this.$route.query,
-          },
-        })
-      },
-    },
-
+      });
+    }
   }
+};
 </script>
 
 <style scoped>
+.modal-container {
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
   .modal-container {
-    z-index: 510;
+    width: 70%;
   }
-  @media screen and (min-width: 1200px) {
-    .modal-container {
-      width: 70%;
-    }
-  }
+}
 </style>

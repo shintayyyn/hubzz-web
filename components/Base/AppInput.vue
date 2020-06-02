@@ -23,34 +23,67 @@
 					</div>
 				</div>
 				<template v-if="type === 'multi-checkbox'">
-					<div :class="isHorizontal ? 'flex flex-row items-center flex-wrap' : ''">
+					<div v-if="updatable" class="flex flex-row justify-start items-center mt-1">
 						<div
-							v-if="!required"
-							class="flex flex-row justify-start items-center mt-1"
-							:class="isHorizontal ? 'mr-3 my-1' : ''"
-						>
-							<input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0" />
-							<label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
+							class="mb-1 bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
+							@click="add"
+						>Add mandatory training</div>
+					</div>
+					<div v-if="!required" class="flex flex-row justify-start items-center mt-1">
+						<input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0" />
+						<label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
+					</div>
+					<template v-if="toAdd">
+						<div class="flex flex-row justify-start items-center mt-1">
+							<div class="flex flex-col w-full">
+								<input
+									class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm shadow-none"
+									v-model="listLabel"
+									type="text"
+								/>
+								<div class="text-sm text-red-500" v-if="errorMsg">{{errorMsg}}</div>
+							</div>
+							<div class="ml-2" @click="cancel">Cancel</div>
+							<div class="ml-2" @click="save(null, 'add')">Add</div>
 						</div>
-						<div
-							v-for="(item, index) in lists"
-							:key="index"
-							class="flex flex-row justify-start items-center mt-1"
-							:class="isHorizontal ? 'mr-3 my-1' : ''"
-						>
+					</template>
+					<div
+						v-for="(item, index) in lists"
+						:key="index"
+						class="flex flex-row justify-start items-center mt-1"
+					>
+						<template v-if="toEdit && editId === item.value && updatable">
+							<div class="flex flex-col w-full">
+								<input
+									class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm shadow-none"
+									:id="`${name}-${index}`"
+									v-model="listLabel"
+									type="text"
+								/>
+								<div class="text-sm text-red-500" v-if="errorMsg">{{errorMsg}}</div>
+							</div>
+						</template>
+						<template v-else>
 							<input
 								:id="`${name}-${index}`"
-								:value="item.value ? item.value : item.id"
+								:value="item.value"
 								type="checkbox"
-								:checked="Array.isArray(value) ? value.includes(item.value ? item.value : item.id) : value"
+								:checked="Array.isArray(value) ? value.includes(item.value) : value"
 								:disabled="disabled"
 								@input="inputMultiCheck"
 							/>
+
 							<label
 								:for="`${name}-${index}`"
 								class="text-xs sm:text-sm flex items-center"
-							>{{ item.label ? item.label : item.name }}</label>
-						</div>
+							>{{ item.label }}</label>
+						</template>
+						<template v-if="updatable">
+							<div class="ml-2" @click="edit(item)" v-if="editId !== item.value">Edit</div>
+							<div class="ml-2" @click="$emit('remove', item)" v-if="editId !== item.value">Remove</div>
+							<div class="ml-2" @click="cancel" v-if="editId === item.value">Cancel</div>
+							<div class="ml-2" @click="save(item, 'update')" v-if="editId === item.value">Save</div>
+						</template>
 					</div>
 				</template>
 				<template v-else>
@@ -319,6 +352,10 @@
 <script>
 export default {
 	props: {
+		updatable: {
+			type: Boolean,
+			default: false
+		},
 		value: [String, Boolean, Array, Number, Object],
 		type: String,
 		name: String,
@@ -364,7 +401,13 @@ export default {
 		return {
 			passwordValue: "",
 			// show/hide password
-			passwordToggle: false
+			passwordToggle: false,
+			//
+			toAdd: false,
+			toEdit: false,
+			editId: null,
+			listLabel: "",
+			errorMsg: null
 		};
 	},
 	computed: {
@@ -382,6 +425,54 @@ export default {
 		}
 	},
 	methods: {
+		// for updatable multi checkbox
+		add() {
+			this.cancel();
+			this.toAdd = true;
+		},
+		edit(payload) {
+			this.cancel();
+			this.toEdit = true;
+			this.editId = payload.value;
+			this.listLabel = payload.label;
+		},
+		cancel() {
+			this.toEdit = false;
+			this.editId = null;
+			this.listLabel = "";
+			this.toAdd = false;
+			this.errorMsg = null;
+		},
+		save(payload, type) {
+			this.errorMsg = null;
+
+			if (type === "add") {
+				let hasSameLabel = this.lists.find(
+					list => list.label === this.listLabel
+				);
+
+				if (hasSameLabel) {
+					this.errorMsg = "Name already exists.";
+				} else {
+					this.$emit("addList", this.listLabel);
+					this.cancel();
+				}
+			} else if (type === "update") {
+				let hasSameLabel = this.lists.find(
+					list => list.label === this.listLabel && list.value !== payload.value
+				);
+
+				if (hasSameLabel) {
+					this.errorMsg = "Name already exists.";
+				} else {
+					this.$emit("updateList", {
+						label: this.listLabel,
+						value: payload.value
+					});
+					this.cancel();
+				}
+			}
+		},
 		// for multi checkbox
 		inputMultiCheck(e) {
 			if (e.target.checked) {

@@ -172,7 +172,7 @@ export default {
 };
 </script>
 <style scoped>
-.bg-job-active {
+/* .bg-job-active {
 	background-color: #38b460;
 }
 
@@ -195,7 +195,7 @@ export default {
 }
 .bg-shift-ooh {
 	background-color: #947ffe;
-}
+} */
 /* .job-card {
 	background-color: #45e577;
 }
