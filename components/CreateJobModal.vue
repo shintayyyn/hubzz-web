@@ -629,9 +629,6 @@ export default {
 			selection_notification: false,
 			bank_first: false,
 			shifts: [],
-			total_working_hours: 0,
-			total_gross_locum_wages: 0,
-			// hubzz_fee: 0,
 
 			selection_date: {
 				date: null,
@@ -642,10 +639,12 @@ export default {
 				time: null
 			},
 
+			// SPLIT JOBS
 			tabActive: "details",
 			hasShiftError: false,
+			total_working_hours: 0,
+			total_gross_locum_wages: 0,
 
-			// SPLIT JOBS
 			// schedule_dates: [],
 			// shift_schedule: [],
 			// initial_schedule: [],

@@ -282,7 +282,80 @@
               @blur="CheckEmptyField(form.date_start,'date_start')"
             />
 					</div>-->
-					<AppSchedule
+					<p>{{ this.$moment(form.dates[0]).format('DD/MM/YYYY') }} - {{ this.$moment(form.dates[form.dates.length-1]).format('DD/MM/YYYY') }}</p>
+					<p class="mb-2">{{ form.dates.length }} Day{{ form.dates.length > 1 ? 's' : ''}}</p>
+					<div class="flex">
+						<AppButton
+							:label="'Edit Schedule'"
+							:inStyle="'padding:8px 16px; font-size: 14px;'"
+							@click="editSchedule=true"
+						/>
+					</div>
+					<p
+						class="mt-2 text-red-500 flex items-center text-sm"
+						v-if="formError.find(item => item.field === 'schedules')"
+					>
+						<span class="mr-2">
+							<svgicon name="exclamation-mark" class="w-4 h-4 class fill-current" />
+						</span>
+						{{ formError.find(item => item.field === 'schedules').message }}
+					</p>
+					<div class="shield" v-if="editSchedule"></div>
+					<transition name="fade">
+						<div
+							v-if="editSchedule"
+							class="message-modal schedule-wrapper fixed z-50 bg-white px-8 py-4 rounded"
+						>
+							<p>Edit Schedule</p>
+							<div class="shield" v-if="toSaveSched"></div>
+							<div
+								class="message-modal job-notification-wrapper bg-white p-4 rounded font-bold text-gray-700"
+								v-if="toSaveSched"
+							>
+								<p
+									class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg font-bold"
+								>JOB NOTIFICATION SUMMARY</p>
+								<div class="px-4">
+									<div class="flex justify-between pb-2">
+										<p>Total Working Hours:</p>
+										<p>{{ total_working_hours | hoursMinutes}}</p>
+									</div>
+									<div class="flex justify-between pb-2">
+										<p>Total Gross Locum Wages:</p>
+										<p>£ {{ total_gross_locum_wages | currency }}</p>
+									</div>
+									<div class="flex justify-between pb-2">
+										<p>
+											Hubzz Fee*
+											<span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
+										</p>
+										<p>£ {{ hubzz_fee | currency }}</p>
+									</div>
+								</div>
+								<div class="flex justify-end items-center text-black mt-3">
+									<AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toSaveSched=false" />
+									<AppButton :label="'Confirm & Save'" :disabled="loading" @click="saveSchedule" />
+								</div>
+							</div>
+							<AppSchedules
+								:shifts="shifts"
+								:rate_lists="rate_lists"
+								@getSchedule="getSchedule"
+								:schedule="editedSchedule"
+								:error="formError.find(err => err.field === 'schedules')"
+							/>
+							<div class="flex justify-end">
+								<AppButton
+									:label="'Save'"
+									class="mr-2"
+									@click="toSaveSched=true"
+									:disabled="!form.schedules.length || !total_working_hours || total_gross_locum_wages <= 0 || this.hasShiftError"
+								/>
+								<AppButton :label="'Close'" @click="editSchedule=false" />
+							</div>
+						</div>
+					</transition>
+					<!-- <AppSchedule
 						:rate_lists="rate_lists"
 						:shifts="shifts"
 						:formError="formError"
@@ -290,7 +363,7 @@
 						:jobSchedule="job && job.schedules ? job.schedules : []"
 						@scheduleTemplates="getScheduleTemplates"
 						@initialSchedule="getInitialSchedule"
-					/>
+					/>-->
 					<!-- <div class="flex flex-row flex-wrap justify-between">
             <div class="px-1 w-full md:w-1/2">
               <AppDate
@@ -611,6 +684,7 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppMultipleDates from "@/components/Base/AppMultipleDates";
 import AppLoading from "@/components/Base/AppLoading";
 import AppSchedule from "@/components/Base/AppSchedule";
+import AppSchedules from "@/components/Base/AppSchedules";
 
 const session_requirements_lists = [
 	{ label: "Practice admin", value: "Practice admin" },
@@ -628,7 +702,8 @@ export default {
 		AppConfirmationModal,
 		AppMultipleDates,
 		AppLoading,
-		AppSchedule
+		AppSchedule,
+		AppSchedules
 	},
 
 	mixins: [clickaway],
@@ -701,6 +776,14 @@ export default {
 			selectedQualification: [],
 			selectedClinicalSystem: [],
 			selectedSpokenLanguage: [],
+
+			// split jobs
+			editSchedule: false,
+			editedSchedule: [],
+			toSaveSched: false,
+			hasShiftError: false,
+			total_working_hours: 0,
+			total_gross_locum_wages: 0,
 
 			form: {
 				practice_id: "",
@@ -925,6 +1008,29 @@ export default {
 						value: complianceDocumentId
 					};
 				});
+		},
+
+		practice_rate() {
+			let rate = 0;
+			let practice_rates = this.$auth.user.practice_detail.practice
+				.practice_rates;
+			let practice_rate = practice_rates.find(
+				item => item.id.toString() === this.form.profession_id.toString()
+			);
+			if (practice_rate) {
+				rate = practice_rate.rate;
+			} else {
+				rate = practice_rates[practice_rates.length - 1].rate;
+			}
+			return rate;
+		},
+
+		hubzz_fee() {
+			if (this.form.profession_id) {
+				let hours = this.total_working_hours / 60;
+				return (hours * this.practice_rate).toFixed(2);
+			}
+			return 0;
 		}
 	},
 
@@ -958,8 +1064,15 @@ export default {
 			if (newValue && oldValue) {
 				this.form.qualification_id = [];
 			}
-		}
+		},
 
+		editSchedule(value) {
+			if (value === true) {
+				this.editedSchedule = this.form.schedules;
+			} else {
+				this.editedSchedule = [];
+			}
+		}
 		// "form.date_end" (value) {
 		//   let end = this.$moment(value, "YYYY-MM-DD")
 		//   let days = []
@@ -1282,6 +1395,45 @@ export default {
 					});
 				});
 			}
+		},
+
+		getSchedule(
+			schedule,
+			total_gross_locum_wages,
+			total_working_hours,
+			hasError
+		) {
+			this.editedSchedule = [];
+			schedule.forEach(sched => {
+				if (sched.shifts && sched.shifts.length) {
+					sched.shifts.forEach(shift => {
+						this.editedSchedule.push({
+							date: this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+							shift_id: shift.shift_id,
+							time_start: shift.time_start,
+							time_end: shift.time_end,
+							locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+							rate: shift.rate
+						});
+					});
+				}
+			});
+			this.total_working_hours = total_working_hours;
+			this.total_gross_locum_wages = total_gross_locum_wages;
+			this.hasShiftError = hasError;
+		},
+
+		saveSchedule() {
+			this.form.schedules = [];
+			this.form.schedules = this.editedSchedule;
+			this.form.dates = [];
+			this.form.schedules.forEach(sched => {
+				if (!this.form.dates.includes(sched.date)) {
+					this.form.dates.push(sched.date);
+				}
+			});
+			this.toSaveSched = false;
+			this.editSchedule = false;
 		},
 
 		hasValue(value, field) {
@@ -1646,3 +1798,14 @@ export default {
 	}
 };
 </script>
+<style>
+.schedule-wrapper {
+	min-width: 75vw;
+	min-height: 90vh;
+	max-height: 90vh;
+	overflow: auto;
+}
+.job-notification-wrapper {
+	min-width: 30vw;
+}
+</style>

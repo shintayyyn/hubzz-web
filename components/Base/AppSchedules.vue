@@ -324,92 +324,6 @@ export default {
 		}
 	},
 	watch: {
-		// start_date(newValue, oldValue) {
-		// 	if (
-		// 		this.start_date &&
-		// 		!this.$moment(this.start_date).isSameOrAfter(
-		// 			this.$moment(this.end_date)
-		// 		)
-		// 	) {
-		// 		let start_date = oldValue;
-		// 		if (this.schedules && this.schedules.length) {
-		// 			let start_date = this.schedules[0];
-		// 			start_date = this.$moment(start_date.date, "DD/MM/YYYY").format(
-		// 				"YYYY-MM-DD"
-		// 			);
-		// 		}
-		// 		if (this.$moment(newValue).isAfter(start_date)) {
-		// 			let overDates = this.schedules.filter(sched =>
-		// 				this.$moment(
-		// 					this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD")
-		// 				).isBefore(newValue)
-		// 			);
-		// 			let schedDates_over = this.schedule_dates.filter(date =>
-		// 				this.$moment(
-		// 					this.$moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
-		// 				).isBefore(newValue)
-		// 			);
-		// 			this.schedule_dates.forEach((d, index) => {
-		// 				let sched_date = this.$moment(d, "DD/MM/YYYY").format("YYYY-MM-DD");
-		// 				if (this.$moment(sched_date).isBefore(newValue)) {
-		// 					this.schedule_dates.splice(index, schedDates_over.length);
-		// 				}
-		// 			});
-		// 			this.schedules.forEach((sched, index) => {
-		// 				let date = this.$moment(sched.date, "DD/MM/YYYY").format(
-		// 					"YYYY-MM-DD"
-		// 				);
-		// 				if (this.$moment(date).isBefore(newValue)) {
-		// 					this.schedules.splice(index, overDates.length);
-		// 				}
-		// 			});
-		// 		}
-		// 		this.generateDates();
-		// 	}
-		// },
-		// end_date(newValue, oldValue) {
-		// 	if (
-		// 		this.start_date &&
-		// 		!this.$moment(this.start_date).isSameOrAfter(
-		// 			this.$moment(this.end_date)
-		// 		)
-		// 	) {
-		// 		let last_date = oldValue;
-		// 		if (this.schedules && this.schedules.length) {
-		// 			let last_sched = this.schedules[this.schedules.length - 1];
-		// 			last_date = this.$moment(last_sched.date, "DD/MM/YYYY").format(
-		// 				"YYYY-MM-DD"
-		// 			);
-		// 		}
-		// 		if (this.$moment(newValue).isBefore(last_date)) {
-		// 			let overDates = this.schedules.filter(sched =>
-		// 				this.$moment(
-		// 					this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD")
-		// 				).isAfter(newValue)
-		// 			);
-		// 			let schedDates_over = this.schedule_dates.filter(date =>
-		// 				this.$moment(
-		// 					this.$moment(date, "DD/MM/YYYY").format("YYYY-MM-DD")
-		// 				).isAfter(newValue)
-		// 			);
-		// 			this.schedule_dates.forEach((d, index) => {
-		// 				let sched_date = this.$moment(d, "DD/MM/YYYY").format("YYYY-MM-DD");
-		// 				if (this.$moment(sched_date).isAfter(newValue)) {
-		// 					this.schedule_dates.splice(index, schedDates_over.length);
-		// 				}
-		// 			});
-		// 			this.schedules.forEach((sched, index) => {
-		// 				let date = this.$moment(sched.date, "DD/MM/YYYY").format(
-		// 					"YYYY-MM-DD"
-		// 				);
-		// 				if (this.$moment(date).isAfter(newValue)) {
-		// 					this.schedules.splice(index, overDates.length);
-		// 				}
-		// 			});
-		// 		}
-		// 		this.generateDates();
-		// 	}
-		// },
 		schedule_dates(value) {
 			if (!this.schedules.length) {
 				value.forEach(date => {
@@ -721,7 +635,7 @@ export default {
 			});
 
 			for (let i = 0; i <= rates.length; i++) {
-				let num = parseInt(rates[i]);
+				let num = parseFloat(rates[i]);
 				if (isNaN(num)) {
 					continue;
 				}
