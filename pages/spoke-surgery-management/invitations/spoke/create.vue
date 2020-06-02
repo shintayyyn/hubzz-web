@@ -101,6 +101,7 @@ export default {
   },
   methods: {
     async search() {
+      this.practiceHubs = [];
       if (!this.search_text) {
         return;
       }

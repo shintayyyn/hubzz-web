@@ -103,6 +103,19 @@
               :label="'Job Part number'"
             />
           </div>
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
+          >
+            <AppInput
+              v-model="is_paid"
+              class="px-1"
+              :type="'select'"
+              :name="'is_paid'"
+              :label="'Paid'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+            />
+          </div>
           <div class="md:px-1 flex w-full">
             <AppButton
               :disabled="disabledClearFilter"
@@ -343,6 +356,7 @@ export default {
       job_ir35: null,
       invoice_number: null,
       job_part_number_includes: null,
+      is_paid: null,
 
       form_bs_columns: [
         {
@@ -491,6 +505,7 @@ export default {
     },
     disabledClearFilter() {
       let jobIr35 = this.job_ir35 === "" ? null : this.job_ir35;
+      let isPaid = this.is_paid === "" ? null : this.is_paid;
       let invoiceNumber =
         this.invoice_number === "" ? null : this.invoice_number;
       let jobPartNumberIncludes =
@@ -499,6 +514,7 @@ export default {
           : this.job_part_number_includes;
 
       if (
+        isPaid === null &&
         jobIr35 === null &&
         invoiceNumber === null &&
         jobPartNumberIncludes === null
@@ -892,6 +908,7 @@ export default {
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
+            is_paid: this.is_paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.job_part_number_includes,
             viewing_locum_user_id: this.$auth.user.id
@@ -907,6 +924,7 @@ export default {
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
+            is_paid: this.is_paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.job_part_number_includes,
             viewing_locum_user_id: this.$auth.user.id,
@@ -1067,6 +1085,7 @@ export default {
             offset: this.offset,
             limit: this.limit,
             job_ir35: this.job_ir35,
+            is_paid: this.is_paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.job_part_number_includes,
             order_by: this.order_by
@@ -1340,6 +1359,7 @@ export default {
       this.limit = 5;
       this.order_by = [];
       this.job_ir35 = null;
+      this.is_paid = null;
       this.invoice_number = null;
       this.job_part_number_includes = null;
       this.filterJobParts();
