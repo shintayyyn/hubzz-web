@@ -173,6 +173,7 @@
           Cancelled: 'bg-red-500 text-white',
           Completed: 'bg-green-500 text-white',
           Approved: 'bg-green-500 text-white',
+          Rejected: 'bg-red-500 text-white',
         }
       },
 
