@@ -642,8 +642,7 @@ export default {
 				time: null
 			},
 
-			// tabActive: "details",
-			tabActive: "schedule",
+			tabActive: "details",
 			hasShiftError: false,
 
 			// SPLIT JOBS
