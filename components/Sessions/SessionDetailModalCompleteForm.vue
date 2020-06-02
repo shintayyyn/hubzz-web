@@ -28,7 +28,7 @@
 					:resize="false"
 				/>
 			</template>
-			<!-- <AppInput
+			<AppInput
 				v-model="has_late"
 				:type="'select'"
 				:name="'has_late'"
@@ -86,56 +86,42 @@
 					:placeholder="'For e.g. Traffic'"
 					:resize="false"
 				/>
-			</template>-->
-			<!-- <AppInput
-        v-model="form.final_hours"
-        :type="'number'"
-        :name="'final_hours'"
-        :label="'Final hours'"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-        :error="formError.find(item => item.field === 'final_hours')"
-			/>-->
-			<!-- <p class="text-sm">
-        Final hours
-      </p>
-      <div class="flex items-center justify-start flex-wrap">
-        <div class="flex items-center">
-          <AppInput
-            v-model="form.final_hours_hour"
-            :type="'number'"
-            :name="'final_hours_hour'"
-            :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            :error="formError.find(item => item.field === 'final_hours_hour')"
-            :min="1"
-            :limit="8"
-            @keydown="inputNumberOnly($event)"
-            @focus="hasValue(form.final_hours_hour, 'final_hours_hour')"
-            @blur="!form.final_hours_hour ? form.final_hours_hour = 0 : form.final_hours_hour"
-          />
-          <p class="mx-2 text-sm">
-            hours
-          </p>
-        </div>
-        <div class="flex items-center">
-          <AppInput
-            v-model="form.final_hours_minute"
-            :type="'number'"
-            :name="'final_hours_minute'"
-            :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            :error="formError.find(item => item.field === 'final_hours_minute')"
-            :min="1"
-            :maxInput="60"
-            :limit="2"
-            @keydown="inputNumberOnly($event)"
-            @focus="hasValue(form.final_hours_minute, 'final_hours_minute')"
-            @blur="!form.final_hours_minute ? form.final_hours_minute = 0 : form.final_hours_minute"
-          />
-          <p class="mx-2 text-sm">
-            minutes
-          </p>
-        </div>
-			</div>-->
-			<div
+			</template>
+			<p class="text-sm">Final hours</p>
+			<div class="flex items-center justify-start flex-wrap">
+				<div class="flex items-center">
+					<AppInput
+						v-model="form.final_hours_hour"
+						:type="'number'"
+						:name="'final_hours_hour'"
+						:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+						:error="formError.find(item => item.field === 'final_hours_hour')"
+						:min="1"
+						:limit="8"
+						@keydown="inputNumberOnly($event)"
+						@focus="hasValue(form.final_hours_hour, 'final_hours_hour')"
+						@blur="!form.final_hours_hour ? form.final_hours_hour = 0 : form.final_hours_hour"
+					/>
+					<p class="mx-2 text-sm">hours</p>
+				</div>
+				<div class="flex items-center">
+					<AppInput
+						v-model="form.final_hours_minute"
+						:type="'number'"
+						:name="'final_hours_minute'"
+						:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+						:error="formError.find(item => item.field === 'final_hours_minute')"
+						:min="1"
+						:maxInput="60"
+						:limit="2"
+						@keydown="inputNumberOnly($event)"
+						@focus="hasValue(form.final_hours_minute, 'final_hours_minute')"
+						@blur="!form.final_hours_minute ? form.final_hours_minute = 0 : form.final_hours_minute"
+					/>
+					<p class="mx-2 text-sm">minutes</p>
+				</div>
+			</div>
+			<!-- <div
 				v-for="(schedule, index) in form.schedules"
 				:key="schedule.id"
 				class="pt-4 px-2"
@@ -213,7 +199,7 @@
 						:resize="false"
 					/>
 				</template>
-			</div>
+			</div>-->
 			<AppButton :label="`Mark this week as Complete`" @click="checkIfCanComplete" />
 		</div>
 		<AppConfirmationModal
