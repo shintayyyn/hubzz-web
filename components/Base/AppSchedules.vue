@@ -228,7 +228,7 @@
 										</div>
 										<div class="flex items-center mt-2 mb-4">
 											<button
-												class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
+												class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
 												:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
 												@click="addShift(item.shifts, index)"
 											>

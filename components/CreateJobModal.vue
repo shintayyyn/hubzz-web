@@ -617,7 +617,7 @@ export default {
 			selectedSpokenLanguage: [],
 
 			// SPLIT JOBS
-			tabActive: "schedule",
+			tabActive: "details",
 			hasShiftError: false,
 			total_working_hours: 0,
 			total_gross_locum_wages: 0,
