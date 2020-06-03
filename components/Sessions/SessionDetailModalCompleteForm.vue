@@ -37,14 +37,14 @@
 			/>
 			<template v-if="has_late === 'true' || has_late === true">
 				<p class="text-sm">Hours of Late</p>
-				<AppInput
+				<!-- <AppInput
 					v-model="form.late_hours"
 					:type="'number'"
 					:name="'late_hours'"
 					:label="'Hours of Late'"
 					:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
 					:error="formError.find(item => item.field === 'late_hours')"
-				/>
+				/>-->
 				<div class="flex items-center justify-start flex-wrap">
 					<div class="flex items-center">
 						<AppInput
@@ -247,10 +247,10 @@ export default {
 				late_hours_reason: "",
 				late_hour: 0,
 				late_minute: 0,
-				schedules: []
-				// final_hours: 0,
-				// final_hours_hour: 0,
-				// final_hours_minute: 0
+				// schedules: []
+				final_hours: 0,
+				final_hours_hour: 0,
+				final_hours_minute: 0
 			},
 			formError: []
 		};
@@ -272,17 +272,17 @@ export default {
 		}
 	},
 	mounted() {
-		console.log("schedules", this.job_part.schedules);
-		this.job_part.schedules.forEach(item => {
-			this.form.schedules.push({
-				id: item.id,
-				date: item.date,
-				final_time_start: "",
-				final_time_end: "",
-				has_late: "",
-				late_hours_reason: ""
-			});
-		});
+		// console.log("schedules", this.job_part.schedules);
+		// this.job_part.schedules.forEach(item => {
+		// 	this.form.schedules.push({
+		// 		id: item.id,
+		// 		date: item.date,
+		// 		final_time_start: "",
+		// 		final_time_end: "",
+		// 		has_late: "",
+		// 		late_hours_reason: ""
+		// 	});
+		// });
 		// this.form.final_hours = this.job_part.final_hours.toFixed(2);
 		// this.form.final_hours_hour = Math.floor(this.job_part.final_hours / 60);
 		// this.form.final_hours_minute = Math.floor(this.job_part.final_hours % 60);
@@ -343,23 +343,23 @@ export default {
 				notRequired.push("late_hours");
 			}
 
-			// if (
-			// 	[0, "0"].includes(this.form.final_hours_hour) &&
-			// 	[0, "0"].includes(this.form.final_hours_minute)
-			// ) {
-			// 	this.formError.push({
-			// 		field: "final_hours_minute",
-			// 		message: "Final Minutes is required"
-			// 	});
-			// 	// this.formError.push({
-			// 	// 	field: "final_hours_hour",
-			// 	// 	message: "Final Hours is required"
-			// 	// });
-			// } else {
-			// 	this.form.final_hours =
-			// 		this.form.final_hours_hour * 60 +
-			// 		parseInt(this.form.final_hours_minute);
-			// }
+			if (
+				[0, "0"].includes(this.form.final_hours_hour) &&
+				[0, "0"].includes(this.form.final_hours_minute)
+			) {
+				this.formError.push({
+					field: "final_hours_minute",
+					message: "Final Minutes is required"
+				});
+				// this.formError.push({
+				// 	field: "final_hours_hour",
+				// 	message: "Final Hours is required"
+				// });
+			} else {
+				this.form.final_hours =
+					this.form.final_hours_hour * 60 +
+					parseInt(this.form.final_hours_minute);
+			}
 
 			if ([true, "true"].includes(this.has_late)) {
 				if (
