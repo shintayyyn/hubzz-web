@@ -216,7 +216,7 @@ export default {
 }
 @media (min-width: 1200px) {
 	.modal-container {
-		width: 80%;
+		width: 90%;
 	}
 	.expense-modal {
 		width: 80%;

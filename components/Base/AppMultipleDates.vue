@@ -10,19 +10,22 @@
         v-if="error"
 			>{{error.message}}</div>-->
 		</div>
-		<div class="flex flex-row justify-start mt-1">
-			<div class="flex flex-col w-full">
+		<div class="flex flex-row justify-start mt-1" v-if="!isDisplay">
+			<div class="relative flex flex-col w-full">
 				<input
 					:value="placeholder"
 					type="text"
 					:placeholder="'DD/MM/YYYY'"
 					class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
 					:class="{ inClass, 'border-red-500': error}"
-					@click="modal = true"
+					@click="notOnClick ? '' : modal = true"
+					@focus="$emit('focus')"
+					@blur="$emit('blur')"
 					@keypress="validateInput($event)"
 					:style="inStyle"
 					:format="format"
 					:disabled="disabled"
+					:isOpen="isOpen"
 				/>
 				<transition name="drop-down">
 					<div
@@ -33,8 +36,15 @@
 			</div>
 		</div>
 		<transition name="fade">
-			<div class="relative md:static z-10 flex" v-if="modal">
-				<div class="absolute border rounded-b-lg calendar bg-white shadow-md">
+			<div
+				class="relative md:static flex"
+				:class="isDisplay ? 'z-0' : 'z-10'"
+				v-if="!isDisplay ? isOpen ? isOpen : modal : true"
+			>
+				<div
+					class="border bg-white"
+					:class="isDisplay ? 'w-full' : 'rounded-b-lg calendar absolute shadow-md'"
+				>
 					<div
 						class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500"
 					>
@@ -82,18 +92,19 @@
 					</div>
 
 					<div class="flex flex-no-wrap justify-between m-1">
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 									'border-yellow-500 border-2': isSame(item.fullDate),
 									'text-gray-500': isDisabled(item.fullDate), 
-									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item),
                   'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
 									}"
@@ -101,41 +112,87 @@
 								>
 									<div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 1"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 										'border-yellow-500 border-2': isSame(item.fullDate),
 										'text-gray-500': isDisabled(item.fullDate), 
-										'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+										'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 										'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item),
-                    'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
+                    'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format)),
 									}"
 									v-if="item.day === 2"
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 2"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 									'border-yellow-500 border-2': isSame(item.fullDate),
 									'text-gray-500': isDisabled(item.fullDate), 
-									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date),
                     'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
 									}"
@@ -143,20 +200,43 @@
 								>
 									<div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 3"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 									'border-yellow-500 border-2': isSame(item.fullDate),
 									'text-gray-500': isDisabled(item.fullDate), 
-									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date),
                     'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
 									}"
@@ -164,20 +244,43 @@
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 4"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 									'border-yellow-500 border-2': isSame(item.fullDate),
 									'text-gray-500': isDisabled(item.fullDate), 
-									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date),
                     'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
 									}"
@@ -185,20 +288,43 @@
 								>
 									<div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 5"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 									'border-yellow-500 border-2': isSame(item.fullDate),
 									'text-gray-500': isDisabled(item.fullDate), 
-									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date),
                     'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
 									}"
@@ -206,27 +332,72 @@
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 6"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
-						<div class="flex flex-col w-full">
+						<div class="relative flex flex-col w-full">
 							<div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
 								<div class="date-cell">&nbsp;</div>
 							</div>
 							<div v-for="(item, index) in daysInMonth" :key="index">
 								<div
+									@mouseover="showHover(item.fullDate)"
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
 									'border-yellow-500 border-2': isSame(item.fullDate),
 									'text-gray-500': isDisabled(item.fullDate), 
-									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate) && !disableSelection,
 									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date),
-                    'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
+									'bg-yellow-500' : dates.length && dates.includes($moment(item.fullDate, 'MM-DD-YYYY').format(format))
 									}"
 									v-if="item.day === 0"
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
 								</div>
+								<transition name="fade">
+									<div
+										@mouseleave="showDetail=false, hoverDate=''"
+										class="hover-details absolute bg-white border border-gray-400 text-xs z-50 flex flex-col items-center"
+										v-if="hoverDate===item.fullDate && item.day === 0"
+									>
+										<div class="w-full">
+											<div class="px-1">Date: {{ scheduleDetails.date }}</div>
+											<div
+												class="px-1 border-t bg-gray-100"
+												v-for="(item, index) in scheduleDetails.shifts"
+												:key="index"
+											>
+												<p>Shift: {{ getName('shift', item.shift_id) }}</p>
+												<p>Start time: {{ item.time_start }}</p>
+												<p>End time: {{ item.time_end }}</p>
+												<p>Rate: {{ item.rate }}</p>
+												<p>Rate Type: {{ getName('rate_type', item.rate_type) }}</p>
+											</div>
+										</div>
+									</div>
+								</transition>
 							</div>
 						</div>
 					</div>
@@ -276,7 +447,12 @@ export default {
 		},
 		disabled: Boolean,
 		startYear: String,
-		startDate: String
+		startDate: String,
+		isOpen: Boolean,
+		notOnClick: Boolean,
+		disableSelection: Boolean,
+		overlayData: Array,
+		isDisplay: Boolean
 	},
 	data() {
 		return {
@@ -288,11 +464,16 @@ export default {
 			selectedYear: this.$moment.utc().format("YYYY"),
 			daysInMonth: [],
 			lastDate: "",
-			dates: []
+			dates: [],
+			showDetail: false,
+			hoverDate: "",
+			scheduleDetails: {
+				date: "",
+				shifts: []
+			}
 		};
 	},
 	created() {
-		console.log("VALUE", this.value);
 		if (this.value && this.value.length) {
 			this.dates = this.value;
 			let last = this.value.find(
@@ -320,19 +501,31 @@ export default {
 	},
 	watch: {
 		selectedMonth(value) {
-			this.getDaysInMonth(value.toString(), this.selectedYear);
+			if (value) {
+				this.getDaysInMonth(value.toString(), this.selectedYear);
+			}
 		},
 		selectedYear(value) {
 			// set selected month to this current month if selected year === current year
-			if (value === this.$moment().format("YYYY")) {
+			if (value && value === this.$moment().format("YYYY")) {
 				this.selectedMonth = this.filteredMonths[0].value;
 			}
 			this.getDaysInMonth(this.selectedMonth.toString(), value);
 		},
 		startDate(value) {
+			console.log(value);
 			if (value) {
-				this.selectedMonth = this.$moment(value).format("M");
-				this.selectedYear = this.$moment(value).format("YYYY");
+				this.selectedMonth = this.$moment(value, this.format).format("M");
+				this.selectedYear = this.$moment(value, this.format).format("YYYY");
+			}
+		},
+		value(value) {
+			this.dates = value;
+		},
+		isOpen(value) {
+			if (value === false) {
+				this.hoverDate = "";
+				this.showDetail = false;
 			}
 		}
 	},
@@ -359,24 +552,79 @@ export default {
 		placeholder() {
 			let sortedDates;
 			let display;
-			if (this.dates && this.dates.length) {
-				sortedDates = this.dates.sort((a, b) => new Date(a) - new Date(b));
-			}
-			display = sortedDates
-				? sortedDates.length > 1
-					? `${this.$moment(sortedDates[0]).format(
-							"DD/MM/YYYY"
-					  )} - ${this.$moment(sortedDates[this.dates.length - 1]).format(
-							"DD/MM/YYYY"
-					  )} - (${sortedDates.length} day${
-							sortedDates.length > 1 ? "s" : ""
-					  })`
-					: `${this.$moment(sortedDates[0]).format("DD/MM/YYYY")} - 1 day`
-				: null;
+			let dates = this.dates;
+			let moments = this.dates.map(d => this.$moment(d));
+			let maxDate = this.$moment.max(moments);
+			let minDate = this.$moment.min(moments);
+			display =
+				this.dates && this.dates.length
+					? dates.length > 1
+						? `${minDate.format("DD/MM/YYYY")} - ${maxDate.format(
+								"DD/MM/YYYY"
+						  )} - (${dates.length} day${dates.length > 1 ? "s" : ""})`
+						: `${this.$moment(dates[0]).format("DD/MM/YYYY")} - 1 day`
+					: null;
 			return display;
 		}
 	},
 	methods: {
+		getName(type, id) {
+			if (type === "shift") {
+				switch (id) {
+					case "1":
+						return "AM";
+						break;
+					case "2":
+						return "PM";
+						break;
+					case "3":
+						return "Whole Day";
+						break;
+					case "4":
+						return "OOH";
+						break;
+					default:
+						break;
+				}
+			} else if (type === "rate_type") {
+				switch (id) {
+					case "1":
+						return "Per Hour";
+						break;
+					case "2":
+						return "Per Half Day Session";
+						break;
+					case "3":
+						return "Per Whole Day Session";
+						break;
+					default:
+						break;
+				}
+			}
+		},
+		showHover(fullDate) {
+			if (this.overlayData) {
+				let details = this.overlayData.filter(
+					item => item.date === this.$moment(fullDate).format("YYYY-MM-DD")
+				);
+				if (details && details.length) {
+					this.scheduleDetails.date = this.$moment(fullDate).format(
+						"YYYY-MM-DD"
+					);
+					this.scheduleDetails.shifts = [];
+					details.forEach(item => {
+						this.scheduleDetails.shifts.push({
+							shift_id: item.shift_id.toString(),
+							time_start: item.time_start,
+							time_end: item.time_end,
+							rate: item.rate,
+							rate_type: item.locum_detail_rate_type_id.toString()
+						});
+					});
+					this.hoverDate = fullDate;
+				}
+			}
+		},
 		getMonthLists() {
 			for (let i = this.selectedMonth; i <= this.months.length; i++) {
 				this.monthLists.push(`${i}`);
@@ -457,14 +705,16 @@ export default {
 			}
 		},
 		toggledOff() {
-			// get to the selected date
-			if (this.lastDate) {
-				let month = this.$moment(this.lastDate, "YYYY-MM-DD").format("M");
-				let year = this.$moment(this.lastDate, "YYYY-MM-DD").format("YYYY");
-				this.selectedMonth = month;
-				this.selectedYear = year;
+			if (!this.isDisplay) {
+				// get to the selected date
+				if (this.lastDate) {
+					let month = this.$moment(this.lastDate, "YYYY-MM-DD").format("M");
+					let year = this.$moment(this.lastDate, "YYYY-MM-DD").format("YYYY");
+					this.selectedMonth = month;
+					this.selectedYear = year;
+				}
+				this.modal = false;
 			}
-			this.modal = false;
 		},
 		adjustMonth(type) {
 			if (type === "previous") {
@@ -526,24 +776,29 @@ export default {
 			}
 		},
 		select(date) {
-			if (!this.isDisabled(date)) {
-				if (
-					!this.dates.includes(
-						this.$moment(date, "MM-DD-YYYY").format(this.format)
-					)
-				) {
-					this.dates.push(this.$moment(date, "MM-DD-YYYY").format(this.format));
-				} else {
-					let dateIndex = this.dates.findIndex(
-						item =>
-							item === this.$moment(date, "MM-DD-YYYY").format(this.format)
-					);
-					if (dateIndex > -1) {
-						this.dates.splice(dateIndex, 1);
+			if (!this.disableSelection) {
+				if (!this.isDisabled(date)) {
+					if (
+						!this.dates.includes(
+							this.$moment(date, "MM-DD-YYYY").format(this.format)
+						)
+					) {
+						this.dates.push(
+							this.$moment(date, "MM-DD-YYYY").format(this.format)
+						);
+					} else {
+						let dateIndex = this.dates.findIndex(
+							item =>
+								item === this.$moment(date, "MM-DD-YYYY").format(this.format)
+						);
+						if (dateIndex > -1) {
+							this.dates.splice(dateIndex, 1);
+						}
 					}
 				}
+				this.$emit("input", this.dates);
+				// this.dates.sort((a, b) => new Date(a) - new Date(b))
 			}
-			this.$emit("input", this.dates);
 		}
 	}
 };
@@ -553,6 +808,52 @@ export default {
 	min-width: 230px;
 	height: auto;
 }
+.hover-details {
+	min-width: 200px;
+	max-height: 300px;
+}
+.hover-details > div {
+	max-height: 300px;
+	overflow-y: auto;
+}
+.top.hover-details {
+	margin-top: -32px;
+	top: 0;
+}
+.hover-details {
+	margin-top: 8px;
+}
+.hover-details::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 23px;
+	width: 12px;
+	height: 12px;
+	/* border: 8px solid transparent;
+	border-bottom-color: #ccc;
+	border-top: 0; */
+	border-top: 1px solid #cbd5e0;
+	border-left: 1px solid #cbd5e0;
+	margin-left: -8px;
+	margin-top: -8px;
+	z-index: -1;
+	transform: rotate(45deg);
+	background-color: #fff;
+}
+.top.hover-details::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 20px;
+	width: 0;
+	height: 0;
+	border: 8px solid transparent;
+	border-top-color: #ccc;
+	border-bottom: 0;
+	margin-left: -8px;
+	margin-bottom: -8px;
+}
 @media screen and (min-width: 468px) {
 	.calendar {
 		width: 330px;
@@ -561,11 +862,13 @@ export default {
 @media screen and (min-width: 468px) {
 	.date-cell {
 		height: 2.5rem;
+		max-width: 2.5rem;
 	}
 }
 @media screen and (min-width: 640px) {
 	.date-cell {
 		height: 3rem;
+		max-width: 3rem;
 	}
 }
 </style>
