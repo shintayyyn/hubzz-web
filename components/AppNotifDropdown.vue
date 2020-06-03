@@ -184,6 +184,8 @@ export default {
       loading: false,
       loadingLoadMore: false,
       notificationTypeNames: [
+        "Locum Notification Incomplete Compliance",
+
         "Locum Notification Compliance Approved",
         "Locum Notification Compliance Pending",
         "Locum Notification Compliance Rejected",
@@ -639,6 +641,16 @@ export default {
         "Practice Notification Practice Surgery Updated",
         "Practice Notification Practice Surgery Termination Requested"
       ]
+
+      if (notificationTypeName === 'Locum Notification Incomplete Compliance') {
+        this.$router.push({
+          name: "compliance"
+        })
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
 
       if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
         const locumComplianceDocument = payload
