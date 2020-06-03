@@ -617,7 +617,7 @@ export default {
 			selectedSpokenLanguage: [],
 
 			// SPLIT JOBS
-			tabActive: "details",
+			tabActive: "schedule",
 			hasShiftError: false,
 			total_working_hours: 0,
 			total_gross_locum_wages: 0,
@@ -1144,9 +1144,9 @@ export default {
 					this.form.session_structure_information = this.repostJob.platform_job.session_structure_information;
 					this.form.extra_information = this.repostJob.platform_job.extra_information;
 
-					this.form.rate = this.repostJob.rate;
-					this.form.total_hours = this.repostJob.total_hours;
-					this.form.locum_detail_rate_type_id = this.repostJob.locum_detail_rate_type.id;
+					// this.form.rate = this.repostJob.rate;
+					// this.form.total_hours = this.repostJob.total_hours;
+					// this.form.locum_detail_rate_type_id = this.repostJob.locum_detail_rate_type.id;
 					this.form.ir35 = this.repostJob.platform_job.ir35;
 
 					this.form.mandatory_training_id = this.repostJob.platform_job.mandatory_trainings.map(
@@ -1226,20 +1226,20 @@ export default {
 					// if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
 					//   this.repostJob.dates.forEach(date => this.form.dates.push(date))
 					// }
-					if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
-						this.unpaid_breaks = false;
-					} else if (
-						![15, 30, 60].includes(
-							this.repostJob.platform_job.unpaid_breaks_in_minutes
-						)
-					) {
-						this.unpaid_breaks = "other";
-						this.form.unpaid_breaks_in_minutes = this.repostJob.platform_job.unpaid_breaks_in_minutes;
-					} else {
-						this.unpaid_breaks = this.repostJob.platform_job.unpaid_breaks_in_minutes;
-					}
+					// if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
+					// 	this.unpaid_breaks = false;
+					// } else if (
+					// 	![15, 30, 60].includes(
+					// 		this.repostJob.platform_job.unpaid_breaks_in_minutes
+					// 	)
+					// ) {
+					// 	this.unpaid_breaks = "other";
+					// 	this.form.unpaid_breaks_in_minutes = this.repostJob.platform_job.unpaid_breaks_in_minutes;
+					// } else {
+					// 	this.unpaid_breaks = this.repostJob.platform_job.unpaid_breaks_in_minutes;
+					// }
 
-					this.form.shift = this.repostJob.shift.id;
+					// this.form.shift = this.repostJob.shift.id;
 
 					this.form.auto_assign_at = this.repostJob.platform_job.auto_assign_at;
 					if (this.form.auto_assign_at) {

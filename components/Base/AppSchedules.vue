@@ -70,7 +70,28 @@
 					<div>
 						<p class="text-gray-700 text-center text-lg font-bold py-6">SHIFTS &amp; RATES</p>
 						<template v-if="schedules && schedules.length">
-							<div class="flex justify-center w-1/3 mx-auto">
+							<div class="flex items-center w-1/3 mx-auto mb-6 text-gray-600">
+								<p class="text-sm whitespace-no-wrap mr-2 font-bold">Job Part</p>
+								<div class="flex flex-col justify-center w-full">
+									<div
+										class="flex border border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
+									>
+										<div class="flex justify-between items-center xl:w-11/12 font-bold" v-if="activeJobPart">
+											<p>{{ `${activeJobPart.id}/${job_parts.length}` }}</p>
+											<p
+												v-if="activeJobPart.total_days>1"
+											>{{ activeJobPart.start_date }} to {{ activeJobPart.end_date }}</p>
+											<p v-else>{{ activeJobPart.start_date }}</p>
+											<p class="mr-2">{{ activeJobPart.total_days }} day{{ activeJobPart.total_days>1?'s':'' }}</p>
+										</div>
+										<svgicon name="down" width="12" height="12" class="fill-current" />
+									</div>
+									<select v-model="job_part_id" class="custom-select -mt-8 py-1 text-sm px-2">
+										<option v-for="part in job_parts" :value="part.value" :key="part.id">{{ part.label }}</option>
+									</select>
+								</div>
+							</div>
+							<!-- <div class="flex justify-center w-1/3 mx-auto">
 								<AppInput
 									v-model="job_part_id"
 									:label="'Job Part'"
@@ -79,7 +100,7 @@
 									:placeholder="'Select...'"
 									:items="job_parts"
 								/>
-							</div>
+							</div>-->
 							<div class="flex px-4 mb-4" v-if="error">
 								<p class="py-2 px-4 bg-red-500 text-white text-sm rounded-lg">{{ error.message }}</p>
 							</div>
@@ -106,8 +127,8 @@
 										:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
 									>
 										<div class="flex items-end w-full" v-for="(shift, i) in item.shifts" :key="i">
-											<div class="w-4/12 px-1">
-												<AppInput
+											<div class="flex flex-col w-4/12 px-1 mb-2">
+												<!-- <AppInput
 													v-model="shift.shift_id"
 													:name="`shift_id-s${index}-${i}`"
 													:type="'select'"
@@ -118,7 +139,27 @@
 													@change="changeShiftId(shift.shift_id, item.shifts, i)"
 													:error="formError.find(err => err.name === `shift_id-s${index}-${i}`)"
 													@blur="CheckEmptyField(shift.shift_id,`shift_id-s${index}-${i}`)"
-												/>
+												/>-->
+												<div
+													class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
+													:class="shiftColor(shift.shift_id)"
+												>
+													<div
+														class="flex justify-between items-center font-bold"
+													>{{ shifts_option.find(item => item.value.toString() === shift.shift_id.toString()) ? shifts_option.find(item => item.value.toString() === shift.shift_id.toString()).label : 'Select...' }}</div>
+													<svgicon name="down" width="12" height="12" class="fill-current" />
+												</div>
+												<select
+													v-model="shift.shift_id"
+													class="custom-select -mt-8 py-1 text-sm px-2"
+													@change="changeShiftId(shift.shift_id, item.shifts, i)"
+												>
+													<option
+														v-for="option in shifts_option"
+														:value="option.value"
+														:key="option.value"
+													>{{ option.label }}</option>
+												</select>
 											</div>
 											<div class="w-2/12 px-1">
 												<AppTime
@@ -273,6 +314,7 @@ export default {
 	props: ["shifts", "rate_lists", "schedule", "error"],
 	data() {
 		return {
+			id: 1,
 			// start_date: "",
 			// end_date: "",
 			schedule_dates: [],
@@ -543,6 +585,7 @@ export default {
 				this.getTotalHours(this.schedules),
 				this.hasShiftError
 			);
+			let job_parts_schedule = [];
 			let activeJobPart = this.job_parts.find(
 				part => part.value.toString() === this.job_part_id.toString()
 			);
@@ -552,7 +595,7 @@ export default {
 					part => part.value.toString() === this.job_part_id.toString()
 				);
 			}
-			let job_parts_schedule = this.schedules.filter(item =>
+			job_parts_schedule = this.schedules.filter(item =>
 				activeJobPart.dates.includes(
 					this.$moment(item.date, "DD/MM/YYYY").format("YYYY-MM-DD")
 				)
@@ -574,6 +617,11 @@ export default {
 				}
 			});
 			return errors > 0 ? true : false;
+		},
+		activeJobPart() {
+			return this.job_parts.find(
+				part => part.value.toString() === this.job_part_id.toString()
+			);
 		}
 	},
 	methods: {
@@ -870,6 +918,13 @@ export default {
 };
 </script>
 <style>
+select.custom-select {
+	background: transparent;
+	appearance: none;
+	border: 1px solid red;
+	opacity: 0;
+	cursor: pointer;
+}
 .multiple-date-picker {
 	min-width: 335px;
 }
@@ -899,16 +954,16 @@ shift .customized-select select option:last-child {
 	color: #a0a0a0;
 }
 .border-shift-whole-day {
-	border: 2px solid #fe703e;
+	border: 1px solid #fe703e;
 }
 .border-shift-am {
-	border: 2px solid #ff59ca;
+	border: 1px solid #ff59ca;
 }
 .border-shift-pm {
-	border: 2px solid #34bbff;
+	border: 1px solid #34bbff;
 }
 .border-shift-ooh {
-	border: 2px solid #947ffe;
+	border: 1px solid #947ffe;
 }
 .shift-color-wholeday {
 	color: #fe703e;
