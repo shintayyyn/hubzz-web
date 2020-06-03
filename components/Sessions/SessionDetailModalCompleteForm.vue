@@ -2,7 +2,7 @@
 	<section>
 		<div class="rounded-lg shadow-lg bg-white flex flex-col p-4 md:p-8 mt-4">
 			<div class="font-bold text-md sm:text-lg">Complete Form</div>
-			<AppFormError v-if="formError.length" :formError="formError" />
+			<!-- <AppFormError v-if="formError.length" :formError="formError" /> -->
 			<AppInput
 				v-model="has_absences"
 				:type="'select'"
@@ -28,7 +28,7 @@
 					:resize="false"
 				/>
 			</template>
-			<AppInput
+			<!-- <AppInput
 				v-model="has_late"
 				:type="'select'"
 				:name="'has_late'"
@@ -37,14 +37,6 @@
 			/>
 			<template v-if="has_late === 'true' || has_late === true">
 				<p class="text-sm">Hours of Late</p>
-				<!-- <AppInput
-					v-model="form.late_hours"
-					:type="'number'"
-					:name="'late_hours'"
-					:label="'Hours of Late'"
-					:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-					:error="formError.find(item => item.field === 'late_hours')"
-				/>-->
 				<div class="flex items-center justify-start flex-wrap">
 					<div class="flex items-center">
 						<AppInput
@@ -120,49 +112,56 @@
 					/>
 					<p class="mx-2 text-sm">minutes</p>
 				</div>
-			</div>
-			<!-- <div
-				v-for="(schedule, index) in form.schedules"
-				:key="schedule.id"
-				class="pt-4 px-2"
-				:class="index%2?'' : 'bg-gray-100'"
-			>
-				<p>{{ schedule.date }}</p>
-				<div class="flex items-end">
-					<div class="w-1/3">
-						<AppTime
-							v-model="schedule.final_time_start"
-							:label="'Final Time Start'"
-							:inStyle="'background-color: transparent'"
-						/>
+			</div>-->
+			<div style="overflow: auto; max-height: 650px;" class="mb-2">
+				<div
+					v-for="(schedule, index) in form.schedules"
+					:key="schedule.id"
+					class="pt-4 px-2"
+					:class="index%2?'' : 'bg-gray-100'"
+				>
+					<p>{{ $moment(schedule.date, "YYYY-MM-DD").format("DD/MM/YYYY") }}</p>
+					<div class="flex flex-wrap items-end">
+						<div class="w-1/2 lg:w-1/3">
+							<AppTime
+								v-model="schedule.final_time_start"
+								:name="`final_time_start-${index}`"
+								:label="'Final Time Start'"
+								:inStyle="'background-color: transparent'"
+								:error="formError.find(err => err.field === `final_time_start-${index}`)"
+								@change="(schedule.final_time_start && schedule.final_time_start === schedule.time_start)  || $moment(`${schedule.date} ${schedule.final_time_start}`).isBefore(`${schedule.date} ${schedule.time_start}`) ? [schedule.has_late = false, schedule.late_hours_reason=''] : ''"
+							/>
+						</div>
+						<div class="w-1/2 lg:w-1/3 px-2">
+							<AppTime
+								v-model="schedule.final_time_end"
+								:name="`final_time_end-${index}`"
+								:label="'Final Time End'"
+								:inStyle="'background-color: transparent'"
+								:error="formError.find(err => err.field === `final_time_end-${index}`)"
+							/>
+						</div>
+						<div class="w-full lg:w-1/3">
+							<AppInput
+								v-model="schedule.has_late"
+								:type="'select'"
+								:name="'has_late'"
+								:label="'Was the Locum late for this session?'"
+								:items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+								:disabled="(schedule.final_time_start && schedule.final_time_start === schedule.time_start)  || $moment(`${schedule.date} ${schedule.final_time_start}`).isBefore(`${schedule.date} ${schedule.time_start}`)"
+							/>
+						</div>
 					</div>
-					<div class="w-1/3 px-2">
-						<AppTime
-							v-model="schedule.final_time_end"
-							:label="'Final Time End'"
-							:inStyle="'background-color: transparent'"
-						/>
-					</div>
-					<div class="w-1/3">
-						<AppInput
-							v-model="schedule.has_late"
-							:type="'select'"
-							:name="'has_late'"
-							:label="'Was the Locum late for this session?'"
-							:items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-						/>
-					</div>
-				</div>
-				<template v-if="schedule.has_late === 'true' || schedule.has_late === true">
-					<p class="text-sm">Hours of Late</p>
+					<template v-if="schedule.has_late === 'true' || schedule.has_late === true">
+						<!-- <p class="text-sm">Hours of Late</p>
 					<div class="flex items-center justify-start">
 						<div class="flex items-center">
 							<AppInput
 								v-model="schedule.late_hour"
 								:type="'number'"
-								:name="'late_hour'"
+								:name="`late_hour-${index}`"
 								:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right; background-color: transparent'"
-								:error="formError.find(item => item.field === 'late_hour')"
+								:error="formError.find(item => item.field === `late_hour-${index}`)"
 								:min="1"
 								:limit="8"
 								@keydown="inputNumberOnly($event)"
@@ -175,9 +174,9 @@
 							<AppInput
 								v-model="schedule.late_minute"
 								:type="'number'"
-								:name="'late_minute'"
+								:name="`late_minute-${index}`"
 								:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right; background-color: transparent'"
-								:error="formError.find(item => item.field === 'late_minute')"
+								:error="formError.find(item => item.field === `late_minute-${index}`)"
 								:min="1"
 								:maxInput="60"
 								:limit="2"
@@ -187,19 +186,21 @@
 							/>
 							<p class="mx-2 text-sm">minutes</p>
 						</div>
-					</div>
-					<AppInput
-						v-model="schedule.late_hours_reason"
-						:type="'textarea'"
-						:name="'late_hours_reason'"
-						:label="'Reason of late'"
-						:rows="2"
-						:inStyle="'background-color: transparent'"
-						:placeholder="'For e.g. Traffic'"
-						:resize="false"
-					/>
-				</template>
-			</div>-->
+						</div>-->
+						<AppInput
+							v-model="schedule.late_hours_reason"
+							:type="'textarea'"
+							:name="`late_hours_reason-${index}`"
+							:label="'Reason of late'"
+							:rows="2"
+							:inStyle="'background-color: transparent'"
+							:placeholder="'For e.g. Traffic'"
+							:resize="false"
+							:error="formError.find(err => err.field === `late_hours_reason-${index}`)"
+						/>
+					</template>
+				</div>
+			</div>
 			<AppButton :label="`Mark this week as Complete`" @click="checkIfCanComplete" />
 		</div>
 		<AppConfirmationModal
@@ -243,14 +244,14 @@ export default {
 			form: {
 				absent_days: 0,
 				absent_days_reason: "",
-				late_hours: 0,
-				late_hours_reason: "",
-				late_hour: 0,
-				late_minute: 0,
-				// schedules: []
-				final_hours: 0,
-				final_hours_hour: 0,
-				final_hours_minute: 0
+				schedules: []
+				// late_hours: 0,
+				// late_hours_reason: "",
+				// late_hour: 0,
+				// late_minute: 0,
+				// final_hours: 0,
+				// final_hours_hour: 0,
+				// final_hours_minute: 0
 			},
 			formError: []
 		};
@@ -272,22 +273,27 @@ export default {
 		}
 	},
 	mounted() {
-		// console.log("schedules", this.job_part.schedules);
-		// this.job_part.schedules.forEach(item => {
-		// 	this.form.schedules.push({
-		// 		id: item.id,
-		// 		date: item.date,
-		// 		final_time_start: "",
-		// 		final_time_end: "",
-		// 		has_late: "",
-		// 		late_hours_reason: ""
-		// 	});
-		// });
+		console.log(this.job_part.schedules);
+		this.job_part.schedules.forEach(item => {
+			this.form.schedules.push({
+				id: item.id,
+				date: item.date,
+				final_time_start: "",
+				final_time_end: "",
+				time_start: item.time_start,
+				time_end: item.time_end,
+				has_late: false,
+				late_hours_reason: ""
+			});
+		});
 		// this.form.final_hours = this.job_part.final_hours.toFixed(2);
 		// this.form.final_hours_hour = Math.floor(this.job_part.final_hours / 60);
 		// this.form.final_hours_minute = Math.floor(this.job_part.final_hours % 60);
 	},
 	methods: {
+		consoleLog() {
+			console.log("working?");
+		},
 		hasValue(value, field) {
 			if (value == 0) {
 				this.form[field] = "";
@@ -310,7 +316,43 @@ export default {
 			}
 		},
 		checkIfCanComplete() {
-			this.confirmation_modal = true;
+			this.formError = [];
+			this.form.schedules.forEach((sched, index) => {
+				if (!sched.final_time_start) {
+					this.formError.push({
+						field: `final_time_start-${index}`,
+						message: "Time Start is required."
+					});
+				}
+				if (!sched.final_time_end) {
+					this.formError.push({
+						field: `final_time_end-${index}`,
+						message: "Time End is required."
+					});
+				}
+
+				if (["true", true].includes(sched.has_late)) {
+					if (!sched.late_hours_reason) {
+						this.formError.push({
+							field: `late_hours_reason-${index}`,
+							message: "Late Reason is required."
+						});
+					}
+				}
+			});
+			if (!this.formError.length) {
+				let schedules = [];
+				this.form.schedules.forEach((sched, index) => {
+					schedules.push({
+						id: sched.id,
+						final_time_start: sched.final_time_start,
+						final_time_end: sched.final_time_end,
+						late_hours_reason: sched.late_hours_reason
+					});
+				});
+				this.form.schedules = schedules;
+				this.confirmation_modal = true;
+			}
 			//   if (this.isPreviousJobPartComplete && this.isCurrentDatePastTheEndDate) {
 			//     this.confirmation_modal = true;
 			//   } else if (!this.isPreviousJobPartComplete) {
@@ -338,47 +380,47 @@ export default {
 				this.form.absent_days = 0;
 				notRequired.push("absent_days");
 			}
-			if (this.has_late === "false" || this.has_late === false) {
-				this.form.late_hours = 0;
-				notRequired.push("late_hours");
-			}
+			// if (this.has_late === "false" || this.has_late === false) {
+			// 	this.form.late_hours = 0;
+			// 	notRequired.push("late_hours");
+			// }
 
-			if (
-				[0, "0"].includes(this.form.final_hours_hour) &&
-				[0, "0"].includes(this.form.final_hours_minute)
-			) {
-				this.formError.push({
-					field: "final_hours_minute",
-					message: "Final Minutes is required"
-				});
-				// this.formError.push({
-				// 	field: "final_hours_hour",
-				// 	message: "Final Hours is required"
-				// });
-			} else {
-				this.form.final_hours =
-					this.form.final_hours_hour * 60 +
-					parseInt(this.form.final_hours_minute);
-			}
+			// if (
+			// 	[0, "0"].includes(this.form.final_hours_hour) &&
+			// 	[0, "0"].includes(this.form.final_hours_minute)
+			// ) {
+			// 	this.formError.push({
+			// 		field: "final_hours_minute",
+			// 		message: "Final Minutes is required"
+			// 	});
+			// 	this.formError.push({
+			// 		field: "final_hours_hour",
+			// 		message: "Final Hours is required"
+			// 	});
+			// } else {
+			// 	this.form.final_hours =
+			// 		this.form.final_hours_hour * 60 +
+			// 		parseInt(this.form.final_hours_minute);
+			// }
 
-			if ([true, "true"].includes(this.has_late)) {
-				if (
-					[0, "0"].includes(this.form.late_hour) &&
-					[0, "0"].includes(this.form.late_minute)
-				) {
-					this.formError.push({
-						field: "late_minute",
-						message: "Late Minutes is required"
-					});
-					// this.formError.push({
-					// 	field: "late_hour",
-					// 	message: "Late Hours is required"
-					// });
-				} else {
-					this.form.late_hours =
-						this.form.late_hour * 60 + parseInt(this.form.late_minute);
-				}
-			}
+			// if ([true, "true"].includes(this.has_late)) {
+			// 	if (
+			// 		[0, "0"].includes(this.form.late_hour) &&
+			// 		[0, "0"].includes(this.form.late_minute)
+			// 	) {
+			// 		this.formError.push({
+			// 			field: "late_minute",
+			// 			message: "Late Minutes is required"
+			// 		});
+			// 		this.formError.push({
+			// 			field: "late_hour",
+			// 			message: "Late Hours is required"
+			// 		});
+			// 	} else {
+			// 		this.form.late_hours =
+			// 			this.form.late_hour * 60 + parseInt(this.form.late_minute);
+			// 	}
+			// }
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
 				this.$axios

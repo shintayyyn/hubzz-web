@@ -19,6 +19,7 @@
 				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass]"
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"
+				@change="$emit('change', $event.target.value)"
 				:style="inStyle"
 				readonly
 			/>
@@ -173,6 +174,7 @@ export default {
 			if (newValue === "24") {
 				this.selectTime("00", "minute");
 			}
+			this.$emit("change", newValue);
 		}
 	},
 	computed: {
