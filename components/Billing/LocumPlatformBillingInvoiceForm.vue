@@ -19,6 +19,7 @@
 
       <div :ref="'pdf-header'" class="flex flex-col">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
+          <div v-if="propInvoice">{{ propInvoice.invoice_number }}</div>
           <div>{{ $auth.user.personal_detail.name }}</div>
           <div>{{ $auth.user.address_detail.address.line_1 }}</div>
           <div>{{ $auth.user.address_detail.address.line_2 }}</div>

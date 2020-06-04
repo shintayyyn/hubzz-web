@@ -306,13 +306,15 @@ export default {
       columns.push({
         name: "Practice / Surgery",
         dataIndex: "practice_name",
-        class: "text-center"
+        class: "text-center",
+        sortable: true
       });
 
       if (queryStatus !== "to-be-invoiced") {
         columns.push({
           name: "Invoice Number",
-          dataIndex: "invoice_number"
+          dataIndex: "invoice_number",
+          sortable: true
         });
       }
 
@@ -1097,6 +1099,8 @@ export default {
         let order = item.split(":")[1];
         let sorting = item.split(":")[0];
         switch (sorting) {
+          case "practice.name":
+            sorting = "practice_name";
           default:
             sorting;
         }
