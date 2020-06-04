@@ -127,7 +127,7 @@
 										:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
 									>
 										<div class="flex items-end w-full" v-for="(shift, i) in item.shifts" :key="i">
-											<div class="flex flex-col w-4/12 px-1 mb-2">
+											<div class="flex flex-col w-3/12 px-1 mb-2">
 												<!-- <AppInput
 													v-model="shift.shift_id"
 													:name="`shift_id-s${index}-${i}`"
@@ -160,8 +160,12 @@
 														:key="option.value"
 													>{{ option.label }}</option>
 												</select>
+												<div
+													class="text-xs text-red-500 pt-2"
+													v-if="formError.find(err => err.name === `shift_id-s${index}-${i}`)"
+												>{{ formError.find(err => err.name === `shift_id-s${index}-${i}`).message }}</div>
 											</div>
-											<div class="w-2/12 px-1">
+											<div class="w-3/12 px-1">
 												<AppTime
 													v-model="shift.time_start"
 													:name="`time_start-s${index}-${i}`"
@@ -171,7 +175,7 @@
 													:error="formError.find(err => err.name === `time_start-s${index}-${i}`)"
 												/>
 											</div>
-											<div class="w-2/12 px-1">
+											<div class="w-3/12 px-1">
 												<AppTime
 													v-model="shift.time_end"
 													:name="`time_end-s${index}-${i}`"
@@ -208,7 +212,7 @@
 													:error="formError.find(err => err.name === `locum_detail_rate_type_id-s${index}-${i}`)"
 												/>
 											</div>
-											<div class="w-3/12 pl-1 pr-3">
+											<div class="w-2/12 pl-1 pr-3">
 												<AppInput
 													v-model="shift.rate"
 													:name="`rate-s${index}-${i}`"
@@ -731,7 +735,7 @@ export default {
 				let errNames = rowError.map(err => err.name);
 				this.formError.forEach((err, i) => {
 					if (errNames.includes(err.name)) {
-						this.formError.splice(i, 1);
+						this.formError.splice(i, errNames.length);
 					}
 				});
 			}
@@ -908,9 +912,10 @@ export default {
 				err.name.includes(`s${index}`)
 			);
 			let errNames = rowError.map(err => err.name);
+
 			this.formError.forEach((err, i) => {
 				if (errNames.includes(err.name)) {
-					this.formError.splice(i, 1);
+					this.formError.splice(i, errNames.length);
 				}
 			});
 		}

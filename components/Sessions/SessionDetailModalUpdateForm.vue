@@ -1438,21 +1438,21 @@ export default {
 			}
 
 			this.Validate(this.form, notRequired);
-			!this.form.hours ? (this.form.hours = 0) : this.form.hours;
+			// !this.form.hours ? (this.form.hours = 0) : this.form.hours;
 
-			if (
-				parseInt(this.form.hours) === 0 &&
-				this.form.minutes &&
-				parseInt(this.form.minutes) === 0
-			) {
-				this.formError.push({
-					field: "minutes",
-					message: "Minutes is invalid"
-				});
-			} else {
-				this.form.total_hours =
-					this.form.hours * 60 + parseInt(this.form.minutes);
-			}
+			// if (
+			// 	parseInt(this.form.hours) === 0 &&
+			// 	this.form.minutes &&
+			// 	parseInt(this.form.minutes) === 0
+			// ) {
+			// 	this.formError.push({
+			// 		field: "minutes",
+			// 		message: "Minutes is invalid"
+			// 	});
+			// } else {
+			// 	this.form.total_hours =
+			// 		this.form.hours * 60 + parseInt(this.form.minutes);
+			// }
 
 			if (!this.formError.length) {
 				this.selectedClinicalSystem = [...this.form.clinical_system_id];
