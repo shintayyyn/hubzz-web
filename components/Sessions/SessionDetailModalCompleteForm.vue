@@ -113,14 +113,18 @@
 					<p class="mx-2 text-sm">minutes</p>
 				</div>
 			</div>-->
-			<div style="overflow: auto; max-height: 650px;" class="mb-2">
+			<p class="text-sm mb-2">Schedule</p>
+			<div style="overflow: auto; max-height: 650px;" class="mb-2 px-2">
 				<div
 					v-for="(schedule, index) in form.schedules"
 					:key="schedule.id"
-					class="pt-4 px-2"
-					:class="index%2?'' : 'bg-gray-100'"
+					class="pt-4 px-2 mb-2 rounded-lg"
+					:class="index%2?'bg-lighter-gray' : 'bg-light-gray'"
 				>
-					<p>{{ $moment(schedule.date, "YYYY-MM-DD").format("DD/MM/YYYY") }}</p>
+					<div class="flex justify-between font-bold">
+						<p>{{ $moment(schedule.date, "YYYY-MM-DD").format("DD/MM/YYYY") }}</p>
+						<p>{{ schedule.time_start }} - {{ schedule.time_end }}</p>
+					</div>
 					<div class="flex flex-wrap items-end">
 						<div class="w-1/2 lg:w-1/3">
 							<AppTime
@@ -153,40 +157,6 @@
 						</div>
 					</div>
 					<template v-if="schedule.has_late === 'true' || schedule.has_late === true">
-						<!-- <p class="text-sm">Hours of Late</p>
-					<div class="flex items-center justify-start">
-						<div class="flex items-center">
-							<AppInput
-								v-model="schedule.late_hour"
-								:type="'number'"
-								:name="`late_hour-${index}`"
-								:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right; background-color: transparent'"
-								:error="formError.find(item => item.field === `late_hour-${index}`)"
-								:min="1"
-								:limit="8"
-								@keydown="inputNumberOnly($event)"
-								@focus="hasValue(form.late_hour, 'late_hour')"
-								@blur="!schedule.late_hour ? schedule.late_hour = 0 : schedule.late_hour"
-							/>
-							<p class="mx-2 text-sm">hours</p>
-						</div>
-						<div class="flex items-center">
-							<AppInput
-								v-model="schedule.late_minute"
-								:type="'number'"
-								:name="`late_minute-${index}`"
-								:inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right; background-color: transparent'"
-								:error="formError.find(item => item.field === `late_minute-${index}`)"
-								:min="1"
-								:maxInput="60"
-								:limit="2"
-								@keydown="inputNumberOnly($event)"
-								@focus="hasValue(schedule.late_minute, 'late_minute')"
-								@blur="!schedule.late_minute ? schedule.late_minute = 0 : schedule.late_minute"
-							/>
-							<p class="mx-2 text-sm">minutes</p>
-						</div>
-						</div>-->
 						<AppInput
 							v-model="schedule.late_hours_reason"
 							:type="'textarea'"
@@ -273,7 +243,6 @@ export default {
 		}
 	},
 	mounted() {
-		console.log(this.job_part.schedules);
 		this.job_part.schedules.forEach(item => {
 			this.form.schedules.push({
 				id: item.id,
