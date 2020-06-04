@@ -184,6 +184,8 @@ export default {
       loading: false,
       loadingLoadMore: false,
       notificationTypeNames: [
+        "Locum Notification Incomplete Compliance",
+
         "Locum Notification Compliance Approved",
         "Locum Notification Compliance Pending",
         "Locum Notification Compliance Rejected",
@@ -207,11 +209,16 @@ export default {
 
         "Locum Notification Job Part Completed",
         "Locum Notification Job Part Approved",
+        "Locum Notification Job Part To Be Invoiced",
 
         "Locum Notification Locum Invoice Issued",
         "Locum Notification Locum Invoice Disputed",
         "Locum Notification Locum Invoice Approved",
         "Locum Notification Locum Invoice Paid",
+
+        "Practice Notification Practice Actived",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Suspended",
 
         "Practice Notification Locum Compliance Expired",
 
@@ -589,6 +596,12 @@ export default {
         "Locum Notification Locum Invoice Paid"
       ]
 
+      const practiceNotifications = [
+        "Practice Notification Practice Actived",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Suspended",
+      ]
+
       const practiceComplianceDocumentNotifications = [
         "Practice Notification Locum Compliance Expired"
       ]
@@ -639,6 +652,16 @@ export default {
         "Practice Notification Practice Surgery Updated",
         "Practice Notification Practice Surgery Termination Requested"
       ]
+
+      if (notificationTypeName === 'Locum Notification Incomplete Compliance') {
+        this.$router.push({
+          name: "compliance"
+        })
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
 
       if (locumComplianceDocumentNotifications.includes(notificationTypeName)) {
         const locumComplianceDocument = payload
@@ -842,6 +865,29 @@ export default {
         return
       }
 
+      if (notificationTypeName === 'Locum Notification Job Part To Be Invoiced') {
+        const jobPart = payload
+
+        const { id: jobPartId } = jobPart
+
+        this.$router.push({
+          name: "locum-billing-invoices"
+        })
+
+        setTimeout(() => {
+          this.$router.push({
+            name: "locum-billing-invoices-id-create",
+            params: {
+              id: jobPartId,
+            },
+          })
+        }, 500)
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
+
       if (locumLocumInvoiceNotifications.includes(notificationTypeName)) {
         const locumInvoice = payload
 
@@ -875,6 +921,17 @@ export default {
             })
           }, 500)
         }
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
+
+
+      if (practiceNotifications.includes(notificationTypeName)) {
+        this.$router.push({
+          name: "dashboard"
+        })
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)

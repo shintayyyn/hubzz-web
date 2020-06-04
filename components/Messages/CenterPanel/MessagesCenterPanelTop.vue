@@ -66,14 +66,12 @@ export default {
 					let detail = {
 						name: `${user.first_name} ${user.last_name}`,
 						profession: user.locum_detail_profession_name
-								? user.locum_detail_profession_name
-								: user.practice_detail_practice_role
-								? user.practice_detail_practice_role
-								: null,
+							? user.locum_detail_profession_name
+							: user.practice_detail_practice_role
+							? user.practice_detail_practice_role
+							: null,
 						status: user.is_online
-								? user.is_online
-								: null
-					}
+					};
 					// if (user.email) {
 					// 	detail = {
 					// 		name: `${user.first_name} ${user.last_name}`,
@@ -98,7 +96,8 @@ export default {
 						name: `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`,
 						profession: this.newUserMessage.locum_detail
 							? this.newUserMessage.locum_detail.profession.name
-							: this.newUserMessage.practice_detail.practice_role
+							: this.newUserMessage.practice_detail.practice_role,
+						status: user.is_online
 					};
 				} else {
 					detail = {

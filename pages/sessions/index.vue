@@ -302,7 +302,7 @@
 					:order-by="order_by"
 					:loading="loading"
 					:routerLink="routerLink"
-					:min-height="'53vh'"
+					:min-height="'55vh'"
 					:customWidth="1400"
 					@pagechanged="pagechanged"
 					@limitchanged="limitchanged"
@@ -660,7 +660,8 @@ export default {
 					{
 						name: "Approved At",
 						dataIndex: "approved_at",
-						class: "text-center localDate"
+						class: "text-center localDate",
+						sortable: true
 					},
 					{
 						name: "Invoice status",

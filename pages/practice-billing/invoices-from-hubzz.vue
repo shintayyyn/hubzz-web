@@ -123,27 +123,37 @@ export default {
         {
           name: "Practice / Surgery",
           dataIndex: "practice.name",
-          class: "text-left"
+          class: "text-left",
+          sortable: true
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          class: "text-left"
+          class: "text-left",
+          sortable: true
         },
         {
           name: "Issued",
-          dataIndex: "date_created",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        },
+        {
+          name: "Due Date",
+          dataIndex: "due_date",
           class: "text-center localDate"
         },
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center currency"
+          class: "text-center currency",
+          sortable: true
         },
         {
           name: "Paid At",
           dataIndex: "paid_at",
-          class: "text-center localDate"
+          class: "text-center localDate",
+          sortable: true
         }
       ]
     };
@@ -247,7 +257,6 @@ export default {
       }
     },
     getInvoicesCount(params) {
-      console.log("1", params);
       this.$axios
         .$get(`/api/v1/practice/practice-invoices/count`, {
           params
@@ -313,10 +322,22 @@ export default {
     closePaymentModal() {
       this.paymentModal = false;
     },
-    sorted(order_by) {
+    async sorted(order_by) {
+      let orderBy = order_by.map(item => {
+        let order = item.split(":")[1];
+        let sorting = item.split(":")[0];
+        switch (sorting) {
+          case "practice.name":
+            sorting = "practice_name";
+          default:
+            sorting;
+        }
+        return `${sorting}:${order}`;
+      });
+
       this.current_page = 1;
       this.params.offset = 0;
-      this.params.order_by = order_by;
+      this.params.order_by = orderBy;
       this.getInvoices(this.params);
     },
     pagechanged(page) {
