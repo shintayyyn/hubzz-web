@@ -216,6 +216,10 @@ export default {
         "Locum Notification Locum Invoice Approved",
         "Locum Notification Locum Invoice Paid",
 
+        "Practice Notification Practice Actived",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Suspended",
+
         "Practice Notification Locum Compliance Expired",
 
         "Practice Notification Job Allocated",
@@ -592,6 +596,12 @@ export default {
         "Locum Notification Locum Invoice Paid"
       ]
 
+      const practiceNotifications = [
+        "Practice Notification Practice Actived",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Suspended",
+      ]
+
       const practiceComplianceDocumentNotifications = [
         "Practice Notification Locum Compliance Expired"
       ]
@@ -911,6 +921,17 @@ export default {
             })
           }, 500)
         }
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
+
+
+      if (practiceNotifications.includes(notificationTypeName)) {
+        this.$router.push({
+          name: "dashboard"
+        })
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
