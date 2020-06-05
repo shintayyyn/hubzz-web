@@ -348,7 +348,7 @@ export default {
 }
 .chat-message {
 	word-wrap: wrap;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 /* bubble mesage */

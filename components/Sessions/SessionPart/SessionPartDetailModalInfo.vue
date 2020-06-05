@@ -22,7 +22,7 @@
 							class="lg:w-1/3"
 						>{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
 						<p class="lg:w-1/3 lg:text-center">{{ sched.shift.name }}</p>
-						<p class="lg:w-1/3 lg:text-center">${{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+						<p class="lg:w-1/3 lg:text-center">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
 					</div>
 				</div>
 			</div>
@@ -109,7 +109,7 @@
 							class="lg:w-1/3"
 						>{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
 						<p class="lg:w-1/3 lg:text-center">{{ sched.shift.name }}</p>
-						<p class="lg:w-1/3 lg:text-center">${{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+						<p class="lg:w-1/3 lg:text-center">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
 					</div>
 				</div>-->
 				<!-- <div class="flex text-xs sm:text-sm mb-6">
