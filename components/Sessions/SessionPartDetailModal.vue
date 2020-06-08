@@ -98,13 +98,13 @@
                 (practice.type === 'Spoke' && !practice.parent_practice_id) ||
                 (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
 						>
-							<SessionDetailModalCompleteForm
+							<!-- <SessionDetailModalCompleteForm
 								v-if="jobPart.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
 								:job_part="jobPart"
 								@completed="$emit('close')"
-							/>
+							/>-->
 							<SessionDetailModalCancelForm
-								v-if="['Live','Allocated','Ongoing','Applied'].includes(jobPart.status) && authPermissions.includes('Cancel Sessions Job')"
+								v-if="['Live','Allocated','Applied'].includes(jobPart.status) && authPermissions.includes('Cancel Sessions Job')"
 								:job="jobPart.status === 'Ongoing' ? jobPart : jobPart.job"
 								@cancelled="$emit('close')"
 							/>

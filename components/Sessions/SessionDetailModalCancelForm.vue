@@ -306,7 +306,6 @@ export default {
 		};
 	},
 	created() {
-		console.log("terminate", this.job);
 		if (this.job.status === "Ongoing") {
 			this.job.schedules.forEach(item => {
 				this.form.schedules.push({

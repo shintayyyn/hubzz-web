@@ -38,9 +38,9 @@
 				<!-- <div class="font-bold text-sm sm:text-md">Rate</div>
         <div
           class="text-xs sm:text-sm mb-8"
-        >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>
-        <div class="font-bold text-sm sm:text-md">Total hours</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.total_hours | hoursMinutes }}</div>-->
+				>{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>-->
+				<div class="font-bold text-sm sm:text-md">Total hours</div>
+				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.total_hours | hoursMinutes }}</div>
 				<div class="font-bold text-sm sm:text-md break-words">Extra information</div>
 				<div
 					class="text-xs sm:text-sm mb-8"

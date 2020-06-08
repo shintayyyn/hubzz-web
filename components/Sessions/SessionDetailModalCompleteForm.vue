@@ -260,9 +260,6 @@ export default {
 		// this.form.final_hours_minute = Math.floor(this.job_part.final_hours % 60);
 	},
 	methods: {
-		consoleLog() {
-			console.log("working?");
-		},
 		hasValue(value, field) {
 			if (value == 0) {
 				this.form[field] = "";
