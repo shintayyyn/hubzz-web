@@ -253,7 +253,12 @@ export default {
         "Practice Notification Practice Surgery Deleted",
         "Practice Notification Practice Surgery Updated",
         "Practice Notification Practice Surgery Rejected",
-        "Practice Notification Practice Surgery Termination Requested"
+        "Practice Notification Practice Surgery Termination Requested",
+
+        "Practice Notification Practice Hub Created",
+        "Practice Notification Practice Hub Deleted",
+        "Practice Notification Practice Hub Accepted",
+        "Practice Notification Practice Hub Rejected"
       ],
       popUpNotifications: [],
       showPopUpNotification: true
@@ -651,6 +656,13 @@ export default {
         "Practice Notification Practice Surgery Updated",
         "Practice Notification Practice Surgery Rejected",
         "Practice Notification Practice Surgery Termination Requested"
+      ];
+
+      const practicePracticeHubNotifications = [
+        "Practice Notification Practice Hub Created",
+        "Practice Notification Practice Hub Deleted",
+        "Practice Notification Practice Hub Accepted",
+        "Practice Notification Practice Hub Rejected"
       ];
 
       if (notificationTypeName === "Locum Notification Incomplete Compliance") {
@@ -1458,6 +1470,122 @@ export default {
               this.$router.push({
                 name: "spoke-surgery-management-index"
               });
+            }
+          }
+        }
+
+        this.showNotificationsDropdown = false;
+        this.updateNotificationSeen(notification);
+        return;
+      }
+
+      if (practicePracticeHubNotifications.includes(notificationTypeName)) {
+        if (
+          [
+            "Practice Notification Practice Hub Created",
+            "Practice Notification Practice Hub Deleted",
+            "Practice Notification Practice Hub Rejected"
+          ].includes(notificationTypeName)
+        ) {
+          const practice = payload;
+
+          const {
+            id: practiceId,
+            name: practiceName,
+            hub_practice,
+            isDeleted,
+            isRejected,
+            isAccepted
+          } = practice;
+
+          const { id: hubPracticeId, name: hubPracticeName } = hub_practice;
+
+          if (practiceId === this.$auth.user.practice_id) {
+            if (isAccepted) {
+              this.$router.push({
+                name: "spoke-surgery-management-index"
+              });
+            } else {
+              this.$router.push({
+                name: "spoke-surgery-management-invitations-spoke"
+              });
+            }
+          }
+
+          if (hubPracticeId === this.$auth.user.practice_id) {
+            if (isAccepted) {
+              this.$router.push({
+                name: "hub-surgery-management-index"
+              });
+            } else {
+              if (
+                this.$route.name ===
+                  "hub-surgery-management-invitations-spoke" &&
+                (!isDeleted || !isRejected)
+              ) {
+                this.$router.push({
+                  name: "hub-surgery-management-invitations-spoke-invitationId",
+                  params: {
+                    invitationId: practiceId
+                  }
+                });
+              } else {
+                this.$router.push({
+                  name: "hub-surgery-management-invitations-spoke"
+                });
+
+                if (!isDeleted) {
+                  setTimeout(() => {
+                    this.$router.push({
+                      name:
+                        "hub-surgery-management-invitations-spoke-invitationId",
+                      params: {
+                        invitationId: practiceId
+                      }
+                    });
+                  }, 500);
+                }
+              }
+            }
+          }
+        }
+
+        if (
+          ["Practice Notification Practice Hub Accepted"].includes(
+            notificationTypeName
+          )
+        ) {
+          const practice_surgery = payload;
+
+          const { id, practice_id, child_practice_id } = practice_surgery;
+
+          if (child_practice_id === this.$auth.user.practice_id) {
+            this.$router.push({
+              name: "spoke-surgery-management-index"
+            });
+          }
+
+          if (practice_id === this.$auth.user.practice_id) {
+            if (this.$route.name === "hub-surgery-management-index") {
+              this.$router.push({
+                name: "hub-surgery-management-id",
+                params: {
+                  id: id
+                }
+              });
+            } else {
+              this.$router.push({
+                name: "hub-surgery-management-index"
+              });
+
+              setTimeout(() => {
+                this.$router.push({
+                  name: "hub-surgery-management-id",
+                  params: {
+                    id: id
+                  }
+                });
+              }, 500);
             }
           }
         }
