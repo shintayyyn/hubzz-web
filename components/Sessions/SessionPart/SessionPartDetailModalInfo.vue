@@ -12,17 +12,29 @@
 				<p class="text-xs sm:text-sm">Days: {{ job_part.dates.length }}</p>
 				<p class="font-bold text-sm sm:text-md">Schedule</p>
 				<div class="hidden lg:flex font-bold text-xs">
-					<p class="w-1/3">DATE</p>
-					<p class="w-1/3 text-center">SHIFT</p>
-					<p class="w-1/3 text-center">RATE</p>
+					<p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'">DATE</p>
+					<p v-if="job_part.status === 'Completed'" class="w-1/4 text-center">FINAL TIME</p>
+					<p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'" class="text-center">SHIFT</p>
+					<p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'" class="text-center">RATE</p>
 				</div>
 				<div class="text-xs sm:text-sm overflow-y-auto" style="max-height: 205px;">
 					<div v-for="(sched, index) in job_part.schedules" :key="index" class="lg:flex pb-2">
 						<p
-							class="lg:w-1/3"
+							:class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
 						>{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
-						<p class="lg:w-1/3 lg:text-center">{{ sched.shift.name }}</p>
-						<p class="lg:w-1/3 lg:text-center">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+						<p
+							v-if="job_part.status === 'Completed'"
+							:class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
+							class="lg:text-center"
+						>{{ sched.final_time_start }} - {{ sched.final_time_end }}</p>
+						<p
+							:class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
+							class="lg:text-center"
+						>{{ sched.shift.name }}</p>
+						<p
+							:class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
+							class="lg:text-center"
+						>£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
 					</div>
 				</div>
 			</div>

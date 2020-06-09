@@ -125,12 +125,12 @@
 										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'">Rate Type</p>
 										<p :class="!toComplete ? 'w-2/12' : 'w-2/12'">Rate £</p>
 										<!-- FOR COMPLETING JOB -->
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'" v-if="toComplete">Final Start</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'" v-if="toComplete">Final End</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'" v-if="toComplete">Has Late?</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'" v-if="toComplete"></p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'" v-if="toComplete">Any Absences?</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'" v-if="toComplete"></p>
+										<p class="w-2/12" v-if="toComplete">Final Start</p>
+										<p class="w-2/12" v-if="toComplete">Final End</p>
+										<p class="w-2/12" v-if="toComplete">Has Late?</p>
+										<p class="w-2/12" v-if="toComplete"></p>
+										<p class="w-2/12" v-if="toComplete">Any Absences?</p>
+										<p class="w-2/12" v-if="toComplete"></p>
 									</div>
 									<p v-if="!toComplete" class="w-2/12 text-center">Other Options</p>
 								</div>
@@ -271,35 +271,46 @@
 									</template>
 									<template v-else>
 										<div
-											class="w-1/12 rounded-l-lg p-2 pt-6 border-l border-t border-b"
+											class="w-1/12 rounded-l-lg p-2 border-l border-t border-b pt-4"
 											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
 										>{{ item.date }}</div>
-										<div
-											class="w-11/12 rounded-r-lg pb-4 pr-2 border-r border-t border-b"
-											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
-										>
-											<div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full my-1">
-												<div class="w-2/12 pt-4 flex items-center justify-center px-2">
+										<div class="w-11/12 pr-2">
+											<div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full">
+												<div
+													class="w-2/12 flex items-center justify-center px-2"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+												>
 													<p
 														class="rounded px-2 w-full text-center py-1 font-bold"
 														:class="shiftColor(shift.shift_id)"
 													>{{ shifts.find(item => item.value === shift.shift_id) ? shifts.find(item => item.value === shift.shift_id).label : '' }}</p>
 												</div>
-												<div class="w-2/12 pt-4 flex items-center justify-center">{{ shift.time_start }}</div>
-												<div class="w-2/12 pt-4 flex items-center justify-center">{{ shift.time_end }}</div>
 												<div
-													class="w-2/12 pt-4 flex items-center justify-center text-center"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													class="w-2/12 flex items-center justify-center"
+												>{{ shift.time_start }}</div>
+												<div
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													class="w-2/12 flex items-center justify-center"
+												>{{ shift.time_end }}</div>
+												<div
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													class="w-2/12 flex items-center justify-center text-center"
 												>{{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes}}</div>
 												<div
-													class="w-2/12 pt-4 flex items-center justify-center text-center"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													class="w-2/12 flex items-center justify-center text-center"
 												>{{ rate_lists.find(item => item.value === shift.locum_detail_rate_type_id) ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label : '' }}</div>
-												<div class="w-2/12 pt-4 flex items-center justify-center">{{ shift.rate }}</div>
+												<div
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t rounded-tr-lg' : i === item.shifts.length-1 ? 'border-b rounded-br-lg' : '' : 'border-t border-b rounded-r-lg']"
+													class="w-2/12 flex items-center justify-center border-r"
+												>{{ shift.rate }}</div>
 												<!-- FOR COMPLETING JOB -->
-												<div class="w-2/12">
+												<div class="px-2 w-2/12">
 													<AppTime
 														v-model="shift.final_time_start"
 														:name="`final_time_start-s${index}-${i}`"
-														:wrapperClass="'px-1 mt-2'"
+														:wrapperClass="'px-1 mt-2 mb-2'"
 														:inStyle="`background-color: transparent; ${(shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`), ((shift.final_time_start && shift.final_time_start === shift.time_start))  || $moment(`${item.date} ${shift.final_time_start}`).isBefore(`${item.date} ${shift.time_start}`) ? [shift.has_late = false, shift.late_hours_reason=''] : ''"
 														:error="shiftErrors.find(err => err.field === `final_time_start-s${index}-${i}`)"
@@ -315,7 +326,7 @@
 													<AppTime
 														v-model="shift.final_time_end"
 														:name="`final_time_end-s${index}-${i}`"
-														:wrapperClass="'px-1 mt-2'"
+														:wrapperClass="'px-1 mt-2 mb-2'"
 														:inStyle="`background-color: transparent; ${(shift.final_time_end && shift.time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), $emit('getSchedule', schedules)"
 														:error="shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) ? shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) : formError.find(err => err.field === `final_time_end-s${index}-${i}`)"
@@ -323,7 +334,7 @@
 														:disabled="[true, 'true'].includes(shift.has_absences)"
 													/>
 												</div>
-												<div class="w-2/12 flex items-center px-1">
+												<div class="px-2 w-2/12 flex items-center px-1">
 													<button
 														@click="[![true, 'true'].includes(shift.has_absences) ? shift.has_late=!shift.has_late : '', ![true, 'true'].includes(shift.has_absences) ? shift.has_late ? lateChange(shift, index, i, 'late') : shift.late_hours_reason = '' : '']"
 														class="px-2 py-1 text-white focus:outline-none rounded uppercase w-full"
@@ -354,7 +365,7 @@
 														class="px-2 py-1 text-gray-700 border-2 border-orange-500 cursor-pointer focus:outline-none rounded w-full"
 													>Reason</button>
 												</div>
-												<div class="w-2/12 flex items-center px-1">
+												<div class="px-2 w-2/12 flex items-center px-1">
 													<button
 														@click="[shift.has_absences=!shift.has_absences, shift.has_absences ? lateChange(shift, index, i, 'absent') : shift.absent_reason = '']"
 														class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full"
@@ -955,8 +966,6 @@ export default {
 			}
 		},
 		CheckIfEmptyFormError(field, name) {
-			console.log("field", field);
-			console.log("name", name);
 			if (field) {
 				let errIndex = this.formError.findIndex(err => err.field === name);
 				if (errIndex > -1) {

@@ -19,6 +19,7 @@
 		>
 			<template v-slot:complete="slotProps">
 				<button
+					v-if="slotProps.item.status === 'Ongoing'"
 					class="text-white px-3 py-2 rounded-lg transition-hover focus:outline-none"
 					:class="slotProps.item.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job') ? 'bg-green-500 hover:bg-green-600 ' : 'cursor-not-allowed bg-gray-400'"
 					@click="slotProps.item.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job') ? [completeJobPart=true, job_part = slotProps.item] : ''"
@@ -26,6 +27,7 @@
 			</template>
 			<template v-slot:terminate="slotProps">
 				<button
+					v-if="slotProps.item.status === 'Ongoing'"
 					class="text-white px-3 py-2 rounded-lg transition-hover focus:outline-none"
 					:class="slotProps.item.status === 'Ongoing' && authPermissions.includes('Cancel Sessions Job') ? 'bg-red-500 hover:bg-red-600 ' : 'cursor-not-allowed bg-gray-400'"
 					@click="slotProps.item.status === 'Ongoing' && authPermissions.includes('Cancel Sessions Job') ? [terminateJobPart=true, job_part = slotProps.item] : ''"
