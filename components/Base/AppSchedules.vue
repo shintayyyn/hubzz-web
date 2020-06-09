@@ -146,19 +146,7 @@
 											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
 										>
 											<div class="flex items-end w-full" v-for="(shift, i) in item.shifts" :key="i">
-												<div class="flex flex-col w-3/12 px-1 mb-2">
-													<!-- <AppInput
-													v-model="shift.shift_id"
-													:name="`shift_id-s${index}-${i}`"
-													:type="'select'"
-													:items="shifts_option"
-													class="w-full"
-													:inStyle="'font-size: 13px; padding-left: 8px;'"
-													:wrapperClass="'mb-1 py-1'"
-													@change="changeShiftId(shift.shift_id, item.shifts, i)"
-													:error="formError.find(err => err.field === `shift_id-s${index}-${i}`)"
-													@blur="CheckEmptyField(shift.shift_id,`shift_id-s${index}-${i}`)"
-													/>-->
+												<div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
 													<div
 														class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
 														:class="shiftColor(shift.shift_id)"
@@ -181,8 +169,8 @@
 													</select>
 													<div
 														class="text-xs text-red-500 pt-2"
-														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`)"
-													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`).message }}</div>
+														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`)"
+													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message }}</div>
 												</div>
 												<div class="w-3/12 px-1">
 													<AppTime
@@ -190,8 +178,8 @@
 														:name="`time_start-s${index}-${i}`"
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="$emit('getSchedule', schedules)"
-														:error="formError.find(err => err.field === `time_start-s${index}-${i}`)"
+														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors.find(err => err.field === `time_start-s${index}-${i}`)"
 														@blur="CheckEmptyField(form.phone_number,'phone_number')"
 													/>
 												</div>
@@ -201,8 +189,8 @@
 														:name="`time_end-s${index}-${i}`"
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="$emit('getSchedule', schedules)"
-														:error="formError.find(err => err.field === `time_end-s${index}-${i}`)"
+														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors.find(err => err.field === `time_end-s${index}-${i}`)"
 													/>
 												</div>
 												<div class="w-2/12 px-2 py-4 text-center">
@@ -228,8 +216,8 @@
 														:items="rate_lists"
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="'font-size: 13px; padding-left: 8px;'"
-														@change="$emit('getSchedule', schedules)"
-														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`)"
+														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`)"
 													/>
 												</div>
 												<div class="w-2/12 pl-1 pr-3">
@@ -245,16 +233,17 @@
 														@blur="shift.rate === '' ? shift.rate = 0 : shift.rate"
 														@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
 														@keydown="isNumber($event)"
-														@change="$emit('getSchedule', schedules)"
-														:error="formError.find(err => err.field === `rate-s${index}-${i}`)"
+														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors.find(err => err.field === `rate-s${index}-${i}`)"
 													/>
 												</div>
 											</div>
-											<div class="flex items-center mt-2 mb-4">
+											<!-- Add button -->
+											<div class="flex justify-start items-center mt-2 mb-4">
 												<button
 													class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
 													:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
-													@click="addShift(item.shifts, index)"
+													@click="addShift(item.shifts, index, item.date)"
 												>
 													<svgicon
 														name="times-solid"
@@ -273,6 +262,10 @@
 														@click="clearShifts(item.shifts, index)"
 													/>
 												</span>
+												<p
+													class="px-2 whitespace-no-wrap text-sm text-red-500"
+													v-if="shiftErrors.find(err => err.field === `shift-${item.date}`)"
+												>{{ shiftErrors.find(err => err.field === `shift-${item.date}`).message }}</p>
 											</div>
 										</div>
 									</template>
@@ -509,7 +502,8 @@ export default {
 			confirmApply: "",
 			formError: [],
 			show_late_reason: false,
-			selectedShift: null
+			selectedShift: null,
+			cannotAddShift: []
 		};
 	},
 	created() {
@@ -661,6 +655,9 @@ export default {
 				this.getTotalHours(this.schedules),
 				this.hasShiftError
 			);
+		},
+		shiftErrors(value) {
+			console.log(value);
 		}
 	},
 	computed: {
@@ -846,6 +843,9 @@ export default {
 		hubzz_fee() {
 			let hours = this.getTotalHours(this.filteredSchedule) / 60;
 			return (hours * this.practice_rate).toFixed(2);
+		},
+		errors() {
+			return [...this.formError, ...this.shiftErrors];
 		}
 	},
 	methods: {
@@ -954,6 +954,16 @@ export default {
 				}
 			}
 		},
+		CheckIfEmptyFormError(field, name) {
+			console.log("field", field);
+			console.log("name", name);
+			if (field) {
+				let errIndex = this.formError.findIndex(err => err.field === name);
+				if (errIndex > -1) {
+					this.formError.splice(errIndex, 1);
+				}
+			}
+		},
 		CheckIfEmpty(field, name) {
 			if (field) {
 				let errIndex = this.shiftErrors.findIndex(err => err.field === name);
@@ -1034,6 +1044,10 @@ export default {
 			let time_end = this.toComplete ? shift.final_time_end : shift.time_end;
 			let total_hours = this.totalHours(time_start, time_end, date) / 60;
 			switch (shift.locum_detail_rate_type_id) {
+				case 1:
+				case "1":
+					return time_start && time_end ? shift.rate * total_hours : 0;
+					break;
 				case 2:
 				case "2":
 					return time_start && time_end ? shift.rate / total_hours / 2 : 0;
@@ -1043,7 +1057,7 @@ export default {
 					return time_start && time_end ? shift.rate / total_hours : 0;
 					break;
 				default:
-					return time_start && time_end ? shift.rate * total_hours : 0;
+					return 0;
 					break;
 			}
 		},
@@ -1054,7 +1068,9 @@ export default {
 			schedules.map(item => {
 				if (item.shifts && item.shifts.length) {
 					if (!this.toComplete) {
-						rates.push(...item.shifts.map(shift => shift.rate));
+						rates.push(
+							...item.shifts.map(shift => this.getRate(shift, item.date))
+						);
 					} else {
 						rates.push(
 							...item.shifts.map(shift =>
@@ -1185,7 +1201,7 @@ export default {
 				}
 			}
 		},
-		addShift(shifts, index) {
+		addShift(shifts, index, date) {
 			let rowError = [];
 
 			if (shifts.length) {
@@ -1262,6 +1278,7 @@ export default {
 					}
 				}
 			}
+
 			this.formError = [...this.formError, ...rowError];
 			if (!rowError.length) {
 				shifts.push({

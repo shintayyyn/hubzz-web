@@ -40,6 +40,7 @@
 				v-if="completeJobPart"
 				:job_part="job_part"
 				@close="completeJobPart=false"
+				@completed="[getJobParts(params), completeJobPart=false]"
 			/>
 		</transition>
 		<transition name="slide" mode="out-in">
@@ -47,6 +48,7 @@
 				v-if="terminateJobPart"
 				:job_part="job_part"
 				@close="terminateJobPart=false"
+				@terminated="[getJobParts(params), terminateJobPart=false]"
 			/>
 		</transition>
 	</div>
@@ -86,6 +88,7 @@ export default {
 			completeJobPart: false,
 			terminateJobPart: false,
 			job_part: null,
+			practice: null,
 			// app table params
 			params: {
 				job_id: null,
@@ -149,7 +152,15 @@ export default {
 				}
 			];
 
-			if (this.$route.query.status === "Ongoing") {
+			if (
+				this.$route.query.status === "Ongoing" &&
+				(this.practice.type !== "Spoke" ||
+					(this.practice.type === "Spoke" &&
+						!this.practice.parent_practice_id) ||
+					(this.practice.type === "Spoke" &&
+						this.practice.parent_practice_id &&
+						this.practice.allow_surgery_bill_locum === true))
+			) {
 				columns.push(
 					{
 						name: "",
@@ -174,6 +185,7 @@ export default {
 	async mounted() {
 		this.loading = true;
 		this.params.job_id = this.job_id;
+		this.practice = this.$auth.user.practice_detail.practice;
 
 		try {
 			Promise.all([

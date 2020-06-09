@@ -132,6 +132,35 @@ export default {
 							late_hours_reason: shift.late_hours_reason,
 							absent_reason: shift.absent_reason
 						});
+
+						if (shift.has_absences && shift.absent_reason) {
+							let rowError = this.shiftErrors.filter(err =>
+								err.field.includes(`s${index}-${i}`)
+							);
+							let errNames = rowError.map(err => err.field);
+							this.shiftErrors.forEach((err, ind) => {
+								if (errNames.includes(err.field)) {
+									this.shiftErrors.splice(ind, errNames.length);
+								}
+							});
+						} else {
+							if (shift.final_time_start) {
+								let startIndex = this.shiftErrors.findIndex(
+									err => err.field === `final_time_start-s${index}-${i}`
+								);
+								if (startIndex > -1) {
+									this.shiftErrors.splice(startIndex, 1);
+								}
+							}
+							if (shift.final_time_end) {
+								let endIndex = this.shiftErrors.findIndex(
+									err => err.field === `final_time_end-s${index}-${i}`
+								);
+								if (endIndex > -1) {
+									this.shiftErrors.splice(endIndex, 1);
+								}
+							}
+						}
 					});
 				}
 			});
@@ -204,7 +233,7 @@ export default {
 							status: "success",
 							text: ["Job Part completed"]
 						});
-						this.$emit("close");
+						this.$emit("completed");
 					})
 					.catch(err => {
 						if (!err.response.data.error_messages) {
