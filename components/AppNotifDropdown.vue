@@ -248,6 +248,7 @@ export default {
         "Practice Notification Practice Invoice Issued",
         "Practice Notification Practice Invoice Paid",
         "Practice Notification Practice Invoice Past Due",
+        "Practice Notification Practice Invoice Unpaid",
 
         "Practice Notification Practice Surgery Created",
         "Practice Notification Practice Surgery Deleted",
@@ -647,7 +648,8 @@ export default {
       const practiceInvoiceNotifications = [
         "Practice Notification Practice Invoice Issued",
         "Practice Notification Practice Invoice Paid",
-        "Practice Notification Practice Invoice Past Due"
+        "Practice Notification Practice Invoice Past Due",
+        "Practice Notification Practice Invoice Unpaid"
       ];
 
       const practicePracticeSurgeryNotifications = [
