@@ -109,7 +109,10 @@
 								@cancelled="$emit('close')"
 							/>
 						</div>
-						<div v-else class="mx-4 m-2"></div>
+						<!-- <div
+							v-else
+							class="mx-4 m-2"
+						>You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</div>-->
 					</div>
 				</div>
 				<div class="p-0 md:pr-4 w-full md:w-1/2">
@@ -118,8 +121,8 @@
 						<div
 							class="px-2 mb-4"
 							v-if="practice.type === 'Spoke' || 
-                (practice.type !== 'Spoke' && practice.parent_practice_id) ||
-                (practice.type !== 'Spoke' && !practice.parent_practice_id && practice.allow_surgery_bill_locum === false)"
+                (practice.type !== 'Hub' && practice.parent_practice_id) ||
+                (practice.type !== 'Hub' && practice.parent_practice_id && practice.allow_surgery_bill_locum === false)"
 						>
 							<p>You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</p>
 						</div>
