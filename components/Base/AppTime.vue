@@ -16,11 +16,13 @@
 				type="input"
 				placeholder="hh:mm"
 				class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
-				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass]"
+				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed' : '']"
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"
+				@change="$emit('change', $event.target.value)"
 				:style="inStyle"
 				readonly
+				:disabled="disabled"
 			/>
 			<transition name="drop-down">
 				<div
@@ -157,7 +159,8 @@ export default {
 		inStyle: String,
 		required: Boolean,
 		inClass: String,
-		wrapperClass: String
+		wrapperClass: String,
+		disabled: Boolean
 	},
 	data() {
 		return {
@@ -173,6 +176,7 @@ export default {
 			if (newValue === "24") {
 				this.selectTime("00", "minute");
 			}
+			this.$emit("change", newValue);
 		}
 	},
 	computed: {
