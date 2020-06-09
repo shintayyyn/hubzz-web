@@ -155,7 +155,8 @@ export default {
 			];
 
 			if (
-				this.$route.query.status === "Ongoing" &&
+				(this.$route.query.status === "Ongoing" ||
+					this.$route.query.jobStatus === "Ongoing") &&
 				(this.practice.type !== "Spoke" ||
 					(this.practice.type === "Spoke" &&
 						!this.practice.parent_practice_id) ||
