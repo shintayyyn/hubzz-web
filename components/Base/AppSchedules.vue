@@ -169,8 +169,8 @@
 													</select>
 													<div
 														class="text-xs text-red-500 pt-2"
-														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`)"
-													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message }}</div>
+														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`))"
+													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors ? shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message : null }}</div>
 												</div>
 												<div class="w-3/12 px-1">
 													<AppTime
@@ -179,7 +179,7 @@
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors.find(err => err.field === `time_start-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
 														@blur="CheckEmptyField(form.phone_number,'phone_number')"
 													/>
 												</div>
@@ -190,7 +190,7 @@
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors.find(err => err.field === `time_end-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_end-s${index}-${i}`) : null"
 													/>
 												</div>
 												<div class="w-2/12 px-2 py-4 text-center">
@@ -217,7 +217,7 @@
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="'font-size: 13px; padding-left: 8px;'"
 														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : null"
 													/>
 												</div>
 												<div class="w-2/12 pl-1 pr-3">
@@ -234,7 +234,7 @@
 														@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
 														@keydown="isNumber($event)"
 														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors.find(err => err.field === `rate-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`) : null"
 													/>
 												</div>
 											</div>
@@ -264,7 +264,7 @@
 												</span>
 												<p
 													class="px-2 whitespace-no-wrap text-sm text-red-500"
-													v-if="shiftErrors.find(err => err.field === `shift-${item.date}`)"
+													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
 												>{{ shiftErrors.find(err => err.field === `shift-${item.date}`).message }}</p>
 											</div>
 										</div>
