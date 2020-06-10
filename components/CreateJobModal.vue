@@ -1871,6 +1871,13 @@ export default {
             }
 
             this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", res.data.job);
+
+            if (this.repostJob) {
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_UNFILLED_JOB",
+                this.repostJob.id
+              );
+            }
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
