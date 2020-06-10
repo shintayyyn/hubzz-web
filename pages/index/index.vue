@@ -44,9 +44,12 @@
       </div>
     </div>
 
-    <div class="flex justify-end mt-2 mb-8">
+    <div class="flex flex-col items-end justify-end mt-2 mb-8">
       <nuxt-link to="/forgot-password">
         <span class="hover:underline text-sm cursor-pointer">Forgot password?</span>
+      </nuxt-link>
+      <nuxt-link to="/change-email-request">
+        <span class="hover:underline text-sm cursor-pointer">Forgot email?</span>
       </nuxt-link>
     </div>
 
