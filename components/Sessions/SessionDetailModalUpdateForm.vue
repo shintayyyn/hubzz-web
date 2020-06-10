@@ -237,13 +237,14 @@
                 @getSchedule="getSchedule"
                 :schedule="editedSchedule"
                 :error="formError.find(err => err.field === 'schedules')"
+                :shiftErrors="shiftErrors"
               />
               <div class="flex justify-end">
                 <AppButton
                   :label="'Save'"
                   class="mr-2"
-                  @click="toSaveSched=true"
-                  :disabled="!form.schedules.length || !total_working_hours || total_gross_locum_wages <= 0 || this.hasShiftError"
+                  @click="canSaveSched"
+                  :disabled="!form.schedules.length"
                 />
                 <AppButton :label="'Close'" @click="editSchedule=false" />
               </div>
@@ -696,6 +697,8 @@ export default {
       hasShiftError: false,
       total_working_hours: 0,
       total_gross_locum_wages: 0,
+      shiftErrors: [],
+      schedules: [],
 
       form: {
         practice_id: "",
@@ -830,7 +833,7 @@ export default {
     },
 
     compliances() {
-      if (!this.form.profession_id && !this.form.practice_id) {
+      if (!this.form.profession_id) {
         return [];
       }
 
@@ -950,6 +953,7 @@ export default {
     selectedUpdateRemarksValue() {
       this.form.update_remarks = this.selectedUpdateRemarksValue || "";
     },
+
     selectedProfessionComplianceCategory() {
       if (this.selectedProfessionComplianceCategory) {
         const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
@@ -970,6 +974,7 @@ export default {
 
       this.form.compliance_document_id = [];
     },
+
     "form.profession_id"(newValue, oldValue) {
       if (newValue && oldValue) {
         this.form.qualification_id = [];
@@ -1039,13 +1044,6 @@ export default {
         .get("/api/v1/profession-compliance-categories")
         .then(response => {
           return response.data.data.profession_compliance_categories;
-        }),
-      this.$axios
-        .get(
-          `/api/v1/practice/other-mandatory-training/${this.job.practice_id}`
-        )
-        .then(response => {
-          return response.data.data.practice_other_mandatory_trainings;
         })
     ])
       .then(responses => {
@@ -1078,13 +1076,11 @@ export default {
           report_to: reportTo,
           email,
           extra_information: extraInformation
-          // practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments
         } = profileProfile;
 
         this.form.report_to = reportTo;
         this.form.email = email;
         this.form.extra_information = extraInformation;
-        // this.practiceProfessionComplianceCategoryComplianceDocuments = practiceProfessionComplianceCategoryComplianceDocuments;
 
         if (this.job) {
           let foundPractice = this.practices.find(
@@ -1281,9 +1277,16 @@ export default {
       hasError
     ) {
       this.editedSchedule = [];
-      schedule.forEach(sched => {
+      this.schedules = schedule;
+      schedule.forEach((sched, index) => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach(shift => {
+          let dateErrIndex = this.shiftErrors.findIndex(
+            err => err.field === `shift-${sched.date}`
+          );
+          if (dateErrIndex > -1) {
+            this.shiftErrors.splice(dateErrIndex, 1);
+          }
+          sched.shifts.forEach((shift, i) => {
             this.editedSchedule.push({
               date: this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
               shift_id: shift.shift_id,
@@ -1292,6 +1295,49 @@ export default {
               locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
               rate: shift.rate
             });
+            if (shift.time_start) {
+              let startIndex = this.shiftErrors.findIndex(
+                err => err.field === `time_start-s${index}-${i}`
+              );
+              if (startIndex > -1) {
+                this.shiftErrors.splice(startIndex, 1);
+              }
+            }
+            if (shift.time_end) {
+              let endIndex = this.shiftErrors.findIndex(
+                err => err.field === `time_end-s${index}-${i}`
+              );
+              if (endIndex > -1) {
+                this.shiftErrors.splice(endIndex, 1);
+              }
+            }
+            if (
+              shift.locum_detail_rate_type_id !== 0 &&
+              shift.locum_detail_rate_type_id !== ""
+            ) {
+              let rateTypeIndex = this.shiftErrors.findIndex(
+                err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
+              );
+              if (rateTypeIndex > -1) {
+                this.shiftErrors.splice(rateTypeIndex, 1);
+              }
+            }
+            if (shift.shift_id !== 0 && shift.shift_id !== "") {
+              let shiftIdIndex = this.shiftErrors.findIndex(
+                err => err.field === `shift_id-s${index}-${i}`
+              );
+              if (shiftIdIndex > -1) {
+                this.shiftErrors.splice(shiftIdIndex, 1);
+              }
+            }
+            if (shift.rate !== 0 && shift.rate !== "") {
+              let rateIndex = this.shiftErrors.findIndex(
+                err => err.field === `rate-s${index}-${i}`
+              );
+              if (rateIndex > -1) {
+                this.shiftErrors.splice(rateIndex, 1);
+              }
+            }
           });
         }
       });
@@ -1408,6 +1454,58 @@ export default {
       }
     },
 
+    canSaveSched() {
+      this.shiftErrors = [];
+      this.schedules.forEach((sched, index) => {
+        if (!sched.shifts.length) {
+          this.shiftErrors.push({
+            field: `shift-${sched.date}`,
+            message: "Schedule is required. Add Shift to create schedule."
+          });
+        } else {
+          sched.shifts.forEach((shift, i) => {
+            if (!shift.time_start) {
+              this.shiftErrors.push({
+                field: `time_start-s${index}-${i}`,
+                message: "Start is required."
+              });
+            }
+            if (!shift.time_end) {
+              this.shiftErrors.push({
+                field: `time_end-s${index}-${i}`,
+                message: "End is required."
+              });
+            }
+            if (shift.locum_detail_rate_type_id === 0) {
+              this.shiftErrors.push({
+                field: `locum_detail_rate_type_id-s${index}-${i}`,
+                message: "Rate type is required."
+              });
+            }
+            if (shift.shift_id === 0) {
+              this.shiftErrors.push({
+                field: `shift_id-s${index}-${i}`,
+                message: "Shift is required."
+              });
+            }
+            if (shift.rate === 0) {
+              this.shiftErrors.push({
+                field: `rate-s${index}-${i}`,
+                message: "Rate is required."
+              });
+            }
+          });
+        }
+      });
+      if (
+        !this.shiftErrors.length &&
+        !this.hasShiftError &&
+        !this.formError.length
+      ) {
+        this.toSaveSched = true;
+      }
+    },
+
     save() {
       this.modal = false;
 
@@ -1475,21 +1573,21 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-      !this.form.hours ? (this.form.hours = 0) : this.form.hours;
+      // !this.form.hours ? (this.form.hours = 0) : this.form.hours;
 
-      if (
-        parseInt(this.form.hours) === 0 &&
-        this.form.minutes &&
-        parseInt(this.form.minutes) === 0
-      ) {
-        this.formError.push({
-          field: "minutes",
-          message: "Minutes is invalid"
-        });
-      } else {
-        this.form.total_hours =
-          this.form.hours * 60 + parseInt(this.form.minutes);
-      }
+      // if (
+      // 	parseInt(this.form.hours) === 0 &&
+      // 	this.form.minutes &&
+      // 	parseInt(this.form.minutes) === 0
+      // ) {
+      // 	this.formError.push({
+      // 		field: "minutes",
+      // 		message: "Minutes is invalid"
+      // 	});
+      // } else {
+      // 	this.form.total_hours =
+      // 		this.form.hours * 60 + parseInt(this.form.minutes);
+      // }
 
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
