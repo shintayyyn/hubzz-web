@@ -54,10 +54,10 @@
 				<div
 					class="text-xs sm:text-sm mb-8 break-words"
 				>{{ job && job.description ? job.description : '(none)' }}</div>
-				<div class="font-bold text-sm sm:text-md">Rate</div>
+				<!-- <div class="font-bold text-sm sm:text-md">Rate</div>
 				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>
 				<div class="font-bold text-sm sm:text-md">Total Hours</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job.total_hours | hoursMinutes }}</div>
+				<div class="text-xs sm:text-sm mb-8">{{ job.total_hours | hoursMinutes }}</div>-->
 				<div class="font-bold text-sm sm:text-md">Extra information</div>
 				<div
 					class="text-xs sm:text-sm mb-8 break-words"
@@ -114,8 +114,8 @@
         <div class="text-xs sm:text-sm mb-8">
           {{ job.include_sunday ? 'Yes' : 'No' }}
 				</div>-->
-				<div class="font-bold text-sm sm:text-md">Unpaid break</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.unpaid_breaks_in_minutes }}</div>
+				<!-- <div class="font-bold text-sm sm:text-md">Unpaid break</div>
+				<div class="text-xs sm:text-sm mb-8">{{ job.platform_job.unpaid_breaks_in_minutes }}</div>-->
 
 				<template v-if="job.selection_date">
 					<div class="font-bold text-sm sm:text-md">

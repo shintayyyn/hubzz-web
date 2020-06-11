@@ -143,37 +143,37 @@ export default {
   methods: {
     addSocketListeners() {
       this.$socket.on(
-        "Practice Notification Create Hub",
+        "Practice Notification Practice Hub Created",
         this.getInvitationPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Delete Hub",
+        "Practice Notification Practice Hub Deleted",
         this.getInvitationPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Accept Surgery",
+        "Practice Notification Practice Hub Accepted",
         this.getInvitationPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Reject Hub",
+        "Practice Notification Practice Hub Rejected",
         this.getInvitationPromiseAll
       );
     },
     removeSocketListener() {
       this.$socket.removeListener(
-        "Practice Notification Create Hub",
+        "Practice Notification Practice Hub Created",
         this.getInvitationPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Delete Hub",
+        "Practice Notification Practice Hub Deleted",
         this.getInvitationPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Accept Surgery",
+        "Practice Notification Practice Hub Accepted",
         this.getInvitationPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Reject Hub",
+        "Practice Notification Practice Hub Rejected",
         this.getInvitationPromiseAll
       );
     },
@@ -206,12 +206,12 @@ export default {
       this.$axios
         .delete(`/api/v1/practice/practice-spokes/${this.selectedSurgeryId}`)
         .then(res => {
-          let index = this.surgeries.findIndex(
-            surgery => surgery.id === this.selectedSurgeryId
-          );
-          if (index >= 0) {
-            this.surgeries.splice(index, 1);
-          }
+          // let index = this.surgeries.findIndex(
+          //   surgery => surgery.id === this.selectedSurgeryId
+          // );
+          // if (index >= 0) {
+          //   this.surgeries.splice(index, 1);
+          // }
           this.toggle_reject_modal = false;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,

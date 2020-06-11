@@ -162,11 +162,11 @@ export default {
   methods: {
     addSocketListeners() {
       this.$socket.on(
-        "Practice Notification Create Surgery",
+        "Practice Notification Practice Surgery Created",
         this.getInvitationPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Delete Surgery",
+        "Practice Notification Practice Surgery Deleted",
         this.getInvitationPromiseAll
       );
       this.$socket.on(
@@ -174,17 +174,17 @@ export default {
         this.getInvitationPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Reject Surgery",
+        "Practice Notification Practice Surgery Surgery Rejected",
         this.getInvitationPromiseAll
       );
     },
     removeSocketListener() {
       this.$socket.removeListener(
-        "Practice Notification Create Surgery",
+        "Practice Notification Practice Surgery Created",
         this.getInvitationPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Delete Surgery",
+        "Practice Notification Practice Surgery Deleted",
         this.getInvitationPromiseAll
       );
       this.$socket.removeListener(
@@ -192,12 +192,12 @@ export default {
         this.getInvitationPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Reject Surgery",
+        "Practice Notification Practice Surgery Surgery Rejected",
         this.getInvitationPromiseAll
       );
     },
     getInvitationPromiseAll() {
-      return Promise.all([
+      Promise.all([
         this.$axios.$get(
           `/api/v1/practice/me/parent-surgery/invitations-count`,
           {

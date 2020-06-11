@@ -136,37 +136,37 @@ export default {
   methods: {
     addSocketListeners() {
       this.$socket.on(
-        "Practice Notification Create Hub",
+        "Practice Notification Practice Hub Created",
         this.getHubPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Delete Hub",
+        "Practice Notification Practice Hub Deleted",
         this.getHubPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Accept Surgery",
+        "Practice Notification Practice Hub Accepted",
         this.getHubPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Reject Hub",
+        "Practice Notification Practice Hub Rejected",
         this.getHubPromiseAll
       );
     },
     removeSocketListener() {
       this.$socket.removeListener(
-        "Practice Notification Create Hub",
+        "Practice Notification Practice Hub Created",
         this.getHubPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Delete Hub",
+        "Practice Notification Practice Hub Deleted",
         this.getHubPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Accept Surgery",
+        "Practice Notification Practice Hub Accepted",
         this.getHubPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Reject Hub",
+        "Practice Notification Practice Hub Rejected",
         this.getHubPromiseAll
       );
     },

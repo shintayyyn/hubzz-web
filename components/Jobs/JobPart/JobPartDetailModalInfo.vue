@@ -1,9 +1,36 @@
 <template>
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap justify-between">
-      <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
+      <div class="w-full">
         <div class="font-bold text-sm sm:text-md">Job part number</div>
         <div class="text-xs sm:text-sm mb-8">{{ job_part.job_part_number }}</div>
+        <div class="mb-8">
+          <div class="font-bold text-sm sm:text-md">Duration</div>
+          <p
+            v-if="job_part.dates.length>1"
+            class="px-1"
+          >{{ $moment(job_part.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+          <p class="text-xs sm:text-sm">Days: {{ job_part.dates.length }}</p>
+          <p class="font-bold text-sm sm:text-md">Schedule</p>
+          <div class="hidden lg:flex font-bold text-xs">
+            <p class="w-1/3">DATE</p>
+            <p class="w-1/3 text-center">SHIFT</p>
+            <p class="w-1/3 text-center">RATE</p>
+          </div>
+          <div class="text-xs sm:text-sm overflow-y-auto" style="max-height: 205px;">
+            <div v-for="(sched, index) in job_part.schedules" :key="index" class="lg:flex pb-2">
+              <p
+                class="lg:w-1/3"
+              >{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
+              <p class="lg:w-1/3 lg:text-center">{{ sched.shift.name }}</p>
+              <p
+                class="lg:w-1/3 lg:text-center"
+              >£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <template v-if="job_part.locum_status === 'Cancelled' && job_part.terminated">
           <div class="font-bold text-sm sm:text-md">Terminated At</div>
           <div
@@ -24,12 +51,24 @@
         <div
           class="text-xs sm:text-sm mb-8 break-words"
         >{{ job_part.job && job_part.job.description ? job_part.job.description : '(none)' }}</div>
-        <div class="font-bold text-sm sm:text-md">Rate</div>
+        <!-- <div class="font-bold text-sm sm:text-md">Rate</div>
+				<div
+					class="text-xs sm:text-sm mb-8"
+        >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>-->
+        <div class="font-bold text-sm sm:text-md">Total Original hours</div>
         <div
           class="text-xs sm:text-sm mb-8"
-        >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>
-        <div class="font-bold text-sm sm:text-md">Total hours</div>
-        <div class="text-xs sm:text-sm mb-8">{{ job_part.job.total_hours | hoursMinutes }}</div>
+        >{{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+          <div class="font-bold text-sm sm:text-md">
+            Total Final hours
+            <!-- <span class="text-sm font-light">(set by Practice)</span> -->
+          </div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        </template>
+        <!-- <div class="text-xs sm:text-sm mb-8">{{ job_part.job.total_hours | hoursMinutes }}</div> -->
         <div class="font-bold text-sm sm:text-md">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-8 break-words"
@@ -85,7 +124,7 @@
         <!--  -->
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
-        <div class="font-bold text-sm sm:text-md">Duration</div>
+        <!-- <div class="font-bold text-sm sm:text-md">Duration</div> -->
         <!-- <div class="flex text-xs sm:text-sm mb-6">
           <div class="px-1">
             <p>From</p>
@@ -99,7 +138,7 @@
           </div>
         </div>-->
 
-        <div class="text-xs sm:text-sm mb-8">
+        <!-- <div class="text-xs sm:text-sm mb-8">
           <p
             class="px-1"
           >{{ $moment(job_part.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.dates[job_part.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
@@ -122,7 +161,7 @@
               class="m-1"
             >{{ $moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</div>
           </div>
-        </div>
+        </div>-->
 
         <!-- <div class="font-bold text-sm sm:text-md">
           Include Saturday
@@ -136,10 +175,8 @@
         <div class="text-xs sm:text-sm mb-8">
           {{ job_part.job.include_sunday ? 'Yes' : 'No' }}
         </div>-->
-        <div class="font-bold text-sm sm:text-md">Unpaid break</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-        >{{ job_part.job.platform_job.unpaid_breaks_in_minutes }}</div>
+        <!-- <div class="font-bold text-sm sm:text-md">Unpaid break</div>
+        <div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.unpaid_breaks_in_minutes }}</div>-->
 
         <div class="text-xs sm:text-sm mb-6">
           This job is

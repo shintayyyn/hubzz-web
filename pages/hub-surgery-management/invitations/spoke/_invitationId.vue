@@ -181,6 +181,21 @@ export default {
     }
   },
   async asyncData({ app, params, error }) {
+    const resAll = await app.$axios.$get(
+      `/api/v1/practice/me/practice-surgeries/spoke-invitations`
+    );
+
+    let invitationIds =
+      resAll.data &&
+      resAll.data.invitations &&
+      resAll.data.invitations.length > 0
+        ? resAll.data.invitations.map(item => item.id)
+        : [];
+
+    if (!invitationIds.includes(parseInt(params.invitationId))) {
+      return error({ status: 404, message: "Page Not Found" });
+    }
+
     const res = await app.$axios.$get(
       `/api/v1/practice/practice-spokes/${params.invitationId}`
     );
@@ -194,9 +209,6 @@ export default {
   },
   methods: {
     publish() {
-      // this.$router.push("/hub-surgery-management/invitations/spoke");
-      // this.$emit("acceptSpoke", this.spoke.id);
-      // return;
       this.formError = [];
       let notRequired = [
         "max_hourly_rate_limit",

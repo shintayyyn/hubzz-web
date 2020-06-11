@@ -188,39 +188,67 @@ export default {
   methods: {
     addSocketListeners() {
       this.$socket.on(
-        "Practice Notification Create Surgery",
-        this.getSurgeriesCount
+        "Practice Notification Practice Surgery Created",
+        this.getSurgeriesPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Delete Surgery",
-        this.getSurgeriesCount
+        "Practice Notification Practice Surgery Deleted",
+        this.getSurgeriesPromiseAll
       );
       this.$socket.on(
         "Practice Notification Accept Surgery",
-        this.getSurgeriesCount
+        this.getSurgeriesPromiseAll
       );
       this.$socket.on(
-        "Practice Notification Reject Surgery",
-        this.getSurgeriesCount
+        "Practice Notification Practice Surgery Rejected",
+        this.getSurgeriesPromiseAll
       );
     },
     removeSocketListener() {
       this.$socket.removeListener(
-        "Practice Notification Create Surgery",
-        this.getSurgeriesCount
+        "Practice Notification Practice Surgery Created",
+        this.getSurgeriesPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Delete Surgery",
-        this.getSurgeriesCount
+        "Practice Notification Practice Surgery Deleted",
+        this.getSurgeriesPromiseAll
       );
       this.$socket.removeListener(
         "Practice Notification Accept Surgery",
-        this.getSurgeriesCount
+        this.getSurgeriesPromiseAll
       );
       this.$socket.removeListener(
-        "Practice Notification Reject Surgery",
-        this.getSurgeriesCount
+        "Practice Notification Practice Surgery Rejected",
+        this.getSurgeriesPromiseAll
       );
+    },
+    getSurgeriesPromiseAll() {
+      return Promise.all([
+        this.$axios.$get(`/api/v1/practice/me/practice-surgeries/count`, {
+          params: {
+            is_invitation_accepted: false
+          }
+        }),
+        this.$axios.$get(`/api/v1/practice/me/practice-surgeries`, {
+          params: {
+            offset: 0,
+            limit: 5,
+            is_invitation_accepted: false
+          }
+        })
+      ])
+        .then(([responseCount, response]) => {
+          this.surgeries = [];
+          response.data.practice_surgeries.forEach(surgery => {
+            surgery.status = this.getStatus(surgery);
+            this.surgeries.push(surgery);
+          });
+          this.totalSurgeries = responseCount.data.count;
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          throw err;
+        });
     },
     getSurgeriesCount(params) {
       this.$axios
@@ -268,9 +296,9 @@ export default {
             `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
           )
           .then(() => {
-            this.surgeries = this.surgeries.filter(
-              surgery => surgery.id !== this.selectedSurgeryId
-            );
+            // this.surgeries = this.surgeries.filter(
+            //   surgery => surgery.id !== this.selectedSurgeryId
+            // );
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
