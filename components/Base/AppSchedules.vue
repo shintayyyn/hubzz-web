@@ -644,7 +644,8 @@ export default {
 		shiftErrors: Array,
 		practice_rate: Number,
 		noDisputeReason: Boolean,
-		toDisplay: Boolean
+		toDisplay: Boolean,
+		invoiceDetails: Object
 	},
 	data() {
 		return {
@@ -691,11 +692,11 @@ export default {
 							absent_reason: ""
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.time_start === sched.time_end;
+						let isAbsent = sched.fina_time_start === sched.final_time_end;
 						let finalRate = this.getRate(
 							sched,
-							sched.time_start,
-							sched.time_end,
+							sched.fina_time_start,
+							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
 						let isDisputed = !sched.remarks ? false : true;
@@ -711,9 +712,17 @@ export default {
 							orig_final_start: sched.final_time_start,
 							orig_final_end: sched.final_time_end,
 							orig_has_absences: isAbsent,
-							final_time_start: isAbsent ? "" : sched.time_start,
-							final_time_end: isAbsent ? "" : sched.time_end,
-							late_hours: "",
+							final_time_start: isAbsent
+								? ""
+								: !this.invoiceDetails
+								? sched.final_time_start
+								: sched.time_start,
+							final_time_end: isAbsent
+								? ""
+								: !this.invoiceDetails
+								? sched.final_time_end
+								: sched.time_end,
+							late_hours: sched.late_hours_in_minutes,
 							has_absences: isAbsent,
 							dispute: sched.disputed ? sched.disputed : false,
 							remarks: sched.remarks ? sched.remarks : "",
@@ -729,6 +738,7 @@ export default {
 						});
 					}
 				} else {
+					console.log(this.invoiceDetails);
 					this.schedule_dates.push(
 						this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 					);
@@ -753,15 +763,14 @@ export default {
 							]
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.time_start === sched.time_end;
+						let isAbsent = sched.final_time_start === sched.final_time_end;
 						let finalRate = this.getRate(
 							sched,
-							sched.time_start,
-							sched.time_end,
+							sched.final_time_start,
+							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
 						let isDisputed = !sched.remarks ? false : true;
-						console.log("isDIsputed", isDisputed);
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -779,9 +788,17 @@ export default {
 									orig_final_start: sched.final_time_start,
 									orig_final_end: sched.final_time_end,
 									orig_has_absences: isAbsent,
-									final_time_start: isAbsent ? "" : sched.time_start,
-									final_time_end: isAbsent ? "" : sched.time_end,
-									late_hours: "",
+									final_time_start: isAbsent
+										? ""
+										: !this.invoiceDetails
+										? sched.final_time_start
+										: sched.time_start,
+									final_time_end: isAbsent
+										? ""
+										: !this.invoiceDetails
+										? sched.final_time_end
+										: sched.time_end,
+									late_hours: sched.late_hours_in_minutes,
 									has_absences: isAbsent,
 									dispute: sched.disputed ? sched.disputed : false,
 									remarks: sched.remarks ? sched.remarks : "",
@@ -1315,6 +1332,15 @@ export default {
 			let final_start_minute = shift.final_time_start.split(":")[1];
 			let hourDiff = final_start_hour - orig_start_hour;
 			let minDiff = final_start_minute - orig_start_minute;
+
+			if (shift.late_hours > 0 && shift.dispute) {
+				let late_hours =
+					shift.late_hours > 60
+						? parseFloat(shift.late_hours / 60)
+						: shift.late_hours / 100;
+				hourDiff = parseInt(late_hours.toString().split(".")[0]);
+				minDiff = parseInt(late_hours.toString().split(".")[1]);
+			}
 
 			let diff =
 				shift.final_time_start && shift.final_time_end
