@@ -8,9 +8,8 @@
 			@confirm="applyToAll(confirmApply.type, confirmApply.data)"
 			@cancel="confirmApply = ''"
 		/>
-		<div></div>
 		<div class="flex">
-			<div class="pl-0 p-4" v-if="!toComplete">
+			<div class="pl-0 p-4" v-if="!toComplete && !toInvoice">
 				<div class="border rounded-lg w-full h-full">
 					<p class="text-gray-700 text-center text-lg font-bold pt-6">DATES</p>
 					<p class="text-center text-xs text-gray-700">
@@ -69,15 +68,18 @@
 			<div class="w-full py-4">
 				<div
 					class="w-full h-full pb-6 flex flex-col justify-between"
-					:class="toComplete ? '' : 'border rounded-lg '"
+					:class="toComplete || toInvoice ? '' : 'border rounded-lg '"
 				>
 					<div>
 						<p
 							class="text-gray-700 text-center text-lg font-bold py-6"
-							v-if="!toComplete"
+							v-if="!toComplete && !toInvoice"
 						>SHIFTS &amp; RATES</p>
 						<template v-if="schedules && schedules.length">
-							<div class="flex items-center w-2/5 mx-auto mb-6 text-gray-600" v-if="!toComplete">
+							<div
+								class="flex items-center w-2/5 mx-auto mb-6 text-gray-600"
+								v-if="!toComplete && !toInvoice"
+							>
 								<p class="text-sm whitespace-no-wrap mr-2 font-bold">Job Part</p>
 								<div class="flex flex-col justify-center w-full">
 									<div
@@ -113,163 +115,35 @@
 							</div>
 							<div class="px-4">
 								<div class="flex items-end text-sm pb-2 font-bold text-gray-700">
-									<p class="px-2" :class="!toComplete ? 'w-2/12' : 'w-1/12 pb-4'">Date</p>
+									<p class="px-2" :class="!toComplete && !toInvoice ? 'w-2/12' : 'w-1/12'">Date</p>
 									<div
 										class="flex items-end text-center"
-										:class="!toComplete ? 'w-9/12 ' : 'w-11/12 pb-4 pr-2'"
+										:class="!toComplete && !toInvoice ? 'w-9/12 ' : 'w-11/12 pr-2'"
 									>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'">Shift</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'">Start</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'">End</p>
-										<p :class="!toComplete ? 'w-2/12' : 'w-2/12'">Hours</p>
-										<p :class="!toComplete ? 'w-3/12' : 'w-2/12'">Rate Type</p>
-										<p :class="!toComplete ? 'w-2/12' : 'w-2/12'">Rate £</p>
+										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">Shift</p>
+										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">Start</p>
+										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">End</p>
+										<p :class="!toComplete && !toInvoice ? 'w-2/12' : 'w-2/12'">Hours</p>
+										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">Rate Type</p>
+										<p :class="!toComplete && !toInvoice ? 'w-2/12' : 'w-2/12'">Rate £</p>
 										<!-- FOR COMPLETING JOB -->
-										<p class="w-2/12" v-if="toComplete">Final Start</p>
-										<p class="w-2/12" v-if="toComplete">Final End</p>
-										<p class="w-2/12" v-if="toComplete">Has Late?</p>
+										<p class="w-2/12" v-if="toComplete || toInvoice">Final Start</p>
+										<p class="w-2/12" v-if="toComplete || toInvoice">Final End</p>
+										<p class="w-2/12" v-if="toComplete || toInvoice">Has Late?</p>
 										<p class="w-2/12" v-if="toComplete"></p>
-										<p class="w-2/12" v-if="toComplete">Any Absences?</p>
+										<p class="w-2/12" v-if="toComplete || toInvoice">Any Absences?</p>
 										<p class="w-2/12" v-if="toComplete"></p>
+										<!-- FOR INVOICING -->
+										<p class="w-2/12" v-if="toInvoice">Final Hours</p>
+										<p class="w-2/12" v-if="toInvoice">Final Rate</p>
+										<p class="w-2/12" v-if="toInvoice">Dispute?</p>
+										<p class="w-2/12" v-if="toInvoice "></p>
 									</div>
-									<p v-if="!toComplete" class="w-2/12 text-center">Other Options</p>
+									<p v-if="!toComplete && !toInvoice" class="w-2/12 text-center">Other Options</p>
 								</div>
 
 								<div class="flex text-sm mb-2" v-for="(item, index) in filteredSchedule" :key="index">
-									<template v-if="!toComplete">
-										<div
-											class="w-2/12 pl-3 pr-1 pt-4 pb-8 rounded-l-lg border-l border-t border-b"
-											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
-										>{{ item.date }}</div>
-										<div
-											class="w-9/12 flex flex-col items-start rounded-r-lg border-r border-t border-b"
-											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
-										>
-											<div class="flex items-end w-full" v-for="(shift, i) in item.shifts" :key="i">
-												<div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
-													<div
-														class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
-														:class="shiftColor(shift.shift_id)"
-													>
-														<div
-															class="flex justify-between items-center font-bold"
-														>{{ shifts_option.find(item => item.value.toString() === shift.shift_id.toString()) ? shifts_option.find(item => item.value.toString() === shift.shift_id.toString()).label : 'Select...' }}</div>
-														<svgicon name="down" width="12" height="12" class="fill-current" />
-													</div>
-													<select
-														v-model="shift.shift_id"
-														class="custom-select -mt-8 py-1 text-sm px-2"
-														@change="changeShiftId(shift.shift_id, item.shifts, i)"
-													>
-														<option
-															v-for="option in shifts_option"
-															:value="option.value"
-															:key="option.value"
-														>{{ option.label }}</option>
-													</select>
-													<div
-														class="text-xs text-red-500 pt-2"
-														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`))"
-													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors ? shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message : null }}</div>
-												</div>
-												<div class="w-3/12 px-1">
-													<AppTime
-														v-model="shift.time_start"
-														:name="`time_start-s${index}-${i}`"
-														:wrapperClass="'mb-1 py-1'"
-														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
-														@blur="CheckEmptyField(form.phone_number,'phone_number')"
-													/>
-												</div>
-												<div class="w-3/12 px-1">
-													<AppTime
-														v-model="shift.time_end"
-														:name="`time_end-s${index}-${i}`"
-														:wrapperClass="'mb-1 py-1'"
-														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_end-s${index}-${i}`) : null"
-													/>
-												</div>
-												<div class="w-2/12 px-2 py-4 text-center">
-													<template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
-														<p>{{totalHours(shift.time_start, shift.time_end, item.date) | hours}}</p>
-														<p>{{totalHours(shift.time_start, shift.time_end, item.date) | minutes}}</p>
-													</template>
-													<template v-else-if="shift.time_start && shift.time_end">
-														<span class="text-red-500 leading-none text-sm">
-															Shift is less than
-															<template
-																v-if="totalHours(shift.time_start, shift.time_end, item.date) !== 0"
-															>{{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes }}</template>
-															<template v-else>a minute</template>
-														</span>
-													</template>
-												</div>
-												<div class="w-3/12 px-1">
-													<AppInput
-														v-model="shift.locum_detail_rate_type_id"
-														:name="`locum_detail_rate_type_id-s${index}-${i}`"
-														:type="'select'"
-														:items="rate_lists"
-														:wrapperClass="'mb-1 py-1'"
-														:inStyle="'font-size: 13px; padding-left: 8px;'"
-														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : null"
-													/>
-												</div>
-												<div class="w-2/12 pl-1 pr-3">
-													<AppInput
-														v-model="shift.rate"
-														:name="`rate-s${index}-${i}`"
-														class="w-full"
-														:type="'text'"
-														:min="1"
-														:in-style="'text-align:right;background-color: transparent'"
-														:wrapperClass="'mb-1 py-1'"
-														:limit="8"
-														@blur="shift.rate === '' ? shift.rate = 0 : shift.rate"
-														@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
-														@keydown="isNumber($event)"
-														@change="$emit('getSchedule', schedules), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`) : null"
-													/>
-												</div>
-											</div>
-											<!-- Add button -->
-											<div class="flex justify-start items-center mt-2 mb-4">
-												<button
-													class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
-													:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
-													@click="addShift(item.shifts, index, item.date)"
-												>
-													<svgicon
-														name="times-solid"
-														width="8"
-														height="8"
-														class="fill-current mr-1"
-														style="transform: rotate(45deg);"
-													/>Add Shift
-												</button>
-												<span v-if="item.shifts.length" class="pl-1">
-													<svgicon
-														name="refresh"
-														width="14"
-														height="14"
-														class="fill-current cursor-pointer"
-														@click="clearShifts(item.shifts, index)"
-													/>
-												</span>
-												<p
-													class="px-2 whitespace-no-wrap text-sm text-red-500"
-													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
-												>{{ shiftErrors.find(err => err.field === `shift-${item.date}`).message }}</p>
-											</div>
-										</div>
-									</template>
-									<template v-else>
+									<template v-if="toComplete">
 										<div
 											class="w-1/12 rounded-l-lg p-2 border-l border-t border-b pt-4"
 											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
@@ -278,7 +152,7 @@
 											<div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full">
 												<div
 													class="w-2/12 flex items-center justify-center px-2"
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 												>
 													<p
 														class="rounded px-2 w-full text-center py-1 font-bold"
@@ -286,26 +160,26 @@
 													>{{ shifts.find(item => item.value === shift.shift_id) ? shifts.find(item => item.value === shift.shift_id).label : '' }}</p>
 												</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center"
 												>{{ shift.time_start }}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center"
 												>{{ shift.time_end }}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center text-center"
 												>{{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes}}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center text-center"
 												>{{ rate_lists.find(item => item.value === shift.locum_detail_rate_type_id) ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label : '' }}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t rounded-tr-lg' : i === item.shifts.length-1 ? 'border-b rounded-br-lg' : '' : 'border-t border-b rounded-r-lg']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t rounded-tr-lg' : i === item.shifts.length-1 ? 'border-b rounded-br-lg pb-2' : '' : 'border-t border-b rounded-r-lg']"
 													class="w-2/12 flex items-center justify-center border-r"
 												>{{ shift.rate }}</div>
-												<!-- FOR COMPLETING JOB -->
+												<!-- FIELDS -->
 												<div class="px-2 w-2/12">
 													<AppTime
 														v-model="shift.final_time_start"
@@ -328,7 +202,7 @@
 														:name="`final_time_end-s${index}-${i}`"
 														:wrapperClass="'px-1 mt-2 mb-2'"
 														:inStyle="`background-color: transparent; ${(shift.final_time_end && shift.time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), $emit('getSchedule', schedules)"
+														@change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), emitSchedule()"
 														:error="shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) ? shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) : formError.find(err => err.field === `final_time_end-s${index}-${i}`)"
 														@blur="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`)"
 														:disabled="[true, 'true'].includes(shift.has_absences)"
@@ -382,7 +256,259 @@
 											</div>
 										</div>
 									</template>
-									<div class="w-2/12 flex flex-col items-center p-2" v-if="!toComplete">
+									<template v-else-if="toInvoice">
+										<div
+											class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
+											:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
+										>{{ item.date }}</div>
+										<div
+											class="w-11/12 py-2 rounded-r-lg border-r border-t border-b"
+											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
+										>
+											<div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full">
+												<div class="flex items-center justify-center text-center w-2/12">{{ shift.shift.name }}</div>
+												<div
+													class="flex items-center justify-center text-center w-2/12"
+												>{{ shift.orig_time_start ? shift.orig_time_start : shift.time_start }}</div>
+												<div
+													class="flex items-center justify-center text-center w-2/12"
+												>{{ shift.orig_time_end ? shift.orig_time_end : shift.time_end }}</div>
+												<div class="flex items-center justify-center text-center w-2/12">
+													<template v-if="shift.orig_time_start && shift.orig_time_end">
+														<template
+															v-if="totalHours(shift.orig_time_start, shift.orig_time_end, item.date)>0"
+														>{{ totalHours(shift.orig_time_start, shift.orig_time_end, item.date) | hoursMinutes}}</template>
+														<template v-else>0</template>
+													</template>
+													<template v-else>
+														<template
+															v-if="totalHours(shift.time_start, shift.time_end, item.date)>0"
+														>{{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes}}</template>
+														<template v-else>0</template>
+													</template>
+												</div>
+												<div
+													class="flex items-center justify-center text-center w-2/12"
+												>{{ shift.locum_detail_rate_type.name }}</div>
+												<div class="flex items-center justify-center text-center w-2/12">{{ shift.rate }}</div>
+												<!-- FIELDS -->
+												<!-- FINAL START -->
+												<div class="flex items-center justify-center text-center w-2/12">
+													<template v-if="!toDisplay">
+														<AppTime
+															v-model="shift.final_time_start"
+															:name="`final_time_start-s${index}-${i}`"
+															:wrapperClass="'px-1 mt-2 mb-2'"
+															:inStyle="`background-color: transparent; ${!isAbsent(shift) && (shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
+															@change="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`), onChangeField(shift, item.date)"
+															:error="shiftErrors.find(err => err.field === `final_time_start-s${index}-${i}`)"
+															@blur="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`)"
+															:disabled="[true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
+														/>
+														<p
+															v-if="!isAbsent(shift) && (shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 "
+															class="text-xs text-red-500 px-2 pt-1"
+														>Shift is less than {{ Math.abs(totalHours(shift.final_time_start, shift.final_time_end, item.date)) | hoursMinutes }}</p>
+													</template>
+													<template v-else>{{ shift.time_start }}</template>
+												</div>
+												<!-- FINAL END -->
+												<div class="flex items-center justify-center text-center w-2/12">
+													<AppTime
+														v-if="!toDisplay"
+														v-model="shift.final_time_end"
+														:name="`final_time_end-s${index}-${i}`"
+														:wrapperClass="'px-1 mt-2 mb-2'"
+														:inStyle="`background-color: transparent; ${!isAbsent(shift) && (shift.final_time_end  && shift.time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
+														@change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), emitSchedule(), onChangeField(shift, item.date)"
+														:error="shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) ? shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) : formError.find(err => err.field === `final_time_end-s${index}-${i}`)"
+														@blur="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`)"
+														:disabled="[true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
+													/>
+													<template v-else>{{ shift.time_end }}</template>
+												</div>
+												<!-- HAS LATE -->
+												<div
+													class="flex items-center justify-center text-center w-2/12"
+												>{{ getLate(shift, item.date) }}</div>
+												<!-- ANY ABSENCES -->
+												<div class="flex items-center justify-center text-center w-2/12">
+													<button
+														v-if="!toDisplay"
+														@click="absent(shift)"
+														:disabled="[false, 'false'].includes(shift.dispute)"
+														class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
+														:class="[shift.has_absences ? 'bg-orange-500' : 'bg-gray-600', [false, 'false'].includes(shift.dispute) ? 'opacity-50 cursor-not-allowed' : '']"
+													>{{ shift.has_absences ? 'YES' : 'NO' }}</button>
+													<template v-else>{{ shift.has_absences ? 'YES' : 'NO' }}</template>
+												</div>
+												<!-- FINAL HOURS -->
+												<div
+													class="flex items-center justify-center text-center w-2/12"
+												>{{ finalHours(shift, item.date) }}</div>
+												<!-- FINAL RATE -->
+												<div class="flex items-center justify-center text-center w-2/12">
+													£ {{ getRate(shift,
+													shift.time_start,
+													shift.time_end,
+													item.date) | currency }}
+												</div>
+												<!-- DISPUTE? -->
+												<div class="flex items-center justify-center text-center w-2/12">
+													<button
+														v-if="!toDisplay"
+														@click="dispute(shift, index, i)"
+														class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
+														:class="shift.dispute ? 'bg-orange-500' : 'bg-gray-600'"
+													>{{ shift.dispute ? 'YES' : 'NO' }}</button>
+													<template v-else>{{ shift.dispute ? 'YES' : 'NO' }}</template>
+												</div>
+												<div class="flex items-center justify-center w-2/12">
+													<button
+														v-if="shift.dispute"
+														@click="lateChange(shift, index, i, 'dispute')"
+														class="border py-1 px-4 text-xs rounded"
+													>Reason</button>
+												</div>
+											</div>
+										</div>
+									</template>
+									<!-- Create / Edit Job -->
+									<template v-else>
+										<div
+											class="w-2/12 pl-3 pr-1 pt-4 pb-8 rounded-l-lg border-l border-t border-b"
+											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
+										>{{ item.date }}</div>
+										<div
+											class="w-9/12 flex flex-col items-start rounded-r-lg border-r border-t border-b"
+											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
+										>
+											<div class="flex items-end w-full" v-for="(shift, i) in item.shifts" :key="i">
+												<div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
+													<div
+														class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
+														:class="shiftColor(shift.shift_id)"
+													>
+														<div
+															class="flex justify-between items-center font-bold"
+														>{{ shifts_option.find(item => item.value.toString() === shift.shift_id.toString()) ? shifts_option.find(item => item.value.toString() === shift.shift_id.toString()).label : 'Select...' }}</div>
+														<svgicon name="down" width="12" height="12" class="fill-current" />
+													</div>
+													<select
+														v-model="shift.shift_id"
+														class="custom-select -mt-8 py-1 text-sm px-2"
+														@change="changeShiftId(shift.shift_id, item.shifts, i)"
+													>
+														<option
+															v-for="option in shifts_option"
+															:value="option.value"
+															:key="option.value"
+														>{{ option.label }}</option>
+													</select>
+													<div
+														class="text-xs text-red-500 pt-2"
+														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`))"
+													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors ? shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message : null }}</div>
+												</div>
+												<div class="w-3/12 px-1">
+													<AppTime
+														v-model="shift.time_start"
+														:name="`time_start-s${index}-${i}`"
+														:wrapperClass="'mb-1 py-1'"
+														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
+														@blur="CheckEmptyField(form.phone_number,'phone_number')"
+													/>
+												</div>
+												<div class="w-3/12 px-1">
+													<AppTime
+														v-model="shift.time_end"
+														:name="`time_end-s${index}-${i}`"
+														:wrapperClass="'mb-1 py-1'"
+														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_end-s${index}-${i}`) : null"
+													/>
+												</div>
+												<div class="w-2/12 px-2 py-4 text-center">
+													<template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
+														<p>{{totalHours(shift.time_start, shift.time_end, item.date) | hours}}</p>
+														<p>{{totalHours(shift.time_start, shift.time_end, item.date) | minutes}}</p>
+													</template>
+													<template v-else-if="shift.time_start && shift.time_end">
+														<span class="text-red-500 leading-none text-sm">
+															Shift is less than
+															<template
+																v-if="totalHours(shift.time_start, shift.time_end, item.date) !== 0"
+															>{{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes }}</template>
+															<template v-else>a minute</template>
+														</span>
+													</template>
+												</div>
+												<div class="w-3/12 px-1">
+													<AppInput
+														v-model="shift.locum_detail_rate_type_id"
+														:name="`locum_detail_rate_type_id-s${index}-${i}`"
+														:type="'select'"
+														:items="rate_lists"
+														:wrapperClass="'mb-1 py-1'"
+														:inStyle="'font-size: 13px; padding-left: 8px;'"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : null"
+													/>
+												</div>
+												<div class="w-2/12 pl-1 pr-3">
+													<AppInput
+														v-model="shift.rate"
+														:name="`rate-s${index}-${i}`"
+														class="w-full"
+														:type="'text'"
+														:min="1"
+														:in-style="'text-align:right;background-color: transparent'"
+														:wrapperClass="'mb-1 py-1'"
+														:limit="8"
+														@blur="shift.rate === '' ? shift.rate = 0 : shift.rate"
+														@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
+														@keydown="isNumber($event)"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
+														:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`) : null"
+													/>
+												</div>
+											</div>
+											<!-- Add button -->
+											<div class="flex justify-start items-center mt-2 mb-4">
+												<button
+													class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
+													:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
+													@click="addShift(item.shifts, index, item.date)"
+												>
+													<svgicon
+														name="times-solid"
+														width="8"
+														height="8"
+														class="fill-current mr-1"
+														style="transform: rotate(45deg);"
+													/>Add Shift
+												</button>
+												<span v-if="item.shifts.length" class="pl-1">
+													<svgicon
+														name="refresh"
+														width="14"
+														height="14"
+														class="fill-current cursor-pointer"
+														@click="clearShifts(item.shifts, index)"
+													/>
+												</span>
+												<p
+													class="px-2 whitespace-no-wrap text-sm text-red-500"
+													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
+												>{{ shiftErrors.find(err => err.field === `shift-${item.date}`).message }}</p>
+											</div>
+										</div>
+									</template>
+
+									<div class="w-2/12 flex flex-col items-center p-2" v-if="!toComplete && !toInvoice">
 										<template v-if="item.shifts && item.shifts.length">
 											<button
 												class="w-full border border-gray-500 hover:bg-gray-200 leading-tight px-2 py-1 mb-2 rounded-lg"
@@ -398,11 +524,14 @@
 							</div>
 						</template>
 						<template v-else>
-							<p class="text-center py-20 italic text-gray-500">Select dates first</p>
+							<p
+								v-if="!toComplete && !toInvoice"
+								class="text-center py-20 italic text-gray-500"
+							>Select dates first</p>
 						</template>
 					</div>
 					<div
-						v-if="schedules && schedules.length"
+						v-if="(schedules && schedules.length) && !toInvoice"
 						class="pl-4 pt-4 flex flex-col items-end"
 						:class="!toComplete ? 'w-10/12' : 'w-full px-4'"
 					>
@@ -431,8 +560,8 @@
 						</div>
 					</div>
 					<transition name="fade">
-						<div class="message-modal mini-modal fixed bg-white p-4" v-if="show_late_reason">
-							<p class="font-bold">{{ selectedShift.type === 'late' ? 'Late' : 'Absence' }} Reason</p>
+						<div class="message-modal mini-modal fixed bg-white p-4 center" v-if="show_late_reason">
+							<p class="font-bold uppercase">{{ selectedShift.type }} Reason</p>
 							<AppInput
 								v-if="selectedShift.type === 'late'"
 								v-model="selectedShift.late_hours_reason"
@@ -451,13 +580,30 @@
 								:name="`absent_reason-${selectedShift.index}-${selectedShift.i}`"
 								:rows="3"
 								:inStyle="'background-color: transparent'"
-								:placeholder="'For e.g. Traffic'"
+								:placeholder="'For e.g. Sick'"
 								:resize="false"
 								:error="formError.find(err => err.field === `absent_reason-${selectedShift.index}-${selectedShift.i}`)"
 							/>
+							<template v-if="selectedShift.type === 'dispute'">
+								<AppInput
+									v-model="selectedShift.remarks"
+									:type="'textarea'"
+									:name="`remarks-${selectedShift.index}-${selectedShift.i}`"
+									:rows="3"
+									:inStyle="'background-color: transparent'"
+									:resize="false"
+									:error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
+									:disabled="toDisplay"
+								/>
+							</template>
+
 							<div class="flex justify-end">
-								<AppButton :label="'Cancel'" class="mr-2" @click="cancelReason()" />
-								<AppButton :label="'Save'" @click="saveLateReason(selectedShift)" />
+								<AppButton
+									:label="toDisplay ? 'Close' : 'Cancel'"
+									class="mr-2"
+									@click="toDisplay ? show_late_reason=false : cancelReason()"
+								/>
+								<AppButton :label="'Save'" @click="saveLateReason(selectedShift)" v-if="!toDisplay" />
 							</div>
 						</div>
 					</transition>
@@ -494,8 +640,11 @@ export default {
 		schedule: Array,
 		error: Array,
 		toComplete: Boolean,
+		toInvoice: Boolean,
 		shiftErrors: Array,
-		practice_rate: Number
+		practice_rate: Number,
+		noDisputeReason: Boolean,
+		toDisplay: Boolean
 	},
 	data() {
 		return {
@@ -526,15 +675,7 @@ export default {
 						this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 				);
 				if (isExisting) {
-					if (!this.toComplete) {
-						isExisting.shifts.push({
-							rate: sched.rate,
-							shift_id: sched.shift_id,
-							time_end: sched.time_end,
-							time_start: sched.time_start,
-							locum_detail_rate_type_id: sched.locum_detail_rate_type_id
-						});
-					} else {
+					if (this.toComplete) {
 						isExisting.shifts.push({
 							id: sched.id,
 							rate: sched.rate,
@@ -549,25 +690,49 @@ export default {
 							has_absences: false,
 							absent_reason: ""
 						});
+					} else if (this.toInvoice) {
+						let isAbsent = sched.time_start === sched.time_end;
+						let finalRate = this.getRate(
+							sched,
+							sched.time_start,
+							sched.time_end,
+							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+						);
+						let isDisputed = !sched.remarks ? false : true;
+						isExisting.shifts.push({
+							id: sched.id,
+							rate: sched.rate,
+							shift_id: sched.shift.id,
+							shift: sched.shift,
+							time_end: sched.time_end,
+							time_start: sched.time_start,
+							locum_detail_rate_type: sched.locum_detail_rate_type,
+							locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
+							orig_final_start: sched.final_time_start,
+							orig_final_end: sched.final_time_end,
+							orig_has_absences: isAbsent,
+							final_time_start: isAbsent ? "" : sched.time_start,
+							final_time_end: isAbsent ? "" : sched.time_end,
+							late_hours: "",
+							has_absences: isAbsent,
+							dispute: sched.disputed ? sched.disputed : false,
+							remarks: sched.remarks ? sched.remarks : "",
+							total: finalRate
+						});
+					} else {
+						isExisting.shifts.push({
+							rate: sched.rate,
+							shift_id: sched.shift_id,
+							time_end: sched.time_end,
+							time_start: sched.time_start,
+							locum_detail_rate_type_id: sched.locum_detail_rate_type_id
+						});
 					}
 				} else {
 					this.schedule_dates.push(
 						this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 					);
-					if (!this.toComplete) {
-						this.schedules.push({
-							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
-							shifts: [
-								{
-									rate: sched.rate,
-									shift_id: sched.shift_id,
-									time_end: sched.time_end,
-									time_start: sched.time_start,
-									locum_detail_rate_type_id: sched.locum_detail_rate_type_id
-								}
-							]
-						});
-					} else {
+					if (this.toComplete) {
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -587,9 +752,60 @@ export default {
 								}
 							]
 						});
+					} else if (this.toInvoice) {
+						let isAbsent = sched.time_start === sched.time_end;
+						let finalRate = this.getRate(
+							sched,
+							sched.time_start,
+							sched.time_end,
+							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+						);
+						let isDisputed = !sched.remarks ? false : true;
+						console.log("isDIsputed", isDisputed);
+						this.schedules.push({
+							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
+							shifts: [
+								{
+									id: sched.id,
+									rate: sched.rate,
+									shift: sched.shift,
+									shift_id: sched.shift.id,
+									orig_time_start: sched.original_time_start,
+									orig_time_end: sched.original_time_end,
+									time_end: sched.time_end,
+									time_start: sched.time_start,
+									locum_detail_rate_type: sched.locum_detail_rate_type,
+									locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
+									orig_final_start: sched.final_time_start,
+									orig_final_end: sched.final_time_end,
+									orig_has_absences: isAbsent,
+									final_time_start: isAbsent ? "" : sched.time_start,
+									final_time_end: isAbsent ? "" : sched.time_end,
+									late_hours: "",
+									has_absences: isAbsent,
+									dispute: sched.disputed ? sched.disputed : false,
+									remarks: sched.remarks ? sched.remarks : "",
+									total: finalRate
+								}
+							]
+						});
+					} else {
+						this.schedules.push({
+							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
+							shifts: [
+								{
+									rate: sched.rate,
+									shift_id: sched.shift_id,
+									time_end: sched.time_end,
+									time_start: sched.time_start,
+									locum_detail_rate_type_id: sched.locum_detail_rate_type_id
+								}
+							]
+						});
 					}
 				}
 			});
+			console.log("schedules", this.schedules);
 		}
 	},
 	watch: {
@@ -659,13 +875,7 @@ export default {
 			);
 		},
 		schedules(value) {
-			this.$emit(
-				"getSchedule",
-				this.schedules,
-				this.getJobGrossRate(this.schedules),
-				this.getTotalHours(this.schedules),
-				this.hasShiftError
-			);
+			this.emitSchedule();
 		},
 		shiftErrors(value) {
 			console.log(value);
@@ -803,13 +1013,7 @@ export default {
 			return job_part;
 		},
 		filteredSchedule() {
-			this.$emit(
-				"getSchedule",
-				this.schedules,
-				this.getJobGrossRate(this.schedules),
-				this.getTotalHours(this.schedules),
-				this.hasShiftError
-			);
+			this.emitSchedule();
 			let job_parts_schedule = [];
 			let activeJobPart = this.job_parts.find(
 				part => part.value.toString() === this.job_part_id.toString()
@@ -860,6 +1064,30 @@ export default {
 		}
 	},
 	methods: {
+		emitSchedule() {
+			if (this.toInvoice) {
+				let deduction =
+					this.getJobGrossRate(this.schedules) -
+					this.getJobGrossRate(this.schedules, true);
+				this.$emit(
+					"getSchedule",
+					this.schedules,
+					this.getJobGrossRate(this.schedules, true),
+					this.getTotalHours(this.schedules, true),
+					deduction > -1 ? deduction : 0,
+					this.getTotalLates(this.schedules),
+					this.hasShiftError
+				);
+			} else {
+				this.$emit(
+					"getSchedule",
+					this.schedules,
+					this.getJobGrossRate(this.schedules),
+					this.getTotalHours(this.schedules),
+					this.hasShiftError
+				);
+			}
+		},
 		// Completing Job
 		cancelReason() {
 			if (this.selectedShift.type === "late") {
@@ -906,10 +1134,29 @@ export default {
 				}
 				this.show_late_reason = false;
 				this.selectedShift = null;
+			} else if (this.selectedShift.type === "dispute") {
+				let sched = this.schedules.find(
+					(item, index) => index === this.selectedShift.index
+				);
+				let shift = sched.shifts.find(
+					(item, index) => index === this.selectedShift.i
+				);
+				if (!shift.remarks) {
+					shift.dispute = false;
+					shift.final_time_start = shift.orig_final_start;
+					shift.final_time_end = shift.orig_final_end;
+				}
+				this.show_late_reason = false;
+				this.selectedShift = null;
 			}
 		},
 		lateChange(shift, index, i, type) {
-			let value = type === "late" ? shift.has_late : shift.has_absences;
+			let value =
+				type === "late"
+					? shift.has_late
+					: type === "absent"
+					? shift.has_absences
+					: shift.dispute;
 			if (["true", true].includes(value)) {
 				let errIndex = -1;
 				if (type === "late") {
@@ -919,6 +1166,10 @@ export default {
 				} else if (type === "absent") {
 					errIndex = this.formError.findIndex(
 						err => err.field === `absent_reason-${index}-${i}`
+					);
+				} else if (type === "dispute") {
+					errIndex = this.formError.findIndex(
+						err => err.field === `remarks-${index}-${i}`
 					);
 				}
 				if (errIndex > -1) {
@@ -961,6 +1212,17 @@ export default {
 					this.formError.push({
 						field: `absent_reason-${selectedShift.index}-${selectedShift.i}`,
 						message: "Late Reason is required."
+					});
+				}
+			} else if (selectedShift.type === "dispute") {
+				if (selectedShift.remarks) {
+					shift.remarks = selectedShift.remarks;
+					this.selectedShift = null;
+					this.show_late_reason = false;
+				} else {
+					this.formError.push({
+						field: `remarks-${selectedShift.index}-${selectedShift.i}`,
+						message: "Remarks is required."
 					});
 				}
 			}
@@ -1046,44 +1308,157 @@ export default {
 			}
 			this.confirmApply = "";
 		},
-		getRate(shift, date) {
-			let time_start = this.toComplete
-				? shift.final_time_start
-				: shift.time_start;
-			let time_end = this.toComplete ? shift.final_time_end : shift.time_end;
-			let total_hours = this.totalHours(time_start, time_end, date) / 60;
+		getLate(shift, date) {
+			let orig_start_hour = shift.time_start.split(":")[0];
+			let orig_start_minute = shift.time_start.split(":")[1];
+			let final_start_hour = shift.final_time_start.split(":")[0];
+			let final_start_minute = shift.final_time_start.split(":")[1];
+			let hourDiff = final_start_hour - orig_start_hour;
+			let minDiff = final_start_minute - orig_start_minute;
+
+			let diff =
+				shift.final_time_start && shift.final_time_end
+					? `${hourDiff > 9 ? hourDiff : `0${hourDiff > -1 ? hourDiff : 0}`}:${
+							minDiff > 9 ? minDiff : `0${minDiff > -1 ? minDiff : 0}`
+					  }`
+					: "00:00";
+			return diff;
+		},
+		getTotalLates(schedule) {
+			let lateHours = [];
+			let lateMinutes = [];
+			let late_hour = 0;
+			let late_minute = 0;
+			schedule.forEach(sched => {
+				sched.shifts.forEach(shift => {
+					let orig_start_hour = shift.time_start.split(":")[0];
+					let orig_start_minute = shift.time_start.split(":")[1];
+					let final_start_hour = shift.final_time_start.split(":")[0];
+					let final_start_minute = shift.final_time_start.split(":")[1];
+					let hourDiff = final_start_hour - orig_start_hour;
+					let minDiff = final_start_minute - orig_start_minute;
+					lateHours.push(
+						shift.final_time_start && shift.final_time_end ? hourDiff : 0
+					);
+					lateMinutes.push(
+						shift.final_time_start && shift.final_time_end ? minDiff : 0
+					);
+				});
+			});
+			for (let i = 0; i <= lateHours.length; i++) {
+				let num = parseFloat(lateHours[i]);
+				if (isNaN(num)) {
+					continue;
+				}
+				late_hour += Number(num);
+			}
+			for (let i = 0; i <= lateMinutes.length; i++) {
+				let num = parseFloat(lateMinutes[i]);
+				if (isNaN(num)) {
+					continue;
+				}
+				late_minute += Number(num);
+			}
+			return `${late_hour > 9 ? late_hour : `0${late_hour}`}:${
+				late_minute > 9 ? late_minute : `0${late_minute}`
+			}`;
+		},
+
+		finalHours(shift, date) {
+			let origTotalHours =
+				shift.orig_time_start && shift.orig_time_end
+					? this.totalHours(shift.orig_time_start, shift.orig_time_end, date)
+					: this.totalHours(shift.time_start, shift.time_end, date);
+			let finalTotalHours = this.totalHours(
+				shift.final_time_start,
+				shift.final_time_end,
+				date
+			);
+
+			let origHours = Math.floor(origTotalHours / 60);
+			let origMinutes = Math.floor(origTotalHours % 60);
+			let finalHours = Math.floor(finalTotalHours / 60);
+			let finalMinutes = Math.floor(finalTotalHours % 60);
+
+			return `${finalHours > 9 ? finalHours : `0${finalHours}`}:${
+				finalMinutes > 9 ? finalMinutes : `0${finalMinutes}`
+			}/${origHours > 9 ? origHours : `0${origHours}`}:${
+				origMinutes > 9 ? origMinutes : `0${origMinutes}`
+			}`;
+		},
+
+		getRate(shift, startTime, endTime, date) {
+			let total_hours = this.totalHours(startTime, endTime, date) / 60;
 			switch (shift.locum_detail_rate_type_id) {
+				// Hourly
 				case 1:
 				case "1":
-					return time_start && time_end ? shift.rate * total_hours : 0;
+					return startTime && endTime && total_hours !== 0
+						? shift.rate * total_hours
+						: 0;
 					break;
+				// Half Day
 				case 2:
 				case "2":
-					return time_start && time_end ? shift.rate / total_hours / 2 : 0;
+					return startTime && endTime && total_hours !== 0
+						? shift.rate / (total_hours / 2)
+						: 0;
 					break;
+				// Whole Day
 				case 3:
 				case "3":
-					return time_start && time_end ? shift.rate / total_hours : 0;
+					return startTime && endTime && total_hours !== 0
+						? shift.rate / total_hours
+						: 0;
 					break;
 				default:
 					return 0;
 					break;
 			}
 		},
-		getJobGrossRate(schedules) {
+		getJobGrossRate(schedules, final) {
 			let rate = 0;
 			let rates = [];
 
 			schedules.map(item => {
 				if (item.shifts && item.shifts.length) {
-					if (!this.toComplete) {
+					if (this.toComplete) {
 						rates.push(
-							...item.shifts.map(shift => this.getRate(shift, item.date))
+							...item.shifts.map(shift =>
+								shift.has_absences
+									? 0
+									: this.getRate(
+											shift,
+											shift.time_start,
+											shift.time_end,
+											item.date
+									  )
+							)
+						);
+					} else if (this.toInvoice) {
+						rates.push(
+							...item.shifts.map(shift =>
+								shift.has_absences
+									? 0
+									: final
+									? this.getRate(
+											shift,
+											shift.final_time_start,
+											shift.final_time_end,
+											item.date
+									  )
+									: this.getRate(
+											shift,
+											shift.time_start,
+											shift.time_end,
+											item.date
+									  )
+							)
 						);
 					} else {
 						rates.push(
 							...item.shifts.map(shift =>
-								shift.has_absences ? 0 : this.getRate(shift, item.date)
+								this.getRate(shift, shift.time_start, shift.time_end, item.date)
 							)
 						);
 					}
@@ -1099,17 +1474,17 @@ export default {
 			}
 			return rate.toFixed(2);
 		},
-		getTotalHours(schedule) {
+		getTotalHours(schedule, final) {
 			let hour = 0;
 			let hours = [];
 			schedule.forEach(sched => {
 				sched.shifts.forEach(shift => {
-					let time_start = this.toComplete
-						? shift.final_time_start
-						: shift.time_start;
-					let time_end = this.toComplete
-						? shift.final_time_end
-						: shift.time_end;
+					let time_start =
+						this.toComplete || final
+							? shift.final_time_start
+							: shift.time_start;
+					let time_end =
+						this.toComplete || final ? shift.final_time_end : shift.time_end;
 					let total_hours = this.totalHours(time_start, time_end, sched.date);
 					if (total_hours > 0) {
 						hours.push(total_hours);
@@ -1145,13 +1520,7 @@ export default {
 					}
 				});
 			}
-			this.$emit(
-				"getSchedule",
-				this.schedules,
-				this.getJobGrossRate(this.schedules),
-				this.total_working_hours,
-				this.hasShiftError
-			);
+			this.emitSchedule();
 		},
 		shiftColor(shift, condition) {
 			switch (shift) {
@@ -1325,6 +1694,93 @@ export default {
 					this.formError.splice(i, errNames.length);
 				}
 			});
+		},
+		absent(shift) {
+			console.log("absent");
+			shift.has_absences = !shift.has_absences;
+			if (shift.has_absences) {
+				shift.final_time_start = "";
+				shift.final_time_end = "";
+				if (shift.has_absences == shift.orig_has_absences) {
+					shift.dispute = false;
+				} else {
+					shift.dispute = true;
+				}
+			} else {
+				shift.final_time_start = shift.orig_has_absences
+					? ""
+					: shift.orig_final_start;
+				shift.final_time_end = shift.orig_has_absences
+					? ""
+					: shift.orig_final_end;
+
+				if (
+					shift.final_time_start === shift.orig_final_start &&
+					shift.orig_final_end === shift.final_time_end &&
+					shift.has_absences == shift.orig_has_absences
+				) {
+					shift.dispute = false;
+				} else {
+					shift.dispute = true;
+				}
+			}
+		},
+		isAbsent(shift) {
+			if (shift.orig_final_start === shift.orig_final_end) {
+				return true;
+			}
+			return false;
+		},
+		onChangeField(shift, date) {
+			// if (shift.final_time_start && shift.final_time_end) {
+			// 	shift.total = this.getRate(
+			// 		shift,
+			// 		shift.final_time_start,
+			// 		shift.final_time_end,
+			// 		date
+			// 	);
+			// 	if (
+			// 		shift.final_time_start === shift.orig_final_start &&
+			// 		shift.final_time_end === shift.orig_final_end
+			// 	) {
+			// 		shift.dispute = false;
+			// 	} else {
+			// 		shift.dispute = true;
+			// 	}
+			// }
+		},
+		dispute(shift, index, i) {
+			shift.dispute = !shift.dispute;
+			if (shift.dispute === false) {
+				shift.final_time_start = shift.orig_final_start;
+				shift.final_time_end = shift.orig_final_end;
+				shift.remarks = "";
+			} else {
+				this.lateChange(shift, index, i, "dispute");
+				shift.final_time_start = "";
+				shift.final_time_end = "";
+				shift.total = 0;
+			}
+		},
+		isDisputed(shift) {
+			console.log("isDisputed mehtods");
+			if (!shift.has_absences) {
+				if (
+					shift.final_time_start === shift.orig_final_start &&
+					shift.orig_final_end === shift.final_time_end &&
+					shift.has_absences == shift.orig_has_absences
+				) {
+					shift.dispute = false;
+				} else {
+					shift.dispute = true;
+				}
+			} else {
+				if (shift.has_absences == shift.orig_has_absences) {
+					shift.dispute = false;
+				} else {
+					shift.dispute = true;
+				}
+			}
 		}
 	}
 };
@@ -1332,6 +1788,7 @@ export default {
 <style>
 .message-modal.mini-modal {
 	min-width: 25vw;
+	z-index: 56;
 }
 select.custom-select {
 	background: transparent;

@@ -191,9 +191,9 @@
           },
           {
             title: 'Area',
-            key: 'locum_postcode',
-            sort_key: 'locum_postcode',
-            column: (item) => item.locum_postcode,
+            key: 'user_postcode',
+            sort_key: 'user_postcode',
+            column: (item) => item.user_postcode,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
@@ -208,6 +208,15 @@
             flexShrink: 0,
           },
           {
+            title: 'Max Rate per Hour',
+            key: 'max_rate_per_hour',
+            sort_key: 'max_rate_per_hour',
+            column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
+            justify: 'start',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
             title: 'Min Rate per Half Day Session',
             key: 'min_rate_per_half_day_session',
             sort_key: 'min_rate_per_half_day_session',
@@ -217,10 +226,28 @@
             flexShrink: 0,
           },
           {
+            title: 'Max Rate per Half Day Session',
+            key: 'max_rate_per_half_day_session',
+            sort_key: 'max_rate_per_half_day_session',
+            column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
+            justify: 'start',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
             title: 'Min Rate per Whole Day Session',
             key: 'min_rate_per_whole_day_session',
             sort_key: 'min_rate_per_whole_day_session',
             column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
+            justify: 'start',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Max Rate per Whole Day Session',
+            key: 'max_rate_per_whole_day_session',
+            sort_key: 'max_rate_per_whole_day_session',
+            column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
@@ -337,7 +364,14 @@
           profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
         }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/locums/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/locums/count',{
+            params: {
+              ...params,
+              order_by: this.orderBy,
+              limit: this.limit,
+              offset: this.offset,
+            },
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/locums', {
@@ -352,6 +386,7 @@
           }),
           new Promise((resolve) => setTimeout(resolve, 500))
         ]).then((results) => {
+          console.log('results', results)
           const [
             count,
             locums,

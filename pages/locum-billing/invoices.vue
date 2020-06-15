@@ -158,7 +158,7 @@
               <div class="flex flex-wrap justify-center">
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                 >Generate Invoice</div>
 
@@ -167,15 +167,15 @@
                     slotProps.item.locum_invoice_id
                       && slotProps.item.locum_status !== 'Approved'
                   "
-                  class="flex justify-between my-1"
+                  class="flex flex-wrap justify-around"
                 >
                   <div
-                    class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                   >Edit</div>
                   <button
                     v-if="!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced'"
-                    class="mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
+                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
                   >Delete</button>
                 </div>
@@ -690,27 +690,30 @@ export default {
             // rate / ((final_hours_in_minutes / 60) / 2)
 
             jobPart.schedules.forEach(schedule => {
-              switch (schedule.locum_detail_rate_type.name) {
-                case "Per Hour":
-                  total =
-                    total +
-                    schedule.rate * (schedule.final_hours_in_minutes / 60);
-                  break;
-                case "Per Whole Day Session":
-                  total =
-                    total +
-                    schedule.rate / (schedule.final_hours_in_minutes / 60);
-                  break;
-                case "Per Half Day Session":
-                  total =
-                    total +
-                    schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
-                  break;
-                default:
-                  total =
-                    total +
-                    schedule.rate * (schedule.final_hours_in_minutes / 60);
-                  break;
+              if (!schedule.absent_reason) {
+                switch (schedule.locum_detail_rate_type.name) {
+                  case "Per Hour":
+                    total =
+                      total +
+                      schedule.rate * (schedule.final_hours_in_minutes / 60);
+                    break;
+                  case "Per Whole Day Session":
+                    total =
+                      total +
+                      schedule.rate / (schedule.final_hours_in_minutes / 60);
+                    break;
+                  case "Per Half Day Session":
+                    total =
+                      total +
+                      schedule.rate /
+                        (schedule.final_hours_in_minutes / 60 / 2);
+                    break;
+                  default:
+                    total =
+                      total +
+                      schedule.rate * (schedule.final_hours_in_minutes / 60);
+                    break;
+                }
               }
             });
           }
@@ -971,28 +974,33 @@ export default {
                 // rate / ((final_hours_in_minutes / 60) / 2)
 
                 jobPart.schedules.forEach(schedule => {
-                  switch (schedule.locum_detail_rate_type.name) {
-                    case "Per Hour":
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Whole Day Session":
-                      total =
-                        total +
-                        schedule.rate / (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Half Day Session":
-                      total =
-                        total +
-                        schedule.rate /
-                          (schedule.final_hours_in_minutes / 60 / 2);
-                      break;
-                    default:
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
+                  if (!schedule.absent_reason) {
+                    switch (schedule.locum_detail_rate_type.name) {
+                      case "Per Hour":
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Whole Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Half Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60 / 2);
+                        break;
+                      default:
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                    }
                   }
                 });
               }
@@ -1144,28 +1152,33 @@ export default {
                 // rate / ((final_hours_in_minutes / 60) / 2)
 
                 jobPart.schedules.forEach(schedule => {
-                  switch (schedule.locum_detail_rate_type.name) {
-                    case "Per Hour":
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Whole Day Session":
-                      total =
-                        total +
-                        schedule.rate / (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Half Day Session":
-                      total =
-                        total +
-                        schedule.rate /
-                          (schedule.final_hours_in_minutes / 60 / 2);
-                      break;
-                    default:
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
+                  if (!schedule.absent_reason) {
+                    switch (schedule.locum_detail_rate_type.name) {
+                      case "Per Hour":
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Whole Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Half Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60 / 2);
+                        break;
+                      default:
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                    }
                   }
                 });
               }

@@ -16,7 +16,7 @@
 				type="input"
 				placeholder="hh:mm"
 				class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
-				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed' : '']"
+				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed text-gray-500' : '']"
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"
 				@change="$emit('change', $event.target.value)"
@@ -176,6 +176,9 @@ export default {
 			if (newValue === "24") {
 				this.selectTime("00", "minute");
 			}
+			this.$emit("change", newValue);
+		},
+		selectedMinute(newValue, oldValue) {
 			this.$emit("change", newValue);
 		}
 	},
