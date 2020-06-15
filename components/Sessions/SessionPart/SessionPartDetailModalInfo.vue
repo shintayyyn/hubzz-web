@@ -285,7 +285,7 @@
           >{{ job_part.late_hours > 0 || job_part.late_hours_reason !== null ? 'Yes' : 'No' }}</div>
           <template v-if="job_part.late_hours > 0 || job_part.late_hours_reason !== null">
             <div class="font-bold text-sm sm:text-md">Hours of Late:</div>
-            <div class="text-xs sm:text-sm mb-8">{{ job_part.late_hours | hoursMinutes }}</div>
+            <div class="text-xs sm:text-sm mb-8">{{ late_hours | hoursMinutes }}</div>
             <div class="font-bold text-sm sm:text-md">Reason of Late:</div>
             <div
               class="text-xs sm:text-sm mb-8"
@@ -427,6 +427,19 @@ export default {
       return this.job_part.job.platform_job.session_requirements
         ? this.job_part.job.platform_job.session_requirements.split(",")
         : [];
+    },
+    late_hours() {
+      let originalHours = this.job_part.schedules
+        .map(item => item.original_hours_in_minutes)
+        .reduce((acc, cur) => acc + cur);
+
+      let finalHours = this.job_part.schedules
+        .map(item => item.final_hours_in_minutes)
+        .reduce((acc, cur) => acc + cur);
+
+      let lateHours = originalHours - finalHours;
+
+      return lateHours;
     }
   },
 
