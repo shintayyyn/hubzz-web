@@ -3,7 +3,7 @@
     <div>
       <!-- FILTER -->
       <div
-        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo text-white my-2"
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2"
       >
         <div class="md:px-1 w-full">
           <label class="text-md md:text-lg text-bold">Filters</label>
@@ -91,7 +91,7 @@
       />
 
       <div
-        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
+        class="flex-wrap justify-start items-center w-full flex"
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <div v-if="true" class="text-white"> 
+      <div v-if="true"> 
         <span>Count: {{ count }}</span>
         <br>
         <span>Order By: {{ orderBy.join(',') }}</span>
@@ -133,6 +133,7 @@
       return {
         loading: false,
         count: 0,
+        downloading: false,
         locumNameIncludes: '',
         practiceNameIncludes: '',
         professionNameIncludes:'',
@@ -211,9 +212,9 @@
           },
           {
             title: 'Area',
-            key: 'locum_postcode',
-            sort_key: 'locum_postcode',
-            column: (item) => item.locum_postcode,
+            key: 'user_postcode',
+            sort_key: 'user_postcode',
+            column: (item) => item.user_postcode,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
@@ -222,8 +223,17 @@
             title: 'Min Rate per Hour',
             key: 'min_rate_per_hour',
             sort_key: 'min_rate_per_hour',
-            column: (item) => item.min_rate_per_hour.toFixed(2),
+            column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
             justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Max Rate per Hour',
+            key: 'max_rate_per_hour',
+            sort_key: 'max_rate_per_hour',
+            column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -231,8 +241,17 @@
             title: 'Min Rate per Half Day Session',
             key: 'min_rate_per_half_day_session',
             sort_key: 'min_rate_per_half_day_session',
-            column: (item) => item.min_rate_per_half_day_session.toFixed(2),
+            column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
             justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Max Rate per Half Day Session',
+            key: 'max_rate_per_half_day_session',
+            sort_key: 'max_rate_per_half_day_session',
+            column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -240,8 +259,17 @@
             title: 'Min Rate per Whole Day Session',
             key: 'min_rate_per_whole_day_session',
             sort_key: 'min_rate_per_whole_day_session',
-            column: (item) => item.min_rate_per_whole_day_session.toFixed(2),
+            column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
             justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Max Rate per Whole Day Session',
+            key: 'max_rate_per_whole_day_session',
+            sort_key: 'max_rate_per_whole_day_session',
+            column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -318,7 +346,7 @@
           this.$router.replace({ query })
         }
         
-        this.getLocums()
+        this.getPracticeLocums()
       },
 
       setPage (page) {
