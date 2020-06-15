@@ -110,7 +110,7 @@
           <AppInput
             v-model="practiceForm.memorable_number"
             type="text"
-            label="Memorable number"
+            label="Memorable 6 digit number"
             placeholder="Your memorable number"
             :error="formError.find(error => error.field === 'memorable_number')"
             required
@@ -315,7 +315,7 @@
       <AppInput
         v-model="locumForm.memorable_number"
         type="text"
-        label="Memorable number"
+        label="Memorable 6 digit number"
         placeholder="Your memorable number"
         :error="formError.find(error => error.field === 'memorable_number')"
         required

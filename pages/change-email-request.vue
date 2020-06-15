@@ -62,7 +62,7 @@
               <AppInput
                 v-model="memorableNumber"
                 type="text"
-                label="Memorable number"
+                label="Memorable 6 digit number"
                 placeholder="Your memorable number"
                 :error="formErrors.find(error => error.field === 'memorable_number')"
                 required
@@ -70,7 +70,7 @@
 
               <AppDate
                 v-model="dateOfBirth"
-                label="Date of Birth (Locum)"
+                label="Date of Birth (optional for Locum)"
                 :error="formErrors.find(item => item.field === 'date_of_birth')"
                 isBefore
                 :limitYear="100"
@@ -80,7 +80,7 @@
               <AppInput
                 v-model="professionId"
                 type="select"
-                label="Profession (Locum)"
+                label="Profession (optional for Locum)"
                 placeholder="Select..."
                 :error="formErrors.find(item => item.field === 'profession_id')"
                 :items="professionsSelectionList"
@@ -89,7 +89,7 @@
               <AppInput
                 v-model="practiceName"
                 type="text"
-                label="Practice Name (Practice)"
+                label="Practice Name (optional for Practice)"
               />
 
               <AppInput
@@ -181,7 +181,7 @@
           memorable_word_category_id: 'required',
           memorable_word: 'required|string',
           memorable_date: 'required|string',
-          memorable_number: 'required|integer',
+          memorable_number: 'required|integer|min:6|max:6',
           date_of_birth: 'string',
           practice_name: 'string',
           new_email: 'required|email',
@@ -195,8 +195,10 @@
           'memorable_word.string': 'Invalid memorable word.',
           'memorable_date.required': 'Memorable date is required.',
           'memorable_date.string': 'Invalid memorable date.',
-          'memorable_number.required': 'Memorable number is required.',
-          'memorable_number.integer': 'Invalid memorable number.',
+          'memorable_number.required': 'Memorable 6 digit number is required.',
+          'memorable_number.integer': 'Invalid memorable 6 digit number.',
+          'memorable_number.min': 'Memorable 6 digit number must be 6 digit.',
+          'memorable_number.max': 'Memorable 6 digit number must be 6 digit.',
           'date_of_birth.string': 'Invalid date of birth.',
           'practice_name.string': 'Invalid practice name.',
           'new_email.required': 'New email is required.',
@@ -245,20 +247,52 @@
       },
 
       memorableNumber () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'memorable_number')
+        const requiredIndex = this.formErrors
+          .findIndex((formError) => formError.field === 'memorable_number' && formError.validation === 'required')
 
-        if (this.memorableNumber) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'memorable_number',
-              message: 'Memorable number is required.',
-              validation: 'required',
-            })
-          }
+        const integerIndex = this.formErrors
+          .findIndex((formError) => formError.field === 'memorable_number' && formError.validation === 'integer')
+
+        const minMaxIndex = this.formErrors
+          .findIndex((formError) => formError.field === 'memorable_number' && ['min', 'max'].includes(formError.validation))
+
+        if (requiredIndex > -1) {
+          this.formErrors.splice(requiredIndex, 1)
+        }
+
+        if (integerIndex > -1) {
+          this.formErrors.splice(integerIndex, 1)
+        }
+
+        if (minMaxIndex > -1) {
+          this.formErrors.splice(minMaxIndex, 1)
+        }
+
+        if (!this.memorableNumber) {
+          this.formErrors.push({
+            field: 'memorable_number',
+            message: 'Memorable 6 digit number is required.',
+            validation: 'required',
+          })
+          return
+        }
+
+        if (!(/^\d+$/.test(this.memorableNumber))) {
+          this.formErrors.push({
+            field: 'memorable_number',
+            message: 'Invalid memorable 6 digit number.',
+            validation: 'integer',
+          })
+          return
+        }
+
+        if (this.memorableNumber.length !== 6) {
+          this.formErrors.push({
+            field: 'memorable_number',
+            message: 'Memorable 6 digit number must be 6 digit.',
+            validation: this.memorableNumber.length > 6 ? 'max' : 'min',
+          })
+          return
         }
       },
 
