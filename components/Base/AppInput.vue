@@ -222,6 +222,7 @@
 									@input="$emit('input', $event.target.value)"
 									@blur="$emit('blur', $event)"
 									@keydown="limit ? ($emit('keydown'), limitInput($event, trimmedMessage(value))) : $emit('keydown')"
+									:readonly="disabled"
 								/>
 								<div class="flex items-center justify-between">
 									<transition name="drop-down">
