@@ -152,7 +152,7 @@
 											<div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full">
 												<div
 													class="w-2/12 flex items-center justify-center px-2"
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 												>
 													<p
 														class="rounded px-2 w-full text-center py-1 font-bold"
@@ -160,23 +160,23 @@
 													>{{ shifts.find(item => item.value === shift.shift_id) ? shifts.find(item => item.value === shift.shift_id).label : '' }}</p>
 												</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center"
 												>{{ shift.time_start }}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center"
 												>{{ shift.time_end }}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center text-center"
 												>{{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes}}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b' : '' : 'border-t border-b']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t' : i === item.shifts.length-1 ? 'border-b pb-2' : '' : 'border-t border-b']"
 													class="w-2/12 flex items-center justify-center text-center"
 												>{{ rate_lists.find(item => item.value === shift.locum_detail_rate_type_id) ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label : '' }}</div>
 												<div
-													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t rounded-tr-lg' : i === item.shifts.length-1 ? 'border-b rounded-br-lg' : '' : 'border-t border-b rounded-r-lg']"
+													:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', item.shifts.length !== 1 ? i === 0 ? 'border-t rounded-tr-lg' : i === item.shifts.length-1 ? 'border-b rounded-br-lg pb-2' : '' : 'border-t border-b rounded-r-lg']"
 													class="w-2/12 flex items-center justify-center border-r"
 												>{{ shift.rate }}</div>
 												<!-- FIELDS -->

@@ -27,7 +27,7 @@
 			</template>
 			<template v-slot:terminate="slotProps">
 				<button
-					v-if="slotProps.item.status === 'Ongoing'"
+					v-if="slotProps.item.status === 'Ongoing' "
 					class="text-white px-3 py-2 rounded-lg transition-hover focus:outline-none"
 					:class="slotProps.item.status === 'Ongoing' && authPermissions.includes('Cancel Sessions Job') ? 'bg-red-500 hover:bg-red-600 ' : 'cursor-not-allowed bg-gray-400'"
 					@click="slotProps.item.status === 'Ongoing' && authPermissions.includes('Cancel Sessions Job') ? [terminateJobPart=true, job_part = slotProps.item] : ''"
@@ -78,6 +78,9 @@ export default {
 		disabledLink: {
 			type: Boolean,
 			default: false
+		},
+		canCompleteJob: {
+			type: Boolean
 		}
 	},
 
@@ -157,12 +160,7 @@ export default {
 			if (
 				(this.$route.query.status === "Ongoing" ||
 					this.$route.query.jobStatus === "Ongoing") &&
-				(this.practice.type !== "Spoke" ||
-					(this.practice.type === "Spoke" &&
-						!this.practice.parent_practice_id) ||
-					(this.practice.type === "Spoke" &&
-						this.practice.parent_practice_id &&
-						this.practice.allow_surgery_bill_locum === true))
+				!this.cantCompleteJob
 			) {
 				columns.push(
 					{
