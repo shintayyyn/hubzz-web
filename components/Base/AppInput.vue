@@ -39,12 +39,19 @@
 								<input
 									class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm shadow-none"
 									v-model="listLabel"
+									placeholder="Type Training Title Here"
 									type="text"
 								/>
 								<div class="text-sm text-red-500" v-if="errorMsg">{{errorMsg}}</div>
 							</div>
-							<div class="ml-2" @click="cancel">Cancel</div>
-							<div class="ml-2" @click="save(null, 'add')">Add</div>
+							<div
+								class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+								@click="save(null, 'add')"
+							>Add</div>
+							<div
+								class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+								@click="cancel"
+							>Cancel</div>
 						</div>
 					</template>
 					<div
@@ -79,10 +86,26 @@
 							>{{ item.label }}</label>
 						</template>
 						<template v-if="updatable">
-							<div class="ml-2" @click="edit(item)" v-if="editId !== item.value">Edit</div>
-							<div class="ml-2" @click="$emit('remove', item)" v-if="editId !== item.value">Remove</div>
-							<div class="ml-2" @click="cancel" v-if="editId === item.value">Cancel</div>
-							<div class="ml-2" @click="save(item, 'update')" v-if="editId === item.value">Save</div>
+							<div
+								class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+								@click="edit(item)"
+								v-if="editId !== item.value"
+							>Edit</div>
+							<div
+								class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+								@click="$emit('remove', item)"
+								v-if="editId !== item.value"
+							>Remove</div>
+							<div
+								class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+								@click="save(item, 'update')"
+								v-if="editId === item.value"
+							>Save</div>
+							<div
+								class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+								@click="cancel"
+								v-if="editId === item.value"
+							>Cancel</div>
 						</template>
 					</div>
 				</template>
@@ -446,31 +469,35 @@ export default {
 		},
 		save(payload, type) {
 			this.errorMsg = null;
+			if (this.listLabel.trim().length === 0) {
+				this.errorMsg = "Name is required.";
+			} else {
+				if (type === "add") {
+					let hasSameLabel = this.lists.find(
+						list => list.label === this.listLabel
+					);
 
-			if (type === "add") {
-				let hasSameLabel = this.lists.find(
-					list => list.label === this.listLabel
-				);
+					if (hasSameLabel) {
+						this.errorMsg = "Name already exists.";
+					} else {
+						this.$emit("addList", this.listLabel);
+						this.cancel();
+					}
+				} else if (type === "update") {
+					let hasSameLabel = this.lists.find(
+						list =>
+							list.label === this.listLabel && list.value !== payload.value
+					);
 
-				if (hasSameLabel) {
-					this.errorMsg = "Name already exists.";
-				} else {
-					this.$emit("addList", this.listLabel);
-					this.cancel();
-				}
-			} else if (type === "update") {
-				let hasSameLabel = this.lists.find(
-					list => list.label === this.listLabel && list.value !== payload.value
-				);
-
-				if (hasSameLabel) {
-					this.errorMsg = "Name already exists.";
-				} else {
-					this.$emit("updateList", {
-						label: this.listLabel,
-						value: payload.value
-					});
-					this.cancel();
+					if (hasSameLabel) {
+						this.errorMsg = "Name already exists.";
+					} else {
+						this.$emit("updateList", {
+							label: this.listLabel,
+							value: payload.value
+						});
+						this.cancel();
+					}
 				}
 			}
 		},

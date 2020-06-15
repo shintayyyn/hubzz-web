@@ -8,6 +8,7 @@
       >
         HQ Invoice
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/finance-reports/practice-invoice' }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -15,6 +16,7 @@
       >
         Practice Invoice
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/finance-reports/tax-year-total' }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -23,19 +25,23 @@
         Tax Year Totals
       </nuxt-link>
     </div>
+
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
     </transition>
+
+    <nuxt-child />
   </section>
 </template>
+
 <script>
-export default {
-  data () {
-    return {
-      initialLoading: false
+  export default {
+    data () {
+      return {
+        initialLoading: false,
+      }
     }
   }
-}
 </script>

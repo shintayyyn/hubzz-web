@@ -2,16 +2,19 @@
   <section class="relative">
     <div class="flex overflow-x-auto whitespace-no-wrap">
       <AppButton
+        v-if="authPermissions.includes('Create Profile Users')"
         :label="'Add User'"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
         @click="$router.push('/profile/users/create')"
       />
+
       <AppButton
         class="mx-2"
         :label="'Filter'"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
         @click="filterModal = !filterModal"
       />
+
       <!-- <AppButton
         v-if="showRefresh"
         :label="'Refresh'"
@@ -19,6 +22,7 @@
         @click="refreshUsers"
       />-->
     </div>
+
     <div
       class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
       :class="filterModal ? 'flex' : 'hidden'"
@@ -35,6 +39,7 @@
             :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
           />
         </div>
+
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
             v-model="practiceRole"
@@ -46,6 +51,7 @@
             :disabled="loading"
           />
         </div>
+
         <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
           <AppInput
             v-model="practiceUserRoleId"
@@ -65,12 +71,14 @@
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
           @click="clearFilters"
         />
+
         <AppButton
           class="mx-2"
           :label="'Search'"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
           @click="filterUsers"
         />
+
         <AppButton
           class="mx-2 md:hidden"
           :label="'Close'"
@@ -79,6 +87,7 @@
         />
       </div>
     </div>
+
     <AppTable
       v-if="users.length > 0"
       :total="total"
@@ -102,6 +111,7 @@
           </div>
         </div>
       </template>
+
       <template v-slot:actions="slotProps">
         <div class="flex items-center justify-center">
           <AppButton
@@ -117,9 +127,11 @@
         </div>
       </template>
     </AppTable>
+
     <div v-else class="flex justify-center py-4 text-gray-600">
       No User Found
     </div>
+
     <transition name="fade" mode="out-in">
       <nuxt-link
         v-if="['profile-users-create', 'profile-users-edit'].includes($route.name) || $route.name.includes('profile-users-id')"
@@ -127,6 +139,7 @@
         :to="'/profile/users'"
       />
     </transition>
+
     <nuxt-child @addUser="addUser" @updateUser="updateUser" />
   </section>
 </template>

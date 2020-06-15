@@ -320,1048 +320,1092 @@ import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppLoading from "@/components/Base/AppLoading";
 export default {
-	transition: {
-		name: "fade",
-		mode: "out-in"
-	},
-	components: {
-		AppInput,
-		AppLoading,
-		AppButton,
-		AppConfirmationModal,
-		AppTable
-	},
-	data() {
-		return {
-			hasFormA: false,
-			hasFormB: false,
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  components: {
+    AppInput,
+    AppLoading,
+    AppButton,
+    AppConfirmationModal,
+    AppTable
+  },
+  data() {
+    return {
+      hasFormA: false,
+      hasFormB: false,
 
-			initialLoading: false,
-			loading: false,
-			filterModal: false,
-			isFiltered: false,
-			total: 0,
-			job_parts: [],
-			locum_form_bs: [],
+      initialLoading: false,
+      loading: false,
+      filterModal: false,
+      isFiltered: false,
+      total: 0,
+      job_parts: [],
+      locum_form_bs: [],
 
-			showRefresh: false,
-			current_page: 1,
+      showRefresh: false,
+      current_page: 1,
 
-			offset: 0,
-			limit: 5,
-			order_by: [],
-			job_ir35: null,
-			invoice_number: null,
-			job_part_number_includes: null,
-			is_paid: null,
+      offset: 0,
+      limit: 5,
+      order_by: [],
+      job_ir35: null,
+      invoice_number: null,
+      job_part_number_includes: null,
+      is_paid: null,
 
-			form_bs_columns: [
-				{
-					name: "Type",
-					dataIndex: "type"
-				},
-				{
-					name: "Practice",
-					dataIndex: "practice"
-				},
-				{
-					name: "Date Created",
-					dataIndex: "date_created",
-					class: "text-center localDate"
-				},
-				{
-					name: "Actions",
-					dataIndex: "actions",
-					class: "text-center"
-				}
-			],
+      form_bs_columns: [
+        {
+          name: "Type",
+          dataIndex: "type"
+        },
+        {
+          name: "Practice",
+          dataIndex: "practice"
+        },
+        {
+          name: "Date Created",
+          dataIndex: "date_created",
+          class: "text-center localDate"
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center"
+        }
+      ],
 
-			delete_invoice_modal: false,
-			generate_form_a_modal: false,
-			send_form_a_modal: false,
-			invoice_id: null
-		};
-	},
-	computed: {
-		columns() {
-			let columns = [];
-			let queryStatus = this.$route.query.status
-				? this.$route.query.status.toLowerCase()
-				: "to-be-invoiced";
+      delete_invoice_modal: false,
+      generate_form_a_modal: false,
+      send_form_a_modal: false,
+      invoice_id: null
+    };
+  },
+  computed: {
+    columns() {
+      let columns = [];
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "to-be-invoiced";
 
-			columns.push({
-				name: "Practice / Surgery",
-				dataIndex: "practice_name",
-				class: "text-center"
-			});
+      columns.push({
+        name: "Practice / Surgery",
+        dataIndex: "practice_name",
+        class: "text-center"
+      });
 
-			if (queryStatus !== "to-be-invoiced") {
-				columns.push({
-					name: "Invoice Number",
-					dataIndex: "invoice_number"
-				});
-			}
+      if (queryStatus !== "to-be-invoiced") {
+        columns.push({
+          name: "Invoice Number",
+          dataIndex: "invoice_number"
+        });
+      }
 
-			columns.push(
-				{
-					name: "Job Part Number",
-					dataIndex: "job_part_number"
-				},
-				{
-					name: "Job Title",
-					dataIndex: "job_title"
-				},
-				{
-					name: "£ Amount",
-					dataIndex: "total_amount",
-					class: "text-center currency",
-					sortable: true
-				},
-				{
-					name: "OOH",
-					dataIndex: "ooh",
-					class: "text-center"
-				},
-				{
-					name: "NHS Claimable",
-					dataIndex: "nhs_claimable",
-					class: "text-center"
-				}
-			);
+      columns.push(
+        {
+          name: "Job Part Number",
+          dataIndex: "job_part_number"
+        },
+        {
+          name: "Job Title",
+          dataIndex: "job_title"
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center currency",
+          sortable: true
+        },
+        {
+          name: "OOH",
+          dataIndex: "ooh",
+          class: "text-center"
+        },
+        {
+          name: "NHS Claimable",
+          dataIndex: "nhs_claimable",
+          class: "text-center"
+        }
+      );
 
-			if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
-				columns.push({
-					name: "Paid",
-					dataIndex: "paid",
-					class: "text-center"
-				});
-			}
+      if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid",
+          dataIndex: "paid",
+          class: "text-center"
+        });
+      }
 
-			if (queryStatus === "approved" || queryStatus === "pension-form-a") {
-				columns.push({
-					name: "Approved At",
-					dataIndex: "approved_at",
-					class: "text-center localDate"
-				});
-			} else if (queryStatus === "to-be-invoiced") {
-				columns.push({
-					name: "Completed At",
-					dataIndex: "completed_at",
-					class: "text-center localDate",
-					sortable: true
-				});
-			} else {
-				columns.push({
-					name: "Issued",
-					dataIndex: "issued_at",
-					class: "text-center localDate",
-					sortable: true
-				});
-			}
+      if (queryStatus === "approved" || queryStatus === "pension-form-a") {
+        columns.push({
+          name: "Approved At",
+          dataIndex: "approved_at",
+          class: "text-center localDate"
+        });
+      } else if (queryStatus === "to-be-invoiced") {
+        columns.push({
+          name: "Completed At",
+          dataIndex: "completed_at",
+          class: "text-center localDate",
+          sortable: true
+        });
+      } else {
+        columns.push({
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        });
+      }
 
-			columns.push({
-				name: "Actions",
-				dataIndex: "actions",
-				class: "text-center"
-			});
+      columns.push({
+        name: "Actions",
+        dataIndex: "actions",
+        class: "text-center"
+      });
 
-			return columns;
-		},
-		authPermissions() {
-			return this.$store.getters["permissions"];
-		},
-		noJobPartsToDisplay() {
-			let str = "";
-			let queryStatus = this.$route.query.status;
-			switch (queryStatus && queryStatus.toLowerCase()) {
-				case "to-be-invoiced":
-					str = "You do not have any completed job parts.";
-					break;
-				case "disputed":
-					str = "You do not have any disputed invoices.";
-					break;
-				case "issued":
-					str = "You do not have any invoiced job parts.";
-					break;
-				case "approved":
-					str = "You do not have any approved job parts.";
-					break;
-				case "solo-form":
-					str = "You do not have any solo forms.";
-					break;
-				case "pension-form-a":
-					str = "You do not have any nhs form a.";
-					break;
-				case "pension-form-b":
-					str = "You do not have any nhs form b.";
-					break;
-				default:
-					str = "You do not have any completed job parts.";
-			}
-			return str;
-		},
-		disabledClearFilter() {
-			let jobIr35 = this.job_ir35 === "" ? null : this.job_ir35;
-			let isPaid = this.is_paid === "" ? null : this.is_paid;
-			let invoiceNumber =
-				this.invoice_number === "" ? null : this.invoice_number;
-			let jobPartNumberIncludes =
-				this.job_part_number_includes === ""
-					? null
-					: this.job_part_number_includes;
+      return columns;
+    },
+    authPermissions() {
+      return this.$store.getters["permissions"];
+    },
+    noJobPartsToDisplay() {
+      let str = "";
+      let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
+        case "to-be-invoiced":
+          str = "You do not have any completed job parts.";
+          break;
+        case "disputed":
+          str = "You do not have any disputed invoices.";
+          break;
+        case "issued":
+          str = "You do not have any invoiced job parts.";
+          break;
+        case "approved":
+          str = "You do not have any approved job parts.";
+          break;
+        case "solo-form":
+          str = "You do not have any solo forms.";
+          break;
+        case "pension-form-a":
+          str = "You do not have any nhs form a.";
+          break;
+        case "pension-form-b":
+          str = "You do not have any nhs form b.";
+          break;
+        default:
+          str = "You do not have any completed job parts.";
+      }
+      return str;
+    },
+    disabledClearFilter() {
+      let jobIr35 = this.job_ir35 === "" ? null : this.job_ir35;
+      let isPaid = this.is_paid === "" ? null : this.is_paid;
+      let invoiceNumber =
+        this.invoice_number === "" ? null : this.invoice_number;
+      let jobPartNumberIncludes =
+        this.job_part_number_includes === ""
+          ? null
+          : this.job_part_number_includes;
 
-			if (
-				isPaid === null &&
-				jobIr35 === null &&
-				invoiceNumber === null &&
-				jobPartNumberIncludes === null
-			) {
-				return true;
-			}
-			return false;
-		}
-	},
-	watch: {
-		async "$route.query"(newValue, oldValue) {
-			let newStatus = newValue.status;
-			let oldStatus = oldValue.status;
-			if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-				this.current_page = 1;
-				this.filterModal = false;
-				this.showRefresh = false;
-				this.total = 0;
-				this.job_parts = [];
-				this.clearFilters();
-				this.isFiltered = false;
-				this.initialLoading = true;
-				await this.getJobPartsPromiseAll();
-				this.initialLoading = false;
-			}
-		}
-	},
+      if (
+        isPaid === null &&
+        jobIr35 === null &&
+        invoiceNumber === null &&
+        jobPartNumberIncludes === null
+      ) {
+        return true;
+      }
+      return false;
+    }
+  },
+  watch: {
+    async "$route.query"(newValue, oldValue) {
+      let newStatus = newValue.status;
+      let oldStatus = oldValue.status;
+      if (newStatus && newStatus !== null && newStatus !== oldStatus) {
+        this.current_page = 1;
+        this.filterModal = false;
+        this.showRefresh = false;
+        this.total = 0;
+        this.job_parts = [];
+        this.clearFilters();
+        this.isFiltered = false;
+        this.initialLoading = true;
+        await this.getJobPartsPromiseAll();
+        this.initialLoading = false;
+      }
+    }
+  },
 
-	async asyncData({ app, query }) {
-		try {
-			let [hasFormA, hasFormB] = await Promise.all([
-				app.$axios
-					.$get(`/api/v1/locum/job-parts/count`, {
-						params: {
-							invoice_status: ["Invoiced"],
-							locum_status: ["Approved"],
-							locum_invoiceable: true,
-							nhs_claimable: true,
-							ooh: false,
-							viewing_locum_user_id: app.$auth.user.id,
-							job_type: "Platform",
-							type: "Platform"
-						}
-					})
-					.then(res => {
-						return res.data.count > 0 ? true : false;
-					}),
-				app.$axios
-					.$get(`/api/v1/locum/locum-invoices-form-b/count`, {
-						params: {
-							viewing_locum_user_id: app.$auth.user.id,
-							job_type: "Platform",
-							type: "Platform"
-						}
-					})
-					.then(res => {
-						return res.data.count > 0 ? true : false;
-					})
-			]);
+  async asyncData({ app, query }) {
+    try {
+      let [hasFormA, hasFormB] = await Promise.all([
+        app.$axios
+          .$get(`/api/v1/locum/job-parts/count`, {
+            params: {
+              invoice_status: ["Invoiced"],
+              locum_status: ["Approved"],
+              locum_invoiceable: true,
+              nhs_claimable: true,
+              ooh: false,
+              viewing_locum_user_id: app.$auth.user.id,
+              job_type: "Platform",
+              type: "Platform"
+            }
+          })
+          .then(res => {
+            return res.data.count > 0 ? true : false;
+          }),
+        app.$axios
+          .$get(`/api/v1/locum/locum-invoices-form-b/count`, {
+            params: {
+              viewing_locum_user_id: app.$auth.user.id,
+              job_type: "Platform",
+              type: "Platform"
+            }
+          })
+          .then(res => {
+            return res.data.count > 0 ? true : false;
+          })
+      ]);
 
-			let url = `/api/v1/locum/job-parts`;
-			let invoice_status = [];
-			let locum_status = [];
-			let locum_invoiceable;
-			let nhs_claimable;
-			let ooh;
-			let queryStatus = query.status;
+      let url = `/api/v1/locum/job-parts`;
+      let invoice_status = [];
+      let locum_status = [];
+      let locum_invoiceable;
+      let nhs_claimable;
+      let ooh;
+      let queryStatus = query.status;
 
-			switch (queryStatus && queryStatus.toLowerCase()) {
-				case "to-be-invoiced":
-					invoice_status.push("To Be Invoice");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "disputed":
-					invoice_status.push("Disputed");
-					locum_invoiceable = true;
-					break;
-				case "issued":
-					invoice_status.push("Invoiced");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "approved":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					break;
-				case "solo-form":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					ooh = true;
-					break;
-				case "pension-form-a":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					nhs_claimable = true;
-					ooh = false;
-					break;
-				case "pension-form-b":
-					url = `/api/v1/locum/locum-invoices-form-b`;
-					break;
-				default:
-					invoice_status.push("To Be Invoice");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-			}
+      switch (queryStatus && queryStatus.toLowerCase()) {
+        case "to-be-invoiced":
+          // invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "disputed":
+          invoice_status.push("Disputed");
+          locum_invoiceable = true;
+          break;
+        case "issued":
+          invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "approved":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          break;
+        case "solo-form":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
+        case "pension-form-a":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
+          ooh = false;
+          break;
+        case "pension-form-b":
+          url = `/api/v1/locum/locum-invoices-form-b`;
+          break;
+        default:
+          // invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+      }
 
-			let locum_form_bs = [];
-			let [total, job_parts] = await Promise.all([
-				app.$axios
-					.$get(`${url}/count`, {
-						params: {
-							invoice_status,
-							locum_status,
-							locum_invoiceable,
-							nhs_claimable,
-							ooh,
-							viewing_locum_user_id: app.$auth.user.id,
-							job_type: "Platform",
-							type: "Platform"
-						}
-					})
-					.then(res => {
-						let total = res.data.count;
-						return total;
-					}),
-				app.$axios
-					.$get(`${url}`, {
-						params: {
-							invoice_status,
-							locum_status,
-							locum_invoiceable,
-							nhs_claimable,
-							ooh,
-							viewing_locum_user_id: app.$auth.user.id,
-							job_type: "Platform",
-							type: "Platform",
-							offset: 0,
-							limit: 5
-						}
-					})
-					.then(res => {
-						if (res.data && res.data.job_parts) {
-							return res.data.job_parts;
-						} else if (res.data && res.data.locum_form_bs) {
-							return res.data.locum_form_bs;
-						}
-					})
-			]);
+      let locum_form_bs = [];
+      let [total, job_parts] = await Promise.all([
+        app.$axios
+          .$get(`${url}/count`, {
+            params: {
+              invoice_status,
+              locum_status,
+              locum_invoiceable,
+              nhs_claimable,
+              ooh,
+              viewing_locum_user_id: app.$auth.user.id,
+              job_type: "Platform",
+              type: "Platform"
+            }
+          })
+          .then(res => {
+            let total = res.data.count;
+            return total;
+          }),
+        app.$axios
+          .$get(`${url}`, {
+            params: {
+              invoice_status,
+              locum_status,
+              locum_invoiceable,
+              nhs_claimable,
+              ooh,
+              viewing_locum_user_id: app.$auth.user.id,
+              job_type: "Platform",
+              type: "Platform",
+              offset: 0,
+              limit: 5
+            }
+          })
+          .then(res => {
+            if (res.data && res.data.job_parts) {
+              return res.data.job_parts;
+            } else if (res.data && res.data.locum_form_bs) {
+              return res.data.locum_form_bs;
+            }
+          })
+      ]);
 
-			if (url === `/api/v1/locum/job-parts`) {
-				job_parts = job_parts.map(jobPart => {
-					// Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
-					// Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
+      if (url === `/api/v1/locum/job-parts`) {
+        job_parts = job_parts.map(jobPart => {
+          let type;
+          let finalHours;
+          let totalHours;
+          let total = 0;
 
-					let type;
-					let finalHours;
-					let totalHours;
-					let total;
+          if (jobPart.locum_invoice_item) {
+            total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-					if (jobPart.locum_invoice_item) {
-						total = jobPart.locum_invoice_item.locum_invoice.total_amount;
+            if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+              total =
+                total -
+                jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                jobPart.locum_invoice_item.locum_invoice.paye_amount;
+            }
+          } else if (!jobPart.locum_invoice_item) {
+            // rate * (final_hours_in_minutes / 60)
+            // rate / (final_hours_in_minutes / 60)
+            // rate / ((final_hours_in_minutes / 60) / 2)
 
-						if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-							total =
-								total -
-								jobPart.locum_invoice_item.locum_invoice.ni_amount -
-								jobPart.locum_invoice_item.locum_invoice.paye_amount;
-						}
-					} else if (!jobPart.locum_invoice_item) {
-						type = jobPart.job.locum_detail_rate_type.name;
-						finalHours = jobPart.final_hours / 60;
-						totalHours = jobPart.job.total_hours / 60;
-						total = 0;
+            jobPart.schedules.forEach(schedule => {
+              switch (schedule.locum_detail_rate_type.name) {
+                case "Per Hour":
+                  total =
+                    total +
+                    schedule.rate * (schedule.final_hours_in_minutes / 60);
+                  break;
+                case "Per Whole Day Session":
+                  total =
+                    total +
+                    schedule.rate / (schedule.final_hours_in_minutes / 60);
+                  break;
+                case "Per Half Day Session":
+                  total =
+                    total +
+                    schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+                  break;
+                default:
+                  total =
+                    total +
+                    schedule.rate * (schedule.final_hours_in_minutes / 60);
+                  break;
+              }
+            });
+          }
 
-						switch (type) {
-							case "Per Hour":
-								total = finalHours * jobPart.job.rate;
-								break;
-							default:
-								total = finalHours * (jobPart.job.rate / totalHours);
-								break;
-						}
-					}
+          return {
+            ...jobPart,
+            practice_name:
+              jobPart.job.type === "Platform"
+                ? jobPart.job.platform_job.practice.name
+                : jobPart.job.private_job.private_practice.name,
+            issued_at: jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.locum_invoice.issued_at
+              : null,
+            invoice_number: jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+              : null,
+            total_amount: total,
+            paid:
+              jobPart.locum_status === "Approved" &&
+              jobPart.locum_invoice_item.locum_invoice.paid_at
+                ? "Yes"
+                : "No",
+            nhs_claimable: jobPart.locum_invoice_id
+              ? jobPart.locum_invoices_nhs_claimable
+              : jobPart.locum_details_nhs_claimable
+          };
+        });
+      }
 
-					return {
-						...jobPart,
-						practice_name:
-							jobPart.job.type === "Platform"
-								? jobPart.job.platform_job.practice.name
-								: jobPart.job.private_job.private_practice.name,
-						issued_at: jobPart.locum_invoice_id
-							? jobPart.locum_invoice_item.locum_invoice.issued_at
-							: null,
-						invoice_number: jobPart.locum_invoice_id
-							? jobPart.locum_invoice_item.locum_invoice.invoice_number
-							: null,
-						total_amount: total,
-						paid:
-							jobPart.locum_status === "Approved" &&
-							jobPart.locum_invoice_item.locum_invoice.paid_at
-								? "Yes"
-								: "No",
-						nhs_claimable: jobPart.locum_invoice_id
-							? jobPart.locum_invoices_nhs_claimable
-							: jobPart.locum_details_nhs_claimable
-					};
-				});
-			}
+      if (url === `/api/v1/locum/locum-invoices-form-b`) {
+        job_parts.forEach(item => {
+          locum_form_bs.push({
+            ...item,
+            practice: item.forms[0].practice_name
+          });
+        });
+      }
 
-			if (url === `/api/v1/locum/locum-invoices-form-b`) {
-				job_parts.forEach(item => {
-					locum_form_bs.push({
-						...item,
-						practice: item.forms[0].practice_name
-					});
-				});
-			}
+      return {
+        hasFormA,
+        hasFormB,
+        total,
+        job_parts,
+        locum_form_bs
+      };
+    } catch (err) {
+      console.log("err", err.response || err);
+    }
+  },
 
-			return {
-				hasFormA,
-				hasFormB,
-				total,
-				job_parts,
-				locum_form_bs
-			};
-		} catch (err) {
-			console.log("err", err.response || err);
-		}
-	},
+  mounted() {
+    this.$socket.on(
+      "Locum Notification Locum Invoice Created",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Locum Invoice Paid",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Locum Invoice Updated",
+      this.getLocumInvoiceRealTime
+    );
+  },
 
-	mounted() {
-		this.$socket.on(
-			"Locum Notification Locum Invoice Created",
-			this.getLocumInvoiceRealTime
-		);
-		this.$socket.on(
-			"Locum Notification Locum Invoice Paid",
-			this.getLocumInvoiceRealTime
-		);
-		this.$socket.on(
-			"Locum Notification Locum Invoice Updated",
-			this.getLocumInvoiceRealTime
-		);
-	},
+  destroyed() {
+    this.removeListener();
+  },
 
-	destroyed() {
-		this.removeListener();
-	},
+  methods: {
+    toggleSendFormAModal(locumInvoiceId, alreadySent) {
+      if (alreadySent) return;
+      this.send_form_a_modal = true;
+      this.invoice_id = locumInvoiceId;
+    },
+    sendForm() {
+      this.$axios
+        .$put(
+          `/api/v1/locum/locum-invoices-form-a/${this.invoice_id}/send-to-practice`
+        )
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.send_form_a_modal = false;
+          let updatedFormA = this.job_parts.find(
+            jobPart =>
+              jobPart.locum_invoice_id ===
+              res.data.locum_form_a.locum_invoice_id
+          );
+          updatedFormA.locum_form_a_sent_to_practice = 1;
+        });
+    },
+    // showTest(id) {
+    //   this.$axios.$get(`/api/v1/locum/locum-invoices-form-b/${id}`).then(res => {
+    //     console.log(res.data.locum_invoice_form_b)
+    //   })
+    // },
+    viewAsPdf(formId, type) {
+      let url =
+        type === "form-a"
+          ? `/api/v1/locum-form-a`
+          : type === "solo-form"
+          ? `/api/v1/locum-solo-form`
+          : `/api/v1/locum-form-b`;
+      window.open(`${process.env.API_URL}${url}/${formId}/pdf`);
+    },
 
-	methods: {
-		toggleSendFormAModal(locumInvoiceId, alreadySent) {
-			if (alreadySent) return;
-			this.send_form_a_modal = true;
-			this.invoice_id = locumInvoiceId;
-		},
-		sendForm() {
-			this.$axios
-				.$put(
-					`/api/v1/locum/locum-invoices-form-a/${this.invoice_id}/send-to-practice`
-				)
-				.then(res => {
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: [`${res.message}`]
-					});
-					this.send_form_a_modal = false;
-					let updatedFormA = this.job_parts.find(
-						jobPart =>
-							jobPart.locum_invoice_id ===
-							res.data.locum_form_a.locum_invoice_id
-					);
-					updatedFormA.locum_form_a_sent_to_practice = 1;
-				});
-		},
-		// showTest(id) {
-		//   this.$axios.$get(`/api/v1/locum/locum-invoices-form-b/${id}`).then(res => {
-		//     console.log(res.data.locum_invoice_form_b)
-		//   })
-		// },
-		viewAsPdf(formId, type) {
-			let url =
-				type === "form-a"
-					? `/api/v1/locum-form-a`
-					: type === "solo-form"
-					? `/api/v1/locum-solo-form`
-					: `/api/v1/locum-form-b`;
-			window.open(`${process.env.API_URL}${url}/${formId}/pdf`);
-		},
+    generateFormA() {
+      this.$axios
+        .$post(`/api/v1/locum/locum-invoices-form-a`, {
+          locum_invoice_id: this.invoice_id
+        })
+        .then(res => {
+          let index = this.job_parts.findIndex(
+            item => item.locum_invoice_id === this.invoice_id
+          );
+          if (index >= 0) {
+            let jobPart = this.job_parts[index];
+            jobPart.locum_form_a_id = res.data.locum_invoice_form_a.id;
+            this.job_parts.splice(index, 1, jobPart);
+          }
 
-		generateFormA() {
-			this.$axios
-				.$post(`/api/v1/locum/locum-invoices-form-a`, {
-					locum_invoice_id: this.invoice_id
-				})
-				.then(res => {
-					let index = this.job_parts.findIndex(
-						item => item.locum_invoice_id === this.invoice_id
-					);
-					if (index >= 0) {
-						let jobPart = this.job_parts[index];
-						jobPart.locum_form_a_id = res.data.locum_invoice_form_a.id;
-						this.job_parts.splice(index, 1, jobPart);
-					}
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response && err.response.data && err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`]
+            });
+          }
+          throw err;
+        })
+        .finally(() => {
+          this.generate_form_a_modal = false;
+        });
+    },
 
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: [`${res.message}`]
-					});
-				})
-				.catch(err => {
-					console.log("err", err.response || err);
-					if (err.response && err.response.data && err.response.data.message) {
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: [`${err.response.data.message}`]
-						});
-					}
-					throw err;
-				})
-				.finally(() => {
-					this.generate_form_a_modal = false;
-				});
-		},
+    getJobPartsPromiseAll() {
+      let url = `/api/v1/locum/job-parts`;
+      let invoice_status = [];
+      let locum_status = [];
+      let locum_invoiceable = null;
+      let nhs_claimable = null;
+      let ooh = null;
+      let queryStatus = this.$route.query.status;
 
-		getJobPartsPromiseAll() {
-			let url = `/api/v1/locum/job-parts`;
-			let invoice_status = [];
-			let locum_status = [];
-			let locum_invoiceable = null;
-			let nhs_claimable = null;
-			let ooh = null;
-			let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
+        case "to-be-invoiced":
+          // invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "disputed":
+          invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "issued":
+          invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "approved":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          break;
+        case "solo-form":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
+        case "pension-form-a":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
+          ooh = false;
+          break;
+        case "pension-form-b":
+          url = `/api/v1/locum/locum-invoices-form-b`;
+          break;
+        default:
+          // invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+      }
+      return Promise.all([
+        this.$axios.$get(`${url}/count`, {
+          params: {
+            invoice_status,
+            locum_status,
+            locum_invoiceable,
+            nhs_claimable,
+            ooh,
+            job_type: "Platform",
+            type: "Platform",
+            job_ir35: this.job_ir35,
+            is_paid: this.is_paid,
+            invoice_number: this.invoice_number,
+            job_part_number_includes: this.job_part_number_includes,
+            viewing_locum_user_id: this.$auth.user.id
+          }
+        }),
+        this.$axios.$get(`${url}`, {
+          params: {
+            invoice_status,
+            locum_status,
+            locum_invoiceable,
+            nhs_claimable,
+            ooh,
+            job_type: "Platform",
+            type: "Platform",
+            job_ir35: this.job_ir35,
+            is_paid: this.is_paid,
+            invoice_number: this.invoice_number,
+            job_part_number_includes: this.job_part_number_includes,
+            viewing_locum_user_id: this.$auth.user.id,
+            offset: 0,
+            limit: 5
+          }
+        })
+      ])
+        .then(([responseTotal, response]) => {
+          this.total = responseTotal.data.count;
+          if (response.data && response.data.job_parts) {
+            let job_parts = response.data.job_parts;
 
-			switch (queryStatus && queryStatus.toLowerCase()) {
-				case "to-be-invoiced":
-					invoice_status.push("To Be Invoice");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "disputed":
-					invoice_status.push("Disputed");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "issued":
-					invoice_status.push("Invoiced");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "approved":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					break;
-				case "solo-form":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					ooh = true;
-					break;
-				case "pension-form-a":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					nhs_claimable = true;
-					ooh = false;
-					break;
-				case "pension-form-b":
-					url = `/api/v1/locum/locum-invoices-form-b`;
-					break;
-				default:
-					invoice_status.push("To Be Invoice");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-			}
-			return Promise.all([
-				this.$axios.$get(`${url}/count`, {
-					params: {
-						invoice_status,
-						locum_status,
-						locum_invoiceable,
-						nhs_claimable,
-						ooh,
-						job_type: "Platform",
-						type: "Platform",
-						job_ir35: this.job_ir35,
-						is_paid: this.is_paid,
-						invoice_number: this.invoice_number,
-						job_part_number_includes: this.job_part_number_includes,
-						viewing_locum_user_id: this.$auth.user.id
-					}
-				}),
-				this.$axios.$get(`${url}`, {
-					params: {
-						invoice_status,
-						locum_status,
-						locum_invoiceable,
-						nhs_claimable,
-						ooh,
-						job_type: "Platform",
-						type: "Platform",
-						job_ir35: this.job_ir35,
-						is_paid: this.is_paid,
-						invoice_number: this.invoice_number,
-						job_part_number_includes: this.job_part_number_includes,
-						viewing_locum_user_id: this.$auth.user.id,
-						offset: 0,
-						limit: 5
-					}
-				})
-			])
-				.then(([responseTotal, response]) => {
-					this.total = responseTotal.data.count;
-					if (response.data && response.data.job_parts) {
-						let job_parts = response.data.job_parts;
+            this.job_parts = job_parts.map(jobPart => {
+              let type;
+              let finalHours;
+              let totalHours;
+              let total = 0;
 
-						this.job_parts = job_parts.map(jobPart => {
-							let type;
-							let finalHours;
-							let totalHours;
-							let total;
+              if (jobPart.locum_invoice_item) {
+                total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-							if (jobPart.locum_invoice_item) {
-								total = jobPart.locum_invoice_item.locum_invoice.total_amount;
+                if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                  total =
+                    total -
+                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount;
+                }
+              } else if (!jobPart.locum_invoice_item) {
+                // rate * (final_hours_in_minutes / 60)
+                // rate / (final_hours_in_minutes / 60)
+                // rate / ((final_hours_in_minutes / 60) / 2)
 
-								if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-									total =
-										total -
-										jobPart.locum_invoice_item.locum_invoice.ni_amount -
-										jobPart.locum_invoice_item.locum_invoice.paye_amount;
-								}
-							} else if (!jobPart.locum_invoice_item) {
-								type = jobPart.job.locum_detail_rate_type.name;
-								finalHours = jobPart.final_hours / 60;
-								totalHours = jobPart.job.total_hours / 60;
-								total = 0;
+                jobPart.schedules.forEach(schedule => {
+                  switch (schedule.locum_detail_rate_type.name) {
+                    case "Per Hour":
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Whole Day Session":
+                      total =
+                        total +
+                        schedule.rate / (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Half Day Session":
+                      total =
+                        total +
+                        schedule.rate /
+                          (schedule.final_hours_in_minutes / 60 / 2);
+                      break;
+                    default:
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                  }
+                });
+              }
 
-								switch (type) {
-									case "Per Hour":
-										total = finalHours * jobPart.job.rate;
-										break;
-									default:
-										total = finalHours * (jobPart.job.rate / totalHours);
-										break;
-								}
-							}
+              return {
+                ...jobPart,
+                practice_name:
+                  jobPart.job.type === "Platform"
+                    ? jobPart.job.platform_job.practice.name
+                    : jobPart.job.private_job.private_practice.name,
+                issued_at: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoice_item.locum_invoice.issued_at
+                  : null,
+                invoice_number: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+                  : null,
+                total_amount: total,
+                paid:
+                  jobPart.locum_status === "Approved" &&
+                  jobPart.locum_invoice_item.locum_invoice.paid_at
+                    ? "Yes"
+                    : "No",
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable
+              };
+            });
+          } else if (response.data && response.data.locum_form_bs) {
+            this.locum_form_bs = response.data.locum_form_bs.map(item => {
+              return {
+                ...item,
+                practice: item.forms[0].practice_name
+              };
+            });
+          }
+        })
+        .catch(([errTotal, err]) => {
+          console.log(
+            "err",
+            errTotal.response || errTotal || err.response || err
+          );
+          throw err;
+        });
+    },
+    async filterJobParts() {
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = 5;
+      this.initialLoading = true;
+      this.isFiltered = true;
+      await this.getJobPartsPromiseAll();
+      this.initialLoading = false;
+      this.filterModal = false;
+    },
 
-							return {
-								...jobPart,
-								practice_name:
-									jobPart.job.type === "Platform"
-										? jobPart.job.platform_job.practice.name
-										: jobPart.job.private_job.private_practice.name,
-								issued_at: jobPart.locum_invoice_id
-									? jobPart.locum_invoice_item.locum_invoice.issued_at
-									: null,
-								invoice_number: jobPart.locum_invoice_id
-									? jobPart.locum_invoice_item.locum_invoice.invoice_number
-									: null,
-								total_amount: total,
-								paid:
-									jobPart.locum_status === "Approved" &&
-									jobPart.locum_invoice_item.locum_invoice.paid_at
-										? "Yes"
-										: "No",
-								nhs_claimable: jobPart.locum_invoice_id
-									? jobPart.locum_invoices_nhs_claimable
-									: jobPart.locum_details_nhs_claimable
-							};
-						});
-					} else if (response.data && response.data.locum_form_bs) {
-						this.locum_form_bs = response.data.locum_form_bs.map(item => {
-							return {
-								...item,
-								practice: item.forms[0].practice_name
-							};
-						});
-					}
-				})
-				.catch(([errTotal, err]) => {
-					console.log(
-						"err",
-						errTotal.response || errTotal || err.response || err
-					);
-					throw err;
-				});
-		},
-		async filterJobParts() {
-			this.current_page = 1;
-			this.offset = 0;
-			this.limit = 5;
-			this.initialLoading = true;
-			this.isFiltered = true;
-			await this.getJobPartsPromiseAll();
-			this.initialLoading = false;
-			this.filterModal = false;
-		},
+    getJobParts() {
+      let url = `/api/v1/locum/job-parts`;
+      let invoice_status = [];
+      let locum_status = [];
+      let locum_invoiceable;
+      let nhs_claimable;
+      let ooh;
+      let queryStatus = this.$route.query.status;
 
-		getJobParts() {
-			let url = `/api/v1/locum/job-parts`;
-			let invoice_status = [];
-			let locum_status = [];
-			let locum_invoiceable;
-			let nhs_claimable;
-			let ooh;
-			let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
+        case "to-be-invoiced":
+          // invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "disputed":
+          invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "issued":
+          invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+          break;
+        case "approved":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          break;
+        case "solo-form":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          ooh = true;
+          break;
+        case "pension-form-a":
+          invoice_status.push("Invoiced");
+          locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
+          ooh = false;
+          break;
+        case "pension-form-b":
+          url = `/api/v1/locum/locum-invoices-form-b`;
+          break;
+        default:
+          // invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
+      }
+      return this.$axios
+        .$get(`${url}`, {
+          params: {
+            invoice_status,
+            locum_status,
+            locum_invoiceable,
+            nhs_claimable,
+            ooh,
+            job_type: "Platform",
+            type: "Platform",
+            viewing_locum_user_id: this.$auth.user.id,
+            offset: this.offset,
+            limit: this.limit,
+            job_ir35: this.job_ir35,
+            is_paid: this.is_paid,
+            invoice_number: this.invoice_number,
+            job_part_number_includes: this.job_part_number_includes,
+            order_by: this.order_by
+          }
+        })
+        .then(res => {
+          if (res.data && res.data.job_parts) {
+            let job_parts = res.data.job_parts;
 
-			switch (queryStatus && queryStatus.toLowerCase()) {
-				case "to-be-invoiced":
-					invoice_status.push("To Be Invoice");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "disputed":
-					invoice_status.push("Disputed");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "issued":
-					invoice_status.push("Invoiced");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-					break;
-				case "approved":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					break;
-				case "solo-form":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					ooh = true;
-					break;
-				case "pension-form-a":
-					invoice_status.push("Invoiced");
-					locum_status.push("Approved");
-					locum_invoiceable = true;
-					nhs_claimable = true;
-					ooh = false;
-					break;
-				case "pension-form-b":
-					url = `/api/v1/locum/locum-invoices-form-b`;
-					break;
-				default:
-					invoice_status.push("To Be Invoice");
-					locum_status = ["Completed", "Declined", "Cancelled"];
-					locum_invoiceable = true;
-			}
-			return this.$axios
-				.$get(`${url}`, {
-					params: {
-						invoice_status,
-						locum_status,
-						locum_invoiceable,
-						nhs_claimable,
-						ooh,
-						job_type: "Platform",
-						type: "Platform",
-						viewing_locum_user_id: this.$auth.user.id,
-						offset: this.offset,
-						limit: this.limit,
-						job_ir35: this.job_ir35,
-						is_paid: this.is_paid,
-						invoice_number: this.invoice_number,
-						job_part_number_includes: this.job_part_number_includes,
-						order_by: this.order_by
-					}
-				})
-				.then(res => {
-					if (res.data && res.data.job_parts) {
-						let job_parts = res.data.job_parts;
+            this.job_parts = job_parts.map(jobPart => {
+              let type;
+              let finalHours;
+              let totalHours;
+              let total = 0;
 
-						this.job_parts = job_parts.map(jobPart => {
-							let type;
-							let finalHours;
-							let totalHours;
-							let total;
+              if (jobPart.locum_invoice_item) {
+                total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-							if (jobPart.locum_invoice_item) {
-								total = jobPart.locum_invoice_item.locum_invoice.total_amount;
+                if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                  total =
+                    total -
+                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount;
+                }
+              } else if (!jobPart.locum_invoice_item) {
+                // rate * (final_hours_in_minutes / 60)
+                // rate / (final_hours_in_minutes / 60)
+                // rate / ((final_hours_in_minutes / 60) / 2)
 
-								if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-									total =
-										total -
-										jobPart.locum_invoice_item.locum_invoice.ni_amount -
-										jobPart.locum_invoice_item.locum_invoice.paye_amount;
-								}
-							} else if (!jobPart.locum_invoice_item) {
-								type = jobPart.job.locum_detail_rate_type.name;
-								finalHours = jobPart.final_hours / 60;
-								totalHours = jobPart.job.total_hours / 60;
-								total = 0;
+                jobPart.schedules.forEach(schedule => {
+                  switch (schedule.locum_detail_rate_type.name) {
+                    case "Per Hour":
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Whole Day Session":
+                      total =
+                        total +
+                        schedule.rate / (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Half Day Session":
+                      total =
+                        total +
+                        schedule.rate /
+                          (schedule.final_hours_in_minutes / 60 / 2);
+                      break;
+                    default:
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                  }
+                });
+              }
 
-								switch (type) {
-									case "Per Hour":
-										total = finalHours * jobPart.job.rate;
-										break;
-									default:
-										total = finalHours * (jobPart.job.rate / totalHours);
-										break;
-								}
-							}
+              return {
+                ...jobPart,
+                practice_name:
+                  jobPart.job.type === "Platform"
+                    ? jobPart.job.platform_job.practice.name
+                    : jobPart.job.private_job.private_practice.name,
+                issued_at: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoice_item.locum_invoice.issued_at
+                  : null,
+                invoice_number: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+                  : null,
+                total_amount: total,
+                paid:
+                  jobPart.locum_status === "Approved" &&
+                  jobPart.locum_invoice_item.locum_invoice.paid_at
+                    ? "Yes"
+                    : "No",
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable
+              };
+            });
+          } else if (res.data && res.data.locum_form_bs) {
+            this.locum_form_bs = res.data.locum_form_bs.map(item => {
+              return {
+                ...item,
+                practice: item.forms[0].practice_name
+              };
+            });
+          }
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+        });
+    },
+    async refreshInvoices() {
+      this.loading = true;
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = 5;
+      await this.getJobPartsPromiseAll();
+      this.loading = false;
+      this.showRefresh = false;
+    },
+    getLocumInvoiceRealTime({ id }) {
+      if (!id) {
+        return;
+      }
+      this.showRefresh = true;
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Create",
+        this.getLocumInvoiceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Paid",
+        this.getLocumInvoiceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Updated",
+        this.getLocumInvoiceRealTime
+      );
+    },
+    select_invoice(id, type) {
+      this.invoice_id = id;
+      if (type === "deleteInvoice") {
+        this.delete_invoice_modal = true;
+      } else if (type === "generateFormA") {
+        this.generate_form_a_modal = true;
+      }
+    },
+    deleteInvoice() {
+      this.$axios
+        .$delete(`/api/v1/locum/locum-invoices/${this.invoice_id}`)
+        .then(res => {
+          let job_part = this.job_parts.find(item => {
+            return item.locum_invoice_id === this.invoice_id;
+          });
+          let index = this.job_parts.findIndex(item => {
+            return item.locum_invoice_id === this.invoice_id;
+          });
+          let queryStatus = this.$route.query.status;
 
-							return {
-								...jobPart,
-								practice_name:
-									jobPart.job.type === "Platform"
-										? jobPart.job.platform_job.practice.name
-										: jobPart.job.private_job.private_practice.name,
-								issued_at: jobPart.locum_invoice_id
-									? jobPart.locum_invoice_item.locum_invoice.issued_at
-									: null,
-								invoice_number: jobPart.locum_invoice_id
-									? jobPart.locum_invoice_item.locum_invoice.invoice_number
-									: null,
-								total_amount: total,
-								paid:
-									jobPart.locum_status === "Approved" &&
-									jobPart.locum_invoice_item.locum_invoice.paid_at
-										? "Yes"
-										: "No",
-								nhs_claimable: jobPart.locum_invoice_id
-									? jobPart.locum_invoices_nhs_claimable
-									: jobPart.locum_details_nhs_claimable
-							};
-						});
-					} else if (res.data && res.data.locum_form_bs) {
-						this.locum_form_bs = res.data.locum_form_bs.map(item => {
-							return {
-								...item,
-								practice: item.forms[0].practice_name
-							};
-						});
-					}
-				})
-				.catch(err => {
-					console.log("err", err.response || err);
-				});
-		},
-		async refreshInvoices() {
-			this.loading = true;
-			this.current_page = 1;
-			this.offset = 0;
-			this.limit = 5;
-			await this.getJobPartsPromiseAll();
-			this.loading = false;
-			this.showRefresh = false;
-		},
-		getLocumInvoiceRealTime({ id }) {
-			if (!id) {
-				return;
-			}
-			this.showRefresh = true;
-		},
-		removeListener() {
-			this.$socket.removeListener(
-				"Locum Notification Locum Invoice Create",
-				this.getLocumInvoiceRealTime
-			);
-			this.$socket.removeListener(
-				"Locum Notification Locum Invoice Paid",
-				this.getLocumInvoiceRealTime
-			);
-			this.$socket.removeListener(
-				"Locum Notification Locum Invoice Updated",
-				this.getLocumInvoiceRealTime
-			);
-		},
-		select_invoice(id, type) {
-			this.invoice_id = id;
-			if (type === "deleteInvoice") {
-				this.delete_invoice_modal = true;
-			} else if (type === "generateFormA") {
-				this.generate_form_a_modal = true;
-			}
-		},
-		deleteInvoice() {
-			this.$axios
-				.$delete(`/api/v1/locum/locum-invoices/${this.invoice_id}`)
-				.then(res => {
-					let job_part = this.job_parts.find(item => {
-						return item.locum_invoice_id === this.invoice_id;
-					});
-					let index = this.job_parts.findIndex(item => {
-						return item.locum_invoice_id === this.invoice_id;
-					});
-					let queryStatus = this.$route.query.status;
+          if (
+            !queryStatus ||
+            (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")
+          ) {
+            job_part.locum_invoice_id = null;
+          } else if (
+            queryStatus &&
+            ["disputed", "issued"].includes(queryStatus.toLowerCase())
+          ) {
+            this.job_parts.splice(index, 1);
+          }
 
-					if (
-						!queryStatus ||
-						(queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")
-					) {
-						job_part.locum_invoice_id = null;
-					} else if (
-						queryStatus &&
-						["disputed", "issued"].includes(queryStatus.toLowerCase())
-					) {
-						this.job_parts.splice(index, 1);
-					}
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`]
+            });
+          }
+          throw err;
+        })
+        .finally(() => {
+          this.delete_invoice_modal = false;
+        });
+    },
+    async createFormB() {
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+      // this.locum_form_bs.push({
+      //   ...invoice,
+      //   date_created: app
+      //     .$moment(invoice.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
+      //     .format("DD-MM-YYYY"),
+      //   practice: invoice.forms[0].practice_name
+      // });
 
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: [`${res.message}`]
-					});
-				})
-				.catch(err => {
-					console.log("err", err.response || err);
-					if (err.response.data.message) {
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: [`${err.response.data.message}`]
-						});
-					}
-					throw err;
-				})
-				.finally(() => {
-					this.delete_invoice_modal = false;
-				});
-		},
-		async createFormB() {
-			this.loading = true;
-			await this.getJobParts();
-			this.loading = false;
-			// this.locum_form_bs.push({
-			//   ...invoice,
-			//   date_created: app
-			//     .$moment(invoice.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
-			//     .format("DD-MM-YYYY"),
-			//   practice: invoice.forms[0].practice_name
-			// });
+      // job_parts.forEach(item => {
+      //   locum_form_bs.push({
+      //     ...item,
+      //     date_created: app
+      //       .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
+      //       .format("DD-MM-YYYY"),
+      //     practice: item.forms[0].practice_name
+      //   });
+      // });
+    },
+    async createInvoice() {
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+      // let queryStatus = this.$route.query.status;
 
-			// job_parts.forEach(item => {
-			//   locum_form_bs.push({
-			//     ...item,
-			//     date_created: app
-			//       .$moment(item.date_created, "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]")
-			//       .format("DD-MM-YYYY"),
-			//     practice: item.forms[0].practice_name
-			//   });
-			// });
-		},
-		async createInvoice() {
-			this.loading = true;
-			await this.getJobParts();
-			this.loading = false;
-			// let queryStatus = this.$route.query.status;
+      // let job_part = this.job_parts.find(
+      //   item => item.id === invoice.items[0].job_part.id
+      // );
+      // job_part.locum_invoice_id = invoice.id;
+      // let index = this.job_parts.findIndex(item => item.id === job_part.id);
+      // if (index >= 0) {
+      //   if (
+      //     queryStatus &&
+      //     queryStatus.toLowerCase() === "to-be-invoiced" &&
+      //     invoice.status === "Draft"
+      //   ) {
+      //     this.job_parts.splice(index, 1, job_part);
+      //   } else if (invoice.status !== "Draft") {
+      //     this.job_parts.splice(index, 1);
+      //   }
+      // }
+    },
+    async updateInvoice() {
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+      // let queryStatus = this.$route.query.status;
 
-			// let job_part = this.job_parts.find(
-			//   item => item.id === invoice.items[0].job_part.id
-			// );
-			// job_part.locum_invoice_id = invoice.id;
-			// let index = this.job_parts.findIndex(item => item.id === job_part.id);
-			// if (index >= 0) {
-			//   if (
-			//     queryStatus &&
-			//     queryStatus.toLowerCase() === "to-be-invoiced" &&
-			//     invoice.status === "Draft"
-			//   ) {
-			//     this.job_parts.splice(index, 1, job_part);
-			//   } else if (invoice.status !== "Draft") {
-			//     this.job_parts.splice(index, 1);
-			//   }
-			// }
-		},
-		async updateInvoice() {
-			this.loading = true;
-			await this.getJobParts();
-			this.loading = false;
-			// let queryStatus = this.$route.query.status;
+      // let job_part = this.job_parts.find(
+      //   item => item.id === invoice.items[0].job_part.id
+      // );
+      // job_part.locum_invoice_id = invoice.id;
 
-			// let job_part = this.job_parts.find(
-			//   item => item.id === invoice.items[0].job_part.id
-			// );
-			// job_part.locum_invoice_id = invoice.id;
-
-			// let index = this.job_parts.findIndex(item => item.id === job_part.id);
-			// if (index >= 0) {
-			//   if (
-			//     ((!queryStatus ||
-			//       (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")) &&
-			//       invoice.status === "Draft") ||
-			//     (queryStatus &&
-			//       queryStatus.toLowerCase() === "issued" &&
-			//       invoice.status === "Issued") ||
-			//     (queryStatus &&
-			//       queryStatus.toLowerCase() === "disputed" &&
-			//       invoice.status === "Disputed") ||
-			//     (queryStatus &&
-			//       queryStatus.toLowerCase() === "approved" &&
-			//       invoice.status === "Approved")
-			//   ) {
-			//     this.job_parts.splice(index, 1, job_part);
-			//   } else {
-			//     this.job_parts.splice(index, 1);
-			//   }
-			// }
-		},
-		async sorted(order_by) {
-			let orderBy = order_by.map(item => {
-				let order = item.split(":")[1];
-				let sorting = item.split(":")[0];
-				switch (sorting) {
-					default:
-						sorting;
-				}
-				return `${sorting}:${order}`;
-			});
-			this.current_page = 1;
-			this.offset = 0;
-			this.order_by = orderBy;
-			this.loading = true;
-			await this.getJobParts();
-			this.loading = false;
-		},
-		async pagechanged(page) {
-			this.current_page = page;
-			this.offset = this.limit * (page - 1);
-			this.loading = true;
-			await this.getJobParts();
-			this.loading = false;
-		},
-		async limitchanged(limit) {
-			this.current_page = 1;
-			this.offset = 0;
-			this.limit = limit;
-			this.loading = true;
-			await this.getJobParts();
-			this.loading = false;
-		},
-		clearFilters() {
-			this.offset = 0;
-			this.limit = 5;
-			this.order_by = [];
-			this.job_ir35 = null;
-			this.is_paid = null;
-			this.invoice_number = null;
-			this.job_part_number_includes = null;
-			this.filterJobParts();
-		}
-	}
+      // let index = this.job_parts.findIndex(item => item.id === job_part.id);
+      // if (index >= 0) {
+      //   if (
+      //     ((!queryStatus ||
+      //       (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")) &&
+      //       invoice.status === "Draft") ||
+      //     (queryStatus &&
+      //       queryStatus.toLowerCase() === "issued" &&
+      //       invoice.status === "Issued") ||
+      //     (queryStatus &&
+      //       queryStatus.toLowerCase() === "disputed" &&
+      //       invoice.status === "Disputed") ||
+      //     (queryStatus &&
+      //       queryStatus.toLowerCase() === "approved" &&
+      //       invoice.status === "Approved")
+      //   ) {
+      //     this.job_parts.splice(index, 1, job_part);
+      //   } else {
+      //     this.job_parts.splice(index, 1);
+      //   }
+      // }
+    },
+    async sorted(order_by) {
+      let orderBy = order_by.map(item => {
+        let order = item.split(":")[1];
+        let sorting = item.split(":")[0];
+        switch (sorting) {
+          default:
+            sorting;
+        }
+        return `${sorting}:${order}`;
+      });
+      this.current_page = 1;
+      this.offset = 0;
+      this.order_by = orderBy;
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+    },
+    async pagechanged(page) {
+      this.current_page = page;
+      this.offset = this.limit * (page - 1);
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+    },
+    async limitchanged(limit) {
+      this.current_page = 1;
+      this.offset = 0;
+      this.limit = limit;
+      this.loading = true;
+      await this.getJobParts();
+      this.loading = false;
+    },
+    clearFilters() {
+      this.offset = 0;
+      this.limit = 5;
+      this.order_by = [];
+      this.job_ir35 = null;
+      this.is_paid = null;
+      this.invoice_number = null;
+      this.job_part_number_includes = null;
+      this.filterJobParts();
+    }
+  }
 };
 </script>
 
