@@ -77,6 +77,7 @@
               :rows="3"
               :resize="false"
               :error="formError.find(item => item.field === 'rejected_reason')"
+              :placeholder="'Enter Reason Here'"
             />
             <div class="flex justify-center mt-5">Note: Job will be deleted once rejected.</div>
             <div class="flex justify-center mt-2">

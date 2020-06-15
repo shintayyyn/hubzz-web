@@ -1,297 +1,300 @@
 <template>
-	<section class="relative">
-		<div class="flex flex-row justify-start overflow-x-auto pb-3">
-			<nuxt-link
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class="$route.name.includes('locum-billing-invoices') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>To be invoiced</nuxt-link>
-			<nuxt-link
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'disputed' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>Disputed Invoices</nuxt-link>
-			<nuxt-link
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'issued' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>Invoiced</nuxt-link>
-			<nuxt-link
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'approved' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>Approved Invoices</nuxt-link>
-			<nuxt-link
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'solo-form' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>Solo Forms</nuxt-link>
-			<nuxt-link
-				v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormA"
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>NHS Pensions Form A</nuxt-link>
-			<nuxt-link
-				v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormB"
-				:to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-				:class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-			>NHS Pensions Form B</nuxt-link>
-		</div>
+  <section class="relative">
+    <div class="flex flex-row justify-start overflow-x-auto pb-3">
+      <nuxt-link
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >To be invoiced</nuxt-link>
+      <nuxt-link
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'disputed' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Disputed Invoices</nuxt-link>
+      <nuxt-link
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'issued' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Invoiced</nuxt-link>
+      <nuxt-link
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'approved' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Approved Invoices</nuxt-link>
+      <nuxt-link
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'solo-form' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Solo Forms</nuxt-link>
+      <nuxt-link
+        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormA"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >NHS Pensions Form A</nuxt-link>
+      <nuxt-link
+        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormB"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >NHS Pensions Form B</nuxt-link>
+    </div>
 
-		<div
-			v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
-			class="flex flex-row justify-start overflow-x-auto pb-3"
-		>
-			<nuxt-link
-				:to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
-				class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
-			>Generate NHS Form B</nuxt-link>
-		</div>
+    <div
+      v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
+      class="flex flex-row justify-start overflow-x-auto pb-3"
+    >
+      <nuxt-link
+        :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
+      >Generate NHS Form B</nuxt-link>
+    </div>
 
-		<transition name="fade" mode="out-in">
-			<div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
-				<AppLoading :loading="initialLoading" spinner />
-			</div>
+    <transition name="fade" mode="out-in">
+      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
+        <AppLoading :loading="initialLoading" spinner />
+      </div>
 
-			<div v-if="!initialLoading">
-				<AppButton
-					v-if="!['pension-form-b'].includes($route.query.status)"
-					:label="'Filter'"
-					:in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-					@click="filterModal = !filterModal"
-				/>
-				<AppButton
-					v-if="showRefresh"
-					:label="'Refresh'"
-					:in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-					@click="refreshInvoices"
-				/>
-				<div
-					class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-					:class="filterModal ? 'flex' : 'hidden'"
-				>
-					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-						<AppInput
-							v-model="job_ir35"
-							class="px-1"
-							:type="'select'"
-							:name="'job_ir35'"
-							:label="'Inside ir35'"
-							:items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-						/>
-					</div>
-					<div
-						class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-						v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
-					>
-						<AppInput
-							v-model="invoice_number"
-							class="px-1"
-							:type="'text'"
-							:name="'invoice_number'"
-							:label="'Invoice number'"
-						/>
-					</div>
-					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-						<AppInput
-							v-model="job_part_number_includes"
-							class="px-1"
-							:type="'text'"
-							:name="'job_part_number_includes'"
-							:label="'Job Part number'"
-						/>
-					</div>
-					<div
-						class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-						v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
-					>
-						<AppInput
-							v-model="is_paid"
-							class="px-1"
-							:type="'select'"
-							:name="'is_paid'"
-							:label="'Paid'"
-							:items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-						/>
-					</div>
-					<div class="md:px-1 flex w-full">
-						<AppButton
-							:disabled="disabledClearFilter"
-							:label="'Clear'"
-							:in-style="'padding:5px 14px;margin-bottom:5px'"
-							@click="clearFilters"
-						/>
-						<AppButton
-							class="mx-2"
-							:label="'Search'"
-							:in-style="'padding:5px 14px;margin-bottom:5px'"
-							@click="filterJobParts"
-						/>
-						<AppButton
-							class="mx-2 md:hidden"
-							:label="'Close'"
-							:in-style="'padding:5px 14px;margin-bottom:5px'"
-							@click="filterModal = false"
-						/>
-					</div>
-				</div>
+      <div v-if="!initialLoading">
+        <AppButton
+          v-if="!['pension-form-b'].includes($route.query.status)"
+          :label="'Filter'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          @click="filterModal = !filterModal"
+        />
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          @click="refreshInvoices"
+        />
+        <div
+          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          :class="filterModal ? 'flex' : 'hidden'"
+        >
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_ir35"
+              class="px-1"
+              :type="'select'"
+              :name="'job_ir35'"
+              :label="'Inside ir35'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+            />
+          </div>
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
+          >
+            <AppInput
+              v-model="invoice_number"
+              class="px-1"
+              :type="'text'"
+              :name="'invoice_number'"
+              :label="'Invoice number'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_part_number_includes"
+              class="px-1"
+              :type="'text'"
+              :name="'job_part_number_includes'"
+              :label="'Job Part number'"
+            />
+          </div>
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
+          >
+            <AppInput
+              v-model="is_paid"
+              class="px-1"
+              :type="'select'"
+              :name="'is_paid'"
+              :label="'Paid'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+            />
+          </div>
+          <div class="md:px-1 flex w-full">
+            <AppButton
+              :disabled="disabledClearFilter"
+              :label="'Clear'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
+              @click="clearFilters"
+            />
+            <AppButton
+              class="mx-2"
+              :label="'Search'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
+              @click="filterJobParts"
+            />
+            <AppButton
+              class="mx-2 md:hidden"
+              :label="'Close'"
+              :in-style="'padding:5px 14px;margin-bottom:5px'"
+              @click="filterModal = false"
+            />
+          </div>
+        </div>
 
-				<template
-					v-if="(!$route.query.status || ($route.query.status && $route.query.status !== 'pension-form-b'))"
-				>
-					<AppTable
-						v-if="job_parts.length > 0"
-						:total="total"
-						:items="job_parts"
-						:current-page="current_page"
-						:per-page="limit"
-						:columns="columns"
-						:order-by="order_by"
-						:loading="loading"
-						@pagechanged="pagechanged"
-						@limitchanged="limitchanged"
-						@sorted="sorted"
-					>
-						<template v-slot:actions="slotProps">
-							<div class="flex flex-wrap justify-center">
-								<div
-									v-if="!slotProps.item.locum_invoice_id"
-									class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
-									@click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
-								>Generate Invoice</div>
+        <template
+          v-if="(!$route.query.status || ($route.query.status && $route.query.status !== 'pension-form-b'))"
+        >
+          <AppTable
+            v-if="job_parts.length > 0"
+            :total="total"
+            :items="job_parts"
+            :current-page="current_page"
+            :per-page="limit"
+            :columns="columns"
+            :order-by="order_by"
+            :loading="loading"
+            @pagechanged="pagechanged"
+            @limitchanged="limitchanged"
+            @sorted="sorted"
+          >
+            <template v-slot:actions="slotProps">
+              <div class="flex flex-wrap justify-center">
+                <div
+                  v-if="!slotProps.item.locum_invoice_id"
+                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
+                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
+                >Generate Invoice</div>
 
-								<div
-									v-if="
+                <div
+                  v-if="
                     slotProps.item.locum_invoice_id
                       && slotProps.item.locum_status !== 'Approved'
                   "
-									class="flex flex-wrap justify-around"
-								>
-									<div
-										class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-										@click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
-									>Edit</div>
-									<button
-										v-if="!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced'"
-										class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
-										@click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-									>Delete</button>
-								</div>
+                  class="flex flex-wrap justify-around"
+                >
+                  <div
+                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                    @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                  >Edit</div>
+                  <button
+                    v-if="!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced'"
+                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
+                    @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
+                  >Delete</button>
+                </div>
 
-								<div
-									v-if="['approved'].includes($route.query.status)"
-									class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-									@click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-								>View</div>
+                <div
+                  v-if="['approved'].includes($route.query.status)"
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                >View</div>
 
-								<div
-									v-if="
+                <div
+                  v-if="
                     $route.query.status && $route.query.status === 'pension-form-a'
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
                   "
-									class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-									@click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
-								>View Form A</div>
-								<div
-									v-if="
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
+                >View Form A</div>
+                <div
+                  v-if="
                     $route.query.status && $route.query.status === 'pension-form-a'
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
                   "
-									class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
-									:class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
-									@click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_form_a_sent_to_practice)"
-								>{{ `${slotProps.item.locum_form_a_sent_to_practice === 1 ? 'Already Sent' : 'Send Form to Practice'}` }}</div>
+                  class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
+                  :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
+                  @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_form_a_sent_to_practice)"
+                >{{ `${slotProps.item.locum_form_a_sent_to_practice === 1 ? 'Already Sent' : 'Send Form to Practice'}` }}</div>
 
-								<div
-									v-if="
+                <div
+                  v-if="
                     $route.query.status && $route.query.status === 'solo-form'
                       && slotProps.item.ooh
                       && slotProps.item.locum_solo_form_id
                   "
-									class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-									@click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
-								>View Solo Form</div>
-							</div>
-						</template>
-					</AppTable>
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
+                >View Solo Form</div>
+              </div>
+            </template>
+          </AppTable>
 
-					<div
-						v-if="!job_parts.length && !isFiltered"
-						class="flex justify-center"
-					>{{ noJobPartsToDisplay }}</div>
-					<div v-if="!job_parts.length && isFiltered" class="flex justify-center py-4">No Jobs Found</div>
-				</template>
+          <div
+            v-if="!job_parts.length && !isFiltered"
+            class="flex justify-center"
+          >{{ noJobPartsToDisplay }}</div>
+          <div v-if="!job_parts.length && isFiltered" class="flex justify-center py-4">No Jobs Found</div>
+        </template>
 
-				<template v-if="($route.query.status && $route.query.status === 'pension-form-b')">
-					<AppTable
-						v-if="locum_form_bs.length > 0"
-						:total="total"
-						:items="locum_form_bs"
-						:current-page="current_page"
-						:per-page="limit"
-						:columns="form_bs_columns"
-						:order-by="order_by"
-						:loading="loading"
-						@pagechanged="pagechanged"
-						@limitchanged="limitchanged"
-						@sorted="sorted"
-					>
-						<template v-slot:actions="slotProps">
-							<div class="flex justify-center">
-								<div
-									class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-									@click="viewAsPdf(slotProps.item.id, 'form-b')"
-								>View Form B</div>
-							</div>
-							<!-- <div class="flex justify-center">
+        <template v-if="($route.query.status && $route.query.status === 'pension-form-b')">
+          <AppTable
+            v-if="locum_form_bs.length > 0"
+            :total="total"
+            :items="locum_form_bs"
+            :current-page="current_page"
+            :per-page="limit"
+            :columns="form_bs_columns"
+            :order-by="order_by"
+            :loading="loading"
+            @pagechanged="pagechanged"
+            @limitchanged="limitchanged"
+            @sorted="sorted"
+          >
+            <template v-slot:actions="slotProps">
+              <div class="flex justify-center">
+                <div
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="viewAsPdf(slotProps.item.id, 'form-b')"
+                >View Form B</div>
+              </div>
+              <!-- <div class="flex justify-center">
                 <div
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="showTest(slotProps.item.id, 'form-b')"
                 >
                   Show Test Form B
                 </div>
-							</div>-->
-						</template>
-					</AppTable>
-					<div v-if="locum_form_bs.length === 0" class="flex justify-center">{{ noJobPartsToDisplay }}</div>
-				</template>
-			</div>
-		</transition>
+              </div>-->
+            </template>
+          </AppTable>
+          <div
+            v-if="locum_form_bs.length === 0"
+            class="flex justify-center"
+          >{{ noJobPartsToDisplay }}</div>
+        </template>
+      </div>
+    </transition>
 
-		<AppConfirmationModal
-			:label="'Proceed to delete this draft?'"
-			:confirm-label="'Yes'"
-			:cancel-label="'Cancel'"
-			:modal="delete_invoice_modal"
-			@confirm="deleteInvoice"
-			@cancel="delete_invoice_modal = false, invoice_id = null"
-		/>
+    <AppConfirmationModal
+      :label="'Proceed to delete this draft?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="delete_invoice_modal"
+      @confirm="deleteInvoice"
+      @cancel="delete_invoice_modal = false, invoice_id = null"
+    />
 
-		<AppConfirmationModal
-			:label="'Generate NHS Form A for this Invoice?'"
-			:confirm-label="'Yes'"
-			:cancel-label="'Cancel'"
-			:modal="generate_form_a_modal"
-			@confirm="generateFormA"
-			@cancel="generate_form_a_modal = false"
-		/>
+    <AppConfirmationModal
+      :label="'Generate NHS Form A for this Invoice?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="generate_form_a_modal"
+      @confirm="generateFormA"
+      @cancel="generate_form_a_modal = false"
+    />
 
-		<AppConfirmationModal
-			:label="'Send this Form A to Practice?'"
-			:confirm-label="'Yes'"
-			:cancel-label="'Cancel'"
-			:modal="send_form_a_modal"
-			@confirm="sendForm"
-			@cancel="send_form_a_modal = false"
-		/>
+    <AppConfirmationModal
+      :label="'Send this Form A to Practice?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="send_form_a_modal"
+      @confirm="sendForm"
+      @cancel="send_form_a_modal = false"
+    />
 
-		<transition name="fade" mode="out-in">
-			<nuxt-link
-				v-if="
+    <transition name="fade" mode="out-in">
+      <nuxt-link
+        v-if="
           [
             'locum-billing-invoices-id',
             'locum-billing-invoices-id-create',
@@ -300,17 +303,17 @@
           ].includes($route.name)
             || delete_invoice_modal
         "
-				:to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
-				class="shield"
-			/>
-		</transition>
+        :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
+        class="shield"
+      />
+    </transition>
 
-		<nuxt-child
-			@createInvoice="createInvoice"
-			@updateInvoice="updateInvoice"
-			@createFormB="createFormB"
-		/>
-	</section>
+    <nuxt-child
+      @createInvoice="createInvoice"
+      @updateInvoice="updateInvoice"
+      @createFormB="createFormB"
+    />
+  </section>
 </template>
 
 <script>
@@ -687,27 +690,30 @@ export default {
             // rate / ((final_hours_in_minutes / 60) / 2)
 
             jobPart.schedules.forEach(schedule => {
-              switch (schedule.locum_detail_rate_type.name) {
-                case "Per Hour":
-                  total =
-                    total +
-                    schedule.rate * (schedule.final_hours_in_minutes / 60);
-                  break;
-                case "Per Whole Day Session":
-                  total =
-                    total +
-                    schedule.rate / (schedule.final_hours_in_minutes / 60);
-                  break;
-                case "Per Half Day Session":
-                  total =
-                    total +
-                    schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
-                  break;
-                default:
-                  total =
-                    total +
-                    schedule.rate * (schedule.final_hours_in_minutes / 60);
-                  break;
+              if (!schedule.absent_reason) {
+                switch (schedule.locum_detail_rate_type.name) {
+                  case "Per Hour":
+                    total =
+                      total +
+                      schedule.rate * (schedule.final_hours_in_minutes / 60);
+                    break;
+                  case "Per Whole Day Session":
+                    total =
+                      total +
+                      schedule.rate / (schedule.final_hours_in_minutes / 60);
+                    break;
+                  case "Per Half Day Session":
+                    total =
+                      total +
+                      schedule.rate /
+                        (schedule.final_hours_in_minutes / 60 / 2);
+                    break;
+                  default:
+                    total =
+                      total +
+                      schedule.rate * (schedule.final_hours_in_minutes / 60);
+                    break;
+                }
               }
             });
           }
@@ -968,28 +974,33 @@ export default {
                 // rate / ((final_hours_in_minutes / 60) / 2)
 
                 jobPart.schedules.forEach(schedule => {
-                  switch (schedule.locum_detail_rate_type.name) {
-                    case "Per Hour":
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Whole Day Session":
-                      total =
-                        total +
-                        schedule.rate / (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Half Day Session":
-                      total =
-                        total +
-                        schedule.rate /
-                          (schedule.final_hours_in_minutes / 60 / 2);
-                      break;
-                    default:
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
+                  if (!schedule.absent_reason) {
+                    switch (schedule.locum_detail_rate_type.name) {
+                      case "Per Hour":
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Whole Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Half Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60 / 2);
+                        break;
+                      default:
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                    }
                   }
                 });
               }
@@ -1141,28 +1152,33 @@ export default {
                 // rate / ((final_hours_in_minutes / 60) / 2)
 
                 jobPart.schedules.forEach(schedule => {
-                  switch (schedule.locum_detail_rate_type.name) {
-                    case "Per Hour":
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Whole Day Session":
-                      total =
-                        total +
-                        schedule.rate / (schedule.final_hours_in_minutes / 60);
-                      break;
-                    case "Per Half Day Session":
-                      total =
-                        total +
-                        schedule.rate /
-                          (schedule.final_hours_in_minutes / 60 / 2);
-                      break;
-                    default:
-                      total =
-                        total +
-                        schedule.rate * (schedule.final_hours_in_minutes / 60);
-                      break;
+                  if (!schedule.absent_reason) {
+                    switch (schedule.locum_detail_rate_type.name) {
+                      case "Per Hour":
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Whole Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Half Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60 / 2);
+                        break;
+                      default:
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                    }
                   }
                 });
               }
@@ -1411,6 +1427,6 @@ export default {
 
 <style scoped>
 .shield {
-	z-index: 511;
+  z-index: 511;
 }
 </style>

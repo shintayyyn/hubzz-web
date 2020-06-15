@@ -580,27 +580,29 @@ export default {
           // rate / ((final_hours_in_minutes / 60) / 2)
 
           jobPart.schedules.forEach(schedule => {
-            switch (schedule.locum_detail_rate_type.name) {
-              case "Per Hour":
-                total =
-                  total +
-                  schedule.rate * (schedule.final_hours_in_minutes / 60);
-                break;
-              case "Per Whole Day Session":
-                total =
-                  total +
-                  schedule.rate / (schedule.final_hours_in_minutes / 60);
-                break;
-              case "Per Half Day Session":
-                total =
-                  total +
-                  schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
-                break;
-              default:
-                total =
-                  total +
-                  schedule.rate * (schedule.final_hours_in_minutes / 60);
-                break;
+            if (!schedule.absent_reason) {
+              switch (schedule.locum_detail_rate_type.name) {
+                case "Per Hour":
+                  total =
+                    total +
+                    schedule.rate * (schedule.final_hours_in_minutes / 60);
+                  break;
+                case "Per Whole Day Session":
+                  total =
+                    total +
+                    schedule.rate / (schedule.final_hours_in_minutes / 60);
+                  break;
+                case "Per Half Day Session":
+                  total =
+                    total +
+                    schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+                  break;
+                default:
+                  total =
+                    total +
+                    schedule.rate * (schedule.final_hours_in_minutes / 60);
+                  break;
+              }
             }
           });
         }
@@ -777,28 +779,30 @@ export default {
               // rate / ((final_hours_in_minutes / 60) / 2)
 
               jobPart.schedules.forEach(schedule => {
-                switch (schedule.locum_detail_rate_type.name) {
-                  case "Per Hour":
-                    total =
-                      total +
-                      schedule.rate * (schedule.final_hours_in_minutes / 60);
-                    break;
-                  case "Per Whole Day Session":
-                    total =
-                      total +
-                      schedule.rate / (schedule.final_hours_in_minutes / 60);
-                    break;
-                  case "Per Half Day Session":
-                    total =
-                      total +
-                      schedule.rate /
-                        (schedule.final_hours_in_minutes / 60 / 2);
-                    break;
-                  default:
-                    total =
-                      total +
-                      schedule.rate * (schedule.final_hours_in_minutes / 60);
-                    break;
+                if (!schedule.absent_reason) {
+                  switch (schedule.locum_detail_rate_type.name) {
+                    case "Per Hour":
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Whole Day Session":
+                      total =
+                        total +
+                        schedule.rate / (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Half Day Session":
+                      total =
+                        total +
+                        schedule.rate /
+                          (schedule.final_hours_in_minutes / 60 / 2);
+                      break;
+                    default:
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                  }
                 }
               });
             }
@@ -926,28 +930,30 @@ export default {
               // rate / ((final_hours_in_minutes / 60) / 2)
 
               jobPart.schedules.forEach(schedule => {
-                switch (schedule.locum_detail_rate_type.name) {
-                  case "Per Hour":
-                    total =
-                      total +
-                      schedule.rate * (schedule.final_hours_in_minutes / 60);
-                    break;
-                  case "Per Whole Day Session":
-                    total =
-                      total +
-                      schedule.rate / (schedule.final_hours_in_minutes / 60);
-                    break;
-                  case "Per Half Day Session":
-                    total =
-                      total +
-                      schedule.rate /
-                        (schedule.final_hours_in_minutes / 60 / 2);
-                    break;
-                  default:
-                    total =
-                      total +
-                      schedule.rate * (schedule.final_hours_in_minutes / 60);
-                    break;
+                if (!schedule.absent_reason) {
+                  switch (schedule.locum_detail_rate_type.name) {
+                    case "Per Hour":
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Whole Day Session":
+                      total =
+                        total +
+                        schedule.rate / (schedule.final_hours_in_minutes / 60);
+                      break;
+                    case "Per Half Day Session":
+                      total =
+                        total +
+                        schedule.rate /
+                          (schedule.final_hours_in_minutes / 60 / 2);
+                      break;
+                    default:
+                      total =
+                        total +
+                        schedule.rate * (schedule.final_hours_in_minutes / 60);
+                      break;
+                  }
                 }
               });
             }
