@@ -42,7 +42,16 @@
     </div>
 
     <div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
-      <div class="text-sm sm:text-base font-bold">
+      <div
+        v-if="$auth.user.practice_detail.practice.status === 'Suspended'"
+        class="text-sm sm:text-base font-bold"
+      >
+        Your account has been suspended by Hubzz. Please contact the administrator to activate it.
+      </div>
+      <div
+        v-if="$auth.user.practice_detail.practice.status !== 'Suspended'"
+        class="text-sm sm:text-base font-bold"
+      >
         Hubzz is in the process of verifying your registration. You will
         receive a notification when this has been completed, with full access to the platform.
       </div>
@@ -114,7 +123,7 @@
           }
           if (domain === "Practice") {
             let practiceStatus = this.$auth.user.practice_detail.practice.status
-            if (accountStatus === "Active" && practiceStatus === "Active") {
+            if (accountStatus === "Active" && (practiceStatus === "Active" || practiceStatus === "Dormant")) {
               return true
             }
             return false

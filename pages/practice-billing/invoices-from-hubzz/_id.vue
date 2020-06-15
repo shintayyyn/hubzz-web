@@ -6,19 +6,19 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </div>-->
         <nuxt-link 
-          :to="{ name: 'practice-billing-invoices-from-hubzz' }">
+          :to="{ name: 'practice-billing-invoices-from-hubzz' }"
+        >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
-
       </div>
+      
       <!-- billing -->
       <section>
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
           <label class="mx-1 py-2 px-3">Type:</label>
-          <button
-            class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
-            :disabled="true"
-          >Platform</button>
+          <div class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500">
+            Platform
+          </div>
         </div>
 
         <div class="m-4">
@@ -34,13 +34,11 @@
             :dateEnd="practiceInvoice.date_end"
           />
         </div>
-
       </section>
     </div>
   </div>
 </template>
 <script>
-import AppDate from "@/components/Base/AppDate";
 import HubzzBillingForm from "@/components/Billing/HubzzBillingForm"
 export default {
   transition: {
@@ -50,60 +48,67 @@ export default {
   components: {
     HubzzBillingForm,
   },
-  async asyncData({ app, auth, error, params }) {
+  computed: {
+    issuedOrPaid () {
+      return this.practiceInvoice.paid_at
+        ? this.practiceInvoice.paid_at
+        : this.practiceInvoice.issued_at
+    }
+  },
+  async asyncData ({ app, params }) {
     try {
       if (process.client) {
-        document.body.style.cursor = "wait";
+        document.body.style.cursor = "wait"
       }
-      let response = await app.$axios.get(
+      let response = await app.$axios.get(`/api/v1/me`)
+      const practice = response.data.data.user.practice_detail.practice
+      console.log('practice', practice)
+      response = await app.$axios.get(
         `/api/v1/practice/practice-invoices/${params.id}`
-      );
+      )
       const practiceInvoice =
         response.data &&
         response.data.data &&
         response.data.data.practice_invoice
           ? response.data.data.practice_invoice
-          : null;
+          : null
 
       if (process.client) {
-        document.body.style.cursor = "auto";
+        document.body.style.cursor = "auto"
       }
 
-      response = await app.$axios.$get(`/api/v1/me`)
-
-      const practice = response.data.user.practice_detail
-
-      const practiceInvoiceItems = practiceInvoice.practice_invoice_items;
+      const practiceInvoiceItems = practiceInvoice.practice_invoice_items
 
       let invoiceItems = []
       let disputedItems = []
       let debitItems = []
       let creditItems = []
-
+      console.log('practiceInvoiceItems', practiceInvoiceItems)
 			for (let i = 0; i < practiceInvoiceItems.length; i++) {
 				const newItem = {
 					job_part_id: practiceInvoiceItems[i].id,
 					description: practiceInvoiceItems[i].description,
-					total: practiceInvoiceItems[i].total.toFixed(2)
-        };
+          total: practiceInvoiceItems[i].total.toFixed(2),
+          total_hours: practiceInvoiceItems[i].job_part ? (practiceInvoiceItems[i].job_part.final_hours)/60 : null
+        }
         if(practiceInvoiceItems[i].type.includes('Job Part - Approved') 
           || practiceInvoiceItems[i].type.includes('Job Part - Issued')
           || practiceInvoiceItems[i].type.includes('Job Part - Invoiced')) {
           console.log('normal invoice item has been pushed')
-          newItem.id = invoiceItems.length + 1;
-          invoiceItems.push(newItem);
+          newItem.id = invoiceItems.length + 1
+          invoiceItems.push(newItem)
         }else if(practiceInvoiceItems[i].type.includes('Job Part - Disputed')){
           console.log('disputed invoice item has been pushed')
-          newItem.id = disputedItems.length + 1;
-          disputedItems.push(newItem);
+          newItem.id = disputedItems.length + 1
+          disputedItems.push(newItem)
         }else if(practiceInvoiceItems[i].type.includes('Debit')) {
           console.log('debit invoice item has been pushed')
-          newItem.id = debitItems.length + 1;
-          debitItems.push(newItem);
+          newItem.id = debitItems.length + 1
+          debitItems.push(newItem)
         }else if(practiceInvoiceItems[i].type.includes('Credit')) {
           console.log('credit invoice item has been pushed')
-          newItem.id = creditItems.length + 1;
-          creditItems.push(newItem);
+          newItem.id = creditItems.length + 1
+          creditItems.push(newItem)
         }else{
           console.log('it didnt work lol')
         }
@@ -115,46 +120,31 @@ export default {
         disputedItems,
         debitItems,
         creditItems
-      };
+      }
     } catch (err) {
       // if (err && err.response.status === 404) {
-      //   return error({ status: 404, message: "This page could not be found" });
+      //   return error({ status: 404, message: "This page could not be found" })
       // } else if (err & (err.response.status === 500)) {
-      //   return error({ status: 500, message: "Something went wrong!" });
+      //   return error({ status: 500, message: "Something went wrong!" })
       // }
-      throw err;
-    }
-  },
-
-
-
-  computed: {
-    issuedOrPaid() {
-      return this.practiceInvoice.paid_at
-        ? this.practiceInvoice.paid_at
-        : this.practiceInvoice.issued_at;
-    }
-  },
-  
-  methods: {
-    exportToPdf(){
-      window.open(
-        `${process.env.API_URL}/api/v1/practice-invoices/${this.invoice.id}/pdf?filename=${'hubzz_invoice_'+this.invoice.invoice_number}`
-      );
+      throw err
     }
   },
 
   // mounted() {
-  //   this.surgery_name = this.practiceInvoice.practice.name;
-  //   this.form.date_start = this.practiceInvoice.date_start;
-  //   this.form.date_end = this.practiceInvoice.date_end;
-  //   document.body.style.overflow = "hidden";
+  //   this.surgery_name = this.practiceInvoice.practice.name
+  //   this.form.date_start = this.practiceInvoice.date_start
+  //   this.form.date_end = this.practiceInvoice.date_end
+  //   document.body.style.overflow = "hidden"
   // },
 
-  destroyed() {
-    document.body.style.overflow = "auto";
+  destroyed () {
+    document.body.style.overflow = "auto"
+  },
+  
+  methods: {
   }
-};
+}
 </script>
 
 <style scoped>
