@@ -179,7 +179,6 @@
             </div>
           </div>
         </div>
-
         <!-- FOR DISPUTED -->
         <div
           v-if="disputedItems && disputedItems.length > 0"
@@ -265,9 +264,8 @@
             </div>
           </div>
         </div>
-
         <!-- FOR DEBITS -->
-        <div v-if="!locumInvoice" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
+        <div v-if="createdDebitItems && createdDebitItems.length > 0" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
           <div
             :ref="'items-header'"
             :class="!doNotShow && 'px-4'"
@@ -350,7 +348,7 @@
         </div>
 
         <!-- FOR CREDITS -->
-        <div v-if="!locumInvoice" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
+        <div v-if="createdCreditItems && createdCreditItems.length > 0" class="flex flex-col overflow-x-auto" :class="doNotShow && 'mx-4'">
           <div
             :ref="'items-header'"
             :class="!doNotShow && 'px-4'"
@@ -431,12 +429,20 @@
           </div>
         </div>
 
-        <div ref="items-total" class="flex justify-betwen px-4 pt-2">
+        <div ref="items-total" class="flex justify-between px-4 pt-2">
           <div class="my-1 px-1 w-3/4 font-bold">
             Total
           </div>
           <div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">
-            {{ "£ " + amountTotal }}
+            {{ "£ " + practiceInvoice.total_amount.toFixed(2) }}
+          </div>
+        </div>
+        <div class="flex flex-row justify-between px-4 w-full">
+          <span class="my-1 px-1 font-bold">
+            Total Hours
+          </span>
+          <div class="my-1 px-1 text-right text-lg font-semibold">
+            {{ totalHoursSum + ' Hours' }}
           </div>
         </div>
       </div>
@@ -539,9 +545,22 @@ export default {
 			}
 			const netSum = parseFloat(grossSum + debitTotal - creditTotal).toFixed(2)
 			return netSum
-		}
-	},
+    },
+    totalHoursSum: function () {
+      let totalHours = 0
+      const reducer = (accumulator, currentValue) => accumulator + currentValue
+      if (this.invoiceItems && this.invoiceItems.length > 0) {
+        let invoiceItemHours = this.invoiceItems.map(invoiceItem => 
+          parseFloat(invoiceItem.total_hours ? invoiceItem.total_hours : 0)
+        )
+        totalHours = invoiceItemHours.reduce(reducer)
+      }
+      return totalHours.toFixed(2)
+    },
+  },
+  
 	created () {
+    console.log('invoiceItems', this.invoiceItems)
 		// if (this.invoiceItems) {
 		//   this.createdInvoiceItems = this.invoiceItems
 		// }
@@ -585,7 +604,14 @@ export default {
 				)
 			} else if (this.practiceInvoice) {
 				window.open(
-					`${process.env.API_URL}/api/v1/practice-invoices/${this.practiceInvoice.id}/pdf`
+					`${process.env.API_URL}/api/v1/practice-invoices/${
+						this.practiceInvoice.id
+					}/pdf?filename=${"hubzz_" +
+						this.$moment(this.practiceInvoice.issued_at, 'YYYY-MM-DD[T]').utc().format("DD/MM/YYYY") +
+						"_" +
+						this.practiceInvoice.invoice_number +
+						"_" +
+						this.practiceInvoice.practice.code}`
 				)
 			}
 		},
