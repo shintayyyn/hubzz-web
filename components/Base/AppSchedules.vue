@@ -349,8 +349,8 @@
 												<!-- FINAL RATE -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													£ {{ getRate(shift,
-													shift.time_start,
-													shift.time_end,
+													shift.final_time_start,
+													shift.final_time_end,
 													item.date) | currency }}
 												</div>
 												<!-- DISPUTE? -->
@@ -547,11 +547,11 @@
 							</div>
 							<div class="flex justify-between">
 								<p class="w-2/3">Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:</p>
-								<p class="w-1/3">£ {{ getJobGrossRate(filteredSchedule) | currency}}</p>
+								<p class="w-1/3">£ {{ getJobGrossRate(filteredSchedule, this.toComplete) | currency}}</p>
 							</div>
 							<div class="flex justify-between">
 								<p class="w-2/3">Total Job Gross Rate:</p>
-								<p class="w-1/3">£ {{ getJobGrossRate(schedules) | currency}}</p>
+								<p class="w-1/3">£ {{ getJobGrossRate(schedules, this.toComplete) | currency}}</p>
 							</div>
 							<div class="flex justify-between" v-if="toComplete">
 								<p class="w-2/3">Hubzz Fee*:</p>
@@ -692,7 +692,7 @@ export default {
 							absent_reason: ""
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.fina_time_start === sched.final_time_end;
+						let isAbsent = sched.final_time_start === sched.final_time_end;
 						let finalRate = this.getRate(
 							sched,
 							sched.fina_time_start,
@@ -738,7 +738,6 @@ export default {
 						});
 					}
 				} else {
-					console.log(this.invoiceDetails);
 					this.schedule_dates.push(
 						this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 					);
@@ -1419,21 +1418,30 @@ export default {
 				// Hourly
 				case 1:
 				case "1":
-					return startTime && endTime && total_hours !== 0
+					return !shift.has_absences &&
+						startTime &&
+						endTime &&
+						total_hours !== 0
 						? shift.rate * total_hours
 						: 0;
 					break;
 				// Half Day
 				case 2:
 				case "2":
-					return startTime && endTime && total_hours !== 0
+					return !shift.has_absences &&
+						startTime &&
+						endTime &&
+						total_hours !== 0
 						? shift.rate / (total_hours / 2)
 						: 0;
 					break;
 				// Whole Day
 				case 3:
 				case "3":
-					return startTime && endTime && total_hours !== 0
+					return !shift.has_absences &&
+						startTime &&
+						endTime &&
+						total_hours !== 0
 						? shift.rate / total_hours
 						: 0;
 					break;
@@ -1453,6 +1461,13 @@ export default {
 							...item.shifts.map(shift =>
 								shift.has_absences
 									? 0
+									: final
+									? this.getRate(
+											shift,
+											shift.final_time_start,
+											shift.final_time_end,
+											item.date
+									  )
 									: this.getRate(
 											shift,
 											shift.time_start,
@@ -1722,16 +1737,15 @@ export default {
 			});
 		},
 		absent(shift) {
-			console.log("absent");
 			shift.has_absences = !shift.has_absences;
 			if (shift.has_absences) {
 				shift.final_time_start = "";
 				shift.final_time_end = "";
-				if (shift.has_absences == shift.orig_has_absences) {
-					shift.dispute = false;
-				} else {
-					shift.dispute = true;
-				}
+				// if (shift.has_absences == shift.orig_has_absences) {
+				// 	shift.dispute = false;
+				// } else {
+				// 	shift.dispute = true;
+				// }
 			} else {
 				shift.final_time_start = shift.orig_has_absences
 					? ""
@@ -1740,15 +1754,15 @@ export default {
 					? ""
 					: shift.orig_final_end;
 
-				if (
-					shift.final_time_start === shift.orig_final_start &&
-					shift.orig_final_end === shift.final_time_end &&
-					shift.has_absences == shift.orig_has_absences
-				) {
-					shift.dispute = false;
-				} else {
-					shift.dispute = true;
-				}
+				// if (
+				// 	shift.final_time_start === shift.orig_final_start &&
+				// 	shift.orig_final_end === shift.final_time_end &&
+				// 	shift.has_absences == shift.orig_has_absences
+				// ) {
+				// 	shift.dispute = false;
+				// } else {
+				// 	shift.dispute = true;
+				// }
 			}
 		},
 		isAbsent(shift) {
@@ -1789,7 +1803,6 @@ export default {
 			}
 		},
 		isDisputed(shift) {
-			console.log("isDisputed mehtods");
 			if (!shift.has_absences) {
 				if (
 					shift.final_time_start === shift.orig_final_start &&
