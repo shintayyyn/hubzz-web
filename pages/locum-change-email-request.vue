@@ -453,7 +453,7 @@
           let message = null
 
           if (err.response) {
-            if (err.response.status === 400 || err.response.data.error_messages) {
+            if (err.response.status === 400 && err.response.data.error_messages) {
               this.formErrors = err.response.data.error_messages
             } else {
               message = err.response.data.message
