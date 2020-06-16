@@ -932,7 +932,6 @@ export default {
 							late_hours_reason: "",
 							description: ""
 						});
-						console.log("asdasd");
 						shift.has_absences ? (absentCount += 1) : "";
 
 						// if (shift.final_time_start !== "") {
