@@ -16,7 +16,7 @@
             <div style="position:sticky;top:0" class="flex">
               <p
                 class="bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
+                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
               >DATE</p>
               <p
                 v-if="job_part.status === 'Completed'"
@@ -25,59 +25,66 @@
               >FINAL TIME</p>
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
+                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >SHIFT</p>
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:150px;max-width:100px"
+                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >RATE</p>
-              <p
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
-              >LATE</p>
-              <p
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
-              >REASON</p>
-              <p
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
-              >ABSENCES</p>
-              <p
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
-              >REASON</p>
+              <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+                <p
+                  class="text-center bg-gray-400 p-1 font-bold text-xs"
+                  style="min-width:100px;max-width:100px"
+                >REMARKS</p>
+                <p
+                  class="text-center bg-gray-400 p-1 font-bold text-xs"
+                  style="min-width:100px;max-width:100px"
+                >REASON</p>
+                <!-- <p
+                  class="text-center bg-gray-400 p-1 font-bold text-xs"
+                  style="min-width:100px;max-width:100px"
+                >LATE</p>
+                <p
+                  class="text-center bg-gray-400 p-1 font-bold text-xs"
+                  style="min-width:100px;max-width:100px"
+                >REASON</p>
+                <p
+                  class="text-center bg-gray-400 p-1 font-bold text-xs"
+                  style="min-width:100px;max-width:100px"
+                >ABSENCES</p>
+                <p
+                  class="text-center bg-gray-400 p-1 font-bold text-xs"
+                  style="min-width:100px;max-width:100px"
+                >REASON</p>-->
+              </template>
             </div>
             <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex pb-2">
               <p
-                style="min-width:100px;max-width:100px"
+                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
               >{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
               <p
                 v-if="job_part.status === 'Completed'"
                 class="text-center"
                 style="min-width:100px;max-width:100px"
               >{{ sched.final_time_start }} - {{ sched.final_time_end }}</p>
-              <p class="text-center" style="min-width:100px;max-width:100px">{{ sched.shift.name }}</p>
               <p
                 class="text-center"
-                style="min-width:150px;max-width:100px"
+                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+              >{{ sched.shift.name }}</p>
+              <p
+                class="text-center"
+                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
-              <p
-                class="text-center"
-                style="min-width:100px;max-width:100px"
-              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) ? 'YES' : 'NO'}` }}</p>
-              <p
-                class="text-center"
-                style="min-width:100px;max-width:100px"
-              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
-              <p
-                class="text-center"
-                style="min-width:100px;max-width:100px"
-              >{{ `${sched.absent > 0 ? sched.absent : 'NONE'}` }}</p>
-              <p
-                class="text-center"
-                style="min-width:100px;max-width:100px"
-              >{{ `${sched.absent > 0 ? sched.absent_reason : 'N/A'}` }}</p>
+              <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+                <p
+                  class="text-center"
+                  style="min-width:100px;max-width:100px"
+                >{{ `${isAbsent(sched) ? 'Absent' : isLate(sched) ? 'Late' : 'N/A'}` }}</p>
+                <p
+                  class="text-center"
+                  style="min-width:100px;max-width:100px"
+                >{{ `${isAbsent(sched) && sched.absent_reason ? sched.absent_reason : isLate(sched) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
+              </template>
             </div>
           </div>
           <!-- <div class="hidden lg:flex font-bold text-xs">
@@ -508,6 +515,15 @@ export default {
       let minute = parseInt(payload.split(":")[1]);
 
       return hour + minute;
+    },
+    isAbsent(payload) {
+      return payload.absent > 0;
+    },
+    isLate(payload) {
+      return (
+        this.convertTimeToMinutes(payload.final_time_start) >
+        this.convertTimeToMinutes(payload.time_start)
+      );
     }
   }
 };
