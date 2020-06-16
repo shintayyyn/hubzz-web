@@ -1,13 +1,14 @@
 <template>
 	<section>
 		<AppConfirmationModal
-			:label="`Are you sure you want to apply this shift to ${confirmApply.type === 'job_part' ? 'this job part' : 'all dates'}?`"
+			:label="['job_part', 'dates'].includes(confirmApply.type) ? `Are you sure you want to apply this shift to ${confirmApply.type === 'job_part' ? 'this job part' : 'all dates'}?` : 'Are you sure to remove all the shift/s on this schedule?'"
 			:confirmLabel="'Yes'"
 			:cancelLabel="'Cancel'"
 			:modal="confirmApply ? true : false"
-			@confirm="applyToAll(confirmApply.type, confirmApply.data)"
+			@confirm="['job_part', 'dates'].includes(confirmApply.type) ? applyToAll(confirmApply.type, confirmApply.data) : clearShifts(confirmApply.data.shifts, confirmApply.data.index)"
 			@cancel="confirmApply = ''"
 		/>
+
 		<div class="flex">
 			<div class="pl-0 p-4" v-if="!toComplete && !toInvoice">
 				<div class="border rounded-lg w-full h-full">
@@ -185,8 +186,9 @@
 														v-model="shift.final_time_start"
 														:name="`final_time_start-s${index}-${i}`"
 														:wrapperClass="'px-1 mt-2 mb-2'"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:inStyle="`background-color: transparent; ${(shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`), ((shift.final_time_start && shift.final_time_start === shift.time_start))  || $moment(`${item.date} ${shift.final_time_start}`).isBefore(`${item.date} ${shift.time_start}`) ? [shift.has_late = false, shift.late_hours_reason=''] : ''"
+														@change="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`), changeStartTime(shift, true), ((shift.final_time_start && shift.final_time_start === shift.time_start))  || $moment(`${item.date} ${shift.final_time_start}`).isBefore(`${item.date} ${shift.time_start}`) ? [shift.has_late = false, shift.late_hours_reason=''] : ''"
 														:error="shiftErrors.find(err => err.field === `final_time_start-s${index}-${i}`)"
 														@blur="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`)"
 														:disabled="[true, 'true'].includes(shift.has_absences)"
@@ -201,6 +203,7 @@
 														v-model="shift.final_time_end"
 														:name="`final_time_end-s${index}-${i}`"
 														:wrapperClass="'px-1 mt-2 mb-2'"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:inStyle="`background-color: transparent; ${(shift.final_time_end && shift.time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), emitSchedule()"
 														:error="shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) ? shiftErrors.find(err => err.field === `final_time_end-s${index}-${i}`) : formError.find(err => err.field === `final_time_end-s${index}-${i}`)"
@@ -293,14 +296,15 @@
 												<div class="flex items-center justify-center text-center w-2/12">{{ shift.rate }}</div>
 												<!-- FIELDS -->
 												<!-- FINAL START -->
-												<div class="flex items-center justify-center text-center w-2/12">
+												<div class="flex flex-col items-center justify-center text-center w-2/12">
 													<template v-if="!toDisplay">
 														<AppTime
 															v-model="shift.final_time_start"
 															:name="`final_time_start-s${index}-${i}`"
 															:wrapperClass="'px-1 mt-2 mb-2'"
+															:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 															:inStyle="`background-color: transparent; ${!isAbsent(shift) && (shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-															@change="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`), onChangeField(shift, item.date)"
+															@change="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`), onChangeField(shift, item.date), changeStartTime(shift, true)"
 															:error="shiftErrors.find(err => err.field === `final_time_start-s${index}-${i}`)"
 															@blur="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`)"
 															:disabled="[true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
@@ -318,6 +322,7 @@
 														v-if="!toDisplay"
 														v-model="shift.final_time_end"
 														:name="`final_time_end-s${index}-${i}`"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:wrapperClass="'px-1 mt-2 mb-2'"
 														:inStyle="`background-color: transparent; ${!isAbsent(shift) && (shift.final_time_end  && shift.time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`), emitSchedule(), onChangeField(shift, item.date)"
@@ -349,8 +354,8 @@
 												<!-- FINAL RATE -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													£ {{ getRate(shift,
-													shift.time_start,
-													shift.time_end,
+													shift.final_time_start,
+													shift.final_time_end,
 													item.date) | currency }}
 												</div>
 												<!-- DISPUTE? -->
@@ -397,7 +402,7 @@
 													<select
 														v-model="shift.shift_id"
 														class="custom-select -mt-8 py-1 text-sm px-2"
-														@change="changeShiftId(shift.shift_id, item.shifts, i)"
+														@change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
 													>
 														<option
 															v-for="option in shifts_option"
@@ -415,8 +420,9 @@
 														v-model="shift.time_start"
 														:name="`time_start-s${index}-${i}`"
 														:wrapperClass="'mb-1 py-1'"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`), changeStartTime(shift)"
 														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
 														@blur="CheckEmptyField(form.phone_number,'phone_number')"
 													/>
@@ -425,6 +431,7 @@
 													<AppTime
 														v-model="shift.time_end"
 														:name="`time_end-s${index}-${i}`"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
@@ -477,9 +484,9 @@
 												</div>
 											</div>
 											<!-- Add button -->
-											<div class="flex justify-start items-center mt-2 mb-4">
+											<div class="flex justify-start items-center mt-3 mb-4 w-1/4">
 												<button
-													class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
+													class="whitespace-no-wrap w-1/2 flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
 													:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
 													@click="addShift(item.shifts, index, item.date)"
 												>
@@ -491,7 +498,11 @@
 														style="transform: rotate(45deg);"
 													/>Add Shift
 												</button>
-												<span v-if="item.shifts.length" class="pl-1">
+												<!-- <span
+													v-if="item.shifts.length"
+													class="mx-1 text-sm text-red-500 hover:text-red-600 cursor-pointer"
+													@click="clearShifts(item.shifts, index)"
+												>
 													<svgicon
 														name="refresh"
 														width="14"
@@ -499,7 +510,16 @@
 														class="fill-current cursor-pointer"
 														@click="clearShifts(item.shifts, index)"
 													/>
-												</span>
+												</span>-->
+												<!-- <button
+													v-if="item.shifts.length"
+													class="w-1/2 flex items-center justify-center border border-red-500 hover:bg-red-200 text-red-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
+													@click="confirmApply={type: 'clear_shifts', data: {shifts: item.shifts, index: index}}"
+												>
+												clearShifts(item.shifts, index)-->
+												<!-- <svgicon name="refresh" width="14" height="14" class="fill-current mr-1" />
+													Clear
+												</button>-->
 												<p
 													class="px-2 whitespace-no-wrap text-sm text-red-500"
 													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
@@ -547,11 +567,11 @@
 							</div>
 							<div class="flex justify-between">
 								<p class="w-2/3">Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:</p>
-								<p class="w-1/3">£ {{ getJobGrossRate(filteredSchedule) | currency}}</p>
+								<p class="w-1/3">£ {{ getJobGrossRate(filteredSchedule, this.toComplete) | currency}}</p>
 							</div>
 							<div class="flex justify-between">
 								<p class="w-2/3">Total Job Gross Rate:</p>
-								<p class="w-1/3">£ {{ getJobGrossRate(schedules) | currency}}</p>
+								<p class="w-1/3">£ {{ getJobGrossRate(schedules, this.toComplete) | currency}}</p>
 							</div>
 							<div class="flex justify-between" v-if="toComplete">
 								<p class="w-2/3">Hubzz Fee*:</p>
@@ -572,6 +592,7 @@
 								:placeholder="'For e.g. Traffic'"
 								:resize="false"
 								:error="formError.find(err => err.field === `late_hours_reason-${selectedShift.index}-${selectedShift.i}`)"
+								:limit="300"
 							/>
 							<AppInput
 								v-if="selectedShift.type === 'absent'"
@@ -583,6 +604,7 @@
 								:placeholder="'For e.g. Sick'"
 								:resize="false"
 								:error="formError.find(err => err.field === `absent_reason-${selectedShift.index}-${selectedShift.i}`)"
+								:limit="300"
 							/>
 							<template v-if="selectedShift.type === 'dispute'">
 								<AppInput
@@ -594,6 +616,7 @@
 									:resize="false"
 									:error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
 									:disabled="toDisplay"
+									:limit="300"
 								/>
 							</template>
 
@@ -644,7 +667,8 @@ export default {
 		shiftErrors: Array,
 		practice_rate: Number,
 		noDisputeReason: Boolean,
-		toDisplay: Boolean
+		toDisplay: Boolean,
+		invoiceDetails: Object
 	},
 	data() {
 		return {
@@ -691,11 +715,13 @@ export default {
 							absent_reason: ""
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.time_start === sched.time_end;
+						let isAbsent = !this.invoiceDetails
+							? sched.final_time_start === sched.final_time_end
+							: sched.time_start === sched.time_end;
 						let finalRate = this.getRate(
 							sched,
-							sched.time_start,
-							sched.time_end,
+							sched.fina_time_start,
+							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
 						let isDisputed = !sched.remarks ? false : true;
@@ -711,9 +737,17 @@ export default {
 							orig_final_start: sched.final_time_start,
 							orig_final_end: sched.final_time_end,
 							orig_has_absences: isAbsent,
-							final_time_start: isAbsent ? "" : sched.time_start,
-							final_time_end: isAbsent ? "" : sched.time_end,
-							late_hours: "",
+							final_time_start: isAbsent
+								? ""
+								: !this.invoiceDetails
+								? sched.final_time_start
+								: sched.time_start,
+							final_time_end: isAbsent
+								? ""
+								: !this.invoiceDetails
+								? sched.final_time_end
+								: sched.time_end,
+							late_hours: sched.late_hours_in_minutes,
 							has_absences: isAbsent,
 							dispute: sched.disputed ? sched.disputed : false,
 							remarks: sched.remarks ? sched.remarks : "",
@@ -753,15 +787,16 @@ export default {
 							]
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.time_start === sched.time_end;
+						let isAbsent = !this.invoiceDetails
+							? sched.final_time_start === sched.final_time_end
+							: sched.time_start === sched.time_end;
 						let finalRate = this.getRate(
 							sched,
-							sched.time_start,
-							sched.time_end,
+							sched.final_time_start,
+							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
 						let isDisputed = !sched.remarks ? false : true;
-						console.log("isDIsputed", isDisputed);
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -779,9 +814,17 @@ export default {
 									orig_final_start: sched.final_time_start,
 									orig_final_end: sched.final_time_end,
 									orig_has_absences: isAbsent,
-									final_time_start: isAbsent ? "" : sched.time_start,
-									final_time_end: isAbsent ? "" : sched.time_end,
-									late_hours: "",
+									final_time_start: isAbsent
+										? ""
+										: !this.invoiceDetails
+										? sched.final_time_start
+										: sched.time_start,
+									final_time_end: isAbsent
+										? ""
+										: !this.invoiceDetails
+										? sched.final_time_end
+										: sched.time_end,
+									late_hours: sched.late_hours_in_minutes,
 									has_absences: isAbsent,
 									dispute: sched.disputed ? sched.disputed : false,
 									remarks: sched.remarks ? sched.remarks : "",
@@ -805,7 +848,6 @@ export default {
 					}
 				}
 			});
-			console.log("schedules", this.schedules);
 		}
 	},
 	watch: {
@@ -878,7 +920,28 @@ export default {
 			this.emitSchedule();
 		},
 		shiftErrors(value) {
-			console.log(value);
+			let has_empty_sched_dates = value.filter(err =>
+				err.field.includes("shift-")
+			);
+			let job_parts = [];
+			if (has_empty_sched_dates.length) {
+				has_empty_sched_dates.forEach(err => {
+					let empty_date = err.field.split("-")[1];
+					let job_part = this.job_parts.find(part =>
+						part.dates.includes(
+							this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+						)
+					);
+					if (job_part) {
+						job_parts.push(job_part.value);
+					}
+				});
+				this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "danger",
+					text: [`Job Part ${job_parts.join(", ")} has an empty schedule.`]
+				});
+			}
 		}
 	},
 	computed: {
@@ -1316,6 +1379,15 @@ export default {
 			let hourDiff = final_start_hour - orig_start_hour;
 			let minDiff = final_start_minute - orig_start_minute;
 
+			if (shift.late_hours > 0 && shift.dispute) {
+				let late_hours =
+					shift.late_hours > 60
+						? parseFloat(shift.late_hours / 60)
+						: shift.late_hours / 100;
+				hourDiff = parseInt(late_hours.toString().split(".")[0]);
+				minDiff = parseInt(late_hours.toString().split(".")[1]);
+			}
+
 			let diff =
 				shift.final_time_start && shift.final_time_end
 					? `${hourDiff > 9 ? hourDiff : `0${hourDiff > -1 ? hourDiff : 0}`}:${
@@ -1393,21 +1465,30 @@ export default {
 				// Hourly
 				case 1:
 				case "1":
-					return startTime && endTime && total_hours !== 0
+					return !shift.has_absences &&
+						startTime &&
+						endTime &&
+						total_hours !== 0
 						? shift.rate * total_hours
 						: 0;
 					break;
 				// Half Day
 				case 2:
 				case "2":
-					return startTime && endTime && total_hours !== 0
+					return !shift.has_absences &&
+						startTime &&
+						endTime &&
+						total_hours !== 0
 						? shift.rate / (total_hours / 2)
 						: 0;
 					break;
 				// Whole Day
 				case 3:
 				case "3":
-					return startTime && endTime && total_hours !== 0
+					return !shift.has_absences &&
+						startTime &&
+						endTime &&
+						total_hours !== 0
 						? shift.rate / total_hours
 						: 0;
 					break;
@@ -1427,6 +1508,13 @@ export default {
 							...item.shifts.map(shift =>
 								shift.has_absences
 									? 0
+									: final
+									? this.getRate(
+											shift,
+											shift.final_time_start,
+											shift.final_time_end,
+											item.date
+									  )
 									: this.getRate(
 											shift,
 											shift.time_start,
@@ -1507,7 +1595,7 @@ export default {
 				? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
 				: 0;
 		},
-		changeShiftId(id, shifts, index) {
+		changeShiftId(id, shifts, index, shift) {
 			if (["5", 5].includes(id)) {
 				shifts.splice(index, 1);
 				let rowError = this.formError.filter(err =>
@@ -1519,6 +1607,9 @@ export default {
 						this.formError.splice(i, errNames.length);
 					}
 				});
+			} else if (["1", 1, "2", 2].includes(id)) {
+				shift.time_start = "";
+				shift.time_end = "";
 			}
 			this.emitSchedule();
 		},
@@ -1694,18 +1785,18 @@ export default {
 					this.formError.splice(i, errNames.length);
 				}
 			});
+			this.confirmApply = "";
 		},
 		absent(shift) {
-			console.log("absent");
 			shift.has_absences = !shift.has_absences;
 			if (shift.has_absences) {
 				shift.final_time_start = "";
 				shift.final_time_end = "";
-				if (shift.has_absences == shift.orig_has_absences) {
-					shift.dispute = false;
-				} else {
-					shift.dispute = true;
-				}
+				// if (shift.has_absences == shift.orig_has_absences) {
+				// 	shift.dispute = false;
+				// } else {
+				// 	shift.dispute = true;
+				// }
 			} else {
 				shift.final_time_start = shift.orig_has_absences
 					? ""
@@ -1714,15 +1805,15 @@ export default {
 					? ""
 					: shift.orig_final_end;
 
-				if (
-					shift.final_time_start === shift.orig_final_start &&
-					shift.orig_final_end === shift.final_time_end &&
-					shift.has_absences == shift.orig_has_absences
-				) {
-					shift.dispute = false;
-				} else {
-					shift.dispute = true;
-				}
+				// if (
+				// 	shift.final_time_start === shift.orig_final_start &&
+				// 	shift.orig_final_end === shift.final_time_end &&
+				// 	shift.has_absences == shift.orig_has_absences
+				// ) {
+				// 	shift.dispute = false;
+				// } else {
+				// 	shift.dispute = true;
+				// }
 			}
 		},
 		isAbsent(shift) {
@@ -1763,7 +1854,6 @@ export default {
 			}
 		},
 		isDisputed(shift) {
-			console.log("isDisputed mehtods");
 			if (!shift.has_absences) {
 				if (
 					shift.final_time_start === shift.orig_final_start &&
@@ -1779,6 +1869,29 @@ export default {
 					shift.dispute = false;
 				} else {
 					shift.dispute = true;
+				}
+			}
+		},
+		changeStartTime(shift, final) {
+			let timeStart = final ? shift.final_time_start : shift.time_start;
+			let timeEnd = final ? shift.final_time_end : shift.time_end;
+			let time_start_hour = timeStart.split(":")[0];
+			let time_start_minute = timeStart.split(":")[1];
+			let time_end_hour = timeEnd.split(":")[0];
+			let time_end_minute = timeEnd.split(":")[1];
+			if (parseInt(time_start_hour) > parseInt(time_end_hour)) {
+				if (final) {
+					shift.final_time_end = "";
+				} else {
+					shift.time_end = "";
+				}
+			} else if (parseInt(time_start_hour) === parseInt(time_end_hour)) {
+				if (parseInt(time_start_minute) > parseInt(time_end_minute)) {
+					if (final) {
+						shift.final_time_end = "";
+					} else {
+						shift.time_end = "";
+					}
 				}
 			}
 		}

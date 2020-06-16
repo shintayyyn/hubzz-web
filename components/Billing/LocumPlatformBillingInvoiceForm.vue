@@ -932,25 +932,24 @@ export default {
 							late_hours_reason: "",
 							description: ""
 						});
-
 						shift.has_absences ? (absentCount += 1) : "";
 
-						if (shift.final_time_start) {
-							let startIndex = this.shiftErrors.findIndex(
-								err => err.field === `final_time_start-s${index}-${i}`
-							);
-							if (startIndex > -1) {
-								this.shiftErrors.splice(startIndex, 1);
-							}
-						}
-						if (shift.final_time_end) {
-							let endIndex = this.shiftErrors.findIndex(
-								err => err.field === `final_time_end-s${index}-${i}`
-							);
-							if (endIndex > -1) {
-								this.shiftErrors.splice(endIndex, 1);
-							}
-						}
+						// if (shift.final_time_start !== "") {
+						// 	let startIndex = this.shiftErrors.findIndex(
+						// 		err => err.field === `final_time_start-s${index}-${i}`
+						// 	);
+						// 	if (startIndex > -1) {
+						// 		this.shiftErrors.splice(startIndex, 1);
+						// 	}
+						// }
+						// if (shift.final_time_end !== "") {
+						// 	let endIndex = this.shiftErrors.findIndex(
+						// 		err => err.field === `final_time_end-s${index}-${i}`
+						// 	);
+						// 	if (endIndex > -1) {
+						// 		this.shiftErrors.splice(endIndex, 1);
+						// 	}
+						// }
 					});
 				}
 			});
@@ -1094,6 +1093,28 @@ export default {
 
 		save(final) {
 			this.formError = [];
+			this.shiftErrors = [];
+
+			if (this.schedule.length) {
+				this.schedule.forEach((sched, index) => {
+					sched.shifts.forEach((shift, i) => {
+						if (!shift.has_absences) {
+							if (!shift.final_time_start) {
+								this.shiftErrors.push({
+									field: `final_time_start-s${index}-${i}`,
+									message: "Final Start is required"
+								});
+							}
+							if (!shift.final_time_end) {
+								this.shiftErrors.push({
+									field: `final_time_end-s${index}-${i}`,
+									message: "Final End is required"
+								});
+							}
+						}
+					});
+				});
+			}
 
 			this.Validate(this.form, [
 				"final",
@@ -1105,7 +1126,7 @@ export default {
 				"late_minutes"
 			]);
 
-			if (!this.formError.length) {
+			if (!this.formError.length && !this.shiftErrors.length) {
 				this.saveLoading = true;
 
 				if (this.propJobPart && !this.propInvoice) {

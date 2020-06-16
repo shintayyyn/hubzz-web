@@ -18,83 +18,76 @@
 </template>
 
 <script>
-  import JobDetailModal from "@/components/Jobs/JobDetailModal"
-  import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
+import JobDetailModal from "@/components/Jobs/JobDetailModal";
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
-  export default {
-    transition: {
-      name: 'slide',
-      mode: 'out-in',
-    },
+export default {
+  transition: {
+    name: "slide",
+    mode: "out-in"
+  },
 
-    components: {
-      JobDetailModal,
-      JobDetailModalAppointment,
-    },
+  components: {
+    JobDetailModal,
+    JobDetailModalAppointment
+  },
 
-    data () {
+  data() {
+    return {
+      job: null
+    };
+  },
+
+  computed: {
+    activeJobTypePlatform() {
+      return this.job.type === "Platform";
+    }
+  },
+
+  async asyncData({ app, params, error }) {
+    try {
+      const { id } = params;
+
+      let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`);
+
+      let job = response.data.data.job;
+
       return {
-        job: null,
+        job
+      };
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        return error({
+          status: 404,
+          message: "This job could not be found."
+        });
       }
-    },
 
-    computed: {
-      activeJobTypePlatform () {
-        return this.job.type === 'Platform'
-      },
-    },
+      throw err;
+    }
+  },
 
-    async asyncData ({ app, params, error }) {
-      try {
-        const {
-          id,
-        } = params
+  methods: {
+    close() {
+      const { query } = this.$route;
 
-        let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`)
-
-        let job = response.data.data.job
-
-        return {
-          job,
-        }
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          return error({
-            status: 404,
-            message: 'This job could not be found.',
-          })
-        }
-
-        throw err
-      }
-    },
-
-    methods: {
-
-      close () {
-        const {
-          query,
-        } = this.$route
-
-        this.$router.push({
-          name: 'jobs-index',
-          query,
-        })
-      },
-
-    },
-
+      this.$router.push({
+        name: "jobs-index",
+        query
+      });
+    }
   }
+};
 </script>
 
 <style scoped>
-  .modal-container {
-    z-index: 510;
-  }
+.modal-container {
+  z-index: 510;
+}
 
-  @media screen and (min-width: 1200px) {
-    .modal-container {
-      width: 80%;
-    }
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 90%;
   }
+}
 </style>
