@@ -61,32 +61,32 @@
 </template>
 <script>
 import { mixin as clickaway } from "vue-clickaway";
-const hours = [
-	"00",
-	"01",
-	"02",
-	"03",
-	"04",
-	"05",
-	"06",
-	"07",
-	"08",
-	"09",
-	"10",
-	"11",
-	"12",
-	"13",
-	"14",
-	"15",
-	"16",
-	"17",
-	"18",
-	"19",
-	"20",
-	"21",
-	"22",
-	"23"
-];
+// const hours = [
+// 	"00",
+// 	"01",
+// 	"02",
+// 	"03",
+// 	"04",
+// 	"05",
+// 	"06",
+// 	"07",
+// 	"08",
+// 	"09",
+// 	"10",
+// 	"11",
+// 	"12",
+// 	"13",
+// 	"14",
+// 	"15",
+// 	"16",
+// 	"17",
+// 	"18",
+// 	"19",
+// 	"20",
+// 	"21",
+// 	"22",
+// 	"23"
+// ];
 const minutes = [
 	"00",
 	"01",
@@ -160,11 +160,12 @@ export default {
 		required: Boolean,
 		inClass: String,
 		wrapperClass: String,
-		disabled: Boolean
+		disabled: Boolean,
+		hourType: String
 	},
 	data() {
 		return {
-			hours,
+			// hours: [],
 			minutes,
 			selectedHour: "00",
 			selectedMinute: "00",
@@ -183,6 +184,66 @@ export default {
 		}
 	},
 	computed: {
+		hours() {
+			if (this.hourType && ["am", "AM"].includes(this.hourType)) {
+				return [
+					"00",
+					"01",
+					"02",
+					"03",
+					"04",
+					"05",
+					"06",
+					"07",
+					"08",
+					"09",
+					"10",
+					"11"
+				];
+			} else if (this.hourType && ["pm", "PM"].includes(this.hourType)) {
+				return [
+					"12",
+					"13",
+					"14",
+					"15",
+					"16",
+					"17",
+					"18",
+					"19",
+					"20",
+					"21",
+					"22",
+					"23"
+				];
+			} else {
+				return [
+					"00",
+					"01",
+					"02",
+					"03",
+					"04",
+					"05",
+					"06",
+					"07",
+					"08",
+					"09",
+					"10",
+					"11",
+					"12",
+					"13",
+					"14",
+					"15",
+					"16",
+					"17",
+					"18",
+					"19",
+					"20",
+					"21",
+					"22",
+					"23"
+				];
+			}
+		},
 		computedMinutes() {
 			if (this.selectedHour === "24") {
 				return ["00"];

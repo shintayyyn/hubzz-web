@@ -398,7 +398,7 @@
 													<select
 														v-model="shift.shift_id"
 														class="custom-select -mt-8 py-1 text-sm px-2"
-														@change="changeShiftId(shift.shift_id, item.shifts, i)"
+														@change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
 													>
 														<option
 															v-for="option in shifts_option"
@@ -416,8 +416,9 @@
 														v-model="shift.time_start"
 														:name="`time_start-s${index}-${i}`"
 														:wrapperClass="'mb-1 py-1'"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`), changeStartTime(shift)"
 														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
 														@blur="CheckEmptyField(form.phone_number,'phone_number')"
 													/>
@@ -426,6 +427,7 @@
 													<AppTime
 														v-model="shift.time_end"
 														:name="`time_end-s${index}-${i}`"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
@@ -505,15 +507,15 @@
 														@click="clearShifts(item.shifts, index)"
 													/>
 												</span>-->
-												<button
+												<!-- <button
 													v-if="item.shifts.length"
 													class="w-1/2 flex items-center justify-center border border-red-500 hover:bg-red-200 text-red-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
 													@click="confirmApply={type: 'clear_shifts', data: {shifts: item.shifts, index: index}}"
 												>
-													<!-- clearShifts(item.shifts, index) -->
-													<!-- <svgicon name="refresh" width="14" height="14" class="fill-current mr-1" /> -->
+												clearShifts(item.shifts, index)-->
+												<!-- <svgicon name="refresh" width="14" height="14" class="fill-current mr-1" />
 													Clear
-												</button>
+												</button>-->
 												<p
 													class="px-2 whitespace-no-wrap text-sm text-red-500"
 													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
@@ -914,7 +916,28 @@ export default {
 			this.emitSchedule();
 		},
 		shiftErrors(value) {
-			console.log(value);
+			let has_empty_sched_dates = value.filter(err =>
+				err.field.includes("shift-")
+			);
+			let job_parts = [];
+			if (has_empty_sched_dates.length) {
+				has_empty_sched_dates.forEach(err => {
+					let empty_date = err.field.split("-")[1];
+					let job_part = this.job_parts.find(part =>
+						part.dates.includes(
+							this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+						)
+					);
+					if (job_part) {
+						job_parts.push(job_part.value);
+					}
+				});
+				this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "danger",
+					text: [`Job Part ${job_parts.join(", ")} has an empty schedule.`]
+				});
+			}
 		}
 	},
 	computed: {
@@ -1568,7 +1591,7 @@ export default {
 				? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
 				: 0;
 		},
-		changeShiftId(id, shifts, index) {
+		changeShiftId(id, shifts, index, shift) {
 			if (["5", 5].includes(id)) {
 				shifts.splice(index, 1);
 				let rowError = this.formError.filter(err =>
@@ -1580,6 +1603,9 @@ export default {
 						this.formError.splice(i, errNames.length);
 					}
 				});
+			} else if (["1", 1, "2", 2].includes(id)) {
+				shift.time_start = "";
+				shift.time_end = "";
 			}
 			this.emitSchedule();
 		},
@@ -1839,6 +1865,19 @@ export default {
 					shift.dispute = false;
 				} else {
 					shift.dispute = true;
+				}
+			}
+		},
+		changeStartTime(shift) {
+			let time_start_hour = shift.time_start.split(":")[0];
+			let time_start_minute = shift.time_start.split(":")[1];
+			let time_end_hour = shift.time_end.split(":")[0];
+			let time_end_minute = shift.time_end.split(":")[1];
+			if (parseInt(time_start_hour) > parseInt(time_end_hour)) {
+				shift.time_end = "";
+			} else if (parseInt(time_start_hour) === parseInt(time_end_hour)) {
+				if (parseInt(time_start_minute) > parseInt(time_end_minute)) {
+					shift.time_end = "";
 				}
 			}
 		}
