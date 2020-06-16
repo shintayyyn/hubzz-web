@@ -65,11 +65,11 @@
               <p
                 class="text-center"
                 style="min-width:100px;max-width:100px"
-              >{{ `${convertTimeToMinutes(sched.final_hours_in_minutes) > convertTimeToMinutes(sched.original_hours_in_minutes) ? 'YES' : 'NO'}` }}</p>
+              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) ? 'YES' : 'NO'}` }}</p>
               <p
                 class="text-center"
                 style="min-width:100px;max-width:100px"
-              >{{ `${convertTimeToMinutes(sched.final_hours_in_minutes) > convertTimeToMinutes(sched.original_hours_in_minutes) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
+              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
               <p
                 class="text-center"
                 style="min-width:100px;max-width:100px"
