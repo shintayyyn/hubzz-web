@@ -371,7 +371,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -398,7 +398,7 @@ export default {
           sent_to_practice = true;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -548,7 +548,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -575,7 +575,7 @@ export default {
           sent_to_practice = true;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -680,7 +680,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -707,7 +707,7 @@ export default {
           sent_to_practice = true;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }

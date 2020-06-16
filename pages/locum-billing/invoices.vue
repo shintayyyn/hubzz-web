@@ -585,7 +585,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -620,7 +620,7 @@ export default {
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -872,7 +872,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -908,7 +908,7 @@ export default {
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -1067,7 +1067,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -1103,7 +1103,7 @@ export default {
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
