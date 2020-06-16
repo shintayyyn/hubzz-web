@@ -505,15 +505,15 @@
 														@click="clearShifts(item.shifts, index)"
 													/>
 												</span>-->
-												<button
+												<!-- <button
 													v-if="item.shifts.length"
 													class="w-1/2 flex items-center justify-center border border-red-500 hover:bg-red-200 text-red-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
 													@click="confirmApply={type: 'clear_shifts', data: {shifts: item.shifts, index: index}}"
 												>
-													<!-- clearShifts(item.shifts, index) -->
-													<!-- <svgicon name="refresh" width="14" height="14" class="fill-current mr-1" /> -->
+												clearShifts(item.shifts, index)-->
+												<!-- <svgicon name="refresh" width="14" height="14" class="fill-current mr-1" />
 													Clear
-												</button>
+												</button>-->
 												<p
 													class="px-2 whitespace-no-wrap text-sm text-red-500"
 													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
@@ -914,7 +914,32 @@ export default {
 			this.emitSchedule();
 		},
 		shiftErrors(value) {
-			console.log(value);
+			let has_empty_sched_dates = value.filter(err =>
+				err.field.includes("shift-")
+			);
+			let job_parts = [];
+			if (has_empty_sched_dates.length) {
+				has_empty_sched_dates.forEach(err => {
+					console.log(err);
+					let empty_date = err.field.split("-")[1];
+					let job_part = this.job_parts.find(part =>
+						part.dates.includes(
+							this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+						)
+					);
+					if (job_part) {
+						job_parts.push(job_part.value);
+					}
+				});
+
+				console.log(job_parts.join(","));
+
+				this.$store.commit("SET_NOTIFICATION", {
+					enabled: true,
+					status: "danger",
+					text: [`Job Part ${job_parts.join(", ")} has an empty schedule.`]
+				});
+			}
 		}
 	},
 	computed: {
