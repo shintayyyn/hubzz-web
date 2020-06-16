@@ -181,7 +181,7 @@
           memorable_word_category_id: 'required',
           memorable_word: 'required|string',
           memorable_date: 'required|string',
-          memorable_number: 'required|integer|min:6|max:6',
+          memorable_number: 'required|integer',
           date_of_birth: 'string',
           practice_name: 'string',
           new_email: 'required|email',
@@ -209,6 +209,23 @@
     },
 
     watch: {
+      memorableWordCategoryId () {
+        const index = this.formErrors.findIndex((formError) => formError.field === 'memorable_word_category_id')
+
+        if (this.memorableWordCategoryId) {
+          if (index > -1) {
+            this.formErrors.splice(index, 1)
+          }
+        } else {
+          if (index === -1) {
+            this.formErrors.push({
+              field: 'memorable_word_category_id',
+              message: 'Memorable word category is required.',
+              validation: 'required',
+            })
+          }
+        }
+      },
 
       memorableWord () {
         const index = this.formErrors.findIndex((formError) => formError.field === 'memorable_word')
@@ -247,26 +264,9 @@
       },
 
       memorableNumber () {
-        const requiredIndex = this.formErrors
-          .findIndex((formError) => formError.field === 'memorable_number' && formError.validation === 'required')
-
-        const integerIndex = this.formErrors
-          .findIndex((formError) => formError.field === 'memorable_number' && formError.validation === 'integer')
-
-        const minMaxIndex = this.formErrors
-          .findIndex((formError) => formError.field === 'memorable_number' && ['min', 'max'].includes(formError.validation))
-
-        if (requiredIndex > -1) {
-          this.formErrors.splice(requiredIndex, 1)
-        }
-
-        if (integerIndex > -1) {
-          this.formErrors.splice(integerIndex, 1)
-        }
-
-        if (minMaxIndex > -1) {
-          this.formErrors.splice(minMaxIndex, 1)
-        }
+        this.formErrors = this.formErrors.filter((formError) => {
+          return formError.field !== 'memorable_number' && ['required', 'integer', 'min', 'max'].includes(formError.validation)
+        })
 
         if (!this.memorableNumber) {
           this.formErrors.push({
@@ -360,7 +360,7 @@
         try {
           this.formErrors = await this.$validator(this.form, this.rules, this.messages).then(() => []).catch((errors) => errors)
 
-          if (this.formErrors.length) {
+          if (this.formErrors.length > 0) {
             return
           }
 
