@@ -855,6 +855,29 @@ export default {
 		save(approved) {
 			this.formError = [];
 
+			this.shiftErrors = [];
+
+			if (this.schedule.length) {
+				this.schedule.forEach((sched, index) => {
+					sched.shifts.forEach((shift, i) => {
+						if (!shift.has_absences) {
+							if (!shift.final_time_start) {
+								this.shiftErrors.push({
+									field: `final_time_start-s${index}-${i}`,
+									message: "Final Start is required"
+								});
+							}
+							if (!shift.final_time_end) {
+								this.shiftErrors.push({
+									field: `final_time_end-s${index}-${i}`,
+									message: "Final End is required"
+								});
+							}
+						}
+					});
+				});
+			}
+
 			if (approved) {
 				this.form.job_part_schedule_items.forEach(item => {
 					item.approve = true;
@@ -885,7 +908,7 @@ export default {
 				"late_minutes"
 			]);
 
-			if (!this.formError.length) {
+			if (!this.formError.length && !this.shiftErrors.length) {
 				// this.form.items[0].final_hours =
 				// 	parseInt(this.form.hours) * 60 + parseInt(this.form.minutes);
 				// this.form.items[0].late_hours =

@@ -692,7 +692,9 @@ export default {
 							absent_reason: ""
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.final_time_start === sched.final_time_end;
+						let isAbsent = !this.invoiceDetails
+							? sched.final_time_start === sched.final_time_end
+							: sched.time_start === sched.time_end;
 						let finalRate = this.getRate(
 							sched,
 							sched.fina_time_start,
@@ -762,7 +764,9 @@ export default {
 							]
 						});
 					} else if (this.toInvoice) {
-						let isAbsent = sched.final_time_start === sched.final_time_end;
+						let isAbsent = !this.invoiceDetails
+							? sched.final_time_start === sched.final_time_end
+							: sched.time_start === sched.time_end;
 						let finalRate = this.getRate(
 							sched,
 							sched.final_time_start,
