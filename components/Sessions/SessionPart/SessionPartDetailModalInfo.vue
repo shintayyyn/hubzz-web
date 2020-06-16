@@ -52,6 +52,14 @@
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:100px;max-width:100px"
+              >REMARKS</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REASON</p>
+              <!-- <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
               >LATE</p>
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
@@ -64,7 +72,7 @@
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:100px;max-width:100px"
-              >REASON</p>
+              >REASON</p>-->
             </template>
           </div>
           <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex pb-2">
@@ -88,19 +96,11 @@
               <p
                 class="text-center"
                 style="min-width:100px;max-width:100px"
-              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) ? 'YES' : 'NO'}` }}</p>
+              >{{ `${isAbsent(sched) ? 'Absent' : isLate(sched) ? 'Late' : 'N/A'}` }}</p>
               <p
                 class="text-center"
                 style="min-width:100px;max-width:100px"
-              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) & sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
-              <p
-                class="text-center"
-                style="min-width:100px;max-width:100px"
-              >{{ `${sched.absent > 0 ? sched.absent : 'NONE'}` }}</p>
-              <p
-                class="text-center"
-                style="min-width:100px;max-width:100px"
-              >{{ `${sched.absent > 0 ? sched.absent_reason : 'N/A'}` }}</p>
+              >{{ `${isAbsent(sched) && sched.absent_reason ? sched.absent_reason : isLate(sched) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
             </template>
           </div>
         </div>
@@ -519,6 +519,15 @@ export default {
       let minute = parseInt(payload.split(":")[1]);
 
       return hour + minute;
+    },
+    isAbsent(payload) {
+      return payload.absent > 0;
+    },
+    isLate(payload) {
+      return (
+        this.convertTimeToMinutes(payload.final_time_start) >
+        this.convertTimeToMinutes(payload.time_start)
+      );
     }
   }
 };
