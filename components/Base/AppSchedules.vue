@@ -1,13 +1,14 @@
 <template>
 	<section>
 		<AppConfirmationModal
-			:label="`Are you sure you want to apply this shift to ${confirmApply.type === 'job_part' ? 'this job part' : 'all dates'}?`"
+			:label="['job_part', 'dates'].includes(confirmApply.type) ? `Are you sure you want to apply this shift to ${confirmApply.type === 'job_part' ? 'this job part' : 'all dates'}?` : 'Are you sure to remove all the shift/s on this schedule?'"
 			:confirmLabel="'Yes'"
 			:cancelLabel="'Cancel'"
 			:modal="confirmApply ? true : false"
-			@confirm="applyToAll(confirmApply.type, confirmApply.data)"
+			@confirm="['job_part', 'dates'].includes(confirmApply.type) ? applyToAll(confirmApply.type, confirmApply.data) : clearShifts(confirmApply.data.shifts, confirmApply.data.index)"
 			@cancel="confirmApply = ''"
 		/>
+
 		<div class="flex">
 			<div class="pl-0 p-4" v-if="!toComplete && !toInvoice">
 				<div class="border rounded-lg w-full h-full">
@@ -477,9 +478,9 @@
 												</div>
 											</div>
 											<!-- Add button -->
-											<div class="flex justify-start items-center mt-2 mb-4">
+											<div class="flex justify-start items-center mt-2 mb-4 w-1/4">
 												<button
-													class="flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg w-full text-xs transition-hover px-4 focus:outline-none"
+													class="w-1/2 flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
 													:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
 													@click="addShift(item.shifts, index, item.date)"
 												>
@@ -491,7 +492,11 @@
 														style="transform: rotate(45deg);"
 													/>Add Shift
 												</button>
-												<span v-if="item.shifts.length" class="pl-1">
+												<!-- <span
+													v-if="item.shifts.length"
+													class="mx-1 text-sm text-red-500 hover:text-red-600 cursor-pointer"
+													@click="clearShifts(item.shifts, index)"
+												>
 													<svgicon
 														name="refresh"
 														width="14"
@@ -499,7 +504,16 @@
 														class="fill-current cursor-pointer"
 														@click="clearShifts(item.shifts, index)"
 													/>
-												</span>
+												</span>-->
+												<button
+													v-if="item.shifts.length"
+													class="w-1/2 flex items-center justify-center border border-red-500 hover:bg-red-200 text-red-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
+													@click="confirmApply={type: 'clear_shifts', data: {shifts: item.shifts, index: index}}"
+												>
+													<!-- clearShifts(item.shifts, index) -->
+													<!-- <svgicon name="refresh" width="14" height="14" class="fill-current mr-1" /> -->
+													Clear
+												</button>
 												<p
 													class="px-2 whitespace-no-wrap text-sm text-red-500"
 													v-if="shiftErrors && shiftErrors.find(err => err.field === `shift-${item.date}`)"
@@ -1739,6 +1753,7 @@ export default {
 					this.formError.splice(i, errNames.length);
 				}
 			});
+			this.confirmApply = "";
 		},
 		absent(shift) {
 			shift.has_absences = !shift.has_absences;
