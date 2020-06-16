@@ -478,9 +478,9 @@
 												</div>
 											</div>
 											<!-- Add button -->
-											<div class="flex justify-start items-center mt-2 mb-4 w-1/4">
+											<div class="flex justify-start items-center mt-3 mb-4 w-1/4">
 												<button
-													class="w-1/2 flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
+													class="whitespace-no-wrap w-1/2 flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
 													:class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
 													@click="addShift(item.shifts, index, item.date)"
 												>
