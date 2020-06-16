@@ -398,7 +398,7 @@
 													<select
 														v-model="shift.shift_id"
 														class="custom-select -mt-8 py-1 text-sm px-2"
-														@change="changeShiftId(shift.shift_id, item.shifts, i)"
+														@change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
 													>
 														<option
 															v-for="option in shifts_option"
@@ -416,8 +416,9 @@
 														v-model="shift.time_start"
 														:name="`time_start-s${index}-${i}`"
 														:wrapperClass="'mb-1 py-1'"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`)"
+														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`), changeStartTime(shift)"
 														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
 														@blur="CheckEmptyField(form.phone_number,'phone_number')"
 													/>
@@ -426,6 +427,7 @@
 													<AppTime
 														v-model="shift.time_end"
 														:name="`time_end-s${index}-${i}`"
+														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
 														:wrapperClass="'mb-1 py-1'"
 														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
 														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
@@ -920,7 +922,6 @@ export default {
 			let job_parts = [];
 			if (has_empty_sched_dates.length) {
 				has_empty_sched_dates.forEach(err => {
-					console.log(err);
 					let empty_date = err.field.split("-")[1];
 					let job_part = this.job_parts.find(part =>
 						part.dates.includes(
@@ -931,9 +932,6 @@ export default {
 						job_parts.push(job_part.value);
 					}
 				});
-
-				console.log(job_parts.join(","));
-
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "danger",
@@ -1593,7 +1591,7 @@ export default {
 				? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
 				: 0;
 		},
-		changeShiftId(id, shifts, index) {
+		changeShiftId(id, shifts, index, shift) {
 			if (["5", 5].includes(id)) {
 				shifts.splice(index, 1);
 				let rowError = this.formError.filter(err =>
@@ -1605,6 +1603,9 @@ export default {
 						this.formError.splice(i, errNames.length);
 					}
 				});
+			} else if (["1", 1, "2", 2].includes(id)) {
+				shift.time_start = "";
+				shift.time_end = "";
 			}
 			this.emitSchedule();
 		},
@@ -1864,6 +1865,19 @@ export default {
 					shift.dispute = false;
 				} else {
 					shift.dispute = true;
+				}
+			}
+		},
+		changeStartTime(shift) {
+			let time_start_hour = shift.time_start.split(":")[0];
+			let time_start_minute = shift.time_start.split(":")[1];
+			let time_end_hour = shift.time_end.split(":")[0];
+			let time_end_minute = shift.time_end.split(":")[1];
+			if (parseInt(time_start_hour) > parseInt(time_end_hour)) {
+				shift.time_end = "";
+			} else if (parseInt(time_start_hour) === parseInt(time_end_hour)) {
+				if (parseInt(time_start_minute) > parseInt(time_end_minute)) {
+					shift.time_end = "";
 				}
 			}
 		}
