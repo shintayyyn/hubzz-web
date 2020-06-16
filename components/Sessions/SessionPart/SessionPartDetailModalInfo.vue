@@ -11,30 +11,97 @@
         >{{ $moment(job_part.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
         <p class="text-xs sm:text-sm">Days: {{ job_part.dates.length }}</p>
         <p class="font-bold text-sm sm:text-md">Schedule</p>
-        <div class="hidden lg:flex font-bold text-xs">
+        <!-- <div class="flex font-bold text-xs overflow-x-auto" style="max-width:500px">
+          <p style="min-width:100px">DATE</p>
+          <p
+            v-if="job_part.status === 'Completed'"
+            class="text-center"
+            style="min-width:100px"
+          >FINAL TIME</p>
+          <p class="text-center" style="min-width:100px">SHIFT</p>
+          <p class="text-center" style="min-width:100px">RATE</p>
+          <p class="text-center" style="min-width:100px">LATE</p>
+          <p class="text-center" style="min-width:100px">REASON</p>
+          <p class="text-center" style="min-width:100px">ABSENCES</p>
+          <p class="text-center" style="min-width:100px">REASON</p>
           <p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'">DATE</p>
           <p v-if="job_part.status === 'Completed'" class="w-1/4 text-center">FINAL TIME</p>
           <p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'" class="text-center">SHIFT</p>
           <p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'" class="text-center">RATE</p>
-        </div>
-        <div class="text-xs sm:text-sm overflow-y-auto" style="max-height: 205px;">
-          <div v-for="(sched, index) in job_part.schedules" :key="index" class="lg:flex pb-2">
+        </div>-->
+        <div class="text-xs sm:text-sm overflow-y-auto" style="max-height:205px;">
+          <div style="position:sticky;top:0" class="flex">
             <p
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
+              class="bg-gray-400 p-1 font-bold text-xs"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
+            >DATE</p>
+            <p
+              v-if="['Completed', 'Approved'].includes(job_part.status)"
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              style="min-width:100px;max-width:100px"
+            >FINAL TIME</p>
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+            >SHIFT</p>
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+            >RATE</p>
+            <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >LATE</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REASON</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >ABSENCES</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REASON</p>
+            </template>
+          </div>
+          <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex pb-2">
+            <p
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
             >{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
             <p
-              v-if="job_part.status === 'Completed'"
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
-              class="lg:text-center"
+              v-if="['Completed', 'Approved'].includes(job_part.status)"
+              class="text-center"
+              style="min-width:100px;max-width:100px"
             >{{ sched.final_time_start }} - {{ sched.final_time_end }}</p>
             <p
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
-              class="lg:text-center"
+              class="text-center"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
             >{{ sched.shift.name }}</p>
             <p
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
-              class="lg:text-center"
+              class="text-center"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
             >£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+            <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+              <p
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) ? 'YES' : 'NO'}` }}</p>
+              <p
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >{{ `${convertTimeToMinutes(sched.final_time_start) > convertTimeToMinutes(sched.time_start) & sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
+              <p
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >{{ `${sched.absent > 0 ? sched.absent : 'NONE'}` }}</p>
+              <p
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >{{ `${sched.absent > 0 ? sched.absent_reason : 'N/A'}` }}</p>
+            </template>
           </div>
         </div>
       </div>
@@ -264,7 +331,7 @@
           >{{ item.name }}</div>
         </div>
 
-        <template
+        <!-- <template
           v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)"
         >
           <div class="font-bold text-sm sm:text-md">Was the Locum absent for session?</div>
@@ -296,7 +363,7 @@
             <template v-if="job_part.final_hours>0">{{ job_part.final_hours | hoursMinutes }}</template>
             <template v-else>{{ job_part.final_hours }}</template>
           </div>
-        </template>
+        </template>-->
 
         <template v-if="job_part.use_variation_terms">
           <template v-if="job_part.variation_terms_file_id">
@@ -446,6 +513,12 @@ export default {
   methods: {
     convertDoc(document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`;
+    },
+    convertTimeToMinutes(payload) {
+      let hour = parseInt(payload.split(":")[0]) * 60;
+      let minute = parseInt(payload.split(":")[1]);
+
+      return hour + minute;
     }
   }
 };
