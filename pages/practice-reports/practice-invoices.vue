@@ -219,7 +219,7 @@
             title: 'Hours',
             key: 'hours',
             sort_key: 'hours',
-            column: (item) => item.hours,
+            column: (item) => item.hours ? (parseFloat(item.hours)/60).toFixed(2) + ' Hours' : null,
             justify: 'end',
             flexGrow: 1,
             flexShrink: 0,
