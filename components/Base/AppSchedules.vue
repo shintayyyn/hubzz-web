@@ -586,6 +586,7 @@
 								:placeholder="'For e.g. Traffic'"
 								:resize="false"
 								:error="formError.find(err => err.field === `late_hours_reason-${selectedShift.index}-${selectedShift.i}`)"
+								:limit="300"
 							/>
 							<AppInput
 								v-if="selectedShift.type === 'absent'"
@@ -597,6 +598,7 @@
 								:placeholder="'For e.g. Sick'"
 								:resize="false"
 								:error="formError.find(err => err.field === `absent_reason-${selectedShift.index}-${selectedShift.i}`)"
+								:limit="300"
 							/>
 							<template v-if="selectedShift.type === 'dispute'">
 								<AppInput
@@ -608,6 +610,7 @@
 									:resize="false"
 									:error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
 									:disabled="toDisplay"
+									:limit="300"
 								/>
 							</template>
 
@@ -839,7 +842,6 @@ export default {
 					}
 				}
 			});
-			console.log("schedules", this.schedules);
 		}
 	},
 	watch: {
