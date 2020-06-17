@@ -569,7 +569,7 @@
 								<p class="w-2/3">Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:</p>
 								<p class="w-1/3">£ {{ getJobGrossRate(filteredSchedule, this.toComplete) | currency}}</p>
 							</div>
-							<div class="flex justify-between">
+							<div class="flex justify-between" v-if="!toComplete">
 								<p class="w-2/3">Total Job Gross Rate:</p>
 								<p class="w-1/3">£ {{ getJobGrossRate(schedules, this.toComplete) | currency}}</p>
 							</div>
