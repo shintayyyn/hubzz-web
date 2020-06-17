@@ -336,7 +336,7 @@
               :name="'utr_number'"
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
-              :placeholder="'AZ000000D'"
+              :placeholder="'0000000000'"
               :limit="10"
               required
               @keydown="alphaNumeric($event)"
@@ -1211,13 +1211,22 @@
 
         if (this.form.employment_type === "Self-Employed") {
           notRequired.push("company_registration_number")
+          // if (
+          //   !this.form.utr_number.substring(0, 2).match(/[A-Z]/g)
+          //   || this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2
+          //   || !this.form.utr_number.substring(2, 8).match(/[0-9]/g)
+          //   || this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6
+          //   // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g)
+          //   // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+          // ) {
+          //   this.formError.push({
+          //     field: "utr_number",
+          //     message: "UTR Number is invalid."
+          //   })
+          // }
           if (
-            !this.form.utr_number.substring(0, 2).match(/[A-Z]/g)
-            || this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2
-            || !this.form.utr_number.substring(2, 8).match(/[0-9]/g)
-            || this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6
-            // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g)
-            // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+            !this.form.utr_number.substring(0, 10).match(/[0-9]/g)
+            || this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10
           ) {
             this.formError.push({
               field: "utr_number",
