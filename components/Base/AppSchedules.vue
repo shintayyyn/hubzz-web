@@ -661,7 +661,7 @@ export default {
 		shifts: Array,
 		rate_lists: Array,
 		schedule: Array,
-		error: Array,
+		error: Object,
 		toComplete: Boolean,
 		toInvoice: Boolean,
 		shiftErrors: Array,
