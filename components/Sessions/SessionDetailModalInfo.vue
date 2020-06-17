@@ -55,9 +55,17 @@
 					class="text-xs sm:text-sm mb-8 break-words"
 				>{{ job && job.description ? job.description : '(none)' }}</div>
 				<!-- <div class="font-bold text-sm sm:text-md">Rate</div>
-				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>
+				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>-->
 				<div class="font-bold text-sm sm:text-md">Total Hours</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job.total_hours | hoursMinutes }}</div>-->
+				<div class="text-xs sm:text-sm mb-8">{{ job.total_hours | hoursMinutes }}</div>
+				<!-- <div class="font-bold text-sm sm:text-md">Total Rate</div>
+				<div
+					class="text-xs sm:text-sm mb-8"
+				>£{{ job.schedules.map(schedule => schedule.rate).reduce((acc, cur) => acc + cur) | currency }}</div>-->
+				<div class="font-bold text-sm sm:text-md">Hubzz Fee</div>
+				<div
+					class="text-xs sm:text-sm mb-8"
+				>£ {{ ((job.total_hours/60) * job.practice_rate).toFixed(2) | currency }}</div>
 				<div class="font-bold text-sm sm:text-md">Extra information</div>
 				<div
 					class="text-xs sm:text-sm mb-8 break-words"

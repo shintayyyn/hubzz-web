@@ -119,15 +119,11 @@
 					<div class="flex flex-col">
 						<SessionPartDetailModalParts
 							:job_id="jobPart.job.id"
-							:cantCompleteJob="practice.type !== 'Spoke' || 
-                (practice.type !== 'Hub' && practice.parent_practice_id) ||
-                (practice.type !== 'Hub' && practice.parent_practice_id && practice.allow_surgery_bill_locum === false)"
+							:cantCompleteJob="practice && practice.type !== 'Hub' && practice.parent_practice_id && !practice.allow_surgery_bill_locum"
 						/>
 						<div
 							class="px-2 mb-4"
-							v-if="practice.type !== 'Spoke' || 
-                (practice.type !== 'Hub' && practice.parent_practice_id) ||
-                (practice.type !== 'Hub' && practice.parent_practice_id && practice.allow_surgery_bill_locum === false)"
+							v-if="practice && practice.type !== 'Hub' && practice.parent_practice_id && !practice.allow_surgery_bill_locum"
 						>
 							<p>You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</p>
 						</div>
