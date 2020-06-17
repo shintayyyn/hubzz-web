@@ -11,6 +11,7 @@
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
+
           <!-- <AppInput
             v-model="form.profession_id"
             :type="'select'"
@@ -21,6 +22,16 @@
             required
             disabled
           />-->
+
+          <AppFilterSearch
+            v-if="false"
+            v-model="subProfessionIds"
+            label="Sub Professions"
+            placeholder="Select..."
+            :error="formError.find(item => item.field === 'sub_profession_ids')"
+            info="Choose other professions if applicable"
+          />
+
           <div
             v-for="(item, index) in form.reference_locum_compliance_documents"
             :key="item.compliance_document_id"
@@ -59,6 +70,7 @@
             @keypress="inputNumberOnly($event)"
             required
           />
+
           <AppInput
             v-model="form.mpl_or_npl_number"
             :type="'text'"
@@ -325,7 +337,7 @@
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="'AZ000000D'"
-              :limit="9"
+              :limit="10"
               required
               @keydown="alphaNumeric($event)"
             />
@@ -1200,12 +1212,12 @@
         if (this.form.employment_type === "Self-Employed") {
           notRequired.push("company_registration_number")
           if (
-            !this.form.utr_number.substring(0, 2).match(/[A-Z]/g) ||
-            this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2 ||
-            !this.form.utr_number.substring(2, 8).match(/[0-9]/g) ||
-            this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6 ||
-            !this.form.utr_number.substring(8, 9).match(/[A-D]/g) ||
-            !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+            !this.form.utr_number.substring(0, 2).match(/[A-Z]/g)
+            || this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2
+            || !this.form.utr_number.substring(2, 8).match(/[0-9]/g)
+            || this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6
+            // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g)
+            // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
           ) {
             this.formError.push({
               field: "utr_number",
