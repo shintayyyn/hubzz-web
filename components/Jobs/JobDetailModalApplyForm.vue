@@ -16,7 +16,7 @@
     </template>
     <AppLoading :loading="loading" spinner />
     <AppConfirmationModal
-      :label="`You already applied to one of this Practice Job.`"
+      :label="`You already appointed to one of this Practice Job.`"
       :label2="`${conflictJobs.length > 2 ? `${conflictJobs.map(conflictJob => conflictJob.job_number).slice(0,2)},etc..` : `${conflictJobs.map(conflictJob => conflictJob.job_number)}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
