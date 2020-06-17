@@ -254,7 +254,11 @@
         this.loading = true
         this.locumInvoiceJobParts = []
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/practice-invoice-items/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/practice-invoice-items/count', {
+            params: {
+              order_by: this.orderBy,
+            }
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/practice-invoice-items', {

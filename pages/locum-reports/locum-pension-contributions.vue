@@ -76,6 +76,21 @@
         @page="setPage" 
       />
 
+      <div
+        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
+      >
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <button
+            :disabled="downloading"
+            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            @click="downloadPDF"
+          >
+            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+            <span>Download PDF</span>
+          </button>
+        </div>
+      </div>
+
       <div v-if="false" class=""> 
         <span>Count: {{ count }}</span>
         <br>
@@ -103,6 +118,7 @@
     data () {
       return {
         loading: false,
+        downloading: false,
         count: 0,
         locumPensionContributions: [],
         orderBy: [],
@@ -353,6 +369,30 @@
           this.$nuxt.error(err)
         }).finally(() => {
           this.loading = false
+        })
+      },
+
+      downloadPDF () {
+        let params = {
+          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+          order_by: this.orderBy,
+        }
+
+        this.$axios.post('/api/v1/locum-reports/locum-pension-contributions-report/generate-key', {
+          filename: `locumPensionContributionsReport.pdf`,
+        }, {
+            params: {
+              ...params,
+            },
+        }).then((responses) => {
+          const token = responses.data.data.token
+
+          window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-pension-contributions-report/pdf?token=${token}`)
+        }).catch((err) => {
+          console.log('err', err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        }).finally(() => {
+          this.downloading = false
         })
       },
     },

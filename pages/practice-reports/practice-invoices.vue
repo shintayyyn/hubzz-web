@@ -94,6 +94,21 @@
         @page="setPage" 
       />
 
+      <div
+        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
+      >
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <button
+            :disabled="downloading"
+            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            @click="downloadCsv"
+          >
+            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+            <span>Download CSV</span>
+          </button>
+        </div>
+      </div>
+
       <div v-if="true" class=""> 
         <span>Count: {{ count }}</span>
         <br>
@@ -121,6 +136,7 @@
     data () {
       return {
         loading: false,
+        downloading: false,
         count: 0,
         practiceInvoices: [],
         orderBy: [],
@@ -210,7 +226,7 @@
             title: '£ Amount',
             key: 'total_amount',
             sort_key: 'total_amount',
-            column: (item) => item.total_amount,
+            column: (item) => item.total_amount ? item.total_amount.toFixed(2) : null,
             justify: 'end',
             flexGrow: 1,
             flexShrink: 0,
@@ -228,7 +244,7 @@
             title: 'Discount',
             key: 'total_credit',
             sort_key: 'total_credit',
-            column: (item) => item.total_credit,
+            column: (item) => item.total_credit ? item.total_credit.toFixed(2) : null,
             justify: 'end',
             flexGrow: 1,
             flexShrink: 0,
@@ -379,7 +395,36 @@
           this.loading = false
         })
       },
-    },
 
+      downloadCsv () {
+        this.downloading = true
+        const params = {
+          practice_id: this.$auth.user.practice_detail.practice.id,
+          date_start: this.dateStart ? this.dateStart : undefined,
+          date_end: this.dateEnd ? this.dateEnd : undefined,
+          order_by: this.orderBy,
+          limit: 999,
+          offset: 0,
+        }
+
+        this.$axios.post('/api/v1/admin/reports/practice-invoices/generate-key', {
+          filename: `practiceInvoices.csv`,
+        }, {
+          params: {
+            ...params,
+            practice_id: this.$auth.user.practice_detail.practice.id,
+          },
+        }).then((responses) => {
+          const token = responses.data.data.token
+
+          window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-invoices/csv?token=${token}`)
+        }).catch((err) => {
+          console.log('err', err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        }).finally(() => {
+          this.downloading = false
+        })
+      },
+    },
   }
 </script>
