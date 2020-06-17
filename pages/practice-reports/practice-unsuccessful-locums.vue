@@ -58,10 +58,10 @@
           <button
             :disabled="downloading"
             class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            @click="downloadCsv"
+            @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
-            <span>Download CSV</span>
+            <span>Download PDF</span>
           </button>
         </div>
       </div>
@@ -118,6 +118,7 @@
           20,
           25,
         ],
+        
         activePage: 1,
       }
     },
@@ -157,11 +158,29 @@
             flexShrink: 0,
           },
           {
+            title: 'Area',
+            key: 'user_postcode',
+            sort_key: 'user_postcode',
+            column: (item) => item.user_postcode,
+            justify: 'start',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
             title: 'Min Rate per Hour',
             key: 'min_rate_per_hour',
             sort_key: 'min_rate_per_hour',
-            column: (item) => item.min_rate_per_hour.toFixed(2),
+            column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
             justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Max Rate per Hour',
+            key: 'max_rate_per_hour',
+            sort_key: 'max_rate_per_hour',
+            column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -169,8 +188,17 @@
             title: 'Min Rate per Half Day Session',
             key: 'min_rate_per_half_day_session',
             sort_key: 'min_rate_per_half_day_session',
-            column: (item) => item.min_rate_per_half_day_session.toFixed(2),
+            column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
             justify: 'end',
+            flexGrow: 1,
+            flexShrink: 0,
+          },
+          {
+            title: 'Max Rate per Half Day Session',
+            key: 'max_rate_per_half_day_session',
+            sort_key: 'max_rate_per_half_day_session',
+            column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
+            justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
           },
@@ -178,16 +206,16 @@
             title: 'Min Rate per Whole Day Session',
             key: 'min_rate_per_whole_day_session',
             sort_key: 'min_rate_per_whole_day_session',
-            column: (item) => item.min_rate_per_whole_day_session.toFixed(2),
+            column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
             justify: 'end',
             flexGrow: 1,
             flexShrink: 0,
           },
           {
-            title: 'Area',
-            key: 'locum_postcode',
-            sort_key: 'locum_postcode',
-            column: (item) => item.locum_postcode,
+            title: 'Max Rate per Whole Day Session',
+            key: 'max_rate_per_whole_day_session',
+            sort_key: 'max_rate_per_whole_day_session',
+            column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
             justify: 'start',
             flexGrow: 1,
             flexShrink: 0,
@@ -216,13 +244,13 @@
     },
 
     mounted () {      
-      // const {
-      //   order_by: orderBy = [],
-      //   page,
-      // } = this.$route.query
+      const {
+        order_by: orderBy = [],
+        page,
+      } = this.$route.query
 
-      // this.orderBy = orderBy
-      // this.activePage = page ? Number.parseInt(page) : 1
+      this.orderBy = orderBy
+      this.activePage = page ? Number.parseInt(page) : 1
 
       this.getPracticeUnsuccessfulLocums()
     },
@@ -267,12 +295,20 @@
       getPracticeUnsuccessfulLocums () {
         this.loading = true
         this.practiceUnsuccessfulLocums = []
+        let params = {
+          practice_id: this.$auth.user.practice_detail.practice.id,
+        }
         Promise.all([
-          this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count').then((responses) => {
+          this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{
+            params: {
+              ...params,
+            }
+          }).then((responses) => {
             return responses.data.data.count
           }),
           this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums', {
             params: {
+              ...params,
               order_by: this.orderBy,
               limit: this.limit,
               offset: this.offset,
@@ -297,24 +333,22 @@
         })
       },
 
-      downloadCsv () {
-        this.downloading = true
-        const params = {
+      downloadPDF () {
+        let params = {
+          practice_id:  this.$auth.user.practice_detail.practice.id,
           order_by: this.orderBy,
-          limit: 999,
-          offset: 0,
         }
 
-        this.$axios.post('/api/v1/admin/reports/practice-unsuccessful-locums/generate-key', {
-          filename: `practice-unsuccessful-locums.csv`,
+        this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
+          filename: `practiceUnsuccessfulReport.pdf`,
         }, {
-          params: {
-            ...params,
-          },
+            params: {
+              ...params,
+            },
         }).then((responses) => {
           const token = responses.data.data.token
 
-          window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-unsuccessful-locums/csv?token=${token}`)
+          window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-unsuccessful-locums-report/pdf?token=${token}`)
         }).catch((err) => {
           console.log('err', err)
           this.$nuxt.error(err.response ? err.response.data : err)

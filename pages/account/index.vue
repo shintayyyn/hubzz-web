@@ -81,6 +81,40 @@
             :items="roles"
             required
           />
+          <AppInput
+            v-model="practiceForm.memorable_word_category_id"
+            type="select"
+            label="Memorable word category"
+            placeholder="Select..."
+            :error="formError.find(item => item.field === 'memorable_word_category_id')"
+            :items="memorableWordCategoriesSelectionList"
+            required
+          />
+
+          <AppInput
+            v-model="practiceForm.memorable_word"
+            type="text"
+            label="Memorable word"
+            placeholder="Your memorable word"
+            :error="formError.find(error => error.field === 'memorable_word')"
+            required
+          />
+
+          <AppDate
+            v-model="practiceForm.memorable_date"
+            label="Memorable date"
+            :error="formError.find(item => item.field === 'memorable_date')"
+            required
+          />
+
+          <AppInput
+            v-model="practiceForm.memorable_number"
+            type="text"
+            label="Memorable 6 digit number"
+            placeholder="Your memorable number"
+            :error="formError.find(error => error.field === 'memorable_number')"
+            required
+          />
           <div class="text-left mt-5">
             <AppButton :label="'Save changes'" @click="save('practice')" />
           </div>
@@ -196,8 +230,8 @@
         :type="'text'"
         :name="'home_number'"
         :label="'Home Number'"
-        @keydown="inputTelephone($event)"
         :limit="13"
+        @keydown="inputTelephone($event)"
         @submit="save"
       />
       <AppInput
@@ -205,8 +239,8 @@
         :type="'text'"
         :name="'work_number'"
         :label="'Work Number'"
-        @keydown="inputTelephone($event)"
         :limit="13"
+        @keydown="inputTelephone($event)"
         @submit="save"
       />
       <div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
@@ -251,6 +285,42 @@
           @blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3', 'City / Town / District')"
         />
       </div>
+
+      <AppInput
+        v-model="locumForm.memorable_word_category_id"
+        type="select"
+        label="Memorable word category"
+        placeholder="Select..."
+        :error="formError.find(item => item.field === 'memorable_word_category_id')"
+        :items="memorableWordCategoriesSelectionList"
+        required
+      />
+
+      <AppInput
+        v-model="locumForm.memorable_word"
+        type="text"
+        label="Memorable word"
+        placeholder="Your memorable word"
+        :error="formError.find(error => error.field === 'memorable_word')"
+        required
+      />
+
+      <AppDate
+        v-model="locumForm.memorable_date"
+        label="Memorable date"
+        :error="formError.find(item => item.field === 'memorable_date')"
+        required
+      />
+
+      <AppInput
+        v-model="locumForm.memorable_number"
+        type="text"
+        label="Memorable 6 digit number"
+        placeholder="Your memorable number"
+        :error="formError.find(error => error.field === 'memorable_number')"
+        required
+      />
+
       <div class="text-left mt-5">
         <AppButton :label="'Save changes'" @click="save('locum')" />
       </div>
@@ -291,6 +361,9 @@
     data () {
       return {
         loading: false,
+
+        memorableWordCategories: [],
+
         formError: [],
         email_verifiedAt: "",
         roles,
@@ -302,7 +375,11 @@
           first_name: "",
           last_name: "",
           suffix: "",
-          practice_role: ""
+          practice_role: "",
+          memorable_word_category_id: '',
+          memorable_word: '',
+          memorable_date: '',
+          memorable_number: '',
         },
         practiceRole: null,
         practicePermissions: {},
@@ -319,12 +396,20 @@
           post_code: "",
           address_line_1: "",
           address_line_2: "",
-          address_line_3: ""
+          address_line_3: "",
+          memorable_word_category_id: '',
+          memorable_word: '',
+          memorable_date: '',
+          memorable_number: '',
         }
       }
     },  
 
     computed: {
+
+      memorableWordCategoriesSelectionList () {
+        return this.memorableWordCategories.map(({ id, name }) => ({ label: name, value: id }))
+      },
 
       authPermissions () {
         return this.$store.getters["permissions"]
@@ -354,6 +439,10 @@
           practiceForm.last_name = user.personal_detail.last_name
           practiceForm.suffix = user.personal_detail.suffix
           practiceForm.practice_role = user.practice_detail.practice_role
+          practiceForm.memorable_word_category_id = user.memorable_word_category_id
+          practiceForm.memorable_word = user.memorable_word
+          practiceForm.memorable_date = user.memorable_date
+          practiceForm.memorable_number = user.memorable_number
           email_verifiedAt = user.email_verified_at
           practiceRole = user.practice_detail.role
           return {
@@ -379,6 +468,10 @@
           locumForm.address_line_2 = user.address_detail.address.line_2
           locumForm.address_line_3 = user.address_detail.address.line_3
           locumForm.post_code = user.address_detail.address.post_code
+          locumForm.memorable_word_category_id = user.memorable_word_category_id
+          locumForm.memorable_word = user.memorable_word
+          locumForm.memorable_date = user.memorable_date
+          locumForm.memorable_number = user.memorable_number
           email_verifiedAt = user.email_verified_at
 
           return {
@@ -392,43 +485,33 @@
       }
     },
 
-    created () {
-      console.log('authpermissions', this.authPermissions)
-      console.log('')
-
-
-    },
-
     mounted () {
-      this.$socket.on(
-        "User Notification Email Pending",
-        this.getEmailVerificationRealTime
-      )
-      this.$socket.on(
-        "User Notification Email Verified",
-        this.getEmailVerificationRealTime
-      )
+      this.$socket.on('User Notification Email Pending', this.getEmailVerificationRealTime)
+      this.$socket.on('User Notification Email Verified', this.getEmailVerificationRealTime)
+      this.loading = true
+      this.$axios.get('/api/v1/memorable-word-categories', {
+        params: {
+          limit: 999,
+        },
+      }).then((response) => {
+        this.memorableWordCategories = response.data.data.memorable_word_categories
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err)
+      }).finally(() => {
+        this.loading = false
+      })
     },
 
     destroyed () {
-      this.removeListener()
+      this.$socket.removeListener('User Notification Email Pending', this.getEmailVerificationRealTime)
+      this.$socket.removeListener('User Notification Email Verified', this.getEmailVerificationRealTime)
     },
 
     methods: {
       async getEmailVerificationRealTime () {
         await this.$auth.fetchUser()
         this.email_verifiedAt = this.$auth.user.email_verified_at
-      },
-
-      removeListener () {
-        this.$socket.removeListener(
-          "User Notification Email Pending",
-          this.getEmailVerificationRealTime
-        )
-        this.$socket.removeListener(
-          "User Notification Email Verified",
-          this.getEmailVerificationRealTime
-        )
       },
 
       resendEmailVerification () {
@@ -553,17 +636,6 @@
           }
         }
       },
-      // async processPracticePermission () {
-        
-      //   await this.practiceRole.permissions.forEach((permission) => {
-      //     let category = {
-      //       name: '',
-      //       permissions: []
-      //     }
-      //     if(permission.name){}
-            
-      //   })
-      // },
     },
     
   }

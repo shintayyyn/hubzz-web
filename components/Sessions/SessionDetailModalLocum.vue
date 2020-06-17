@@ -351,7 +351,7 @@ export default {
       this.confirmation_modal = true;
     },
     unfavorite() {
-      this.confirmation_text = "Remove this Locum to MyBanks?";
+      this.confirmation_text = "Remove this Locum to My Banks?";
       this.confirmation_modal = true;
     },
     confirm() {

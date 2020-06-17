@@ -1,6 +1,194 @@
 <template>
-	<section class="relative max-w-3xl">
-		<div class="flex flex-col md:flex-row justify-between">
+	<section class="relative">
+		<AppLoading :loading="!propInvoice && !propJobPart" spinner :message="'Loading'" />
+		<template v-if="propInvoice || propJobPart">
+			<div class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4">
+				<AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
+				<AppLoading :loading="saveLoading" spinner />
+
+				<div :ref="'pdf-header'" class="flex justify-between w-full px-2">
+					<div v-if="propInvoice" class="flex flex-wrap justify-between w-1/2">
+						<div
+							class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+						>
+							<section>
+								<div class="relative flex flex-col py-2">
+									<div class="relative flex flex-row flex-no-wrap justify-between">
+										<label class="text-base py-1">To: Accounts Department</label>
+									</div>
+									<div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
+								</div>
+							</section>
+							<div class="text-xs sm:text-sm">
+								<div>{{ propInvoice.practice.address_line_1 }}</div>
+								<div>{{ propInvoice.practice.address_line_2 }}</div>
+								<div>{{ propInvoice.practice.address_line_3 }}</div>
+								<div>{{ propInvoice.practice.address_postcode }}</div>
+							</div>
+						</div>
+					</div>
+					<div v-if="propJobPart" class="flex flex-wrap justify-between w-1/2">
+						<div
+							class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+						>
+							<section>
+								<div class="relative flex flex-col py-2">
+									<div class="relative flex flex-row flex-no-wrap justify-between">
+										<label class="text-base py-1">To: Accounts Department</label>
+									</div>
+									<div class="font-bold text-lg mt-2">{{ propJobPart.practice_name }}</div>
+								</div>
+							</section>
+							<div class="text-xs sm:text-sm">
+								<div>{{ propJobPart.practice_address_line_1 }}</div>
+								<div>{{ propJobPart.practice_address_line_2 }}</div>
+								<div>{{ propJobPart.practice_address_line_3 }}</div>
+								<div>{{ propJobPart.practice_address_postcode }}</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
+						<div v-if="propInvoice">{{ propInvoice.invoice_number }}</div>
+						<div>{{ $auth.user.personal_detail.name }}</div>
+						<div>{{ $auth.user.address_detail.address.line_1 }}</div>
+						<div>{{ $auth.user.address_detail.address.line_2 }}</div>
+						<div>{{ $auth.user.address_detail.address.line_3 }}</div>
+						<div>{{ $auth.user.address_detail.address.post_code }}</div>
+						<div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
+						<div>{{ $auth.user.email }}</div>
+						<div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
+					</div>
+				</div>
+				<template
+					v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
+				>
+					<div
+						class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
+						v-if="(propInvoice && propInvoice.disputed_items_count > 0 && waitingForPracticeReply(propInvoice.items[0])) && propInvoice.status !== 'Draft'"
+					>DISPUTED - Awaiting Practice Reply</div>
+				</template>
+				<p
+					class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
+				>INVOICE DETAILS</p>
+				<div class="w-full flex justify-between px-4 text-gray-600">
+					<div class="flex items-center">
+						<p>Job No.</p>
+						<p
+							class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
+						>{{ job_part.job_part_number }}</p>
+					</div>
+					<div class="flex items-center">
+						<p>Job Type</p>
+						<p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">{{ job_part.type }}</p>
+					</div>
+					<div class="flex items-center">
+						<p>Duration</p>
+						<p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
+							{{ job_part.date_start }}
+							<span class="text-gray-600">to</span>
+							{{ job_part.date_end }}
+						</p>
+					</div>
+					<div class="flex items-center">
+						<p>Total Work Hours</p>
+						<p
+							class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
+							v-if="total_working_hours>0"
+						>{{ total_working_hours | hoursMinutes }}</p>
+						<p class="mx-2 border border-gray-600 rounded px-4 text-gray-700" v-else>0</p>
+					</div>
+				</div>
+
+				<div class="w-full border-b">
+					<AppSchedules
+						:practice_rate="practice_rate"
+						@getSchedule="getSchedule"
+						:schedule="propJobPart? propJobPart.schedules : propInvoice.job_part_schedule_items"
+						:error="formError.find(err => err.field === 'schedules')"
+						:shiftErrors="shiftErrors"
+						toInvoice
+						:invoiceDetails="propInvoice"
+						:toDisplay="propInvoice && propInvoice.status === 'Approved'"
+					/>
+				</div>
+				<div class="w-full flex justify-between py-4">
+					<div class="flex items-end">
+						<p class="text-sm">TOTAL LATES:</p>
+						<p class="font-bold mx-2">{{ total_late_hours === '00:00' ? 'None' : total_late_hours }}</p>
+					</div>
+					<div class="flex items-end">
+						<p class="text-sm">TOTAL ABSENCES:</p>
+						<p class="font-bold mx-2">{{ total_absences > 0 ? total_absences : 'None'}}</p>
+					</div>
+					<div class="flex items-end">
+						<p class="text-sm">TOTAL WORK HOURS:</p>
+						<p
+							class="font-bold mx-2"
+							v-if="total_working_hours>0"
+						>{{ total_working_hours | hoursMinutes }}</p>
+						<p class="font-bold mx-2" v-else>0</p>
+					</div>
+					<div class="flex items-end">
+						<p class="text-sm">TOTAL DEDUCTIONS:</p>
+						<p class="font-bold mx-2">£ {{ total_deductions | currency}}</p>
+					</div>
+					<div class="flex items-end">
+						<p class="text-sm">TOTAL WORK PAYMENT:</p>
+						<p class="font-bold mx-2">£ {{ total_gross_locum_wages | currency }}</p>
+					</div>
+				</div>
+
+				<div :ref="'pdf-footer'" class="flex w-full">
+					<div class="w-1/2 mt-4">
+						<div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-1/2 w-2/3">
+							<div
+								v-if="propInvoice && propInvoice.paid_under_payroll"
+								class="flex flex-col text-xs sm:text-sm"
+							>
+								<div>Payment by BACS: xxxxx</div>
+								<div>Account name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx' }}</div>
+								<div>Bank: {{ propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx' }}</div>
+								<div>Sort code: {{ propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx' }}</div>
+								<div>Account number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
+							</div>
+							<div
+								v-if="propInvoice && !propInvoice.paid_under_payroll"
+								class="flex flex-col text-xs sm:text-sm"
+							>
+								<div>Payment by BACS: xxxxx</div>
+								<div>Account name: {{ propInvoice.account_name ? propInvoice.account_name : 'xxxxx' }}</div>
+								<div>Bank: {{ propInvoice.bank_name ? propInvoice.bank_name : 'xxxxx' }}</div>
+								<div>Sort code: {{ propInvoice.sort_code ? propInvoice.sort_code : 'xxxxx' }}</div>
+								<div>Account number: {{ propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR' }}</div>
+							</div>
+							<div
+								v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll"
+								class="flex flex-col text-xs sm:text-sm"
+							>
+								<div>Payment by BACS: xxxxx</div>
+								<div>Account name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
+								<div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
+								<div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
+								<div>Account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
+							</div>
+							<div
+								v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll"
+								class="flex flex-col text-xs sm:text-sm"
+							>
+								<div>Payment by BACS: xxxxx</div>
+								<div>Account name: {{ propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx' }}</div>
+								<div>Bank: {{ propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx' }}</div>
+								<div>Sort code: {{ propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx' }}</div>
+								<div>Account number: {{ propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR' }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+
+		<div class="flex flex-col md:flex-row justify-between" v-if="old">
 			<div class="flex justify-end items-center w-full my-2 md:my-4">
 				<label class="mx-1">Type:</label>
 				<div
@@ -8,8 +196,8 @@
 				>Platform</div>
 			</div>
 		</div>
-
 		<div
+			v-if="old"
 			id="htmlpdf"
 			class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md"
 			:class="exportLoading ? 'mb-32' : ''"
@@ -132,7 +320,7 @@
 										@keypress="isNumber($event)"
 									/>
 								</div>
-								<!-- <div class="w-1/5 flex flex-col px-2">
+								<div class="w-1/5 flex flex-col px-2">
 									<label class="text-xs sm:text-sm" for="late_hours">Hours of late</label>
 									<div class="flex">
 										<div class="flex items-center mr-2">
@@ -165,9 +353,9 @@
 											<label for="late_minutes" class="text-xs md:text-sm">minutes</label>
 										</div>
 									</div>
-								</div>-->
+								</div>
 							</div>
-							<!-- <div class="w-3/5 flex flex-col px-2 pt-2">
+							<div class="w-3/5 flex flex-col px-2 pt-2">
 								<label class="text-xs sm:text-sm" for="final_hours">Final hours</label>
 								<div class="flex">
 									<div class="flex items-center mr-2">
@@ -204,7 +392,7 @@
 									v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')"
 									class="text-xs mx-2 text-red-500"
 								>Final hours is required</p>
-							</div>-->
+							</div>
 						</div>
 
 						<div
@@ -382,13 +570,15 @@ import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import AppDate from "@/components/Base/AppDate";
+import AppSchedules from "@/components/Base/AppSchedules";
 
 export default {
 	components: {
 		AppInput,
 		AppButton,
 		AppLoading,
-		AppDate
+		AppDate,
+		AppSchedules
 	},
 
 	props: {
@@ -408,6 +598,7 @@ export default {
 
 	data() {
 		return {
+			old: false,
 			exportLoading: false,
 			saveLoading: false,
 			form: {
@@ -417,14 +608,22 @@ export default {
 				total_amount: 0,
 				final: false,
 				ir35: false,
-				minutes: 0,
-				hours: 0,
-				late_hours: 0,
-				late_minutes: 0,
+				// minutes: 0,
+				// hours: 0,
+				// late_hours: 0,
+				// late_minutes: 0,
 				job_part_schedule_items: []
 			},
 			formError: [],
-			disputed: false
+			disputed: false,
+			shiftErrors: [],
+			schedule: [],
+			total_working_hours: 0,
+			total_gross_locum_wages: 0,
+			total_deductions: 0,
+			total_late_hours: "",
+			total_absences: 0,
+			hasShiftError: false
 		};
 	},
 
@@ -604,6 +803,60 @@ export default {
 			return "";
 		},
 
+		job_part() {
+			let jobPartNumber;
+			let jobType;
+			let jobRate;
+			let jobRateTypeName;
+			let formattedDateStart;
+			let formattedDateEnd;
+			if (this.propJobPart && !this.propInvoice) {
+				jobPartNumber = this.propJobPart.job_part_number;
+				jobType = this.propJobPart.job.type;
+				jobRate = this.propJobPart.job.rate;
+				jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name;
+				formattedDateStart = this.$moment(this.propJobPart.date_start).format(
+					"DD/MM/YYYY"
+				);
+				formattedDateEnd = this.$moment(this.propJobPart.date_end).format(
+					"DD/MM/YYYY"
+				);
+			}
+			if (this.propInvoice && !this.propJobPart) {
+				jobPartNumber = this.propInvoice.items[0].job_part.job_part_number;
+				jobType = this.propInvoice.items[0].job_part.job.type;
+				jobRate = this.propInvoice.items[0].job_part.job.rate;
+				jobRateTypeName = this.propInvoice.items[0].job_part.job
+					.locum_detail_rate_type.name;
+				formattedDateStart = this.$moment(this.propInvoice.date_start).format(
+					"DD/MM/YYYY"
+				);
+				formattedDateEnd = this.$moment(this.propInvoice.date_end).format(
+					"DD/MM/YYYY"
+				);
+			}
+			return {
+				job_part_number: jobPartNumber,
+				type: jobType,
+				rate: jobRate,
+				locum_detail_rate_type: jobRateTypeName,
+				date_start: formattedDateStart,
+				date_end: formattedDateEnd
+			};
+		},
+
+		practice_rate() {
+			let practice_rate = this.propJobPart ? this.propJobPart.practice_rate : 0;
+			let rate = 0;
+			if (practice_rate) {
+				rate = practice_rate.rate;
+			} else {
+				rate = 0;
+				// practice_rates[practice_rates.length - 1].rate
+			}
+			return rate;
+		},
+
 		// subTotal () {
 		//   return this.form.items && this.form.items.length > 0
 		//     ? this.form.items[0].total
@@ -637,7 +890,6 @@ export default {
 
 	watch: {
 		dispute() {
-			console.log("dispute", this.dispute);
 			if (!this.dispute) {
 				this.setInitialState();
 				this.form.items[0].dispute = false;
@@ -646,18 +898,76 @@ export default {
 	},
 
 	mounted() {
-		console.log(this.propInvoiceDetail);
 		this.setInitialState();
 	},
 
 	methods: {
+		getSchedule(
+			schedule,
+			total_gross_locum_wages,
+			total_working_hours,
+			deductions,
+			total_lates,
+			hasError
+		) {
+			this.schedule = schedule;
+			this.form.job_part_schedule_items = [];
+			let absentCount = 0;
+			schedule.forEach((sched, index) => {
+				if (sched.shifts && sched.shifts.length) {
+					sched.shifts.forEach((shift, i) => {
+						let timeStart = shift.has_absences
+							? shift.time_start
+							: shift.final_time_start;
+						let timeEnd = shift.has_absences
+							? shift.time_start
+							: shift.final_time_end;
+						this.form.job_part_schedule_items.push({
+							id: shift.id,
+							time_start: timeStart,
+							time_end: timeEnd,
+							total: shift.total,
+							dispute: shift.dispute,
+							remarks: shift.remarks,
+							late_hours_reason: "",
+							description: ""
+						});
+						shift.has_absences ? (absentCount += 1) : "";
+
+						// if (shift.final_time_start !== "") {
+						// 	let startIndex = this.shiftErrors.findIndex(
+						// 		err => err.field === `final_time_start-s${index}-${i}`
+						// 	);
+						// 	if (startIndex > -1) {
+						// 		this.shiftErrors.splice(startIndex, 1);
+						// 	}
+						// }
+						// if (shift.final_time_end !== "") {
+						// 	let endIndex = this.shiftErrors.findIndex(
+						// 		err => err.field === `final_time_end-s${index}-${i}`
+						// 	);
+						// 	if (endIndex > -1) {
+						// 		this.shiftErrors.splice(endIndex, 1);
+						// 	}
+						// }
+					});
+				}
+			});
+			this.total_late_hours = total_lates;
+			this.total_absences = absentCount;
+			this.total_deductions = deductions;
+			this.total_working_hours = total_working_hours;
+			this.total_gross_locum_wages = total_gross_locum_wages;
+			this.form.total_amount = total_gross_locum_wages;
+			this.hasShiftError = hasError;
+		},
 		setInitialState() {
 			if (this.propJobPart && !this.propInvoice) {
 				this.form.type = this.propJobPart.job.type;
 				this.form.practice_id = this.propJobPart.job.practice_id;
 				this.form.date_start = this.propJobPart.date_start;
 				this.form.date_end = this.propJobPart.date_end;
-
+				this.form.job_part_schedule_items = this.propJobPart.schedules;
 				// Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
 				// Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
@@ -730,6 +1040,7 @@ export default {
 				this.form.locum_invoice_id = this.propInvoice.id;
 				this.form.date_start = this.propInvoice.date_start;
 				this.form.date_end = this.propInvoice.date_end;
+				this.form.job_part_schedule_items = this.propInvoice.job_part_schedule_items;
 
 				this.form.items = [
 					{
@@ -782,31 +1093,28 @@ export default {
 
 		save(final) {
 			this.formError = [];
+			this.shiftErrors = [];
 
-			// if (
-			// 	[0, "0"].includes(this.form.hours) &&
-			// 	[0, "0"].includes(this.form.minutes)
-			// ) {
-			// 	this.formError.push({
-			// 		field: "minutes",
-			// 		message: "Minutes is required"
-			// 	});
-			// 	this.formError.push({
-			// 		field: "hours",
-			// 		message: "Hours is required"
-			// 	});
-			// } else {
-			// 	this.form.hours = !this.form.hours ? 0 : this.form.hours;
-
-			// 	this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
-
-			// 	this.form.items[0].final_hours =
-			// 		parseInt(this.form.hours) * 60 + parseInt(this.form.minutes);
-
-			// 	this.form.items[0].late_hours =
-			// 		parseInt(this.form.late_hours) * 60 +
-			// 		parseInt(this.form.late_minutes);
-			// }
+			if (this.schedule.length) {
+				this.schedule.forEach((sched, index) => {
+					sched.shifts.forEach((shift, i) => {
+						if (!shift.has_absences) {
+							if (!shift.final_time_start) {
+								this.shiftErrors.push({
+									field: `final_time_start-s${index}-${i}`,
+									message: "Final Start is required"
+								});
+							}
+							if (!shift.final_time_end) {
+								this.shiftErrors.push({
+									field: `final_time_end-s${index}-${i}`,
+									message: "Final End is required"
+								});
+							}
+						}
+					});
+				});
+			}
 
 			this.Validate(this.form, [
 				"final",
@@ -818,22 +1126,11 @@ export default {
 				"late_minutes"
 			]);
 
-			if (!this.formError.length) {
+			if (!this.formError.length && !this.shiftErrors.length) {
 				this.saveLoading = true;
 
 				if (this.propJobPart && !this.propInvoice) {
-					if (
-						this.form.items &&
-						this.form.items.length > 0 &&
-						this.form.items[0].dispute === false
-					) {
-						this.form.items[0].absent_days = this.propJobPart.absent_days;
-						this.form.items[0].remarks = "";
-					}
-
-					this.form.items[0].description = this.description;
-					this.form.items[0].total = this.totalAmount;
-					this.form.total_amount = this.totalAmount;
+					this.form.total_amount = this.total_gross_locum_wages;
 
 					this.form.final = final;
 
@@ -871,25 +1168,9 @@ export default {
 							this.saveLoading = false;
 						});
 				} else if (this.propInvoice && !this.propJobPart) {
-					if (
-						this.form.items &&
-						this.form.items.length > 0 &&
-						this.form.items[0].dispute === false
-					) {
-						this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
-						// this.form.items[0].late_hours = parseInt(this.form.late_hours) * 60 + parseInt(this.form.late_minutes);
-						// this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
-						// this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
-						this.form.items[0].remarks = "";
-					}
-
-					this.form.items[0].description = this.description;
-					this.form.items[0].total = this.totalAmount;
-					this.form.total_amount = this.totalAmount;
+					this.form.total_amount = this.total_gross_locum_wages;
 
 					this.form.final = final;
-
-					// return;
 
 					this.$axios
 						.$put(
@@ -928,6 +1209,8 @@ export default {
 							this.saveLoading = false;
 						});
 				}
+			} else {
+				console.log(this.formError);
 			}
 		},
 
@@ -954,4 +1237,7 @@ export default {
 /* .items-table { */
 /* width: 733px; */
 /* } */
+.bg-gray {
+	background-color: #707070;
+}
 </style>

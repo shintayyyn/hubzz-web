@@ -11,30 +11,97 @@
         >{{ $moment(job_part.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
         <p class="text-xs sm:text-sm">Days: {{ job_part.dates.length }}</p>
         <p class="font-bold text-sm sm:text-md">Schedule</p>
-        <div class="hidden lg:flex font-bold text-xs">
+        <!-- <div class="flex font-bold text-xs overflow-x-auto" style="max-width:500px">
+          <p style="min-width:100px">DATE</p>
+          <p
+            v-if="job_part.status === 'Completed'"
+            class="text-center"
+            style="min-width:100px"
+          >FINAL TIME</p>
+          <p class="text-center" style="min-width:100px">SHIFT</p>
+          <p class="text-center" style="min-width:100px">RATE</p>
+          <p class="text-center" style="min-width:100px">LATE</p>
+          <p class="text-center" style="min-width:100px">REASON</p>
+          <p class="text-center" style="min-width:100px">ABSENCES</p>
+          <p class="text-center" style="min-width:100px">REASON</p>
           <p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'">DATE</p>
           <p v-if="job_part.status === 'Completed'" class="w-1/4 text-center">FINAL TIME</p>
           <p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'" class="text-center">SHIFT</p>
           <p :class="job_part.status !== 'Completed' ? 'w-1/3' : 'w-1/4'" class="text-center">RATE</p>
-        </div>
-        <div class="text-xs sm:text-sm overflow-y-auto" style="max-height: 205px;">
-          <div v-for="(sched, index) in job_part.schedules" :key="index" class="lg:flex pb-2">
+        </div>-->
+        <div class="text-xs sm:text-sm overflow-y-auto" style="max-height:205px;">
+          <div style="position:sticky;top:0" class="flex">
             <p
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
+              class="bg-gray-400 p-1 font-bold text-xs"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
+            >DATE</p>
+            <p
+              v-if="['Completed', 'Approved'].includes(job_part.status)"
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              style="min-width:100px;max-width:100px"
+            >FINAL TIME</p>
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+            >SHIFT</p>
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+            >RATE</p>
+            <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REMARKS</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REASON</p>
+              <!-- <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >LATE</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REASON</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >ABSENCES</p>
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >REASON</p>-->
+            </template>
+          </div>
+          <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex pb-2">
+            <p
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
             >{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
             <p
-              v-if="job_part.status === 'Completed'"
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
-              class="lg:text-center"
+              v-if="['Completed', 'Approved'].includes(job_part.status)"
+              class="text-center"
+              style="min-width:100px;max-width:100px"
             >{{ sched.final_time_start }} - {{ sched.final_time_end }}</p>
             <p
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
-              class="lg:text-center"
+              class="text-center"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
             >{{ sched.shift.name }}</p>
             <p
-              :class="job_part.status !== 'Completed' ? 'lg:w-1/3' : 'lg:w-1/4'"
-              class="lg:text-center"
+              class="text-center"
+              :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
             >£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+            <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+              <p
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >{{ `${isAbsent(sched) ? 'Absent' : isLate(sched) ? 'Late' : 'N/A'}` }}</p>
+              <p
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >{{ `${isAbsent(sched) && sched.absent_reason ? sched.absent_reason : isLate(sched) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
+            </template>
           </div>
         </div>
       </div>
@@ -51,6 +118,61 @@
         <div
           class="text-xs sm:text-sm mb-8"
         >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>-->
+        <div class="font-bold text-sm sm:text-md">Job Part Hubzz Fee</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartHubzzFee(job_part.schedules) | currency }}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Hubzz Fee</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartHubzzFee(job_part.job.schedules) | currency}}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Part Gross Rate</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartGrossRate(job_part.schedules) | currency}}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Gross Rate</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartGrossRate(job_part.job.schedules) | currency}}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Part Total Original hours</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+
+        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+          <div class="font-bold text-sm sm:text-md">Job Part Total Final hours</div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        </template>
+
+        <div class="font-bold text-sm sm:text-md">Job Total Original hours</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{ job_part.job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+
+        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+          <div class="font-bold text-sm sm:text-md">Job Total Final hours</div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{ job_part.job.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        </template>
+
+        <div class="font-bold text-sm sm:text-md break-words">Extra information</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+          v-text="job_part.job.platform_job.extra_information?job_part.job.platform_job.extra_information:`(none)`"
+        />
+        <div class="font-bold text-sm sm:text-md">Report to</div>
+        <div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
+        <div class="font-bold text-sm sm:text-md">Telephone number</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>-->
         <div class="font-bold text-sm sm:text-md">Total Original hours</div>
         <div
           class="text-xs sm:text-sm mb-8"
@@ -64,6 +186,12 @@
             class="text-xs sm:text-sm mb-8"
           >{{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
         </template>
+        <div class="font-bold text-sm sm:text-md">Total Rate</div>
+        <div class="text-xs sm:text-sm mb-8">£ {{ job_part.total_amount | currency }}</div>
+        <div class="font-bold text-sm sm:text-md">Hubzz Fee</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{ ((job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur)/60) * job_part.practice_rate).toFixed(2) | currency }}</div>
         <div class="font-bold text-sm sm:text-md break-words">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-8"
@@ -264,7 +392,7 @@
           >{{ item.name }}</div>
         </div>
 
-        <template
+        <!-- <template
           v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)"
         >
           <div class="font-bold text-sm sm:text-md">Was the Locum absent for session?</div>
@@ -285,7 +413,7 @@
           >{{ job_part.late_hours > 0 || job_part.late_hours_reason !== null ? 'Yes' : 'No' }}</div>
           <template v-if="job_part.late_hours > 0 || job_part.late_hours_reason !== null">
             <div class="font-bold text-sm sm:text-md">Hours of Late:</div>
-            <div class="text-xs sm:text-sm mb-8">{{ job_part.late_hours | hoursMinutes }}</div>
+            <div class="text-xs sm:text-sm mb-8">{{ late_hours | hoursMinutes }}</div>
             <div class="font-bold text-sm sm:text-md">Reason of Late:</div>
             <div
               class="text-xs sm:text-sm mb-8"
@@ -296,7 +424,7 @@
             <template v-if="job_part.final_hours>0">{{ job_part.final_hours | hoursMinutes }}</template>
             <template v-else>{{ job_part.final_hours }}</template>
           </div>
-        </template>
+        </template>-->
 
         <template v-if="job_part.use_variation_terms">
           <template v-if="job_part.variation_terms_file_id">
@@ -427,12 +555,114 @@ export default {
       return this.job_part.job.platform_job.session_requirements
         ? this.job_part.job.platform_job.session_requirements.split(",")
         : [];
+    },
+    late_hours() {
+      let originalHours = this.job_part.schedules
+        .map(item => item.original_hours_in_minutes)
+        .reduce((acc, cur) => acc + cur);
+
+      let finalHours = this.job_part.schedules
+        .map(item => item.final_hours_in_minutes)
+        .reduce((acc, cur) => acc + cur);
+
+      let lateHours = originalHours - finalHours;
+
+      return lateHours;
     }
   },
 
   methods: {
+    practice_rate() {
+      let practice_rates = this.$auth.user.practice_detail.practice
+        .practice_rates;
+
+      return this.$auth.user.practice_detail;
+      // let practice_rate = practice_rates.find(
+      // 	item => item.id.toString() === this.form.role.toString()
+      // );
+      // let rate = 0;
+      // if (practice_rate) {
+      // 	rate = practice_rate.rate;
+      // } else {
+      // 	rate = practice_rates[practice_rates.length - 1].rate;
+      // }
+      // return rate;
+    },
+    getJobPartHubzzFee(schedules) {
+      // HUBB FEE (final_hours_in_minutes / 60) * practice_rate
+      let practice_rates = this.$auth.user.practice_detail.practice
+        .practice_rates;
+
+      let practice_rate = practice_rates.find(
+        item =>
+          item.id.toString() === this.job_part.job.profession_id.toString()
+      );
+
+      let rate = 0;
+
+      if (practice_rate) {
+        rate = practice_rate.rate;
+      } else {
+        rate = practice_rates[practice_rates.length - 1].rate;
+      }
+
+      let total = 0;
+
+      total = schedules
+        .map(schedule => schedule.final_hours_in_minutes)
+        .reduce((acc, cur) => acc + cur);
+
+      return (total / 60) * rate;
+    },
+    getJobPartGrossRate(schedules) {
+      // PER HOUR rate * (final_hours_in_minute / 60)
+      // PER WHOLE DAY rate / (final_hours_in_minutes / 60)
+      // PER HALF DAY rate / ((final_hours_in_minutes / 60) / 2)
+      let total = 0;
+
+      schedules.forEach(schedule => {
+        if (!schedule.absent_reason) {
+          switch (schedule.locum_detail_rate_type.name) {
+            case "Per Hour":
+              total =
+                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              break;
+            case "Per Whole Day Session":
+              total =
+                total + schedule.rate / (schedule.final_hours_in_minutes / 60);
+              break;
+            case "Per Half Day Session":
+              total =
+                total +
+                schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+              break;
+            default:
+              total =
+                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              break;
+          }
+        }
+      });
+
+      return total;
+    },
     convertDoc(document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`;
+    },
+    convertTimeToMinutes(payload) {
+      let hour = parseInt(payload.split(":")[0]) * 60;
+      let minute = parseInt(payload.split(":")[1]);
+
+      return hour + minute;
+    },
+    isAbsent(payload) {
+      return payload.absent > 0;
+    },
+    isLate(payload) {
+      return (
+        this.convertTimeToMinutes(payload.final_time_start) >
+        this.convertTimeToMinutes(payload.time_start)
+      );
     }
   }
 };

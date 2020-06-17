@@ -158,7 +158,7 @@
               <div class="flex flex-wrap justify-center">
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                 >Generate Invoice</div>
 
@@ -167,15 +167,15 @@
                     slotProps.item.locum_invoice_id
                       && slotProps.item.locum_status !== 'Approved'
                   "
-                  class="flex justify-between my-1"
+                  class="flex flex-wrap justify-around"
                 >
                   <div
-                    class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                   >Edit</div>
                   <button
                     v-if="!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced'"
-                    class="mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
+                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
                   >Delete</button>
                 </div>
@@ -585,7 +585,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -620,7 +620,7 @@ export default {
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -670,13 +670,10 @@ export default {
 
       if (url === `/api/v1/locum/job-parts`) {
         job_parts = job_parts.map(jobPart => {
-          // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
-          // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
-
           let type;
           let finalHours;
           let totalHours;
-          let total;
+          let total = 0;
 
           if (jobPart.locum_invoice_item) {
             total = jobPart.locum_invoice_item.locum_invoice.total_amount;
@@ -688,19 +685,37 @@ export default {
                 jobPart.locum_invoice_item.locum_invoice.paye_amount;
             }
           } else if (!jobPart.locum_invoice_item) {
-            type = jobPart.job.locum_detail_rate_type.name;
-            finalHours = jobPart.final_hours / 60;
-            totalHours = jobPart.job.total_hours / 60;
-            total = 0;
+            // rate * (final_hours_in_minutes / 60)
+            // rate / (final_hours_in_minutes / 60)
+            // rate / ((final_hours_in_minutes / 60) / 2)
 
-            switch (type) {
-              case "Per Hour":
-                total = finalHours * jobPart.job.rate;
-                break;
-              default:
-                total = finalHours * (jobPart.job.rate / totalHours);
-                break;
-            }
+            jobPart.schedules.forEach(schedule => {
+              if (!schedule.absent_reason) {
+                switch (schedule.locum_detail_rate_type.name) {
+                  case "Per Hour":
+                    total =
+                      total +
+                      schedule.rate * (schedule.final_hours_in_minutes / 60);
+                    break;
+                  case "Per Whole Day Session":
+                    total =
+                      total +
+                      schedule.rate / (schedule.final_hours_in_minutes / 60);
+                    break;
+                  case "Per Half Day Session":
+                    total =
+                      total +
+                      schedule.rate /
+                        (schedule.final_hours_in_minutes / 60 / 2);
+                    break;
+                  default:
+                    total =
+                      total +
+                      schedule.rate * (schedule.final_hours_in_minutes / 60);
+                    break;
+                }
+              }
+            });
           }
 
           return {
@@ -857,7 +872,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -893,7 +908,7 @@ export default {
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -942,7 +957,7 @@ export default {
               let type;
               let finalHours;
               let totalHours;
-              let total;
+              let total = 0;
 
               if (jobPart.locum_invoice_item) {
                 total = jobPart.locum_invoice_item.locum_invoice.total_amount;
@@ -954,19 +969,40 @@ export default {
                     jobPart.locum_invoice_item.locum_invoice.paye_amount;
                 }
               } else if (!jobPart.locum_invoice_item) {
-                type = jobPart.job.locum_detail_rate_type.name;
-                finalHours = jobPart.final_hours / 60;
-                totalHours = jobPart.job.total_hours / 60;
-                total = 0;
+                // rate * (final_hours_in_minutes / 60)
+                // rate / (final_hours_in_minutes / 60)
+                // rate / ((final_hours_in_minutes / 60) / 2)
 
-                switch (type) {
-                  case "Per Hour":
-                    total = finalHours * jobPart.job.rate;
-                    break;
-                  default:
-                    total = finalHours * (jobPart.job.rate / totalHours);
-                    break;
-                }
+                jobPart.schedules.forEach(schedule => {
+                  if (!schedule.absent_reason) {
+                    switch (schedule.locum_detail_rate_type.name) {
+                      case "Per Hour":
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Whole Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Half Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60 / 2);
+                        break;
+                      default:
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                    }
+                  }
+                });
               }
 
               return {
@@ -1031,7 +1067,7 @@ export default {
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
@@ -1067,7 +1103,7 @@ export default {
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          invoice_status.push("To Be Invoice");
+          invoice_status.push("To Be Invoiced");
           locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
@@ -1099,7 +1135,7 @@ export default {
               let type;
               let finalHours;
               let totalHours;
-              let total;
+              let total = 0;
 
               if (jobPart.locum_invoice_item) {
                 total = jobPart.locum_invoice_item.locum_invoice.total_amount;
@@ -1111,19 +1147,40 @@ export default {
                     jobPart.locum_invoice_item.locum_invoice.paye_amount;
                 }
               } else if (!jobPart.locum_invoice_item) {
-                type = jobPart.job.locum_detail_rate_type.name;
-                finalHours = jobPart.final_hours / 60;
-                totalHours = jobPart.job.total_hours / 60;
-                total = 0;
+                // rate * (final_hours_in_minutes / 60)
+                // rate / (final_hours_in_minutes / 60)
+                // rate / ((final_hours_in_minutes / 60) / 2)
 
-                switch (type) {
-                  case "Per Hour":
-                    total = finalHours * jobPart.job.rate;
-                    break;
-                  default:
-                    total = finalHours * (jobPart.job.rate / totalHours);
-                    break;
-                }
+                jobPart.schedules.forEach(schedule => {
+                  if (!schedule.absent_reason) {
+                    switch (schedule.locum_detail_rate_type.name) {
+                      case "Per Hour":
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Whole Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                      case "Per Half Day Session":
+                        total =
+                          total +
+                          schedule.rate /
+                            (schedule.final_hours_in_minutes / 60 / 2);
+                        break;
+                      default:
+                        total =
+                          total +
+                          schedule.rate *
+                            (schedule.final_hours_in_minutes / 60);
+                        break;
+                    }
+                  }
+                });
               }
 
               return {
