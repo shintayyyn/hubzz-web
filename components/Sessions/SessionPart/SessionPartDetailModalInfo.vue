@@ -118,19 +118,50 @@
         <div
           class="text-xs sm:text-sm mb-8"
         >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>-->
-        <div class="font-bold text-sm sm:text-md">Total Original hours</div>
+        <div class="font-bold text-sm sm:text-md">Job Part Hubzz Fee</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartHubzzFee(job_part.schedules) | currency }}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Hubzz Fee</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartHubzzFee(job_part.job.schedules) | currency}}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Part Gross Rate</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartGrossRate(job_part.schedules) | currency}}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Gross Rate</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{getJobPartGrossRate(job_part.job.schedules) | currency}}</div>
+
+        <div class="font-bold text-sm sm:text-md">Job Part Total Original hours</div>
         <div
           class="text-xs sm:text-sm mb-8"
         >{{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+
         <template v-if="['Completed', 'Approved'].includes(job_part.status)">
-          <div class="font-bold text-sm sm:text-md">
-            Total Final hours
-            <!-- <span class="text-sm font-light">(set by Practice)</span> -->
-          </div>
+          <div class="font-bold text-sm sm:text-md">Job Part Total Final hours</div>
           <div
             class="text-xs sm:text-sm mb-8"
           >{{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
         </template>
+
+        <div class="font-bold text-sm sm:text-md">Job Total Original hours</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{ job_part.job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+
+        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+          <div class="font-bold text-sm sm:text-md">Job Total Final hours</div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{ job_part.job.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        </template>
+
         <div class="font-bold text-sm sm:text-md break-words">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-8"
@@ -511,6 +542,80 @@ export default {
   },
 
   methods: {
+    practice_rate() {
+      let practice_rates = this.$auth.user.practice_detail.practice
+        .practice_rates;
+
+      return this.$auth.user.practice_detail;
+      // let practice_rate = practice_rates.find(
+      // 	item => item.id.toString() === this.form.role.toString()
+      // );
+      // let rate = 0;
+      // if (practice_rate) {
+      // 	rate = practice_rate.rate;
+      // } else {
+      // 	rate = practice_rates[practice_rates.length - 1].rate;
+      // }
+      // return rate;
+    },
+    getJobPartHubzzFee(schedules) {
+      // HUBB FEE (final_hours_in_minutes / 60) * practice_rate
+      let practice_rates = this.$auth.user.practice_detail.practice
+        .practice_rates;
+
+      let practice_rate = practice_rates.find(
+        item =>
+          item.id.toString() === this.job_part.job.profession_id.toString()
+      );
+
+      let rate = 0;
+
+      if (practice_rate) {
+        rate = practice_rate.rate;
+      } else {
+        rate = practice_rates[practice_rates.length - 1].rate;
+      }
+
+      let total = 0;
+
+      total = schedules
+        .map(schedule => schedule.final_hours_in_minutes)
+        .reduce((acc, cur) => acc + cur);
+
+      return (total / 60) * rate;
+    },
+    getJobPartGrossRate(schedules) {
+      // PER HOUR rate * (final_hours_in_minute / 60)
+      // PER WHOLE DAY rate / (final_hours_in_minutes / 60)
+      // PER HALF DAY rate / ((final_hours_in_minutes / 60) / 2)
+      let total = 0;
+
+      schedules.forEach(schedule => {
+        if (!schedule.absent_reason) {
+          switch (schedule.locum_detail_rate_type.name) {
+            case "Per Hour":
+              total =
+                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              break;
+            case "Per Whole Day Session":
+              total =
+                total + schedule.rate / (schedule.final_hours_in_minutes / 60);
+              break;
+            case "Per Half Day Session":
+              total =
+                total +
+                schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+              break;
+            default:
+              total =
+                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              break;
+          }
+        }
+      });
+
+      return total;
+    },
     convertDoc(document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`;
     },
