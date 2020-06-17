@@ -172,6 +172,36 @@
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
         <div
           class="text-xs sm:text-sm mb-8"
+        >{{ `£ ${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name}` }}</div>-->
+        <div class="font-bold text-sm sm:text-md">Total Original hours</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+          <div class="font-bold text-sm sm:text-md">
+            Total Final hours
+            <!-- <span class="text-sm font-light">(set by Practice)</span> -->
+          </div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
+        </template>
+        <div class="font-bold text-sm sm:text-md">Total Rate</div>
+        <div class="text-xs sm:text-sm mb-8">£ {{ job_part.total_amount | currency }}</div>
+        <div class="font-bold text-sm sm:text-md">Hubzz Fee</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >£ {{ ((job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur)/60) * job_part.practice_rate).toFixed(2) | currency }}</div>
+        <div class="font-bold text-sm sm:text-md break-words">Extra information</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+          v-text="job_part.job.platform_job.extra_information?job_part.job.platform_job.extra_information:`(none)`"
+        />
+        <div class="font-bold text-sm sm:text-md">Report to</div>
+        <div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
+        <div class="font-bold text-sm sm:text-md">Telephone number</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
           v-text="job_part.job.platform_job.practice.phone_number?job_part.job.platform_job.practice.phone_number:`(none)`"
         />
         <div class="font-bold text-sm sm:text-md">Email address</div>

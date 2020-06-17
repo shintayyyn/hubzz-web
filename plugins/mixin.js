@@ -418,6 +418,6 @@ Vue.mixin({
       })
 
       return jobParts
-    }
+    },
   }
 })

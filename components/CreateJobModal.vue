@@ -660,7 +660,7 @@
 					<div class="pt-4 pb-8 w-full flex justify-between">
 						<AppButton class="mr-2" :label="'Back'" :disabled="loading" @click="tabActive='details'" />
 						<AppButton
-							:disabled="!form.schedules.length"
+							:disabled="!form.schedules.length || loading"
 							v-if="authPermissions.includes('Create Sessions Job')"
 							:label="'Publish'"
 							@click="canPublish"
@@ -1446,7 +1446,8 @@ export default {
 				"favorite_only",
 				"shift_id",
 				"schedule_templates",
-				"schedules"
+				"schedules",
+				"unpaid_breaks_in_minutes"
 			];
 			if (!this.hasBanks) {
 				this.form.favorite_only = false;
@@ -1484,7 +1485,7 @@ export default {
 			}
 
 			this.Validate(this.form, notRequired);
-
+			console.log("formError", this.formError);
 			if (!this.formError.length) {
 				this.tabActive = "schedule";
 			} else {
@@ -1617,7 +1618,141 @@ export default {
 				!this.hasShiftError &&
 				!this.formError.length
 			) {
-				this.toPublish = true;
+				this.form.profession_id = this.form.role;
+				this.form.shift_id = this.form.shift;
+				this.selectedClinicalSystem = [...this.form.clinical_system];
+				this.form.clinical_system_id = this.form.clinical_system.map(
+					item => item.value
+				);
+				this.selectedQualification = [...this.form.specialty];
+				this.form.qualification_id = this.form.specialty.map(
+					item => item.value
+				);
+				this.selectedSpokenLanguage = [...this.form.spoken_language_id];
+				this.form.spoken_language_id = this.form.spoken_language_id.map(
+					item => item.value
+				);
+
+				if (Array.isArray(this.form.session_requirements)) {
+					if (this.form.session_requirements.length === 1) {
+						this.form.session_requirements = this.form.session_requirements[0];
+					} else if (this.form.session_requirements.length > 0) {
+						this.form.session_requirements = this.form.session_requirements.join();
+					} else if (this.form.session_requirements.length === 0) {
+						this.form.session_requirements = "";
+					}
+				}
+
+				this.form.auto_assign_at = null;
+				if (["true", true].includes(this.auto_assign_job)) {
+					this.form.auto_assign_at = "1970-01-01 00:00";
+				}
+
+				this.form.selection_date = null;
+				if (["false", false].includes(this.auto_assign_job)) {
+					if (["true", true].includes(this.selection_notification)) {
+						this.form.selection_date = `${this.$moment(
+							this.selection_date.date,
+							"YYYY-MM-DD"
+						).format("YYYY-MM-DD")} ${this.selection_date.time}`;
+					}
+				}
+
+				this.form.favorite_only_until = null;
+				if (["true", true].includes(this.bank_first)) {
+					this.form.favorite_only_until = `${this.$moment(
+						this.favorite_only_until.date,
+						"YYYY-MM-DD"
+					).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+				}
+
+				if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
+					this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
+				}
+				if (this.unpaid_breaks === "other") {
+					this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
+				}
+				if (["false", false].includes(this.unpaid_breaks)) {
+					this.form.unpaid_breaks_in_minutes = "";
+				}
+
+				this.form.ir35 =
+					this.selectedProfession &&
+					this.selectedProfession.profession_category.name === "GP"
+						? this.form.ir35
+						: false;
+
+				this.loading = true;
+				this.$axios
+					.$post(`/api/v1/practice/jobs/check`, {
+						...this.form,
+						old_job_id: this.repostJob ? this.repostJob.id : null
+					})
+					.then(res => {
+						this.toPublish = true;
+						this.loading = false;
+					})
+					.catch(err => {
+						console.log("err", err.response || err);
+
+						this.$refs.modalContainer.scrollTop = 0;
+
+						this.form.clinical_system = this.selectedClinicalSystem;
+
+						this.form.specialty = this.selectedQualification;
+
+						this.form.spoken_language_id = this.selectedSpokenLanguage;
+
+						this.form.session_requirements = this.form.session_requirements
+							? this.form.session_requirements.split(",")
+							: [];
+
+						let message = null;
+
+						if (err.response) {
+							if (
+								err.response.status === 400 ||
+								err.response.data.error_messages
+							) {
+								this.formError = err.response.data.error_messages;
+								let detailsError = [
+									"practice_id",
+									"number_of_patients",
+									"duration_for_each_appointment",
+									"role",
+									"specialty",
+									"clinical_system"
+								];
+								let hasDetailsError = this.formError
+									.map(err => detailsError.includes(err.field))
+									.includes(true);
+								if (hasDetailsError) {
+									this.tabActive = "details";
+								} else if (
+									this.formError
+										.map(err => ["schedules", "dates"].includes(err.field))
+										.includes(true)
+								) {
+									this.tabActive = "schedule";
+								}
+							} else {
+								message = err.response.data.message;
+							}
+						} else if (err.request) {
+							message = "Something weng wrong!";
+						} else {
+							message = err.message;
+						}
+
+						if (message) {
+							this.$store.commit("SET_NOTIFICATION", {
+								enabled: true,
+								status: "danger",
+								text: [`${message}`]
+							});
+						}
+						this.loading = false;
+					});
 			}
 		},
 		// -- END FOR APP SCHEDULE COMPONENT
