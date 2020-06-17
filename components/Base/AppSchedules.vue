@@ -933,13 +933,28 @@ export default {
 						)
 					);
 					if (job_part) {
-						job_parts.push(job_part.value);
+						job_parts.push(`Job Part ${job_part.value}`);
 					}
 				});
+				console.log(job_parts);
+				let partsLabel;
+				job_parts.forEach((item, index) => {
+					if (job_parts.length > 1) {
+						console.log(item, index, job_parts.length - 1);
+						if (index !== job_parts.length - 1) {
+							partsLabel += `${item},`;
+						} else {
+							partsLabel += `and ${item},`;
+						}
+					} else {
+						partsLabel += item;
+					}
+				});
+				console.log(partsLabel);
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "danger",
-					text: [`Job Part ${job_parts.join(", ")} has an empty schedule.`]
+					text: [`${job_parts.join(", ")} has an empty schedule.`]
 				});
 			}
 		}

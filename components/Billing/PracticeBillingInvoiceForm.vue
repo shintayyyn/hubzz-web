@@ -470,7 +470,7 @@
 		</template>
 		<div class="flex justify-start items-center mb-6">
 			<AppButton
-				v-if="propInvoice.disputed_items_count > 0 && propInvoice.status === 'Disputed' && propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
+				v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
 				class="m-1"
 				:label="'Accept changes'"
 				:inStyle="'padding:5px 14px;font-size:1em'"
