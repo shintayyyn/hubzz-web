@@ -44,9 +44,12 @@
       </div>
     </div>
 
-    <div class="flex justify-end mt-2 mb-8">
+    <div class="flex flex-col items-end justify-end mt-2 mb-8">
       <nuxt-link to="/forgot-password">
         <span class="hover:underline text-sm cursor-pointer">Forgot password?</span>
+      </nuxt-link>
+      <nuxt-link to="/change-email-request">
+        <span class="hover:underline text-sm cursor-pointer">Forgot email?</span>
       </nuxt-link>
     </div>
 
@@ -174,7 +177,7 @@
           let message = null
 
           if (err.response) {
-            if (err.response.status === 400 || err.response.data.error_messages) {
+            if (err.response.status === 400 && err.response.data.error_messages) {
               this.formErrors = err.response.data.error_messages
             } else {
               message = err.response.data.message
