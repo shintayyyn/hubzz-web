@@ -483,6 +483,7 @@
                 :name="'nhs_number'"
                 :label="'NHS number'"
                 :error="formError.find(item => item.field === 'nhs_number')"
+                :limit="8"
                 required
                 @keypress="inputNumberOnly($event)"
               />
@@ -492,6 +493,8 @@
                 :name="'ni_number'"
                 :label="'NI number'"
                 :error="formError.find(item => item.field === 'ni_number')"
+                :placeholder="'AA000000'"
+                :limit="8"
                 required
               />
               <AppInput
@@ -1246,6 +1249,30 @@
           this.form.nhs_number = null
           notRequired.push("ni_number")
           this.form.ni_number = null
+        }
+
+        if (["true", true].includes(this.form.claim_nhs)) {
+          if (
+            !this.form.ni_number.substring(0, 8).match(/[A-Za-z0-9]/g)
+            || this.form.ni_number.substring(0, 8).match(/[A-Za-z0-9]/g).length !== 8
+          ) {
+            this.formError.push({
+              field: "nhs_number",
+              message: "NHS number is invalid."
+            })
+          }
+
+          if (
+            !this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
+            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !== 2
+            || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
+            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6
+          ) {
+            this.formError.push({
+              field: "ni_number",
+              message: "NI number is invalid."
+            })
+          }
         }
 
         if (["false", false].includes(this.form.paid_under_payroll)) {
