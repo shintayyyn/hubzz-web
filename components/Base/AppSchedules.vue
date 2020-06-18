@@ -706,6 +706,7 @@ export default {
 							shift_id: sched.shift_id,
 							time_end: sched.time_end,
 							time_start: sched.time_start,
+							locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
 							locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
 							final_time_start: sched.time_start,
 							final_time_end: sched.time_end,
@@ -721,6 +722,7 @@ export default {
 							shift_id: sched.shift_id,
 							time_end: sched.time_end,
 							time_start: sched.time_start,
+							locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
 							locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
 							final_time_start: "",
 							final_time_end: "",
@@ -748,6 +750,7 @@ export default {
 							time_end: sched.time_end,
 							time_start: sched.time_start,
 							locum_detail_rate_type: sched.locum_detail_rate_type,
+							locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
 							locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
 							orig_final_start: sched.final_time_start,
 							orig_final_end: sched.final_time_end,
@@ -791,6 +794,8 @@ export default {
 									shift_id: sched.shift_id,
 									time_end: sched.time_end,
 									time_start: sched.time_start,
+									locum_detail_rate_type_name:
+										sched.locum_detail_rate_type.name,
 									locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
 									final_time_start: sched.time_start,
 									final_time_end: sched.time_end,
@@ -811,6 +816,8 @@ export default {
 									shift_id: sched.shift_id,
 									time_end: sched.time_end,
 									time_start: sched.time_start,
+									locum_detail_rate_type_name:
+										sched.locum_detail_rate_type.name,
 									locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
 									final_time_start: "",
 									final_time_end: "",
@@ -845,6 +852,8 @@ export default {
 									time_end: sched.time_end,
 									time_start: sched.time_start,
 									locum_detail_rate_type: sched.locum_detail_rate_type,
+									locum_detail_rate_type_name:
+										sched.locum_detail_rate_type.name,
 									locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
 									orig_final_start: sched.final_time_start,
 									orig_final_end: sched.final_time_end,
@@ -1453,9 +1462,9 @@ export default {
 									: `0${minDiff > -1 ? minDiff : 0} m`
 								: ""
 					  }`
-					: "00:00";
+					: "NO";
 			if (hourDiff === 0 && minDiff === 0) {
-				diff = "None";
+				diff = "NO";
 			}
 			return diff;
 		},
@@ -1514,36 +1523,58 @@ export default {
 			let origMinutes = Math.floor(origTotalHours % 60);
 			let finalHours = Math.floor(finalTotalHours / 60);
 			let finalMinutes = Math.floor(finalTotalHours % 60);
+			let totalFinalHours =
+				finalHours === 0 && finalMinutes === 0
+					? "0h"
+					: `${
+							finalHours > 0
+								? finalHours > 9
+									? `${finalHours}h`
+									: `0${finalHours}h`
+								: ""
+					  }${
+							finalMinutes > 0
+								? finalMinutes > 9
+									? ` ${finalMinutes}m`
+									: ` 0${finalMinutes}m`
+								: ""
+					  }`;
+			let totalOrigHours =
+				origHours === 0 && origMinutes === 0
+					? "0h"
+					: `${
+							origHours > 0
+								? origHours > 9
+									? `${origHours}`
+									: `0${origHours}h`
+								: ""
+					  }${
+							origMinutes > 0
+								? origMinutes > 9
+									? ` ${origMinutes}m`
+									: ` 0${origMinutes}m`
+								: ""
+					  }`;
 
-			return `${
-				finalHours > 9
-					? finalHours > 9
-						? `${finalHours}h`
-						: `0${finalHours}h`
-					: ""
-			} ${
-				finalMinutes > 0
-					? finalMinutes > 9
-						? `${finalMinutes}m`
-						: `0${finalMinutes} m`
-					: ""
-			}/ ${
-				origHours > 0 ? (origHours > 9 ? `${origHours}` : `0${origHours}h`) : ""
-			} ${
-				origMinutes > 0
-					? origMinutes > 9
-						? `${origMinutes}m`
-						: `0${origMinutes}m`
-					: ""
-			}`;
+			return `${totalFinalHours}/${totalOrigHours}`;
 		},
 
 		getRate(shift, startTime, endTime, date) {
+			let rate_type_name =
+				this.type === "create"
+					? this.rate_lists && shift.locum_detail_rate_type_id
+						? this.rate_lists.find(
+								item =>
+									item.value.toString() ===
+									shift.locum_detail_rate_type_id.toString()
+						  ).label
+						: ""
+					: shift.locum_detail_rate_type_name;
 			let total_hours = this.totalHours(startTime, endTime, date) / 60;
-			switch (shift.locum_detail_rate_type_id) {
-				// Hourly
-				case 1:
-				case "1":
+			let orig_total_hours =
+				this.totalHours(shift.time_start, shift.time_end, date) / 60;
+			switch (rate_type_name) {
+				case "Hourly":
 					return !shift.has_absences &&
 						startTime &&
 						endTime &&
@@ -1551,26 +1582,27 @@ export default {
 						? shift.rate * total_hours
 						: 0;
 					break;
-				// Half Day
-				case 2:
-				case "2":
+				case "Half Day":
+				case "Whole Day":
 					return !shift.has_absences &&
 						startTime &&
 						endTime &&
 						total_hours !== 0
-						? shift.rate / (total_hours / 2)
+						? this.type === "create"
+							? shift.rate
+							: (shift.rate / orig_total_hours) * total_hours
 						: 0;
 					break;
 				// Whole Day
-				case 3:
-				case "3":
-					return !shift.has_absences &&
-						startTime &&
-						endTime &&
-						total_hours !== 0
-						? shift.rate / total_hours
-						: 0;
-					break;
+				// case 3:
+				// case "3":
+				// 	return !shift.has_absences &&
+				// 		startTime &&
+				// 		endTime &&
+				// 		total_hours !== 0
+				// 		? shift.rate / total_hours
+				// 		: 0;
+				// 	break;
 				default:
 					return 0;
 					break;

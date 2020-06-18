@@ -479,7 +479,7 @@
 				@click="save(true)"
 			/>
 			<AppButton
-				v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
+				v-if="propInvoice && !['Approved', 'Paid', 'Issued'].includes(propInvoice.status) && allowToBill"
 				class="m-1"
 				:label="'Save changes'"
 				:inStyle="'padding:5px 14px;font-size:1em'"
