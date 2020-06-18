@@ -120,6 +120,7 @@
 						<SessionPartDetailModalParts
 							:job_id="jobPart.job.id"
 							:cantCompleteJob="practice && practice.type !== 'Hub' && practice.parent_practice_id && !practice.allow_surgery_bill_locum"
+							@close="$emit('close')"
 						/>
 						<div
 							class="px-2 mb-4"

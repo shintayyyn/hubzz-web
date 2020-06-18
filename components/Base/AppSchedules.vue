@@ -10,7 +10,7 @@
 		/>
 
 		<div class="flex">
-			<div class="pl-0 p-4" v-if="!toComplete && !toInvoice">
+			<div class="pl-0 p-4" v-if="type === 'create'">
 				<div class="border rounded-lg w-full h-full">
 					<p class="text-gray-700 text-center text-lg font-bold pt-6">DATES</p>
 					<p class="text-center text-xs text-gray-700">
@@ -69,18 +69,15 @@
 			<div class="w-full py-4">
 				<div
 					class="w-full h-full pb-6 flex flex-col justify-between"
-					:class="toComplete || toInvoice ? '' : 'border rounded-lg '"
+					:class="['complete', 'terminate', 'invoice'].includes(type) ? '' : 'border rounded-lg '"
 				>
 					<div>
 						<p
 							class="text-gray-700 text-center text-lg font-bold py-6"
-							v-if="!toComplete && !toInvoice"
+							v-if="type === 'create'"
 						>SHIFTS &amp; RATES</p>
 						<template v-if="schedules && schedules.length">
-							<div
-								class="flex items-center w-2/5 mx-auto mb-6 text-gray-600"
-								v-if="!toComplete && !toInvoice"
-							>
+							<div class="flex items-center w-2/5 mx-auto mb-6 text-gray-600" v-if="type === 'create'">
 								<p class="text-sm whitespace-no-wrap mr-2 font-bold">Job Part</p>
 								<div class="flex flex-col justify-center w-full">
 									<div
@@ -116,35 +113,35 @@
 							</div>
 							<div class="px-4">
 								<div class="flex items-end text-sm pb-2 font-bold text-gray-700">
-									<p class="px-2" :class="!toComplete && !toInvoice ? 'w-2/12' : 'w-1/12'">Date</p>
+									<p class="px-2" :class="type === 'create' ? 'w-2/12' : 'w-1/12'">Date</p>
 									<div
 										class="flex items-end text-center"
-										:class="!toComplete && !toInvoice ? 'w-9/12 ' : 'w-11/12 pr-2'"
+										:class="type === 'create' ? 'w-9/12 ' : 'w-11/12 pr-2'"
 									>
-										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">Shift</p>
-										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">Start</p>
-										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">End</p>
-										<p :class="!toComplete && !toInvoice ? 'w-2/12' : 'w-2/12'">Hours</p>
-										<p :class="!toComplete && !toInvoice ? 'w-3/12' : 'w-2/12'">Rate Type</p>
-										<p :class="!toComplete && !toInvoice ? 'w-2/12' : 'w-2/12'">Rate £</p>
+										<p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">Shift</p>
+										<p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">Start</p>
+										<p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">End</p>
+										<p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">Hours</p>
+										<p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">Rate Type</p>
+										<p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">Rate £</p>
 										<!-- FOR COMPLETING JOB -->
-										<p class="w-2/12" v-if="toComplete || toInvoice">Final Start</p>
-										<p class="w-2/12" v-if="toComplete || toInvoice">Final End</p>
-										<p class="w-2/12" v-if="toComplete || toInvoice">Has Late?</p>
-										<p class="w-2/12" v-if="toComplete"></p>
-										<p class="w-2/12" v-if="toComplete || toInvoice">Any Absences?</p>
-										<p class="w-2/12" v-if="toComplete"></p>
+										<p class="w-2/12" v-if="['complete', 'terminate', 'invoice'].includes(type)">Final Start</p>
+										<p class="w-2/12" v-if="['complete', 'terminate', 'invoice'].includes(type)">Final End</p>
+										<p class="w-2/12" v-if="['complete', 'terminate', 'invoice'].includes(type)">Has Late?</p>
+										<p class="w-2/12" v-if="['complete', 'terminate'].includes(type)"></p>
+										<p class="w-2/12" v-if="['complete', 'terminate', 'invoice'].includes(type)">Any Absences?</p>
+										<p class="w-2/12" v-if="['complete', 'terminate'].includes(type)"></p>
 										<!-- FOR INVOICING -->
-										<p class="w-2/12" v-if="toInvoice">Final Hours</p>
-										<p class="w-2/12" v-if="toInvoice">Final Rate</p>
-										<p class="w-2/12" v-if="toInvoice">Dispute?</p>
-										<p class="w-2/12" v-if="toInvoice "></p>
+										<p class="w-2/12" v-if="type === 'invoice'">Final Hours</p>
+										<p class="w-2/12" v-if="type === 'invoice'">Final Rate</p>
+										<p class="w-2/12" v-if="type === 'invoice'">Dispute?</p>
+										<p class="w-2/12" v-if="type === 'invoice'"></p>
 									</div>
-									<p v-if="!toComplete && !toInvoice" class="w-2/12 text-center">Other Options</p>
+									<p v-if="type === 'create'" class="w-2/12 text-center">Other Options</p>
 								</div>
 
 								<div class="flex text-sm mb-2" v-for="(item, index) in filteredSchedule" :key="index">
-									<template v-if="toComplete">
+									<template v-if="['complete', 'terminate'].includes(type)">
 										<div
 											class="w-1/12 rounded-l-lg p-2 border-l border-t border-b pt-4"
 											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
@@ -259,7 +256,7 @@
 											</div>
 										</div>
 									</template>
-									<template v-else-if="toInvoice">
+									<template v-else-if="type === 'invoice'">
 										<div
 											class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
 											:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
@@ -528,7 +525,7 @@
 										</div>
 									</template>
 
-									<div class="w-2/12 flex flex-col items-center p-2" v-if="!toComplete && !toInvoice">
+									<div class="w-2/12 flex flex-col items-center p-2" v-if="type === 'create'">
 										<template v-if="item.shifts && item.shifts.length">
 											<button
 												class="w-full border border-gray-500 hover:bg-gray-200 leading-tight px-2 py-1 mb-2 rounded-lg"
@@ -544,36 +541,37 @@
 							</div>
 						</template>
 						<template v-else>
-							<p
-								v-if="!toComplete && !toInvoice"
-								class="text-center py-20 italic text-gray-500"
-							>Select dates first</p>
+							<p v-if="type === 'create'" class="text-center py-20 italic text-gray-500">Select dates first</p>
 						</template>
 					</div>
 					<div
-						v-if="(schedules && schedules.length) && !toInvoice"
+						v-if="(schedules && schedules.length) && type !== 'invoice'"
 						class="pl-4 pt-4 flex flex-col items-end"
-						:class="!toComplete ? 'w-10/12' : 'w-full px-4'"
+						:class="type === 'create' ? 'w-10/12' : 'w-full px-4'"
 					>
 						<div
 							class="flex flex-col text-lg text-gray-600 font-bold text-right"
-							:class="!toComplete ? ' w-2/4' : 'w-2/5'"
+							:class="type === 'create' ? ' w-2/4' : 'w-2/5'"
 						>
 							<div class="flex justify-between">
 								<p class="w-2/3">Job Part {{ job_part_id }}/{{ job_parts.length }} Total Hours:</p>
 								<p
 									class="w-1/3"
-								>{{ getTotalHours(this.filteredSchedule) <= 0 ? '-' : '' }}{{ getTotalHours(this.filteredSchedule) | hoursMinutes }}</p>
+								>{{ getTotalHours(filteredSchedule) <= 0 ? '-' : '' }}{{ getTotalHours(filteredSchedule) | hoursMinutes }}</p>
 							</div>
 							<div class="flex justify-between">
 								<p class="w-2/3">Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:</p>
-								<p class="w-1/3">£ {{ getJobGrossRate(filteredSchedule, this.toComplete) | currency}}</p>
+								<p
+									class="w-1/3"
+								>£ {{ getJobGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency}}</p>
 							</div>
-							<div class="flex justify-between" v-if="!toComplete">
+							<div class="flex justify-between" v-if="type === 'create'">
 								<p class="w-2/3">Total Job Gross Rate:</p>
-								<p class="w-1/3">£ {{ getJobGrossRate(schedules, this.toComplete) | currency}}</p>
+								<p
+									class="w-1/3"
+								>£ {{ getJobGrossRate(schedules, ['complete', 'terminate'].includes(type)) | currency}}</p>
 							</div>
-							<div class="flex justify-between" v-if="toComplete">
+							<div class="flex justify-between" v-if="['complete', 'terminate'].includes(type)">
 								<p class="w-2/3">Hubzz Fee*:</p>
 								<p class="w-1/3">£ {{ hubzz_fee | currency}}</p>
 							</div>
@@ -662,6 +660,8 @@ export default {
 		rate_lists: Array,
 		schedule: Array,
 		error: Object,
+		type: String,
+		toTerminate: Boolean,
 		toComplete: Boolean,
 		toInvoice: Boolean,
 		shiftErrors: Array,
@@ -699,7 +699,22 @@ export default {
 						this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 				);
 				if (isExisting) {
-					if (this.toComplete) {
+					if (this.type === "complete") {
+						isExisting.shifts.push({
+							id: sched.id,
+							rate: sched.rate,
+							shift_id: sched.shift_id,
+							time_end: sched.time_end,
+							time_start: sched.time_start,
+							locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+							final_time_start: sched.time_start,
+							final_time_end: sched.time_end,
+							has_late: false,
+							late_hours_reason: "",
+							has_absences: false,
+							absent_reason: ""
+						});
+					} else if (this.type === "terminate") {
 						isExisting.shifts.push({
 							id: sched.id,
 							rate: sched.rate,
@@ -714,7 +729,7 @@ export default {
 							has_absences: false,
 							absent_reason: ""
 						});
-					} else if (this.toInvoice) {
+					} else if (this.type === "invoice") {
 						let isAbsent = !this.invoiceDetails
 							? sched.final_time_start === sched.final_time_end
 							: sched.time_start === sched.time_end;
@@ -766,7 +781,27 @@ export default {
 					this.schedule_dates.push(
 						this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 					);
-					if (this.toComplete) {
+					if (this.type === "complete") {
+						this.schedules.push({
+							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
+							shifts: [
+								{
+									id: sched.id,
+									rate: sched.rate,
+									shift_id: sched.shift_id,
+									time_end: sched.time_end,
+									time_start: sched.time_start,
+									locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+									final_time_start: sched.time_start,
+									final_time_end: sched.time_end,
+									has_late: false,
+									late_hours_reason: "",
+									has_absences: false,
+									absent_reason: ""
+								}
+							]
+						});
+					} else if (this.type === "terminate") {
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -786,7 +821,7 @@ export default {
 								}
 							]
 						});
-					} else if (this.toInvoice) {
+					} else if (this.type === "invoice") {
 						let isAbsent = !this.invoiceDetails
 							? sched.final_time_start === sched.final_time_end
 							: sched.time_start === sched.time_end;
@@ -1143,7 +1178,7 @@ export default {
 	},
 	methods: {
 		emitSchedule() {
-			if (this.toInvoice) {
+			if (this.type === "invoice") {
 				let deduction =
 					this.getJobGrossRate(this.schedules) -
 					this.getJobGrossRate(this.schedules, true);
@@ -1338,7 +1373,7 @@ export default {
 							if (sched.shifts.length) {
 								sched.shifts.splice(0, sched.shifts.length);
 							}
-							if (!this.toComplete) {
+							if (this.type === "create") {
 								item.shifts.forEach(shift => {
 									sched.shifts.push({
 										shift_id: shift.shift_id,
@@ -1405,10 +1440,23 @@ export default {
 
 			let diff =
 				shift.final_time_start && shift.final_time_end
-					? `${hourDiff > 9 ? hourDiff : `0${hourDiff > -1 ? hourDiff : 0}`}:${
-							minDiff > 9 ? minDiff : `0${minDiff > -1 ? minDiff : 0}`
+					? `${
+							hourDiff > 0
+								? hourDiff > 9
+									? `${hourDiff}h`
+									: `0${hourDiff > -1 ? hourDiff : 0}h`
+								: ""
+					  } ${
+							minDiff > 0
+								? minDiff > 9
+									? `${minDiff}m`
+									: `0${minDiff > -1 ? minDiff : 0} m`
+								: ""
 					  }`
 					: "00:00";
+			if (hourDiff === 0 && minDiff === 0) {
+				diff = "None";
+			}
 			return diff;
 		},
 		getTotalLates(schedule) {
@@ -1467,10 +1515,26 @@ export default {
 			let finalHours = Math.floor(finalTotalHours / 60);
 			let finalMinutes = Math.floor(finalTotalHours % 60);
 
-			return `${finalHours > 9 ? finalHours : `0${finalHours}`}:${
-				finalMinutes > 9 ? finalMinutes : `0${finalMinutes}`
-			}/${origHours > 9 ? origHours : `0${origHours}`}:${
-				origMinutes > 9 ? origMinutes : `0${origMinutes}`
+			return `${
+				finalHours > 9
+					? finalHours > 9
+						? `${finalHours}h`
+						: `0${finalHours}h`
+					: ""
+			} ${
+				finalMinutes > 0
+					? finalMinutes > 9
+						? `${finalMinutes}m`
+						: `0${finalMinutes} m`
+					: ""
+			}/ ${
+				origHours > 0 ? (origHours > 9 ? `${origHours}` : `0${origHours}h`) : ""
+			} ${
+				origMinutes > 0
+					? origMinutes > 9
+						? `${origMinutes}m`
+						: `0${origMinutes}m`
+					: ""
 			}`;
 		},
 
@@ -1518,7 +1582,7 @@ export default {
 
 			schedules.map(item => {
 				if (item.shifts && item.shifts.length) {
-					if (this.toComplete) {
+					if (["complete", "terminate"].includes(this.type)) {
 						rates.push(
 							...item.shifts.map(shift =>
 								shift.has_absences
@@ -1538,7 +1602,7 @@ export default {
 									  )
 							)
 						);
-					} else if (this.toInvoice) {
+					} else if (this.type === "invoice") {
 						rates.push(
 							...item.shifts.map(shift =>
 								shift.has_absences
@@ -1583,11 +1647,13 @@ export default {
 			schedule.forEach(sched => {
 				sched.shifts.forEach(shift => {
 					let time_start =
-						this.toComplete || final
+						["complete", "terminate"].includes(this.type) || final
 							? shift.final_time_start
 							: shift.time_start;
 					let time_end =
-						this.toComplete || final ? shift.final_time_end : shift.time_end;
+						["complete", "terminate"].includes(this.type) || final
+							? shift.final_time_end
+							: shift.time_end;
 					let total_hours = this.totalHours(time_start, time_end, sched.date);
 					if (total_hours > 0) {
 						hours.push(total_hours);

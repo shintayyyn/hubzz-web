@@ -656,6 +656,7 @@
 						:schedule="form.schedules"
 						:error="formError.find(err => err.field === 'schedules')"
 						:shiftErrors="shiftErrors"
+						:type="'create'"
 					/>
 					<div class="pt-4 pb-8 w-full flex justify-between">
 						<AppButton class="mr-2" :label="'Back'" :disabled="loading" @click="tabActive='details'" />
