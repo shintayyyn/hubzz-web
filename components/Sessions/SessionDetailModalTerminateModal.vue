@@ -6,7 +6,7 @@
 				height="32"
 				width="32"
 				class="cursor-pointer"
-				@click="$emit('close')"
+				@click="$emit('cancel')"
 			/>
 		</div>
 		<template v-if="job_part && !dataLoading">
@@ -36,7 +36,8 @@
 				:schedule="form.schedules"
 				:error="formError.find(err => err.field === 'schedules')"
 				:shiftErrors="shiftErrors"
-				toComplete
+				toTerminate
+				:type="'terminate'"
 			/>
 			<div class="flex px-4">
 				<AppButton
@@ -289,12 +290,14 @@ export default {
 					this.job_part.job.job_parts.forEach(({ id }) => {
 						this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id);
 					});
+
+					this.$emit("terminated");
+					this.$emit("close");
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
 						text: ["Job terminated"]
 					});
-					this.$emit("terminated");
 				})
 				.catch(err => {
 					if (!err.response.data.error_messages) {

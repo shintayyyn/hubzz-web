@@ -238,6 +238,7 @@
                 :schedule="editedSchedule"
                 :error="formError.find(err => err.field === 'schedules')"
                 :shiftErrors="shiftErrors"
+						    :type="'create'"
               />
               <div class="flex justify-end">
                 <AppButton

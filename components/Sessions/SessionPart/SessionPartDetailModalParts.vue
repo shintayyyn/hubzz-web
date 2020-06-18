@@ -41,7 +41,8 @@
 			<SessionDetailModalCompleteModal
 				v-if="completeJobPart"
 				:job_part="job_part"
-				@close="completeJobPart=false"
+				@close="completeJobPart=false, $emit('close')"
+				@cancel="completeJobPart=false"
 				@completed="[getJobParts(params), completeJobPart=false]"
 			/>
 		</transition>
@@ -49,7 +50,8 @@
 			<SessionDetailModalTerminateModal
 				v-if="terminateJobPart"
 				:job_part="job_part"
-				@close="terminateJobPart=false"
+				@cancel="terminateJobPart=false"
+				@close="terminateJobPart=false, $emit('close')"
 				@terminated="[getJobParts(params), terminateJobPart=false]"
 			/>
 		</transition>

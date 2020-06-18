@@ -82,6 +82,7 @@
 					toInvoice
 					:invoiceDetails="propInvoice"
 					:toDisplay="propInvoice.status === 'Approved' "
+					:type="'invoice'"
 				/>
 			</div>
 

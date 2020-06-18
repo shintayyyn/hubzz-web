@@ -110,6 +110,7 @@
 						toInvoice
 						:invoiceDetails="propInvoice"
 						:toDisplay="propInvoice && propInvoice.status === 'Approved'"
+						:type="'invoice'"
 					/>
 				</div>
 				<div class="w-full flex justify-between py-4">

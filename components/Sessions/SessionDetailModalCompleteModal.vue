@@ -6,7 +6,7 @@
 				height="32"
 				width="32"
 				class="cursor-pointer"
-				@click="$emit('close')"
+				@click="$emit('cancel')"
 			/>
 		</div>
 		<template v-if="job_part && !dataLoading">
@@ -23,6 +23,7 @@
 				:error="formError.find(err => err.field === 'schedules')"
 				:shiftErrors="shiftErrors"
 				toComplete
+				:type="'complete'"
 			/>
 			<div class="flex px-4">
 				<AppButton :label="'Complete'" @click="canComplete" class="ml-auto" />
@@ -228,12 +229,14 @@ export default {
 								this.job_part.id
 							);
 						}
+
+						this.$emit("completed");
+						this.$emit("close");
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,
 							status: "success",
 							text: ["Job Part completed"]
 						});
-						this.$emit("completed");
 					})
 					.catch(err => {
 						if (!err.response.data.error_messages) {
