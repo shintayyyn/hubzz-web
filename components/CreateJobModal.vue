@@ -1569,10 +1569,12 @@ export default {
 			this.total_working_hours = total_working_hours;
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.hasShiftError = hasError;
+			console.log("hasError", hasError);
 		},
 		canPublish() {
 			this.shiftErrors = [];
 			this.formError = [];
+			let has_conflict = false;
 			this.schedules.forEach((sched, index) => {
 				if (!sched.shifts.length) {
 					this.shiftErrors.push({
@@ -1614,11 +1616,7 @@ export default {
 					});
 				}
 			});
-			if (
-				!this.shiftErrors.length &&
-				!this.hasShiftError &&
-				!this.formError.length
-			) {
+			if (!this.shiftErrors.length) {
 				this.form.profession_id = this.form.role;
 				this.form.shift_id = this.form.shift;
 				this.selectedClinicalSystem = [...this.form.clinical_system];
@@ -1690,7 +1688,14 @@ export default {
 						old_job_id: this.repostJob ? this.repostJob.id : null
 					})
 					.then(res => {
-						this.toPublish = true;
+						if (
+							!this.shiftErrors.length &&
+							!this.hasShiftError &&
+							!this.formError.length &&
+							!has_conflict
+						) {
+							this.toPublish = true;
+						}
 						this.loading = false;
 					})
 					.catch(err => {
@@ -1715,7 +1720,7 @@ export default {
 								err.response.status === 400 ||
 								err.response.data.error_messages
 							) {
-								this.formError = err.response.data.error_messages;
+								this.shiftErrors = err.response.data.error_messages;
 								let detailsError = [
 									"practice_id",
 									"number_of_patients",
@@ -1724,20 +1729,30 @@ export default {
 									"specialty",
 									"clinical_system"
 								];
-								let hasDetailsError = this.formError
-									.map(err => detailsError.includes(err.field))
-									.includes(true);
-								if (hasDetailsError) {
-									this.tabActive = "details";
-								} else if (
-									this.formError
-										.map(err => ["schedules", "dates"].includes(err.field))
-										.includes(true)
-								) {
-									this.tabActive = "schedule";
+								let sched_has_conflict = this.shiftErrors.find(
+									err => err.field === "schedules"
+								);
+								if (sched_has_conflict) {
+									has_conflict = true;
+									sched_has_conflict.conflictSchedules.forEach(item => {
+										// let sched_index = this.schedules.findIndex(sched => sched.date === this.$moment(item.date, 'YYYY-MM-DD').format('DD/MM/YYYY'))
+										this.shiftErrors.push({
+											field: `conflict-${this.$moment(
+												item.date,
+												"YYYY-MM-DD"
+											).format("DD/MM/YYYY")}-${item.index}`,
+											message:
+												"This schedule has a conflict with another schedule."
+										});
+									});
 								}
 							} else {
 								message = err.response.data.message;
+							}
+							if (this.shiftErrors.length) {
+								let sched_has_conflict = this.shiftErrors.find(
+									err => err.field === "schedules"
+								);
 							}
 						} else if (err.request) {
 							message = "Something weng wrong!";

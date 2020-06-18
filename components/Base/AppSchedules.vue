@@ -385,101 +385,108 @@
 											class="w-9/12 flex flex-col items-start rounded-r-lg border-r border-t border-b"
 											:class="index%2 ? 'bg-lighter-gray' : 'bg-light-gray'"
 										>
-											<div class="flex items-end w-full" v-for="(shift, i) in item.shifts" :key="i">
-												<div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
-													<div
-														class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
-														:class="shiftColor(shift.shift_id)"
-													>
+											<div class="w-full flex flex-col" v-for="(shift, i) in item.shifts" :key="i">
+												<div class="flex items-end w-full">
+													<div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
 														<div
-															class="flex justify-between items-center font-bold"
-														>{{ shifts_option.find(item => item.value.toString() === shift.shift_id.toString()) ? shifts_option.find(item => item.value.toString() === shift.shift_id.toString()).label : 'Select...' }}</div>
-														<svgicon name="down" width="12" height="12" class="fill-current" />
+															class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
+															:class="shiftColor(shift.shift_id)"
+														>
+															<div
+																class="flex justify-between items-center font-bold"
+															>{{ shifts_option.find(item => item.value.toString() === shift.shift_id.toString()) ? shifts_option.find(item => item.value.toString() === shift.shift_id.toString()).label : 'Select...' }}</div>
+															<svgicon name="down" width="12" height="12" class="fill-current" />
+														</div>
+														<select
+															v-model="shift.shift_id"
+															class="custom-select -mt-8 py-1 text-sm px-2"
+															@change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
+														>
+															<option
+																v-for="option in shifts_option"
+																:value="option.value"
+																:key="option.value"
+															>{{ option.label }}</option>
+														</select>
+														<div
+															class="text-xs text-red-500 pt-2"
+															v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`))"
+														>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors ? shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message : null }}</div>
 													</div>
-													<select
-														v-model="shift.shift_id"
-														class="custom-select -mt-8 py-1 text-sm px-2"
-														@change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
-													>
-														<option
-															v-for="option in shifts_option"
-															:value="option.value"
-															:key="option.value"
-														>{{ option.label }}</option>
-													</select>
-													<div
-														class="text-xs text-red-500 pt-2"
-														v-if="formError.find(err => err.field === `shift_id-s${index}-${i}`) || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`))"
-													>{{ formError.find(err => err.field === `shift_id-s${index}-${i}`) ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message : shiftErrors ? shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message : null }}</div>
+													<div class="w-3/12 px-1">
+														<AppTime
+															v-model="shift.time_start"
+															:name="`time_start-s${index}-${i}`"
+															:wrapperClass="'mb-1 py-1'"
+															:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
+															:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
+															@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`), changeStartTime(shift)"
+															:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
+															@blur="CheckEmptyField(form.phone_number,'phone_number')"
+														/>
+													</div>
+													<div class="w-3/12 px-1">
+														<AppTime
+															v-model="shift.time_end"
+															:name="`time_end-s${index}-${i}`"
+															:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
+															:wrapperClass="'mb-1 py-1'"
+															:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
+															@change="emitSchedule(), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
+															:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_end-s${index}-${i}`) : null"
+														/>
+													</div>
+													<div class="w-2/12 px-2 py-4 text-center">
+														<template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
+															<p>{{totalHours(shift.time_start, shift.time_end, item.date) | hours}}</p>
+															<p>{{totalHours(shift.time_start, shift.time_end, item.date) | minutes}}</p>
+														</template>
+														<template v-else-if="shift.time_start && shift.time_end">
+															<span class="text-red-500 leading-none text-sm">
+																Shift is less than
+																<template
+																	v-if="totalHours(shift.time_start, shift.time_end, item.date) !== 0"
+																>{{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes }}</template>
+																<template v-else>a minute</template>
+															</span>
+														</template>
+													</div>
+													<div class="w-3/12 px-1">
+														<AppInput
+															v-model="shift.locum_detail_rate_type_id"
+															:name="`locum_detail_rate_type_id-s${index}-${i}`"
+															:type="'select'"
+															:items="rate_lists"
+															:wrapperClass="'mb-1 py-1'"
+															:inStyle="'font-size: 13px; padding-left: 8px;'"
+															@change="emitSchedule(), CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)"
+															:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : null"
+														/>
+													</div>
+													<div class="w-2/12 pl-1 pr-3">
+														<AppInput
+															v-model="shift.rate"
+															:name="`rate-s${index}-${i}`"
+															class="w-full"
+															:type="'text'"
+															:min="1"
+															:in-style="'text-align:right;background-color: transparent'"
+															:wrapperClass="'mb-1 py-1'"
+															:limit="8"
+															@blur="shift.rate === '' ? shift.rate = 0 : shift.rate"
+															@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
+															@keydown="isNumber($event)"
+															@change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
+															:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`) : null"
+														/>
+													</div>
 												</div>
-												<div class="w-3/12 px-1">
-													<AppTime
-														v-model="shift.time_start"
-														:name="`time_start-s${index}-${i}`"
-														:wrapperClass="'mb-1 py-1'"
-														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
-														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`), changeStartTime(shift)"
-														:error="formError.find(err => err.field === `time_start-s${index}-${i}`) ? formError.find(err => err.field === `time_start-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`) : null"
-														@blur="CheckEmptyField(form.phone_number,'phone_number')"
-													/>
-												</div>
-												<div class="w-3/12 px-1">
-													<AppTime
-														v-model="shift.time_end"
-														:name="`time_end-s${index}-${i}`"
-														:hourType="[1, '1'].includes(shift.shift_id) ? 'AM' : [2, '2'].includes(shift.shift_id) ? 'PM' : ''"
-														:wrapperClass="'mb-1 py-1'"
-														:inStyle="`background-color: transparent; ${(shift.time_start && shift.time_end) && totalHours(shift.time_start, shift.time_end, item.date) <= 0 ? 'border-color: #f56565;' : ''}`"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `time_end-s${index}-${i}`) ? formError.find(err => err.field === `time_end-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `time_end-s${index}-${i}`) : null"
-													/>
-												</div>
-												<div class="w-2/12 px-2 py-4 text-center">
-													<template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
-														<p>{{totalHours(shift.time_start, shift.time_end, item.date) | hours}}</p>
-														<p>{{totalHours(shift.time_start, shift.time_end, item.date) | minutes}}</p>
-													</template>
-													<template v-else-if="shift.time_start && shift.time_end">
-														<span class="text-red-500 leading-none text-sm">
-															Shift is less than
-															<template
-																v-if="totalHours(shift.time_start, shift.time_end, item.date) !== 0"
-															>{{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes }}</template>
-															<template v-else>a minute</template>
-														</span>
-													</template>
-												</div>
-												<div class="w-3/12 px-1">
-													<AppInput
-														v-model="shift.locum_detail_rate_type_id"
-														:name="`locum_detail_rate_type_id-s${index}-${i}`"
-														:type="'select'"
-														:items="rate_lists"
-														:wrapperClass="'mb-1 py-1'"
-														:inStyle="'font-size: 13px; padding-left: 8px;'"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`) : null"
-													/>
-												</div>
-												<div class="w-2/12 pl-1 pr-3">
-													<AppInput
-														v-model="shift.rate"
-														:name="`rate-s${index}-${i}`"
-														class="w-full"
-														:type="'text'"
-														:min="1"
-														:in-style="'text-align:right;background-color: transparent'"
-														:wrapperClass="'mb-1 py-1'"
-														:limit="8"
-														@blur="shift.rate === '' ? shift.rate = 0 : shift.rate"
-														@focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
-														@keydown="isNumber($event)"
-														@change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
-														:error="formError.find(err => err.field === `rate-s${index}-${i}`) ? formError.find(err => err.field === `rate-s${index}-${i}`) : shiftErrors ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`) : null"
-													/>
-												</div>
+												<div
+													v-if="shiftErrors.find(err=>err.field === `conflict-${item.date}-${i}`)"
+													class="px-1 text-sm w-full text-red-500"
+												>{{ shiftErrors.find(err=>err.field === `conflict-${item.date}-${i}`).message }}</div>
 											</div>
+
 											<!-- Add button -->
 											<div class="flex justify-start items-center mt-3 mb-4 w-1/4">
 												<button
@@ -672,16 +679,10 @@ export default {
 	},
 	data() {
 		return {
-			id: 1,
-			// start_date: "",
-			// end_date: "",
 			schedule_dates: [],
-			selected_dates: [],
 			overlayData: [],
 			toggleCalendar: false,
 			schedules: [],
-			showSpecialRates: "",
-			// shifts_option: [],
 			job_part_id: 1,
 			confirmApply: "",
 			formError: [],
@@ -1101,9 +1102,6 @@ export default {
 					}
 				}
 			});
-			// this.schedules.forEach(item => {
-			// 	this.original_schedule.push(item);
-			// });
 		}
 	},
 	watch: {
