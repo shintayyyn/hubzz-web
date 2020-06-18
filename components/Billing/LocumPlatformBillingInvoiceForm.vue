@@ -541,7 +541,7 @@
 					class="m-1"
 					:label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
 					:inStyle="'padding:5px 14px;font-size:1em'"
-					:disabled="saveLoading"
+					:disabled="saveLoading || !sched_has_changes"
 					@click="save(false)"
 				/>
 
@@ -624,7 +624,8 @@ export default {
 			total_deductions: 0,
 			total_late_hours: "",
 			total_absences: 0,
-			hasShiftError: false
+			hasShiftError: false,
+			sched_has_changes: false
 		};
 	},
 
@@ -909,7 +910,8 @@ export default {
 			total_working_hours,
 			deductions,
 			total_lates,
-			hasError
+			hasError,
+			hasChanges
 		) {
 			this.schedule = schedule;
 			this.form.job_part_schedule_items = [];
@@ -961,6 +963,7 @@ export default {
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.form.total_amount = total_gross_locum_wages;
 			this.hasShiftError = hasError;
+			this.sched_has_changes = hasChanges;
 		},
 		setInitialState() {
 			if (this.propJobPart && !this.propInvoice) {

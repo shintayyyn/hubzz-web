@@ -687,7 +687,8 @@ export default {
 			formError: [],
 			show_late_reason: false,
 			selectedShift: null,
-			cannotAddShift: []
+			cannotAddShift: [],
+			original_schedule: []
 		};
 	},
 	created() {
@@ -891,7 +892,218 @@ export default {
 						});
 					}
 				}
+				if (this.type !== "create") {
+					let isExisting_original = this.original_schedule.find(
+						item =>
+							item.date ===
+							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+					);
+					if (isExisting_original) {
+						if (this.type === "complete") {
+							isExisting_original.shifts.push({
+								id: sched.id,
+								rate: sched.rate,
+								shift_id: sched.shift_id,
+								time_end: sched.time_end,
+								time_start: sched.time_start,
+								locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
+								locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+								final_time_start: sched.time_start,
+								final_time_end: sched.time_end,
+								has_late: false,
+								late_hours_reason: "",
+								has_absences: false,
+								absent_reason: ""
+							});
+						} else if (this.type === "terminate") {
+							isExisting_original.shifts.push({
+								id: sched.id,
+								rate: sched.rate,
+								shift_id: sched.shift_id,
+								time_end: sched.time_end,
+								time_start: sched.time_start,
+								locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
+								locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+								final_time_start: "",
+								final_time_end: "",
+								has_late: false,
+								late_hours_reason: "",
+								has_absences: false,
+								absent_reason: ""
+							});
+						} else if (this.type === "invoice") {
+							let isAbsent_orig = !this.invoiceDetails
+								? sched.final_time_start === sched.final_time_end
+								: sched.time_start === sched.time_end;
+							let finalRate_orig = this.getRate(
+								sched,
+								sched.fina_time_start,
+								sched.final_time_end,
+								this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+							);
+							let isDisputed = !sched.remarks ? false : true;
+							isExisting_original.shifts.push({
+								id: sched.id,
+								rate: sched.rate,
+								shift_id: sched.shift.id,
+								shift: sched.shift,
+								time_end: sched.time_end,
+								time_start: sched.time_start,
+								locum_detail_rate_type: sched.locum_detail_rate_type,
+								locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
+								locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
+								orig_final_start: sched.final_time_start,
+								orig_final_end: sched.final_time_end,
+								orig_has_absences: isAbsent_orig,
+								final_time_start: isAbsent_orig
+									? ""
+									: !this.invoiceDetails
+									? sched.final_time_start
+									: sched.time_start,
+								final_time_end: isAbsent_orig
+									? ""
+									: !this.invoiceDetails
+									? sched.final_time_end
+									: sched.time_end,
+								late_hours: sched.late_hours_in_minutes,
+								has_absences: isAbsent_orig,
+								dispute: sched.disputed ? sched.disputed : false,
+								remarks: sched.remarks ? sched.remarks : "",
+								total: finalRate_orig
+							});
+						} else {
+							isExisting_original.shifts.push({
+								rate: sched.rate,
+								shift_id: sched.shift_id,
+								time_end: sched.time_end,
+								time_start: sched.time_start,
+								locum_detail_rate_type_id: sched.locum_detail_rate_type_id
+							});
+						}
+					} else {
+						this.schedule_dates.push(
+							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+						);
+						if (this.type === "complete") {
+							this.original_schedule.push({
+								date: this.$moment(sched.date, "YYYY-MM-DD").format(
+									"DD/MM/YYYY"
+								),
+								shifts: [
+									{
+										id: sched.id,
+										rate: sched.rate,
+										shift_id: sched.shift_id,
+										time_end: sched.time_end,
+										time_start: sched.time_start,
+										locum_detail_rate_type_name:
+											sched.locum_detail_rate_type.name,
+										locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+										final_time_start: sched.time_start,
+										final_time_end: sched.time_end,
+										has_late: false,
+										late_hours_reason: "",
+										has_absences: false,
+										absent_reason: ""
+									}
+								]
+							});
+						} else if (this.type === "terminate") {
+							this.original_schedule.push({
+								date: this.$moment(sched.date, "YYYY-MM-DD").format(
+									"DD/MM/YYYY"
+								),
+								shifts: [
+									{
+										id: sched.id,
+										rate: sched.rate,
+										shift_id: sched.shift_id,
+										time_end: sched.time_end,
+										time_start: sched.time_start,
+										locum_detail_rate_type_name:
+											sched.locum_detail_rate_type.name,
+										locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+										final_time_start: "",
+										final_time_end: "",
+										has_late: false,
+										late_hours_reason: "",
+										has_absences: false,
+										absent_reason: ""
+									}
+								]
+							});
+						} else if (this.type === "invoice") {
+							let isAbsent_orig = !this.invoiceDetails
+								? sched.final_time_start === sched.final_time_end
+								: sched.time_start === sched.time_end;
+							let finalRate_orig = this.getRate(
+								sched,
+								sched.final_time_start,
+								sched.final_time_end,
+								this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+							);
+							let isDisputed = !sched.remarks ? false : true;
+							this.original_schedule.push({
+								date: this.$moment(sched.date, "YYYY-MM-DD").format(
+									"DD/MM/YYYY"
+								),
+								shifts: [
+									{
+										id: sched.id,
+										rate: sched.rate,
+										shift: sched.shift,
+										shift_id: sched.shift.id,
+										orig_time_start: sched.original_time_start,
+										orig_time_end: sched.original_time_end,
+										time_end: sched.time_end,
+										time_start: sched.time_start,
+										locum_detail_rate_type: sched.locum_detail_rate_type,
+										locum_detail_rate_type_name:
+											sched.locum_detail_rate_type.name,
+										locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
+										orig_final_start: sched.final_time_start,
+										orig_final_end: sched.final_time_end,
+										orig_has_absences: isAbsent_orig,
+										final_time_start: isAbsent_orig
+											? ""
+											: !this.invoiceDetails
+											? sched.final_time_start
+											: sched.time_start,
+										final_time_end: isAbsent_orig
+											? ""
+											: !this.invoiceDetails
+											? sched.final_time_end
+											: sched.time_end,
+										late_hours: sched.late_hours_in_minutes,
+										has_absences: isAbsent_orig,
+										dispute: sched.disputed ? sched.disputed : false,
+										remarks: sched.remarks ? sched.remarks : "",
+										total: finalRate_orig
+									}
+								]
+							});
+						} else {
+							this.original_schedule.push({
+								date: this.$moment(sched.date, "YYYY-MM-DD").format(
+									"DD/MM/YYYY"
+								),
+								shifts: [
+									{
+										rate: sched.rate,
+										shift_id: sched.shift_id,
+										time_end: sched.time_end,
+										time_start: sched.time_start,
+										locum_detail_rate_type_id: sched.locum_detail_rate_type_id
+									}
+								]
+							});
+						}
+					}
+				}
 			});
+			// this.schedules.forEach(item => {
+			// 	this.original_schedule.push(item);
+			// });
 		}
 	},
 	watch: {
@@ -1004,6 +1216,12 @@ export default {
 		}
 	},
 	computed: {
+		hasChanges() {
+			return (
+				JSON.stringify(this.original_schedule) !==
+				JSON.stringify(this.schedules)
+			);
+		},
 		sortedDates() {
 			return [...this.schedule_dates].sort((dateA, dateB) => {
 				const datetimeA = this.$moment(dateA, "DD/MM/YYYY");
@@ -1198,7 +1416,8 @@ export default {
 					this.getTotalHours(this.schedules, true),
 					deduction > -1 ? deduction : 0,
 					this.getTotalLates(this.schedules),
-					this.hasShiftError
+					this.hasShiftError,
+					this.hasChanges
 				);
 			} else {
 				this.$emit(
