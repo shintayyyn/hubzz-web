@@ -15,9 +15,10 @@
       >Go to Compliance</nuxt-link>
     </template>
     <AppLoading :loading="loading" spinner />
+    <!-- :label="`You already appointed to one of this Practice Job.`" -->
     <AppConfirmationModal
-      :label="`You already appointed to one of this Practice Job.`"
-      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.map(conflictJob => conflictJob.job_number).slice(0,2)},etc..` : `${conflictJobs.map(conflictJob => conflictJob.job_number)}`}`"
+      :label="`This Job is conflict on one of your appointed Job.`"
+      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.slice(0,2)},etc..` : `${conflictJobs}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -89,8 +90,8 @@ export default {
         .$get(`/api/v1/locum/job-parts`, {
           params: {
             appointed_to_locum_user_id: this.$auth.user.id,
-            status: ["Allocated", "Ongoing"],
-            job_practice_id: this.job.practice_id
+            status: ["Allocated", "Ongoing"]
+            // job_practice_id: this.job.practice_id
           }
         })
         .then(res => {
@@ -99,18 +100,14 @@ export default {
           res.data.job_parts.forEach(jobPart => {
             if (jobPart.dates.some(date => this.job.dates.includes(date))) {
               if (jobPart.status === "Ongoing") {
-                this.conflictJobs.push({
-                  job_number: jobPart.job_part_number,
-                  dates: jobPart.dates
-                });
+                this.conflictJobs.push(jobPart.job_part_number);
               } else if (jobPart.status === "Allocated") {
-                this.conflictJobs.push({
-                  job_number: jobPart.job_job_number,
-                  dates: jobPart.dates
-                });
+                this.conflictJobs.push(jobPart.job_job_number);
               }
             }
           });
+
+          this.conflictJobs = [...new Set(this.conflictJobs)];
 
           if (this.conflictJobs.length > 0) {
             this.warning_modal = true;
