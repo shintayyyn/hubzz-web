@@ -484,7 +484,7 @@
 				:label="'Save changes'"
 				:inStyle="'padding:5px 14px;font-size:1em'"
 				:disabled="saveLoading"
-				@click="save()"
+				@click="save(false)"
 			/>
 			<AppButton
 				v-if="propInvoice && propInvoice.status !== 'Draft'"
@@ -860,7 +860,6 @@ export default {
 			this.formError = [];
 
 			this.shiftErrors = [];
-
 			if (this.schedule.length) {
 				this.schedule.forEach((sched, index) => {
 					sched.shifts.forEach((shift, i) => {
@@ -881,12 +880,9 @@ export default {
 					});
 				});
 			}
-
-			if (approved) {
-				this.form.job_part_schedule_items.forEach(item => {
-					item.approve = true;
-				});
-			}
+			this.form.job_part_schedule_items.forEach(item => {
+				item.approve = approved;
+			});
 			// this.form.hours = !this.form.hours ? 0 : this.form.hours;
 			// this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
 
