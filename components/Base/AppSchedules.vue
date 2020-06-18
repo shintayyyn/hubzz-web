@@ -1186,29 +1186,37 @@ export default {
 							this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
 						)
 					);
-					if (job_part) {
+					let exist = job_parts.find(
+						item => item === `Job Part ${job_part.value}`
+					);
+					if (job_part && !exist) {
 						job_parts.push(`Job Part ${job_part.value}`);
 					}
 				});
-				console.log(job_parts);
-				let partsLabel;
+				let partsLabel = "";
 				job_parts.forEach((item, index) => {
 					if (job_parts.length > 1) {
-						console.log(item, index, job_parts.length - 1);
-						if (index !== job_parts.length - 1) {
-							partsLabel += `${item},`;
+						if (
+							index !== job_parts.length - 1 &&
+							index !== job_parts.length - 2
+						) {
+							partsLabel += `${item}, `;
+						} else if (
+							index !== job_parts.length - 1 &&
+							index === job_parts.length - 2
+						) {
+							partsLabel += `${item}`;
 						} else {
-							partsLabel += `and ${item},`;
+							partsLabel += ` and ${item}`;
 						}
 					} else {
 						partsLabel += item;
 					}
 				});
-				console.log(partsLabel);
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
 					status: "danger",
-					text: [`${job_parts.join(", ")} has an empty schedule.`]
+					text: [`${partsLabel} has an empty schedule.`]
 				});
 			}
 		}

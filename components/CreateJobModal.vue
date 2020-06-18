@@ -1569,7 +1569,6 @@ export default {
 			this.total_working_hours = total_working_hours;
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.hasShiftError = hasError;
-			console.log("hasError", hasError);
 		},
 		canPublish() {
 			this.shiftErrors = [];
