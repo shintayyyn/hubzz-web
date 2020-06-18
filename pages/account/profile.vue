@@ -11,16 +11,29 @@
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
-          <!-- <AppInput
+
+          <AppInput
+            v-if="false"
             v-model="form.profession_id"
             :type="'select'"
             :name="'profession_id'"
             :label="'Profession'"
             :placeholder="'Select...'"
-            :items="professions"
+            :items="professionsSelectionList"
             required
-            disabled
-          />-->
+            :disabled="false"
+          />
+
+          <AppFilterSearch
+            v-if="false"
+            v-model="selectedSubProfessionsSelectionList"
+            label="Sub Professions"
+            placeholder="Select..."
+            :error="formError.find(item => item.field === 'sub_profession_ids')"
+            info="Choose other professions if applicable"
+            :selectionLists="subProfessionsSelectionList"
+          />
+
           <div
             v-for="(item, index) in form.reference_locum_compliance_documents"
             :key="item.compliance_document_id"
@@ -59,6 +72,7 @@
             @keypress="inputNumberOnly($event)"
             required
           />
+
           <AppInput
             v-model="form.mpl_or_npl_number"
             :type="'text'"
@@ -78,7 +92,7 @@
             :error="formError.find(item => item.field === 'qualification_id')"
             :info="'Choose at least one qualification'"
             :url="'/api/v1/qualifications'"
-            :professionCategoryId="professionCategoryId.toString()"
+            :professionCategoryId="true ? null : professionCategoryId.toString()"
             required
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
@@ -324,8 +338,8 @@
               :name="'utr_number'"
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
-              :placeholder="'AZ000000D'"
-              :limit="9"
+              :placeholder="'0000000000'"
+              :limit="10"
               required
               @keydown="alphaNumeric($event)"
             />
@@ -471,6 +485,7 @@
                 :name="'nhs_number'"
                 :label="'NHS number'"
                 :error="formError.find(item => item.field === 'nhs_number')"
+                :limit="8"
                 required
                 @keypress="inputNumberOnly($event)"
               />
@@ -480,6 +495,8 @@
                 :name="'ni_number'"
                 :label="'NI number'"
                 :error="formError.find(item => item.field === 'ni_number')"
+                :placeholder="'AA000000'"
+                :limit="8"
                 required
               />
               <AppInput
@@ -670,6 +687,11 @@
 
     data () {
       return {
+        loading: false,
+        user: null,
+        professions: [],
+        selectedSubProfessionsSelectionList: [],
+
         selectedMandatory: null,
         toggle_remove_mandatory_modal: false,
         employmentTypes: [
@@ -682,7 +704,6 @@
             value: "Limited Company"
           }
         ],
-        professionCategoryId: "",
         selectedQualification: [],
         selectedClinicalSystem: [],
         selectedSpokenLanguage: [],
@@ -751,11 +772,45 @@
           email: ""
         },
         formError: [],
-        loading: false
       }
     },
 
     computed: {
+      professionsSelectionList () {
+        return this.professions.map(profession => ({
+          label: profession.name,
+          value: profession.id,
+          reference_compliance_documents:
+            profession.profession_compliance_category
+              .reference_compliance_documents
+        }))
+      },
+
+      subProfessionsSelectionList () {
+        return this.professions
+          .filter(profession => !this.selectedProfession || profession.id !== this.selectedProfession.id)
+          .map(profession => ({
+            label: profession.name,
+            value: profession.id,
+          }))
+      },
+
+      professionId () {
+        return this.form.profession_id
+      },
+
+      selectedProfession () {
+        return this.professions.find(({ id }) => id.toString() === this.professionId.toString())
+      },
+
+      professionCategoryId () {
+        return this.selectedProfession ? this.selectedProfession.profession_category_id : null
+      },
+
+      subProfessionIds () {
+        return this.selectedSubProfessionsSelectionList.map(({ value }) => value)
+      },
+
       schemeYearLists () {
         let defaultDate = 2020
         let currentDate = this.$moment().year()
@@ -777,21 +832,11 @@
 
     watch: {
       "form.profession_id" (value) {
-        let profession = this.professions.find(item => item.value == value)
-
-        if (profession.label === "GP") {
-          this.professionCategoryId = 1
-        } else if (profession.label !== "GP") {
-          this.professionCategoryId = 2
-        }
-
-        // let findprofession = this.professions.find(
-        //   item =>item.value === parseInt(value));
-        // this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents;
         this.form.reference_locum_compliance_documents.forEach(item => {
           let name = item.compliance_document_name
             .replace(/ /g, "_")
             .toLowerCase()
+
           this.old_compliances.push(name)
         })
 
@@ -803,20 +848,14 @@
 
         this.form.reference_locum_compliance_documents = []
 
-        let findprofession = this.professions.find(
-          item => item.value === parseInt(value)
-        )
+        let findprofession = this.professionsSelectionList.find(item => item.value === parseInt(value))
 
-        this.reference_locum_compliance_documents_list =
-          findprofession.reference_compliance_documents
+        this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
+
         this.reference_locum_compliance_documents_list.forEach(item => {
-          let foundCompliance = this.user.reference_locum_compliance_documents.find(
-            compliance =>
-              compliance.compliance_document_id === item.compliance_document_id
-          )
-          // let fieldName = item.compliance_document_name
-          // 	.replace(/ /g, "_")
-          // 	.toLowerCase()
+          let foundCompliance = this.user.reference_locum_compliance_documents
+            .find(compliance => compliance.compliance_document_id === item.compliance_document_id)
+
           this.form.reference_locum_compliance_documents.push({
             compliance_document_id: item.compliance_document_id,
             compliance_document_name: item.compliance_document_name,
@@ -832,84 +871,46 @@
     mounted () {
       this.loading = true
       Promise.all([
-        this.$axios.$get(`/api/v1/professions`).then(responseProfessions => {
-          const professions = []
-          responseProfessions.data.professions.forEach(profession => {
-            professions.push({
-              label: profession.name,
-              value: profession.id,
-              reference_compliance_documents:
-                profession.profession_compliance_category
-                  .reference_compliance_documents
-            })
-          })
-          return professions
-        }),
-        this.$axios
-          .$get(`/api/v1/practice-types`)
-          .then(responsePracticeTypes => {
-            const practice_types = []
-            responsePracticeTypes.data.practice_types.forEach(practiceType => {
-              practice_types.push({
-                label: practiceType.name,
-                value: practiceType.id
-              })
-            })
-            return practice_types
-          }),
-        this.$axios
-          .$get(`/api/v1/mandatory-trainings`)
-          .then(responseMandatoryTrainings => {
-            const mandatory_trainings = []
-            responseMandatoryTrainings.data.mandatory_trainings.forEach(
-              mandatoryTraining => {
-                mandatory_trainings.push({
-                  label: mandatoryTraining.name,
-                  value: mandatoryTraining.id
-                })
-              }
-            )
-            return mandatory_trainings
-          }),
-        this.$axios.$get(`/api/v1/locum/me/profile`).then(responseMe => {
-          const user =
-            responseMe.data && responseMe.data.user
-              ? responseMe.data.user
-              : null
-          return user
-        }),
-        this.$axios
-          .$get(`/api/v1/locum/other-mandatory-training`, {
-            params: {
-              user_id: this.$auth.user.id
-            }
-          })
-          .then(res => {
-            const other_mandatory_trainings = []
-            res.data.locum_other_mandatory_trainings.forEach(
-              otherMandatoryTraining => {
-                other_mandatory_trainings.push({
-                  label: otherMandatoryTraining.name,
-                  value: otherMandatoryTraining.id
-                })
-              }
-            )
-            return other_mandatory_trainings
-          })
+        this.$axios.get(`/api/v1/locum/me/profile`)
+          .then(response => response.data.data.user),
+
+        this.$axios.get('/api/v1/professions?limit=1000000')
+          .then(response => response.data.data.professions),
+
+        this.$axios.get('/api/v1/mandatory-trainings?limit=1000000')
+          .then(response => response.data.data.mandatory_trainings.map(mandatoryTraining => ({
+            label: mandatoryTraining.name,
+            value: mandatoryTraining.id
+          }))),
+
+        this.$axios.get('/api/v1/locum/other-mandatory-training', {
+          params: {
+            user_id: this.$auth.user.id
+          }
+        }).then(response => response.data.data.locum_other_mandatory_trainings.map(otherMandatoryTraining => ({
+          label: otherMandatoryTraining.name,
+          value: otherMandatoryTraining.id
+        }))),
+
+        this.$axios.get('/api/v1/practice-types?limit=1000000')
+          .then(response => response.data.data.practice_types.map(practiceType => ({
+            label: practiceType.name,
+            value: practiceType.id
+          }))),
       ]).then((responses) => {
         const [
-          professions,
-          practiceTypes,
-          mandatoryTrainings,
           user,
-          otherMandatoryTrainings
+          professions,
+          mandatoryTrainings,
+          otherMandatoryTrainings,
+          practiceTypes,
         ] = responses
 
         this.professions = professions
-        this.practiceTypes = practiceTypes
         this.mandatoryTrainings = mandatoryTrainings
         this.user = user
         this.otherMandatoryTrainings = otherMandatoryTrainings
+        this.practiceTypes = practiceTypes
         this.initialize()
       }).catch(this.errorHandler).finally(() => {
         this.loading = false
@@ -987,11 +988,9 @@
         this.form.post_code = this.user.locum_postcode
         this.form.miles = this.user.miles
 
-        let findprofession = this.professions.find(
-          item => item.value === parseInt(this.user.profession.id)
-        )
-        this.reference_locum_compliance_documents_list =
-          findprofession.reference_compliance_documents
+        let findprofession = this.professionsSelectionList.find(item => item.value === parseInt(this.user.profession.id))
+
+        this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
 
         this.reference_locum_compliance_documents_list.forEach(item => {
           let foundCompliance = this.user.reference_locum_compliance_documents.find(
@@ -1199,13 +1198,22 @@
 
         if (this.form.employment_type === "Self-Employed") {
           notRequired.push("company_registration_number")
+          // if (
+          //   !this.form.utr_number.substring(0, 2).match(/[A-Z]/g)
+          //   || this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2
+          //   || !this.form.utr_number.substring(2, 8).match(/[0-9]/g)
+          //   || this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6
+          //   // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g)
+          //   // || !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+          // ) {
+          //   this.formError.push({
+          //     field: "utr_number",
+          //     message: "UTR Number is invalid."
+          //   })
+          // }
           if (
-            !this.form.utr_number.substring(0, 2).match(/[A-Z]/g) ||
-            this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2 ||
-            !this.form.utr_number.substring(2, 8).match(/[0-9]/g) ||
-            this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6 ||
-            !this.form.utr_number.substring(8, 9).match(/[A-D]/g) ||
-            !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+            !this.form.utr_number.substring(0, 10).match(/[0-9]/g)
+            || this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10
           ) {
             this.formError.push({
               field: "utr_number",
@@ -1225,6 +1233,30 @@
           this.form.nhs_number = null
           notRequired.push("ni_number")
           this.form.ni_number = null
+        }
+
+        if (["true", true].includes(this.form.claim_nhs)) {
+          if (
+            !this.form.ni_number.substring(0, 8).match(/[A-Za-z0-9]/g)
+            || this.form.ni_number.substring(0, 8).match(/[A-Za-z0-9]/g).length !== 8
+          ) {
+            this.formError.push({
+              field: "nhs_number",
+              message: "NHS number is invalid."
+            })
+          }
+
+          if (
+            !this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
+            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !== 2
+            || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
+            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6
+          ) {
+            this.formError.push({
+              field: "ni_number",
+              message: "NI number is invalid."
+            })
+          }
         }
 
         if (["false", false].includes(this.form.paid_under_payroll)) {
@@ -1261,9 +1293,8 @@
         }
 
         if (this.form.profession_id) {
-          let profession = this.professions.find(
-            item => item.value === parseInt(this.form.profession_id)
-          )
+          let profession = this.professionsSelectionList.find(item => item.value === parseInt(this.form.profession_id))
+
           profession.reference_compliance_documents.forEach(item => {
             if (
               this.form[
@@ -1413,7 +1444,7 @@
           // })
           this.scrollToTop()
         }
-      }
+      },
     },
   }
 </script>

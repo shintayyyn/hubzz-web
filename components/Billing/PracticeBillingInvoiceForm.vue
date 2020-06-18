@@ -65,24 +65,24 @@
 				<div class="flex items-center">
 					<p>Total Work Hours</p>
 					<p
-						class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
 						v-if="total_working_hours>0"
+						class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
 					>{{ total_working_hours | hoursMinutes }}</p>
-					<p class="mx-2 border border-gray-600 rounded px-4 text-gray-700" v-else>0</p>
+					<p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">0</p>
 				</div>
 			</div>
 
 			<div class="w-full border-b">
 				<AppSchedules
 					:practice_rate="practice_rate"
-					@getSchedule="getSchedule"
 					:schedule="propInvoice.job_part_schedule_items"
 					:error="formError.find(err => err.field === 'schedules')"
 					:shiftErrors="shiftErrors"
 					toInvoice
+					:type="'invoice'"
 					:invoiceDetails="propInvoice"
 					:toDisplay="propInvoice.status === 'Approved' "
-					:type="'invoice'"
+					@getSchedule="getSchedule"
 				/>
 			</div>
 
@@ -93,16 +93,16 @@
 				</div>
 				<div class="flex items-end">
 					<p class="text-sm">TOTAL ABSENCES:</p>
-					<p class="font-bold mx-2">{{ total_absences > 0 ? total_absences : 'None'}}</p>
+					<p class="font-bold mx-2">{{ total_absences > 0 ? total_absences : 'None' }}</p>
 				</div>
 				<div class="flex items-end">
 					<p class="text-sm">TOTAL WORK HOURS:</p>
-					<p class="font-bold mx-2" v-if="total_working_hours>0">{{ total_working_hours | hoursMinutes }}</p>
-					<p class="font-bold mx-2" v-else>0</p>
+					<p v-if="total_working_hours>0" class="font-bold mx-2">{{ total_working_hours | hoursMinutes }}</p>
+					<p v-else class="font-bold mx-2">0</p>
 				</div>
 				<div class="flex items-end">
 					<p class="text-sm">TOTAL DEDUCTIONS:</p>
-					<p class="font-bold mx-2">£ {{ total_deductions | currency}}</p>
+					<p class="font-bold mx-2">£ {{ total_deductions | currency }}</p>
 				</div>
 				<div class="flex items-end">
 					<p class="text-sm">TOTAL WORK PAYMENT:</p>
@@ -476,7 +476,7 @@
 				:label="'Accept changes'"
 				:inStyle="'padding:5px 14px;font-size:1em'"
 				:disabled="saveLoading"
-				@click="save(approve)"
+				@click="save(true)"
 			/>
 			<AppButton
 				v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
@@ -926,7 +926,9 @@ export default {
 						`/api/v1/practice/locum-invoices/${
 							this.propId ? this.propId : this.$route.params.id
 						}`,
-						this.form
+						{
+							...this.form
+						}
 					)
 					.then(res => {
 						this.$store.commit("SET_NOTIFICATION", {
