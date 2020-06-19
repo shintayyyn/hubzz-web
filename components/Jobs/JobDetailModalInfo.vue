@@ -318,30 +318,25 @@ export default {
   },
   methods: {
     getJobGrossRate(schedules) {
-      // PER HOUR rate * (final_hours_in_minute / 60)
-      // PER WHOLE DAY rate / (final_hours_in_minutes / 60)
-      // PER HALF DAY rate / ((final_hours_in_minutes / 60) / 2)
+      // PER HOUR rate * final_hours_in_minutes
+      // PER WHOLE HALF DAY rate / original_hours_in_minutes * final_hours_in_minutes
       let total = 0;
 
       schedules.forEach(schedule => {
         if (!schedule.absent_reason) {
           switch (schedule.locum_detail_rate_type.name) {
             case "Per Hour":
-              total =
-                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              total = total + schedule.rate * schedule.final_hours_in_minutes;
               break;
             case "Per Whole Day Session":
-              total =
-                total + schedule.rate / (schedule.final_hours_in_minutes / 60);
-              break;
             case "Per Half Day Session":
               total =
                 total +
-                schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+                (schedule.rate / schedule.original_hours_in_minutes) *
+                  schedule.final_hours_in_minutes;
               break;
             default:
-              total =
-                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              total = total + schedule.rate * schedule.final_hours_in_minutes;
               break;
           }
         }
