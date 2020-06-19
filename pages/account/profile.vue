@@ -866,7 +866,7 @@
 
       referenceComplianceDocuments () {
         return this.professions
-          .filter(({ id }) => id === this.professionId || this.subProfessionIds.indexOf(id) !== -1)
+          .filter(({ id }) => id === this.professionId || (true && this.subProfessionIds.indexOf(id) !== -1))
           .reduce((referenceComplianceDocuments, profession) => {
             if (
               profession.profession_compliance_category
@@ -999,7 +999,7 @@
 
         if (err.response) {
           if (err.response.status === 400 && err.response.data.error_messages) {
-            this.formErrors = err.response.data.error_messages
+            this.formError = err.response.data.error_messages
           } else {
             message = err.response.data.message
           }
