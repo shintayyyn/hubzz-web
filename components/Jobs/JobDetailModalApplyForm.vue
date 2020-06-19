@@ -90,8 +90,8 @@ export default {
         .$get(`/api/v1/locum/job-parts`, {
           params: {
             appointed_to_locum_user_id: this.$auth.user.id,
-            status: ["Allocated", "Ongoing"]
-            // job_practice_id: this.job.practice_id
+            status: ["Allocated", "Ongoing"],
+            job_practice_id: this.job.practice_id
           }
         })
         .then(res => {
