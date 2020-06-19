@@ -25,7 +25,7 @@
           />
 
           <AppFilterSearch
-            v-if="false"
+            v-if="true"
             v-model="selectedSubProfessionsSelectionList"
             label="Sub Professions"
             placeholder="Select..."
@@ -35,28 +35,28 @@
           />
 
           <div
-            v-for="(item, index) in form.reference_locum_compliance_documents"
-            :key="item.compliance_document_id"
+            v-for="(referenceLocumComplianceDocument) in referenceLocumComplianceDocuments"
+            :key="referenceLocumComplianceDocument.compliance_document_id"
           >
             <AppInput
-              v-model="form.reference_locum_compliance_documents[index].reference"
-              :type="'text'"
-              :name="item.compliance_document_name.replace(/ /g, '_').toLowerCase()"
-              :label="item.compliance_document_name"
-              :error="formError.find(err => err.field === item.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+              v-model="referenceLocumComplianceDocument.reference"
+              type="text"
+              :name="referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()"
+              :label="referenceLocumComplianceDocument.compliance_document_name"
+              :error="formError.find(err => err.field === referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase())"
               :info="'For compliance; to be verified by the hubzz team'"
-              :limit="parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <= 5 ? 8 : 7"
+              :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
               required
               @blur="
                 CheckEmptyField(
-                  form.reference_locum_compliance_documents[index].reference,
-                  item.compliance_document_name.replace(/ /g, '_').toLowerCase()
+                  referenceLocumComplianceDocument.reference,
+                  referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()
                 ), checkValidation(
-                  item.compliance_document_name,
-                  parseInt(form.profession_id) !== 1 && parseInt(form.profession_id) <=5 ? 8 : 7
+                  referenceLocumComplianceDocument.compliance_document_name,
+                  getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)
                 )
               "
-              @keydown="[1, 10, 16, '1','10', '16'].includes(form.profession_id) ? inputNumberOnly($event) : alphaNumeric($event)"
+              @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? inputNumberOnly($event) : alphaNumeric($event)"
             />
           </div>
 
@@ -67,7 +67,7 @@
             :label="'GMC / NMC Number'"
             :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
             :info="'For compliance; to be verified by the hubzz team'"
-            @submit="save"
+            @submit="updateLocumProfile"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
             @keypress="inputNumberOnly($event)"
             required
@@ -79,7 +79,7 @@
             :name="'mpl_or_npl_number'"
             :label="'MPL / NPL Number'"
             :error="formError.find(item => item.field === 'mpl_or_npl_number')"
-            @submit="save"
+            @submit="updateLocumProfile"
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
             @keypress="inputNumberOnly($event)"
           />-->
@@ -129,7 +129,7 @@
             :error="formError.find(item => item.field === 'nhs_smart_card_id_number')"
             :limit="12"
             @keydown="inputNumberOnly($event)"
-            @submit="save"
+            @submit="updateLocumProfile"
           />
 
           <AppInput
@@ -138,7 +138,7 @@
             :name="'headline'"
             :label="'Headline'"
             :info="'A short headline about yourself to show to Practices'"
-            @submit="save"
+            @submit="updateLocumProfile"
           />
 
           <AppInput
@@ -148,7 +148,7 @@
             :label="'Short Biography'"
             :info="'A little bit about yourself to inform to the Practices'"
             :resize="false"
-            @submit="save"
+            @submit="updateLocumProfile"
           />
 
           <AppInput
@@ -158,7 +158,7 @@
             :label="'Special requirements'"
             :info="'Information for Practices for your own needs'"
             :resize="false"
-            @submit="save"
+            @submit="updateLocumProfile"
           />
 
           <div>Select which jobs to view:</div>
@@ -201,7 +201,7 @@
                     :label="'Per Hour £'"
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
                     required
-                    @submit="save"
+                    @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                   />
                   <!-- <AppInput
@@ -210,7 +210,7 @@
                     :name="'max_rate_per_hour'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_hour')"
-                    @submit="save"
+                    @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
                     class="w-1/2 px-1"
                     required
@@ -227,7 +227,7 @@
                     :label="'Per Half Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
                     required
-                    @submit="save"
+                    @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                   />
                   <div class="mx-1" />
@@ -237,7 +237,7 @@
                     :name="'max_rate_per_half_day_session'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
-                    @submit="save"
+                    @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
                     required
                   />-->
@@ -253,7 +253,7 @@
                     :label="'Per Whole Day Session £'"
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
                     required
-                    @submit="save"
+                    @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                   />
                   <div class="mx-1" />
@@ -263,7 +263,7 @@
                     :name="'max_rate_per_whole_day_session'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
-                    @submit="save"
+                    @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
                     required
                   />-->
@@ -629,7 +629,7 @@
           </div>
 
           <div class="text-left mt-5">
-            <AppButton :label="'Save changes'" @click="save" />
+            <AppButton :label="'Save changes'" @click="updateLocumProfile" />
           </div>
         </form>
       </div>
@@ -690,7 +690,8 @@
         loading: false,
         user: null,
         professions: [],
-        selectedSubProfessionsSelectionList: [],
+        subProfessionIds: [],
+        referenceLocumComplianceDocuments: [],
 
         selectedMandatory: null,
         toggle_remove_mandatory_modal: false,
@@ -708,12 +709,8 @@
         selectedClinicalSystem: [],
         selectedSpokenLanguage: [],
         professions_categories: [],
-        reference_locum_compliance_documents_list: [],
         form: {
           other_mandatory_training_id: [],
-          reference_locum_compliance_documents: [],
-          // gmc_or_nmc_number: "",
-          // mpl_or_npl_number: "",
           nhs_smart_card_id_number: "",
           headline: "",
           short_biography: "",
@@ -765,7 +762,6 @@
           pcse_or_lhb_ea_code: "",
           nhs_registration_number: ""
         },
-        old_compliances: [],
         profile: {
           avatar: null,
           name: "",
@@ -776,6 +772,52 @@
     },
 
     computed: {
+      referenceValidations () {
+        return [
+          {
+            name: 'GMC Number',
+            limit: 7,
+            integer: true,
+          },
+          {
+            name: 'Medical Performers List reference check',
+            limit: 7,
+            integer: true,
+          },
+          {
+            name: 'NMC reference check',
+            limit: 8,
+            integer: false,
+          },
+          {
+            name: 'HCPC reference check',
+            limit: 8,
+            integer: false,
+          },
+          {
+            name: 'GpHc reference check',
+            limit: 8,
+            integer: false,
+          },
+        ]
+      },
+
+      getReferenceLimit () {
+        return (complianceDocumentName) => {
+          const referenceLimit = this.referenceValidations.find(({ name }) => name === complianceDocumentName)
+
+          return referenceLimit ? referenceLimit.limit : null
+        }
+      },
+
+      getReferenceIsInteger () {
+        return (complianceDocumentName) => {
+          const referenceLimit = this.referenceValidations.find(({ name }) => name === complianceDocumentName)
+
+          return referenceLimit ? referenceLimit.integer : false
+        }
+      },
+
       professionsSelectionList () {
         return this.professions.map(profession => ({
           label: profession.name,
@@ -796,19 +838,47 @@
       },
 
       professionId () {
-        return this.form.profession_id
+        return this.form.profession_id ? parseInt(this.form.profession_id) : null
       },
 
       selectedProfession () {
-        return this.professions.find(({ id }) => id.toString() === this.professionId.toString())
+        return this.professions.find(({ id }) => id === this.professionId)
       },
 
       professionCategoryId () {
         return this.selectedProfession ? this.selectedProfession.profession_category_id : null
       },
 
-      subProfessionIds () {
-        return this.selectedSubProfessionsSelectionList.map(({ value }) => value)
+      selectedSubProfessionsSelectionList: {
+        get () {
+          return this.subProfessionsSelectionList.filter(({ value }) => this.subProfessionIds.indexOf(value) !== -1)
+        },
+        
+        set (selectedSubProfessionsSelectionList) {
+          console.log('set selectedSubProfessionsSelectionList', selectedSubProfessionsSelectionList)
+          this.subProfessionIds = selectedSubProfessionsSelectionList.map(({ value }) => value)
+        },
+      },
+
+      selectedSubProfessions () {
+        return this.professions.filter(({ id }) => this.subProfessionIds.indexOf(id) !== -1)
+      },
+
+      referenceComplianceDocuments () {
+        return this.professions
+          .filter(({ id }) => id === this.professionId || this.subProfessionIds.indexOf(id) !== -1)
+          .reduce((referenceComplianceDocuments, profession) => {
+            if (
+              profession.profession_compliance_category
+              && profession.profession_compliance_category.reference_compliance_documents
+              && profession.profession_compliance_category.reference_compliance_documents.length > 0
+            ) {
+              referenceComplianceDocuments.push(...profession.profession_compliance_category.reference_compliance_documents)
+            }
+
+            return referenceComplianceDocuments
+          }, [])
+          .filter(({ compliance_document_id: idA }, i, a) => i === a.findIndex(({ compliance_document_id: idB }) => idA === idB))
       },
 
       schemeYearLists () {
@@ -831,41 +901,45 @@
     },
 
     watch: {
-      "form.profession_id" (value) {
-        this.form.reference_locum_compliance_documents.forEach(item => {
-          let name = item.compliance_document_name
-            .replace(/ /g, "_")
-            .toLowerCase()
+      professionId () {
+        if (this.professionId) {
+          const index = this.subProfessionIds.findIndex(professionId => professionId === this.professionId)
 
-          this.old_compliances.push(name)
-        })
+          if (index > -1) {
+            this.subProfessionIds.splice(index, 1)
+          }
+        }
+      },
+
+      referenceComplianceDocuments () {
+        const oldCompliances = this.referenceLocumComplianceDocuments
+          .map(referenceLocumComplianceDocument => referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, "_").toLowerCase())
 
         this.formError.forEach((err, index) => {
-          if (this.old_compliances.includes(err.field)) {
+          if (oldCompliances.includes(err.field)) {
             this.formError.splice(index, 1)
           }
         })
 
-        this.form.reference_locum_compliance_documents = []
+        this.referenceLocumComplianceDocuments = this.referenceComplianceDocuments.map((referenceComplianceDocument) => {
+          const {
+            compliance_document_id: id,
+            compliance_document_name: name,
+          } = referenceComplianceDocument
 
-        let findprofession = this.professionsSelectionList.find(item => item.value === parseInt(value))
+          const referenceLocumComplianceDocument = this.user
+            && this.user.reference_locum_compliance_documents
+            && this.user.reference_locum_compliance_documents
+              .find(referenceLocumComplianceDocument => referenceLocumComplianceDocument.compliance_document_id === id)
 
-        this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
-
-        this.reference_locum_compliance_documents_list.forEach(item => {
-          let foundCompliance = this.user.reference_locum_compliance_documents
-            .find(compliance => compliance.compliance_document_id === item.compliance_document_id)
-
-          this.form.reference_locum_compliance_documents.push({
-            compliance_document_id: item.compliance_document_id,
-            compliance_document_name: item.compliance_document_name,
-            reference: foundCompliance ? foundCompliance.reference : null,
+          return {
+            compliance_document_id: id,
+            compliance_document_name: name,
+            reference: referenceLocumComplianceDocument ? referenceLocumComplianceDocument.reference : '',
             type: "compliance_documents"
-          })
+          }
         })
-
-        this.old_compliances = []
-      }
+      },
     },
 
     mounted () {
@@ -945,6 +1019,14 @@
       },
 
       initialize () {
+        const {
+          profession_id: professionId,
+          sub_profession_ids: subProfessionIds,
+        } = this.user
+
+        this.form.profession_id = professionId
+        this.subProfessionIds = subProfessionIds
+
         this.profile.avatar = this.user.file_url ? this.user.file_url : null
         this.profile.name = `${this.user.first_name} ${this.user.last_name}`
         this.profile.email = this.user.email
@@ -952,7 +1034,6 @@
         this.form.headline = this.user.headline
         this.form.short_biography = this.user.short_biography
         this.form.special_requirements = this.user.special_requirements
-        this.form.profession_id = this.user.profession.id
 
         this.form.qualification_id = this.user.qualifications.map(qualification => {
           return { label: qualification.name, value: qualification.id }
@@ -987,24 +1068,6 @@
         )
         this.form.post_code = this.user.locum_postcode
         this.form.miles = this.user.miles
-
-        let findprofession = this.professionsSelectionList.find(item => item.value === parseInt(this.user.profession.id))
-
-        this.reference_locum_compliance_documents_list = findprofession.reference_compliance_documents
-
-        this.reference_locum_compliance_documents_list.forEach(item => {
-          let foundCompliance = this.user.reference_locum_compliance_documents.find(
-            compliance =>
-              compliance.compliance_document_id === item.compliance_document_id
-          )
-
-          this.form.reference_locum_compliance_documents.push({
-            compliance_document_id: item.compliance_document_id,
-            compliance_document_name: item.compliance_document_name,
-            reference: foundCompliance ? foundCompliance.reference : null,
-            type: "compliance_documents"
-          })
-        })
 
         this.form.referee_1_contact_name = this.user.referee_1_contact_name
         this.form.referee_1_phone_number = this.user.referee_1_phone_number
@@ -1124,18 +1187,20 @@
 
       checkValidation (name, limit) {
         let fieldName = name.replace(/ /g, "_").toLowerCase()
-        let field = this.form.reference_locum_compliance_documents.find(
-          item => item.compliance_document_name === name
+
+        let referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments
+          .find(referenceLocumComplianceDocument => referenceLocumComplianceDocument.compliance_document_name === name)
+
+        let index = this.formError.findIndex(err => err.field === fieldName && err.type === "limit")
+
+        let requiredIndex = this.formError.findIndex(err => err.field === fieldName && !err.type
         )
-        let index = this.formError.findIndex(
-          err => err.field === fieldName && err.type === "limit"
-        )
-        let requiredIndex = this.formError.findIndex(
-          err => err.field === fieldName && !err.type
-        )
-        if (field.reference) {
-          if (requiredIndex > -1) this.formError.splice(requiredIndex, 1)
-          if (field.reference.length < limit) {
+        if (referenceLocumComplianceDocument.reference) {
+          if (requiredIndex > -1) {
+            this.formError.splice(requiredIndex, 1)
+          }
+
+          if (referenceLocumComplianceDocument.reference.length < limit) {
             if (index < 0) {
               this.formError.push({
                 field: fieldName,
@@ -1159,9 +1224,14 @@
         }
       },
 
-      save () {
+      updateLocumProfile () {
+        this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
+        this.form.sub_profession_ids = this.subProfessionIds
+
         this.formError = []
+        
         let notRequired = [
+          'sub_profession_ids',
           "other_mandatory_training_id",
           "nhs_smart_card_id_number",
           "headline",
@@ -1292,38 +1362,12 @@
           notRequired.push("view_locum_jobs", "view_permanent_jobs")
         }
 
-        if (this.form.profession_id) {
-          let profession = this.professionsSelectionList.find(item => item.value === parseInt(this.form.profession_id))
-
-          profession.reference_compliance_documents.forEach(item => {
-            if (
-              this.form[
-                item.compliance_document_name.replace(/ /g, "_").toLowerCase()
-              ]
-            ) {
-              this.form.reference_locum_compliance_documents.push({
-                compliance_document_id: item.compliance_document_id,
-                reference: this.form[
-                  item.compliance_document_name.replace(/ /g, "_").toLowerCase()
-                ]
-              })
-            } else {
-              // this.formError.push({
-              //   field: item.compliance_document_name
-              //     .replace(/ /g, "_")
-              //     .toLowerCase(),
-              //   message: `${item.compliance_document_name} is required`
-              // })
-              this.checkValidation(
-                item.compliance_document_name,
-                parseInt(this.form.profession_id) !== 1 &&
-                  parseInt(this.form.profession_id) <= 5
-                  ? 8
-                  : 7
-              )
-            }
-          })
-        }
+        this.referenceComplianceDocuments.forEach(referenceComplianceDocument => {
+          this.checkValidation(
+            referenceComplianceDocument.compliance_document_name,
+            this.getReferenceLimit(referenceComplianceDocument.compliance_document_name),
+          )
+        })
 
         if (
           this.form.referee_1_phone_number &&
@@ -1407,27 +1451,10 @@
               text: [`${response.data.message}`]
             })
 
-            this.$store.commit(
-              "SET_VIEW_LOCUM_JOBS",
-              this.form.view_locum_jobs
-            )
-
-            this.$store.commit(
-              "SET_VIEW_PERMANENT_JOBS",
-              this.form.view_permanent_jobs
-            )
-
-            response.data.data.user.reference_locum_compliance_documents.forEach(item => {
-              let foundItem = this.form.reference_locum_compliance_documents.find(
-                formItem =>
-                  formItem.compliance_document_name ===
-                  item.compliance_document.name
-              )
-              if (foundItem) {
-                foundItem.reference = item.reference
-              }
-            })
-
+            this.user = response.data.data.user
+            this.initialize()
+            this.$store.commit("SET_VIEW_LOCUM_JOBS", this.form.view_locum_jobs)
+            this.$store.commit("SET_VIEW_PERMANENT_JOBS", this.form.view_permanent_jobs)
             this.CheckUserVerification()
           }).catch(this.errorHandler).finally(() => {
             this.form.clinical_system_id = this.selectedClinicalSystem
@@ -1437,11 +1464,6 @@
             this.scrollToTop()
           })
         } else {
-          // this.$store.commit("SET_NOTIFICATION", {
-          //   enabled: true,
-          //   status: "danger",
-          //   text: ["Please fill up all the forms"]
-          // })
           this.scrollToTop()
         }
       },
