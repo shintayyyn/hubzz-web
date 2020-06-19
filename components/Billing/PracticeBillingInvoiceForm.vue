@@ -80,7 +80,7 @@
 					toInvoice
 					:type="'invoice'"
 					:invoiceDetails="propInvoice"
-					:toDisplay="['Approved', 'Paid'].includes(propInvoice.status)"
+					:toDisplay="['Approved', 'Paid', 'Issued'].includes(propInvoice.status)"
 					@getSchedule="getSchedule"
 				/>
 			</div>
@@ -474,7 +474,7 @@
 				class="m-1"
 				:label="'Accept changes'"
 				:inStyle="'padding:5px 14px;font-size:1em'"
-				:disabled="saveLoading"
+				:disabled="saveLoading || sched_has_changes"
 				@click="save(true)"
 			/>
 			<AppButton
@@ -879,6 +879,8 @@ export default {
 					});
 				});
 			}
+
+			console.log("approved", approved);
 			this.form.job_part_schedule_items.forEach(item => {
 				item.approve = approved;
 			});
