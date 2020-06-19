@@ -29,18 +29,18 @@
 					<div class="px-4">
 						<div class="flex justify-between pb-2">
 							<p>Total Working Hours:</p>
-							<p>{{ total_working_hours | hoursMinutes}}</p>
+							<p class="pl-1">{{ total_working_hours | hoursMinutes}}</p>
 						</div>
 						<div class="flex justify-between pb-2">
 							<p>Total Gross Locum Wages:</p>
-							<p>£ {{ total_gross_locum_wages | currency }}</p>
+							<p class="pl-1">£ {{ total_gross_locum_wages | currency }}</p>
 						</div>
 						<div class="flex justify-between pb-2">
 							<p>
 								Hubzz Fee*
 								<span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
 							</p>
-							<p>£ {{ hubzz_fee | currency }}</p>
+							<p class="pl-1">£ {{ hubzz_fee | currency }}</p>
 						</div>
 					</div>
 					<div class="flex justify-end items-center text-black mt-3">
@@ -989,10 +989,13 @@ export default {
 		},
 
 		practice_rate() {
+			let profession = this.professions.find(
+				item => item.value.toString() === this.form.role.toString()
+			);
 			let practice_rates = this.$auth.user.practice_detail.practice
 				.practice_rates;
 			let practice_rate = practice_rates.find(
-				item => item.id.toString() === this.form.role.toString()
+				item => item.type === profession.label
 			);
 			let rate = 0;
 			if (practice_rate) {

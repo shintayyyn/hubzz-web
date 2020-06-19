@@ -7,10 +7,15 @@
 		<div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
 			<div class="text-gray-600 text-sm xl:text-sm">Job ID: {{ jobNumber }}</div>
 			<div class="text-gray-800 my-1 font-bold">{{ jobTitle }}</div>
-			<div
-				class="my-2 text-sm px-1 text-white rounded w-1/2 sm:w-1/4 lg:w-1/2 text-center"
-				:class="shiftStyle(jobShift)"
-			>{{ jobShift }}</div>
+			<div class="flex flex-wrap items-center w-full">
+				<div class="w-1/2" v-for="shift in jobShift" :key="shift.id">
+					<div
+						:key="shift.id"
+						class="my-1 mx-1 text-sm px-1 text-white rounded text-center"
+						:class="shiftStyle(shift.name)"
+					>{{ shift.name }}</div>
+				</div>
+			</div>
 			<div class="text-gray-600 mt-2 text-sm sm:text-md">{{ jobSurgeryName }}</div>
 			<div class="text-gray-600 mb-2 text-sm sm:text-md">{{ jobSurgeryCode }}</div>
 			<div class="text-gray-600 text-xs xl:text-sm font-bold text-center">
@@ -121,7 +126,6 @@ export default {
 		},
 		jobSurgeryName() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			console.log(job);
 			return job.type === "Private"
 				? job.private_job.private_practice.surgery.name
 				: job.platform_job
@@ -138,7 +142,7 @@ export default {
 		},
 		jobShift() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			return job.shift.name;
+			return job.shifts;
 		},
 		jobDescription() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
