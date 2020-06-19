@@ -58,7 +58,7 @@
 							<p
 								class="text-center"
 								:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
-							>£{{ sched.rate | currency }} {{ sched.locum_detail_rate_type.name }}</p>
+							>£{{ sched.rate | currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}</p>
 							<template v-if="['Completed', 'Approved'].includes(job_part.status)">
 								<p
 									class="text-center"
