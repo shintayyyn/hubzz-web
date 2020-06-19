@@ -257,7 +257,7 @@
 									<template v-else-if="type === 'invoice'">
 										<div
 											class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
-											:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
+											:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-3' : 'pb-4 pt-6']"
 										>{{ item.date }}</div>
 										<div
 											class="w-11/12 py-2 rounded-r-lg border-r border-t border-b"
