@@ -80,7 +80,7 @@
 					toInvoice
 					:type="'invoice'"
 					:invoiceDetails="propInvoice"
-					:toDisplay="['Approved', 'Paid'].includes(propInvoice.status)"
+					:toDisplay="['Approved', 'Paid', 'Issued'].includes(propInvoice.status)"
 					@getSchedule="getSchedule"
 				/>
 			</div>
@@ -879,6 +879,8 @@ export default {
 					});
 				});
 			}
+
+			console.log("approved", approved);
 			this.form.job_part_schedule_items.forEach(item => {
 				item.approve = approved;
 			});
