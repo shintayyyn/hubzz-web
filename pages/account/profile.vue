@@ -1230,7 +1230,9 @@
 
       updateLocumProfile () {
         this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
-        this.form.sub_profession_ids = this.subProfessionIds
+        this.form.sub_profession_ids = this.selectedProfession && this.selectedProfession.sub_professionable
+          ? this.subProfessionIds
+          : []
 
         this.formError = []
         
