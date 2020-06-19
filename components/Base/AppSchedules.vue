@@ -1666,23 +1666,22 @@ export default {
 				minDiff = parseInt(late_hours.toString().split(".")[1]);
 			}
 
-			let diff =
-				shift.final_time_start && shift.final_time_end
-					? `${
-							hourDiff > 0
-								? hourDiff > 9
-									? `${hourDiff}h`
-									: `0${hourDiff > -1 ? hourDiff : 0}h`
-								: ""
-					  } ${
-							minDiff > 0
-								? minDiff > 9
-									? `${minDiff}m`
-									: `0${minDiff > -1 ? minDiff : 0}m`
-								: ""
-					  }`
-					: "NO";
-			if (hourDiff === 0 && minDiff === 0) {
+			let diff = shift.final_time_start
+				? `${
+						hourDiff > 0
+							? hourDiff > 9
+								? `${hourDiff}h`
+								: `0${hourDiff > -1 ? hourDiff : 0}h`
+							: ""
+				  } ${
+						minDiff > 0
+							? minDiff > 9
+								? `${minDiff}m`
+								: `0${minDiff > -1 ? minDiff : 0}m`
+							: ""
+				  }`
+				: "NO";
+			if (hourDiff <= 0 && minDiff <= 0) {
 				diff = "NO";
 			}
 			return diff;
@@ -1700,12 +1699,8 @@ export default {
 					let final_start_minute = shift.final_time_start.split(":")[1];
 					let hourDiff = final_start_hour - orig_start_hour;
 					let minDiff = final_start_minute - orig_start_minute;
-					lateHours.push(
-						shift.final_time_start && shift.final_time_end ? hourDiff : 0
-					);
-					lateMinutes.push(
-						shift.final_time_start && shift.final_time_end ? minDiff : 0
-					);
+					lateHours.push(hourDiff > -1 ? hourDiff : 0);
+					lateMinutes.push(hourDiff > -1 ? minDiff : 0);
 				});
 			});
 			for (let i = 0; i <= lateHours.length; i++) {
@@ -1732,11 +1727,11 @@ export default {
 				late_minute > 0
 					? late_minute > 9
 						? `${late_minute}m`
-						: `0${late_minute > -1 ? late_minute : 0} m`
+						: `0${late_minute > -1 ? late_minute : 0}m`
 					: ""
 			}`;
 
-			if (late_hour === 0 && late_minute === 0) {
+			if (late_hour <= 0 && late_minute <= 0) {
 				total_late_hours = "NONE";
 			}
 
