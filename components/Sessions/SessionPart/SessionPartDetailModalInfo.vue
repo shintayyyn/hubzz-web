@@ -555,10 +555,8 @@ export default {
 				.practice_rates;
 
 			let practice_rate = practice_rates.find(
-				item =>
-					item.id.toString() === this.job_part.job.profession_id.toString()
+				item => item.type === this.job_part.profession.name
 			);
-
 			let rate = 0;
 
 			if (practice_rate) {
@@ -572,7 +570,6 @@ export default {
 			total = schedules
 				.map(schedule => schedule.final_hours_in_minutes)
 				.reduce((acc, cur) => acc + cur);
-
 			return (total / 60) * rate;
 		},
 		getJobPartGrossRate(schedules) {
