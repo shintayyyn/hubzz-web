@@ -328,7 +328,7 @@ export default {
 				.practice_rates;
 
 			let practice_rate = practice_rates.find(
-				item => item.id.toString() === this.job.profession_id.toString()
+				item => item.type === this.job.profession.name
 			);
 
 			let rate = 0;
