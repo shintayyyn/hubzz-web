@@ -132,7 +132,9 @@
 					class="text-xs sm:text-sm mb-8"
 				>£ {{getJobPartGrossRate(job_part.job.schedules) | currency}}</div>
 
-				<div class="font-bold text-sm sm:text-md">Job Part Total Original hours</div>
+				<div
+					class="font-bold text-sm sm:text-md"
+				>Job Part Total {{['Completed', 'Approved'].includes(job_part.status) ? 'Original' : ''}} Hours</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 				>{{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>

@@ -118,25 +118,25 @@
 					class="text-xs sm:text-sm mb-8"
 				>£ {{getJobPartGrossRate(job_part.job.schedules) | currency}}</div>
 
-				<div class="font-bold text-sm sm:text-md">Job Part Total Original hours</div>
+				<div class="font-bold text-sm sm:text-md">Job Part Total Original Hours</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 				>{{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
 
 				<template v-if="['Completed', 'Approved'].includes(job_part.status)">
-					<div class="font-bold text-sm sm:text-md">Job Part Total Final hours</div>
+					<div class="font-bold text-sm sm:text-md">Job Part Total Final Hours</div>
 					<div
 						class="text-xs sm:text-sm mb-8"
 					>{{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
 				</template>
 
-				<div class="font-bold text-sm sm:text-md">Job Total Original hours</div>
+				<div class="font-bold text-sm sm:text-md">Job Total Original Hours</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 				>{{ job_part.job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
 
 				<template v-if="['Completed', 'Approved'].includes(job_part.status)">
-					<div class="font-bold text-sm sm:text-md">Job Total Final hours</div>
+					<div class="font-bold text-sm sm:text-md">Job Total Final Hours</div>
 					<div
 						class="text-xs sm:text-sm mb-8"
 					>{{ job_part.job.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
