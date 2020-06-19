@@ -314,32 +314,31 @@
 												:label="'Add a selection date?'"
 												:items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
 											/>
-											<div
-												v-if="selection_notification === true || selection_notification === 'true'"
-												class="flex flex-row flex-wrap justify-between"
-											>
+											<template v-if="selection_notification === true || selection_notification === 'true'">
 												<div>Selection will be made and you will receive a notification by this date</div>
-												<div class="px-1 w-full md:w-1/2">
-													<AppDate
-														v-model="selection_date.date"
-														:name="'selection_date'"
-														:label="'Date'"
-														is-after
-														:error="formError.find(item => item.field === 'selection_date')"
-														required
-													/>
+												<div class="flex flex-row flex-wrap justify-between items-end">
+													<div class="px-1 w-full md:w-1/2">
+														<AppDate
+															v-model="selection_date.date"
+															:name="'selection_date'"
+															:label="'Date'"
+															is-after
+															:error="formError.find(item => item.field === 'selection_date')"
+															required
+														/>
+													</div>
+													<div class="px-1 w-full md:w-1/2">
+														<AppTime
+															v-model="selection_date.time"
+															:type="'time'"
+															:name="'time_end'"
+															:label="'Time'"
+															:error="formError.find(item => item.field === 'selection_date')"
+															required
+														/>
+													</div>
 												</div>
-												<div class="px-1 w-full md:w-1/2">
-													<AppTime
-														v-model="selection_date.time"
-														:type="'time'"
-														:name="'time_end'"
-														:label="'Time'"
-														:error="formError.find(item => item.field === 'selection_date')"
-														required
-													/>
-												</div>
-											</div>
+											</template>
 										</template>
 
 										<template v-if="hasBanks">
