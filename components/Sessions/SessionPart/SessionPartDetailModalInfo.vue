@@ -164,16 +164,6 @@
 				<div class="font-bold text-sm sm:text-md">Report to</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
 				<div class="font-bold text-sm sm:text-md">Telephone number</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
-
-				<div class="font-bold text-sm sm:text-md break-words">Extra information</div>
-				<div
-					class="text-xs sm:text-sm mb-8"
-					v-text="job_part.job.platform_job.extra_information?job_part.job.platform_job.extra_information:`(none)`"
-				/>
-				<div class="font-bold text-sm sm:text-md">Report to</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
-				<div class="font-bold text-sm sm:text-md">Telephone number</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 					v-text="job_part.job.platform_job.practice.phone_number?job_part.job.platform_job.practice.phone_number:`(none)`"
@@ -565,10 +555,8 @@ export default {
 				.practice_rates;
 
 			let practice_rate = practice_rates.find(
-				item =>
-					item.id.toString() === this.job_part.job.profession_id.toString()
+				item => item.type === this.job_part.profession.name
 			);
-
 			let rate = 0;
 
 			if (practice_rate) {
@@ -582,7 +570,6 @@ export default {
 			total = schedules
 				.map(schedule => schedule.final_hours_in_minutes)
 				.reduce((acc, cur) => acc + cur);
-
 			return (total / 60) * rate;
 		},
 		getJobPartGrossRate(schedules) {
