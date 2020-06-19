@@ -164,16 +164,6 @@
 				<div class="font-bold text-sm sm:text-md">Report to</div>
 				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
 				<div class="font-bold text-sm sm:text-md">Telephone number</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
-
-				<div class="font-bold text-sm sm:text-md break-words">Extra information</div>
-				<div
-					class="text-xs sm:text-sm mb-8"
-					v-text="job_part.job.platform_job.extra_information?job_part.job.platform_job.extra_information:`(none)`"
-				/>
-				<div class="font-bold text-sm sm:text-md">Report to</div>
-				<div class="text-xs sm:text-sm mb-8">{{ job_part.job.platform_job.report_to }}</div>
-				<div class="font-bold text-sm sm:text-md">Telephone number</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 					v-text="job_part.job.platform_job.practice.phone_number?job_part.job.platform_job.practice.phone_number:`(none)`"
