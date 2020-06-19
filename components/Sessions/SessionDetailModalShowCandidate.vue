@@ -241,7 +241,7 @@
     />
     <AppConfirmationModal
       :label="`This Locum is already appointed on one of ${this.$auth.user.practice_id === this.job.practice_id ? 'your' : 'this Spoke'} Job.`"
-      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.map(conflictJob => conflictJob.job_number).slice(0,2)},etc..` : `${conflictJobs.map(conflictJob => conflictJob.job_number)}`}`"
+      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.slice(0,2)},etc..` : `${conflictJobs}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -393,18 +393,14 @@ export default {
           res.data.job_parts.forEach(jobPart => {
             if (jobPart.dates.some(date => this.job.dates.includes(date))) {
               if (jobPart.status === "Ongoing") {
-                this.conflictJobs.push({
-                  job_number: jobPart.job_part_number,
-                  dates: jobPart.dates
-                });
+                this.conflictJobs.push(jobPart.job_part_number);
               } else if (jobPart.status === "Allocated") {
-                this.conflictJobs.push({
-                  job_number: jobPart.job_job_number,
-                  dates: jobPart.dates
-                });
+                this.conflictJobs.push(jobPart.job_job_number);
               }
             }
           });
+
+          this.conflictJobs = [...new Set(this.conflictJobs)];
 
           if (this.conflictJobs.length > 0) {
             this.warning_modal = true;

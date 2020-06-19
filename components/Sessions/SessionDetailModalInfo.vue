@@ -16,21 +16,7 @@
           <div class="px-1">
             <div class="flex justify-between items-end mb-2">
               <p class="font-bold text-sm sm:text-md">Schedule</p>
-              <!-- <div class="text-sm cursor-pointer bg-gray-300 hover:bg-gray-400 px-2 py-1 rounded transition-hover" @click="view_calendar = !view_calendar">{{ !view_calendar ? 'Calendar' : 'Default'}} View</div> -->
             </div>
-            <!-- <AppMultipleDates
-							v-if="view_calendar"
-							v-model="job.dates"
-							:name="'dates'"
-							is-after
-							multipleSelection
-							isDisplay
-							disableSelection
-							:overlayData="job.schedules"
-							@focus="toggleCalendar = true"
-							@blur="toggleCalendar = false"
-						/>
-            <template v-else>-->
             <div class="hidden lg:flex font-bold text-xs">
               <p class="w-1/6">DATE</p>
               <p class="w-2/6 text-center">TIME</p>
@@ -47,7 +33,6 @@
                 >£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
               </div>
             </div>
-            <!-- </template> -->
           </div>
         </div>
       </div>
@@ -67,10 +52,6 @@
         <div
           class="text-xs sm:text-sm mb-8"
         >{{ job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
-        <!-- <div class="font-bold text-sm sm:text-md">Rate</div>
-				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>
-				<div class="font-bold text-sm sm:text-md">Total Hours</div>
-        <div class="text-xs sm:text-sm mb-8">{{ job.total_hours | hoursMinutes }}</div>-->
         <div class="font-bold text-sm sm:text-md">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-8 break-words"
@@ -117,21 +98,6 @@
         <div class="text-xs sm:text-sm mb-8">{{ job.update_remarks?job.update_remarks:`(none)` }}</div>
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
-        <!-- <div class="font-bold text-sm sm:text-md">
-          Include Saturday
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.include_saturday ? 'Yes' : 'No' }}
-        </div>
-        <div class="font-bold text-sm sm:text-md">
-          Include Sunday
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.include_sunday ? 'Yes' : 'No' }}
-        </div>-->
-        <!-- <div class="font-bold text-sm sm:text-md">Unpaid break</div>
-        <div class="text-xs sm:text-sm mb-8">{{ job.platform_job.unpaid_breaks_in_minutes }}</div>-->
-
         <template v-if="job.selection_date">
           <div class="font-bold text-sm sm:text-md">
             Selection will be made and you will receive a notification
@@ -342,10 +308,7 @@
     </transition>
   </div>
 </template>
-
 <script>
-import { gmapApi } from "vue2-google-maps";
-
 export default {
   props: {
     job: {
@@ -353,32 +316,19 @@ export default {
       required: true
     }
   },
-
   data() {
     return {
       modal: false,
       view_calendar: false
     };
   },
-
   computed: {
-    google: gmapApi,
-
-    latLang() {
-      return this.job.platform_job.practice.surgery.address.coordinates;
-    },
-
     session_requirements() {
       return this.job.platform_job.session_requirements
         ? this.job.platform_job.session_requirements.split(",")
         : [];
     }
   },
-
-  created() {
-    console.log("job", this.job);
-  },
-
   methods: {
     getJobPartHubzzFee(schedules) {
       // HUBB FEE (final_hours_in_minutes / 60) * practice_rate
@@ -406,30 +356,25 @@ export default {
       return (total / 60) * rate;
     },
     getJobGrossRate(schedules) {
-      // PER HOUR rate * (final_hours_in_minute / 60)
-      // PER WHOLE DAY rate / (final_hours_in_minutes / 60)
-      // PER HALF DAY rate / ((final_hours_in_minutes / 60) / 2)
+      // PER HOUR rate * final_hours_in_minutes
+      // PER WHOLE HALF DAY rate / original_hours_in_minutes * final_hours_in_minutes
       let total = 0;
 
       schedules.forEach(schedule => {
         if (!schedule.absent_reason) {
           switch (schedule.locum_detail_rate_type.name) {
             case "Per Hour":
-              total =
-                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              total = total + schedule.rate * schedule.final_hours_in_minutes;
               break;
             case "Per Whole Day Session":
-              total =
-                total + schedule.rate / (schedule.final_hours_in_minutes / 60);
-              break;
             case "Per Half Day Session":
               total =
                 total +
-                schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+                (schedule.rate / schedule.original_hours_in_minutes) *
+                  schedule.final_hours_in_minutes;
               break;
             default:
-              total =
-                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              total = total + schedule.rate * schedule.final_hours_in_minutes;
               break;
           }
         }
@@ -443,12 +388,10 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .modal-container {
   z-index: 510;
 }
-
 @media screen and (min-width: 1200px) {
   .modal-container {
     width: 70%;

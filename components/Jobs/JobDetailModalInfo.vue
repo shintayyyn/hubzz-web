@@ -1,9 +1,42 @@
 <template>
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap">
-      <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
+      <div class="flex flex-col w-full">
         <div class="font-bold text-sm sm:text-md">Job number</div>
         <div class="text-xs sm:text-sm mb-8">{{ job.job_number }}</div>
+        <div class="font-bold text-sm sm:text-md">Duration</div>
+        <div class="text-xs sm:text-sm mb-8">
+          <p
+            v-if="job.dates.length>1"
+            class="px-1"
+          >{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+          <div class="px-1">
+            <p>Days: {{ job.dates.length }}</p>
+          </div>
+          <div class="px-1">
+            <div class="flex justify-between items-end mb-2">
+              <p class="font-bold text-sm sm:text-md">Schedule</p>
+            </div>
+            <div class="hidden lg:flex font-bold text-xs">
+              <p class="w-1/6">DATE</p>
+              <p class="w-2/6 text-center">TIME</p>
+              <p class="w-1/6 text-center">SHIFT</p>
+              <p class="w-2/6 text-center">RATE</p>
+            </div>
+            <div class="overflow-y-auto" style="max-height: 205px;">
+              <div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex pb-2">
+                <p class="lg:w-1/6">{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
+                <p class="lg:w-2/6 lg:text-center">{{ sched.time_start }}-{{ sched.time_end }}</p>
+                <p class="lg:w-1/6 lg:text-center">{{ sched.shift.name }}</p>
+                <p
+                  class="lg:w-2/6 lg:text-center"
+                >£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job description</div>
         <div
           class="text-xs sm:text-sm mb-8 break-words"
@@ -69,58 +102,6 @@
         >{{ job.update_remarks?job.update_remarks:`(none)` }}</div>
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
-        <div class="font-bold text-sm sm:text-md">Duration</div>
-        <div class="text-xs sm:text-sm mb-8">
-          <p
-            class="px-1"
-          >{{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
-          <div class="flex">
-            <div class="px-1">
-              <p>Days:</p>
-              <p>Time:</p>
-              <p>Shift:</p>
-            </div>
-            <div class="px-1">
-              <p>{{ job.dates.length }}</p>
-              <p>{{ job.time_start }} - {{ job.time_end }}</p>
-              <p>{{ job.shift.name }}</p>
-            </div>
-          </div>
-          <div class="overflow-y-auto" style="max-height: 205px;">
-            <div
-              v-for="(date, index) in job.dates"
-              :key="index"
-              class="m-1"
-            >{{ $moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</div>
-          </div>
-        </div>
-        <!-- <div class="flex text-xs sm:text-sm mb-8">
-          <div class="px-1">
-            <p>From</p>
-            <p>To</p>
-            <p>Shift</p>
-          </div>
-          <div class="px-1">
-            <p>{{ $moment(job.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job.time_start }}</p>
-            <p>{{ $moment(job.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job.time_end }}</p>
-            <p>{{ job.shift.name }}</p>
-          </div>
-        </div>-->
-        <!-- <div class="font-bold text-sm sm:text-md">
-          Include Saturday
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.include_saturday ? 'Yes' : 'No' }}
-        </div>
-        <div class="font-bold text-sm sm:text-md">
-          Include Sunday
-        </div> 
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job.include_sunday ? 'Yes' : 'No' }}
-        </div>-->
-        <div class="font-bold text-sm sm:text-md">Unpaid break</div>
-        <div class="text-xs sm:text-sm mb-8">{{ job.platform_job.unpaid_breaks_in_minutes }}</div>
-
         <template v-if="job.selection_date">
           <div class="font-bold text-sm sm:text-md">Selection will be made by this date</div>
           <div class="text-xs sm:text-sm mb-8">
@@ -315,7 +296,6 @@
     </transition>
   </div>
 </template>
-
 <script>
 export default {
   props: {
@@ -324,13 +304,11 @@ export default {
       requried: true
     }
   },
-
   data() {
     return {
       modal: false
     };
   },
-
   computed: {
     session_requirements() {
       return this.job.platform_job.session_requirements
@@ -338,33 +316,27 @@ export default {
         : [];
     }
   },
-
   methods: {
     getJobGrossRate(schedules) {
-      // PER HOUR rate * (final_hours_in_minute / 60)
-      // PER WHOLE DAY rate / (final_hours_in_minutes / 60)
-      // PER HALF DAY rate / ((final_hours_in_minutes / 60) / 2)
+      // PER HOUR rate * final_hours_in_minutes
+      // PER WHOLE HALF DAY rate / original_hours_in_minutes * final_hours_in_minutes
       let total = 0;
 
       schedules.forEach(schedule => {
         if (!schedule.absent_reason) {
           switch (schedule.locum_detail_rate_type.name) {
             case "Per Hour":
-              total =
-                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              total = total + schedule.rate * schedule.final_hours_in_minutes;
               break;
             case "Per Whole Day Session":
-              total =
-                total + schedule.rate / (schedule.final_hours_in_minutes / 60);
-              break;
             case "Per Half Day Session":
               total =
                 total +
-                schedule.rate / (schedule.final_hours_in_minutes / 60 / 2);
+                (schedule.rate / schedule.original_hours_in_minutes) *
+                  schedule.final_hours_in_minutes;
               break;
             default:
-              total =
-                total + schedule.rate * (schedule.final_hours_in_minutes / 60);
+              total = total + schedule.rate * schedule.final_hours_in_minutes;
               break;
           }
         }

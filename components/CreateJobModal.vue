@@ -314,32 +314,31 @@
 												:label="'Add a selection date?'"
 												:items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
 											/>
-											<div
-												v-if="selection_notification === true || selection_notification === 'true'"
-												class="flex flex-row flex-wrap justify-between"
-											>
+											<template v-if="selection_notification === true || selection_notification === 'true'">
 												<div>Selection will be made and you will receive a notification by this date</div>
-												<div class="px-1 w-full md:w-1/2">
-													<AppDate
-														v-model="selection_date.date"
-														:name="'selection_date'"
-														:label="'Date'"
-														is-after
-														:error="formError.find(item => item.field === 'selection_date')"
-														required
-													/>
+												<div class="flex flex-row flex-wrap justify-between items-end">
+													<div class="px-1 w-full md:w-1/2">
+														<AppDate
+															v-model="selection_date.date"
+															:name="'selection_date'"
+															:label="'Date'"
+															is-after
+															:error="formError.find(item => item.field === 'selection_date')"
+															required
+														/>
+													</div>
+													<div class="px-1 w-full md:w-1/2">
+														<AppTime
+															v-model="selection_date.time"
+															:type="'time'"
+															:name="'time_end'"
+															:label="'Time'"
+															:error="formError.find(item => item.field === 'selection_date')"
+															required
+														/>
+													</div>
 												</div>
-												<div class="px-1 w-full md:w-1/2">
-													<AppTime
-														v-model="selection_date.time"
-														:type="'time'"
-														:name="'time_end'"
-														:label="'Time'"
-														:error="formError.find(item => item.field === 'selection_date')"
-														required
-													/>
-												</div>
-											</div>
+											</template>
 										</template>
 
 										<template v-if="hasBanks">
@@ -656,6 +655,7 @@
 						:schedule="form.schedules"
 						:error="formError.find(err => err.field === 'schedules')"
 						:shiftErrors="shiftErrors"
+						:type="'create'"
 					/>
 					<div class="pt-4 pb-8 w-full flex justify-between">
 						<AppButton class="mr-2" :label="'Back'" :disabled="loading" @click="tabActive='details'" />
@@ -1572,6 +1572,7 @@ export default {
 		canPublish() {
 			this.shiftErrors = [];
 			this.formError = [];
+			let has_conflict = false;
 			this.schedules.forEach((sched, index) => {
 				if (!sched.shifts.length) {
 					this.shiftErrors.push({
@@ -1613,11 +1614,7 @@ export default {
 					});
 				}
 			});
-			if (
-				!this.shiftErrors.length &&
-				!this.hasShiftError &&
-				!this.formError.length
-			) {
+			if (!this.shiftErrors.length) {
 				this.form.profession_id = this.form.role;
 				this.form.shift_id = this.form.shift;
 				this.selectedClinicalSystem = [...this.form.clinical_system];
@@ -1689,7 +1686,14 @@ export default {
 						old_job_id: this.repostJob ? this.repostJob.id : null
 					})
 					.then(res => {
-						this.toPublish = true;
+						if (
+							!this.shiftErrors.length &&
+							!this.hasShiftError &&
+							!this.formError.length &&
+							!has_conflict
+						) {
+							this.toPublish = true;
+						}
 						this.loading = false;
 					})
 					.catch(err => {
@@ -1714,7 +1718,7 @@ export default {
 								err.response.status === 400 ||
 								err.response.data.error_messages
 							) {
-								this.formError = err.response.data.error_messages;
+								this.shiftErrors = err.response.data.error_messages;
 								let detailsError = [
 									"practice_id",
 									"number_of_patients",
@@ -1723,20 +1727,30 @@ export default {
 									"specialty",
 									"clinical_system"
 								];
-								let hasDetailsError = this.formError
-									.map(err => detailsError.includes(err.field))
-									.includes(true);
-								if (hasDetailsError) {
-									this.tabActive = "details";
-								} else if (
-									this.formError
-										.map(err => ["schedules", "dates"].includes(err.field))
-										.includes(true)
-								) {
-									this.tabActive = "schedule";
+								let sched_has_conflict = this.shiftErrors.find(
+									err => err.field === "schedules"
+								);
+								if (sched_has_conflict) {
+									has_conflict = true;
+									sched_has_conflict.conflictSchedules.forEach(item => {
+										// let sched_index = this.schedules.findIndex(sched => sched.date === this.$moment(item.date, 'YYYY-MM-DD').format('DD/MM/YYYY'))
+										this.shiftErrors.push({
+											field: `conflict-${this.$moment(
+												item.date,
+												"YYYY-MM-DD"
+											).format("DD/MM/YYYY")}-${item.index}`,
+											message:
+												"This schedule has a conflict with another schedule."
+										});
+									});
 								}
 							} else {
 								message = err.response.data.message;
+							}
+							if (this.shiftErrors.length) {
+								let sched_has_conflict = this.shiftErrors.find(
+									err => err.field === "schedules"
+								);
 							}
 						} else if (err.request) {
 							message = "Something weng wrong!";
