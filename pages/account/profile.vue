@@ -25,7 +25,7 @@
           />
 
           <AppFilterSearch
-            v-if="true"
+            v-if="selectedProfession && selectedProfession.sub_professionable"
             v-model="selectedSubProfessionsSelectionList"
             label="Sub Professions"
             placeholder="Select..."
@@ -830,7 +830,7 @@
 
       subProfessionsSelectionList () {
         return this.professions
-          .filter(profession => !this.selectedProfession || profession.id !== this.selectedProfession.id)
+          .filter(profession => profession.sub_professionable && (!this.selectedProfession || profession.id !== this.selectedProfession.id))
           .map(profession => ({
             label: profession.name,
             value: profession.id,
@@ -901,12 +901,16 @@
     },
 
     watch: {
-      professionId () {
-        if (this.professionId) {
-          const index = this.subProfessionIds.findIndex(professionId => professionId === this.professionId)
+      selectedProfession () {
+        if (this.selectedProfession) {
+          if (this.selectedProfession.sub_professionable) {
+            const index = this.subProfessionIds.findIndex(professionId => professionId === this.selectedProfession.id)
 
-          if (index > -1) {
-            this.subProfessionIds.splice(index, 1)
+            if (index > -1) {
+              this.subProfessionIds.splice(index, 1)
+            }
+          } else {
+            this.subProfessionIds = []
           }
         }
       },
