@@ -474,7 +474,7 @@
 				class="m-1"
 				:label="'Accept changes'"
 				:inStyle="'padding:5px 14px;font-size:1em'"
-				:disabled="saveLoading"
+				:disabled="saveLoading || sched_has_changes"
 				@click="save(true)"
 			/>
 			<AppButton
