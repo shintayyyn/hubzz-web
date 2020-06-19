@@ -257,7 +257,7 @@
 									<template v-else-if="type === 'invoice'">
 										<div
 											class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
-											:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
+											:class="[index%2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-3' : 'pb-4 pt-6']"
 										>{{ item.date }}</div>
 										<div
 											class="w-11/12 py-2 rounded-r-lg border-r border-t border-b"
@@ -1678,7 +1678,7 @@ export default {
 							minDiff > 0
 								? minDiff > 9
 									? `${minDiff}m`
-									: `0${minDiff > -1 ? minDiff : 0} m`
+									: `0${minDiff > -1 ? minDiff : 0}m`
 								: ""
 					  }`
 					: "NO";
@@ -1722,9 +1722,25 @@ export default {
 				}
 				late_minute += Number(num);
 			}
-			return `${late_hour > 9 ? late_hour : `0${late_hour}`}:${
-				late_minute > 9 ? late_minute : `0${late_minute}`
+			let total_late_hours = `${
+				late_hour > 0
+					? late_hour > 9
+						? `${late_hour}h`
+						: `0${late_hour > -1 ? late_hour : 0}h`
+					: ""
+			} ${
+				late_minute > 0
+					? late_minute > 9
+						? `${late_minute}m`
+						: `0${late_minute > -1 ? late_minute : 0} m`
+					: ""
 			}`;
+
+			if (late_hour === 0 && late_minute === 0) {
+				total_late_hours = "NONE";
+			}
+
+			return total_late_hours;
 		},
 
 		finalHours(shift, date) {
@@ -1764,7 +1780,7 @@ export default {
 					: `${
 							origHours > 0
 								? origHours > 9
-									? `${origHours}`
+									? `${origHours}h`
 									: `0${origHours}h`
 								: ""
 					  }${

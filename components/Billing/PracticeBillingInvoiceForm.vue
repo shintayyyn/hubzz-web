@@ -71,7 +71,6 @@
 					<p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">0</p>
 				</div>
 			</div>
-
 			<div class="w-full border-b">
 				<AppSchedules
 					:practice_rate="practice_rate"
@@ -81,7 +80,7 @@
 					toInvoice
 					:type="'invoice'"
 					:invoiceDetails="propInvoice"
-					:toDisplay="propInvoice.status === 'Approved' "
+					:toDisplay="['Approved', 'Paid'].includes(propInvoice.status)"
 					@getSchedule="getSchedule"
 				/>
 			</div>
