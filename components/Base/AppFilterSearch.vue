@@ -409,9 +409,13 @@
         if (this.limitItem && this.limitItem == this.value.length) {
           return
         }
-        this.value.push(item)
+
+        const newValue = JSON.parse(JSON.stringify(this.value))
+        newValue.push(item)
         this.$refs.input.focus()
+        this.$emit('input', newValue)
         this.$emit("add")
+
         if (
           this.$refs.filterSearchOptions.offsetHeight +
             this.$refs.filterSearchOptions.scrollTop >=
@@ -424,8 +428,10 @@
       },
 
       remove (index) {
-        this.value.splice(index, 1)
+        const newValue = JSON.parse(JSON.stringify(this.value))
+        newValue.splice(index, 1)
         this.$refs.input.focus()
+        this.$emit('input', newValue)
         this.$emit("remove")
       },
 
