@@ -655,7 +655,6 @@ export default {
 		AppLoading,
 		AppConfirmationModal
 	},
-	// props: ["shifts", "rate_lists", "schedule", "error"],
 	props: {
 		shifts: Array,
 		rate_lists: Array,
@@ -1429,7 +1428,6 @@ export default {
 				);
 			}
 		},
-		// Completing Job
 		cancelReason() {
 			if (this.selectedShift.type === "late") {
 				let sched = this.schedules.find(
@@ -1737,7 +1735,6 @@ export default {
 
 			return total_late_hours;
 		},
-
 		finalHours(shift, date) {
 			let origTotalHours =
 				shift.orig_time_start && shift.orig_time_end
@@ -1788,7 +1785,6 @@ export default {
 
 			return `${totalFinalHours}/${totalOrigHours}`;
 		},
-
 		getRate(shift, startTime, endTime, date) {
 			let rate_type_name =
 				this.type === "create"
