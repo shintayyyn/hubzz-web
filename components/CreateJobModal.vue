@@ -250,62 +250,6 @@
 								<div class="flex flex-col">
 									<h4 class="font-bold mt-4">Duration</h4>
 									<div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
-										<!-- <div class="relative pb-4 pt-2"> -->
-										<!-- <AppSchedule
-												:rate_lists="rate_lists"
-												:shifts="shifts"
-												:formError="formError"
-												:scheduleTemplates="repostJob ? repostJob.schedule_templates : []"
-												@scheduleTemplates="getScheduleTemplates"
-												@initialSchedule="getInitialSchedule"
-										/>-->
-										<!-- <div class="w-full">
-                          <AppMultipleDates
-                            v-model="schedule_dates"
-                            :name="'dates'"
-                            :label="'Job Dates'"
-                            is-after
-                            multipleSelection
-                            required
-                            :overlayData="overlayData"
-                            :error="formError.find(err => err.field === 'dates') ? formError.find(err => err.field === 'dates') : formError.find(err => err.field === 'schedules')"
-                          />
-                        </div>
-                        <AppButton :label="'Manage Shifts'" @click="showShifts = true" :inStyle="'padding:5px 14px;'" v-if="schedule.length"/>
-                        <div v-if="schedule.length" class="w-full pt-4">
-                          <p class="font-bold">Job Dates</p>
-                          <div class="overflow-x-hidden overflow-y-auto" style="max-height: 350px;">
-                            <div v-for="(sched, index) in schedule" :key="index">
-                              <p :class="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length ? '-mb-4' : ''">{{ $moment(sched.date).format('DD/MM/YYYY') }}</p>
-                              <AppInput
-                                v-if="shift_schedule.length && shift_schedule.filter(sched => !sched.initial).length"
-                                v-model="sched.shift_id"
-                                :type="'multi-checkbox'"
-                                :name="`shift-${index+1}`"
-                                :placeholder="''"
-                                :isHorizontal="true"
-                                :lists="shift_schedule.filter(sched => !sched.initial)"
-                                @checked="shiftCheckAction('checked', sched.shift_id, index, $event)"
-                                @unchecked="shiftCheckAction('unchecked', sched.shift_id, index, $event)"
-                                @uncheckAll="shiftCheckAction('unCheckAll', sched.shift_id, index, $event)"
-                              />
-                            </div>
-                          </div>
-                          <div class="flex mt-2" v-if="!shift_schedule.length" >
-                            <svgicon name="exclamation-mark" width="18" height="18" class="fill-current text-orange-500 mr-2" />
-                            <p class="text-sm">It seems like your shifts hasn't been set-up yet.<br/>Click <span class="underline text-blue-500 cursor-pointer hover:text-blue-700" @click="showShifts=true">here</span> to add shift.</p>
-                          </div>
-										</div>-->
-										<!-- </div> -->
-										<!-- 
-										<AppInput
-											v-model="auto_assign_job"
-											:type="'select'"
-											:name="'auto_assign_job'"
-											:label="'Use AUTO-MATCH on this Job?'"
-											:items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-										/>-->
-
 										<template v-if="['false', false].includes(auto_assign_job)">
 											<AppInput
 												v-model="selection_notification"

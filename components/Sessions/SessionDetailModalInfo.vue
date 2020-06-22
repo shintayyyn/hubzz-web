@@ -46,7 +46,7 @@
 				<div class="font-bold text-sm sm:text-md">Job Gross Rate</div>
 				<div class="text-xs sm:text-sm mb-8">£ {{getJobGrossRate(job.schedules) | currency}}</div>
 
-				<div class="font-bold text-sm sm:text-md">Job total hours</div>
+				<div class="font-bold text-sm sm:text-md">Job Total Hours</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 				>{{ job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
