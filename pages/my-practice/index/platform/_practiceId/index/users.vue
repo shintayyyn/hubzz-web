@@ -6,13 +6,13 @@
       :items="users"
       :columns="columns"
       :orderBy="params.order_by"
-      :routerLink="`/my-practice/${$route.params.practiceId}/users`"
+      :routerLink="`/my-practice/platform/${$route.params.practiceId}/users`"
     ></AppTable>
     <transition name="fade" mode="out-in">
       <nuxt-link
         class="shield"
-        v-if="$route.name.includes('my-practice-index-practiceId-index-users-userId')"
-        :to="`/my-practice/${$route.params.practiceId}/users?status=${$route.query.status}`"
+        v-if="$route.name.includes('my-practice-index-platform-practiceId-index-users-userId')"
+        :to="`/my-practice/platform/${$route.params.practiceId}/users?status=${$route.query.status}`"
       ></nuxt-link>
     </transition>
     <div>

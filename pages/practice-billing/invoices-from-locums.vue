@@ -580,21 +580,23 @@ export default {
 
 					jobPart.schedules.forEach(schedule => {
 						if (!schedule.absent_reason) {
+							let finalHours = schedule.final_hours_in_minutes / 60;
+							let totalHours = schedule.original_hours_in_minutes / 60;
 							switch (schedule.locum_detail_rate_type.name) {
-								case "Per Hour":
+								case "Hourly":
 									total =
-										total + schedule.rate * schedule.final_hours_in_minutes;
+										total + schedule.rate * finalHours
 									break;
-								case "Per Whole Day Session":
-								case "Per Half Day Session":
+								case "Whole Day":
+								case "Half Day":
 									total =
 										total +
-										(schedule.rate / schedule.original_hours_in_minutes) *
-											schedule.final_hours_in_minutes;
+										(schedule.rate / totalHours) *
+											finalHours
 									break;
 								default:
 									total =
-										total + schedule.rate * schedule.final_hours_in_minutes;
+										total + schedule.rate * finalHours
 									break;
 							}
 						}
@@ -773,21 +775,23 @@ export default {
 
 							jobPart.schedules.forEach(schedule => {
 								if (!schedule.absent_reason) {
+									let finalHours = schedule.final_hours_in_minutes / 60;
+									let totalHours = schedule.original_hours_in_minutes / 60;
 									switch (schedule.locum_detail_rate_type.name) {
-										case "Per Hour":
+										case "Hourly":
 											total =
-												total + schedule.rate * schedule.final_hours_in_minutes;
+												total + schedule.rate * finalHours
 											break;
-										case "Per Whole Day Session":
-										case "Per Half Day Session":
+										case "Whole Day":
+										case "Half Day":
 											total =
 												total +
-												(schedule.rate / schedule.original_hours_in_minutes) *
-													schedule.final_hours_in_minutes;
+												(schedule.rate / totalHours) *
+													finalHours
 											break;
 										default:
 											total =
-												total + schedule.rate * schedule.final_hours_in_minutes;
+												total + schedule.rate * finalHours
 											break;
 									}
 								}
@@ -917,21 +921,23 @@ export default {
 
 							jobPart.schedules.forEach(schedule => {
 								if (!schedule.absent_reason) {
+									let finalHours = schedule.final_hours_in_minutes / 60;
+									let totalHours = schedule.original_hours_in_minutes / 60;
 									switch (schedule.locum_detail_rate_type.name) {
-										case "Per Hour":
+										case "Hourly":
 											total =
-												total + schedule.rate * schedule.final_hours_in_minutes;
+												total + schedule.rate * finalHours
 											break;
-										case "Per Whole Day Session":
-										case "Per Half Day Session":
+										case "Whole Day":
+										case "Half Day":
 											total =
 												total +
-												(schedule.rate / schedule.original_hours_in_minutes) *
-													schedule.final_hours_in_minutes;
+												(schedule.rate / totalHours) *
+													finalHours
 											break;
 										default:
 											total =
-												total + schedule.rate * schedule.final_hours_in_minutes;
+												total + schedule.rate * finalHours
 											break;
 									}
 								}

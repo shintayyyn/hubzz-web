@@ -205,14 +205,29 @@ export default {
         .then(([responseTotal, response]) => {
           this.total = responseTotal.data.count;
           let job_parts = response.data.job_parts;
-          console.log(job_parts);
+
           this.job_parts = job_parts.map(jobPart => {
-            let total = jobPart.locum_invoice_id
-              ? jobPart.locum_invoice_item.total
-              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-              ? jobPart.job.rate * jobPart.final_hours
-              : (jobPart.job.rate / jobPart.job.total_hours) *
-                jobPart.final_hours;
+            let total = 0;
+
+            jobPart.schedules.forEach(schedule => {
+              if (!schedule.absent_reason) {
+                let finalHours = schedule.final_hours_in_minutes / 60;
+                let totalHours = schedule.original_hours_in_minutes / 60;
+
+                switch (schedule.locum_detail_rate_type.name) {
+                  case "Hourly":
+                    total = total + schedule.rate * finalHours;
+                    break;
+                  case "Whole Day":
+                  case "Half Day":
+                    total = total + (schedule.rate / totalHours) * finalHours;
+                    break;
+                  default:
+                    total = total + schedule.rate * finalHours;
+                    break;
+                }
+              }
+            });
 
             total =
               jobPart.locum_invoice_item &&

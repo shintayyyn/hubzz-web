@@ -441,8 +441,8 @@ export default {
       ]);
 
       job_parts = job_parts.map(jobPart => {
-        // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
-        // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
+        // rate * final_hours_in_minutes
+        // rate / original_hours_in_minutes * final_hours_in_minutes
 
         let type;
         let finalHours;
@@ -465,7 +465,7 @@ export default {
           total = 0;
 
           switch (type) {
-            case "Per Hour":
+            case "Hourly":
               total = finalHours * jobPart.job.rate;
               break;
             default:
@@ -632,7 +632,7 @@ export default {
               total = 0;
 
               switch (type) {
-                case "Per Hour":
+                case "Hourly":
                   total = finalHours * jobPart.job.rate;
                   break;
                 default:
@@ -752,7 +752,7 @@ export default {
               total = 0;
 
               switch (type) {
-                case "Per Hour":
+                case "Hourly":
                   total = finalHours * jobPart.job.rate;
                   break;
                 default:
