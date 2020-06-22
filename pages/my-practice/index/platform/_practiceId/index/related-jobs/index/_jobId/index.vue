@@ -83,7 +83,7 @@ export default {
   methods: {
     close() {
       this.$router.push({
-        path: `/my-practice/${this.$route.params.practiceId}/related-jobs`,
+        path: `/my-practice/platform/${this.$route.params.practiceId}/related-jobs`,
         query: { ...this.$route.query }
       });
     }

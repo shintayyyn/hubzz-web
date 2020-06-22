@@ -43,15 +43,10 @@
 				<div class="font-bold text-sm sm:text-md">Job Gross Rate</div>
 				<div class="text-xs sm:text-sm mb-8">£ {{getJobGrossRate(job.schedules) | currency}}</div>
 
-				<div class="font-bold text-sm sm:text-md">Job total hours</div>
+				<div class="font-bold text-sm sm:text-md">Job Total Hours</div>
 				<div
 					class="text-xs sm:text-sm mb-8"
 				>{{ job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}</div>
-
-				<!-- <div class="font-bold text-sm sm:text-md">Rate</div>
-				<div class="text-xs sm:text-sm mb-8">{{ `£ ${job.rate} ${job.locum_detail_rate_type.name}` }}</div>-->
-				<!-- <div class="font-bold text-sm sm:text-md">Total hours</div>
-				<div class="text-xs sm:text-sm mb-4">{{ job.total_hours | hoursMinutes }}</div>-->
 				<div class="font-bold text-sm sm:text-md">Extra information</div>
 				<div
 					class="text-xs sm:text-sm mb-8 break-words"
@@ -318,19 +313,21 @@ export default {
 
 			schedules.forEach(schedule => {
 				if (!schedule.absent_reason) {
+					let finalHours = schedule.final_hours_in_minutes / 60;
+                	let totalHours = schedule.original_hours_in_minutes / 60;
 					switch (schedule.locum_detail_rate_type.name) {
 						case "Hourly":
-							total = total + schedule.rate * schedule.final_hours_in_minutes;
+							total = total + schedule.rate * finalHours;
 							break;
 						case "Whole Day":
 						case "Half Day":
 							total =
 								total +
-								(schedule.rate / schedule.original_hours_in_minutes) *
-									schedule.final_hours_in_minutes;
+								(schedule.rate / totalHours) *
+									finalHours;
 							break;
 						default:
-							total = total + schedule.rate * schedule.final_hours_in_minutes;
+							total = total + schedule.rate * finalHours;
 							break;
 					}
 				}

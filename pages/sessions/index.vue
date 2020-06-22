@@ -308,6 +308,15 @@
 					@limitchanged="limitchanged"
 					@sorted="sorted"
 				>
+					<template
+						v-slot:shifts="slotProps"
+					>{{ displayArray(slotProps.item.shifts.map(item => item.name)) }}</template>
+					<template
+						v-slot:rate_type="slotProps"
+					>{{ displayArray(slotProps.item.locum_detail_rate_types.map(item => item.name)) }}</template>
+					<template
+						v-slot:rates="slotProps"
+					>{{ slotProps.item.min_rate === slotProps.item.max_rate ? `£${slotProps.item.max_rate}` : `£${slotProps.item.min_rate} - £${ slotProps.item.max_rate}` }}</template>
 					<template v-slot:ended="slotProps">
 						<div class="flex items-center justify-center">
 							<div class="rounded-full px-6 py-1">{{ slotProps.item.ended ? "For Completion" : "Ongoing" }}</div>
@@ -511,21 +520,24 @@ export default {
 						sortable: true
 					},
 					{
-						name: "Shift",
+						name: "Shifts",
 						dataIndex: "job.shift.name",
+						slotName: "shifts",
 						class: "text-center",
 						sortable: true
 					},
 					{
-						name: "Rate",
+						name: "Rates",
 						dataIndex: "job.rate",
+						slotName: "rates",
 						sortable: true,
 						class: "text-center currency"
 					},
 					{
-						name: "per",
+						name: "Rate Type",
 						dataIndex: "job.locum_detail_rate_type.name",
 						class: "text-center",
+						slotName: "rate_type",
 						sortable: true
 					}
 				);
@@ -563,20 +575,23 @@ export default {
 						sortable: true
 					},
 					{
-						name: "Shift",
+						name: "Shifts",
 						dataIndex: "shift_name",
+						slotName: "shifts",
 						class: "text-center",
 						sortable: true
 					},
 					{
-						name: "Rate",
+						name: "Rates",
 						dataIndex: "rate",
 						sortable: true,
+						slotName: "rates",
 						class: "text-center currency"
 					},
 					{
-						name: "per",
+						name: "Rate Type",
 						dataIndex: "rate_type_name",
+						slotName: "rate_type",
 						class: "text-center",
 						sortable: true
 					}
@@ -999,6 +1014,28 @@ export default {
 		this.showRefresh = false;
 	},
 	methods: {
+		displayArray(arrayList) {
+			let arrayToText = "";
+			arrayList.forEach((item, index) => {
+				if (arrayList.length > 1) {
+					if (index !== arrayList.length - 1) {
+						arrayToText += `${item}, `;
+					} else {
+						arrayToText += `${item}`;
+					}
+					// if (
+					// index !== arrayList.length - 1 &&
+					// index === arrayList.length - 2
+					// )
+					//  else {
+					// arrayToText += ` and ${item}`;
+					// }
+				} else {
+					arrayToText += item;
+				}
+			});
+			return arrayToText;
+		},
 		routerLink(jobOrJobPart) {
 			if (this.isJobPart) {
 				return {
@@ -1023,7 +1060,6 @@ export default {
 				}
 			};
 		},
-
 		filterJobList(id) {
 			this.jobs = this.jobs.filter(item => item.id !== id);
 		},
