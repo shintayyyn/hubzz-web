@@ -761,7 +761,7 @@
                   v-model="form.has_reference"
                   :type="'single-checkbox'"
                   :name="'has_reference'"
-                  :label="'Has Reference'"
+                  label="Give permission to do update checks"
                   :error="formError.find(item => item.field === 'has_reference')"
                 />
               </template>
