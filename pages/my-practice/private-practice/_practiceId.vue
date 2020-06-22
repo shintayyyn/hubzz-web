@@ -72,7 +72,6 @@ export default {
   data() {
     return {
       delete_modal: false
-      // showMap: false
     };
   },
   computed: {
@@ -113,12 +112,6 @@ export default {
       throw err;
     }
   },
-  // mouted() {
-  //   setTimeout(() => {
-  //     this.showMap = true;
-  //     console.log(this.showMap);
-  //   }, 1);
-  // },
   methods: {
     removePractice() {
       this.$axios
