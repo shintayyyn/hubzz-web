@@ -11,9 +11,19 @@
 				>{{ propJob.locum_status !== 'Permanent' ? `Job ID: ${jobNumber}` : 'Permanent / Salaried Role' }}</div>
 				<div class="text-gray-800 my-1 font-bold">{{ jobTitle }}</div>
 				<div
+					v-if="propJob.locum_status === 'Permanent'"
 					class="my-2 text-sm px-1 text-white rounded w-1/2 sm:w-1/4 lg:w-1/2 text-center"
 					:class="shiftStyle(jobShift)"
 				>{{ jobShift }}</div>
+				<div class="flex flex-wrap items-center w-full" v-else>
+					<div class="w-1/2" v-for="shift in jobShift" :key="shift.id">
+						<div
+							:key="shift.id"
+							class="my-1 mx-1 text-sm px-1 text-white rounded text-center"
+							:class="shiftStyle(shift.name)"
+						>{{ shift.name }}</div>
+					</div>
+				</div>
 				<div class="text-gray-600 mt-2 text-sm sm:text-md">{{ jobSurgeryName }}</div>
 				<div class="text-gray-600 mb-2 text-sm sm:text-md">{{ jobSurgeryCode }}</div>
 				<div class="text-gray-600 text-xs xl:text-sm font-bold text-center">
@@ -26,7 +36,10 @@
 				</div>
 			</div>
 		</template>
-		<p class="text-center text-white py-1 text-sm w-full font-bold">Click to view Details</p>
+		<p
+			class="text-center py-1 text-sm w-full font-bold"
+			:class="['Applied'].includes(job.locum_status) ? 'text-black' : 'text-white'"
+		>Click to view Details</p>
 	</nuxt-link>
 </template>
 <script>
@@ -155,7 +168,7 @@ export default {
 		},
 		jobShift() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
-			return job.locum_status === "Permanent" ? "Interview" : job.shift.name;
+			return job.locum_status === "Permanent" ? "Interview" : job.shifts;
 		},
 		jobDescription() {
 			let job = this.isJobPart ? this.propJob.job : this.propJob;
