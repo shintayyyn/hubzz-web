@@ -1,38 +1,29 @@
 <template>
   <section class="my-practice-section">
-    <div class="flex flex-row justify-start overflow-x-auto">
+    <div class="flex flex-row justify-start overflow-x-auto mb-2">
       <nuxt-link
-        to="/my-practice?status=Favorite"
-        :event="$route.query.status && $route.query.status === 'Favorite' ? '' : 'click'"
+        :to="{ name: 'my-practice-index-platform'}"
+        :event="$route.name === 'my-practice' || $route.name.includes('my-practice-index-platform') ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorite')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Favorites</nuxt-link>
+        :class="$route.name === 'my-practice' || $route.name.includes('my-practice-index-platform')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Platform</nuxt-link>
       <nuxt-link
-        to="/my-practice?status=Completed"
-        :event="$route.query.status && $route.query.status === 'Completed' ? '' : 'click'"
+        :to="{ name: 'my-practice-private-practice'}"
+        :event="$route.name === 'my-practice-private-practice' ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.status && $route.query.status.toLowerCase() === 'completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Completed</nuxt-link>
-      <nuxt-link
-        to="/my-practice?status=Applied"
-        :event="$route.query.status && $route.query.status === 'Applied' ? '' : 'click'"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.status && $route.query.status.toLowerCase() === 'applied'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Applied</nuxt-link>
-      <nuxt-link
-        to="/my-practice?status=Unsuccessful"
-        :event="$route.query.status && $route.query.status === 'Unsuccessful' ? '' : 'click'"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.status && $route.query.status.toLowerCase() === 'unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Unsuccessful</nuxt-link>
+        :class="$route.name.includes('my-practice-private-practice')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Private</nuxt-link>
     </div>
-    <div class="mt-5">
-      <nuxt-child />
-    </div>
+    <nuxt-child />
   </section>
 </template>
 <script>
 export default {
-  middleware: "isVerified"
+  created() {
+    if (!this.$route.query.status && this.$route.name === "my-practice") {
+      this.$router.push("/my-practice/platform?status=Favorite");
+    }
+  }
 };
 </script>
+
