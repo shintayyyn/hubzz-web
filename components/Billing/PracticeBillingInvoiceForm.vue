@@ -830,7 +830,8 @@ export default {
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.form.total_amount = total_gross_locum_wages;
 			this.hasShiftError = hasError;
-			this.sched_has_changes = hasChanges;
+			this.sched_has_changes =
+				this.$route.query.status === "issued" ? false : hasChanges;
 		},
 		handleKeyDownEvent(e, formField, limit) {
 			let acceptedKeys = [
@@ -879,8 +880,6 @@ export default {
 					});
 				});
 			}
-
-			console.log("approved", approved);
 			this.form.job_part_schedule_items.forEach(item => {
 				item.approve = approved;
 			});
