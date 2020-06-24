@@ -1414,7 +1414,6 @@ export default {
 	methods: {
 		emitSchedule() {
 			if (this.type === "invoice") {
-				console.log(this.getDeductions(this.schedules));
 				let deduction =
 					this.getJobGrossRate(this.schedules) -
 					this.getJobGrossRate(this.schedules, true);
@@ -1491,18 +1490,22 @@ export default {
 				let shift = sched.shifts.find(
 					(item, index) => index === this.selectedShift.i
 				);
+
 				if (!shift.remarks) {
 					shift.dispute = false;
-					shift.final_time_start = shift.orig_final_start;
-					shift.final_time_end = shift.orig_final_end;
+					if (shift.orig_has_absences) {
+						shift.final_time_start = "";
+						shift.final_time_end = "";
+					} else {
+						shift.final_time_start = shift.orig_final_start;
+						shift.final_time_end = shift.orig_final_end;
+					}
 				}
 				this.show_late_reason = false;
 				this.selectedShift = null;
 			}
 		},
 		getDeductions(schedules) {
-			console.log("get deductions");
-			console.log(schedules);
 			let deductions = [];
 			schedules.forEach(sched => {
 				sched.shifts.forEach(shift => {
@@ -1518,29 +1521,18 @@ export default {
 						);
 					} else {
 						if (this.getLate(shift, sched.date) !== "NO") {
-							let orig_rate = this.getRate(
-								shift,
-								shift.orig_time_start,
-								shift.orig_time_end,
-								sched.date
+							deductions.push(
+								this.getRate(
+									shift,
+									shift.orig_time_start,
+									shift.final_time_start,
+									sched.date
+								)
 							);
-							let current_rate = this.getRate(
-								shift,
-								shift.final_time_start,
-								shift.final_time_end,
-								sched.date
-							);
-							deductions.push(orig_rate - current_rate);
 						}
 					}
 				});
 			});
-			console.log("---", deductions);
-			console.log(
-				"deductions",
-				deductions.reduce((acc, item) => acc + item, 0)
-			);
-			console.log("---");
 			return deductions.reduce((acc, item) => acc + item, 0);
 		},
 		lateChange(shift, index, i, type) {
@@ -1864,8 +1856,6 @@ export default {
 				orig_total_hours =
 					this.totalHours(shift.time_start, shift.time_end, date) / 60;
 			}
-
-			console.log(date, orig_total_hours);
 			switch (rate_type_name) {
 				case "Hourly":
 					return type !== "deduction"
@@ -2250,8 +2240,13 @@ export default {
 		dispute(shift, index, i) {
 			shift.dispute = !shift.dispute;
 			if (shift.dispute === false) {
-				shift.final_time_start = shift.orig_final_start;
-				shift.final_time_end = shift.orig_final_end;
+				if (shift.orig_has_absences) {
+					shift.final_time_start = "";
+					shift.final_time_end = "";
+				} else {
+					shift.final_time_start = shift.orig_final_start;
+					shift.final_time_end = shift.orig_final_end;
+				}
 				shift.remarks = "";
 			} else {
 				this.lateChange(shift, index, i, "dispute");
@@ -2272,6 +2267,8 @@ export default {
 					shift.dispute = true;
 				}
 			} else {
+				shift.final_time_start = "";
+				shift.final_time_end = "";
 				if (shift.has_absences == shift.orig_has_absences) {
 					shift.dispute = false;
 				} else {
