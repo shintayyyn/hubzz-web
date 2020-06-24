@@ -766,6 +766,8 @@ export default {
 							locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
 							orig_final_start: sched.final_time_start,
 							orig_final_end: sched.final_time_end,
+							orig_time_start: sched.original_time_start,
+							orig_time_end: sched.original_time_end,
 							orig_has_absences: isAbsent,
 							final_time_start: isAbsent
 								? ""
