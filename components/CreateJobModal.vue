@@ -305,7 +305,7 @@
 												/>
 												<div
 													v-if="bank_first === true || bank_first === 'true'"
-													class="flex flex-row flex-wrap justify-between"
+													class="flex flex-row flex-wrap justify-between items-end"
 												>
 													<div>Only favorite locum will be notified until this date</div>
 													<div class="px-1 w-full md:w-1/2">
@@ -698,6 +698,7 @@ export default {
 			shiftErrors: [],
 			toPublish: false,
 			schedules: [],
+			job_parts: [],
 
 			// schedule_dates: [],
 			// shift_schedule: [],
@@ -1445,7 +1446,8 @@ export default {
 			schedule,
 			total_gross_locum_wages,
 			total_working_hours,
-			hasError
+			hasError,
+			job_parts
 		) {
 			this.form.schedules = [];
 			this.schedules = schedule;
@@ -1515,6 +1517,7 @@ export default {
 			this.total_working_hours = total_working_hours;
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.hasShiftError = hasError;
+			this.job_parts = job_parts;
 		},
 		canPublish() {
 			this.shiftErrors = [];
@@ -1680,7 +1683,6 @@ export default {
 								if (sched_has_conflict) {
 									has_conflict = true;
 									sched_has_conflict.conflictSchedules.forEach(item => {
-										// let sched_index = this.schedules.findIndex(sched => sched.date === this.$moment(item.date, 'YYYY-MM-DD').format('DD/MM/YYYY'))
 										this.shiftErrors.push({
 											field: `conflict-${this.$moment(
 												item.date,
@@ -1714,6 +1716,47 @@ export default {
 						}
 						this.loading = false;
 					});
+			}
+			if (this.shiftErrors.length) {
+				let has_empty_sched_dates = this.shiftErrors.filter(err =>
+					err.field.includes("shift-")
+				);
+				let job_parts = [];
+				if (has_empty_sched_dates.length) {
+					has_empty_sched_dates.forEach(err => {
+						let empty_date = err.field.split("-")[1];
+						let job_part = this.job_parts.find(part =>
+							part.dates.includes(
+								this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+							)
+						);
+						let exist = job_parts.find(item => item === `${job_part.value}`);
+						if (job_part && !exist) {
+							job_parts.push(`${job_part.value}`);
+						}
+					});
+					let partsLabel = "";
+					job_parts.forEach((item, index) => {
+						if (job_parts.length > 1) {
+							if (index !== job_parts.length - 1) {
+								partsLabel += `${item}, `;
+							} else if (index === job_parts.length - 1) {
+								partsLabel += `${item}`;
+							}
+							//  else {
+							// partsLabel += ` and ${item}`;
+							// }
+						} else {
+							partsLabel += item;
+						}
+					});
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "danger",
+						text: [`Empty schedule on Job Part/s (${partsLabel})`],
+						duration: 3000
+					});
+				}
 			}
 		},
 		// -- END FOR APP SCHEDULE COMPONENT

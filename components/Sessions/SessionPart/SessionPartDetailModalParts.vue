@@ -34,9 +34,7 @@
 				>Terminate</button>
 			</template>
 		</AppTable>
-		<transition name="fade" mode="out-in">
-			<div v-if="completeJobPart || terminateJobPart" class="shield"></div>
-		</transition>
+
 		<transition name="slide" mode="out-in">
 			<SessionDetailModalCompleteModal
 				v-if="completeJobPart"
@@ -54,6 +52,9 @@
 				@close="terminateJobPart=false, $emit('close')"
 				@terminated="[getJobParts(params), terminateJobPart=false]"
 			/>
+		</transition>
+		<transition name="fade" mode="out-in">
+			<div v-if="completeJobPart || terminateJobPart" class="shield"></div>
 		</transition>
 	</div>
 </template>
@@ -341,14 +342,14 @@ export default {
 	z-index: 511;
 }
 .modal-container {
-	z-index: 512;
+	z-index: 520;
+}
+.wrapper {
+	transition: all 0.3s linear;
 }
 @media screen and (min-width: 1200px) {
 	.modal-container {
 		width: 80%;
 	}
-}
-.wrapper {
-	transition: all 0.3s linear;
 }
 </style>

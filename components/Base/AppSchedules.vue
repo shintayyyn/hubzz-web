@@ -192,7 +192,7 @@
 													<p
 														v-if="(shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 "
 														class="text-xs text-red-500 px-2 pt-1"
-													>Shift is less than {{ Math.abs(totalHours(shift.final_time_start, shift.final_time_end, item.date)) | hoursMinutes }}</p>
+													>Invalid End Time</p>
 												</div>
 												<div class="w-2/12">
 													<AppTime
@@ -306,7 +306,7 @@
 														<p
 															v-if="!isAbsent(shift) && (shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 "
 															class="text-xs text-red-500 px-2 pt-1"
-														>Shift is less than {{ Math.abs(totalHours(shift.final_time_start, shift.final_time_end, item.date)) | hoursMinutes }}</p>
+														>Invalid End Time</p>
 													</template>
 													<template v-else>{{ shift.time_start }}</template>
 												</div>
@@ -435,13 +435,12 @@
 															<p>{{totalHours(shift.time_start, shift.time_end, item.date) | hours}}</p>
 															<p>{{totalHours(shift.time_start, shift.time_end, item.date) | minutes}}</p>
 														</template>
-														<template v-else-if="shift.time_start && shift.time_end">
+														<template
+															v-else-if="(shift.time_start && shift.time_end && shift.time_start === shift.time_end) || ((shift.time_start && shift.time_end) && (totalHours(shift.time_start, shift.time_end, item.date) !== 0))"
+														>
 															<span class="text-red-500 leading-none text-sm">
-																Shift is less than
-																<template
-																	v-if="totalHours(shift.time_start, shift.time_end, item.date) !== 0"
-																>{{ Math.abs(totalHours(shift.time_start, shift.time_end, item.date)) | hoursMinutes }}</template>
-																<template v-else>a minute</template>
+																Invalid
+																<br />End Time
 															</span>
 														</template>
 													</div>
@@ -672,6 +671,7 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			schedule_dates: [],
 			overlayData: [],
 			toggleCalendar: false,
@@ -687,6 +687,8 @@ export default {
 	},
 	created() {
 		if (this.schedule.length) {
+			this.loading = true;
+			let status = this.$route.query.status ? this.$route.query.status : "";
 			this.schedule.forEach(sched => {
 				let isExisting = this.schedules.find(
 					item =>
@@ -742,13 +744,19 @@ export default {
 							rate: sched.rate,
 							shift_id: sched.shift.id,
 							shift: sched.shift,
-							time_end: sched.time_end,
-							time_start: sched.time_start,
+							time_end:
+								status === "issued" ? sched.original_time_end : sched.time_end,
+							time_start:
+								status === "issued"
+									? sched.original_time_start
+									: sched.time_start,
 							locum_detail_rate_type: sched.locum_detail_rate_type,
 							locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
 							locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
 							orig_final_start: sched.final_time_start,
 							orig_final_end: sched.final_time_end,
+							orig_time_start: sched.original_time_start,
+							orig_time_end: sched.original_time_end,
 							orig_has_absences: isAbsent,
 							final_time_start: isAbsent
 								? ""
@@ -844,8 +852,14 @@ export default {
 									shift_id: sched.shift.id,
 									orig_time_start: sched.original_time_start,
 									orig_time_end: sched.original_time_end,
-									time_end: sched.time_end,
-									time_start: sched.time_start,
+									time_end:
+										status === "issued"
+											? sched.original_time_end
+											: sched.time_end,
+									time_start:
+										status === "issued"
+											? sched.original_time_start
+											: sched.time_start,
 									locum_detail_rate_type: sched.locum_detail_rate_type,
 									locum_detail_rate_type_name:
 										sched.locum_detail_rate_type.name,
@@ -1095,6 +1109,7 @@ export default {
 					}
 				}
 			});
+			this.loading = false;
 		}
 	},
 	watch: {
@@ -1167,51 +1182,45 @@ export default {
 			this.emitSchedule();
 		},
 		shiftErrors(value) {
-			let has_empty_sched_dates = value.filter(err =>
-				err.field.includes("shift-")
-			);
-			let job_parts = [];
-			if (has_empty_sched_dates.length) {
-				has_empty_sched_dates.forEach(err => {
-					let empty_date = err.field.split("-")[1];
-					let job_part = this.job_parts.find(part =>
-						part.dates.includes(
-							this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
-						)
-					);
-					let exist = job_parts.find(
-						item => item === `Job Part ${job_part.value}`
-					);
-					if (job_part && !exist) {
-						job_parts.push(`Job Part ${job_part.value}`);
-					}
-				});
-				let partsLabel = "";
-				job_parts.forEach((item, index) => {
-					if (job_parts.length > 1) {
-						if (
-							index !== job_parts.length - 1 &&
-							index !== job_parts.length - 2
-						) {
-							partsLabel += `${item}, `;
-						} else if (
-							index !== job_parts.length - 1 &&
-							index === job_parts.length - 2
-						) {
-							partsLabel += `${item}`;
-						} else {
-							partsLabel += ` and ${item}`;
-						}
-					} else {
-						partsLabel += item;
-					}
-				});
-				this.$store.commit("SET_NOTIFICATION", {
-					enabled: true,
-					status: "danger",
-					text: [`${partsLabel} has an empty schedule.`]
-				});
-			}
+			// let has_empty_sched_dates = value.filter(err =>
+			// 	err.field.includes("shift-")
+			// );
+			// let job_parts = [];
+			// if (has_empty_sched_dates.length) {
+			// 	has_empty_sched_dates.forEach(err => {
+			// 		let empty_date = err.field.split("-")[1];
+			// 		let job_part = this.job_parts.find(part =>
+			// 			part.dates.includes(
+			// 				this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+			// 			)
+			// 		);
+			// 		let exist = job_parts.find(item => item === `${job_part.value}`);
+			// 		if (job_part && !exist) {
+			// 			job_parts.push(`${job_part.value}`);
+			// 		}
+			// 	});
+			// 	let partsLabel = "";
+			// 	job_parts.forEach((item, index) => {
+			// 		if (job_parts.length > 1) {
+			// 			if (index !== job_parts.length - 1) {
+			// 				partsLabel += `${item}, `;
+			// 			} else if (index === job_parts.length - 1) {
+			// 				partsLabel += `${item}`;
+			// 			}
+			// 			//  else {
+			// 			// partsLabel += ` and ${item}`;
+			// 			// }
+			// 		} else {
+			// 			partsLabel += item;
+			// 		}
+			// 	});
+			// 	this.$store.commit("SET_NOTIFICATION", {
+			// 		enabled: true,
+			// 		status: "danger",
+			// 		text: [`Empty schedule on Job Part/s (${partsLabel})`],
+			// 		duration: 3000
+			// 	});
+			// }
 		}
 	},
 	computed: {
@@ -1413,7 +1422,7 @@ export default {
 					this.schedules,
 					this.getJobGrossRate(this.schedules, true),
 					this.getTotalHours(this.schedules, true),
-					deduction > -1 ? deduction : 0,
+					this.getDeductions(this.schedules),
 					this.getTotalLates(this.schedules),
 					this.hasShiftError,
 					this.hasChanges
@@ -1424,7 +1433,8 @@ export default {
 					this.schedules,
 					this.getJobGrossRate(this.schedules),
 					this.getTotalHours(this.schedules),
-					this.hasShiftError
+					this.hasShiftError,
+					this.job_parts
 				);
 			}
 		},
@@ -1480,14 +1490,52 @@ export default {
 				let shift = sched.shifts.find(
 					(item, index) => index === this.selectedShift.i
 				);
+
 				if (!shift.remarks) {
 					shift.dispute = false;
-					shift.final_time_start = shift.orig_final_start;
-					shift.final_time_end = shift.orig_final_end;
+					if (shift.orig_has_absences) {
+						shift.final_time_start = "";
+						shift.final_time_end = "";
+					} else {
+						shift.final_time_start = shift.orig_final_start;
+						shift.final_time_end = shift.orig_final_end;
+					}
 				}
 				this.show_late_reason = false;
 				this.selectedShift = null;
 			}
+		},
+		getDeductions(schedules) {
+			let deductions = [];
+			schedules.forEach(sched => {
+				sched.shifts.forEach(shift => {
+					if (shift.has_absences) {
+						deductions.push(
+							this.getRate(
+								shift,
+								shift.orig_time_start,
+								shift.orig_time_end,
+								sched.date,
+								"deduction"
+							)
+						);
+					} else {
+						if (this.getLate(shift, sched.date) !== "NO") {
+							deductions.push(
+								this.getRate(
+									shift,
+									shift.orig_time_start
+										? shift.orig_time_start
+										: shift.time_start,
+									shift.final_time_start,
+									sched.date
+								)
+							);
+						}
+					}
+				});
+			});
+			return deductions.reduce((acc, item) => acc + item, 0);
 		},
 		lateChange(shift, index, i, type) {
 			let value =
@@ -1648,21 +1696,25 @@ export default {
 			this.confirmApply = "";
 		},
 		getLate(shift, date) {
-			let orig_start_hour = shift.time_start.split(":")[0];
-			let orig_start_minute = shift.time_start.split(":")[1];
+			let orig_start_hour = shift.orig_time_start
+				? shift.orig_time_start.split(":")[0]
+				: shift.time_start.split(":")[0];
+			let orig_start_minute = shift.orig_time_start
+				? shift.orig_time_start.split(":")[1]
+				: shift.time_start.split(":")[1];
 			let final_start_hour = shift.final_time_start.split(":")[0];
 			let final_start_minute = shift.final_time_start.split(":")[1];
 			let hourDiff = final_start_hour - orig_start_hour;
 			let minDiff = final_start_minute - orig_start_minute;
-
-			if (shift.late_hours > 0 && shift.dispute) {
-				let late_hours =
-					shift.late_hours > 60
-						? parseFloat(shift.late_hours / 60)
-						: shift.late_hours / 100;
-				hourDiff = parseInt(late_hours.toString().split(".")[0]);
-				minDiff = parseInt(late_hours.toString().split(".")[1]);
-			}
+			// if (shift.late_hours > 0 && shift.dispute) {
+			// 	let late_hours =
+			// 		shift.late_hours > 60
+			// 			? parseFloat(shift.late_hours / 60).toFixed(2)
+			// 			: (shift.late_hours / 100).toFixed(2);
+			// 	hourDiff = parseInt(late_hours.toString().split(".")[0]);
+			// 	minDiff = parseInt(late_hours.toString().split(".")[1]);
+			// 	console.log("late_hours", late_hours);
+			// }
 
 			let diff = shift.final_time_start
 				? `${
@@ -1785,7 +1837,7 @@ export default {
 
 			return `${totalFinalHours}/${totalOrigHours}`;
 		},
-		getRate(shift, startTime, endTime, date) {
+		getRate(shift, startTime, endTime, date, type) {
 			let rate_type_name =
 				this.type === "create"
 					? this.rate_lists && shift.locum_detail_rate_type_id
@@ -1797,47 +1849,41 @@ export default {
 						: ""
 					: shift.locum_detail_rate_type_name;
 			let total_hours = this.totalHours(startTime, endTime, date) / 60;
-			let orig_total_hours =
-				this.totalHours(shift.time_start, shift.time_end, date) / 60;
+			let orig_total_hours = 0;
+			if (shift.orig_time_start && shift.orig_time_end) {
+				orig_total_hours =
+					this.totalHours(shift.orig_time_start, shift.orig_time_end, date) /
+					60;
+			} else {
+				orig_total_hours =
+					this.totalHours(shift.time_start, shift.time_end, date) / 60;
+			}
 			switch (rate_type_name) {
 				case "Hourly":
-					return !shift.has_absences &&
-						startTime &&
-						endTime &&
-						total_hours !== 0
-						? shift.rate * total_hours
-						: 0;
+					return type !== "deduction"
+						? !shift.has_absences && startTime && endTime && total_hours !== 0
+							? shift.rate * total_hours
+							: 0
+						: shift.rate * total_hours;
 					break;
 				case "Half Day":
 				case "Whole Day":
-					return !shift.has_absences &&
-						startTime &&
-						endTime &&
-						total_hours !== 0
-						? this.type === "create"
-							? shift.rate
-							: (shift.rate / orig_total_hours) * total_hours
-						: 0;
+					return type !== "deduction"
+						? !shift.has_absences && startTime && endTime && total_hours !== 0
+							? this.type === "create"
+								? shift.rate
+								: (shift.rate / orig_total_hours) * total_hours
+							: 0
+						: (shift.rate / orig_total_hours) * total_hours;
 					break;
-				// Whole Day
-				// case 3:
-				// case "3":
-				// 	return !shift.has_absences &&
-				// 		startTime &&
-				// 		endTime &&
-				// 		total_hours !== 0
-				// 		? shift.rate / total_hours
-				// 		: 0;
-				// 	break;
 				default:
 					return 0;
 					break;
 			}
 		},
-		getJobGrossRate(schedules, final) {
+		getJobGrossRate(schedules, final, type) {
 			let rate = 0;
 			let rates = [];
-
 			schedules.map(item => {
 				if (item.shifts && item.shifts.length) {
 					if (["complete", "terminate"].includes(this.type)) {
@@ -1863,7 +1909,21 @@ export default {
 					} else if (this.type === "invoice") {
 						rates.push(
 							...item.shifts.map(shift =>
-								shift.has_absences
+								type === "deduction"
+									? final
+										? this.getRate(
+												shift,
+												shift.final_time_start,
+												shift.final_time_end,
+												item.date
+										  )
+										: this.getRate(
+												shift,
+												shift.time_start,
+												shift.time_end,
+												item.date
+										  )
+									: shift.has_absences
 									? 0
 									: final
 									? this.getRate(
@@ -2182,8 +2242,13 @@ export default {
 		dispute(shift, index, i) {
 			shift.dispute = !shift.dispute;
 			if (shift.dispute === false) {
-				shift.final_time_start = shift.orig_final_start;
-				shift.final_time_end = shift.orig_final_end;
+				if (shift.orig_has_absences) {
+					shift.final_time_start = "";
+					shift.final_time_end = "";
+				} else {
+					shift.final_time_start = shift.orig_final_start;
+					shift.final_time_end = shift.orig_final_end;
+				}
 				shift.remarks = "";
 			} else {
 				this.lateChange(shift, index, i, "dispute");
@@ -2204,6 +2269,8 @@ export default {
 					shift.dispute = true;
 				}
 			} else {
+				shift.final_time_start = "";
+				shift.final_time_end = "";
 				if (shift.has_absences == shift.orig_has_absences) {
 					shift.dispute = false;
 				} else {
