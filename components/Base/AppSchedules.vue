@@ -308,7 +308,7 @@
 															class="text-xs text-red-500 px-2 pt-1"
 														>Invalid End Time</p>
 													</template>
-													<template v-else>{{ shift.time_start }}</template>
+													<template v-else>{{ shift.final_time_start }}</template>
 												</div>
 												<!-- FINAL END -->
 												<div class="flex items-center justify-center text-center w-2/12">
@@ -323,7 +323,7 @@
 														@blur="CheckIfEmpty(shift.final_time_end, `final_time_end-s${index}-${i}`)"
 														:disabled="[true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
 													/>
-													<template v-else>{{ shift.time_end }}</template>
+													<template v-else>{{ shift.final_time_end }}</template>
 												</div>
 												<!-- HAS LATE -->
 												<div
