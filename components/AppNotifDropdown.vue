@@ -220,6 +220,12 @@ export default {
 
         "Practice Notification Locum Compliance Expired",
 
+        "Practice Notification Permanent Job Applied",
+        "Practice Notification Approve Permanent Job Spoke",
+        "Practice Notification Reject Permanent Job Spoke",
+        "Practice Notification Hub Created Permanent Job for Spoke",
+        "Practice Notification Spoke Created Pending Permanent Job",
+
         "Practice Notification Job Allocated",
         "Practice Notification Job Amended",
         "Practice Notification Job Application",
@@ -506,6 +512,7 @@ export default {
     },
 
     updateNotificationSeen(notification) {
+      console.log('notification', notification)
       if (!notification.seen) {
         const notificationId = notification.id;
 
@@ -609,6 +616,14 @@ export default {
 
       const practiceComplianceDocumentNotifications = [
         "Practice Notification Locum Compliance Expired"
+      ];
+
+      const practicePermanentJobNotifications = [
+        "Practice Notification Permanent Job Applied",
+        "Practice Notification Approve Permanent Job Spoke",
+        "Practice Notification Reject Permanent Job Spoke",
+        "Practice Notification Hub Created Permanent Job for Spoke",
+        "Practice Notification Spoke Created Pending Permanent Job",
       ];
 
       const practiceJobNotifications = [
@@ -996,6 +1011,29 @@ export default {
         this.showNotificationsDropdown = false;
         this.updateNotificationSeen(notification);
         return;
+      }
+      
+      if(practicePermanentJobNotifications.includes(notificationTypeName)) {
+        const permanentJob = payload
+        const  {
+          id: permanentJobId,
+          practice_id: practiceId,
+          parent_practice_id: parentPracticeId,
+        } = permanentJob
+
+        if (notificationTypeName === "Practice Notification Permanent Job Applied" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practiceJobNotifications.includes(notificationTypeName)) {

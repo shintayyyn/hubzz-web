@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section ref="modalContainer">
     <div class="p-4 md:p-8">
       <nuxt-link
         :to="{
@@ -564,8 +564,7 @@ export default {
 		}
 	},
 	created () {
-    console.log('me practice', this.$auth.user.practice_detail.practice)
-    console.log('practice',this.$auth.user.practice_detail.practice.type)
+    console.log('router name', this.$route.name)
 		this.loading = true
 		Promise.all([
       this.getPermanentJob(),
