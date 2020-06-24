@@ -85,7 +85,7 @@
                     <div class="mt-2 flex flex-col">
                       <div>For the period</div>
                       <div>
-                        <span>{{ dateStart + " to " + dateEnd }}</span>
+                        <span>{{ moment(dateStart).format('DD/MM/YYYY') + " to " + moment.format(dateEnd).format('DD/MM/YYYY') }}</span>
                       </div>
                     </div>
                   </div>
