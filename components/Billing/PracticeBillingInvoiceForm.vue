@@ -80,6 +80,7 @@
 					toInvoice
 					:type="'invoice'"
 					:invoiceDetails="propInvoice"
+					:invoiceStatus="$route.query.status"
 					:toDisplay="['Approved', 'Paid', 'Issued'].includes(propInvoice.status)"
 					@getSchedule="getSchedule"
 				/>
@@ -830,7 +831,8 @@ export default {
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.form.total_amount = total_gross_locum_wages;
 			this.hasShiftError = hasError;
-			this.sched_has_changes = hasChanges;
+			this.sched_has_changes =
+				this.$route.query.status === "issued" ? false : hasChanges;
 		},
 		handleKeyDownEvent(e, formField, limit) {
 			let acceptedKeys = [
@@ -880,10 +882,6 @@ export default {
 				});
 			}
 
-			console.log("approved", approved);
-			this.form.job_part_schedule_items.forEach(item => {
-				item.approve = approved;
-			});
 			// this.form.hours = !this.form.hours ? 0 : this.form.hours;
 			// this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
 
@@ -918,6 +916,10 @@ export default {
 				// this.form.items[0].description = this.description;
 				// this.form.items[0].total = this.totalAmount;
 				this.form.total_amount = this.total_gross_locum_wages;
+				this.form.job_part_schedule_items.forEach(item => {
+					item.approve = approved;
+				});
+				console.log(this.form.job_part_schedule_items);
 
 				this.saveLoading = true;
 

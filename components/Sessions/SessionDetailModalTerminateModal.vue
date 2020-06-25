@@ -149,6 +149,9 @@ export default {
 	},
 	computed: {
 		practice_rate() {
+			if (this.job_part.practice_rate) {
+				return this.job_part.practice_rate;
+			}
 			let practice_rates = this.$auth.user.practice_detail.practice
 				.practice_rates;
 			let practice_rate = practice_rates.find(

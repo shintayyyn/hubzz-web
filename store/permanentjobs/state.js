@@ -7,7 +7,8 @@ export default () => ({
 
   permanent_job_applications: [],
   permanent_job_applications_count: 0,
-
+  
+  // NOTIFICATIONS
   locum_permanent_job_notifications: [],
   practice_permanent_job_notifications: [],
 })

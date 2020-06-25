@@ -551,18 +551,21 @@ export default {
 		},
 		getJobPartHubzzFee(schedules) {
 			// HUBB FEE (final_hours_in_minutes / 60) * practice_rate
-			let practice_rates = this.$auth.user.practice_detail.practice
-				.practice_rates;
-
-			let practice_rate = practice_rates.find(
-				item => item.type === this.job_part.profession.name
-			);
 			let rate = 0;
-
-			if (practice_rate) {
-				rate = practice_rate.rate;
+			if (this.job_part.practice_rate) {
+				rate = this.job_part.practice_rate;
 			} else {
-				rate = practice_rates[practice_rates.length - 1].rate;
+				let practice_rates = this.$auth.user.practice_detail.practice
+					.practice_rates;
+				let practice_rate = practice_rates.find(
+					item => item.type === this.job_part.profession.name
+				);
+
+				if (practice_rate) {
+					rate = practice_rate.rate;
+				} else {
+					rate = practice_rates[practice_rates.length - 1].rate;
+				}
 			}
 
 			let total = 0;
@@ -580,17 +583,14 @@ export default {
 			schedules.forEach(schedule => {
 				if (!schedule.absent_reason) {
 					let finalHours = schedule.final_hours_in_minutes / 60;
-         			let totalHours = schedule.original_hours_in_minutes / 60;
+					let totalHours = schedule.original_hours_in_minutes / 60;
 					switch (schedule.locum_detail_rate_type.name) {
 						case "Hourly":
 							total = total + schedule.rate * finalHours;
 							break;
 						case "Whole Day":
 						case "Half Day":
-							total =
-								total +
-								(schedule.rate / totalHours) *
-									finalHours;
+							total = total + (schedule.rate / totalHours) * finalHours;
 							break;
 						default:
 							total = total + schedule.rate * finalHours;

@@ -67,7 +67,7 @@
             </div>
           </div>
           <div class="flex">
-            <div class="w-full md:w-2/3">
+            <div class="w-full ">
               <div
                 class="border-2 border-gray-300 rounded-lg p-4 text-sm"
                 :class="doNotShow ? 'md:w-2/3' : 'w-2/3'"
@@ -85,10 +85,20 @@
                     <div class="mt-2 flex flex-col">
                       <div>For the period</div>
                       <div>
-                        <span>{{ dateStart + " to " + dateEnd }}</span>
+                        <span>{{ $moment(dateStart).format('DD/MM/YYYY') + " to " + $moment(dateEnd).format('DD/MM/YYYY') }}</span>
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="practiceInvoice" class="w-full flex flex-col-reverse">
+              <div class="flex justify-end items-center">
+                <div>Invoice Number: </div>
+                <div
+                  class="pl-1 font-semibold"
+                >
+                  {{ practiceInvoice.invoice_number }}
                 </div>
               </div>
             </div>

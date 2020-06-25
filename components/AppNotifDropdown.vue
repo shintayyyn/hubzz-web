@@ -220,6 +220,12 @@ export default {
 
         "Practice Notification Locum Compliance Expired",
 
+        "Practice Notification Permanent Job Applied",
+        "Practice Notification Approve Permanent Job Spoke",
+        "Practice Notification Reject Permanent Job Spoke",
+        "Practice Notification Hub Created Permanent Job for Spoke",
+        "Practice Notification Spoke Created Pending Permanent Job",
+
         "Practice Notification Job Allocated",
         "Practice Notification Job Amended",
         "Practice Notification Job Application",
@@ -611,6 +617,14 @@ export default {
         "Practice Notification Locum Compliance Expired"
       ];
 
+      const practicePermanentJobNotifications = [
+        "Practice Notification Permanent Job Applied",
+        "Practice Notification Approve Permanent Job Spoke",
+        "Practice Notification Reject Permanent Job Spoke",
+        "Practice Notification Hub Created Permanent Job for Spoke",
+        "Practice Notification Spoke Created Pending Permanent Job",
+      ];
+
       const practiceJobNotifications = [
         "Practice Notification Job Allocated",
         "Practice Notification Job Amended",
@@ -996,6 +1010,67 @@ export default {
         this.showNotificationsDropdown = false;
         this.updateNotificationSeen(notification);
         return;
+      }
+      
+      if(practicePermanentJobNotifications.includes(notificationTypeName)) {
+        const permanentJob = payload
+        const  {
+          id: permanentJobId,
+          practice_id: practiceId,
+          parent_practice_id: parentPracticeId,
+        } = permanentJob
+        console.log('permanentjob inside notif dropdown', permanentJob)
+        if (notificationTypeName === "Practice Notification Permanent Job Applied" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Approve Permanent Job Spoke" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Reject Permanent Job Spoke" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Hub Created Permanent Job for Spoke" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Spoke Created Pending Permanent Job" && permanentJob) {
+          this.$router.push({
+            name:
+              "hub-surgery-management-id-surgery-permanent-jobs-index-permJobId",
+            params: {
+              id: permanentJob.spoke_surgery_id ? permanentJob.spoke_surgery_id : null,
+              permJobId:permanentJobId, 
+            }
+          })
+        }
+
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
       }
 
       if (practiceJobNotifications.includes(notificationTypeName)) {
