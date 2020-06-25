@@ -971,22 +971,22 @@ export default {
 								orig_final_end: sched.final_time_end,
 								orig_time_start: sched.original_time_start,
 								orig_time_end: sched.original_time_end,
-								orig_has_absences: isAbsent,
-								final_time_start: isAbsent
+								orig_has_absences: isAbsent_orig,
+								final_time_start: isAbsent_orig
 									? ""
 									: !this.invoiceDetails
 									? sched.final_time_start
 									: sched.time_start,
-								final_time_end: isAbsent
+								final_time_end: isAbsent_orig
 									? ""
 									: !this.invoiceDetails
 									? sched.final_time_end
 									: sched.time_end,
 								late_hours: sched.late_hours_in_minutes,
-								has_absences: isAbsent,
+								has_absences: isAbsent_orig,
 								dispute: isDisputed,
 								remarks: sched.remarks ? sched.remarks : "",
-								total: finalRate
+								total: finalRate_orig
 							});
 						} else {
 							isExisting_original.shifts.push({
@@ -1086,22 +1086,22 @@ export default {
 										locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
 										orig_final_start: sched.final_time_start,
 										orig_final_end: sched.final_time_end,
-										orig_has_absences: isAbsent,
-										final_time_start: isAbsent
+										orig_has_absences: isAbsent_orig,
+										final_time_start: isAbsent_orig
 											? ""
 											: !this.invoiceDetails
 											? sched.final_time_start
 											: sched.time_start,
-										final_time_end: isAbsent
+										final_time_end: isAbsent_orig
 											? ""
 											: !this.invoiceDetails
 											? sched.final_time_end
 											: sched.time_end,
 										late_hours: sched.late_hours_in_minutes,
-										has_absences: isAbsent,
+										has_absences: isAbsent_orig,
 										dispute: isDisputed,
 										remarks: sched.remarks ? sched.remarks : "",
-										total: finalRate
+										total: finalRate_orig
 									}
 								]
 							});
