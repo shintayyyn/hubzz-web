@@ -551,20 +551,21 @@ export default {
 		},
 		getJobPartHubzzFee(schedules) {
 			// HUBB FEE (final_hours_in_minutes / 60) * practice_rate
-			let practice_rates = this.$auth.user.practice_detail.practice
-				.practice_rates;
-
-			let practice_rate = this.job_part.practice_rate
-				? this.job_part.practice_rate
-				: practice_rates.find(
-						item => item.type === this.job_part.profession.name
-				  );
 			let rate = 0;
-
-			if (practice_rate) {
-				rate = practice_rate.rate;
+			if (this.job_part.practice_rate) {
+				rate = this.job_part.practice_rate;
 			} else {
-				rate = practice_rates[practice_rates.length - 1].rate;
+				let practice_rates = this.$auth.user.practice_detail.practice
+					.practice_rates;
+				let practice_rate = practice_rates.find(
+					item => item.type === this.job_part.profession.name
+				);
+
+				if (practice_rate) {
+					rate = practice_rate.rate;
+				} else {
+					rate = practice_rates[practice_rates.length - 1].rate;
+				}
 			}
 
 			let total = 0;
