@@ -2274,6 +2274,11 @@ export default {
 				} else {
 					shift.final_time_start = shift.orig_final_start;
 					shift.final_time_end = shift.orig_final_end;
+					if (shift.orig_final_start === shift.orig_final_end) {
+						shift.has_absences = true;
+						shift.final_time_start = "";
+						shift.final_time_end = "";
+					}
 				}
 				shift.remarks = "";
 			} else {
