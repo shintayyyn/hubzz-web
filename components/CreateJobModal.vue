@@ -627,6 +627,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppTime from "@/components/Base/AppTime";
 import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import JobPartDetailModalInfoVue from "./Jobs/JobPart/JobPartDetailModalInfo.vue";
 
 const session_requirements_lists = [
 	{ label: "Practice admin", value: "Practice admin" },
@@ -1691,6 +1692,28 @@ export default {
 											message:
 												"This schedule has a conflict with another schedule."
 										});
+									});
+									let conflictDates = sched_has_conflict.conflictSchedules
+										.map(item => item.date)
+										.filter(item => item);
+									let job_parts = [];
+									conflictDates.forEach(date => {
+										let job_part = this.job_parts.find(item =>
+											item.dates.includes(date)
+										);
+										if (!job_parts.includes(job_part.value)) {
+											job_parts.push(job_part.value);
+										}
+									});
+
+									console.log(job_parts);
+									console.log(JSON.stringify(job_parts).join(","));
+									console.log(conflictDates, this.job_parts);
+									this.$store.commit("SET_NOTIFICATION", {
+										enabled: true,
+										status: "danger",
+										text: [`Conflict schedule on Job Part/s ()`],
+										duration: 3000
 									});
 								}
 							} else {

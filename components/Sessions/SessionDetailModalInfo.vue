@@ -327,9 +327,9 @@ export default {
 			let practice_rates = this.$auth.user.practice_detail.practice
 				.practice_rates;
 
-			let practice_rate = practice_rates.find(
-				item => item.type === this.job.profession.name
-			);
+			let practice_rate = this.job.practice_rate
+				? this.job.practice_rate
+				: practice_rates.find(item => item.type === this.job.profession.name);
 
 			let rate = 0;
 
