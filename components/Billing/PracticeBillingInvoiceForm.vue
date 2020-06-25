@@ -80,6 +80,7 @@
 					toInvoice
 					:type="'invoice'"
 					:invoiceDetails="propInvoice"
+					:invoiceStatus="$route.query.status"
 					:toDisplay="['Approved', 'Paid', 'Issued'].includes(propInvoice.status)"
 					@getSchedule="getSchedule"
 				/>
