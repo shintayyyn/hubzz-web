@@ -880,9 +880,7 @@ export default {
 					});
 				});
 			}
-			this.form.job_part_schedule_items.forEach(item => {
-				item.approve = approved;
-			});
+
 			// this.form.hours = !this.form.hours ? 0 : this.form.hours;
 			// this.form.minutes = !this.form.minutes ? 0 : this.form.minutes;
 
@@ -917,6 +915,10 @@ export default {
 				// this.form.items[0].description = this.description;
 				// this.form.items[0].total = this.totalAmount;
 				this.form.total_amount = this.total_gross_locum_wages;
+				this.form.job_part_schedule_items.forEach(item => {
+					item.approve = approved;
+				});
+				console.log(this.form.job_part_schedule_items);
 
 				this.saveLoading = true;
 

@@ -738,7 +738,7 @@ export default {
 							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
-						let isDisputed = !sched.remarks ? false : true;
+						let isDisputed = sched.remarks === "" ? false : true;
 						isExisting.shifts.push({
 							id: sched.id,
 							rate: sched.rate,
@@ -770,7 +770,7 @@ export default {
 								: sched.time_end,
 							late_hours: sched.late_hours_in_minutes,
 							has_absences: isAbsent,
-							dispute: sched.disputed ? sched.disputed : false,
+							dispute: isDisputed,
 							remarks: sched.remarks ? sched.remarks : "",
 							total: finalRate
 						});
@@ -841,7 +841,7 @@ export default {
 							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
-						let isDisputed = !sched.remarks ? false : true;
+						let isDisputed = sched.remarks === "" ? false : true;
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -879,7 +879,7 @@ export default {
 										: sched.time_end,
 									late_hours: sched.late_hours_in_minutes,
 									has_absences: isAbsent,
-									dispute: sched.disputed ? sched.disputed : false,
+									dispute: isDisputed,
 									remarks: sched.remarks ? sched.remarks : "",
 									total: finalRate
 								}
@@ -1743,8 +1743,12 @@ export default {
 			let late_minute = 0;
 			schedule.forEach(sched => {
 				sched.shifts.forEach(shift => {
-					let orig_start_hour = shift.time_start.split(":")[0];
-					let orig_start_minute = shift.time_start.split(":")[1];
+					let orig_start_hour = shift.orig_time_start
+						? shift.orig_time_start.split(":")[0]
+						: shift.time_start.split(":")[0];
+					let orig_start_minute = shift.orig_time_start
+						? shift.orig_time_start.split(":")[1]
+						: shift.time_start.split(":")[1];
 					let final_start_hour = shift.final_time_start.split(":")[0];
 					let final_start_minute = shift.final_time_start.split(":")[1];
 					let hourDiff = final_start_hour - orig_start_hour;
