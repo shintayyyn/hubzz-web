@@ -1535,8 +1535,10 @@ export default {
 						deductions.push(
 							this.getRate(
 								shift,
-								shift.orig_time_start,
-								shift.orig_time_end,
+								shift.orig_time_start
+									? shift.orig_time_start
+									: shift.time_start,
+								shift.orig_time_end ? shift.orig_time_end : shift.time_end,
 								sched.date,
 								"deduction"
 							)
@@ -1550,7 +1552,8 @@ export default {
 										? shift.orig_time_start
 										: shift.time_start,
 									shift.final_time_start,
-									sched.date
+									sched.date,
+									"deduction"
 								)
 							);
 						}
