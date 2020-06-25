@@ -1,4 +1,8 @@
 module.exports = {
+  purge: {
+    enable: false,
+    content: []
+  },
   prefix: '',
   important: false,
   separator: ':',
