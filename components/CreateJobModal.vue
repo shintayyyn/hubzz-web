@@ -1705,14 +1705,12 @@ export default {
 											job_parts.push(job_part.value);
 										}
 									});
-
-									console.log(job_parts);
-									console.log(JSON.stringify(job_parts).join(","));
-									console.log(conflictDates, this.job_parts);
 									this.$store.commit("SET_NOTIFICATION", {
 										enabled: true,
 										status: "danger",
-										text: [`Conflict schedule on Job Part/s ()`],
+										text: [
+											`Conflict schedule on Job Part/s (${job_parts.join(",")})`
+										],
 										duration: 3000
 									});
 								}
