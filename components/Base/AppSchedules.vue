@@ -687,7 +687,6 @@ export default {
 		};
 	},
 	created() {
-		console.log("invoiceStatus", this.invoiceStatus);
 		if (this.schedule.length) {
 			this.loading = true;
 			let status = this.$route.query.status ? this.$route.query.status : "";
@@ -761,12 +760,12 @@ export default {
 							orig_time_end: sched.original_time_end,
 							orig_has_absences: isAbsent,
 							final_time_start: isAbsent
-								? ""
+								? "-"
 								: !this.invoiceDetails
 								? sched.final_time_start
 								: sched.time_start,
 							final_time_end: isAbsent
-								? ""
+								? "-"
 								: !this.invoiceDetails
 								? sched.final_time_end
 								: sched.time_end,
@@ -871,12 +870,12 @@ export default {
 									orig_final_end: sched.final_time_end,
 									orig_has_absences: isAbsent,
 									final_time_start: isAbsent
-										? ""
+										? "-"
 										: !this.invoiceDetails
 										? sched.final_time_start
 										: sched.time_start,
 									final_time_end: isAbsent
-										? ""
+										? "-"
 										: !this.invoiceDetails
 										? sched.final_time_end
 										: sched.time_end,
@@ -979,12 +978,12 @@ export default {
 								orig_time_end: sched.original_time_end,
 								orig_has_absences: isAbsent_orig,
 								final_time_start: isAbsent_orig
-									? ""
+									? "-"
 									: !this.invoiceDetails
 									? sched.final_time_start
 									: sched.time_start,
 								final_time_end: isAbsent_orig
-									? ""
+									? "-"
 									: !this.invoiceDetails
 									? sched.final_time_end
 									: sched.time_end,
@@ -1095,12 +1094,12 @@ export default {
 										orig_final_end: sched.final_time_end,
 										orig_has_absences: isAbsent_orig,
 										final_time_start: isAbsent_orig
-											? ""
+											? "-"
 											: !this.invoiceDetails
 											? sched.final_time_start
 											: sched.time_start,
 										final_time_end: isAbsent_orig
-											? ""
+											? "-"
 											: !this.invoiceDetails
 											? sched.final_time_end
 											: sched.time_end,
@@ -2353,6 +2352,7 @@ export default {
 .message-modal.mini-modal {
 	min-width: 25vw;
 	z-index: 56;
+	position: fixed;
 }
 select.custom-select {
 	background: transparent;
