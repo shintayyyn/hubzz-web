@@ -738,7 +738,7 @@ export default {
 							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
-						let isDisputed = !sched.remarks ? false : true;
+						let isDisputed = sched.remarks === "" ? false : true;
 						isExisting.shifts.push({
 							id: sched.id,
 							rate: sched.rate,
@@ -770,7 +770,7 @@ export default {
 								: sched.time_end,
 							late_hours: sched.late_hours_in_minutes,
 							has_absences: isAbsent,
-							dispute: sched.disputed ? sched.disputed : false,
+							dispute: isDisputed,
 							remarks: sched.remarks ? sched.remarks : "",
 							total: finalRate
 						});
@@ -841,7 +841,7 @@ export default {
 							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
-						let isDisputed = !sched.remarks ? false : true;
+						let isDisputed = sched.remarks === "" ? false : true;
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -879,7 +879,7 @@ export default {
 										: sched.time_end,
 									late_hours: sched.late_hours_in_minutes,
 									has_absences: isAbsent,
-									dispute: sched.disputed ? sched.disputed : false,
+									dispute: isDisputed,
 									remarks: sched.remarks ? sched.remarks : "",
 									total: finalRate
 								}
@@ -900,6 +900,7 @@ export default {
 						});
 					}
 				}
+				// for original copy to check if has changes
 				if (this.type !== "create") {
 					let isExisting_original = this.original_schedule.find(
 						item =>
@@ -949,19 +950,27 @@ export default {
 								sched.final_time_end,
 								this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 							);
-							let isDisputed = !sched.remarks ? false : true;
+							let isDisputed = sched.remarks === "" ? false : true;
 							isExisting_original.shifts.push({
 								id: sched.id,
 								rate: sched.rate,
 								shift_id: sched.shift.id,
 								shift: sched.shift,
-								time_end: sched.time_end,
-								time_start: sched.time_start,
+								time_end:
+									status === "issued"
+										? sched.original_time_end
+										: sched.time_end,
+								time_start:
+									status === "issued"
+										? sched.original_time_start
+										: sched.time_start,
 								locum_detail_rate_type: sched.locum_detail_rate_type,
 								locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
 								locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
 								orig_final_start: sched.final_time_start,
 								orig_final_end: sched.final_time_end,
+								orig_time_start: sched.original_time_start,
+								orig_time_end: sched.original_time_end,
 								orig_has_absences: isAbsent_orig,
 								final_time_start: isAbsent_orig
 									? ""
@@ -975,7 +984,7 @@ export default {
 									: sched.time_end,
 								late_hours: sched.late_hours_in_minutes,
 								has_absences: isAbsent_orig,
-								dispute: sched.disputed ? sched.disputed : false,
+								dispute: isDisputed,
 								remarks: sched.remarks ? sched.remarks : "",
 								total: finalRate_orig
 							});
@@ -1050,7 +1059,7 @@ export default {
 								sched.final_time_end,
 								this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 							);
-							let isDisputed = !sched.remarks ? false : true;
+							let isDisputed = sched.remarks === "" ? false : true;
 							this.original_schedule.push({
 								date: this.$moment(sched.date, "YYYY-MM-DD").format(
 									"DD/MM/YYYY"
@@ -1063,8 +1072,14 @@ export default {
 										shift_id: sched.shift.id,
 										orig_time_start: sched.original_time_start,
 										orig_time_end: sched.original_time_end,
-										time_end: sched.time_end,
-										time_start: sched.time_start,
+										time_end:
+											status === "issued"
+												? sched.original_time_end
+												: sched.time_end,
+										time_start:
+											status === "issued"
+												? sched.original_time_start
+												: sched.time_start,
 										locum_detail_rate_type: sched.locum_detail_rate_type,
 										locum_detail_rate_type_name:
 											sched.locum_detail_rate_type.name,
@@ -1084,7 +1099,7 @@ export default {
 											: sched.time_end,
 										late_hours: sched.late_hours_in_minutes,
 										has_absences: isAbsent_orig,
-										dispute: sched.disputed ? sched.disputed : false,
+										dispute: isDisputed,
 										remarks: sched.remarks ? sched.remarks : "",
 										total: finalRate_orig
 									}
@@ -1414,6 +1429,13 @@ export default {
 	methods: {
 		emitSchedule() {
 			if (this.type === "invoice") {
+				// schedule,
+				// total_gross_locum_wages,
+				// total_working_hours,
+				// deductions,
+				// total_lates,
+				// hasError,
+				// hasChanges
 				let deduction =
 					this.getJobGrossRate(this.schedules) -
 					this.getJobGrossRate(this.schedules, true);
@@ -1598,7 +1620,7 @@ export default {
 				} else {
 					this.formError.push({
 						field: `absent_reason-${selectedShift.index}-${selectedShift.i}`,
-						message: "Late Reason is required."
+						message: "Absent Reason is required."
 					});
 				}
 			} else if (selectedShift.type === "dispute") {
@@ -1743,8 +1765,12 @@ export default {
 			let late_minute = 0;
 			schedule.forEach(sched => {
 				sched.shifts.forEach(shift => {
-					let orig_start_hour = shift.time_start.split(":")[0];
-					let orig_start_minute = shift.time_start.split(":")[1];
+					let orig_start_hour = shift.orig_time_start
+						? shift.orig_time_start.split(":")[0]
+						: shift.time_start.split(":")[0];
+					let orig_start_minute = shift.orig_time_start
+						? shift.orig_time_start.split(":")[1]
+						: shift.time_start.split(":")[1];
 					let final_start_hour = shift.final_time_start.split(":")[0];
 					let final_start_minute = shift.final_time_start.split(":")[1];
 					let hourDiff = final_start_hour - orig_start_hour;
@@ -2248,6 +2274,11 @@ export default {
 				} else {
 					shift.final_time_start = shift.orig_final_start;
 					shift.final_time_end = shift.orig_final_end;
+					if (shift.orig_final_start === shift.orig_final_end) {
+						shift.has_absences = true;
+						shift.final_time_start = "";
+						shift.final_time_end = "";
+					}
 				}
 				shift.remarks = "";
 			} else {

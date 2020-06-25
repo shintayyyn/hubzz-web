@@ -574,12 +574,12 @@ export default {
 			schedule.forEach((sched, index) => {
 				if (sched.shifts && sched.shifts.length) {
 					sched.shifts.forEach((shift, i) => {
-						let timeStart = shift.has_absences
-							? shift.time_start
-							: shift.final_time_start;
-						let timeEnd = shift.has_absences
-							? shift.time_start
-							: shift.final_time_end;
+						let timeStart = shift.final_time_start
+							? shift.final_time_start
+							: shift.time_start;
+						let timeEnd = shift.final_time_end
+							? shift.final_time_end
+							: shift.time_start;
 						this.form.job_part_schedule_items.push({
 							id: shift.id,
 							time_start: timeStart,
@@ -784,8 +784,6 @@ export default {
 				"late_hours",
 				"late_minutes"
 			]);
-
-			console.log("final", final);
 
 			if (!this.formError.length && !this.shiftErrors.length) {
 				this.saveLoading = true;
