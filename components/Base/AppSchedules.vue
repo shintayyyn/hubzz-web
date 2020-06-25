@@ -1793,6 +1793,10 @@ export default {
 				}
 				late_minute += Number(num);
 			}
+			if (late_minute > 59) {
+				late_hour = Math.abs(late_hour + Math.floor(late_minute / 60));
+				late_minute -= 60;
+			}
 			let total_late_hours = `${
 				late_hour > 0
 					? late_hour > 9
