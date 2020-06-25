@@ -98,16 +98,6 @@
 									</select>
 								</div>
 							</div>
-							<!-- <div class="flex justify-center w-1/3 mx-auto">
-								<AppInput
-									v-model="job_part_id"
-									:label="'Job Part'"
-									class="w-full"
-									:type="'select'"
-									:placeholder="'Select...'"
-									:items="job_parts"
-								/>
-							</div>-->
 							<div class="flex px-4 mb-4" v-if="error">
 								<p class="py-2 px-4 bg-red-500 text-white text-sm rounded-lg">{{ error.message }}</p>
 							</div>
@@ -292,6 +282,7 @@
 												<!-- FIELDS -->
 												<!-- FINAL START -->
 												<div class="flex flex-col items-center justify-center text-center w-2/12">
+													<!-- invoiceStatus === 'to-be-invoiced' || (shift.dispute && invoiceStatus !== 'to-be-invoiced') -->
 													<template v-if="!toDisplay">
 														<AppTime
 															v-model="shift.final_time_start"
@@ -739,7 +730,7 @@ export default {
 							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
-						let isDisputed = sched.remarks === "" ? false : true;
+						let isDisputed = sched.remarks ? true : false;
 						isExisting.shifts.push({
 							id: sched.id,
 							rate: sched.rate,
@@ -771,8 +762,7 @@ export default {
 								: sched.time_end,
 							late_hours: sched.late_hours_in_minutes,
 							has_absences: isAbsent,
-							dispute:
-								this.invoiceStatus === "to-be-invoiced" ? false : isDisputed,
+							dispute: isDisputed,
 							remarks: sched.remarks ? sched.remarks : "",
 							total: finalRate
 						});
@@ -843,7 +833,7 @@ export default {
 							sched.final_time_end,
 							this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 						);
-						let isDisputed = sched.remarks === "" ? false : true;
+						let isDisputed = sched.remarks ? true : false;
 						this.schedules.push({
 							date: this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY"),
 							shifts: [
@@ -881,10 +871,7 @@ export default {
 										: sched.time_end,
 									late_hours: sched.late_hours_in_minutes,
 									has_absences: isAbsent,
-									dispute:
-										this.invoiceStatus === "to-be-invoiced"
-											? false
-											: isDisputed,
+									dispute: isDisputed,
 									remarks: sched.remarks ? sched.remarks : "",
 									total: finalRate
 								}
@@ -955,7 +942,7 @@ export default {
 								sched.final_time_end,
 								this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 							);
-							let isDisputed = sched.remarks === "" ? false : true;
+							let isDisputed = sched.remarks ? true : false;
 							isExisting_original.shifts.push({
 								id: sched.id,
 								rate: sched.rate,
@@ -989,8 +976,7 @@ export default {
 									: sched.time_end,
 								late_hours: sched.late_hours_in_minutes,
 								has_absences: isAbsent_orig,
-								dispute:
-									this.invoiceStatus === "to-be-invoiced" ? false : isDisputed,
+								dispute: isDisputed,
 								remarks: sched.remarks ? sched.remarks : "",
 								total: finalRate_orig
 							});
@@ -1065,7 +1051,7 @@ export default {
 								sched.final_time_end,
 								this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
 							);
-							let isDisputed = sched.remarks === "" ? false : true;
+							let isDisputed = sched.remarks ? true : false;
 							this.original_schedule.push({
 								date: this.$moment(sched.date, "YYYY-MM-DD").format(
 									"DD/MM/YYYY"
@@ -1105,10 +1091,7 @@ export default {
 											: sched.time_end,
 										late_hours: sched.late_hours_in_minutes,
 										has_absences: isAbsent_orig,
-										dispute:
-											this.invoiceStatus === "to-be-invoiced"
-												? false
-												: isDisputed,
+										dispute: isDisputed,
 										remarks: sched.remarks ? sched.remarks : "",
 										total: finalRate_orig
 									}
