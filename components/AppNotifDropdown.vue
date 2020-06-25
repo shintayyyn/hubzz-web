@@ -512,7 +512,6 @@ export default {
     },
 
     updateNotificationSeen(notification) {
-      console.log('notification', notification)
       if (!notification.seen) {
         const notificationId = notification.id;
 
@@ -1020,7 +1019,7 @@ export default {
           practice_id: practiceId,
           parent_practice_id: parentPracticeId,
         } = permanentJob
-
+        console.log('permanentjob inside notif dropdown', permanentJob)
         if (notificationTypeName === "Practice Notification Permanent Job Applied" && permanentJob) {
           this.$router.push({
             name:
@@ -1030,6 +1029,44 @@ export default {
             }
           })
         }
+        if (notificationTypeName === "Practice Notification Approve Permanent Job Spoke" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Reject Permanent Job Spoke" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Hub Created Permanent Job for Spoke" && permanentJob) {
+          this.$router.push({
+            name:
+              "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId
+            }
+          })
+        }
+        if (notificationTypeName === "Practice Notification Spoke Created Pending Permanent Job" && permanentJob) {
+          this.$router.push({
+            name:
+              "hub-surgery-management-id-surgery-permanent-jobs-index-permJobId",
+            params: {
+              id: permanentJob.spoke_surgery_id ? permanentJob.spoke_surgery_id : null,
+              permJobId:permanentJobId, 
+            }
+          })
+        }
+
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
