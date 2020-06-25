@@ -760,12 +760,12 @@ export default {
 							orig_time_end: sched.original_time_end,
 							orig_has_absences: isAbsent,
 							final_time_start: isAbsent
-								? "-"
+								? ""
 								: !this.invoiceDetails
 								? sched.final_time_start
 								: sched.time_start,
 							final_time_end: isAbsent
-								? "-"
+								? ""
 								: !this.invoiceDetails
 								? sched.final_time_end
 								: sched.time_end,
@@ -870,12 +870,12 @@ export default {
 									orig_final_end: sched.final_time_end,
 									orig_has_absences: isAbsent,
 									final_time_start: isAbsent
-										? "-"
+										? ""
 										: !this.invoiceDetails
 										? sched.final_time_start
 										: sched.time_start,
 									final_time_end: isAbsent
-										? "-"
+										? ""
 										: !this.invoiceDetails
 										? sched.final_time_end
 										: sched.time_end,
@@ -978,12 +978,12 @@ export default {
 								orig_time_end: sched.original_time_end,
 								orig_has_absences: isAbsent_orig,
 								final_time_start: isAbsent_orig
-									? "-"
+									? ""
 									: !this.invoiceDetails
 									? sched.final_time_start
 									: sched.time_start,
 								final_time_end: isAbsent_orig
-									? "-"
+									? ""
 									: !this.invoiceDetails
 									? sched.final_time_end
 									: sched.time_end,
@@ -1094,12 +1094,12 @@ export default {
 										orig_final_end: sched.final_time_end,
 										orig_has_absences: isAbsent_orig,
 										final_time_start: isAbsent_orig
-											? "-"
+											? ""
 											: !this.invoiceDetails
 											? sched.final_time_start
 											: sched.time_start,
 										final_time_end: isAbsent_orig
-											? "-"
+											? ""
 											: !this.invoiceDetails
 											? sched.final_time_end
 											: sched.time_end,
@@ -1206,45 +1206,7 @@ export default {
 			this.emitSchedule();
 		},
 		shiftErrors(value) {
-			// let has_empty_sched_dates = value.filter(err =>
-			// 	err.field.includes("shift-")
-			// );
-			// let job_parts = [];
-			// if (has_empty_sched_dates.length) {
-			// 	has_empty_sched_dates.forEach(err => {
-			// 		let empty_date = err.field.split("-")[1];
-			// 		let job_part = this.job_parts.find(part =>
-			// 			part.dates.includes(
-			// 				this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
-			// 			)
-			// 		);
-			// 		let exist = job_parts.find(item => item === `${job_part.value}`);
-			// 		if (job_part && !exist) {
-			// 			job_parts.push(`${job_part.value}`);
-			// 		}
-			// 	});
-			// 	let partsLabel = "";
-			// 	job_parts.forEach((item, index) => {
-			// 		if (job_parts.length > 1) {
-			// 			if (index !== job_parts.length - 1) {
-			// 				partsLabel += `${item}, `;
-			// 			} else if (index === job_parts.length - 1) {
-			// 				partsLabel += `${item}`;
-			// 			}
-			// 			//  else {
-			// 			// partsLabel += ` and ${item}`;
-			// 			// }
-			// 		} else {
-			// 			partsLabel += item;
-			// 		}
-			// 	});
-			// 	this.$store.commit("SET_NOTIFICATION", {
-			// 		enabled: true,
-			// 		status: "danger",
-			// 		text: [`Empty schedule on Job Part/s (${partsLabel})`],
-			// 		duration: 3000
-			// 	});
-			// }
+			console.log("shiftErrors", value);
 		}
 	},
 	computed: {
