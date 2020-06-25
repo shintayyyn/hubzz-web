@@ -283,7 +283,9 @@
 												<!-- FINAL START -->
 												<div class="flex flex-col items-center justify-center text-center w-2/12">
 													<!-- invoiceStatus === 'to-be-invoiced' || (shift.dispute && invoiceStatus !== 'to-be-invoiced') -->
-													<template v-if="!toDisplay">
+													<template
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && invoiceStatus !== 'issued')"
+													>
 														<AppTime
 															v-model="shift.final_time_start"
 															:name="`final_time_start-s${index}-${i}`"
@@ -304,7 +306,7 @@
 												<!-- FINAL END -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													<AppTime
-														v-if="!toDisplay"
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && invoiceStatus !== 'issued')"
 														v-model="shift.final_time_end"
 														:name="`final_time_end-s${index}-${i}`"
 														:wrapperClass="'px-1 mt-2 mb-2'"
@@ -323,7 +325,7 @@
 												<!-- ANY ABSENCES -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													<button
-														v-if="!toDisplay"
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && invoiceStatus !== 'issued'"
 														@click="absent(shift)"
 														:disabled="[false, 'false'].includes(shift.dispute)"
 														class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
@@ -345,7 +347,7 @@
 												<!-- DISPUTE? -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													<button
-														v-if="!toDisplay"
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : false"
 														@click="dispute(shift, index, i)"
 														class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
 														:class="shift.dispute ? 'bg-orange-500' : 'bg-gray-600'"
@@ -604,18 +606,22 @@
 									:inStyle="'background-color: transparent'"
 									:resize="false"
 									:error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
-									:disabled="toDisplay"
+									:disabled="$auth.user.domain === 'Locum'"
 									:limit="300"
 								/>
 							</template>
 
 							<div class="flex justify-end">
 								<AppButton
-									:label="toDisplay ? 'Close' : 'Cancel'"
+									:label="$auth.user.domain === 'Locum' ? 'Cancel' : 'Close'"
 									class="mr-2"
-									@click="toDisplay ? show_late_reason=false : cancelReason()"
+									@click="$auth.user.domain === 'Locum' ? cancelReason() : show_late_reason=false"
 								/>
-								<AppButton :label="'Save'" @click="saveLateReason(selectedShift)" v-if="!toDisplay" />
+								<AppButton
+									:label="'Save'"
+									@click="saveLateReason(selectedShift)"
+									v-if="$auth.user.domain === 'Locum'"
+								/>
 							</div>
 						</div>
 					</transition>
