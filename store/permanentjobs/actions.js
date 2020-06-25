@@ -133,7 +133,7 @@ export default {
     })
     // MAKE WORKING ; FOR SPOKES ONLY
     this.$socket.on('Practice Notification Hub Created Permanent Job for Spoke', async (permanentJob) => {
-      console.log('permanentJob', permanentJob)
+      console.log('permanentJob for spoke onli', permanentJob)
       let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanentJob.notification.payload.id}`)
       
       if(response.data && response.data.permanent_job) {
@@ -142,12 +142,10 @@ export default {
       
     })
     // MAKE WORKING ; FOR HUBS ONLY
-    this.$socket.on('Practice Notification Spoke Created Pending Permanent Job', async (permanentJob) => {
-      console.log('permanentJob', permanentJob.id)
+    this.$socket.on('Practice Notification Spoke Created Pending Permanent Job', async (permanent_job) => {
+      console.log('permanentJob for hub onli', permanent_job)
       
-      let permanent_job = null
-
-      let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanentJob.id}`)
+      let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanent_job.notification.payload.id}`)
 
       if(response.data && response.data.permanent_job) {
         permanent_job = await response.data.permanent_job
