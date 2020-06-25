@@ -667,7 +667,8 @@ export default {
 		practice_rate: Number,
 		noDisputeReason: Boolean,
 		toDisplay: Boolean,
-		invoiceDetails: Object
+		invoiceDetails: Object,
+		invoiceStatus: String
 	},
 	data() {
 		return {
@@ -686,6 +687,7 @@ export default {
 		};
 	},
 	created() {
+		console.log("invoiceStatus", this.invoiceStatus);
 		if (this.schedule.length) {
 			this.loading = true;
 			let status = this.$route.query.status ? this.$route.query.status : "";
@@ -770,7 +772,8 @@ export default {
 								: sched.time_end,
 							late_hours: sched.late_hours_in_minutes,
 							has_absences: isAbsent,
-							dispute: isDisputed,
+							dispute:
+								this.invoiceStatus === "to-be-invoiced" ? false : isDisputed,
 							remarks: sched.remarks ? sched.remarks : "",
 							total: finalRate
 						});
@@ -879,7 +882,10 @@ export default {
 										: sched.time_end,
 									late_hours: sched.late_hours_in_minutes,
 									has_absences: isAbsent,
-									dispute: isDisputed,
+									dispute:
+										this.invoiceStatus === "to-be-invoiced"
+											? false
+											: isDisputed,
 									remarks: sched.remarks ? sched.remarks : "",
 									total: finalRate
 								}
@@ -984,7 +990,8 @@ export default {
 									: sched.time_end,
 								late_hours: sched.late_hours_in_minutes,
 								has_absences: isAbsent_orig,
-								dispute: isDisputed,
+								dispute:
+									this.invoiceStatus === "to-be-invoiced" ? false : isDisputed,
 								remarks: sched.remarks ? sched.remarks : "",
 								total: finalRate_orig
 							});
@@ -1099,7 +1106,10 @@ export default {
 											: sched.time_end,
 										late_hours: sched.late_hours_in_minutes,
 										has_absences: isAbsent_orig,
-										dispute: isDisputed,
+										dispute:
+											this.invoiceStatus === "to-be-invoiced"
+												? false
+												: isDisputed,
 										remarks: sched.remarks ? sched.remarks : "",
 										total: finalRate_orig
 									}
@@ -1535,8 +1545,10 @@ export default {
 						deductions.push(
 							this.getRate(
 								shift,
-								shift.orig_time_start,
-								shift.orig_time_end,
+								shift.orig_time_start
+									? shift.orig_time_start
+									: shift.time_start,
+								shift.orig_time_end ? shift.orig_time_end : shift.time_end,
 								sched.date,
 								"deduction"
 							)
@@ -1550,7 +1562,8 @@ export default {
 										? shift.orig_time_start
 										: shift.time_start,
 									shift.final_time_start,
-									sched.date
+									sched.date,
+									"deduction"
 								)
 							);
 						}

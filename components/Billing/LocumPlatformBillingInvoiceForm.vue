@@ -111,6 +111,7 @@
 						:invoiceDetails="propInvoice"
 						:toDisplay="propInvoice && ['Approved', 'Issued', 'Paid'].includes(propInvoice.status)"
 						:type="'invoice'"
+						:invoiceStatus="$route.query.status"
 					/>
 				</div>
 				<div class="w-full flex justify-between py-4">
