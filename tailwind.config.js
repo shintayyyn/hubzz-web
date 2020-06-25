@@ -1,6 +1,6 @@
 module.exports = {
   purge: {
-    enable: false,
+    enabled: false,
     content: []
   },
   prefix: '',
