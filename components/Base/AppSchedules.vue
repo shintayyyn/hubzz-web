@@ -613,14 +613,14 @@
 
 							<div class="flex justify-end">
 								<AppButton
-									:label="$auth.user.domain === 'Locum' ? 'Cancel' : 'Close'"
+									:label="type === 'invoice' ? $auth.user.domain === 'Locum' ? 'Cancel' : 'Close' : 'Cancel' "
 									class="mr-2"
-									@click="$auth.user.domain === 'Locum' ? cancelReason() : show_late_reason=false"
+									@click="type === 'invoice' ? $auth.user.domain === 'Locum' ? cancelReason() : show_late_reason=false : toDisplay ? show_late_reason=false : cancelReason()"
 								/>
 								<AppButton
 									:label="'Save'"
 									@click="saveLateReason(selectedShift)"
-									v-if="$auth.user.domain === 'Locum'"
+									v-if="type === 'invoice' ? $auth.user.domain === 'Locum' : !toDisplay"
 								/>
 							</div>
 						</div>
