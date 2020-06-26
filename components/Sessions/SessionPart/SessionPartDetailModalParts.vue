@@ -136,6 +136,10 @@ export default {
 		totalPages() {
 			return Math.ceil(this.total / this.params.limit);
 		},
+		hasOngoingJob() {
+			let partStatus = this.parts.map(item => item.status);
+			return partStatus.includes("Ongoing");
+		},
 		columns() {
 			let columns = [
 				{
@@ -159,12 +163,7 @@ export default {
 					class: "text-center"
 				}
 			];
-
-			if (
-				(this.$route.query.status === "Ongoing" ||
-					this.$route.query.jobStatus === "Ongoing") &&
-				!this.cantCompleteJob
-			) {
+			if (!this.cantCompleteJob && this.hasOngoingJob) {
 				columns.push(
 					{
 						name: "",

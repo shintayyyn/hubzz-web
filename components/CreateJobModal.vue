@@ -303,32 +303,31 @@
 													:items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
 													required
 												/>
-												<div
-													v-if="bank_first === true || bank_first === 'true'"
-													class="flex flex-row flex-wrap justify-between items-end"
-												>
+												<template v-if="bank_first === true || bank_first === 'true'">
 													<div>Only favorite locum will be notified until this date</div>
-													<div class="px-1 w-full md:w-1/2">
-														<AppDate
-															v-model="favorite_only_until.date"
-															:name="'favorite_only_until'"
-															:label="'Date'"
-															is-after
-															:error="formError.find(item => item.field === 'favorite_only_until')"
-															required
-														/>
+													<div class="flex flex-row flex-wrap justify-between items-end">
+														<div class="px-1 w-full md:w-1/2">
+															<AppDate
+																v-model="favorite_only_until.date"
+																:name="'favorite_only_until'"
+																:label="'Date'"
+																is-after
+																:error="formError.find(item => item.field === 'favorite_only_until')"
+																required
+															/>
+														</div>
+														<div class="px-1 w-full md:w-1/2">
+															<AppTime
+																v-model="favorite_only_until.time"
+																:type="'time'"
+																:name="'time_end'"
+																:label="'Time'"
+																:error="formError.find(item => item.field === 'favorite_only_until')"
+																required
+															/>
+														</div>
 													</div>
-													<div class="px-1 w-full md:w-1/2">
-														<AppTime
-															v-model="favorite_only_until.time"
-															:type="'time'"
-															:name="'time_end'"
-															:label="'Time'"
-															:error="formError.find(item => item.field === 'favorite_only_until')"
-															required
-														/>
-													</div>
-												</div>
+												</template>
 											</template>
 										</template>
 									</div>
