@@ -284,7 +284,7 @@
 												<div class="flex flex-col items-center justify-center text-center w-2/12">
 													<!-- invoiceStatus === 'to-be-invoiced' || (shift.dispute && invoiceStatus !== 'to-be-invoiced') -->
 													<template
-														v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && invoiceStatus !== 'issued')"
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))"
 													>
 														<AppTime
 															v-model="shift.final_time_start"
@@ -306,7 +306,7 @@
 												<!-- FINAL END -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													<AppTime
-														v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && invoiceStatus !== 'issued')"
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))"
 														v-model="shift.final_time_end"
 														:name="`final_time_end-s${index}-${i}`"
 														:wrapperClass="'px-1 mt-2 mb-2'"
@@ -325,7 +325,7 @@
 												<!-- ANY ABSENCES -->
 												<div class="flex items-center justify-center text-center w-2/12">
 													<button
-														v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && invoiceStatus !== 'issued'"
+														v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus)"
 														@click="absent(shift)"
 														:disabled="[false, 'false'].includes(shift.dispute)"
 														class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
@@ -613,14 +613,14 @@
 
 							<div class="flex justify-end">
 								<AppButton
-									:label="$auth.user.domain === 'Locum' ? 'Cancel' : 'Close'"
+									:label="type === 'invoice' ? $auth.user.domain === 'Locum' ? 'Cancel' : 'Close' : 'Cancel' "
 									class="mr-2"
-									@click="$auth.user.domain === 'Locum' ? cancelReason() : show_late_reason=false"
+									@click="type === 'invoice' ? $auth.user.domain === 'Locum' ? cancelReason() : show_late_reason=false : toDisplay ? show_late_reason=false : cancelReason()"
 								/>
 								<AppButton
 									:label="'Save'"
 									@click="saveLateReason(selectedShift)"
-									v-if="$auth.user.domain === 'Locum'"
+									v-if="type === 'invoice' ? $auth.user.domain === 'Locum' : !toDisplay"
 								/>
 							</div>
 						</div>
@@ -1775,7 +1775,7 @@ export default {
 			}`;
 
 			if (late_hour <= 0 && late_minute <= 0) {
-				total_late_hours = "NONE";
+				total_late_hours = "None";
 			}
 
 			return total_late_hours;

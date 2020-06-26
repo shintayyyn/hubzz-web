@@ -363,6 +363,110 @@
                   :resize="false"
                 />
 
+                <div class="flex flex-col">
+                  <h4 class="font-bold mt-4">Duration</h4>
+                  <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                    <template v-if="['false', false].includes(auto_assign_job)">
+                      <AppInput
+                        v-model="selection_notification"
+                        :type="'select'"
+                        :name="'selection_notification'"
+                        :label="'Add a selection date?'"
+                        :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                      />
+                      <template
+                        v-if="selection_notification === true || selection_notification === 'true'"
+                      >
+                        <div>Selection will be made and you will receive a notification by this date</div>
+                        <div class="flex flex-row flex-wrap justify-between items-end">
+                          <div class="px-1 w-full md:w-1/2">
+                            <AppDate
+                              v-model="selection_date.date"
+                              :name="'selection_date'"
+                              :label="'Date'"
+                              is-after
+                              :error="formError.find(item => item.field === 'selection_date')"
+                              required
+                            />
+                          </div>
+                          <div class="px-1 w-full md:w-1/2">
+                            <AppTime
+                              v-model="selection_date.time"
+                              :type="'time'"
+                              :name="'time_end'"
+                              :label="'Time'"
+                              :error="formError.find(item => item.field === 'selection_date')"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </template>
+                    </template>
+
+                    <template v-if="hasBanks">
+                      <AppInput
+                        v-model="form.favorite_only"
+                        :type="'select'"
+                        :name="'favorite_only'"
+                        :label="'Make this Job available for Bank Only?'"
+                        :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                        required
+                      />
+                      <template v-if="['false', false].includes(form.favorite_only)">
+                        <AppInput
+                          v-model="bank_first"
+                          :type="'select'"
+                          :name="'bank_first'"
+                          :label="'Make this Job available for Bank First?'"
+                          :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                          required
+                        />
+                        <template v-if="bank_first === true || bank_first === 'true'">
+                          <div>Only favorite locum will be notified until this date</div>
+                          <div class="flex flex-row flex-wrap justify-between items-end">
+                            <div class="px-1 w-full md:w-1/2">
+                              <AppDate
+                                v-model="favorite_only_until.date"
+                                :name="'favorite_only_until'"
+                                :label="'Date'"
+                                is-after
+                                :error="formError.find(item => item.field === 'favorite_only_until')"
+                                required
+                              />
+                            </div>
+                            <div class="px-1 w-full md:w-1/2">
+                              <AppTime
+                                v-model="favorite_only_until.time"
+                                :type="'time'"
+                                :name="'time_end'"
+                                :label="'Time'"
+                                :error="formError.find(item => item.field === 'favorite_only_until')"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </template>
+                      </template>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-full md:w-1/2 lg:pl-4 mb-4">
+              <h4 class="font-bold mt-4">Overview</h4>
+
+              <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                <AppInput v-model="form.title" :type="'text'" :name="'title'" :label="'Title'" />
+
+                <AppInput
+                  v-model="form.description"
+                  :type="'textarea'"
+                  :name="'description'"
+                  :label="'Description'"
+                  :resize="false"
+                />
+
                 <AppInput
                   v-model="form.report_to"
                   :type="'text'"

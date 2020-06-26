@@ -1247,6 +1247,8 @@ export default {
             this.job_parts.splice(index, 1);
           }
 
+          this.refreshInvoices()
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
