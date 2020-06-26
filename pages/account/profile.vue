@@ -483,7 +483,7 @@
                 v-model="form.nhs_number"
                 :type="'text'"
                 :name="'nhs_number'"
-                :label="'NHS number'"
+                :label="'NHS Pension Scheme membership (SD) number'"
                 :error="formError.find(item => item.field === 'nhs_number')"
                 :limit="8"
                 required
@@ -1318,7 +1318,7 @@
           ) {
             this.formError.push({
               field: "nhs_number",
-              message: "NHS number is invalid."
+              message: "NHS Pension Scheme membership (SD) number is invalid."
             })
           }
 
