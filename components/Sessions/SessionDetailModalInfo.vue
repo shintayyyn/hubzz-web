@@ -17,18 +17,25 @@
 						<div class="flex justify-between items-end mb-2">
 							<p class="font-bold text-sm sm:text-md">Schedule</p>
 						</div>
-						<div class="hidden lg:flex font-bold text-xs">
-							<p class="w-1/6">DATE</p>
-							<p class="w-2/6 text-center">TIME</p>
-							<p class="w-1/6 text-center">SHIFT</p>
-							<p class="w-2/6 text-center">RATE</p>
+						<div
+							class="hidden lg:flex font-bold text-xs bg-gray-400 py-1 pl-1"
+							:class="job.schedules.length > 7 ? 'pr-2' : ''"
+						>
+							<p class="w-1/3">DATE</p>
+							<p class="w-1/3 text-center">SHIFT</p>
+							<p class="w-1/3">RATE</p>
 						</div>
-						<div class="overflow-y-auto" style="max-height: 205px;">
-							<div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex pb-2">
-								<p class="lg:w-1/6">{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
-								<p class="lg:w-2/6 lg:text-center">{{ sched.time_start }}-{{ sched.time_end }}</p>
-								<p class="lg:w-1/6 lg:text-center">{{ sched.shift.name }}</p>
-								<p class="lg:w-2/6 lg:text-center">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
+						<div
+							class="pl-1 text-xs md:text-sm"
+							:style="job.schedules.length > 7 ? 'max-height:205px' : ''"
+							:class="job.schedules.length > 7 ? 'overflow-x-hidden overflow-y-auto' : ''"
+						>
+							<div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex py-1 border-b">
+								<p
+									class="lg:w-1/3"
+								>{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
+								<p class="lg:w-1/3 lg:text-center">{{ sched.shift.name }}</p>
+								<p class="lg:w-1/3">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
 							</div>
 						</div>
 					</div>

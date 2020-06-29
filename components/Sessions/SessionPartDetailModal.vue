@@ -11,7 +11,7 @@
 		</div>
 
 		<div class="flex flex-row justify-start items-center mt-4">
-			<div class="leading-tight font-bold text-md sm:text-lg">{{ jobPart.job.title }}</div>
+			<div class="leading-tight font-bold text-md sm:text-lg mr-2">{{ jobPart.job.title }}</div>
 			<div
 				class="py-2 px-4 mx-1 rounded font-semibold"
 				:class="bgStatus(jobPart.status)"

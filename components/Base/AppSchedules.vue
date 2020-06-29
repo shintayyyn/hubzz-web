@@ -685,7 +685,6 @@ export default {
 	},
 	created() {
 		if (this.schedule.length) {
-			this.loading = true;
 			let status = this.$route.query.status ? this.$route.query.status : "";
 			this.schedule.forEach(sched => {
 				let isExisting = this.schedules.find(
@@ -1122,7 +1121,6 @@ export default {
 					}
 				}
 			});
-			this.loading = false;
 		}
 	},
 	watch: {
