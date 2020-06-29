@@ -286,14 +286,14 @@
 										</template>
 
 										<template v-if="hasBanks">
-											<!-- <AppInput
+											<AppInput
 												v-model="form.favorite_only"
 												:type="'select'"
 												:name="'favorite_only'"
 												:label="'Make this Job available for Bank Only?'"
 												:items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
 												required
-											/>-->
+											/>
 											<template v-if="['false', false].includes(form.favorite_only)">
 												<AppInput
 													v-model="bank_first"
