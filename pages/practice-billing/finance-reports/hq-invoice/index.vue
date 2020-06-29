@@ -73,11 +73,11 @@
 					},
 					{
 						name: 'Total Hours',
-						dataIndex: 'total_final_hours',
+						dataIndex: 'total_final_hours_formatted',
 					},
 					{
-						name: 'Total Amount',
-						dataIndex: 'total_amount',
+						name: '£ Total Amount',
+						dataIndex: 'total_amount_formatted',
 					},
         ]
       },
@@ -92,9 +92,9 @@
     mounted () {
       const minYearMonth = '2019-01'
 
-      this.selectedYearMonth = this.$moment.utc().startOf('month').subtract(1, 'months').format('YYYY-MM')
+      const selectedYearMonth = this.$moment.utc().startOf('month').subtract(1, 'months').format('YYYY-MM')
 
-      let tempYearMonth = this.selectedYearMonth
+      let tempYearMonth = selectedYearMonth
 
       let yearMonthsValues = []
 
@@ -108,7 +108,7 @@
         label: this.$moment(yearMonthsValue, 'YYYY-MM').format('YYYY MMMM'),
       }))
 
-      this.getPracticeInvoiceFinanceReports()
+      this.selectedYearMonth = selectedYearMonth
     },
 
     methods: {
@@ -128,20 +128,20 @@
         this.loading = true
 
         Promise.all([
-          this.$axios.get(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}/count`).then((responses) => {
-            return responses.data.data.count
-          }),
+          // this.$axios.get(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}/count`).then((responses) => {
+          //   return responses.data.data.count
+          // }),
           this.$axios.get(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}`).then((responses) => {
             return responses.data.data.practice_invoice_finance_reports
           }),
           new Promise((resolve) => setTimeout(resolve, 500))
         ]).then((results) => {
           const [
-            count,
+            // count,
             practiceInvoiceFinanceReports,
           ] = results
 
-          this.count = count
+          // this.count = count
           this.practiceInvoiceFinanceReports = practiceInvoiceFinanceReports
         }).catch((err) => {
           console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
