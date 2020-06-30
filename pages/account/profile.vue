@@ -1288,8 +1288,11 @@
           //   })
           // }
           if (
-            !this.form.utr_number.substring(0, 10).match(/[0-9]/g)
-            || this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10
+            this.form.utr_number
+            && (
+              !this.form.utr_number.substring(0, 10).match(/[0-9]/g)
+              || this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10
+            )
           ) {
             this.formError.push({
               field: "utr_number",
