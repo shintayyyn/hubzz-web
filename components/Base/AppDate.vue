@@ -14,6 +14,7 @@
     <div class="flex flex-row justify-start mt-1">
       <div class="flex flex-col w-full">
         <input
+          :name="name"
           :value="placeholder"
           type="input"
           :placeholder="'DD/MM/YYYY'"
@@ -276,28 +277,13 @@
 <script>
   import { mixin as clickaway } from "vue-clickaway"
 
-  let months = [
-    { label: "Jan", value: "1" },
-    { label: "Feb", value: "2" },
-    { label: "Mar", value: "3" },
-    { label: "Apr", value: "4" },
-    { label: "May", value: "5" },
-    { label: "Jun", value: "6" },
-    { label: "Jul", value: "7" },
-    { label: "Aug", value: "8" },
-    { label: "Sep", value: "9" },
-    { label: "Oct", value: "10" },
-    { label: "Nov", value: "11" },
-    { label: "Dec", value: "12" }
-  ]
-
   export default {
     mixins: [clickaway],
 
     props: {
       value: {
         type: String,
-        required: true,
+        default: () => null,
       },
 
       name: {
@@ -366,7 +352,20 @@
     data () {
       return {
         modal: false,
-        months,
+        months: [
+          { label: "Jan", value: "1" },
+          { label: "Feb", value: "2" },
+          { label: "Mar", value: "3" },
+          { label: "Apr", value: "4" },
+          { label: "May", value: "5" },
+          { label: "Jun", value: "6" },
+          { label: "Jul", value: "7" },
+          { label: "Aug", value: "8" },
+          { label: "Sep", value: "9" },
+          { label: "Oct", value: "10" },
+          { label: "Nov", value: "11" },
+          { label: "Dec", value: "12" }
+        ],
         monthLists: [],
         yearLists: [],
         selectedMonth: this.$moment.utc().format("M"),
@@ -448,7 +447,7 @@
       },
 
       getYearLists () {
-        // let yearsBefore = []
+        this.yearLists = []
 
         if (!this.isAfter) {
           if (this.limitYear) {
@@ -456,9 +455,14 @@
               this.yearLists.push(this.$moment().subtract(this.maxYearBefore ? this.maxYearBefore - 1 : 0, "years").subtract(i, "years").format("YYYY"))
             }
           } else {
-            for (let i = 0; i <= 5; i++) {
-              this.yearLists.push(this.$moment().subtract(i, "years").format("YYYY"))
-              this.yearLists.push(this.$moment().add(i, "years").format("YYYY"))
+            const currentYear = this.$moment.utc().format('YYYY')
+            const minYear = '1900'
+            const maxYear = this.$moment(currentYear, 'YYYY').add(5, 'years').format('YYYY')
+            let tempYear = minYear
+
+            while (this.$moment(tempYear, 'YYYY').isSameOrBefore(this.$moment(maxYear, 'YYYY'), 'year')) {
+              this.yearLists.push(tempYear)
+              tempYear = this.$moment(tempYear, 'YYYY').add(1, 'years').format('YYYY')
             }
           }
         } else if (this.isAfter) {
@@ -516,6 +520,7 @@
           this.selectedMonth = month
           this.selectedYear = year
         }
+
         this.modal = false
       },
 
