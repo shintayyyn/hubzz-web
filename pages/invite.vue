@@ -23,7 +23,7 @@
 
 <script>
   export default {
-    middleware: "isVerified",
+    // middleware: "isVerified",
 
     data () {
       return {
