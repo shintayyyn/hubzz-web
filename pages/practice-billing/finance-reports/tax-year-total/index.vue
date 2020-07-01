@@ -9,7 +9,7 @@
             <AppInput
               v-model="selectedTaxYear"
               type="select"
-              label="Tax Year"
+              label="Tax Year End"
               :items="taxYearsSelectionList"
               required
             />
@@ -131,7 +131,9 @@
 
         this.taxYearsSelectionList = years.map(year => ({
           value: year,
-          label: this.$moment(year, 'YYYY').format('YYYY'),
+          label: this.practice && this.practice.tax_year_end_date
+            ? this.$moment(this.practice.tax_year_end_date, 'YYYY-MM-DD').format('MM/DD/') + this.$moment(year, 'YYYY').format('YYYY')
+            : this.$moment(year, 'YYYY').format('YYYY'),
         }))
 
         this.selectedTaxYear = selectedTaxYear
