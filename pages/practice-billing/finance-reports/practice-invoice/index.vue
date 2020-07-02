@@ -95,7 +95,7 @@
 
     watch: {
       selectedYearMonth () {
-        this.getPracticeInvoiceFinanceReports()
+        this.getLocumInvoiceFinanceReports()
       },
     },
 
@@ -122,7 +122,7 @@
     },
 
     methods: {
-      getPracticeInvoiceFinanceReports () {
+      getLocumInvoiceFinanceReports () {
         this.count = 0
         this.locumInvoiceFinanceReports = []
 

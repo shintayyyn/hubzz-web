@@ -70,6 +70,7 @@
         selectedYearMonth: null,
         count: 0,
         practiceInvoiceFinanceReports: [],
+        exporting: false,
       }
     },
 

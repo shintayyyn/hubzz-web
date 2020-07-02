@@ -25,6 +25,13 @@
         :loading="loading"
       />
 
+      <AppButton
+        v-if="!loading && locumInvoiceTaxYearTotals.length > 0"
+        :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'"
+        :inStyle="'padding: 5px 14px;'"
+        @click="exportLocumInvoiceTaxYearTotalsAsPdf"
+      />
+
       <transition name="fade" mode="out-in">
         <div
           v-if="locumInvoiceTaxYearTotals.length === 0 && !loading"
@@ -47,6 +54,7 @@
 
 <script>
   import AppInput from "@/components/Base/AppInput"
+  import AppButton from "@/components/Base/AppButton"
   import AppLoading from "@/components/Base/AppLoading"
   import AppFormError from "@/components/Base/AppFormError"
   import AppTable from "@/components/Base/AppTable"
@@ -59,6 +67,7 @@
 
     components: {
       AppInput,
+      AppButton,
       AppLoading,
       AppFormError,
       AppTable,
@@ -72,6 +81,7 @@
         selectedTaxYear: null,
         count: 0,
         locumInvoiceTaxYearTotals: [],
+        exporting: false,
       }
     },
 
@@ -100,7 +110,7 @@
 
     watch: {
       selectedTaxYear () {
-        this.getPracticeInvoiceFinanceReports()
+        this.getLocumInvoiceTaxYearTotals()
       },
     },
 
@@ -139,7 +149,7 @@
         this.selectedTaxYear = selectedTaxYear
       },
 
-      getPracticeInvoiceFinanceReports () {
+      getLocumInvoiceTaxYearTotals () {
         this.count = 0
         this.locumInvoiceTaxYearTotals = []
 
@@ -147,15 +157,15 @@
           return
         }
 
-        const year = this.selectedTaxYear
+        const taxYear = this.selectedTaxYear
 
         this.loading = true
 
         Promise.all([
-          // this.$axios.get(`/api/v1/practice/locum-invoice-tax-year-totals/${year}/count`).then((responses) => {
+          // this.$axios.get(`/api/v1/practice/locum-invoice-tax-year-totals/${taxYear}/count`).then((responses) => {
           //   return responses.data.data.count
           // }),
-          this.$axios.get(`/api/v1/practice/locum-invoice-tax-year-totals/${year}`).then((responses) => {
+          this.$axios.get(`/api/v1/practice/locum-invoice-tax-year-totals/${taxYear}`).then((responses) => {
             return responses.data.data.locum_invoice_tax_year_totals
           }),
           new Promise((resolve) => setTimeout(resolve, 500))
@@ -172,6 +182,29 @@
           this.$nuxt.error(err.response ? err.response.data : err)
         }).finally(() => {
           this.loading = false
+        })
+      },
+
+      exportLocumInvoiceTaxYearTotalsAsPdf () {
+        if (!this.selectedTaxYear) {
+          return
+        }
+
+        const taxYear = this.selectedTaxYear
+
+        this.exporting = true
+
+        const filename = `locum_invoice_tax_year_totals_${taxYear}.pdf`
+
+        this.$axios.post(`/api/v1/practice/locum-invoice-tax-year-totals/${taxYear}/generate-key`).then((responses) => {
+          const token = responses.data.data.token
+
+          window.open(`${process.env.API_URL}/api/v1/locum-invoice-tax-year-totals/pdf/${filename}?token=${token}`)
+        }).catch((err) => {
+          console.log('err', err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        }).finally(() => {
+          this.exporting = false
         })
       },
     },
