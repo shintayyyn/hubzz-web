@@ -178,7 +178,7 @@
         this.$axios.post(`/api/v1/practice/locum-invoice-finance-reports/${year}/${month}/generate-key`).then((responses) => {
           const token = responses.data.data.token
 
-          window.open(`${process.env.API_URL}/api/v1/practice/locum-invoice-finance-reports/pdf/${filename}?token=${token}`)
+          window.open(`${process.env.API_URL}/api/v1/locum-invoice-finance-reports/pdf/${filename}?token=${token}`)
         }).catch((err) => {
           console.log('err', err)
           this.$nuxt.error(err.response ? err.response.data : err)
