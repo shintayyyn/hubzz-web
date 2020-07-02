@@ -24,6 +24,13 @@
       :loading="loading"
     />
 
+    <AppButton
+      v-if="!loading && locumInvoiceFinanceReports.length > 0"
+      :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'"
+      :inStyle="'padding: 5px 14px;'"
+      @click="exportLocumInvoiceFinanceReportsAsPdf"
+    />
+
     <transition name="fade" mode="out-in">
       <div
         v-if="locumInvoiceFinanceReports.length === 0 && !loading"
@@ -37,6 +44,7 @@
 
 <script>
   import AppInput from "@/components/Base/AppInput"
+  import AppButton from "@/components/Base/AppButton"
   import AppLoading from "@/components/Base/AppLoading"
   import AppFormError from "@/components/Base/AppFormError"
   import AppTable from "@/components/Base/AppTable"
@@ -49,6 +57,7 @@
 
     components: {
       AppInput,
+      AppButton,
       AppLoading,
       AppFormError,
       AppTable,
@@ -61,6 +70,7 @@
         selectedYearMonth: null,
         count: 0,
         locumInvoiceFinanceReports: [],
+        exporting: false,
       }
     },
 
@@ -85,7 +95,7 @@
 
     watch: {
       selectedYearMonth () {
-        this.getPracticeInvoiceFinanceReports()
+        this.getLocumInvoiceFinanceReports()
       },
     },
 
@@ -112,7 +122,7 @@
     },
 
     methods: {
-      getPracticeInvoiceFinanceReports () {
+      getLocumInvoiceFinanceReports () {
         this.count = 0
         this.locumInvoiceFinanceReports = []
 
@@ -148,6 +158,32 @@
           this.$nuxt.error(err.response ? err.response.data : err)
         }).finally(() => {
           this.loading = false
+        })
+      },
+
+      exportLocumInvoiceFinanceReportsAsPdf () {
+        if (!this.selectedYearMonth) {
+          return
+        }
+
+        const [
+          year,
+          month,
+        ] = this.selectedYearMonth.split('-')
+
+        this.exporting = true
+
+        const filename = `locum_invoice_finance_reports_${year}_${month}.pdf`
+
+        this.$axios.post(`/api/v1/practice/locum-invoice-finance-reports/${year}/${month}/generate-key`).then((responses) => {
+          const token = responses.data.data.token
+
+          window.open(`${process.env.API_URL}/api/v1/locum-invoice-finance-reports/pdf/${filename}?token=${token}`)
+        }).catch((err) => {
+          console.log('err', err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        }).finally(() => {
+          this.exporting = false
         })
       },
     },
