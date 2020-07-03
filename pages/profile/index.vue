@@ -188,7 +188,7 @@
                   :type="'select'"
                   :name="'section_scheme_year'"
                   :label="'NHS Pension Scheme Year?'"
-                  :items="[{ label: '1995/2008', value: '1995/2008' }, { label: '2015', value: '2015' }]"
+                  :items="schemeYearLists"
                   required
                 />
                 <AppInput
@@ -598,6 +598,23 @@ export default {
           }
         );
       }
+    },
+    schemeYearLists() {
+      let defaultDate = 2020;
+      let currentDate = this.$moment().year();
+      let lists = [];
+      while (currentDate >= defaultDate) {
+        lists.push({
+          label: `${currentDate}-${this.$moment(currentDate, "YYYY")
+            .add(1, "years")
+            .year()}`,
+          value: `${currentDate}-${this.$moment(currentDate, "YYYY")
+            .add(1, "years")
+            .year()}`
+        });
+        currentDate = currentDate - 1;
+      }
+      return lists;
     }
   },
   watch: {
