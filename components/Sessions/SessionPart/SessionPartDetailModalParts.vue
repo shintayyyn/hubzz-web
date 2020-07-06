@@ -50,6 +50,7 @@
         @completed="[getJobParts(params), completeJobPart=false]"
       />
     </transition>
+
     <transition name="slide" mode="out-in">
       <SessionDetailModalTerminateModal
         v-if="terminateJobPart"
@@ -59,6 +60,7 @@
         @terminated="[getJobParts(params), terminateJobPart=false]"
       />
     </transition>
+    
     <transition name="fade" mode="out-in">
       <div v-if="completeJobPart || terminateJobPart" class="shield" />
     </transition>
