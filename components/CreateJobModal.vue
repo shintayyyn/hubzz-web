@@ -497,7 +497,6 @@
 									:name="'number_of_patients'"
 									:label="'Number of patients to be seen during the session?'"
 									:placeholder="''"
-									:in-style="'text-align:right;'"
 									:error="formError.find(item => item.field === 'number_of_patients')"
 									required
 									@blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"

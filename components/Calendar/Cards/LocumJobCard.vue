@@ -64,14 +64,14 @@ export default {
 			);
 		},
 		link() {
-			let job = this.isJobPart ? this.propJob.job : this.propJob;
+			let job = this.propJob;
 			if (job.locum_status !== "Permanent") {
 				let status = job.type === "Private" ? "Private" : job.status;
 				let id =
 					["Ongoing"].includes(this.propJob.status) &&
 					this.propJob.job.type === "Platform"
 						? this.propJob.id
-						: job.id;
+						: this.propJob.job.id;
 				return {
 					path: this.job.type
 						? `/dashboard/${id}?status=${status}`
@@ -108,7 +108,7 @@ export default {
 			// if (job.type === "Private") {
 			// 	if (job.locum_status === )
 			// }
-			switch (job.locum_status) {
+			switch (this.propJob.locum_status) {
 				case "Applied":
 					return `bg-job-pending`;
 					break;

@@ -405,9 +405,12 @@ export default {
 								if (job.dates.includes(days.fullDate)) {
 									if (jobsInMonth.length === 0) {
 										let shifts = [];
-										if (job.shifts.length) {
-											job.shifts.forEach(shift => {
-												shifts.push(shift.name);
+										let shiftSchedule = job.schedules.filter(
+											item => item.date === days.fullDate
+										);
+										if (shiftSchedule.length) {
+											shiftSchedule.forEach(sched => {
+												shifts.push(sched.shift.name);
 											});
 										}
 										jobsInMonth.push({
@@ -440,9 +443,12 @@ export default {
 											findDate.jobs.push(job);
 										} else {
 											let shifts = [];
-											if (job.shifts.length) {
-												job.shifts.forEach(shift => {
-													shifts.push(shift.name);
+											let shiftSchedule = job.schedules.filter(
+												item => item.date === days.fullDate
+											);
+											if (shiftSchedule.length) {
+												shiftSchedule.forEach(sched => {
+													shifts.push(sched.shift.name);
 												});
 											}
 											jobsInMonth.push({
@@ -458,9 +464,12 @@ export default {
 								if (job.dates[0] === days.fullDate) {
 									if (jobsInMonth.length === 0) {
 										let shifts = [];
-										if (job.shifts.length) {
-											job.shifts.forEach(shift => {
-												shifts.push(shift.name);
+										let shiftSchedule = job.schedules.filter(
+											item => item.date === days.fullDate
+										);
+										if (shiftSchedule.length) {
+											shiftSchedule.forEach(sched => {
+												shifts.push(sched.shift.name);
 											});
 										}
 										jobsInMonth.push({
@@ -479,10 +488,13 @@ export default {
 											let findDate = jobsInMonth.find(
 												item => item.date === days.fullDate
 											);
-											if (job.shifts.length) {
-												job.shifts.forEach(shift => {
-													if (!findDate.shifts.includes(shift.name)) {
-														findDate.shifts.push(shift.name);
+											let shiftSchedule = job.schedules.filter(
+												item => item.date === days.fullDate
+											);
+											if (shiftSchedule.length) {
+												shiftSchedule.forEach(sched => {
+													if (!findDate.shifts.includes(sched.shift.name)) {
+														findDate.shifts.push(sched.shift.name);
 													}
 												});
 											}
@@ -492,9 +504,12 @@ export default {
 											findDate.jobs.push(job);
 										} else {
 											let shifts = [];
-											if (job.shifts.length) {
-												job.shifts.forEach(shift => {
-													shifts.push(shift.name);
+											let shiftSchedule = job.schedules.filter(
+												item => item.date === days.fullDate
+											);
+											if (shiftSchedule.length) {
+												shiftSchedule.forEach(sched => {
+													shifts.push(sched.shift.name);
 												});
 											}
 											jobsInMonth.push({
@@ -514,9 +529,12 @@ export default {
 							if (jobPart.dates.includes(days.fullDate)) {
 								if (jobsInMonth.length === 0) {
 									let shifts = [];
-									if (jobPart.job.shifts.length) {
-										jobPart.job.shifts.forEach(shift => {
-											shifts.push(shift.name);
+									let shiftSchedule = jobPart.schedules.filter(
+										item => item.date === days.fullDate
+									);
+									if (shiftSchedule.length) {
+										shiftSchedule.forEach(sched => {
+											shifts.push(sched.shift.name);
 										});
 									}
 									jobsInMonth.push({
@@ -535,10 +553,13 @@ export default {
 										let findDate = jobsInMonth.find(
 											item => item.date === days.fullDate
 										);
-										if (jobPart.job.shifts.length) {
-											jobPart.job.shifts.forEach(shift => {
-												if (!findDate.shifts.includes(shift.name)) {
-													findDate.shifts.push(shift.name);
+										let shiftSchedule = jobPart.schedules.filter(
+											item => item.date === days.fullDate
+										);
+										if (shiftSchedule.length) {
+											shiftSchedule.forEach(sched => {
+												if (!findDate.shifts.includes(sched.shift.name)) {
+													findDate.shifts.push(sched.shift.name);
 												}
 											});
 										}
@@ -549,9 +570,12 @@ export default {
 										findDate.jobs.push(jobPart);
 									} else {
 										let shifts = [];
-										if (jobPart.job.shifts.length) {
-											jobPart.job.shifts.forEach(shift => {
-												shifts.push(shift.name);
+										let shiftSchedule = jobPart.schedules.filter(
+											item => item.date === days.fullDate
+										);
+										if (shiftSchedule.length) {
+											shiftSchedule.forEach(sched => {
+												shifts.push(sched.shift.name);
 											});
 										}
 										jobsInMonth.push({
@@ -634,9 +658,17 @@ export default {
 							if (jobPart.dates.includes(days.fullDate)) {
 								if (jobsInMonth.length === 0) {
 									let shifts = [];
-									if (jobPart.job.shifts.length) {
-										jobPart.job.shifts.forEach(shift => {
-											shifts.push(shift.name);
+									// if (jobPart.job.shifts.length) {
+									// 	jobPart.job.shifts.forEach(shift => {
+									// 		shifts.push(shift.name);
+									// 	});
+									// }
+									let shiftSchedule = jobPart.schedules.filter(
+										item => item.date === days.fullDate
+									);
+									if (shiftSchedule.length) {
+										shiftSchedule.forEach(sched => {
+											shifts.push(sched.shift.name);
 										});
 									}
 									jobsInMonth.push({
@@ -656,10 +688,13 @@ export default {
 											item => item.date === days.fullDate
 										);
 
-										if (jobPart.job.shifts.length) {
-											jobPart.job.shifts.forEach(shift => {
-												if (!findDate.shifts.includes(shift.name)) {
-													findDate.shifts.push(shift.name);
+										let shiftSchedule = jobPart.schedules.filter(
+											item => item.date === days.fullDate
+										);
+										if (shiftSchedule.length) {
+											shiftSchedule.forEach(sched => {
+												if (!findDate.shifts.includes(sched.shift.name)) {
+													findDate.shifts.push(sched.shift.name);
 												}
 											});
 										}
@@ -669,9 +704,12 @@ export default {
 										findDate.jobs.push(jobPart);
 									} else {
 										let shifts = [];
-										if (jobPart.job.shifts.length) {
-											jobPart.job.shifts.forEach(shift => {
-												shifts.push(shift.name);
+										let shiftSchedule = jobPart.schedules.filter(
+											item => item.date === days.fullDate
+										);
+										if (shiftSchedule.length) {
+											shiftSchedule.forEach(sched => {
+												shifts.push(sched.shift.name);
 											});
 										}
 										jobsInMonth.push({
@@ -1095,7 +1133,7 @@ export default {
 					this.$axios
 						.$get("/api/v1/locum/job-parts", {
 							params: {
-								locum_status: ["Ongoing", "Allocated"],
+								locum_status: ["Allocated"],
 								calendar_date_start: `${this.startOfMonth}:gte`,
 								calendar_date_end: `${this.endOfMonth}:lte`,
 								limit: 100000000
@@ -1156,8 +1194,7 @@ export default {
 							"jobs/SET_LOCUM_ALLOCATED_JOB_PARTS",
 							ongoingJobParts.filter(
 								item =>
-									item.job.status === "Allocated" &&
-									item.job.type === "Platform"
+									item.status === "Allocated" && item.job.type === "Platform"
 							)
 						);
 
