@@ -17,10 +17,12 @@
         :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >My Bank</nuxt-link>
     </div>-->
+    
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+
       <div v-if="!initialLoading">
         <div class="flex">
           <AppButton
@@ -384,8 +386,8 @@ export default {
   },
   middleware ({ query, error, }) {
     if (
-      query.status &&
-      ![
+      query.status
+      && ![
         "pending",
         "allocated",
         "ongoing",
@@ -453,8 +455,8 @@ export default {
   computed: {
     isJobPart () {
       if (
-        this.$route.query.status &&
-        ![
+        this.$route.query.status
+        && ![
           "ongoing",
           "completed",
           "approved",
@@ -465,8 +467,8 @@ export default {
         return false
       }
       if (
-        this.$route.query.status &&
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
+        this.$route.query.status
+        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
           this.$route.query.status.toLowerCase()
         )
       ) {
@@ -478,9 +480,9 @@ export default {
       return false
     },
     noJobsToDisplay () {
-      let queryStatus = this.$route.query.status ?
-        this.$route.query.status.toLowerCase() :
-        ""
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : ""
       switch (queryStatus) {
       case "pending":
       case "allocated":
@@ -502,9 +504,9 @@ export default {
     },
     columns () {
       let columns = []
-      let queryStatus = this.$route.query.status ?
-        this.$route.query.status.toLowerCase() :
-        "allocated"
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "allocated"
       if (
         ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
           queryStatus
@@ -710,9 +712,9 @@ export default {
       // let newBank = newValue.bank;
       // let oldBank = oldValue.bank;
       if (
-        newStatus &&
-        newStatus !== null &&
-        newStatus !== oldStatus
+        newStatus
+        && newStatus !== null
+        && newStatus !== oldStatus
         // || (newBank && newBank !== null && newBank !== oldBank)
       ) {
         this.current_page = 1
@@ -749,8 +751,8 @@ export default {
 
       let isJobPart = false
       if (
-        queryStatus &&
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
+        queryStatus
+        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
           queryStatus.toLowerCase()
         )
       ) {
@@ -815,12 +817,12 @@ export default {
               order_by: [],
               type: !isJobPart ? type : "",
               job_type: isJobPart ? job_type : "",
-              practice_id: !isJobPart ?
-                app.$auth.user.practice_detail.practice.id :
-                "",
-              job_practice_id: isJobPart ?
-                app.$auth.user.practice_detail.practice.id :
-                "",
+              practice_id: !isJobPart
+                ? app.$auth.user.practice_detail.practice.id
+                : "",
+              job_practice_id: isJobPart
+                ? app.$auth.user.practice_detail.practice.id
+                : "",
               shift_id: !isJobPart ? shift_id : "",
               job_shift_id: isJobPart ? job_shift_id : "",
               rate: !isJobPart ? rate : "",
@@ -838,9 +840,9 @@ export default {
               title_includes: !isJobPart ? title_includes : "",
               job_title_includes: isJobPart ? job_title_includes : "",
               job_number_includes: !isJobPart ? job_number_includes : "",
-              job_part_number_includes: isJobPart ?
-                job_part_number_includes :
-                "",
+              job_part_number_includes: isJobPart
+                ? job_part_number_includes
+                : "",
               // ended: queryStatus === "Ongoing" ? false : null
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
@@ -869,12 +871,12 @@ export default {
               job_title: isJobPart ? job_title : "",
               type: !isJobPart ? type : "",
               job_type: isJobPart ? job_type : "",
-              practice_id: !isJobPart ?
-                app.$auth.user.practice_detail.practice.id :
-                "",
-              job_practice_id: isJobPart ?
-                app.$auth.user.practice_detail.practice.id :
-                "",
+              practice_id: !isJobPart
+                ? app.$auth.user.practice_detail.practice.id
+                : "",
+              job_practice_id: isJobPart
+                ? app.$auth.user.practice_detail.practice.id
+                : "",
               shift_id: !isJobPart ? shift_id : "",
               job_shift_id: isJobPart ? job_shift_id : "",
               rate: !isJobPart ? rate : "",
@@ -892,9 +894,9 @@ export default {
               title_includes: !isJobPart ? title_includes : "",
               job_title_includes: isJobPart ? job_title_includes : "",
               job_number_includes: !isJobPart ? job_number_includes : "",
-              job_part_number_includes: isJobPart ?
-                job_part_number_includes :
-                "",
+              job_part_number_includes: isJobPart
+                ? job_part_number_includes
+                : "",
               // ended: queryStatus === "Ongoing" ? false : null
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
@@ -907,9 +909,9 @@ export default {
           })
           .then(res => {
             let jobs = 0
-            jobs =
-              res.data && res.data.jobs ?
-                res.data.jobs.map(item => {
+            jobs
+              = res.data && res.data.jobs
+                ? res.data.jobs.map(item => {
                   return {
                     ...item,
                     // isGp:
@@ -917,10 +919,10 @@ export default {
                     //     ? "GP"
                     //     : "Non-GP",
                     profession_name: item.platform_job.profession.name,
-                    assigned_to: item.platform_job.appointed_to_locum.user ?
-                      item.platform_job.appointed_to_locum.user
-                        .personal_detail.name :
-                      null,
+                    assigned_to: item.platform_job.appointed_to_locum.user
+                      ? item.platform_job.appointed_to_locum.user
+                        .personal_detail.name
+                      : null,
                     date_time_start: `${app
                       .$moment(item.date_start)
                       .format("DD-MM-YYYY")} | ${item.time_start}`,
@@ -928,9 +930,9 @@ export default {
                       .$moment(item.date_end)
                       .format("DD-MM-YYYY")} | ${item.time_end}`,
                   }
-                }) :
-                res.data.job_parts ?
-                  res.data.job_parts.map(item => {
+                })
+                : res.data.job_parts
+                  ? res.data.job_parts.map(item => {
                     return {
                       ...item,
                       // isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
@@ -943,8 +945,8 @@ export default {
                         .$moment(item.date_end)
                         .format("DD-MM-YYYY")} | ${item.time_end}`,
                     }
-                  }) :
-                  []
+                  })
+                  : []
             return jobs
           }),
       ])
@@ -1105,12 +1107,12 @@ export default {
               order_by: [],
               type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
-              practice_id: !this.isJobPart ?
-                this.$auth.user.practice_detail.practice.id :
-                "",
-              job_practice_id: this.isJobPart ?
-                this.$auth.user.practice_detail.practice.id :
-                "",
+              practice_id: !this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
+              job_practice_id: this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
               shift_id: !this.isJobPart ? this.shift_id : "",
               job_shift_id: this.isJobPart ? this.job_shift_id : "",
               rate: !this.isJobPart ? this.rate : "",
@@ -1127,12 +1129,12 @@ export default {
               viewing_locum_user_id: this.viewing_locum_user_id,
               title_includes: !this.isJobPart ? this.title_includes : "",
               job_title_includes: this.isJobPart ? this.job_title_includes : "",
-              job_number_includes: !this.isJobPart ?
-                this.job_number_includes :
-                "",
-              job_part_number_includes: this.isJobPart ?
-                this.job_part_number_includes :
-                "",
+              job_number_includes: !this.isJobPart
+                ? this.job_number_includes
+                : "",
+              job_part_number_includes: this.isJobPart
+                ? this.job_part_number_includes
+                : "",
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -1156,12 +1158,12 @@ export default {
               order_by: [],
               type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
-              practice_id: !this.isJobPart ?
-                this.$auth.user.practice_detail.practice.id :
-                "",
-              job_practice_id: this.isJobPart ?
-                this.$auth.user.practice_detail.practice.id :
-                "",
+              practice_id: !this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
+              job_practice_id: this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
               shift_id: !this.isJobPart ? this.shift_id : "",
               job_shift_id: this.isJobPart ? this.job_shift_id : "",
               rate: !this.isJobPart ? this.rate : "",
@@ -1178,12 +1180,12 @@ export default {
               viewing_locum_user_id: this.viewing_locum_user_id,
               title_includes: !this.isJobPart ? this.title_includes : "",
               job_title_includes: this.isJobPart ? this.job_title_includes : "",
-              job_number_includes: !this.isJobPart ?
-                this.job_number_includes :
-                "",
-              job_part_number_includes: this.isJobPart ?
-                this.job_part_number_includes :
-                "",
+              job_number_includes: !this.isJobPart
+                ? this.job_number_includes
+                : "",
+              job_part_number_includes: this.isJobPart
+                ? this.job_part_number_includes
+                : "",
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -1199,9 +1201,9 @@ export default {
         ),
       ])
         .then(([responseCount, responseJobs,]) => {
-          this.jobs =
-            responseJobs.data && responseJobs.data.jobs ?
-              responseJobs.data.jobs.map(item => {
+          this.jobs
+            = responseJobs.data && responseJobs.data.jobs
+              ? responseJobs.data.jobs.map(item => {
                 return {
                   ...item,
                   // isGp:
@@ -1209,10 +1211,10 @@ export default {
                   //     ? "GP"
                   //     : "Non-GP",
                   profession_name: item.platform_job.profession.name,
-                  assigned_to: item.platform_job.appointed_to_locum.user ?
-                    item.platform_job.appointed_to_locum.user
-                      .personal_detail.name :
-                    null,
+                  assigned_to: item.platform_job.appointed_to_locum.user
+                    ? item.platform_job.appointed_to_locum.user
+                      .personal_detail.name
+                    : null,
                   date_time_start: `${this.$moment(item.date_start).format(
                     "DD-MM-YYYY"
                   )} | ${item.time_start}`,
@@ -1220,9 +1222,9 @@ export default {
                     "DD-MM-YYYY"
                   )} | ${item.time_end}`,
                 }
-              }) :
-              responseJobs.data.job_parts ?
-                responseJobs.data.job_parts.map(item => {
+              })
+              : responseJobs.data.job_parts
+                ? responseJobs.data.job_parts.map(item => {
                   return {
                     ...item,
                     profession_name: item.profession.name,
@@ -1235,8 +1237,8 @@ export default {
                       "DD-MM-YYYY"
                     )} | ${item.time_end}`,
                   }
-                }) :
-                []
+                })
+                : []
           this.total = responseCount.data.count
         })
         .catch(err => {
@@ -1274,12 +1276,12 @@ export default {
             order_by: this.order_by,
             type: !this.isJobPart ? this.type : "",
             job_type: this.isJobPart ? this.job_type : "",
-            practice_id: !this.isJobPart ?
-              this.$auth.user.practice_detail.practice.id :
-              "",
-            job_practice_id: this.isJobPart ?
-              this.$auth.user.practice_detail.practice.id :
-              "",
+            practice_id: !this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            job_practice_id: this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
             shift_id: !this.isJobPart ? this.shift_id : "",
             job_shift_id: this.isJobPart ? this.job_shift_id : "",
             rate: !this.isJobPart ? this.rate : "",
@@ -1296,12 +1298,12 @@ export default {
             viewing_locum_user_id: this.viewing_locum_user_id,
             title_includes: !this.isJobPart ? this.title_includes : "",
             job_title_includes: this.isJobPart ? this.job_title_includes : "",
-            job_number_includes: !this.isJobPart ?
-              this.job_number_includes :
-              "",
-            job_part_number_includes: this.isJobPart ?
-              this.job_part_number_includes :
-              "",
+            job_number_includes: !this.isJobPart
+              ? this.job_number_includes
+              : "",
+            job_part_number_includes: this.isJobPart
+              ? this.job_part_number_includes
+              : "",
             ended: this.ended,
             // has_favorite_applicants:
             //   queryStatus === "Applied" && bankStatus === "true"
@@ -1313,20 +1315,20 @@ export default {
           },
         })
         .then(res => {
-          this.jobs =
-            res.data && res.data.jobs ?
-              res.data.jobs.map(item => {
+          this.jobs
+            = res.data && res.data.jobs
+              ? res.data.jobs.map(item => {
                 return {
                   ...item,
                   isGp:
-                      item.platform_job.profession.name === "GP" ?
-                        "GP" :
-                        "Non-GP",
+                      item.platform_job.profession.name === "GP"
+                        ? "GP"
+                        : "Non-GP",
                   profession_name: item.platform_job.profession.name,
-                  assigned_to: item.platform_job.appointed_to_locum.user ?
-                    item.platform_job.appointed_to_locum.user
-                      .personal_detail.name :
-                    null,
+                  assigned_to: item.platform_job.appointed_to_locum.user
+                    ? item.platform_job.appointed_to_locum.user
+                      .personal_detail.name
+                    : null,
                   date_time_start: `${this.$moment(item.date_start).format(
                     "DD-MM-YYYY"
                   )} | ${item.time_start}`,
@@ -1334,9 +1336,9 @@ export default {
                     "DD-MM-YYYY"
                   )} | ${item.time_end}`,
                 }
-              }) :
-              res.data.job_parts ?
-                res.data.job_parts.map(item => {
+              })
+              : res.data.job_parts
+                ? res.data.job_parts.map(item => {
                   return {
                     ...item,
                     profession_name: item.profession.name,
@@ -1349,8 +1351,8 @@ export default {
                       "DD-MM-YYYY"
                     )} | ${item.time_end}`,
                   }
-                }) :
-                []
+                })
+                : []
         })
         .catch(err => {
           console.log("err", err.response || err)
@@ -1362,9 +1364,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1374,9 +1376,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Applied" ||
-          this.$route.query.status === "Live")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Applied"
+          || this.$route.query.status === "Live")
       ) {
         this.showRefresh = true
       }
@@ -1386,9 +1388,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Applied" ||
-          this.$route.query.status === "Live")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Applied"
+          || this.$route.query.status === "Live")
       ) {
         this.showRefresh = true
       }
@@ -1398,9 +1400,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Applied")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1410,9 +1412,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Allocated")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Allocated")
       ) {
         this.showRefresh = true
       }
@@ -1422,9 +1424,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Completed" ||
-          this.$route.query.status === "Ongoing")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Completed"
+          || this.$route.query.status === "Ongoing")
       ) {
         this.showRefresh = true
       }
@@ -1434,9 +1436,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Approved" ||
-          this.$route.query.status === "Completed")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Approved"
+          || this.$route.query.status === "Completed")
       ) {
         this.showRefresh = true
       }
@@ -1446,12 +1448,12 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Cancelled" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Cancelled"
+          || this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1461,11 +1463,11 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1475,12 +1477,12 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Declined" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Declined"
+          || this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1490,9 +1492,9 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Declined" ||
-          this.$route.query.status === "Allocated")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Declined"
+          || this.$route.query.status === "Allocated")
       ) {
         this.showRefresh = true
       }
@@ -1502,8 +1504,8 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        this.$route.query.status === "Allocated"
+        this.$route.path.includes("/sessions")
+        && this.$route.query.status === "Allocated"
       ) {
         this.showRefresh = true
       }
@@ -1513,12 +1515,12 @@ export default {
         return
       }
       if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Unfilled" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
+        this.$route.path.includes("/sessions")
+        && (this.$route.query.status === "Unfilled"
+          || this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
