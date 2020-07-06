@@ -37,218 +37,218 @@
 </template>
 
 <script>
-  import AppSideBar from "@/components/AppSideBar"
-  import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-  import AppNotification from "@/components/AppNotification"
-  // import JobNotification from "@/components/JobNotification"
-  import AppHeader from "@/components/AppHeader"
+import AppSideBar from "@/components/AppSideBar"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppNotification from "@/components/AppNotification"
+// import JobNotification from "@/components/JobNotification"
+import AppHeader from "@/components/AppHeader"
 
-  export default {
-    transitions: "page",
-    components: {
-      AppSideBar,
-      AppConfirmationModal,
-      AppNotification,
-      // JobNotification,
-      AppHeader
+export default {
+  transitions: "page",
+  components: {
+    AppSideBar,
+    AppConfirmationModal,
+    AppNotification,
+    // JobNotification,
+    AppHeader,
+  },
+  data () {
+    return {
+      signout_modal: false,
+    }
+  },
+  computed: {
+    user_verification () {
+      return this.$store.state.user_verification
     },
-    data () {
-      return {
-        signout_modal: false
+    user_deactivated_modal () {
+      return this.$store.state.user_deactivated_modal
+    },
+  },
+  middleware: "isNotAuthenticated",
+  watch: {
+    $route (value) {
+      if (value) {
+        this.$store.commit("TOGGLE_SIDEBAR", false)
+        document.body.style.overflow = "auto"
       }
     },
-    computed: {
-      user_verification () {
-        return this.$store.state.user_verification
-      },
-      user_deactivated_modal () {
-        return this.$store.state.user_deactivated_modal
-      }
+  },
+  mounted () {
+    // EMAIL DEACTIVATED
+    this.$socket.on(
+      "Locum Notification Account Deactivated",
+      this.userDeactivated
+    )
+    this.$socket.on(
+      "Practice Notification Account Deactivated",
+      this.userDeactivated
+    )
+    // LOCUM
+    this.$socket.on(
+      "User Notification Email Verified",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "User Notification Email Pending",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Number Pending",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Number Rejected",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Number Verified",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Compliance Approved",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Compliance Rejected",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Compliance Pending",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Compliance Expiring",
+      this.getLocumVerification
+    )
+    this.$socket.on(
+      "Locum Notification Compliance Expired",
+      this.getLocumVerification
+    )
+
+    // PRACTICE
+    this.$socket.on(
+      "Practice Notification Document Created",
+      this.getPracticeVerification
+    )
+    this.$socket.on(
+      "Practice Notification Document Updated",
+      this.getPracticeVerification
+    )
+    this.$socket.on(
+      "Practice Notification Rates Update",
+      this.getPracticeVerification
+    )
+    this.$socket.on(
+      "Practice Notification User Update",
+      this.getPracticeVerification
+    )
+    this.$socket.on(
+      "Practice Notification Practice Update",
+      this.getPracticeVerification
+    )
+  },
+  destroyed () {
+    this.removeListener()
+  },
+  methods: {
+    async logout () {
+      await this.$auth.logout()
+      this.$auth.$storage.setUniversal("_token.local", "")
+      this.$router.push("/")
     },
-    middleware: "isNotAuthenticated",
-    watch: {
-      $route (value) {
-        if (value) {
-          this.$store.commit("TOGGLE_SIDEBAR", false)
-          document.body.style.overflow = "auto"
-        }
-      }
+    userDeactivated () {
+      this.CheckIfUserIsDeactivated()
     },
-    mounted () {
+    getPracticeVerification () {
+      this.CheckUserVerification()
+    },
+    getLocumVerification () {
+      this.CheckUserVerification()
+    },
+    removeListener () {
       // EMAIL DEACTIVATED
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Account Deactivated",
         this.userDeactivated
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Practice Notification Account Deactivated",
         this.userDeactivated
       )
       // LOCUM
-      this.$socket.on(
+      this.$socket.removeListener(
         "User Notification Email Verified",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "User Notification Email Pending",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Number Pending",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Number Rejected",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Number Verified",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Compliance Approved",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Compliance Rejected",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Compliance Pending",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Compliance Expiring",
         this.getLocumVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Locum Notification Compliance Expired",
         this.getLocumVerification
       )
 
       // PRACTICE
-      this.$socket.on(
+      this.$socket.removeListener(
         "Practice Notification Document Created",
         this.getPracticeVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Practice Notification Document Updated",
         this.getPracticeVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Practice Notification Rates Update",
         this.getPracticeVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Practice Notification User Update",
         this.getPracticeVerification
       )
-      this.$socket.on(
+      this.$socket.removeListener(
         "Practice Notification Practice Update",
         this.getPracticeVerification
       )
     },
-    destroyed () {
-      this.removeListener()
+    close () {
+      this.$store.commit("TOGGLE_SIDEBAR", false)
+      document.body.style.overflow = "auto"
     },
-    methods: {
-      async logout () {
-        await this.$auth.logout()
-        this.$auth.$storage.setUniversal("_token.local", "")
-        this.$router.push("/")
-      },
-      userDeactivated () {
-        this.CheckIfUserIsDeactivated()
-      },
-      getPracticeVerification () {
-        this.CheckUserVerification()
-      },
-      getLocumVerification () {
-        this.CheckUserVerification()
-      },
-      removeListener () {
-        // EMAIL DEACTIVATED
-        this.$socket.removeListener(
-          "Locum Notification Account Deactivated",
-          this.userDeactivated
-        )
-        this.$socket.removeListener(
-          "Practice Notification Account Deactivated",
-          this.userDeactivated
-        )
-        // LOCUM
-        this.$socket.removeListener(
-          "User Notification Email Verified",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "User Notification Email Pending",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Number Pending",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Number Rejected",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Number Verified",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Compliance Approved",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Compliance Rejected",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Compliance Pending",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Compliance Expiring",
-          this.getLocumVerification
-        )
-        this.$socket.removeListener(
-          "Locum Notification Compliance Expired",
-          this.getLocumVerification
-        )
-
-        // PRACTICE
-        this.$socket.removeListener(
-          "Practice Notification Document Created",
-          this.getPracticeVerification
-        )
-        this.$socket.removeListener(
-          "Practice Notification Document Updated",
-          this.getPracticeVerification
-        )
-        this.$socket.removeListener(
-          "Practice Notification Rates Update",
-          this.getPracticeVerification
-        )
-        this.$socket.removeListener(
-          "Practice Notification User Update",
-          this.getPracticeVerification
-        )
-        this.$socket.removeListener(
-          "Practice Notification Practice Update",
-          this.getPracticeVerification
-        )
-      },
-      close () {
-        this.$store.commit("TOGGLE_SIDEBAR", false)
-        document.body.style.overflow = "auto"
-      },
-      refresh () {
-        window.location.reload()
-      }
-    }
-  }
+    refresh () {
+      window.location.reload()
+    },
+  },
+}
 </script>
 
 <style>
