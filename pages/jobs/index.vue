@@ -50,7 +50,6 @@
         />
 
         <div
-          v-if="!isJobPart"
           class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
@@ -184,154 +183,6 @@
           </div>
         </div>
 
-        <div
-          v-if="isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="job_part_number_includes"
-              class="px-1"
-              :type="'text'"
-              :name="'job_part_number_includes'"
-              :label="'Job part number'"
-            />
-          </div>
-          <!-- <div
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-            v-if="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() !== 'private')"
-          >
-            <AppInput
-              v-model="job_practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>-->
-          <!-- <div
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-            v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
-          >
-            <AppInput
-              v-model="job_private_practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>-->
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="job_title_includes"
-              class="px-1"
-              :type="'text'"
-              :name="'job_title_includes'"
-              :label="'Job Title'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="job_shift_id"
-              class="px-1"
-              :type="'select'"
-              :name="'job_shift_id'"
-              :label="'Shift'"
-              :items="shifts"
-            />
-          </div>
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="job_rate"
-              class="px-1"
-              :type="'text'"
-              :name="'job_rate'"
-              :label="'Rate £'"
-              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-              :limit="8"
-              @keydown="isNumber($event)"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="job_rate_type_id"
-              class="px-1"
-              :type="'select'"
-              :name="'job_rate_type_id'"
-              :label="'per'"
-              :items="rates"
-            />
-          </div>
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="calendar_date_start"
-              :name="'calendar_date_start'"
-              :label="'From'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="calendar_date_end"
-              :name="'calendar_date_end'"
-              :label="'To'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              v-model="near_post_code"
-              class="px-1"
-              :name="'near_post_code'"
-              :label="'Post code'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput v-model="miles" class="px-1" :type="'number'" :name="'miles'" :label="'Miles'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="invoice_status"
-              class="px-1"
-              :type="'select'"
-              :name="'invoice_status'"
-              :label="'Invoice Status'"
-              :items="invoiceStatusList"
-            />
-          </div>
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJob"
-            />
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
-        </div>
-
         <AppTable
           v-if="jobs.length > 0"
           :total="total"
@@ -346,19 +197,15 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
-          <template
-            v-slot:shifts="slotProps"
-          >
-            {{ displayArray(slotProps.item.shifts.map(item => item.name)) }}
+          <template v-slot:shifts="slotProps">
+            {{ slotProps.item.shifts.map(item => item.name).join(', ') }}
           </template>
-          <template
-            v-slot:rate_type="slotProps"
-          >
-            {{ displayArray(slotProps.item.locum_detail_rate_types.map(item => item.name)) }}
+
+          <template v-slot:rate_type="slotProps">
+            {{ slotProps.item.locum_detail_rate_types.map(item => item.name).join(', ') }}
           </template>
-          <template
-            v-slot:rates="slotProps"
-          >
+
+          <template v-slot:rates="slotProps">
             {{ slotProps.item.min_rate === slotProps.item.max_rate ? `£${slotProps.item.max_rate}` : `£${slotProps.item.min_rate} - £${ slotProps.item.max_rate}` }}
           </template>
         </AppTable>
@@ -509,18 +356,57 @@ export default {
   },
 
   computed: {
-    isJobPart () {
-      const { query, } = this.$route
+    getRequestQueryFilters () {
+      let locum_status = []
 
-      const { status = "Allocated", } = query
+      let queryStatus = this.$route.query.status
 
-      return [
-        "ongoing",
-        "completed",
-        "approved",
-        "cancelled",
-        "withdrawn",
-      ].includes(status.toLowerCase())
+      if (queryStatus) {
+        switch (queryStatus) {
+        // case "Bank":
+        //   locum_status = ["Matched"];
+        //   break;
+        case "Completed":
+          locum_status = ["Completed",]
+          break
+        case "Available":
+          locum_status = ["Matched", "Available",]
+          break
+          // case "Public":
+          //   locum_status = ["Available"];
+          //   break;
+        case "Private":
+          locum_status = []
+          break
+        default:
+          locum_status = [`${queryStatus}`,]
+          break
+        }
+      } else if (!queryStatus) {
+        locum_status = ["Allocated",]
+      }
+
+      return {
+        locum_status,
+        practice_id: this.practice_id,
+        private_practice_id: this.private_practice_id,
+        shift_id: this.shift_id,
+        rate: this.rate,
+        rate_type_id: this.rate_type_id,
+        near_post_code: this.near_post_code,
+        miles: this.miles,
+        calendar_date_start: this.calendar_date_start,
+        calendar_date_end: this.calendar_date_end,
+        time_start: this.time_start,
+        time_end: this.time_end,
+        invoice_status: this.invoice_status,
+        viewing_locum_user_id: [],
+        title_includes: this.title_includes,
+        job_number_includes: this.job_number_includes,
+        type: queryStatus === "Private"
+          ? "Private"
+          : "Platform",
+      }
     },
 
     noJobsToDisplay () {
@@ -749,259 +635,103 @@ export default {
         this.clearFilters()
         this.isFiltered = false
         this.initialLoading = true
-        await this.getJobsPromiseAll()
+        await this.getLocumJobs()
         this.initialLoading = false
       }
     },
   },
 
-  async asyncData ({ app, query, error, }) {
-    try {
-      let locum_status = []
-      let queryStatus = query.status
-
-      if (!queryStatus) {
-        locum_status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        // case "Bank":
-        //   locum_status = ["Matched"];
-        //   break;
-        case "Completed":
-          locum_status = ["Completed",]
-          break
-        case "Available":
-          locum_status = ["Matched", "Available",]
-          break
-          // case "Public":
-          //   locum_status = ["Available"];
-          //   break;
-        case "Private":
-          locum_status = []
-          break
-        default:
-          locum_status = [`${queryStatus}`,]
-          break
-        }
-      }
-
-      let isJobPart = false
-      if (
-        queryStatus
-        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
-          queryStatus.toLowerCase()
-        )
-      ) {
-        isJobPart = true
-      }
-
-      let practice_id = ""
-      let job_practice_id = ""
-      let private_practice_id = ""
-      let job_private_practice_id = ""
-      let shift_id = ""
-      let job_shift_id = ""
-      let rate = ""
-      let job_rate = ""
-      let rate_type_id = ""
-      let job_rate_type_id = ""
-
-      let near_post_code = ""
-      let miles = ""
-      let calendar_date_start = ""
-      let calendar_date_end = ""
-      let time_start = ""
-      let time_end = ""
-      let invoice_status = ""
-
-      let title_includes = ""
-      let job_title_includes = ""
-      let job_number_includes = ""
-      let job_part_number_includes = ""
-      let type = queryStatus === "Private" ? "Private" : "Platform"
-      let job_type = queryStatus === "Private" ? "Private" : "Platform"
-
-      const filterParams = {
-        locum_status,
-        order_by: [],
-        practice_id:
-          !isJobPart && queryStatus === "Platform" ? practice_id : "",
-        job_practice_id:
-          isJobPart && queryStatus === "Platform" ? job_practice_id : "",
-        private_practice_id:
-          !isJobPart && queryStatus === "Private" ? private_practice_id : "",
-        job_private_practice_id:
-          isJobPart && queryStatus === "Private" ? job_private_practice_id : "",
-        shift_id: !isJobPart ? shift_id : "",
-        job_shift_id: isJobPart ? job_shift_id : "",
-        rate: !isJobPart ? rate : "",
-        job_rate: isJobPart ? job_rate : "",
-        rate_type_id: !isJobPart ? rate_type_id : "",
-        job_rate_type_id: isJobPart ? job_rate_type_id : "",
-        near_post_code: near_post_code,
-        miles: miles,
-        calendar_date_start: calendar_date_start,
-        calendar_date_end: calendar_date_end,
-        time_start: time_start,
-        time_end: time_end,
-        invoice_status: invoice_status,
-        viewing_locum_user_id: [],
-        title_includes: !isJobPart ? title_includes : "",
-        job_title_includes: isJobPart ? job_title_includes : "",
-        job_number_includes: !isJobPart ? job_number_includes : "",
-        job_part_number_includes: isJobPart ? job_part_number_includes : "",
-        type: !isJobPart ? type : "",
-        job_type: isJobPart ? job_type : "",
-        // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-      }
-
-      const [shifts, rates, total, jobs,] = await Promise.all([
-        app.$axios.$get(`/api/v1/shifts`).then(res => {
-          let shifts = []
-          shifts.push({ label: "All", value: "", })
-          res.data.shifts.forEach(shift => {
-            shifts.push({ label: shift.name, value: shift.id, })
-          })
-          return shifts
-        }),
-
-        app.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-          let rates = []
-          rates.push({ label: "All", value: "", })
-          res.data.locum_detail_rate_types.forEach(rateType => {
-            rates.push({ label: rateType.name, value: rateType.id, })
-          })
-          return rates
-        }),
-
-        app.$axios
-          .$get(`/api/v1/locum/${isJobPart ? "job-parts" : "jobs"}/count`, {
-            params: {
-              ...filterParams,
-            },
-          })
-          .then(res => {
-            let total = 0
-            total = res.data.count
-            return total
-          }),
-
-        app.$axios
-          .$get(`/api/v1/locum/${isJobPart ? "job-parts" : "jobs"}`, {
-            params: {
-              offset: 0,
-              limit: 5,
-              ...filterParams,
-            },
-          })
-          .then(res => {
-            const jobs
-              = res.data && res.data.jobs
-                ? res.data.jobs.map(item => {
-                  return {
-                    ...item,
-                    date_time_start: `${app
-                      .$moment(item.date_start)
-                      .format("DD-MM-YYYY")} | ${item.time_start}`,
-                    date_time_end: `${app
-                      .$moment(item.date_end)
-                      .format("DD-MM-YYYY")} | ${item.time_end}`,
-                  }
-                })
-                : res.data.job_parts
-                  ? res.data.job_parts.map(item => {
-                    return {
-                      ...item,
-                      tag_status: item.terminated
-                        ? "Terminated"
-                        : item.locum_status,
-                      date_time_start: `${app
-                        .$moment(item.date_start)
-                        .format("DD-MM-YYYY")} | ${item.time_start}`,
-                      date_time_end: `${app
-                        .$moment(item.date_end)
-                        .format("DD-MM-YYYY")} | ${item.time_end}`,
-                    }
-                  })
-                  : []
-
-            return jobs
-          }),
-      ])
-
-      return {
-        shifts,
-        rates,
-        total,
-        jobs,
-      }
-    } catch (err) {
-      return error({ status: 404, })
-    }
-  },
-
   mounted () {
-    this.$axios
-      .$get(`/api/v1/locum/practices`, {
-        params: {
-          status: "Active",
-          locum_practice_type: "Applied",
-        },
-      })
-      .then(res => {
-        this.practiceLists = res.data.practices.map(item => {
-          return {
-            label: item.name,
-            value: item.id,
-          }
-        })
-      })
+    this.$socket.on('Locum Notification Job Available', this.getAvailableJobsRealTime)
+    this.$socket.on('Locum Notification Job Matched', this.getMatchedJobsRealTime)
+    this.$socket.on('Locum Notification Job Unsuccessful', this.getUnsuccessfulJobsRealTime)
+    this.$socket.on('Locum Notification Job Allocated', this.getCurrentJobsRealTime)
+    this.$socket.on('Locum Notification Job Ongoing', this.getOngoingJobsRealTime)
+    this.$socket.on('Locum Notification Job Part Completed', this.getCompletedJobsRealTime)
+    this.$socket.on('Locum Notification Job Completed', this.getCompletedJobsRealTime)
+    this.$socket.on('Locum Notification Locum Invoice Updated', this.getApprovedJobsRealTime)
+    this.$socket.on('Locum Notification Job Cancelled', this.getCancelledJobsRealTime)
+    this.$socket.on('Locum Notification Job Amended', this.getAmendedJobsRealTime)
+    this.$socket.on('Locum Notification Job Updated', this.getUpdatedJobsRealTime)
+    this.$socket.on('Locum Notification Job Declined', this.getDeclinedJobsRealTime)
+    this.$socket.on('Locum Notification Job Terminated', this.getTerminatedJobsRealTime)
+    this.$socket.on('Locum Notification Job Auto Declined', this.getAutoDeclinedJobsRealTime)
+    this.$socket.on('Locum Notification Job Unavailable', this.getUnavailableJobsRealTime)
+    this.$socket.on('Locum Notification Job Unqualified', this.getUnqualifiedJobsRealTime)
 
-    this.addSocketListeners()
+    this.current_page = 1
+    this.filterModal = false
+    this.showRefresh = false
+    this.total = 0
+    this.jobs = []
+    this.clearFilters()
+    this.isFiltered = false
+    this.initialLoading = true
+    this.getLocumJobs().finally(() => {
+      this.initialLoading = false
+    })
+
+    Promise.all([
+      this.$axios.$get(`/api/v1/shifts`).then(res => {
+        let shifts = []
+        shifts.push({ label: "All", value: "", })
+        res.data.shifts.forEach(shift => {
+          shifts.push({ label: shift.name, value: shift.id, })
+        })
+        return shifts
+      }),
+
+      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
+        let rates = []
+        rates.push({ label: "All", value: "", })
+        res.data.locum_detail_rate_types.forEach(rateType => {
+          rates.push({ label: rateType.name, value: rateType.id, })
+        })
+        return rates
+      }),
+    ]).then((responses) => {
+      const [shifts, rates,] = responses
+
+      this.shifts = shifts
+      this.rates = rates
+    })
+
+    this.$axios.$get(`/api/v1/locum/practices`, {
+      params: {
+        status: "Active",
+        locum_practice_type: "Applied",
+      },
+    }).then(res => {
+      this.practiceLists = res.data.practices.map(item => ({
+        label: item.name,
+        value: item.id,
+      }))
+    })
   },
 
   destroyed () {
-    this.removeSocketListeners()
+    this.$socket.removeListener('Locum Notification Job Available', this.getAvailableJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Matched', this.getMatchedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Unsuccessful', this.getUnsuccessfulJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Allocated', this.getCurrentJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Ongoing', this.getOngoingJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Part', this.getCompletedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Completed', this.getCompletedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Locum Invoice ', this.getApprovedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Cancelled', this.getCancelledJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Amended', this.getAmendedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Updated', this.getUpdatedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Declined', this.getDeclinedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Terminated', this.getTerminatedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Auto ', this.getAutoDeclinedJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Unavailable', this.getUnavailableJobsRealTime)
+    this.$socket.removeListener('Locum Notification Job Unqualified', this.getUnqualifiedJobsRealTime)
+
     this.showRefresh = false
   },
 
   methods: {
-    displayArray (arrayList) {
-      let arrayToText = ""
-      arrayList.forEach((item, index) => {
-        if (arrayList.length > 1) {
-          if (index !== arrayList.length - 1) {
-            arrayToText += `${item}, `
-          } else {
-            arrayToText += `${item}`
-          }
-          // if (
-          // index !== arrayList.length - 1 &&
-          // index === arrayList.length - 2
-          // )
-          //  else {
-          // arrayToText += ` and ${item}`;
-          // }
-        } else {
-          arrayToText += item
-        }
-      })
-      return arrayToText
-    },
     routerLink (jobOrJobPart) {
-      if (this.isJobPart) {
-        return {
-          name: "jobs-index-id-job-parts-jobPartId",
-          params: {
-            id: jobOrJobPart.job_id,
-            jobPartId: jobOrJobPart.id,
-          },
-          query: {
-            ...this.$route.query,
-          },
-        }
-      }
-
       return {
         name: "jobs-index-id",
         params: {
@@ -1013,462 +743,79 @@ export default {
       }
     },
 
-    addSocketListeners () {
-      this.$socket.on(
-        "Locum Notification Job Available",
-        this.getAvailableJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Matched",
-        this.getMatchedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Unsuccessful",
-        this.getUnsuccessfulJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Allocated",
-        this.getCurrentJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Ongoing",
-        this.getOngoingJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Part Completed",
-        this.getCompletedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Completed",
-        this.getCompletedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Locum Invoice Updated",
-        this.getApprovedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Cancelled",
-        this.getCancelledJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Amended",
-        this.getAmendedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Updated",
-        this.getUpdatedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Declined",
-        this.getDeclinedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Terminated",
-        this.getTerminatedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Auto Declined",
-        this.getAutoDeclinedJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Unavailable",
-        this.getUnavailableJobsRealTime
-      )
-      this.$socket.on(
-        "Locum Notification Job Unqualified",
-        this.getUnqualifiedJobsRealTime
-      )
-    },
-
-    removeSocketListeners () {
-      this.$socket.removeListener(
-        "Locum Notification Job Available",
-        this.getAvailableJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Matched",
-        this.getMatchedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Unsuccessful",
-        this.getUnsuccessfulJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Allocated",
-        this.getCurrentJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Ongoing",
-        this.getOngoingJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Part",
-        this.getCompletedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Completed",
-        this.getCompletedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Locum Invoice ",
-        this.getApprovedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Cancelled",
-        this.getCancelledJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Amended",
-        this.getAmendedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Updated",
-        this.getUpdatedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Declined",
-        this.getDeclinedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Terminated",
-        this.getTerminatedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Auto ",
-        this.getAutoDeclinedJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Unavailable",
-        this.getUnavailableJobsRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Job Unqualified",
-        this.getUnqualifiedJobsRealTime
-      )
-    },
-
     addPractice (payload) {
       this.search_practice = payload.name
       this.practice_id = payload.id
     },
+
     addPrivatePractice (payload) {
       this.search_private_practice = payload.name
       this.private_practice_id = payload.id
     },
+
     async filterJobList () {
       // this.jobs = this.jobs.filter(item => item.id !== id);
       this.loading = true
       await this.getJobs()
       this.loading = false
     },
-    getJobsPromiseAll () {
-      let locum_status = []
-      let queryStatus = this.$route.query.status
 
-      if (queryStatus) {
-        switch (queryStatus) {
-        // case "Bank":
-        //   locum_status = ["Matched"];
-        //   break;
-        case "Completed":
-          locum_status = ["Completed",]
-          break
-        case "Available":
-          locum_status = ["Matched", "Available",]
-          break
-          // case "Public":
-          //   locum_status = ["Available"];
-          //   break;
-        case "Private":
-          locum_status = []
-          break
-        default:
-          locum_status = [`${queryStatus}`,]
-          break
-        }
-      } else if (!queryStatus) {
-        locum_status = ["Allocated",]
-      }
+    getLocumJobs () {
       return Promise.all([
-        this.$axios.$get(
-          `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
-          {
-            params: {
-              locum_status,
-              order_by: [],
-              practice_id:
-                !this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.practice_id
-                  : "",
-              job_practice_id:
-                this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.job_practice_id
-                  : "",
-              private_practice_id:
-                !this.isJobPart && queryStatus === "Private"
-                  ? this.private_practice_id
-                  : "",
-              job_private_practice_id:
-                this.isJobPart && queryStatus === "Private"
-                  ? this.job_private_practice_id
-                  : "",
-              shift_id: !this.isJobPart ? this.shift_id : "",
-              job_shift_id: this.isJobPart ? this.job_shift_id : "",
-              rate: !this.isJobPart ? this.rate : "",
-              job_rate: this.isJobPart ? this.job_rate : "",
-              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.near_post_code,
-              miles: this.miles,
-              calendar_date_start: this.calendar_date_start,
-              calendar_date_end: this.calendar_date_end,
-              time_start: this.time_start,
-              time_end: this.time_end,
-              invoice_status: this.invoice_status,
-              viewing_locum_user_id: [],
-              title_includes: !this.isJobPart ? this.title_includes : "",
-              job_title_includes: this.isJobPart ? this.job_title_includes : "",
-              job_number_includes: !this.isJobPart
-                ? this.job_number_includes
-                : "",
-              job_part_number_includes: this.isJobPart
-                ? this.job_part_number_includes
-                : "",
-              type: !this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              job_type: this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-            },
-          }
-        ),
-        this.$axios.$get(
-          `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`,
-          {
-            params: {
-              offset: 0,
-              limit: 5,
-              locum_status,
-              order_by: [],
-              practice_id:
-                !this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.practice_id
-                  : "",
-              job_practice_id:
-                this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.job_practice_id
-                  : "",
-              private_practice_id:
-                !this.isJobPart && queryStatus === "Private"
-                  ? this.private_practice_id
-                  : "",
-              job_private_practice_id:
-                this.isJobPart && queryStatus === "Private"
-                  ? this.job_private_practice_id
-                  : "",
-              shift_id: !this.isJobPart ? this.shift_id : "",
-              job_shift_id: this.isJobPart ? this.job_shift_id : "",
-              rate: !this.isJobPart ? this.rate : "",
-              job_rate: this.isJobPart ? this.job_rate : "",
-              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.near_post_code,
-              miles: this.miles,
-              calendar_date_start: this.calendar_date_start,
-              calendar_date_end: this.calendar_date_end,
-              time_start: this.time_start,
-              time_end: this.time_end,
-              invoice_status: this.invoice_status,
-              viewing_locum_user_id: [],
-              title_includes: !this.isJobPart ? this.title_includes : "",
-              job_title_includes: this.isJobPart ? this.job_title_includes : "",
-              job_number_includes: !this.isJobPart
-                ? this.job_number_includes
-                : "",
-              job_part_number_includes: this.isJobPart
-                ? this.job_part_number_includes
-                : "",
-              type: !this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              job_type: this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-            },
-          }
-        ),
-      ])
-        .then(([responseCount, responseJobs,]) => {
-          this.jobs
-            = responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs.map(item => {
-                return {
-                  ...item,
-                  date_time_start: `${this.$moment(item.date_start).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_start}`,
-                  date_time_end: `${this.$moment(item.date_end).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_end}`,
-                }
-              })
-              : responseJobs.data.job_parts
-                ? responseJobs.data.job_parts.map(item => {
-                  return {
-                    ...item,
-                    tag_status: item.terminated
-                      ? "Terminated"
-                      : item.locum_status,
-                    date_time_start: `${this.$moment(item.date_start).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_start}`,
-                    date_time_end: `${this.$moment(item.date_end).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_end}`,
-                  }
-                })
-                : []
-          this.total = responseCount.data.count
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          throw err
-        })
-    },
-    getJobs () {
-      let locum_status = []
-      let queryStatus = this.$route.query.status
-
-      if (!queryStatus) {
-        locum_status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        // case "Bank":
-        //   locum_status = ["Matched"];
-        //   break;
-        case "Completed":
-          locum_status = ["Completed",]
-          break
-        case "Available":
-          locum_status = ["Matched", "Available",]
-          break
-          // case "Public":
-          //   locum_status = ["Available"];
-          //   break;
-        case "Private":
-          locum_status = []
-          break
-        default:
-          locum_status = [`${queryStatus}`,]
-          break
-        }
-      }
-
-      return this.$axios
-        .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`, {
+        this.$axios.get('/api/v1/locum/jobs/count', {
           params: {
-            offset: this.offset,
-            limit: this.limit,
-            locum_status,
-            order_by: this.order_by,
-            practice_id:
-              !this.isJobPart && queryStatus === "Platform"
-                ? this.practice_id
-                : "",
-            job_practice_id:
-              this.isJobPart && queryStatus === "Platform"
-                ? this.job_practice_id
-                : "",
-            private_practice_id:
-              !this.isJobPart && queryStatus === "Private"
-                ? this.private_practice_id
-                : "",
-            job_private_practice_id:
-              this.isJobPart && queryStatus === "Private"
-                ? this.job_private_practice_id
-                : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-            near_post_code: this.near_post_code,
-            miles: this.miles,
-            calendar_date_start: this.calendar_date_start,
-            calendar_date_end: this.calendar_date_end,
-            time_start: this.time_start,
-            time_end: this.time_end,
-            invoice_status: this.invoice_status,
-            viewing_locum_user_id: [],
-            title_includes: !this.isJobPart ? this.title_includes : "",
-            job_title_includes: this.isJobPart ? this.job_title_includes : "",
-            job_number_includes: !this.isJobPart
-              ? this.job_number_includes
-              : "",
-            job_part_number_includes: this.isJobPart
-              ? this.job_part_number_includes
-              : "",
-            type: !this.isJobPart
-              ? queryStatus === "Private"
-                ? "Private"
-                : "Platform"
-              : "",
-            job_type: this.isJobPart
-              ? queryStatus === "Private"
-                ? "Private"
-                : "Platform"
-              : "",
-            // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+            ...this.getRequestQueryFilters,
           },
-        })
-        .then(res => {
-          this.jobs
-            = res.data && res.data.jobs
-              ? res.data.jobs.map(item => {
-                return {
-                  ...item,
-                  date_time_start: `${this.$moment(item.date_start).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_start}`,
-                  date_time_end: `${this.$moment(item.date_end).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_end}`,
-                }
-              })
-              : res.data.job_parts
-                ? res.data.job_parts.map(item => {
-                  return {
-                    ...item,
-                    tag_status: item.terminated
-                      ? "Terminated"
-                      : item.locum_status,
-                    date_time_start: `${this.$moment(item.date_start).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_start}`,
-                    date_time_end: `${this.$moment(item.date_end).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_end}`,
-                  }
-                })
-                : []
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          throw err
-        })
+        }),
+        this.$axios.get('/api/v1/locum/jobs', {
+          params: {
+            offset: 0,
+            limit: 5,
+            order_by: [],
+            ...this.getRequestQueryFilters,
+          },
+        }),
+      ]).then(([responseCount, responseJobs,]) => {
+        this.total = responseCount.data.data.count
+        this.jobs = responseJobs.data.data.jobs.map(item => ({
+          ...item,
+          date_time_start: `${this.$moment(item.date_start).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_start}`,
+          date_time_end: `${this.$moment(item.date_end).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_end}`,
+        }))
+      }).catch(err => {
+        console.log("err", err.response || err)
+        throw err
+      })
     },
+
+    getJobs () {
+      return this.$axios.get('/api/v1/locum/jobs', {
+        params: {
+          offset: this.offset,
+          limit: this.limit,
+          order_by: this.order_by,
+          ...this.getRequestQueryFilters,
+        },
+      }).then(response => {
+        this.jobs = response.data.data.jobs.map(item => ({
+          ...item,
+          date_time_start: `${this.$moment(item.date_start).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_start}`,
+          date_time_end: `${this.$moment(item.date_end).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_end}`,
+        }))
+      }).catch(err => {
+        console.log("err", err.response || err)
+        throw err
+      })
+    },
+
     async getAvailableJobsRealTime (job) {
       if (!job) {
         return
@@ -1480,6 +827,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getMatchedJobsRealTime (job) {
       if (!job) {
         return
@@ -1492,6 +840,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getUnsuccessfulJobsRealTime (job) {
       if (!job) {
         return
@@ -1504,6 +853,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getCurrentJobsRealTime (job) {
       if (!job) {
         return
@@ -1516,6 +866,7 @@ export default {
         this.showRefresh = true
       }
     },
+    
     async getOngoingJobsRealTime (job) {
       if (!job) {
         return
@@ -1528,6 +879,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getCompletedJobsRealTime (job) {
       if (!job) {
         return
@@ -1540,6 +892,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getApprovedJobsRealTime (job) {
       if (!job) {
         return
@@ -1552,6 +905,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getCancelledJobsRealTime (job) {
       if (!job) {
         return
@@ -1568,6 +922,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getAmendedJobsRealTime (job) {
       if (!job) {
         return
@@ -1584,6 +939,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getUpdatedJobsRealTime (job) {
       if (!job) {
         return
@@ -1596,6 +952,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getDeclinedJobsRealTime (job) {
       if (!job) {
         return
@@ -1609,6 +966,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getTerminatedJobsRealTime (job) {
       if (!job) {
         return
@@ -1620,6 +978,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getAutoDeclinedJobsRealTime (job) {
       if (!job) {
         return
@@ -1632,6 +991,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getUnavailableJobsRealTime (job) {
       if (!job) {
         return
@@ -1643,6 +1003,7 @@ export default {
         this.showRefresh = true
       }
     },
+
     async getUnqualifiedJobsRealTime (job) {
       if (!job) {
         return
@@ -1657,20 +1018,20 @@ export default {
         this.showRefresh = true
       }
     },
+
     async appointmentUpdated () {
       // this.loading = true;
-      // await this.getJobsCount(
-      //   this.isJobPart ? this.jobPartParams : this.params
-      // );
-      // await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      // await this.getJobsCount(this.params);
+      // await this.getJobs(this.params);
       // this.loading = false;
     },
+
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
       this.limit = 5
       this.initialLoading = true
-      await this.getJobsPromiseAll()
+      await this.getLocumJobs()
       this.initialLoading = false
       this.showRefresh = false
     },
@@ -1681,7 +1042,7 @@ export default {
       this.limit = 5
       this.initialLoading = true
       this.isFiltered = true
-      await this.getJobsPromiseAll()
+      await this.getLocumJobs()
       this.initialLoading = false
       this.filterModal = false
     },
@@ -1692,7 +1053,7 @@ export default {
         let sorting = item.split(":")[0]
         switch (sorting) {
         case "practice_name":
-          sorting = this.isJobPart ? "job_surgery" : "surgery"
+          sorting = "surgery"
           break
         case "date_time_start":
           sorting = "date_start"
@@ -1783,6 +1144,8 @@ export default {
       this.job_number_includes = ""
       this.job_part_number_includes = ""
     },
+
   },
+
 }
 </script>

@@ -36,7 +36,7 @@ export default {
       mode: 'out-in',
     }
   },
-  
+
   data () {
     return {
       invoiceStatusList: [
@@ -178,7 +178,7 @@ export default {
         {
           title: 'Private',
           route: {
-            name: 'locum-job-parts-index',
+            name: 'jobs-index',
             query: {
               status: 'Private',
             },

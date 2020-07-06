@@ -178,7 +178,7 @@ export default {
         {
           title: 'Private',
           route: {
-            name: 'locum-job-parts-index',
+            name: 'jobs-index',
             query: {
               status: 'Private',
             },

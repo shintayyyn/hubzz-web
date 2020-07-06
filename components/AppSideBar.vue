@@ -132,10 +132,16 @@ export default {
           ["Active", "Dormant",].includes(accountStatus)
           && this.view_locum_jobs
         ) {
+          // locumTabList.push({
+          //   navigationTabTitle: "Jobs",
+          //   route: "/jobs",
+          //   active: `/${this.$route.path.split('/')[1]}` === '/jobs' || `/${this.$route.path.split('/')[1]}` === '/locum-job-parts',
+          // })
+
           locumTabList.push({
             navigationTabTitle: "Jobs",
-            route: "/jobs",
-            active: `/${this.$route.path.split('/')[1]}` === '/jobs',
+            route: "/locum-job-parts",
+            active: `/${this.$route.path.split('/')[1]}` === '/jobs' || `/${this.$route.path.split('/')[1]}` === '/locum-job-parts',
           })
         }
 
