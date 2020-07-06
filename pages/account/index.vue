@@ -1,9 +1,11 @@
 <template>
   <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
     <AppLoading :loading="loading" spinner />
+
     <AppFormError v-if="false && formError.length > 0" :formError="formError" />
+
     <!-- =========PRACTICE========= -->
-    <template v-if="$auth.user.domain === 'Practice'">
+    <template v-if="!loading && $auth.user.domain === 'Practice'">
       <div class="flex flex-wrap ">
         <div class="w-full">
           <AppInput
@@ -16,6 +18,7 @@
             @submit="save"
             @blur="CheckEmptyField(practiceForm.username, 'username')"
           />
+
           <AppInput
             v-model="practiceForm.email"
             :type="'email'"
@@ -26,18 +29,22 @@
             @submit="save"
             @blur="CheckEmptyField(practiceForm.email, 'email')"
           />
-          <div v-if="email_verifiedAt" class="-mt-6 mb-4">
-            <span
-              class="text-xs"
-            >E-mail is Verified on {{ $moment(email_verifiedAt).utc().format('DD/MM/YYYY | hh:mm A') }}</span>
+
+          <div v-if="user && user.email === practiceForm.email" class="-mt-4 mb-4">
+            <template v-if="user.email_verified">
+              <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_gb_formatted }}</span>
+            </template>
+
+            <template v-if="!user.email_verified">
+              <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
+              
+              <span
+                class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
+                @click="resendEmailVerification()"
+              >Click here to re-send</span>
+            </template>
           </div>
-          <div v-if="!email_verifiedAt" class="-mt-6 mb-4">
-            <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
-            <span
-              class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
-              @click="resendEmailVerification()"
-            >Click here to re-send</span>
-          </div>
+
           <AppInput
             v-model="practiceForm.title"
             :type="'text'"
@@ -45,6 +52,7 @@
             :label="'Title'"
             @submit="save"
           />
+
           <AppInput
             v-model="practiceForm.first_name"
             :type="'text'"
@@ -55,6 +63,7 @@
             @submit="save"
             @blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
           />
+
           <AppInput
             v-model="practiceForm.last_name"
             :type="'text'"
@@ -65,6 +74,7 @@
             @submit="save"
             @blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
           />
+
           <AppInput
             v-model="practiceForm.suffix"
             :type="'text'"
@@ -72,6 +82,7 @@
             :label="'Suffix'"
             @submit="save"
           />
+
           <AppInput
             v-model="practiceForm.practice_role"
             :type="'select'"
@@ -81,6 +92,7 @@
             :items="roles"
             required
           />
+
           <AppInput
             v-model="practiceForm.memorable_word_category_id"
             type="select"
@@ -115,6 +127,7 @@
             :error="formError.find(error => error.field === 'memorable_number')"
             required
           />
+
           <div class="text-left mt-5">
             <AppButton :label="'Save changes'" @click="save('practice')" />
           </div>
@@ -130,8 +143,9 @@
         </div> -->
       </div>
     </template>
+
     <!-- ==========LOCUM=========== -->
-    <template v-if="$auth.user.domain === 'Locum'">
+    <template v-if="!loading && $auth.user.domain === 'Locum'">
       <AppInput
         v-model="locumForm.email"
         :type="'email'"
@@ -142,20 +156,22 @@
         @submit="save"
         @blur="CheckEmptyField(locumForm.email, 'email')"
       />
-      <div class="-mt-4 mb-4">
-        <template v-if="email_verifiedAt">
-          <span
-            class="text-xs"
-          >E-mail is Verified on {{ $moment(email_verifiedAt).utc().format('DD/MM/YYYY | hh:mm A') }}</span>
+
+      <div v-if="user && user.email === locumForm.email" class="-mt-4 mb-4">
+        <template v-if="user.email_verified">
+          <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_gb_formatted }}</span>
         </template>
-        <template v-else>
+
+        <template v-if="!user.email_verified">
           <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
+          
           <span
             class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
             @click="resendEmailVerification()"
           >Click here to re-send</span>
         </template>
       </div>
+
       <AppInput
         v-model="locumForm.title"
         :type="'text'"
@@ -164,6 +180,7 @@
         :error="formError.find(item => item.field === 'title')"
         @submit="save"
       />
+
       <AppInput
         v-model="locumForm.first_name"
         :type="'text'"
@@ -174,6 +191,7 @@
         @submit="save"
         @blur="CheckEmptyField(locumForm.first_name, 'first_name')"
       />
+
       <AppInput
         v-model="locumForm.last_name"
         :type="'text'"
@@ -184,6 +202,7 @@
         @submit="save"
         @blur="CheckEmptyField(locumForm.last_name, 'last_name')"
       />
+
       <AppInput
         v-model="locumForm.suffix"
         :type="'text'"
@@ -191,6 +210,7 @@
         :label="'Suffix'"
         @submit="save"
       />
+
       <AppInput
         v-model="locumForm.gender"
         :type="'select'"
@@ -201,6 +221,7 @@
         required
         @blur="CheckEmptyField(locumForm.gender, 'gender')"
       />
+
       <AppDate
         v-model="locumForm.date_of_birth"
         :name="'date_of_birth'"
@@ -212,6 +233,7 @@
         required
         @blur="CheckEmptyField(locumForm.date_of_birth, 'date_of_birth')"
       />
+
       <AppInput
         v-model="locumForm.mobile_number"
         :type="'text'"
@@ -225,6 +247,7 @@
         @keydown="inputNumberOnly($event)"
         @blur="CheckEmptyField(locumForm.mobile_number, 'mobile_number')"
       />
+
       <AppInput
         v-model="locumForm.home_number"
         :type="'text'"
@@ -234,6 +257,7 @@
         @keydown="inputTelephone($event)"
         @submit="save"
       />
+
       <AppInput
         v-model="locumForm.work_number"
         :type="'text'"
@@ -243,6 +267,7 @@
         @keydown="inputTelephone($event)"
         @submit="save"
       />
+
       <div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
         <AppPostCode
           v-model="locumForm.post_code"
@@ -254,6 +279,7 @@
           required
           @blur="CheckEmptyField(locumForm.post_code, 'post_code')"
         />
+
         <AppInput
           v-model="locumForm.address_line_1"
           :type="'text'"
@@ -265,6 +291,7 @@
           @submit="save"
           @blur="CheckEmptyField(locumForm.address_line_1, 'address_line_1')"
         />
+
         <AppInput
           v-model="locumForm.address_line_2"
           :type="'text'"
@@ -273,6 +300,7 @@
           :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
         />
+
         <AppInput
           v-model="locumForm.address_line_3"
           :type="'text'"
@@ -336,12 +364,6 @@
   import AppFormError from "@/components/Base/AppFormError"
   import AppPostCode from "@/components/Base/AppPostCode"
 
-  const roles = [
-    { value: "Practice Staff", label: "Practice Staff" },
-    { value: "Practice Manager", label: "Practice Manager" },
-    { value: "Partner", label: "Partner" }
-  ]
-
   export default {
 
     transition: {
@@ -355,7 +377,7 @@
       AppButton,
       AppLoading,
       AppFormError,
-      AppPostCode
+      AppPostCode,
     },
 
     data () {
@@ -365,8 +387,12 @@
         memorableWordCategories: [],
 
         formError: [],
-        email_verifiedAt: "",
-        roles,
+
+        roles: [
+          { value: "Practice Staff", label: "Practice Staff" },
+          { value: "Practice Manager", label: "Practice Manager" },
+          { value: "Partner", label: "Partner" },
+        ],
 
         practiceForm: {
           username: "",
@@ -381,8 +407,7 @@
           memorable_date: '',
           memorable_number: '',
         },
-        practiceRole: null,
-        practicePermissions: {},
+
         locumForm: {
           email: "",
           title: "",
@@ -401,12 +426,11 @@
           memorable_word: '',
           memorable_date: '',
           memorable_number: '',
-        }
+        },
       }
     },  
 
     computed: {
-
       memorableWordCategoriesSelectionList () {
         return this.memorableWordCategories.map(({ id, name }) => ({ label: name, value: id }))
       },
@@ -414,24 +438,44 @@
       authPermissions () {
         return this.$store.getters["permissions"]
       },
-
     },
 
-    async asyncData ({ app }) {
-      try {
-        const response = await app.$axios.$get("/api/v1/me")
-        const user =
-          response.data && response.data && response.data.user
-            ? response.data.user
-            : null
+    mounted () {
+      this.$socket.on('User Notification Email Pending', this.getEmailVerificationRealTime)
+      this.$socket.on('User Notification Email Verified', this.getEmailVerificationRealTime)
 
-        let practiceForm = {}
-        let practiceRole = ""
+      this.loading = true
+      Promise.all([
+        this.$axios.get('/api/v1/memorable-word-categories?limit=9999')
+          .then((response) => response.data.data.memorable_word_categories),
+        this.getUser(),
+      ]).then((responses) => {
+        const [
+          memorableWordCategories,
+        ] = responses
 
-        let locumForm = {}
-        let email_verifiedAt = ""
+        this.memorableWordCategories = memorableWordCategories
+      }).catch(this.errorHandler).finally(() => {
+        this.loading = false
+      })
+    },
+
+    destroyed () {
+      this.$socket.removeListener('User Notification Email Pending', this.getEmailVerificationRealTime)
+      this.$socket.removeListener('User Notification Email Verified', this.getEmailVerificationRealTime)
+    },
+
+    methods: {
+      async getUser () {
+        const response = await this.$axios.get('/api/v1/me')
+
+        const user = response.data.data.user
+
+        this.user = user
 
         if (user.domain === "Practice") {
+          let practiceForm = {}
+
           practiceForm.username = user.username
           practiceForm.email = user.email
           practiceForm.title = user.personal_detail.title
@@ -443,17 +487,13 @@
           practiceForm.memorable_word = user.memorable_word
           practiceForm.memorable_date = user.memorable_date
           practiceForm.memorable_number = user.memorable_number
-          email_verifiedAt = user.email_verified_at
-          practiceRole = user.practice_detail.role
-          return {
-            user,
-            practiceForm,
-            email_verifiedAt,
-            practiceRole,
-          }
+
+          this.practiceForm = practiceForm
         }
 
         if (user.domain === "Locum") {
+          let locumForm = {}
+
           locumForm.email = user.email
           locumForm.title = user.personal_detail.title
           locumForm.first_name = user.personal_detail.first_name
@@ -472,121 +512,93 @@
           locumForm.memorable_word = user.memorable_word
           locumForm.memorable_date = user.memorable_date
           locumForm.memorable_number = user.memorable_number
-          email_verifiedAt = user.email_verified_at
 
-          return {
-            user,
-            locumForm,
-            email_verifiedAt
-          }
+          this.locumForm = locumForm
         }
-      } catch (err) {
-        throw err
-      }
-    },
+      },
 
-    mounted () {
-      this.$socket.on('User Notification Email Pending', this.getEmailVerificationRealTime)
-      this.$socket.on('User Notification Email Verified', this.getEmailVerificationRealTime)
-      this.loading = true
-      this.$axios.get('/api/v1/memorable-word-categories', {
-        params: {
-          limit: 999,
-        },
-      }).then((response) => {
-        this.memorableWordCategories = response.data.data.memorable_word_categories
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err)
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-
-    destroyed () {
-      this.$socket.removeListener('User Notification Email Pending', this.getEmailVerificationRealTime)
-      this.$socket.removeListener('User Notification Email Verified', this.getEmailVerificationRealTime)
-    },
-
-    methods: {
       async getEmailVerificationRealTime () {
         await this.$auth.fetchUser()
-        this.email_verifiedAt = this.$auth.user.email_verified_at
+
+        this.user = this.$auth.user
+      },
+
+      errorHandler (err) {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formError = err.response.data.error_messages
+          }
+
+          message = err.response.data.message
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
+        }
+
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`],
+          })
+        }
       },
 
       resendEmailVerification () {
-        this.$axios
-          .$post(`/api/v1/email-verification/resend`)
-          .then(res => {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`]
-            })
+        this.$axios.post(`/api/v1/email-verification/resend`).then((response) => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${response.data.message}`]
           })
-          .catch(err => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`]
-              })
-              throw err
-            }
-          })
+        }).catch(this.errorHandler)
       },
 
       save (domain) {
         if (domain === "practice") {
           this.formError = []
+
           this.Validate(
             this.practiceForm,
             ["title", "suffix"],
             [{ field: "address_line_3", display: "City / Town / District" }]
           )
-          if (!this.formError.length) {
-            this.loading = true
-            this.$axios
-              .$put(`/api/v1/practice/me/account`, this.practiceForm)
-              .then(() => {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "success",
-                  text: ["Saved"]
-                })
-              })
-              .catch(err => {
-                console.log("err", err.response || err)
-                if (err.response.data.message) {
-                  this.$store.commit("SET_NOTIFICATION", {
-                    enabled: true,
-                    status: "danger",
-                    text: [`${err.response.data.message}`]
-                  })
-                }
-                if (err.response.data.error_messages) {
-                  err.response.data.error_messages.forEach(error => {
-                    this.formError.push(error)
-                  })
-                }
-              })
-              .finally(() => {
-                this.scrollToTop()
-                this.loading = false
-              })
-          } else {
+
+          if (this.formError.length > 0) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: ["Please fill up all the forms"]
+              text: ["Please fill up all the forms"],
             })
+
             this.scrollToTop()
+
+            return
           }
+
+          this.loading = true
+          this.$axios.put(`/api/v1/practice/me/account`, this.practiceForm).then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Saved"],
+            })
+
+            this.CheckUserVerification()
+          }).catch(this.errorHandler).finally(() => {
+            this.scrollToTop()
+            this.loading = false
+          })
         }
 
         if (domain === "locum") {
           this.formError = []
+
           this.Validate(this.locumForm, [
             "title",
             "suffix",
@@ -594,46 +606,35 @@
             "work_number",
             "address_line_2"
           ])
-          if (!this.formError.length) {
-            this.loading = true
-            this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}` 
-            this.$axios
-              .$put(`/api/v1/locum/me/account`, this.locumForm)
-              .then(() => {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "success",
-                  text: ["Saved"]
-                })
-                this.CheckUserVerification()
-              })
-              .catch(err => {
-                console.log("err", err.response || err)
-                if (err.response.data.message) {
-                  this.$store.commit("SET_NOTIFICATION", {
-                    enabled: true,
-                    status: "danger",
-                    text: [`${err.response.data.message}`]
-                  })
-                }
-                if (err.response.data.error_messages) {
-                  err.response.data.error_messages.forEach(error => {
-                    this.formError.push(error)
-                  })
-                }
-              })
-              .finally(() => {
-                this.scrollToTop()
-                this.loading = false
-              })
-          } else {
+
+          if (this.formError.length > 0) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: ["Please fill up all the forms"]
             })
+
             this.scrollToTop()
+
+            return
           }
+
+          this.loading = true
+
+          this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}`
+
+          this.$axios.put(`/api/v1/locum/me/account`, this.locumForm).then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Saved"]
+            })
+
+            this.CheckUserVerification()
+          }).catch(this.errorHandler).finally(() => {
+            this.scrollToTop()
+            this.loading = false
+          })
         }
       },
     },
