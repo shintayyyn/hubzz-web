@@ -53,7 +53,11 @@ export default {
 			};
 		},
 		bgStatus() {
-			let job = this.isJobPart ? this.propJob.job : this.propJob;
+			let job = this.isJobPart
+				? this.propJob.status === "Allocated"
+					? this.propJob
+					: this.propJob.job
+				: this.propJob;
 			switch (job.status) {
 				case "Allocated":
 					return "bg-job-active";
