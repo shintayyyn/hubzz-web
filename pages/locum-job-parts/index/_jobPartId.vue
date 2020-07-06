@@ -67,7 +67,7 @@ export default {
       const { query, } = this.$route
 
       this.$router.push({
-        name: "jobs-index",
+        name: "locum-job-parts-index",
         query,
       })
     },

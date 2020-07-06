@@ -20,6 +20,23 @@
 
 <script>
 export default {
+  transition: (to, from) => {
+    if (
+      (to && to.name === 'locum-job-parts-index' && from && from.name === 'jobs-index')
+      || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index')
+    ) {
+      return {
+        name: '',
+        mode: 'out-in',
+      }
+    }
+    
+    return {
+      name: 'page',
+      mode: 'out-in',
+    }
+  },
+  
   data () {
     return {
       invoiceStatusList: [
@@ -71,7 +88,7 @@ export default {
         {
           title: 'Allocated',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Allocated',
             },
@@ -81,7 +98,7 @@ export default {
         {
           title: 'Ongoing',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Ongoing',
             },
@@ -121,7 +138,7 @@ export default {
         {
           title: 'Withdrawn',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Withdrawn',
             },
@@ -131,7 +148,7 @@ export default {
         {
           title: 'Cancelled',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Cancelled',
             },
@@ -141,7 +158,7 @@ export default {
         {
           title: 'Completed',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Completed',
             },
@@ -151,7 +168,7 @@ export default {
         {
           title: 'Approved',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Approved',
             },
@@ -161,7 +178,7 @@ export default {
         {
           title: 'Private',
           route: {
-            name: 'jobs-index',
+            name: 'locum-job-parts-index',
             query: {
               status: 'Private',
             },

@@ -315,6 +315,90 @@ export default {
       return true
     },
 
+    getRequestQueryFilters () {
+      let locum_status = []
+
+      let queryStatus = this.$route.query.status
+
+      if (queryStatus) {
+        switch (queryStatus) {
+        // case "Bank":
+        //   locum_status = ["Matched"];
+        //   break;
+        case "Completed":
+          locum_status = ["Completed",]
+          break
+        case "Available":
+          locum_status = ["Matched", "Available",]
+          break
+          // case "Public":
+          //   locum_status = ["Available"];
+          //   break;
+        case "Private":
+          locum_status = []
+          break
+        default:
+          locum_status = [`${queryStatus}`,]
+          break
+        }
+      } else if (!queryStatus) {
+        locum_status = ["Allocated",]
+      }
+
+      return {
+        locum_status,
+        practice_id:
+          !this.isJobPart && (!queryStatus || queryStatus !== "Private")
+            ? this.practice_id
+            : "",
+        job_practice_id:
+          this.isJobPart && (!queryStatus || queryStatus !== "Private")
+            ? this.job_practice_id
+            : "",
+        private_practice_id:
+          !this.isJobPart && queryStatus === "Private"
+            ? this.private_practice_id
+            : "",
+        job_private_practice_id:
+          this.isJobPart && queryStatus === "Private"
+            ? this.job_private_practice_id
+            : "",
+        shift_id: !this.isJobPart ? this.shift_id : "",
+        job_shift_id: this.isJobPart ? this.job_shift_id : "",
+        rate: !this.isJobPart ? this.rate : "",
+        job_rate: this.isJobPart ? this.job_rate : "",
+        rate_type_id: !this.isJobPart ? this.rate_type_id : "",
+        job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+        near_post_code: this.near_post_code,
+        miles: this.miles,
+        calendar_date_start: this.calendar_date_start,
+        calendar_date_end: this.calendar_date_end,
+        time_start: this.time_start,
+        time_end: this.time_end,
+        invoice_status: this.invoice_status,
+        viewing_locum_user_id: [],
+        title_includes: !this.isJobPart ? this.title_includes : "",
+        job_title_includes: this.isJobPart ? this.job_title_includes : "",
+        job_number_includes: !this.isJobPart
+          ? this.job_number_includes
+          : "",
+        job_part_number_includes: this.isJobPart
+          ? this.job_part_number_includes
+          : "",
+        type: !this.isJobPart
+          ? queryStatus === "Private"
+            ? "Private"
+            : "Platform"
+          : "",
+        job_type: this.isJobPart
+          ? queryStatus === "Private"
+            ? "Private"
+            : "Platform"
+          : "",
+        // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+      }
+    },
+
     noJobsToDisplay () {
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
@@ -496,187 +580,10 @@ export default {
         this.clearFilters()
         this.isFiltered = false
         this.initialLoading = true
-        await this.getJobsPromiseAll()
+        await this.getLocumJobParts()
         this.initialLoading = false
       }
     },
-  },
-
-  async asyncData ({ app, query, error, }) {
-    try {
-      let locum_status = []
-      let queryStatus = query.status
-
-      if (!queryStatus) {
-        locum_status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        // case "Bank":
-        //   locum_status = ["Matched"];
-        //   break;
-        case "Completed":
-          locum_status = ["Completed",]
-          break
-        case "Available":
-          locum_status = ["Matched", "Available",]
-          break
-          // case "Public":
-          //   locum_status = ["Available"];
-          //   break;
-        case "Private":
-          locum_status = []
-          break
-        default:
-          locum_status = [`${queryStatus}`,]
-          break
-        }
-      }
-
-      let isJobPart = true
-
-      let practice_id = ""
-      let job_practice_id = ""
-      let private_practice_id = ""
-      let job_private_practice_id = ""
-      let shift_id = ""
-      let job_shift_id = ""
-      let rate = ""
-      let job_rate = ""
-      let rate_type_id = ""
-      let job_rate_type_id = ""
-
-      let near_post_code = ""
-      let miles = ""
-      let calendar_date_start = ""
-      let calendar_date_end = ""
-      let time_start = ""
-      let time_end = ""
-      let invoice_status = ""
-
-      let title_includes = ""
-      let job_title_includes = ""
-      let job_number_includes = ""
-      let job_part_number_includes = ""
-      let type = queryStatus === "Private" ? "Private" : "Platform"
-      let job_type = queryStatus === "Private" ? "Private" : "Platform"
-
-      const filterParams = {
-        locum_status,
-        order_by: [],
-        practice_id:
-          !isJobPart && queryStatus === "Platform" ? practice_id : "",
-        job_practice_id:
-          isJobPart && queryStatus === "Platform" ? job_practice_id : "",
-        private_practice_id:
-          !isJobPart && queryStatus === "Private" ? private_practice_id : "",
-        job_private_practice_id:
-          isJobPart && queryStatus === "Private" ? job_private_practice_id : "",
-        shift_id: !isJobPart ? shift_id : "",
-        job_shift_id: isJobPart ? job_shift_id : "",
-        rate: !isJobPart ? rate : "",
-        job_rate: isJobPart ? job_rate : "",
-        rate_type_id: !isJobPart ? rate_type_id : "",
-        job_rate_type_id: isJobPart ? job_rate_type_id : "",
-        near_post_code: near_post_code,
-        miles: miles,
-        calendar_date_start: calendar_date_start,
-        calendar_date_end: calendar_date_end,
-        time_start: time_start,
-        time_end: time_end,
-        invoice_status: invoice_status,
-        viewing_locum_user_id: [],
-        title_includes: !isJobPart ? title_includes : "",
-        job_title_includes: isJobPart ? job_title_includes : "",
-        job_number_includes: !isJobPart ? job_number_includes : "",
-        job_part_number_includes: isJobPart ? job_part_number_includes : "",
-        type: !isJobPart ? type : "",
-        job_type: isJobPart ? job_type : "",
-        // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-      }
-
-      const [shifts, rates, total, jobs,] = await Promise.all([
-        app.$axios.$get(`/api/v1/shifts`).then(res => {
-          let shifts = []
-          shifts.push({ label: "All", value: "", })
-          res.data.shifts.forEach(shift => {
-            shifts.push({ label: shift.name, value: shift.id, })
-          })
-          return shifts
-        }),
-
-        app.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-          let rates = []
-          rates.push({ label: "All", value: "", })
-          res.data.locum_detail_rate_types.forEach(rateType => {
-            rates.push({ label: rateType.name, value: rateType.id, })
-          })
-          return rates
-        }),
-
-        app.$axios
-          .$get('/api/v1/locum/job-parts/count', {
-            params: {
-              ...filterParams,
-            },
-          })
-          .then(res => {
-            let total = 0
-            total = res.data.count
-            return total
-          }),
-
-        app.$axios
-          .$get('/api/v1/locum/job-parts', {
-            params: {
-              offset: 0,
-              limit: 5,
-              ...filterParams,
-            },
-          })
-          .then(res => {
-            const jobs
-              = res.data && res.data.jobs
-                ? res.data.jobs.map(item => {
-                  return {
-                    ...item,
-                    date_time_start: `${app
-                      .$moment(item.date_start)
-                      .format("DD-MM-YYYY")} | ${item.time_start}`,
-                    date_time_end: `${app
-                      .$moment(item.date_end)
-                      .format("DD-MM-YYYY")} | ${item.time_end}`,
-                  }
-                })
-                : res.data.job_parts
-                  ? res.data.job_parts.map(item => {
-                    return {
-                      ...item,
-                      tag_status: item.terminated
-                        ? "Terminated"
-                        : item.locum_status,
-                      date_time_start: `${app
-                        .$moment(item.date_start)
-                        .format("DD-MM-YYYY")} | ${item.time_start}`,
-                      date_time_end: `${app
-                        .$moment(item.date_end)
-                        .format("DD-MM-YYYY")} | ${item.time_end}`,
-                    }
-                  })
-                  : []
-
-            return jobs
-          }),
-      ])
-
-      return {
-        shifts,
-        rates,
-        total,
-        jobs,
-      }
-    } catch (err) {
-      return error({ status: 404, })
-    }
   },
 
   mounted () {
@@ -696,6 +603,43 @@ export default {
     this.$socket.on('Locum Notification Job Auto Declined', this.getAutoDeclinedJobsRealTime)
     this.$socket.on('Locum Notification Job Unavailable', this.getUnavailableJobsRealTime)
     this.$socket.on('Locum Notification Job Unqualified', this.getUnqualifiedJobsRealTime)
+
+    this.current_page = 1
+    this.filterModal = false
+    this.showRefresh = false
+    this.total = 0
+    this.jobs = []
+    this.clearFilters()
+    this.isFiltered = false
+    this.initialLoading = true
+    this.getLocumJobParts().finally(() => {
+      this.initialLoading = false
+    })
+
+    Promise.all([
+      this.$axios.$get(`/api/v1/shifts`).then(res => {
+        let shifts = []
+        shifts.push({ label: "All", value: "", })
+        res.data.shifts.forEach(shift => {
+          shifts.push({ label: shift.name, value: shift.id, })
+        })
+        return shifts
+      }),
+
+      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
+        let rates = []
+        rates.push({ label: "All", value: "", })
+        res.data.locum_detail_rate_types.forEach(rateType => {
+          rates.push({ label: rateType.name, value: rateType.id, })
+        })
+        return rates
+      }),
+    ]).then((responses) => {
+      const [shifts, rates,] = responses
+
+      this.shifts = shifts
+      this.rates = rates
+    })
 
     this.$axios.$get(`/api/v1/locum/practices`, {
       params: {
@@ -761,314 +705,68 @@ export default {
       this.loading = false
     },
 
-    getJobsPromiseAll () {
-      let locum_status = []
-      let queryStatus = this.$route.query.status
+    getLocumJobParts () {
 
-      if (queryStatus) {
-        switch (queryStatus) {
-        // case "Bank":
-        //   locum_status = ["Matched"];
-        //   break;
-        case "Completed":
-          locum_status = ["Completed",]
-          break
-        case "Available":
-          locum_status = ["Matched", "Available",]
-          break
-          // case "Public":
-          //   locum_status = ["Available"];
-          //   break;
-        case "Private":
-          locum_status = []
-          break
-        default:
-          locum_status = [`${queryStatus}`,]
-          break
-        }
-      } else if (!queryStatus) {
-        locum_status = ["Allocated",]
-      }
       return Promise.all([
-        this.$axios.$get(
-          `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
-          {
-            params: {
-              locum_status,
-              order_by: [],
-              practice_id:
-                !this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.practice_id
-                  : "",
-              job_practice_id:
-                this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.job_practice_id
-                  : "",
-              private_practice_id:
-                !this.isJobPart && queryStatus === "Private"
-                  ? this.private_practice_id
-                  : "",
-              job_private_practice_id:
-                this.isJobPart && queryStatus === "Private"
-                  ? this.job_private_practice_id
-                  : "",
-              shift_id: !this.isJobPart ? this.shift_id : "",
-              job_shift_id: this.isJobPart ? this.job_shift_id : "",
-              rate: !this.isJobPart ? this.rate : "",
-              job_rate: this.isJobPart ? this.job_rate : "",
-              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.near_post_code,
-              miles: this.miles,
-              calendar_date_start: this.calendar_date_start,
-              calendar_date_end: this.calendar_date_end,
-              time_start: this.time_start,
-              time_end: this.time_end,
-              invoice_status: this.invoice_status,
-              viewing_locum_user_id: [],
-              title_includes: !this.isJobPart ? this.title_includes : "",
-              job_title_includes: this.isJobPart ? this.job_title_includes : "",
-              job_number_includes: !this.isJobPart
-                ? this.job_number_includes
-                : "",
-              job_part_number_includes: this.isJobPart
-                ? this.job_part_number_includes
-                : "",
-              type: !this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              job_type: this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-            },
-          }
-        ),
-        this.$axios.$get(
-          `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`,
-          {
-            params: {
-              offset: 0,
-              limit: 5,
-              locum_status,
-              order_by: [],
-              practice_id:
-                !this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.practice_id
-                  : "",
-              job_practice_id:
-                this.isJobPart && (!queryStatus || queryStatus !== "Private")
-                  ? this.job_practice_id
-                  : "",
-              private_practice_id:
-                !this.isJobPart && queryStatus === "Private"
-                  ? this.private_practice_id
-                  : "",
-              job_private_practice_id:
-                this.isJobPart && queryStatus === "Private"
-                  ? this.job_private_practice_id
-                  : "",
-              shift_id: !this.isJobPart ? this.shift_id : "",
-              job_shift_id: this.isJobPart ? this.job_shift_id : "",
-              rate: !this.isJobPart ? this.rate : "",
-              job_rate: this.isJobPart ? this.job_rate : "",
-              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.near_post_code,
-              miles: this.miles,
-              calendar_date_start: this.calendar_date_start,
-              calendar_date_end: this.calendar_date_end,
-              time_start: this.time_start,
-              time_end: this.time_end,
-              invoice_status: this.invoice_status,
-              viewing_locum_user_id: [],
-              title_includes: !this.isJobPart ? this.title_includes : "",
-              job_title_includes: this.isJobPart ? this.job_title_includes : "",
-              job_number_includes: !this.isJobPart
-                ? this.job_number_includes
-                : "",
-              job_part_number_includes: this.isJobPart
-                ? this.job_part_number_includes
-                : "",
-              type: !this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              job_type: this.isJobPart
-                ? queryStatus === "Private"
-                  ? "Private"
-                  : "Platform"
-                : "",
-              // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-            },
-          }
-        ),
-      ])
-        .then(([responseCount, responseJobs,]) => {
-          this.jobs
-            = responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs.map(item => {
-                return {
-                  ...item,
-                  date_time_start: `${this.$moment(item.date_start).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_start}`,
-                  date_time_end: `${this.$moment(item.date_end).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_end}`,
-                }
-              })
-              : responseJobs.data.job_parts
-                ? responseJobs.data.job_parts.map(item => {
-                  return {
-                    ...item,
-                    tag_status: item.terminated
-                      ? "Terminated"
-                      : item.locum_status,
-                    date_time_start: `${this.$moment(item.date_start).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_start}`,
-                    date_time_end: `${this.$moment(item.date_end).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_end}`,
-                  }
-                })
-                : []
-          this.total = responseCount.data.count
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          throw err
-        })
+        this.$axios.get('/api/v1/locum/job-parts/count', {
+          params: {
+            ...this.getRequestQueryFilters,
+          },
+        }),
+
+        this.$axios.get('/api/v1/locum/job-parts', {
+          params: {
+            offset: 0,
+            limit: 5,
+            order_by: [],
+            ...this.getRequestQueryFilters,
+          },
+        }),
+      ]).then(([responseCount, responseJobs,]) => {
+        this.total = responseCount.data.data.count
+        this.jobs = responseJobs.data.data.job_parts.map(item => ({
+          ...item,
+          tag_status: item.terminated
+            ? "Terminated"
+            : item.locum_status,
+          date_time_start: `${this.$moment(item.date_start).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_start}`,
+          date_time_end: `${this.$moment(item.date_end).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_end}`,
+        }))
+      }).catch(err => {
+        console.log("err", err.response || err)
+        throw err
+      })
     },
 
     getJobs () {
-      let locum_status = []
-      let queryStatus = this.$route.query.status
-
-      if (!queryStatus) {
-        locum_status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        // case "Bank":
-        //   locum_status = ["Matched"];
-        //   break;
-        case "Completed":
-          locum_status = ["Completed",]
-          break
-        case "Available":
-          locum_status = ["Matched", "Available",]
-          break
-          // case "Public":
-          //   locum_status = ["Available"];
-          //   break;
-        case "Private":
-          locum_status = []
-          break
-        default:
-          locum_status = [`${queryStatus}`,]
-          break
-        }
-      }
-
-      return this.$axios
-        .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`, {
-          params: {
-            offset: this.offset,
-            limit: this.limit,
-            locum_status,
-            order_by: this.order_by,
-            practice_id:
-              !this.isJobPart && queryStatus === "Platform"
-                ? this.practice_id
-                : "",
-            job_practice_id:
-              this.isJobPart && queryStatus === "Platform"
-                ? this.job_practice_id
-                : "",
-            private_practice_id:
-              !this.isJobPart && queryStatus === "Private"
-                ? this.private_practice_id
-                : "",
-            job_private_practice_id:
-              this.isJobPart && queryStatus === "Private"
-                ? this.job_private_practice_id
-                : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-            near_post_code: this.near_post_code,
-            miles: this.miles,
-            calendar_date_start: this.calendar_date_start,
-            calendar_date_end: this.calendar_date_end,
-            time_start: this.time_start,
-            time_end: this.time_end,
-            invoice_status: this.invoice_status,
-            viewing_locum_user_id: [],
-            title_includes: !this.isJobPart ? this.title_includes : "",
-            job_title_includes: this.isJobPart ? this.job_title_includes : "",
-            job_number_includes: !this.isJobPart
-              ? this.job_number_includes
-              : "",
-            job_part_number_includes: this.isJobPart
-              ? this.job_part_number_includes
-              : "",
-            type: !this.isJobPart
-              ? queryStatus === "Private"
-                ? "Private"
-                : "Platform"
-              : "",
-            job_type: this.isJobPart
-              ? queryStatus === "Private"
-                ? "Private"
-                : "Platform"
-              : "",
-            // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
-          },
-        })
-        .then(res => {
-          this.jobs
-            = res.data && res.data.jobs
-              ? res.data.jobs.map(item => {
-                return {
-                  ...item,
-                  date_time_start: `${this.$moment(item.date_start).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_start}`,
-                  date_time_end: `${this.$moment(item.date_end).format(
-                    "DD-MM-YYYY"
-                  )} | ${item.time_end}`,
-                }
-              })
-              : res.data.job_parts
-                ? res.data.job_parts.map(item => {
-                  return {
-                    ...item,
-                    tag_status: item.terminated
-                      ? "Terminated"
-                      : item.locum_status,
-                    date_time_start: `${this.$moment(item.date_start).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_start}`,
-                    date_time_end: `${this.$moment(item.date_end).format(
-                      "DD-MM-YYYY"
-                    )} | ${item.time_end}`,
-                  }
-                })
-                : []
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          throw err
-        })
+      return this.$axios.get('/api/v1/locum/job-parts', {
+        params: {
+          offset: this.offset,
+          limit: this.limit,
+          order_by: this.order_by,
+          ...this.getRequestQueryFilters,
+        },
+      }).then(res => {
+        this.jobs = res.data.data.job_parts.map(item => ({
+          ...item,
+          tag_status: item.terminated
+            ? "Terminated"
+            : item.locum_status,
+          date_time_start: `${this.$moment(item.date_start).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_start}`,
+          date_time_end: `${this.$moment(item.date_end).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_end}`,
+        }))
+      }).catch(err => {
+        console.log("err", err.response || err)
+        throw err
+      })
     },
 
     async getAvailableJobsRealTime (job) {
@@ -1288,7 +986,7 @@ export default {
       this.offset = 0
       this.limit = 5
       this.initialLoading = true
-      await this.getJobsPromiseAll()
+      await this.getLocumJobParts()
       this.initialLoading = false
       this.showRefresh = false
     },
@@ -1299,7 +997,7 @@ export default {
       this.limit = 5
       this.initialLoading = true
       this.isFiltered = true
-      await this.getJobsPromiseAll()
+      await this.getLocumJobParts()
       this.initialLoading = false
       this.filterModal = false
     },
