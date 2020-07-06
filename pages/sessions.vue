@@ -2,26 +2,34 @@
   <section class="sessions-section">
     <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
       <AppLoading :loading="loading" spinner />
+
       <div class="flex flex-row justify-start overflow-x-auto">
         <div class="flex flex-col mb-2">
           <label for="search" class="text-xs sm:text-sm">Job number</label>
+
           <div class="flex flex-row justify-start">
             <input
               v-model="search"
               type="text"
               class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-            />
+            >
           </div>
+
           <transition name="fade" mode="out-in">
-            <div class="text-xs text-red-500" v-if="noFoundJob">No matching job number</div>
+            <div v-if="noFoundJob" class="text-xs text-red-500">
+              No matching job number
+            </div>
           </transition>
         </div>
       </div>
+
       <div class="flex justify-start">
         <div
           class="bg-yellow-500 hover:text-white cursor-pointer shadow-lg rounded-lg px-2 py-1 font-bold mb-5 min-w-sm"
           @click="findJobNumber"
-        >Search</div>
+        >
+          Search
+        </div>
       </div>
     </div>
 
@@ -32,7 +40,9 @@
           :to="tab.route"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="tab.active ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >{{ tab.title }}</nuxt-link>
+        >
+          {{ tab.title }}
+        </nuxt-link>
       </div>
     </div>
 
@@ -50,22 +60,18 @@
 </template>
 
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppLoading from "@/components/Base/AppLoading"
 
 export default {
   middleware: "isVerified",
 
   components: {
     AppConfirmationModal,
-    AppInput,
     AppLoading,
-    AppButton
   },
 
-  data() {
+  data () {
     return {
       search: null,
       noFoundJob: false,
@@ -74,39 +80,41 @@ export default {
       invoiceStatusList: [
         {
           label: "All",
-          value: ""
+          value: "",
         },
         {
           label: "To Be Invoice",
-          value: "To Be Invoice"
+          value: "To Be Invoice",
         },
         {
           label: "Disputed",
-          value: "Disputed"
+          value: "Disputed",
         },
         {
           label: "Invoiced",
-          value: "Invoiced"
-        }
-      ]
-    };
+          value: "Invoiced",
+        },
+      ],
+    }
   },
 
   computed: {
-    practice() {
-      return this.$auth.loggedIn && this.$auth.user.practice_detail
-        ? this.$auth.user.practice_detail.practice
-        : null;
+    practice () {
+      return this.$auth.loggedIn && this.$auth.user.practice_detail ?
+        this.$auth.user.practice_detail.practice :
+        null
     },
-    authPermissions() {
-      return this.$store.getters["permissions"];
+
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
-    tabs() {
-      const { query } = this.$route;
 
-      const { status = "Allocated" } = query;
+    tabs () {
+      const { query, } = this.$route
 
-      const tabs = [];
+      const { status = "Allocated", } = query
+
+      const tabs = []
 
       if (this.practice && this.practice.type === "Spoke") {
         tabs.push(
@@ -116,13 +124,13 @@ export default {
               route: {
                 name: "sessions-index",
                 query: {
-                  status: "Pending"
-                }
+                  status: "Pending",
+                },
               },
-              active: status && status.toLowerCase() === "Pending".toLowerCase()
-            }
+              active: status && status.toLowerCase() === "Pending".toLowerCase(),
+            },
           ]
-        );
+        )
       }
 
       tabs.push(
@@ -132,173 +140,175 @@ export default {
             route: {
               name: "sessions-index",
               query: {
-                status: "Allocated"
-              }
+                status: "Allocated",
+              },
             },
-            active: status && status.toLowerCase() === "Allocated".toLowerCase()
+            active: status && status.toLowerCase() === "Allocated".toLowerCase(),
           },
           {
             title: "Ongoing",
             route: {
               name: "sessions-index",
               query: {
-                status: "Ongoing"
-              }
+                status: "Ongoing",
+              },
             },
-            active: status && status.toLowerCase() === "Ongoing".toLowerCase()
+            active: status && status.toLowerCase() === "Ongoing".toLowerCase(),
           },
           {
             title: "Live",
             route: {
               name: "sessions-index",
               query: {
-                status: "Live"
-              }
+                status: "Live",
+              },
             },
-            active: status && status.toLowerCase() === "Live".toLowerCase()
+            active: status && status.toLowerCase() === "Live".toLowerCase(),
           },
           {
             title: "Applied",
             route: {
               name: "sessions-index",
               query: {
-                status: "Applied"
-              }
+                status: "Applied",
+              },
             },
-            active: status && status.toLowerCase() === "Applied".toLowerCase()
+            active: status && status.toLowerCase() === "Applied".toLowerCase(),
           },
           {
             title: "Unfilled",
             route: {
               name: "sessions-index",
               query: {
-                status: "Unfilled"
-              }
+                status: "Unfilled",
+              },
             },
-            active: status && status.toLowerCase() === "Unfilled".toLowerCase()
+            active: status && status.toLowerCase() === "Unfilled".toLowerCase(),
           },
           {
             title: "Withdrawn",
             route: {
               name: "sessions-index",
               query: {
-                status: "Withdrawn"
-              }
+                status: "Withdrawn",
+              },
             },
-            active: status && status.toLowerCase() === "Withdrawn".toLowerCase()
+            active: status && status.toLowerCase() === "Withdrawn".toLowerCase(),
           },
           {
             title: "Cancelled",
             route: {
               name: "sessions-index",
               query: {
-                status: "Cancelled"
-              }
+                status: "Cancelled",
+              },
             },
-            active: status && status.toLowerCase() === "Cancelled".toLowerCase()
+            active: status && status.toLowerCase() === "Cancelled".toLowerCase(),
           },
           {
             title: "Completed",
             route: {
               name: "sessions-index",
               query: {
-                status: "Completed"
-              }
+                status: "Completed",
+              },
             },
-            active: status && status.toLowerCase() === "Completed".toLowerCase()
+            active: status && status.toLowerCase() === "Completed".toLowerCase(),
           },
           {
             title: "Approved",
             route: {
               name: "sessions-index",
               query: {
-                status: "Approved"
-              }
+                status: "Approved",
+              },
             },
-            active: status && status.toLowerCase() === "Approved".toLowerCase()
-          }
+            active: status && status.toLowerCase() === "Approved".toLowerCase(),
+          },
         ]
-      );
+      )
 
-      return tabs;
-    }
+      return tabs
+    },
   },
 
   watch: {
-    authPermissions(value) {
+    authPermissions (value) {
       if (!this.CheckPermissions(value).hasPermission) {
-        this.confirmation_modal = true;
+        this.confirmation_modal = true
       }
-    }
+    },
   },
 
   methods: {
-    goTo() {
-      this.confirmation_modal = false;
+    goTo () {
+      this.confirmation_modal = false
       setTimeout(() => {
-        this.$router.push("/");
-      }, 500);
+        this.$router.push("/")
+      }, 500)
     },
-    async findJobNumber() {
+    async findJobNumber () {
       if (!this.search) {
-        return;
+        return
       }
 
-      this.loading = true;
+      this.loading = true
 
-      let resJob = await this.findJob();
-      let resJobPart = await this.findJobParts();
-      let job = null;
-      let urlPath = null;
-      this.noFoundJob = false;
+      let resJob = await this.findJob()
+      let resJobPart = await this.findJobParts()
+      let job = null
+      let urlPath = null
+      this.noFoundJob = false
 
-      this.loading = false;
+      this.loading = false
 
       if (resJob.length > 0) {
-        job = resJob[0];
-        urlPath = `/sessions/${job.id}`;
+        job = resJob[0]
+        urlPath = `/sessions/${job.id}`
       }
 
       if (resJobPart.length > 0) {
-        job = resJobPart[0];
-        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`;
+        job = resJobPart[0]
+        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
       }
 
       if (resJob.length > 0 || resJobPart.length > 0) {
         this.$router.push({
           path: `/sessions`,
-          query: { status: job.status }
-        });
+          query: { status: job.status, },
+        })
 
         setTimeout(() => {
           this.$router.push({
             path: urlPath,
-            query: { status: job.status }
-          });
-        }, 500);
+            query: { status: job.status, },
+          })
+        }, 500)
       }
 
       if (resJob.length === 0 && resJobPart.length === 0) {
-        this.noFoundJob = true;
+        this.noFoundJob = true
       }
     },
-    findJob() {
+
+    findJob () {
       return this.$axios
         .$get(`/api/v1/practice/jobs`, {
           params: {
-            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled"],
-            job_number: this.search
-          }
+            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled",],
+            job_number: this.search,
+          },
         })
         .then(res => {
-          return res.data.jobs;
+          return res.data.jobs
         })
         .catch(err => {
-          return [];
-          console.log("job err", err.response);
-        });
+          console.log("job err", err.response)
+          return []
+        })
     },
-    findJobParts() {
+
+    findJobParts () {
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, {
           params: {
@@ -308,19 +318,20 @@ export default {
               "Cancelled",
               "Completed",
               "Approved",
-              "Terminated"
+              "Terminated",
             ],
-            job_part_number: this.search
-          }
+            job_part_number: this.search,
+          },
         })
         .then(res => {
-          return res.data.job_parts;
+          return res.data.job_parts
         })
         .catch(err => {
-          return [];
-          console.log("job part err", err.response);
-        });
-    }
-  }
-};
+          console.log("job part err", err.response)
+          return []
+        })
+    },
+    
+  },
+}
 </script>
