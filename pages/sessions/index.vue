@@ -311,16 +311,14 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
-          <template
-            v-slot:shifts="slotProps"
-          >
-            {{ displayArray(slotProps.item.shifts.map(item => item.name)) }}
+          <template v-slot:shifts="slotProps">
+            {{ slotProps.item.shifts.map(item => item.name).join(', ') }}
           </template>
-          <template
-            v-slot:rate_type="slotProps"
-          >
-            {{ displayArray(slotProps.item.locum_detail_rate_types.map(item => item.name)) }}
+
+          <template v-slot:rate_type="slotProps">
+            {{ slotProps.item.locum_detail_rate_types.map(item => item.name).join(', ') }}
           </template>
+
           <template
             v-slot:rates="slotProps"
           >
@@ -376,6 +374,7 @@ export default {
     AppButton,
     AppLoading,
   },
+
   props: {
     invoiceStatusList: {
       type: Array,
@@ -384,6 +383,7 @@ export default {
       },
     },
   },
+
   middleware ({ query, error, }) {
     if (
       query.status
@@ -452,6 +452,7 @@ export default {
       showRefresh: false,
     }
   },
+
   computed: {
     isJobPart () {
       if (
@@ -705,6 +706,7 @@ export default {
       return columns
     },
   },
+
   watch: {
     async "$route.query" (newValue, oldValue) {
       let newStatus = newValue.status
@@ -730,6 +732,7 @@ export default {
       }
     },
   },
+
   async asyncData ({ app, query, error, }) {
     try {
       let status = []
@@ -968,91 +971,30 @@ export default {
       }
     }
   },
+
   mounted () {
-    this.$socket.on(
-      "Practice Notification Job Available",
-      this.getAvailableJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Application",
-      this.getAppliedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Application Cancelled",
-      this.getAppliedCancelledJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Allocated",
-      this.getCurrentJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Ongoing",
-      this.getOngoingJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Part Completed",
-      this.getCompletedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Completed",
-      this.getCompletedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Locum Invoice Updated",
-      this.getApprovedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Cancelled",
-      this.getCancelledJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Amended",
-      this.getAmendedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Declined",
-      this.getDeclinedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Auto Declined",
-      this.getAutoDeclinedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Update Accept",
-      this.getUpdateAcceptJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Unfilled",
-      this.getUnfilledJobsRealTime
-    )
+    this.$socket.on('Practice Notification Job Available', this.getAvailableJobsRealTime)
+    this.$socket.on('Practice Notification Job Application', this.getAppliedJobsRealTime)
+    this.$socket.on('Practice Notification Job Application Cancelled', this.getAppliedCancelledJobsRealTime)
+    this.$socket.on('Practice Notification Job Allocated', this.getCurrentJobsRealTime)
+    this.$socket.on('Practice Notification Job Ongoing', this.getOngoingJobsRealTime)
+    this.$socket.on('Practice Notification Job Part Completed', this.getCompletedJobsRealTime)
+    this.$socket.on('Practice Notification Job Completed', this.getCompletedJobsRealTime)
+    this.$socket.on('Practice Notification Locum Invoice Updated', this.getApprovedJobsRealTime)
+    this.$socket.on('Practice Notification Job Cancelled', this.getCancelledJobsRealTime)
+    this.$socket.on('Practice Notification Job Amended', this.getAmendedJobsRealTime)
+    this.$socket.on('Practice Notification Job Declined', this.getDeclinedJobsRealTime)
+    this.$socket.on('Practice Notification Job Auto Declined', this.getAutoDeclinedJobsRealTime)
+    this.$socket.on('Practice Notification Job Update Accept', this.getUpdateAcceptJobsRealTime)
+    this.$socket.on('Practice Notification Job Unfilled', this.getUnfilledJobsRealTime)
   },
+
   destroyed () {
     this.removeListener()
     this.showRefresh = false
   },
+
   methods: {
-    displayArray (arrayList) {
-      let arrayToText = ""
-      arrayList.forEach((item, index) => {
-        if (arrayList.length > 1) {
-          if (index !== arrayList.length - 1) {
-            arrayToText += `${item}, `
-          } else {
-            arrayToText += `${item}`
-          }
-          // if (
-          // index !== arrayList.length - 1 &&
-          // index === arrayList.length - 2
-          // )
-          //  else {
-          // arrayToText += ` and ${item}`;
-          // }
-        } else {
-          arrayToText += item
-        }
-      })
-      return arrayToText
-    },
     routerLink (jobOrJobPart) {
       if (this.isJobPart) {
         return {
@@ -1077,9 +1019,11 @@ export default {
         },
       }
     },
+
     filterJobList (id) {
       this.jobs = this.jobs.filter(item => item.id !== id)
     },
+
     getJobsPromiseAll () {
       let status = []
       let queryStatus = this.$route.query.status

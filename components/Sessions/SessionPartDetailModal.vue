@@ -71,6 +71,7 @@
                   </p>
                 </div>
               </template>
+              
               <template v-if="jobPart.status === 'Cancelled'">
                 <div class="leading-tight pb-4">
                   <p
@@ -122,7 +123,9 @@
                 </div>
               </template>
             </div>
+
             <SessionPartDetailModalInfo :job_part="jobPart" />
+
             <div
               v-if="practice.type !== 'Spoke' || 
                 (practice.type === 'Spoke' && !practice.parent_practice_id) ||
