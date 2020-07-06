@@ -66,8 +66,8 @@ import AppLoading from "@/components/Base/AppLoading"
 export default {
   transition: (to, from) => {
     if (
-      (to.name === 'job-parts-index' && from.name === 'sessions-index')
-      || (from.name === 'job-parts-index' && to.name === 'sessions-index')
+      (to && to.name === 'job-parts-index' && from && from.name === 'sessions-index')
+      || (from && from.name === 'job-parts-index' && to && to.name === 'sessions-index')
     ) {
       return {
         name: '',

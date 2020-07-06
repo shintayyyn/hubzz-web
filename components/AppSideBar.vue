@@ -9,31 +9,22 @@
           X
         </button>
 
-        <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
-          <span
-            v-if="`/${$route.path.split('/')[1]}` == item.route"
-            class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full"
-          />
+        <div v-for="(navigationTab, index) in navigationTabs" :key="index" class="text-sm relative">
+          <span v-if="navigationTab.active" class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full" />
 
           <nuxt-link
-            :to="item.route"
-            :event="isDisabled(item.route)"
+            :to="navigationTab.route"
+            :event="$route.path.includes(navigationTab.route) ? '' : 'click'"
             class="block no-underline p-4 transition-hover"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+            :class="navigationTab.active ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
           >
-            <span>{{ item.name }}</span>
+            <span>{{ navigationTab.navigationTabTitle }}</span>
           </nuxt-link>
         </div>
 
         <div class="text-sm relative">
-          <span
-            v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
-            class="absolute left-0 border-solid bg-sunglow w-1 h-full"
-          />
-
           <button
-            class="block no-underline p-4 transition-hover focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+            class="block no-underline p-4 transition-hover focus:outline-none hover:text-sunglow hover:font-bold"
             @click.prevent="signout_modal = true"
           >
             <span>Sign Out</span>
@@ -70,9 +61,9 @@ export default {
 
   data () {
     return {
+      user: null,
       signout_modal: false,
       confirmation_modal: false,
-      lists: [],
       eligibleToSpoke: false,
     }
   },
@@ -81,11 +72,319 @@ export default {
     authPermissions () {
       return this.$store.getters["permissions"]
     },
+
     view_locum_jobs () {
       return this.$store.getters["getViewLocumJobs"]
     },
+
     view_permanent_jobs () {
       return this.$store.getters["getViewPermanentJobs"]
+    },
+
+    navigationTabs () {
+      if (!this.user) {
+        return []
+      }
+
+      const { domain, status: accountStatus, } = this.user
+
+      if (domain === "Locum") {
+        const locumTabList = []
+
+        locumTabList.push({
+          navigationTabTitle: "Dashboard",
+          route: "/dashboard",
+          active: `/${this.$route.path.split('/')[1]}` === '/dashboard',
+        })
+
+        locumTabList.push({
+          navigationTabTitle: "Account",
+          route: "/account",
+          active: `/${this.$route.path.split('/')[1]}` === '/account',
+        })
+
+        locumTabList.push({
+          navigationTabTitle: "Compliance",
+          route: "/compliance",
+          active: `/${this.$route.path.split('/')[1]}` === '/compliance',
+        })
+
+        if (this.view_locum_jobs) {
+          locumTabList.push({
+            navigationTabTitle: "Availability",
+            route: "/availability",
+            active: `/${this.$route.path.split('/')[1]}` === '/availability',
+          })
+        }
+
+        if (
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_locum_jobs
+        ) {
+          locumTabList.push({
+            navigationTabTitle: "My Practice",
+            route: "/my-practice",
+            active: `/${this.$route.path.split('/')[1]}` === '/my-practice',
+          })
+        }
+
+        if (
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_locum_jobs
+        ) {
+          locumTabList.push({
+            navigationTabTitle: "Jobs",
+            route: "/jobs",
+            active: `/${this.$route.path.split('/')[1]}` === '/jobs',
+          })
+        }
+
+        if (
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_permanent_jobs
+        ) {
+          locumTabList.push({
+            navigationTabTitle: "Permanent Jobs",
+            route: "/permanent-jobs",
+            active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
+          })
+        }
+
+        if (
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_locum_jobs
+        ) {
+          locumTabList.push({
+            navigationTabTitle: "Billing",
+            route: "/locum-billing",
+            active: `/${this.$route.path.split('/')[1]}` === '/locum-billing',
+          })
+        }
+
+        if (["Active", "Dormant",].includes(accountStatus)) {
+          locumTabList.push({
+            navigationTabTitle: "Reports",
+            route: "/locum-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/locum-reports',
+          })
+        }
+
+        locumTabList.push({
+          navigationTabTitle: "Invite",
+          route: "/invite",
+          active: `/${this.$route.path.split('/')[1]}` === '/invite',
+        })
+
+        locumTabList.push({
+          navigationTabTitle: "FAQ",
+          route: "/faq",
+          active: `/${this.$route.path.split('/')[1]}` === '/faq',
+        })
+
+        locumTabList.push({
+          navigationTabTitle: "Terms and Conditions",
+          route: "/terms-and-conditions",
+          active: `/${this.$route.path.split('/')[1]}` === '/terms-and-conditions',
+        })
+
+        locumTabList.push({
+          navigationTabTitle: "Contact Us",
+          route: "/contact-us",
+          active: `/${this.$route.path.split('/')[1]}` === '/contact-us',
+        })
+
+        return locumTabList
+      }
+
+      if (domain === "Practice") {
+        const practiceUser = this.$auth.user
+
+        const practice = practiceUser.practice_detail
+          ? practiceUser.practice_detail.practice
+          : null
+
+        const {
+          status: practiceStatus = null,
+          type: practiceType = null,
+          hub_type: hubType = null,
+        } = practice || {}
+
+        const practiceTabList = []
+
+        practiceTabList.push({
+          navigationTabTitle: "Dashboard",
+          route: "/dashboard",
+          active: `/${this.$route.path.split('/')[1]}` === '/dashboard',
+        })
+
+        practiceTabList.push({
+          navigationTabTitle: "Account",
+          route: "/account",
+          active: `/${this.$route.path.split('/')[1]}` === '/account',
+        })
+
+        if (this.authPermissions.includes("View Profile Practice")) {
+          practiceTabList.push({
+            navigationTabTitle: "Profile",
+            route: "/profile",
+            active: `/${this.$route.path.split('/')[1]}` === '/profile',
+          })
+        } else if (this.authPermissions.includes("View Profile Users")) {
+          practiceTabList.push({
+            navigationTabTitle: "Profile",
+            route: "/profile/users",
+            active: `/${this.$route.path.split('/')[1]}` === '/profile',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && practiceType === "Hub"
+          && this.authPermissions.includes("View Surgery Management")
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Surgery Management",
+            route: "/hub-surgery-management",
+            active: `/${this.$route.path.split('/')[1]}` === '/hub-surgery-management',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && practiceType === "Spoke"
+          && this.authPermissions.includes("View Surgery Management")
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Surgery Management",
+            route: "/spoke-surgery-management",
+            active: `/${this.$route.path.split('/')[1]}` === '/spoke-surgery-management',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && practiceType === "Stand Alone"
+          && this.authPermissions.includes("View Surgery Management")
+          && this.eligibleToSpoke
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Surgery Management",
+            route: "/spoke-surgery-management",
+            active: `/${this.$route.path.split('/')[1]}` === '/spoke-surgery-management',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && hubType !== "Type 2"
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "My Banks",
+            route: "/my-banks",
+            active: `/${this.$route.path.split('/')[1]}` === '/my-banks',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Sessions Job")
+          && hubType !== "Type 2"
+        ) {
+          // practiceTabList.push({
+          //   navigationTabTitle: "Sessions",
+          //   route: "/sessions",
+          //   active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
+          // })
+
+          practiceTabList.push({
+            navigationTabTitle: "Sessions",
+            route: "/job-parts",
+            active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Permanent Job")
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Permanent Jobs",
+            route: "/permanent-jobs",
+            active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Sessions Job")
+          && this.authPermissions.includes("View Billings")
+          && hubType !== "Type 2"
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Billing",
+            route: "/practice-billing",
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-billing',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Reports",
+            route: "/practice-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-reports',
+          })
+        }
+
+        practiceTabList.push({
+          navigationTabTitle: "Invite",
+          route: "/invite",
+          active: `/${this.$route.path.split('/')[1]}` === '/invite',
+        })
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Role")
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Roles and Permissions",
+            route: "/roles-and-permissions",
+            active: `/${this.$route.path.split('/')[1]}` === '/roles-and-permissions',
+          })
+        }
+
+        practiceTabList.push({
+          navigationTabTitle: "FAQ",
+          route: "/faq",
+          active: `/${this.$route.path.split('/')[1]}` === '/faq',
+        })
+
+        practiceTabList.push({
+          navigationTabTitle: "Terms and Conditions",
+          route: "/terms-and-conditions",
+          active: `/${this.$route.path.split('/')[1]}` === '/terms-and-conditions',
+        })
+
+        practiceTabList.push({
+          navigationTabTitle: "Contact Us",
+          route: "/contact-us",
+          active: `/${this.$route.path.split('/')[1]}` === '/contact-us',
+        })
+
+        return practiceTabList
+      }
+
+      return []
     },
   },
 
@@ -100,10 +399,10 @@ export default {
 
   async created () {
     if (
-      this.$auth.loggedIn &&
-      this.$auth.user.domain === "Practice" &&
-      this.$auth.user.practice_detail.practice.type === "Stand Alone" &&
-      this.authPermissions.includes("View Surgery Management")
+      this.$auth.loggedIn
+      && this.$auth.user.domain === "Practice"
+      && this.$auth.user.practice_detail.practice.type === "Stand Alone"
+      && this.authPermissions.includes("View Surgery Management")
     ) {
       let hasHubInvitation = false
       let hasSpokeInvitation = false
@@ -148,25 +447,13 @@ export default {
 
   methods: {
     addSocketListener () {
-      this.$socket.removeListener(
-        "Practice Notification Update Profile",
-        this.updatePermissions
-      )
-      this.$socket.removeListener(
-        "Practice Notification Delete Profile",
-        this.toggleConfirmationModal
-      )
+      this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+      this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
     },
 
     removeSocketListener () {
-      this.$socket.removeListener(
-        "Practice Notification Update Profile",
-        this.updatePermissions
-      )
-      this.$socket.removeListener(
-        "Practice Notification Delete Profile",
-        this.toggleConfirmationModal
-      )
+      this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+      this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
     },
 
     toggleConfirmationModal () {
@@ -175,286 +462,19 @@ export default {
 
     updatePermissions (user) {
       if (
-        user &&
-        user.practice_detail &&
-        user.practice_detail.permissions &&
-        user.practice_detail.permissions.length > 0
+        user
+        && user.practice_detail
+        && user.practice_detail.permissions
+        && user.practice_detail.permissions.length > 0
       ) {
-        this.$store.commit(
-          "SET_PERMISSIONS",
-          user.practice_detail.role.permissions
-        )
+        this.$store.commit("SET_PERMISSIONS", user.practice_detail.role.permissions)
       } else {
         this.$store.commit("SET_PERMISSIONS", [])
       }
     },
 
     getInit () {
-      const user = this.$auth.user
-
-      const { domain, status: accountStatus, } = user
-
-      if (domain === "Locum") {
-        const locumTabList = []
-
-        locumTabList.push({
-          name: "Dashboard",
-          route: "/dashboard",
-        })
-
-        locumTabList.push({
-          name: "Account",
-          route: "/account",
-        })
-
-        locumTabList.push({
-          name: "Compliance",
-          route: "/compliance",
-        })
-
-        if (this.view_locum_jobs) {
-          locumTabList.push({
-            name: "Availability",
-            route: "/availability",
-          })
-        }
-
-        if (
-          ["Active", "Dormant",].includes(accountStatus) &&
-          this.view_locum_jobs
-        ) {
-          locumTabList.push({
-            name: "My Practice",
-            route: "/my-practice",
-          })
-        }
-
-        if (
-          ["Active", "Dormant",].includes(accountStatus) &&
-          this.view_locum_jobs
-        ) {
-          locumTabList.push({
-            name: "Jobs",
-            route: "/jobs",
-          })
-        }
-
-        if (
-          ["Active", "Dormant",].includes(accountStatus) &&
-          this.view_permanent_jobs
-        ) {
-          locumTabList.push({
-            name: "Permanent Jobs",
-            route: "/permanent-jobs",
-          })
-        }
-
-        if (
-          ["Active", "Dormant",].includes(accountStatus) &&
-          this.view_locum_jobs
-        ) {
-          locumTabList.push({
-            name: "Billing",
-            route: "/locum-billing",
-          })
-        }
-
-        if (["Active", "Dormant",].includes(accountStatus)) {
-          locumTabList.push({
-            name: "Reports",
-            route: "/locum-reports",
-          })
-        }
-
-        locumTabList.push({
-          name: "Invite",
-          route: "/invite",
-        })
-
-        locumTabList.push({
-          name: "FAQ",
-          route: "/faq",
-        })
-
-        locumTabList.push({
-          name: "Terms and Conditions",
-          route: "/terms-and-conditions",
-        })
-
-        locumTabList.push({
-          name: "Contact Us",
-          route: "/contact-us",
-        })
-
-        this.lists = locumTabList
-        return
-      }
-
-      if (domain === "Practice") {
-        const practiceUser = this.$auth.user
-
-        const practice = practiceUser.practice_detail ?
-          practiceUser.practice_detail.practice :
-          null
-
-        const {
-          status: practiceStatus = null,
-          type: practiceType = null,
-          hub_type: hubType = null,
-        } = practice || {}
-
-        const practiceTabList = []
-
-        practiceTabList.push({
-          name: "Dashboard",
-          route: "/dashboard",
-        })
-
-        practiceTabList.push({
-          name: "Account",
-          route: "/account",
-        })
-
-        if (this.authPermissions.includes("View Profile Practice")) {
-          practiceTabList.push({
-            name: "Profile",
-            route: "/profile",
-          })
-        } else if (this.authPermissions.includes("View Profile Users")) {
-          practiceTabList.push({
-            name: "Profile",
-            route: "/profile/users",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          practiceType === "Hub" &&
-          this.authPermissions.includes("View Surgery Management")
-        ) {
-          practiceTabList.push({
-            name: "Surgery Management",
-            route: "/hub-surgery-management",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          practiceType === "Spoke" &&
-          this.authPermissions.includes("View Surgery Management")
-        ) {
-          practiceTabList.push({
-            name: "Surgery Management",
-            route: "/spoke-surgery-management",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          practiceType === "Stand Alone" &&
-          this.authPermissions.includes("View Surgery Management") &&
-          this.eligibleToSpoke
-        ) {
-          practiceTabList.push({
-            name: "Surgery Management",
-            route: "/spoke-surgery-management",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          hubType !== "Type 2"
-        ) {
-          practiceTabList.push({
-            name: "My Banks",
-            route: "/my-banks",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          this.authPermissions.includes("View Sessions Job") &&
-          hubType !== "Type 2"
-        ) {
-          practiceTabList.push({
-            name: "Sessions",
-            route: "/sessions",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          this.authPermissions.includes("View Permanent Job")
-        ) {
-          practiceTabList.push({
-            name: "Permanent Jobs",
-            route: "/permanent-jobs",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          this.authPermissions.includes("View Sessions Job") &&
-          this.authPermissions.includes("View Billings") &&
-          hubType !== "Type 2"
-        ) {
-          practiceTabList.push({
-            name: "Billing",
-            route: "/practice-billing",
-          })
-        }
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus)
-        ) {
-          practiceTabList.push({
-            name: "Reports",
-            route: "/practice-reports",
-          })
-        }
-
-        practiceTabList.push({
-          name: "Invite",
-          route: "/invite",
-        })
-
-        if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant",].includes(practiceStatus) &&
-          this.authPermissions.includes("View Role")
-        ) {
-          practiceTabList.push({
-            name: "Roles and Permissions",
-            route: "/roles-and-permissions",
-          })
-        }
-
-        practiceTabList.push({
-          name: "FAQ",
-          route: "/faq",
-        })
-
-        practiceTabList.push({
-          name: "Terms and Conditions",
-          route: "/terms-and-conditions",
-        })
-
-        practiceTabList.push({
-          name: "Contact Us",
-          route: "/contact-us",
-        })
-
-        this.lists = practiceTabList
-        return
-      }
+      this.user = this.$auth.user
     },
 
     logout () {
@@ -512,10 +532,6 @@ export default {
       await this.$auth.logout()
       this.$auth.$storage.setUniversal("_token.local", "")
       this.$router.push("/")
-    },
-
-    isDisabled (routeName) {
-      return this.$route.path.includes(routeName) ? "" : "click"
     },
 
     close () {

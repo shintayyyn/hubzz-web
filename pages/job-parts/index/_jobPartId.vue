@@ -1,17 +1,11 @@
 <template>
   <div ref="modalContainer" class="modal-container shadow-lg">
-    <SessionDetailModal
-      :job="job"
-      @close="close"
-      @appointed="$emit('appointed', $event)"
-      @cancelled="$emit('cancelled', $event)"
-      @scrollToTop="scrollToTop()"
-    />
+    <SessionPartDetailModal :job-part="jobPart" @close="close" />
   </div>
 </template>
 
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 
 export default {
   transition: {
@@ -20,25 +14,27 @@ export default {
   },
 
   components: {
-    SessionDetailModal,
+    SessionPartDetailModal,
   },
 
   data () {
     return {
-      job: null,
+      jobPart: null,
     }
   },
 
   async asyncData ({ app, params, error, }) {
     try {
-      const { id, } = params
+      const { jobPartId, } = params
 
-      let response = await app.$axios.get(`/api/v1/practice/jobs/${id}`)
+      let response = await app.$axios.get(
+        `/api/v1/practice/job-parts/${jobPartId}`
+      )
 
-      let job = response.data.data.job
+      let jobPart = response.data.data.job_part
 
       return {
-        job,
+        jobPart,
       }
     } catch (err) {
       if (err && err.response && err.response.status === 404) {
@@ -54,16 +50,15 @@ export default {
 
   methods: {
     close () {
+      const { query, } = this.$route
+
       this.$router.push({
-        name: "sessions-index",
-        query: {
-          ...this.$route.query,
-        },
+        name: "job-parts-index",
+        query,
       })
     },
 
     scrollToTop () {
-      console.log(this.$refs.modalContainer)
       this.$nextTick(() => {
         this.$refs.modalContainer.scrollTop = 0
       })
@@ -74,11 +69,11 @@ export default {
 
 <style scoped>
 .modal-container {
-  z-index: 510;
+	z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 90%;
-  }
+	.modal-container {
+		width: 90%;
+	}
 }
 </style>
