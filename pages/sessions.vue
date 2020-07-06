@@ -60,278 +60,278 @@
 </template>
 
 <script>
-  import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-  import AppLoading from "@/components/Base/AppLoading"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppLoading from "@/components/Base/AppLoading"
 
-  export default {
-    middleware: "isVerified",
+export default {
+  middleware: "isVerified",
 
-    components: {
-      AppConfirmationModal,
-      AppLoading,
+  components: {
+    AppConfirmationModal,
+    AppLoading,
+  },
+
+  data () {
+    return {
+      search: null,
+      noFoundJob: false,
+      loading: false,
+      confirmation_modal: false,
+      invoiceStatusList: [
+        {
+          label: "All",
+          value: "",
+        },
+        {
+          label: "To Be Invoice",
+          value: "To Be Invoice",
+        },
+        {
+          label: "Disputed",
+          value: "Disputed",
+        },
+        {
+          label: "Invoiced",
+          value: "Invoiced",
+        },
+      ],
+    }
+  },
+
+  computed: {
+    practice () {
+      return this.$auth.loggedIn && this.$auth.user.practice_detail ?
+        this.$auth.user.practice_detail.practice :
+        null
     },
 
-    data () {
-      return {
-        search: null,
-        noFoundJob: false,
-        loading: false,
-        confirmation_modal: false,
-        invoiceStatusList: [
-          {
-            label: "All",
-            value: ""
-          },
-          {
-            label: "To Be Invoice",
-            value: "To Be Invoice"
-          },
-          {
-            label: "Disputed",
-            value: "Disputed"
-          },
-          {
-            label: "Invoiced",
-            value: "Invoiced"
-          }
-        ],
-      }
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
 
-    computed: {
-      practice () {
-        return this.$auth.loggedIn && this.$auth.user.practice_detail
-          ? this.$auth.user.practice_detail.practice
-          : null
-      },
+    tabs () {
+      const { query, } = this.$route
 
-      authPermissions () {
-        return this.$store.getters["permissions"]
-      },
+      const { status = "Allocated", } = query
 
-      tabs () {
-        const { query } = this.$route
+      const tabs = []
 
-        const { status = "Allocated" } = query
-
-        const tabs = []
-
-        if (this.practice && this.practice.type === "Spoke") {
-          tabs.push(
-            ...[
-              {
-                title: "Pending",
-                route: {
-                  name: "sessions-index",
-                  query: {
-                    status: "Pending"
-                  }
-                },
-                active: status && status.toLowerCase() === "Pending".toLowerCase()
-              }
-            ]
-          )
-        }
-
+      if (this.practice && this.practice.type === "Spoke") {
         tabs.push(
           ...[
             {
-              title: "Allocated",
+              title: "Pending",
               route: {
                 name: "sessions-index",
                 query: {
-                  status: "Allocated"
-                }
+                  status: "Pending",
+                },
               },
-              active: status && status.toLowerCase() === "Allocated".toLowerCase()
+              active: status && status.toLowerCase() === "Pending".toLowerCase(),
             },
-            {
-              title: "Ongoing",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Ongoing"
-                }
-              },
-              active: status && status.toLowerCase() === "Ongoing".toLowerCase()
-            },
-            {
-              title: "Live",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Live"
-                }
-              },
-              active: status && status.toLowerCase() === "Live".toLowerCase()
-            },
-            {
-              title: "Applied",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Applied"
-                }
-              },
-              active: status && status.toLowerCase() === "Applied".toLowerCase()
-            },
-            {
-              title: "Unfilled",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Unfilled"
-                }
-              },
-              active: status && status.toLowerCase() === "Unfilled".toLowerCase()
-            },
-            {
-              title: "Withdrawn",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Withdrawn"
-                }
-              },
-              active: status && status.toLowerCase() === "Withdrawn".toLowerCase()
-            },
-            {
-              title: "Cancelled",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Cancelled"
-                }
-              },
-              active: status && status.toLowerCase() === "Cancelled".toLowerCase()
-            },
-            {
-              title: "Completed",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Completed"
-                }
-              },
-              active: status && status.toLowerCase() === "Completed".toLowerCase()
-            },
-            {
-              title: "Approved",
-              route: {
-                name: "sessions-index",
-                query: {
-                  status: "Approved"
-                }
-              },
-              active: status && status.toLowerCase() === "Approved".toLowerCase()
-            }
           ]
         )
+      }
 
-        return tabs
+      tabs.push(
+        ...[
+          {
+            title: "Allocated",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Allocated",
+              },
+            },
+            active: status && status.toLowerCase() === "Allocated".toLowerCase(),
+          },
+          {
+            title: "Ongoing",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Ongoing",
+              },
+            },
+            active: status && status.toLowerCase() === "Ongoing".toLowerCase(),
+          },
+          {
+            title: "Live",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Live",
+              },
+            },
+            active: status && status.toLowerCase() === "Live".toLowerCase(),
+          },
+          {
+            title: "Applied",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Applied",
+              },
+            },
+            active: status && status.toLowerCase() === "Applied".toLowerCase(),
+          },
+          {
+            title: "Unfilled",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Unfilled",
+              },
+            },
+            active: status && status.toLowerCase() === "Unfilled".toLowerCase(),
+          },
+          {
+            title: "Withdrawn",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Withdrawn",
+              },
+            },
+            active: status && status.toLowerCase() === "Withdrawn".toLowerCase(),
+          },
+          {
+            title: "Cancelled",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Cancelled",
+              },
+            },
+            active: status && status.toLowerCase() === "Cancelled".toLowerCase(),
+          },
+          {
+            title: "Completed",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Completed",
+              },
+            },
+            active: status && status.toLowerCase() === "Completed".toLowerCase(),
+          },
+          {
+            title: "Approved",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Approved",
+              },
+            },
+            active: status && status.toLowerCase() === "Approved".toLowerCase(),
+          },
+        ]
+      )
+
+      return tabs
+    },
+  },
+
+  watch: {
+    authPermissions (value) {
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true
       }
     },
+  },
 
-    watch: {
-      authPermissions (value) {
-        if (!this.CheckPermissions(value).hasPermission) {
-          this.confirmation_modal = true
-        }
-      }
+  methods: {
+    goTo () {
+      this.confirmation_modal = false
+      setTimeout(() => {
+        this.$router.push("/")
+      }, 500)
     },
+    async findJobNumber () {
+      if (!this.search) {
+        return
+      }
 
-    methods: {
-      goTo () {
-        this.confirmation_modal = false
+      this.loading = true
+
+      let resJob = await this.findJob()
+      let resJobPart = await this.findJobParts()
+      let job = null
+      let urlPath = null
+      this.noFoundJob = false
+
+      this.loading = false
+
+      if (resJob.length > 0) {
+        job = resJob[0]
+        urlPath = `/sessions/${job.id}`
+      }
+
+      if (resJobPart.length > 0) {
+        job = resJobPart[0]
+        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
+      }
+
+      if (resJob.length > 0 || resJobPart.length > 0) {
+        this.$router.push({
+          path: `/sessions`,
+          query: { status: job.status, },
+        })
+
         setTimeout(() => {
-          this.$router.push("/")
-        }, 500)
-      },
-      async findJobNumber () {
-        if (!this.search) {
-          return
-        }
-
-        this.loading = true
-
-        let resJob = await this.findJob()
-        let resJobPart = await this.findJobParts()
-        let job = null
-        let urlPath = null
-        this.noFoundJob = false
-
-        this.loading = false
-
-        if (resJob.length > 0) {
-          job = resJob[0]
-          urlPath = `/sessions/${job.id}`
-        }
-
-        if (resJobPart.length > 0) {
-          job = resJobPart[0]
-          urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
-        }
-
-        if (resJob.length > 0 || resJobPart.length > 0) {
           this.$router.push({
-            path: `/sessions`,
-            query: { status: job.status }
+            path: urlPath,
+            query: { status: job.status, },
           })
+        }, 500)
+      }
 
-          setTimeout(() => {
-            this.$router.push({
-              path: urlPath,
-              query: { status: job.status }
-            })
-          }, 500)
-        }
-
-        if (resJob.length === 0 && resJobPart.length === 0) {
-          this.noFoundJob = true
-        }
-      },
-
-      findJob () {
-        return this.$axios
-          .$get(`/api/v1/practice/jobs`, {
-            params: {
-              status: ["Pending", "Allocated", "Live", "Applied", "Unfilled"],
-              job_number: this.search
-            }
-          })
-          .then(res => {
-            return res.data.jobs
-          })
-          .catch(err => {
-            console.log("job err", err.response)
-            return []
-          })
-      },
-
-      findJobParts () {
-        return this.$axios
-          .$get(`/api/v1/practice/job-parts`, {
-            params: {
-              status: [
-                "Ongoing",
-                "Withdrawn",
-                "Cancelled",
-                "Completed",
-                "Approved",
-                "Terminated"
-              ],
-              job_part_number: this.search
-            }
-          })
-          .then(res => {
-            return res.data.job_parts
-          })
-          .catch(err => {
-            console.log("job part err", err.response)
-            return []
-          })
-      },
-      
+      if (resJob.length === 0 && resJobPart.length === 0) {
+        this.noFoundJob = true
+      }
     },
-  }
+
+    findJob () {
+      return this.$axios
+        .$get(`/api/v1/practice/jobs`, {
+          params: {
+            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled",],
+            job_number: this.search,
+          },
+        })
+        .then(res => {
+          return res.data.jobs
+        })
+        .catch(err => {
+          console.log("job err", err.response)
+          return []
+        })
+    },
+
+    findJobParts () {
+      return this.$axios
+        .$get(`/api/v1/practice/job-parts`, {
+          params: {
+            status: [
+              "Ongoing",
+              "Withdrawn",
+              "Cancelled",
+              "Completed",
+              "Approved",
+              "Terminated",
+            ],
+            job_part_number: this.search,
+          },
+        })
+        .then(res => {
+          return res.data.job_parts
+        })
+        .catch(err => {
+          console.log("job part err", err.response)
+          return []
+        })
+    },
+    
+  },
+}
 </script>

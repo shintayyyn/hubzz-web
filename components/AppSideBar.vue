@@ -65,7 +65,7 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 export default {
   components: {
-    AppConfirmationModal
+    AppConfirmationModal,
   },
 
   data () {
@@ -73,7 +73,7 @@ export default {
       signout_modal: false,
       confirmation_modal: false,
       lists: [],
-      eligibleToSpoke: false
+      eligibleToSpoke: false,
     }
   },
 
@@ -86,7 +86,7 @@ export default {
     },
     view_permanent_jobs () {
       return this.$store.getters["getViewPermanentJobs"]
-    }
+    },
   },
 
   watch: {
@@ -95,7 +95,7 @@ export default {
     },
     view_permanent_jobs () {
       this.getInit()
-    }
+    },
   },
 
   async created () {
@@ -192,98 +192,98 @@ export default {
     getInit () {
       const user = this.$auth.user
 
-      const { domain, status: accountStatus } = user
+      const { domain, status: accountStatus, } = user
 
       if (domain === "Locum") {
         const locumTabList = []
 
         locumTabList.push({
           name: "Dashboard",
-          route: "/dashboard"
+          route: "/dashboard",
         })
 
         locumTabList.push({
           name: "Account",
-          route: "/account"
+          route: "/account",
         })
 
         locumTabList.push({
           name: "Compliance",
-          route: "/compliance"
+          route: "/compliance",
         })
 
         if (this.view_locum_jobs) {
           locumTabList.push({
             name: "Availability",
-            route: "/availability"
+            route: "/availability",
           })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
+          ["Active", "Dormant",].includes(accountStatus) &&
           this.view_locum_jobs
         ) {
           locumTabList.push({
             name: "My Practice",
-            route: "/my-practice"
+            route: "/my-practice",
           })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
+          ["Active", "Dormant",].includes(accountStatus) &&
           this.view_locum_jobs
         ) {
           locumTabList.push({
             name: "Jobs",
-            route: "/jobs"
+            route: "/jobs",
           })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
+          ["Active", "Dormant",].includes(accountStatus) &&
           this.view_permanent_jobs
         ) {
           locumTabList.push({
             name: "Permanent Jobs",
-            route: "/permanent-jobs"
+            route: "/permanent-jobs",
           })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
+          ["Active", "Dormant",].includes(accountStatus) &&
           this.view_locum_jobs
         ) {
           locumTabList.push({
             name: "Billing",
-            route: "/locum-billing"
+            route: "/locum-billing",
           })
         }
 
-        if (["Active", "Dormant"].includes(accountStatus)) {
+        if (["Active", "Dormant",].includes(accountStatus)) {
           locumTabList.push({
             name: "Reports",
-            route: "/locum-reports"
+            route: "/locum-reports",
           })
         }
 
         locumTabList.push({
           name: "Invite",
-          route: "/invite"
+          route: "/invite",
         })
 
         locumTabList.push({
           name: "FAQ",
-          route: "/faq"
+          route: "/faq",
         })
 
         locumTabList.push({
           name: "Terms and Conditions",
-          route: "/terms-and-conditions"
+          route: "/terms-and-conditions",
         })
 
         locumTabList.push({
           name: "Contact Us",
-          route: "/contact-us"
+          route: "/contact-us",
         })
 
         this.lists = locumTabList
@@ -293,163 +293,163 @@ export default {
       if (domain === "Practice") {
         const practiceUser = this.$auth.user
 
-        const practice = practiceUser.practice_detail
-          ? practiceUser.practice_detail.practice
-          : null
+        const practice = practiceUser.practice_detail ?
+          practiceUser.practice_detail.practice :
+          null
 
         const {
           status: practiceStatus = null,
           type: practiceType = null,
-          hub_type: hubType = null
+          hub_type: hubType = null,
         } = practice || {}
 
         const practiceTabList = []
 
         practiceTabList.push({
           name: "Dashboard",
-          route: "/dashboard"
+          route: "/dashboard",
         })
 
         practiceTabList.push({
           name: "Account",
-          route: "/account"
+          route: "/account",
         })
 
         if (this.authPermissions.includes("View Profile Practice")) {
           practiceTabList.push({
             name: "Profile",
-            route: "/profile"
+            route: "/profile",
           })
         } else if (this.authPermissions.includes("View Profile Users")) {
           practiceTabList.push({
             name: "Profile",
-            route: "/profile/users"
+            route: "/profile/users",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           practiceType === "Hub" &&
           this.authPermissions.includes("View Surgery Management")
         ) {
           practiceTabList.push({
             name: "Surgery Management",
-            route: "/hub-surgery-management"
+            route: "/hub-surgery-management",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           practiceType === "Spoke" &&
           this.authPermissions.includes("View Surgery Management")
         ) {
           practiceTabList.push({
             name: "Surgery Management",
-            route: "/spoke-surgery-management"
+            route: "/spoke-surgery-management",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           practiceType === "Stand Alone" &&
           this.authPermissions.includes("View Surgery Management") &&
           this.eligibleToSpoke
         ) {
           practiceTabList.push({
             name: "Surgery Management",
-            route: "/spoke-surgery-management"
+            route: "/spoke-surgery-management",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           hubType !== "Type 2"
         ) {
           practiceTabList.push({
             name: "My Banks",
-            route: "/my-banks"
+            route: "/my-banks",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           this.authPermissions.includes("View Sessions Job") &&
           hubType !== "Type 2"
         ) {
           practiceTabList.push({
             name: "Sessions",
-            route: "/sessions"
+            route: "/sessions",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           this.authPermissions.includes("View Permanent Job")
         ) {
           practiceTabList.push({
             name: "Permanent Jobs",
-            route: "/permanent-jobs"
+            route: "/permanent-jobs",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           this.authPermissions.includes("View Sessions Job") &&
           this.authPermissions.includes("View Billings") &&
           hubType !== "Type 2"
         ) {
           practiceTabList.push({
             name: "Billing",
-            route: "/practice-billing"
+            route: "/practice-billing",
           })
         }
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus)
+          ["Active", "Dormant",].includes(practiceStatus)
         ) {
           practiceTabList.push({
             name: "Reports",
-            route: "/practice-reports"
+            route: "/practice-reports",
           })
         }
 
         practiceTabList.push({
           name: "Invite",
-          route: "/invite"
+          route: "/invite",
         })
 
         if (
           accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
+          ["Active", "Dormant",].includes(practiceStatus) &&
           this.authPermissions.includes("View Role")
         ) {
           practiceTabList.push({
             name: "Roles and Permissions",
-            route: "/roles-and-permissions"
+            route: "/roles-and-permissions",
           })
         }
 
         practiceTabList.push({
           name: "FAQ",
-          route: "/faq"
+          route: "/faq",
         })
 
         practiceTabList.push({
           name: "Terms and Conditions",
-          route: "/terms-and-conditions"
+          route: "/terms-and-conditions",
         })
 
         practiceTabList.push({
           name: "Contact Us",
-          route: "/contact-us"
+          route: "/contact-us",
         })
 
         this.lists = practiceTabList
@@ -474,7 +474,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
+              text: [`${err.response.data.message}`,],
             })
           }
         })
@@ -492,7 +492,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
+              text: [`${err.response.data.message}`,],
             })
           }
         })
@@ -521,8 +521,8 @@ export default {
     close () {
       this.$store.commit("TOGGLE_SIDEBAR", false)
       document.body.style.overflow = "auto"
-    }
-  }
+    },
+  },
 }
 </script>
 
