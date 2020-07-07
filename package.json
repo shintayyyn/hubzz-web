@@ -102,7 +102,7 @@
       "semi": ["warn", "never"],
       "comma-dangle": ["warn", "always"],
       "indent": ["warn", 2],
-      "operator-linebreak": ["warn", "after"],
+      "operator-linebreak": ["warn", "before"],
       "eol-last": ["warn", "always"]
     }
   },

@@ -11,65 +11,65 @@
 </template>
 
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 
 export default {
   transition: {
     name: "slide",
-    mode: "out-in"
+    mode: "out-in",
   },
 
   components: {
-    SessionDetailModal
+    SessionDetailModal,
   },
 
-  data() {
+  data () {
     return {
-      job: null
-    };
+      job: null,
+    }
   },
 
-  async asyncData({ app, params, error }) {
+  async asyncData ({ app, params, error, }) {
     try {
-      const { id } = params;
+      const { id, } = params
 
-      let response = await app.$axios.get(`/api/v1/practice/jobs/${id}`);
+      let response = await app.$axios.get(`/api/v1/practice/jobs/${id}`)
 
-      let job = response.data.data.job;
+      let job = response.data.data.job
 
       return {
-        job
-      };
+        job,
+      }
     } catch (err) {
       if (err && err.response && err.response.status === 404) {
         return error({
           status: 404,
-          message: "This session could not be found."
-        });
+          message: "This session could not be found.",
+        })
       }
 
-      throw err;
+      throw err
     }
   },
 
   methods: {
-    close() {
+    close () {
       this.$router.push({
         name: "sessions-index",
         query: {
-          ...this.$route.query
-        }
-      });
+          ...this.$route.query,
+        },
+      })
     },
 
-    scrollToTop() {
-      console.log(this.$refs.modalContainer);
+    scrollToTop () {
+      console.log(this.$refs.modalContainer)
       this.$nextTick(() => {
-        this.$refs.modalContainer.scrollTop = 0;
-      });
-    }
-  }
-};
+        this.$refs.modalContainer.scrollTop = 0
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>

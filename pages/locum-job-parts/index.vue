@@ -1,35 +1,5 @@
 <template>
   <section class="relative">
-    <!-- <div
-      v-if="$route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase())"
-      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
-    >
-      <div class="relative">
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          to="/jobs?status=Available"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Available</nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          to="/jobs?status=Public"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'public' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Public</nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          to="/jobs?status=Bank"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'bank' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Bank</nuxt-link>
-      </div>
-    </div>-->
-
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -50,85 +20,64 @@
         />
 
         <div
-          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="job_number_includes"
+              v-model="job_part_number_includes"
               class="px-1"
               :type="'text'"
-              :name="'job_number_includes'"
-              :label="'Job number'"
+              :name="'job_part_number_includes'"
+              :label="'Job part number'"
             />
           </div>
-          <div
-            v-if="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() !== 'private')"
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-          >
-            <AppInput
-              v-model="practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>
-          <!-- <div
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-            v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
-          >
-            <AppInput
-              v-model="private_practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>-->
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="title_includes"
+              v-model="job_title_includes"
               class="px-1"
               :type="'text'"
-              :name="'title_includes'"
+              :name="'job_title_includes'"
               :label="'Job Title'"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="shift_id"
+              v-model="job_shift_id"
               class="px-1"
               :type="'select'"
-              :name="'shift_id'"
+              :name="'job_shift_id'"
               :label="'Shift'"
               :items="shifts"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="rate"
+              v-model="job_rate"
               class="px-1"
               :type="'text'"
-              :name="'rate'"
+              :name="'job_rate'"
               :label="'Rate £'"
               :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
               :limit="8"
               @keydown="isNumber($event)"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="rate_type_id"
+              v-model="job_rate_type_id"
               class="px-1"
               :type="'select'"
-              :name="'rate_type_id'"
+              :name="'job_rate_type_id'"
               :label="'per'"
               :items="rates"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="calendar_date_start"
@@ -137,9 +86,11 @@
               :format="'YYYY-MM-DD'"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="calendar_date_end"
@@ -148,9 +99,11 @@
               :format="'YYYY-MM-DD'"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppPostCode
               v-model="near_post_code"
@@ -159,21 +112,36 @@
               :label="'Post code'"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput v-model="miles" class="px-1" :type="'number'" :name="'miles'" :label="'Miles'" />
           </div>
+
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="invoice_status"
+              class="px-1"
+              :type="'select'"
+              :name="'invoice_status'"
+              :label="'Invoice Status'"
+              :items="invoiceStatusList"
+            />
+          </div>
+
           <div class="md:px-1 flex w-full">
             <AppButton
               :label="'Clear'"
               :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="clearFilters"
             />
+
             <AppButton
               class="mx-2"
               :label="'Search'"
               :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="filterJob"
             />
+
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
@@ -210,32 +178,19 @@
           </template>
         </AppTable>
 
-        <!-- <div
-          class="relative flex w-full"
-          v-if="jobs.length === 0 && loading"
-          style="min-height:80px"
-        >
-          <AppLoading :loading="loading" spinner />
-        </div>-->
-        <div
-          v-if="!jobs.length && !loading && !isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!jobs.length && !loading && !isFiltered" class="flex justify-center py-4">
           {{ noJobsToDisplay }}
         </div>
 
-        <div
-          v-if="!jobs.length && !loading && isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!jobs.length && !loading && isFiltered" class="flex justify-center py-4">
           No Jobs Found
         </div>
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            v-if="$route.name === 'jobs-index-id' || $route.name === 'jobs-index-id-job-parts-jobPartId'"
+            v-if="$route.name === 'locum-job-parts-index-jobPartId'"
             class="shield"
-            :to="{ path: `/jobs?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+            :to="{ path: `/locum-job-parts?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
           />
         </transition>
 
@@ -356,6 +311,10 @@ export default {
   },
 
   computed: {
+    isJobPart () {
+      return true
+    },
+
     getRequestQueryFilters () {
       let locum_status = []
 
@@ -388,11 +347,28 @@ export default {
 
       return {
         locum_status,
-        practice_id: this.practice_id,
-        private_practice_id: this.private_practice_id,
-        shift_id: this.shift_id,
-        rate: this.rate,
-        rate_type_id: this.rate_type_id,
+        practice_id:
+          !this.isJobPart && (!queryStatus || queryStatus !== "Private")
+            ? this.practice_id
+            : "",
+        job_practice_id:
+          this.isJobPart && (!queryStatus || queryStatus !== "Private")
+            ? this.job_practice_id
+            : "",
+        private_practice_id:
+          !this.isJobPart && queryStatus === "Private"
+            ? this.private_practice_id
+            : "",
+        job_private_practice_id:
+          this.isJobPart && queryStatus === "Private"
+            ? this.job_private_practice_id
+            : "",
+        shift_id: !this.isJobPart ? this.shift_id : "",
+        job_shift_id: this.isJobPart ? this.job_shift_id : "",
+        rate: !this.isJobPart ? this.rate : "",
+        job_rate: this.isJobPart ? this.job_rate : "",
+        rate_type_id: !this.isJobPart ? this.rate_type_id : "",
+        job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
         near_post_code: this.near_post_code,
         miles: this.miles,
         calendar_date_start: this.calendar_date_start,
@@ -401,11 +377,25 @@ export default {
         time_end: this.time_end,
         invoice_status: this.invoice_status,
         viewing_locum_user_id: [],
-        title_includes: this.title_includes,
-        job_number_includes: this.job_number_includes,
-        type: queryStatus === "Private"
-          ? "Private"
-          : "Platform",
+        title_includes: !this.isJobPart ? this.title_includes : "",
+        job_title_includes: this.isJobPart ? this.job_title_includes : "",
+        job_number_includes: !this.isJobPart
+          ? this.job_number_includes
+          : "",
+        job_part_number_includes: this.isJobPart
+          ? this.job_part_number_includes
+          : "",
+        type: !this.isJobPart
+          ? queryStatus === "Private"
+            ? "Private"
+            : "Platform"
+          : "",
+        job_type: this.isJobPart
+          ? queryStatus === "Private"
+            ? "Private"
+            : "Platform"
+          : "",
+        // practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
       }
     },
 
@@ -443,104 +433,52 @@ export default {
 
     columns () {
       let columns = []
+
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
         : "allocated"
-      if (
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
-          queryStatus
-        )
-      ) {
-        columns.push(
-          {
-            name: "Job Part Number",
-            dataIndex: "job_part_number",
-            sortable: true,
-          },
-          {
-            name: "Surgery",
-            dataIndex: "practice_name",
-            class: "text-center",
-            sortable: true,
-          },
-          {
-            name: "Title",
-            dataIndex: "job_title",
-            class: "text-center",
-            sortable: true,
-          },
-          {
-            name: "Shifts",
-            dataIndex: "job.shift.name",
-            slotName: "shifts",
-            class: "text-center",
-            sortable: true,
-          },
-          {
-            name: "Rates",
-            dataIndex: "job.rate",
-            slotName: "rates",
-            sortable: true,
-            class: "text-center currency",
-          },
-          {
-            name: "Rate Type",
-            dataIndex: "job.locum_detail_rate_type.name",
-            slotName: "rate_type",
-            class: "text-center",
-            sortable: true,
-          }
-        )
-      } else if (
-        ![
-          "ongoing",
-          "completed",
-          "approved",
-          "cancelled",
-          "withdrawn",
-        ].includes(queryStatus)
-      ) {
-        columns.push(
-          {
-            name: "Job Number",
-            dataIndex: "job_number",
-            sortable: true,
-          },
-          {
-            name: "Surgery",
-            dataIndex: "practice_name",
-            class: "text-center",
-            sortable: true,
-          },
-          {
-            name: "Title",
-            dataIndex: "title",
-            class: "text-center",
-            sortable: true,
-          },
-          {
-            name: "Shifts",
-            dataIndex: "shift_name",
-            slotName: "shifts",
-            class: "text-center",
-            sortable: true,
-          },
-          {
-            name: "Rates",
-            dataIndex: "rate",
-            slotName: "rates",
-            sortable: true,
-            class: "text-center currency",
-          },
-          {
-            name: "Rate Type",
-            dataIndex: "rate_type_name",
-            slotName: "rate_type",
-            class: "text-center",
-            sortable: true,
-          }
-        )
-      }
+
+      columns.push(
+        {
+          name: "Job Part Number",
+          dataIndex: "job_part_number",
+          sortable: true,
+        },
+        {
+          name: "Surgery",
+          dataIndex: "practice_name",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Title",
+          dataIndex: "job_title",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Shifts",
+          dataIndex: "job.shift.name",
+          slotName: "shifts",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Rates",
+          dataIndex: "job.rate",
+          slotName: "rates",
+          sortable: true,
+          class: "text-center currency",
+        },
+        {
+          name: "Rate Type",
+          dataIndex: "job.locum_detail_rate_type.name",
+          slotName: "rate_type",
+          class: "text-center",
+          sortable: true,
+        }
+      )
+
       columns.push(
         {
           name: "From",
@@ -555,6 +493,7 @@ export default {
           class: "text-center",
         }
       )
+
       if (queryStatus === "applied") {
         columns.push({
           name: "Applicants",
@@ -562,6 +501,7 @@ export default {
           class: "text-center",
         })
       }
+
       if (queryStatus === "unsuccessful") {
         columns.push({
           name: "Rejected At",
@@ -569,6 +509,7 @@ export default {
           class: "text-center localDate",
         })
       }
+
       if (queryStatus === "withdrawn") {
         columns.push({
           name: "Withdrawn At",
@@ -576,6 +517,7 @@ export default {
           class: "text-center localDate",
         })
       }
+
       if (queryStatus === "cancelled") {
         columns.push(
           {
@@ -590,6 +532,7 @@ export default {
           }
         )
       }
+
       if (["completed",].includes(queryStatus)) {
         columns.push(
           {
@@ -604,6 +547,7 @@ export default {
           }
         )
       }
+
       if (["approved",].includes(queryStatus)) {
         columns.push(
           {
@@ -618,6 +562,7 @@ export default {
           }
         )
       }
+
       return columns
     },
   },
@@ -635,7 +580,7 @@ export default {
         this.clearFilters()
         this.isFiltered = false
         this.initialLoading = true
-        await this.getLocumJobs()
+        await this.getLocumJobParts()
         this.initialLoading = false
       }
     },
@@ -667,7 +612,7 @@ export default {
     this.clearFilters()
     this.isFiltered = false
     this.initialLoading = true
-    this.getLocumJobs().finally(() => {
+    this.getLocumJobParts().finally(() => {
       this.initialLoading = false
     })
 
@@ -733,9 +678,9 @@ export default {
   methods: {
     routerLink (jobOrJobPart) {
       return {
-        name: "jobs-index-id",
+        name: "locum-job-parts-index-jobPartId",
         params: {
-          id: jobOrJobPart.id,
+          jobPartId: jobOrJobPart.id,
         },
         query: {
           ...this.$route.query,
@@ -760,14 +705,16 @@ export default {
       this.loading = false
     },
 
-    getLocumJobs () {
+    getLocumJobParts () {
+
       return Promise.all([
-        this.$axios.get('/api/v1/locum/jobs/count', {
+        this.$axios.get('/api/v1/locum/job-parts/count', {
           params: {
             ...this.getRequestQueryFilters,
           },
         }),
-        this.$axios.get('/api/v1/locum/jobs', {
+
+        this.$axios.get('/api/v1/locum/job-parts', {
           params: {
             offset: 0,
             limit: 5,
@@ -777,8 +724,11 @@ export default {
         }),
       ]).then(([responseCount, responseJobs,]) => {
         this.total = responseCount.data.data.count
-        this.jobs = responseJobs.data.data.jobs.map(item => ({
+        this.jobs = responseJobs.data.data.job_parts.map(item => ({
           ...item,
+          tag_status: item.terminated
+            ? "Terminated"
+            : item.locum_status,
           date_time_start: `${this.$moment(item.date_start).format(
             "DD-MM-YYYY"
           )} | ${item.time_start}`,
@@ -793,16 +743,19 @@ export default {
     },
 
     getJobs () {
-      return this.$axios.get('/api/v1/locum/jobs', {
+      return this.$axios.get('/api/v1/locum/job-parts', {
         params: {
           offset: this.offset,
           limit: this.limit,
           order_by: this.order_by,
           ...this.getRequestQueryFilters,
         },
-      }).then(response => {
-        this.jobs = response.data.data.jobs.map(item => ({
+      }).then(res => {
+        this.jobs = res.data.data.job_parts.map(item => ({
           ...item,
+          tag_status: item.terminated
+            ? "Terminated"
+            : item.locum_status,
           date_time_start: `${this.$moment(item.date_start).format(
             "DD-MM-YYYY"
           )} | ${item.time_start}`,
@@ -866,7 +819,7 @@ export default {
         this.showRefresh = true
       }
     },
-    
+
     async getOngoingJobsRealTime (job) {
       if (!job) {
         return
@@ -1021,8 +974,10 @@ export default {
 
     async appointmentUpdated () {
       // this.loading = true;
-      // await this.getJobsCount(this.params);
-      // await this.getJobs(this.params);
+      // await this.getJobsCount(
+      //   this.isJobPart ? this.jobPartParams : this.params
+      // );
+      // await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
       // this.loading = false;
     },
 
@@ -1031,7 +986,7 @@ export default {
       this.offset = 0
       this.limit = 5
       this.initialLoading = true
-      await this.getLocumJobs()
+      await this.getLocumJobParts()
       this.initialLoading = false
       this.showRefresh = false
     },
@@ -1042,7 +997,7 @@ export default {
       this.limit = 5
       this.initialLoading = true
       this.isFiltered = true
-      await this.getLocumJobs()
+      await this.getLocumJobParts()
       this.initialLoading = false
       this.filterModal = false
     },
@@ -1053,7 +1008,7 @@ export default {
         let sorting = item.split(":")[0]
         switch (sorting) {
         case "practice_name":
-          sorting = "surgery"
+          sorting = this.isJobPart ? "job_surgery" : "surgery"
           break
         case "date_time_start":
           sorting = "date_start"
