@@ -24,6 +24,10 @@ export default {
     if (
       (to && to.name === 'locum-job-parts-index' && from && from.name === 'jobs-index')
       || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index')
+      || (to && to.name === 'locum-job-parts-index-jobPartId' && from && from.name === 'jobs-index')
+      || (from && from.name === 'locum-job-parts-index-jobPartId' && to && to.name === 'jobs-index')
+      || (to && to.name === 'locum-job-parts-index' && from && from.name === 'jobs-index-id')
+      || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index-id')
     ) {
       return {
         name: '',
