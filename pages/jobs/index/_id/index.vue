@@ -18,66 +18,66 @@
 </template>
 
 <script>
-import JobDetailModal from "@/components/Jobs/JobDetailModal";
-import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
+import JobDetailModal from "@/components/Jobs/JobDetailModal"
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
 export default {
   transition: {
     name: "slide",
-    mode: "out-in"
+    mode: "out-in",
   },
 
   components: {
     JobDetailModal,
-    JobDetailModalAppointment
+    JobDetailModalAppointment,
   },
 
-  data() {
+  data () {
     return {
-      job: null
-    };
-  },
-
-  computed: {
-    activeJobTypePlatform() {
-      return this.job.type === "Platform";
+      job: null,
     }
   },
 
-  async asyncData({ app, params, error }) {
+  computed: {
+    activeJobTypePlatform () {
+      return this.job.type === "Platform"
+    },
+  },
+
+  async asyncData ({ app, params, error, }) {
     try {
-      const { id } = params;
+      const { id, } = params
 
-      let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`);
+      let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`)
 
-      let job = response.data.data.job;
+      let job = response.data.data.job
 
       return {
-        job
-      };
+        job,
+      }
     } catch (err) {
       if (err.response && err.response.status === 404) {
         return error({
           status: 404,
-          message: "This job could not be found."
-        });
+          message: "This job could not be found.",
+        })
       }
 
-      throw err;
+      throw err
     }
   },
 
   methods: {
-    close() {
-      const { query } = this.$route;
+    close () {
+      const { query, } = this.$route
 
       this.$router.push({
         name: "jobs-index",
-        query
-      });
-    }
-  }
-};
+        query,
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>
