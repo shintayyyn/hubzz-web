@@ -68,6 +68,10 @@ export default {
     if (
       (to && to.name === 'job-parts-index' && from && from.name === 'sessions-index')
       || (from && from.name === 'job-parts-index' && to && to.name === 'sessions-index')
+      || (to && to.name === 'job-parts-index-jobPartId' && from && from.name === 'sessions-index')
+      || (from && from.name === 'job-parts-index-jobPartId' && to && to.name === 'sessions-index')
+      || (to && to.name === 'job-parts-index' && from && from.name === 'sessions-index-id')
+      || (from && from.name === 'job-parts-index' && to && to.name === 'sessions-index-id')
     ) {
       return {
         name: '',

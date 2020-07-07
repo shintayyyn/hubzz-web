@@ -1,13 +1,16 @@
 <template>
   <div class="modal-container shadow-lg">
+    <AppLoading :loading="initialLoading" spinner />
+
     <JobDetailModalAppointment
-      v-if="!activeJobTypePlatform"
+      v-if="job && job.type === 'Private'"
       :job="job"
       @close="close"
       @appointmentUpdated="$emit('appointmentUpdated')"
     />
+
     <JobDetailModal
-      v-if="activeJobTypePlatform"
+      v-if="job && job.type === 'Platform'"
       :job="job"
       @close="close"
       @applied="$emit('applied', $event)"
@@ -18,76 +21,85 @@
 </template>
 
 <script>
-import JobDetailModal from "@/components/Jobs/JobDetailModal";
-import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
+import AppLoading from "@/components/Base/AppLoading"
+import JobDetailModal from "@/components/Jobs/JobDetailModal"
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
 export default {
   transition: {
     name: "slide",
-    mode: "out-in"
+    mode: "out-in",
   },
 
   components: {
+    AppLoading,
     JobDetailModal,
-    JobDetailModalAppointment
+    JobDetailModalAppointment,
   },
 
-  data() {
+  data () {
     return {
-      job: null
-    };
-  },
-
-  computed: {
-    activeJobTypePlatform() {
-      return this.job.type === "Platform";
+      initialLoading: false,
+      loadingJob: false,
+      job: null,
     }
   },
+  
+  watch: {
+    $route () {
+      this.loadingJob = true
+      this.getLocumJob().finally(() => {
+        this.loadingJob = false
+      })
+    },
+  },
 
-  async asyncData({ app, params, error }) {
-    try {
-      const { id } = params;
-
-      let response = await app.$axios.get(`/api/v1/locum/jobs/${id}`);
-
-      let job = response.data.data.job;
-
-      return {
-        job
-      };
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        return error({
-          status: 404,
-          message: "This job could not be found."
-        });
-      }
-
-      throw err;
-    }
+  mounted () {
+    this.jobPart = null
+    this.initialLoading = true
+    this.getLocumJob().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   methods: {
-    close() {
-      const { query } = this.$route;
+    getLocumJob () {
+      return this.$axios.get(`/api/v1/locum/jobs/${this.$route.params.id}`).then((response) => {
+        this.job = response.data.data.job
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        if (err.response && err.response.status === 404) {
+          this.$nuxt.error({
+            status: 404,
+            message: "This job could not be found.",
+          })
+        } else {
+          this.$nuxt.error(err)
+        }
+      })
+    },
+
+    close () {
+      const { query, } = this.$route
 
       this.$router.push({
         name: "jobs-index",
-        query
-      });
-    }
-  }
-};
+        query,
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>
-.modal-container {
-  z-index: 510;
-}
-
-@media screen and (min-width: 1200px) {
   .modal-container {
-    width: 90%;
+    z-index: 510;
   }
-}
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 90%;
+    }
+  }
 </style>

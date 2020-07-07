@@ -1,6 +1,9 @@
 <template>
   <div ref="modalContainer" class="modal-container shadow-lg">
+    <AppLoading :loading="initialLoading" spinner />
+
     <SessionDetailModal
+      v-if="job"
       :job="job"
       @close="close"
       @appointed="$emit('appointed', $event)"
@@ -11,6 +14,7 @@
 </template>
 
 <script>
+import AppLoading from "@/components/Base/AppLoading"
 import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 
 export default {
@@ -20,39 +24,53 @@ export default {
   },
 
   components: {
+    AppLoading,
     SessionDetailModal,
   },
 
   data () {
     return {
+      initialLoading: false,
+      loadingJob: false,
       job: null,
     }
   },
 
-  async asyncData ({ app, params, error, }) {
-    try {
-      const { id, } = params
+  watch: {
+    $route () {
+      this.loadingJob = true
+      this.getJob().finally(() => {
+        this.loadingJob = false
+      })
+    },
+  },
 
-      let response = await app.$axios.get(`/api/v1/practice/jobs/${id}`)
-
-      let job = response.data.data.job
-
-      return {
-        job,
-      }
-    } catch (err) {
-      if (err && err.response && err.response.status === 404) {
-        return error({
-          status: 404,
-          message: "This session could not be found.",
-        })
-      }
-
-      throw err
-    }
+  mounted () {
+    this.jobPart = null
+    this.initialLoading = true
+    this.getJob().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   methods: {
+    getJob () {
+      return this.$axios.get(`/api/v1/practice/jobs/${this.$route.params.id}`).then((response) => {
+        this.job = response.data.data.job
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        if (err.response && err.response.status === 404) {
+          this.$nuxt.error({
+            status: 404,
+            message: "This session could not be found.",
+          })
+        } else {
+          this.$nuxt.error(err)
+        }
+      })
+    },
+
     close () {
       this.$router.push({
         name: "sessions-index",
@@ -63,7 +81,6 @@ export default {
     },
 
     scrollToTop () {
-      console.log(this.$refs.modalContainer)
       this.$nextTick(() => {
         this.$refs.modalContainer.scrollTop = 0
       })
@@ -73,12 +90,12 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
   .modal-container {
-    width: 90%;
+    z-index: 510;
   }
-}
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 90%;
+    }
+  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div ref="modalContainer" class="modal-container shadow-lg">
+  <div class="modal-container shadow-lg">
     <AppLoading :loading="initialLoading" spinner />
 
     <SessionPartDetailModal

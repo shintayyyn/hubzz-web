@@ -640,6 +640,7 @@ export default {
         "Practice Notification Job Unfilled Warning",
         "Practice Notification Job Withdrawn",
       ]
+
       const practiceJobPartNotifications = [
         "Practice Notification Job Part Completed",
         "Practice Notification Job Part Approved",
@@ -745,22 +746,17 @@ export default {
           id: jobId,
           old_job_id: oldJobId,
           job_parts: jobParts,
+          locum_status: locumStatus,
         } = job
 
         let routeParamId = jobId
         let routeParamJobPartId = null
 
-        if (
-          notificationTypeName === "Locum Notification Job Unqualified"
-          && oldJobId
-        ) {
+        if (notificationTypeName === "Locum Notification Job Unqualified" && oldJobId) {
           routeParamId = oldJobId
         }
 
-        if (
-          notificationTypeName === "Locum Notification Job Unavailable"
-          && oldJobId
-        ) {
+        if (notificationTypeName === "Locum Notification Job Unavailable" && oldJobId) {
           routeParamId = oldJobId
         }
 
@@ -769,21 +765,16 @@ export default {
             || notificationTypeName === "Locum Notification Job Withdrawn")
           && jobParts
         ) {
-          const jobPart = jobParts.find(
-            jobPart => jobPart.status === "Withdrawn"
-          )
+          const jobPart = jobParts.find(jobPart => jobPart.status === "Withdrawn")
+
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
         }
 
-        if (
-          notificationTypeName === "Locum Notification Job Cancelled"
-          && jobParts
-        ) {
-          const jobPart = jobParts.find(
-            jobPart => jobPart.status === "Cancelled"
-          )
+        if (notificationTypeName === "Locum Notification Job Cancelled" && jobParts) {
+          const jobPart = jobParts.find(jobPart => jobPart.status === "Cancelled")
+          
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
@@ -794,15 +785,37 @@ export default {
           && notificationTypeName === "Locum Notification Job Ongoing"
           && jobParts
         ) {
-          const jobPart = jobParts.find(
-            jobPart => jobPart.status === "Ongoing"
-          )
+          const jobPart = jobParts.find(jobPart => jobPart.status === "Ongoing")
+
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
         }
 
-        if (this.$route.name === "jobs-index") {
+        if (this.$route.name === "locum-job-parts-index") {
+          if (routeParamJobPartId) {
+            this.$router.push({
+              name: "locum-job-parts-index-jobPartId",
+              params: {
+                jobPartId: routeParamJobPartId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: "jobs-index-id",
+              params: {
+                id: routeParamId,
+              },
+              query: {
+                ...this.$route.query,
+                status: locumStatus,
+              },
+            })
+          }
+        } else if (this.$route.name === "jobs-index") {
           if (routeParamJobPartId) {
             this.$router.push({
               name: "jobs-index-id-job-parts-jobPartId",
@@ -860,7 +873,17 @@ export default {
 
         const { id: jobPartId, job_id: jobId, } = jobPart
 
-        if (this.$route.name === "jobs-index") {
+        if (this.$route.name === "locum-job-parts-index") {
+          this.$router.push({
+            name: "locum-job-parts-index-jobPartId",
+            params: {
+              jobPartId,
+            },
+            query: {
+              ...this.$route.query,
+            },
+          })
+        } else if (this.$route.name === "jobs-index") {
           this.$router.push({
             name: "jobs-index-id-job-parts-jobPartId",
             params: {
@@ -892,9 +915,7 @@ export default {
         return
       }
 
-      if (
-        notificationTypeName === "Locum Notification Job Part To Be Invoiced"
-      ) {
+      if (notificationTypeName === "Locum Notification Job Part To Be Invoiced") {
         const jobPart = payload
 
         const { id: jobPartId, } = jobPart
@@ -966,9 +987,7 @@ export default {
         return
       }
 
-      if (
-        practiceComplianceDocumentNotifications.includes(notificationTypeName)
-      ) {
+      if (practiceComplianceDocumentNotifications.includes(notificationTypeName)) {
         const locumComplianceDocument = payload
 
         const { locum_user: locumUser, } = locumComplianceDocument
@@ -1097,6 +1116,7 @@ export default {
           practice_id: jobPracticeId,
           practice_surgery_id: practiceSurgeryId,
           job_parts: jobParts,
+          status,
         } = job
 
         let routeParamId = jobId
@@ -1108,42 +1128,30 @@ export default {
             || notificationTypeName === "Practice Notification Job Withdrawn")
           && jobParts
         ) {
-          const jobPart = jobParts.find(
-            jobPart => jobPart.status === "Withdrawn"
-          )
+          const jobPart = jobParts.find(jobPart => jobPart.status === "Withdrawn")
+
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
         }
 
-        if (
-          notificationTypeName === "Practice Notification Job Cancelled"
-          && jobParts
-        ) {
-          const jobPart = jobParts.find(
-            jobPart => jobPart.status === "Cancelled"
-          )
+        if (notificationTypeName === "Practice Notification Job Cancelled" && jobParts) {
+          const jobPart = jobParts.find(jobPart => jobPart.status === "Cancelled")
+
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
         }
 
-        if (
-          notificationTypeName === "Practice Notification Job Ongoing"
-          && jobParts
-        ) {
-          const jobPart = jobParts.find(
-            jobPart => jobPart.status === "Ongoing"
-          )
+        if (notificationTypeName === "Practice Notification Job Ongoing" && jobParts) {
+          const jobPart = jobParts.find(jobPart => jobPart.status === "Ongoing")
+
           if (jobPart) {
             routeParamJobPartId = jobPart.id
           }
         }
 
-        if (
-          jobPracticeId !== this.$auth.user.practice_id
-          && practiceSurgeryId
-        ) {
+        if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
           this.$router.push({
             name: "hub-surgery-management-id-surgery-sessions-index",
             params: {
@@ -1174,7 +1182,30 @@ export default {
             }
           }, 500)
         } else {
-          if (this.$route.name === "sessions-index") {
+          if (this.$route.name === "job-parts-index") {
+            if (routeParamJobPartId) {
+              this.$router.push({
+                name: "job-parts-index-jobPartId",
+                params: {
+                  jobPartId: routeParamJobPartId,
+                },
+                query: {
+                  ...this.$route.query,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: "sessions-index-id",
+                params: {
+                  id: routeParamId,
+                },
+                query: {
+                  ...this.$route.query,
+                  status,
+                },
+              })
+            }
+          } else if (this.$route.name === "sessions-index") {
             if (routeParamJobPartId) {
               this.$router.push({
                 name: "sessions-index-id-job-parts-jobPartId",
@@ -1238,10 +1269,7 @@ export default {
           practice_surgery_id: practiceSurgeryId,
         } = jobPart
 
-        if (
-          jobPracticeId !== this.$auth.user.practice_id
-          && practiceSurgeryId
-        ) {
+        if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
           this.$router.push({
             name: "hub-surgery-management-id-surgery-sessions-index",
             params: {
@@ -1261,7 +1289,17 @@ export default {
             })
           }, 500)
         } else {
-          if (this.$route.name === "sessions-index") {
+          if (this.$route.name === "job-parts-index") {
+            this.$router.push({
+              name: "job-parts-index-jobPartId",
+              params: {
+                jobPartId,
+              },
+              query: {
+                ...this.$route.query,
+              },
+            })
+          } else if (this.$route.name === "sessions-index") {
             this.$router.push({
               name: "sessions-index-id-job-parts-jobPartId",
               params: {
