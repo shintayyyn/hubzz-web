@@ -14,6 +14,7 @@
       <div class="leading-tight font-bold text-md sm:text-lg mr-2">
         {{ jobPart.job.title }}
       </div>
+
       <div
         class="py-2 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(jobPart.status)"
@@ -21,6 +22,7 @@
       >
         {{ status(jobPart.status) }}
       </div>
+
       <div
         v-if="['Completed', 'Cancelled'].includes(jobPart.status) && tagStatus(jobPart)"
         class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
@@ -28,8 +30,16 @@
       >
         {{ tagStatus(jobPart) }}
       </div>
+
       <template
-        v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(jobPart.status) && !this.$route.name.includes('my-banks')"
+        v-if="[
+          'Terminated',
+          'Completed',
+          'Approved',
+          'Cancelled',
+          'Withdrawn',
+          'Declined'
+        ].includes(jobPart.status) && !this.$route.name.includes('my-banks')"
       >
         <AppButton :label="'Repost Job'" :in-style="'font-size:1em'" @click="repost" />
       </template>
@@ -40,7 +50,7 @@
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
             <div
-              v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn' || jobPart.status === 'Cancelled'"
+              v-if="!loadingJobPart && (jobPart.status === 'Declined' || jobPart.status === 'Withdrawn' || jobPart.status === 'Cancelled')"
               class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
             >
               <template v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn'">
@@ -74,31 +84,30 @@
               
               <template v-if="jobPart.status === 'Cancelled'">
                 <div class="leading-tight pb-4">
-                  <p
-                    class="font-bold text-sm sm:text-md"
-                  >
+                  <p class="font-bold text-sm sm:text-md">
                     {{ jobPart.terminated ? 'Terminated' : 'Cancelled' }} At
                   </p>
+
                   <p class="text-xs sm:text-sm">
                     {{ jobPart.job.platform_job.cancelled_at | localDate }}
                   </p>
                 </div>
+
                 <div class="leading-tight">
-                  <p
-                    class="font-bold text-sm sm:text-md"
-                  >
+                  <p class="font-bold text-sm sm:text-md">
                     Reason for {{ jobPart.terminated ? 'termination' : 'cancellation' }}
                   </p>
+
                   <p class="text-xs sm:text-sm">
                     {{ jobPart.job.platform_job.cancelled_reason }}
                   </p>
                 </div>
+
                 <div class="leading-tight mt-4">
-                  <p
-                    class="font-bold text-sm sm:text-md"
-                  >
+                  <p class="font-bold text-sm sm:text-md">
                     {{ jobPart.terminated ? 'Terminated By' : 'Cancelled By' }}
                   </p>
+
                   <div class="flex justify-start">
                     <div class="text-xs sm:text-sm">
                       {{
@@ -109,9 +118,11 @@
                             : jobPart.practice_name
                       }}
                     </div>
+
                     <div v-if="jobPart.cancelled_by_user" class="mx-1">
                       -
                     </div>
+
                     <div v-if="jobPart.cancelled_by_user" class="text-xs sm:text-sm">
                       {{
                         jobPart.cancelled_by_user.email
@@ -124,12 +135,20 @@
               </template>
             </div>
 
-            <SessionPartDetailModalInfo :job_part="jobPart" />
+            <SessionPartDetailModalInfo
+              :loadingJobPart="loadingJobPart"
+              :job_part="jobPart"
+            />
 
             <div
-              v-if="practice.type !== 'Spoke' || 
-                (practice.type === 'Spoke' && !practice.parent_practice_id) ||
-                (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
+              v-if="
+                !loadingJobPart
+                  && (
+                    practice.type !== 'Spoke'
+                  || (practice.type === 'Spoke' && !practice.parent_practice_id)
+                  || (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)
+                  )
+              "
             >
               <!-- <SessionDetailModalCompleteForm
 								v-if="jobPart.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
@@ -137,8 +156,8 @@
 								@completed="$emit('close')"
 							/>-->
               <SessionDetailModalCancelForm
-                v-if="['Live','Allocated','Applied'].includes(jobPart.status) && authPermissions.includes('Cancel Sessions Job')"
-                :job="jobPart.status === 'Ongoing' ? jobPart : jobPart.job"
+                v-if="['Live','Allocated','Applied'].includes(jobPart.job_status) && authPermissions.includes('Cancel Sessions Job')"
+                :job="jobPart.job"
                 @cancelled="$emit('close')"
               />
             </div>
@@ -148,6 +167,7 @@
 						>You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</div>-->
           </div>
         </div>
+
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
             <SessionPartDetailModalParts
@@ -155,14 +175,23 @@
               :cantCompleteJob="practice && practice.type !== 'Hub' && practice.parent_practice_id && !practice.allow_surgery_bill_locum"
               @close="$emit('close')"
             />
+            
             <div
               v-if="practice && practice.type !== 'Hub' && practice.parent_practice_id && !practice.allow_surgery_bill_locum"
               class="px-2 mb-4"
             >
               <p>You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</p>
             </div>
+
             <SessionDetailModalLocum
-              v-if="(jobPart.status === 'Allocated' || jobPart.status === 'Ongoing' || jobPart.status === 'Completed' || jobPart.status === 'Approved' || jobPart.status === 'Withdrawn' || (jobPart.status === 'Cancelled' && jobPart.appointed_to_locum_user_id))"
+              v-if="(
+                jobPart.status === 'Allocated'
+                  || jobPart.status === 'Ongoing'
+                  || jobPart.status === 'Completed'
+                  || jobPart.status === 'Approved'
+                  || jobPart.status === 'Withdrawn'
+                  || (jobPart.status === 'Cancelled' && jobPart.appointed_to_locum_user_id)
+              )"
               :job="jobPart.job"
             />
           </div>
@@ -200,12 +229,19 @@ export default {
     AppButton,
     AppConfirmationModal,
   },
+
   props: {
+    loadingJobPart: {
+      type: Boolean,
+      default: false,
+    },
+
     jobPart: {
       type: Object,
       required: true,
     },
   },
+
   data () {
     return {
       user: null,

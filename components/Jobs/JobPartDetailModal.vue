@@ -40,7 +40,7 @@
       <div class="flex flex-wrap justify-start">
         <div class="p-0 lg:pr-4 w-full lg:w-1/2">
           <div
-            v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'"
+            v-if="!loadingJobPart && (job_part.status === 'Declined' || job_part.status === 'Withdrawn')"
             class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
           >
             <div class="leading-tight pb-4">

@@ -1,23 +1,5 @@
 <template>
   <section class="relative">
-    <!-- <div
-      v-if="$route.query.status && $route.query.status.toLowerCase() === 'applied'"
-      class="flex flex-row justify-start overflow-x-auto pb-3"
-    >
-      <nuxt-link
-        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-        :to="'/sessions?status=Applied&bank=false'"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && (!$route.query.bank || $route.query.bank && $route.query.bank === 'false') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Non-Bank</nuxt-link>
-      <nuxt-link
-        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-        :to="'/sessions?status=Applied&bank=true'"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >My Bank</nuxt-link>
-    </div>-->
-    
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />

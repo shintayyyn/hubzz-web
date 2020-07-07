@@ -1,54 +1,79 @@
 <template>
   <div ref="modalContainer" class="modal-container shadow-lg">
-    <SessionPartDetailModal :job-part="jobPart" @close="close" />
+    <AppLoading :loading="initialLoading" spinner />
+
+    <SessionPartDetailModal
+      v-if="jobPart"
+      :job-part="jobPart"
+      :loadingJobPart="loadingJobPart"
+      @close="close"
+    />
   </div>
 </template>
 
 <script>
+import AppLoading from "@/components/Base/AppLoading"
 import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 
 export default {
   transition: {
-    name: "slide",
-    mode: "out-in",
+    name: 'slide',
+    mode: 'out-in',
   },
 
   components: {
+    AppLoading,
     SessionPartDetailModal,
   },
 
   data () {
     return {
+      initialLoading: false,
+      loadingJobPart: false,
       jobPart: null,
     }
   },
 
-  async asyncData ({ app, params, error, }) {
-    try {
-      const { jobPartId, } = params
+  computed: {
+    jobPartId () {
+      return this.jobPart ? this.jobPart.id : null
+    },
+  },
 
-      let response = await app.$axios.get(
-        `/api/v1/practice/job-parts/${jobPartId}`
-      )
+  watch: {
+    $route () {
+      this.loadingJobPart = true
+      this.getJobPart().finally(() => {
+        this.loadingJobPart = false
+      })
+    },
+  },
 
-      let jobPart = response.data.data.job_part
-
-      return {
-        jobPart,
-      }
-    } catch (err) {
-      if (err && err.response && err.response.status === 404) {
-        return error({
-          status: 404,
-          message: "This session could not be found.",
-        })
-      }
-
-      throw err
-    }
+  mounted () {
+    this.initialLoading = true
+    this.getJobPart().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   methods: {
+    getJobPart () {
+      return this.$axios.get(`/api/v1/practice/job-parts/${this.$route.params.jobPartId}`).then((response) => {
+        this.jobPart = response.data.data.job_part
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        if (err.response && err.response.status === 404) {
+          this.$nuxt.error({
+            status: 404,
+            message: "This session could not be found.",
+          })
+        } else {
+          this.$nuxt.error(err)
+        }
+      })
+    },
+
     close () {
       const { query, } = this.$route
 
@@ -57,23 +82,18 @@ export default {
         query,
       })
     },
-
-    scrollToTop () {
-      this.$nextTick(() => {
-        this.$refs.modalContainer.scrollTop = 0
-      })
-    },
   },
 }
 </script>
 
 <style scoped>
-.modal-container {
-	z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 90%;
-	}
-}
+  .modal-container {
+    z-index: 510;
+  }
+  
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 90%;
+    }
+  }
 </style>
