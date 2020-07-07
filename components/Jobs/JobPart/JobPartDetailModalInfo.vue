@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+    <AppLoading :loading="loadingJobPart" spinner />
+
     <div class="relative flex flex-row flex-wrap justify-between">
-      <AppLoading :loading="loadingJobPart" spinner />
-      
       <div class="w-full">
         <div class="font-bold text-sm sm:text-md">
           Job part number
