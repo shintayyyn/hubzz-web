@@ -62,19 +62,26 @@
               </p>
             </div>
           </div>
+
           <div class="flex flex-col">
-            <JobPartDetailModalInfo :job_part="job_part" />
+            <JobPartDetailModalInfo
+              :loadingJobPart="loadingJobPart"
+              :job_part="job_part"
+            />
+
             <JobDetailModalUnassignForm
-              v-if="job_part.locum_status === 'Ongoing'"
+              v-if="!loadingJobPart && (job_part.locum_status === 'Ongoing' || job_part.locum_status === 'Allocated')"
               :ref="'unassignForm'"
               :job="job_part.job"
               @unassign="$emit('close')"
             />
           </div>
         </div>
+
         <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
             <JobPartDetailModalParts :job_id="job_part.job.id" />
+
             <JobDetailModalMap :job="job_part.job" />
           </div>
         </div>
@@ -91,6 +98,7 @@
     />
   </div>
 </template>
+
 <script>
 import JobPartDetailModalInfo from "@/components/Jobs/JobPart/JobPartDetailModalInfo"
 import JobPartDetailModalParts from "@/components/Jobs/JobPart/JobPartDetailModalParts"
@@ -108,6 +116,11 @@ export default {
   },
 
   props: {
+    loadingJobPart: {
+      type: Boolean,
+      default: false,
+    },
+
     job_part: {
       type: Object,
       default: () => null,
@@ -119,6 +132,7 @@ export default {
       toggle_invoice_modal: false,
     }
   },
+
   methods: {
     goToGenerateInvoice () {
       let hasInvoice = false
@@ -167,6 +181,7 @@ export default {
         }
       }, 500)
     },
+
     tagStatus (job_part) {
       let status = ""
       if (job_part.locum_status === "Completed") {
@@ -199,7 +214,7 @@ export default {
         return "bg-red-500 text-white"
       }
     },
-    
+
   },
 
 }
