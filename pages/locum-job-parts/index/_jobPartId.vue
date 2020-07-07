@@ -39,11 +39,20 @@ export default {
     return {
       initialLoading: false,
       loadingJobPart: false,
-      jobPart: null,
     }
   },
 
   computed: {
+    jobPart: {
+      get () {
+        return this.$store.getters['locumJobParts/getLocumJobPart']
+      },
+
+      set (jobPart) {
+        this.$store.commit('locumJobParts/setLocumJobPart', jobPart)
+      },
+    },
+
     jobPartId () {
       return this.jobPart ? this.jobPart.id : null
     },
@@ -59,6 +68,7 @@ export default {
   },
 
   mounted () {
+    this.jobPart = null
     this.initialLoading = true
     this.getLocumJobPart().finally(() => {
       this.initialLoading = false
