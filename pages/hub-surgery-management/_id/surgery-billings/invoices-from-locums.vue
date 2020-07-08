@@ -452,12 +452,12 @@ export default {
         if (jobPart.locum_invoice_item) {
           total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-          if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-            total =
-              total -
-              jobPart.locum_invoice_item.locum_invoice.ni_amount -
-              jobPart.locum_invoice_item.locum_invoice.paye_amount;
-          }
+          // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+          //   total =
+          //     total -
+          //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
+          //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
+          // }
         } else if (!jobPart.locum_invoice_item) {
           type = jobPart.job.locum_detail_rate_type.name;
           finalHours = jobPart.final_hours / 60;
@@ -619,12 +619,12 @@ export default {
             if (jobPart.locum_invoice_item) {
               total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-              if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-                total =
-                  total -
-                  jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                  jobPart.locum_invoice_item.locum_invoice.paye_amount;
-              }
+              // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+              //   total =
+              //     total -
+              //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
+              //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
+              // }
             } else if (!jobPart.locum_invoice_item) {
               type = jobPart.job.locum_detail_rate_type.name;
               finalHours = jobPart.final_hours / 60;
@@ -739,12 +739,12 @@ export default {
             if (jobPart.locum_invoice_item) {
               total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-              if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-                total =
-                  total -
-                  jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                  jobPart.locum_invoice_item.locum_invoice.paye_amount;
-              }
+              // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+              //   total =
+              //     total -
+              //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
+              //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
+              // }
             } else if (!jobPart.locum_invoice_item) {
               type = jobPart.job.locum_detail_rate_type.name;
               finalHours = jobPart.final_hours / 60;
@@ -822,6 +822,10 @@ export default {
     },
     select_invoice(id) {
       this.payment_modal = true;
+      this.form.ni = false;
+      this.form.ni_amount = null;
+      this.form.paye = false;
+      this.form.paye_amount = null;
       this.invoice_id = id;
     },
     updateInvoice(invoice) {
