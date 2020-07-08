@@ -811,7 +811,7 @@ export default {
               },
               query: {
                 ...this.$route.query,
-                status: locumStatus,
+                status: locumStatus === 'Matched' ? 'Available' : locumStatus,
               },
             })
           }
@@ -839,28 +839,21 @@ export default {
             })
           }
         } else {
-          this.$router.push({
-            name: "jobs-index",
-          })
-
-          setTimeout(() => {
-            if (routeParamJobPartId) {
-              this.$router.push({
-                name: "jobs-index-id-job-parts-jobPartId",
-                params: {
-                  id: routeParamId,
-                  jobPartId: routeParamJobPartId,
-                },
-              })
-            } else {
-              this.$router.push({
-                name: "jobs-index-id",
-                params: {
-                  id: routeParamId,
-                },
-              })
-            }
-          }, 500)
+          if (routeParamJobPartId) {
+            this.$router.push({
+              name: "locum-job-parts-index-jobPartId",
+              params: {
+                jobPartId: routeParamJobPartId,
+              },
+            })
+          } else {
+            this.$router.push({
+              name: "jobs-index-id",
+              params: {
+                id: routeParamId,
+              },
+            })
+          }
         }
 
         this.showNotificationsDropdown = false
@@ -896,18 +889,11 @@ export default {
           })
         } else {
           this.$router.push({
-            name: "jobs-index",
+            name: "locum-job-parts-index-jobPartId",
+            params: {
+              jobPartId,
+            },
           })
-
-          setTimeout(() => {
-            this.$router.push({
-              name: "jobs-index-id-job-parts-jobPartId",
-              params: {
-                id: jobId,
-                jobPartId,
-              },
-            })
-          }, 500)
         }
 
         this.showNotificationsDropdown = false
@@ -1229,28 +1215,21 @@ export default {
               })
             }
           } else {
-            this.$router.push({
-              name: "sessions-index",
-            })
-
-            setTimeout(() => {
-              if (routeParamJobPartId) {
-                this.$router.push({
-                  name: "sessions-index-id-job-parts-jobPartId",
-                  params: {
-                    id: routeParamId,
-                    jobPartId: routeParamJobPartId,
-                  },
-                })
-              } else {
-                this.$router.push({
-                  name: "sessions-index-id",
-                  params: {
-                    id: routeParamId,
-                  },
-                })
-              }
-            }, 500)
+            if (routeParamJobPartId) {
+              this.$router.push({
+                name: "job-parts-index-jobPartId",
+                params: {
+                  jobPartId: routeParamJobPartId,
+                },
+              })
+            } else {
+              this.$router.push({
+                name: "sessions-index-id",
+                params: {
+                  id: routeParamId,
+                },
+              })
+            }
           }
         }
 
@@ -1312,18 +1291,11 @@ export default {
             })
           } else {
             this.$router.push({
-              name: "sessions-index",
+              name: "job-parts-index-jobPartId",
+              params: {
+                jobPartId,
+              },
             })
-
-            setTimeout(() => {
-              this.$router.push({
-                name: "sessions-index-id-job-parts-jobPartId",
-                params: {
-                  id: jobId,
-                  jobPartId,
-                },
-              })
-            }, 500)
           }
         }
 

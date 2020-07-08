@@ -5,7 +5,7 @@
         <AppLoading :loading="initialLoading" spinner />
       </div>
 
-      <div v-if="!initialLoading">
+      <div>
         <div class="flex">
           <AppButton
             class="mr-2"
@@ -13,6 +13,7 @@
             :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
             @click="filterModal = !filterModal"
           />
+          
           <AppButton
             v-if="showRefresh"
             :label="'Refresh'"
@@ -22,131 +23,6 @@
         </div>
 
         <div
-          v-if="!isJobPart"
-          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_number_includes"
-                class="px-1"
-                :type="'text'"
-                :name="'job_number'"
-                :label="'Job number'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="title_includes"
-                class="px-1"
-                :type="'text'"
-                :name="'title'"
-                :label="'Job Title'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="rate"
-                class="px-1"
-                :type="'text'"
-                :name="'rate'"
-                :label="'Rate £'"
-                :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-                :limit="8"
-                @keydown="isNumber($event)"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="rate_type_id"
-                class="px-1"
-                :type="'select'"
-                :name="'rate_type_id'"
-                :label="'per'"
-                :items="rates"
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="profession_id"
-                :type="'select'"
-                :name="'profession_id'"
-                :label="'Roles'"
-                :placeholder="'Select...'"
-                :items="professions"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="shift_id"
-                class="px-1"
-                :type="'select'"
-                :name="'shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
-            <template v-if="this.$route.query.status === 'Live'">
-              <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-                <AppInput
-                  v-model="favorite_only"
-                  :type="'select'"
-                  :name="'favorite_only'"
-                  :label="'Favorite Only'"
-                  :placeholder="'Select...'"
-                  :items="[{label: 'All', value: ''}, {label: 'Yes', value: true}, {label: 'No', value: false}]"
-                />
-              </div>
-            </template>
-          </div>
-
-          <div class="md:px-1 h-full flex w-full">
-            <AppButton
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-            
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJob"
-            />
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
-        </div>
-
-        <div
-          v-if="isJobPart"
           class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
@@ -281,7 +157,7 @@
         </div>
 
         <AppTable
-          v-if="jobs.length > 0"
+          v-if="jobs.length > 0 && !initialLoading"
           :total="total"
           :items="jobs"
           :current-page="current_page"
@@ -296,21 +172,15 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
-          <template
-            v-slot:shifts="slotProps"
-          >
+          <template v-slot:shifts="slotProps">
             {{ slotProps.item.shifts.map(item => item.name).join(', ') }}
           </template>
 
-          <template
-            v-slot:rate_type="slotProps"
-          >
+          <template v-slot:rate_type="slotProps">
             {{ slotProps.item.locum_detail_rate_types.map(item => item.name).join(', ') }}
           </template>
 
-          <template
-            v-slot:rates="slotProps"
-          >
+          <template v-slot:rates="slotProps">
             {{ slotProps.item.min_rate === slotProps.item.max_rate ? `£${slotProps.item.max_rate}` : `£${slotProps.item.min_rate} - £${ slotProps.item.max_rate}` }}
           </template>
 
@@ -323,25 +193,19 @@
           </template>
         </AppTable>
 
-        <div
-          v-if="!jobs.length && !loading && !isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!jobs.length && !initialLoading && !loading && !isFiltered" class="flex justify-center py-4">
           {{ noJobsToDisplay }}
         </div>
 
-        <div
-          v-if="!jobs.length && !loading && isFiltered"
-          class="flex justify-center py-4"
-        >
+        <div v-if="!jobs.length && !initialLoading && !loading && isFiltered" class="flex justify-center py-4">
           No Jobs Found
         </div>
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            v-if="$route.name === 'job-parts-index-jobPartId'"
+            v-if="showShield"
             class="shield"
-            :to="{ path: `/job-parts?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+            :to="{ name: 'job-parts-index', query: $route.query }"
           />
         </transition>
 
@@ -400,6 +264,7 @@ export default {
 
   data () {
     return {
+      showShield: false,
       total: 0,
       jobs: [],
       initialLoading: false,
@@ -654,9 +519,15 @@ export default {
         this.initialLoading = false
       }
     },
+
+    $route () {
+      this.showShield = this.$route.name === 'job-parts-index-jobPartId'
+    },
   },
   
   mounted () {
+    this.showShield = this.$route.name === 'job-parts-index-jobPartId'
+
     this.$socket.on('Practice Notification Job Available', this.getAvailableJobsRealTime)
     this.$socket.on('Practice Notification Job Application', this.getAppliedJobsRealTime)
     this.$socket.on('Practice Notification Job Application Cancelled', this.getAppliedCancelledJobsRealTime)
