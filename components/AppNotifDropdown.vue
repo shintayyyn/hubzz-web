@@ -213,6 +213,8 @@ export default {
         "Locum Notification Locum Invoice Approved",
         "Locum Notification Locum Invoice Paid",
 
+        "Locum Notification Locum Form A Paid",
+
         "Practice Notification Practice Actived",
         "Practice Notification Practice Reactivated",
         "Practice Notification Practice Suspended",
@@ -249,6 +251,8 @@ export default {
         "Practice Notification Locum Invoice Disputed",
         "Practice Notification Locum Invoice Approved",
         "Practice Notification Locum Invoice Paid",
+
+        "Practice Notification Locum Form A Paid",
 
         "Practice Notification Practice Invoice Issued",
         "Practice Notification Practice Invoice Paid",
@@ -565,9 +569,28 @@ export default {
     },
 
     goTo (notification) {
-      const { notification_type: notificationType, payload, } = notification
+      const {
+        notification_type: notificationType,
+        payload,
+        url: notificationUrl,
+      } = notification
 
       const { name: notificationTypeName, } = notificationType
+
+      const validNotificationUrl = [
+        "Locum Notification Locum Form A Paid",
+        "Practice Notification Locum Form A Paid",
+      ]
+
+      if (validNotificationUrl.includes(notificationTypeName)) {
+        this.$router.push({
+          path: notificationUrl,
+        })
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
 
       const locumComplianceDocumentNotifications = [
         "Locum Notification Compliance Approved",
