@@ -28,6 +28,8 @@ export default {
       || (from && from.name === 'locum-job-parts-index-jobPartId' && to && to.name === 'jobs-index')
       || (to && to.name === 'locum-job-parts-index' && from && from.name === 'jobs-index-id')
       || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index-id')
+      || (to && to.name === 'jobs-index-id')
+      || (to && to.name === 'jobs-index-id-job-parts-jobPartId')
     ) {
       return {
         name: '',
