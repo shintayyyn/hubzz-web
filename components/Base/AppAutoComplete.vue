@@ -53,7 +53,8 @@
                 </p>
                 
                 <p v-if="item.practice_detail" class="text-gray-600">
-                  {{ item.practice_detail.practice_role }}
+                  <span>{{ item.practice_detail.practice_role }}</span>
+                  <span>({{ item.practice_detail.practice && item.practice_detail.practice.name }})</span>
                 </p>
               </div>
             </template>
