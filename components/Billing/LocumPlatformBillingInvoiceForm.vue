@@ -143,7 +143,9 @@
             </div>
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">STATUS:</p>
-              <p class="font-bold w-1/2 text-right">{{ propInvoice && propInvoice.status }}</p>
+              <p
+                class="font-bold w-1/2 text-right"
+              >{{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}</p>
             </div>
           </div>
           <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
@@ -151,7 +153,7 @@
               <p class="text-sm w-1/2">TOTAL WORK PAYMENT:</p>
               <p class="font-bold w-1/2 text-right">£ {{ total_gross_locum_wages | currency }}</p>
             </div>
-            <template v-if="propInvoice && propInvoice.status === 'Approved'">
+            <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
               <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">NI / PAYE:</p>
                 <p class="font-bold w-1/2 text-right">

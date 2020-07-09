@@ -122,7 +122,7 @@
             <p class="text-sm w-1/2">TOTAL WORK PAYMENT:</p>
             <p class="font-bold w-1/2 text-right">£ {{ total_gross_locum_wages | currency }}</p>
           </div>
-          <template v-if="propInvoice && propInvoice.status === 'Approved'">
+          <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">NI / PAYE:</p>
               <p class="font-bold w-1/2 text-right">
@@ -971,7 +971,6 @@ export default {
         this.form.job_part_schedule_items.forEach(item => {
           item.approve = approved;
         });
-        console.log(this.form.job_part_schedule_items);
 
         this.saveLoading = true;
 
