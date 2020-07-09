@@ -139,6 +139,16 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
+              <AppInput
+                v-model="form.ea_code"
+                :type="'text'"
+                :name="'ea_code'"
+                :label="'PCSE Code'"
+                :error="formError.find(item => item.field === 'ea_code')"
+                required
+                @submit="save"
+                @blur="CheckEmptyField(form.ea_code, 'ea_code')"
+              />
               <template v-if="isOOH">
                 <AppInput
                   v-model="form.national_insurance_number"
@@ -172,16 +182,6 @@
                   @submit="save"
                   @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
                   @keypress="inputNumberOnly($event)"
-                />
-                <AppInput
-                  v-model="form.ea_code"
-                  :type="'text'"
-                  :name="'ea_code'"
-                  :label="'EA Code'"
-                  :error="formError.find(item => item.field === 'ea_code')"
-                  required
-                  @submit="save"
-                  @blur="CheckEmptyField(form.ea_code, 'ea_code')"
                 />
                 <AppInput
                   v-model="form.section_scheme_year"
@@ -966,7 +966,8 @@ export default {
         "extra_information",
         "vat_registered",
         "practice_profession_compliance_category_compliance_documents",
-        "other_mandatory_training_id"
+        "other_mandatory_training_id",
+        "ea_code"
       ];
 
       if (!this.form.practice_type_id.includes(8)) {
@@ -974,7 +975,6 @@ export default {
           "national_insurance_number",
           "sd_number",
           "paying_reference",
-          "ea_code",
           "professional_nhs_expenses",
           "section_scheme_year",
           "added_year_contributions",

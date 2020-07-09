@@ -2124,6 +2124,8 @@ export default {
 							this.$router.push("/dashboard");
 						} else if (this.$route.name !== "dashboard-create") {
 							this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+
+							console.log("res.data", res.data);
 						}
 
 						this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", res.data.job);

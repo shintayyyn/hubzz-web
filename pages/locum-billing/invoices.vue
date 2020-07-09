@@ -678,12 +678,12 @@ export default {
           if (jobPart.locum_invoice_item) {
             total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-            if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-              total =
-                total -
-                jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                jobPart.locum_invoice_item.locum_invoice.paye_amount;
-            }
+            // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+            //   total =
+            //     total -
+            //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
+            //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
+            // }
           } else if (!jobPart.locum_invoice_item) {
             // rate * final_hours_in_minutes
             // rate / original_hours_in_minutes * final_hours_in_minutes
@@ -706,8 +706,6 @@ export default {
                 }
               }
             });
-
-            console.log(total);
           }
 
           return {
@@ -954,12 +952,12 @@ export default {
               if (jobPart.locum_invoice_item) {
                 total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-                if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-                  total =
-                    total -
-                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                    jobPart.locum_invoice_item.locum_invoice.paye_amount;
-                }
+                // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                //   total =
+                //     total -
+                //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
+                // }
               } else if (!jobPart.locum_invoice_item) {
                 // rate * final_hours_in_minutes
                 // rate / original_hours_in_minutes * final_hours_in_minutes
@@ -1119,12 +1117,12 @@ export default {
               if (jobPart.locum_invoice_item) {
                 total = jobPart.locum_invoice_item.locum_invoice.total_amount;
 
-                if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-                  total =
-                    total -
-                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
-                    jobPart.locum_invoice_item.locum_invoice.paye_amount;
-                }
+                // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
+                //   total =
+                //     total -
+                //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
+                // }
               } else if (!jobPart.locum_invoice_item) {
                 // rate * final_hours_in_minutes
                 // rate / original_hours_in_minutes * final_hours_in_minutes
@@ -1247,7 +1245,7 @@ export default {
             this.job_parts.splice(index, 1);
           }
 
-          this.refreshInvoices()
+          this.refreshInvoices();
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
