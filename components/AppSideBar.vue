@@ -5,33 +5,26 @@
         <button
           class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
           @click="close"
-        >X</button>
+        >
+          X
+        </button>
 
-        <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
-          <span
-            v-if="`/${$route.path.split('/')[1]}` == item.route"
-            class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full"
-          />
+        <div v-for="(navigationTab, index) in navigationTabs" :key="index" class="text-sm relative">
+          <span v-if="navigationTab.active" class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full" />
 
           <nuxt-link
-            :to="item.route"
-            :event="isDisabled(item.route)"
+            :to="navigationTab.route"
+            :event="$route.path.includes(navigationTab.route) ? '' : 'click'"
             class="block no-underline p-4 transition-hover"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+            :class="navigationTab.active ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
           >
-            <span>{{ item.name }}</span>
+            <span>{{ navigationTab.navigationTabTitle }}</span>
           </nuxt-link>
         </div>
 
         <div class="text-sm relative">
-          <span
-            v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
-            class="absolute left-0 border-solid bg-sunglow w-1 h-full"
-          />
-
           <button
-            class="block no-underline p-4 transition-hover focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+            class="block no-underline p-4 transition-hover focus:outline-none hover:text-sunglow hover:font-bold"
             @click.prevent="signout_modal = true"
           >
             <span>Sign Out</span>
@@ -59,469 +52,500 @@
 </template>
 
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 export default {
   components: {
-    AppConfirmationModal
+    AppConfirmationModal,
   },
 
-  data() {
+  data () {
     return {
+      user: null,
       signout_modal: false,
       confirmation_modal: false,
-      lists: [],
-      eligibleToSpoke: false
-    };
+      eligibleToSpoke: false,
+    }
   },
 
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
-    },
-    view_locum_jobs() {
-      return this.$store.getters["getViewLocumJobs"];
-    },
-    view_permanent_jobs() {
-      return this.$store.getters["getViewPermanentJobs"];
-    }
-  },
-
-  watch: {
-    view_locum_jobs() {
-      this.getInit();
-    },
-    view_permanent_jobs() {
-      this.getInit();
-    }
-  },
-
-  async created() {
-    if (
-      this.$auth.loggedIn &&
-      this.$auth.user.domain === "Practice" &&
-      this.$auth.user.practice_detail.practice.type === "Stand Alone" &&
-      this.authPermissions.includes("View Surgery Management")
-    ) {
-      let hasHubInvitation = false;
-      let hasSpokeInvitation = false;
-
-      await this.$axios
-        .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
-        .then(res => {
-          hasHubInvitation = res.data.count > 0;
-        });
-
-      await this.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries/spoke-invitations/count`)
-        .then(res => {
-          hasSpokeInvitation = res.data.count > 0;
-        });
-
-      this.eligibleToSpoke = hasHubInvitation || hasSpokeInvitation;
-      this.getInit();
-    } else {
-      this.getInit();
-      this.$store.dispatch("getViewJobsPermissions");
-      console.log(this.view_locum_jobs);
-      console.log(this.view_permanent_jobs);
-    }
-  },
-
-  mounted() {
-    this.$loggedOutBroadcastChannel.addEventListener(
-      "message",
-      this.loggedOutHandler
-    );
-    this.addSocketListener();
-  },
-
-  destroyed() {
-    this.$loggedOutBroadcastChannel.removeEventListener(
-      "message",
-      this.loggedOutHandler
-    );
-    this.removeSocketListener();
-  },
-
-  methods: {
-    addSocketListener() {
-      this.$socket.removeListener(
-        "Practice Notification Update Profile",
-        this.updatePermissions
-      );
-      this.$socket.removeListener(
-        "Practice Notification Delete Profile",
-        this.toggleConfirmationModal
-      );
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
 
-    removeSocketListener() {
-      this.$socket.removeListener(
-        "Practice Notification Update Profile",
-        this.updatePermissions
-      );
-      this.$socket.removeListener(
-        "Practice Notification Delete Profile",
-        this.toggleConfirmationModal
-      );
+    view_locum_jobs () {
+      return this.$store.getters["getViewLocumJobs"]
     },
 
-    toggleConfirmationModal() {
-      this.confirmation_modal = true;
+    view_permanent_jobs () {
+      return this.$store.getters["getViewPermanentJobs"]
     },
 
-    updatePermissions(user) {
-      if (
-        user &&
-        user.practice_detail &&
-        user.practice_detail.permissions &&
-        user.practice_detail.permissions.length > 0
-      ) {
-        this.$store.commit(
-          "SET_PERMISSIONS",
-          user.practice_detail.role.permissions
-        );
-      } else {
-        this.$store.commit("SET_PERMISSIONS", []);
+    navigationTabs () {
+      if (!this.user) {
+        return []
       }
-    },
 
-    getInit() {
-      const user = this.$auth.user;
-
-      const { domain, status: accountStatus } = user;
+      const { domain, status: accountStatus, } = this.user
 
       if (domain === "Locum") {
-        const locumTabList = [];
+        const locumTabList = []
 
         locumTabList.push({
-          name: "Dashboard",
-          route: "/dashboard"
-        });
+          navigationTabTitle: "Dashboard",
+          route: "/dashboard",
+          active: `/${this.$route.path.split('/')[1]}` === '/dashboard',
+        })
 
         locumTabList.push({
-          name: "Account",
-          route: "/account"
-        });
+          navigationTabTitle: "Account",
+          route: "/account",
+          active: `/${this.$route.path.split('/')[1]}` === '/account',
+        })
 
         locumTabList.push({
-          name: "Compliance",
-          route: "/compliance"
-        });
+          navigationTabTitle: "Compliance",
+          route: "/compliance",
+          active: `/${this.$route.path.split('/')[1]}` === '/compliance',
+        })
 
         if (this.view_locum_jobs) {
           locumTabList.push({
-            name: "Availability",
-            route: "/availability"
-          });
+            navigationTabTitle: "Availability",
+            route: "/availability",
+            active: `/${this.$route.path.split('/')[1]}` === '/availability',
+          })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
-          this.view_locum_jobs
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_locum_jobs
         ) {
           locumTabList.push({
-            name: "My Practice",
-            route: "/my-practice"
-          });
+            navigationTabTitle: "My Practice",
+            route: "/my-practice",
+            active: `/${this.$route.path.split('/')[1]}` === '/my-practice',
+          })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
-          this.view_locum_jobs
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_locum_jobs
         ) {
+          // locumTabList.push({
+          //   navigationTabTitle: "Jobs",
+          //   route: "/jobs",
+          //   active: `/${this.$route.path.split('/')[1]}` === '/jobs' || `/${this.$route.path.split('/')[1]}` === '/locum-job-parts',
+          // })
+
           locumTabList.push({
-            name: "Jobs",
-            route: "/jobs"
-          });
+            navigationTabTitle: "Jobs",
+            route: "/locum-job-parts",
+            active: `/${this.$route.path.split('/')[1]}` === '/jobs' || `/${this.$route.path.split('/')[1]}` === '/locum-job-parts',
+          })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
-          this.view_permanent_jobs
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_permanent_jobs
         ) {
           locumTabList.push({
-            name: "Permanent Jobs",
-            route: "/permanent-jobs"
-          });
+            navigationTabTitle: "Permanent Jobs",
+            route: "/permanent-jobs",
+            active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
+          })
         }
 
         if (
-          ["Active", "Dormant"].includes(accountStatus) &&
-          this.view_locum_jobs
+          ["Active", "Dormant",].includes(accountStatus)
+          && this.view_locum_jobs
         ) {
           locumTabList.push({
-            name: "Billing",
-            route: "/locum-billing"
-          });
+            navigationTabTitle: "Billing",
+            route: "/locum-billing",
+            active: `/${this.$route.path.split('/')[1]}` === '/locum-billing',
+          })
         }
 
-        if (["Active", "Dormant"].includes(accountStatus)) {
+        if (["Active", "Dormant",].includes(accountStatus)) {
           locumTabList.push({
-            name: "Reports",
-            route: "/locum-reports"
-          });
+            navigationTabTitle: "Reports",
+            route: "/locum-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/locum-reports',
+          })
         }
 
         locumTabList.push({
-          name: "Invite",
-          route: "/invite"
-        });
+          navigationTabTitle: "Invite",
+          route: "/invite",
+          active: `/${this.$route.path.split('/')[1]}` === '/invite',
+        })
 
         locumTabList.push({
-          name: "FAQ",
-          route: "/faq"
-        });
+          navigationTabTitle: "FAQ",
+          route: "/faq",
+          active: `/${this.$route.path.split('/')[1]}` === '/faq',
+        })
 
         locumTabList.push({
-          name: "Terms and Conditions",
-          route: "/terms-and-conditions"
-        });
+          navigationTabTitle: "Terms and Conditions",
+          route: "/terms-and-conditions",
+          active: `/${this.$route.path.split('/')[1]}` === '/terms-and-conditions',
+        })
 
         locumTabList.push({
-          name: "Contact Us",
-          route: "/contact-us"
-        });
+          navigationTabTitle: "Contact Us",
+          route: "/contact-us",
+          active: `/${this.$route.path.split('/')[1]}` === '/contact-us',
+        })
 
-        this.lists = locumTabList;
-        return;
+        return locumTabList
       }
 
       if (domain === "Practice") {
-        const practiceUser = this.$auth.user;
+        const practiceUser = this.$auth.user
 
         const practice = practiceUser.practice_detail
           ? practiceUser.practice_detail.practice
-          : null;
+          : null
 
         const {
           status: practiceStatus = null,
           type: practiceType = null,
-          hub_type: hubType = null
-        } = practice || {};
+          hub_type: hubType = null,
+        } = practice || {}
 
-        const practiceTabList = [];
-
-        practiceTabList.push({
-          name: "Dashboard",
-          route: "/dashboard"
-        });
+        const practiceTabList = []
 
         practiceTabList.push({
-          name: "Account",
-          route: "/account"
-        });
+          navigationTabTitle: "Dashboard",
+          route: "/dashboard",
+          active: `/${this.$route.path.split('/')[1]}` === '/dashboard',
+        })
+
+        practiceTabList.push({
+          navigationTabTitle: "Account",
+          route: "/account",
+          active: `/${this.$route.path.split('/')[1]}` === '/account',
+        })
 
         if (this.authPermissions.includes("View Profile Practice")) {
           practiceTabList.push({
-            name: "Profile",
-            route: "/profile"
-          });
+            navigationTabTitle: "Profile",
+            route: "/profile",
+            active: `/${this.$route.path.split('/')[1]}` === '/profile',
+          })
         } else if (this.authPermissions.includes("View Profile Users")) {
           practiceTabList.push({
-            name: "Profile",
-            route: "/profile/users"
-          });
+            navigationTabTitle: "Profile",
+            route: "/profile/users",
+            active: `/${this.$route.path.split('/')[1]}` === '/profile',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          practiceType === "Hub" &&
-          this.authPermissions.includes("View Surgery Management")
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && practiceType === "Hub"
+          && this.authPermissions.includes("View Surgery Management")
         ) {
           practiceTabList.push({
-            name: "Surgery Management",
-            route: "/hub-surgery-management"
-          });
+            navigationTabTitle: "Surgery Management",
+            route: "/hub-surgery-management",
+            active: `/${this.$route.path.split('/')[1]}` === '/hub-surgery-management',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          practiceType === "Spoke" &&
-          this.authPermissions.includes("View Surgery Management")
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && practiceType === "Spoke"
+          && this.authPermissions.includes("View Surgery Management")
         ) {
           practiceTabList.push({
-            name: "Surgery Management",
-            route: "/spoke-surgery-management"
-          });
+            navigationTabTitle: "Surgery Management",
+            route: "/spoke-surgery-management",
+            active: `/${this.$route.path.split('/')[1]}` === '/spoke-surgery-management',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          practiceType === "Stand Alone" &&
-          this.authPermissions.includes("View Surgery Management") &&
-          this.eligibleToSpoke
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && practiceType === "Stand Alone"
+          && this.authPermissions.includes("View Surgery Management")
+          && this.eligibleToSpoke
         ) {
           practiceTabList.push({
-            name: "Surgery Management",
-            route: "/spoke-surgery-management"
-          });
+            navigationTabTitle: "Surgery Management",
+            route: "/spoke-surgery-management",
+            active: `/${this.$route.path.split('/')[1]}` === '/spoke-surgery-management',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          hubType !== "Type 2"
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && hubType !== "Type 2"
         ) {
           practiceTabList.push({
-            name: "My Banks",
-            route: "/my-banks"
-          });
+            navigationTabTitle: "My Banks",
+            route: "/my-banks",
+            active: `/${this.$route.path.split('/')[1]}` === '/my-banks',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          this.authPermissions.includes("View Sessions Job") &&
-          hubType !== "Type 2"
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Sessions Job")
+          && hubType !== "Type 2"
         ) {
+          // practiceTabList.push({
+          //   navigationTabTitle: "Sessions",
+          //   route: "/sessions",
+          //   active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
+          // })
+
           practiceTabList.push({
-            name: "Sessions",
-            route: "/sessions"
-          });
+            navigationTabTitle: "Sessions",
+            route: "/job-parts",
+            active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          this.authPermissions.includes("View Permanent Job")
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Permanent Job")
         ) {
           practiceTabList.push({
-            name: "Permanent Jobs",
-            route: "/permanent-jobs"
-          });
+            navigationTabTitle: "Permanent Jobs",
+            route: "/permanent-jobs",
+            active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          this.authPermissions.includes("View Sessions Job") &&
-          this.authPermissions.includes("View Billings") &&
-          hubType !== "Type 2"
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Sessions Job")
+          && this.authPermissions.includes("View Billings")
+          && hubType !== "Type 2"
         ) {
           practiceTabList.push({
-            name: "Billing",
-            route: "/practice-billing"
-          });
+            navigationTabTitle: "Billing",
+            route: "/practice-billing",
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-billing',
+          })
         }
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus)
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
         ) {
           practiceTabList.push({
-            name: "Reports",
-            route: "/practice-reports"
-          });
+            navigationTabTitle: "Reports",
+            route: "/practice-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-reports',
+          })
         }
 
         practiceTabList.push({
-          name: "Invite",
-          route: "/invite"
-        });
+          navigationTabTitle: "Invite",
+          route: "/invite",
+          active: `/${this.$route.path.split('/')[1]}` === '/invite',
+        })
 
         if (
-          accountStatus === "Active" &&
-          ["Active", "Dormant"].includes(practiceStatus) &&
-          this.authPermissions.includes("View Role")
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && this.authPermissions.includes("View Role")
         ) {
           practiceTabList.push({
-            name: "Roles and Permissions",
-            route: "/roles-and-permissions"
-          });
+            navigationTabTitle: "Roles and Permissions",
+            route: "/roles-and-permissions",
+            active: `/${this.$route.path.split('/')[1]}` === '/roles-and-permissions',
+          })
         }
 
         practiceTabList.push({
-          name: "FAQ",
-          route: "/faq"
-        });
+          navigationTabTitle: "FAQ",
+          route: "/faq",
+          active: `/${this.$route.path.split('/')[1]}` === '/faq',
+        })
 
         practiceTabList.push({
-          name: "Terms and Conditions",
-          route: "/terms-and-conditions"
-        });
+          navigationTabTitle: "Terms and Conditions",
+          route: "/terms-and-conditions",
+          active: `/${this.$route.path.split('/')[1]}` === '/terms-and-conditions',
+        })
 
         practiceTabList.push({
-          name: "Contact Us",
-          route: "/contact-us"
-        });
+          navigationTabTitle: "Contact Us",
+          route: "/contact-us",
+          active: `/${this.$route.path.split('/')[1]}` === '/contact-us',
+        })
 
-        this.lists = practiceTabList;
-        return;
+        return practiceTabList
+      }
+
+      return []
+    },
+  },
+
+  watch: {
+    view_locum_jobs () {
+      this.getInit()
+    },
+    view_permanent_jobs () {
+      this.getInit()
+    },
+  },
+
+  async created () {
+    if (
+      this.$auth.loggedIn
+      && this.$auth.user.domain === "Practice"
+      && this.$auth.user.practice_detail.practice.type === "Stand Alone"
+      && this.authPermissions.includes("View Surgery Management")
+    ) {
+      let hasHubInvitation = false
+      let hasSpokeInvitation = false
+
+      await this.$axios
+        .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
+        .then(res => {
+          hasHubInvitation = res.data.count > 0
+        })
+
+      await this.$axios
+        .$get(`/api/v1/practice/me/practice-surgeries/spoke-invitations/count`)
+        .then(res => {
+          hasSpokeInvitation = res.data.count > 0
+        })
+
+      this.eligibleToSpoke = hasHubInvitation || hasSpokeInvitation
+      this.getInit()
+    } else {
+      this.getInit()
+      this.$store.dispatch("getViewJobsPermissions")
+      console.log(this.view_locum_jobs)
+      console.log(this.view_permanent_jobs)
+    }
+  },
+
+  mounted () {
+    this.$loggedOutBroadcastChannel.addEventListener(
+      "message",
+      this.loggedOutHandler
+    )
+    this.addSocketListener()
+  },
+
+  destroyed () {
+    this.$loggedOutBroadcastChannel.removeEventListener(
+      "message",
+      this.loggedOutHandler
+    )
+    this.removeSocketListener()
+  },
+
+  methods: {
+    addSocketListener () {
+      this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+      this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+    },
+
+    removeSocketListener () {
+      this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+      this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+    },
+
+    toggleConfirmationModal () {
+      this.confirmation_modal = true
+    },
+
+    updatePermissions (user) {
+      if (
+        user
+        && user.practice_detail
+        && user.practice_detail.permissions
+        && user.practice_detail.permissions.length > 0
+      ) {
+        this.$store.commit("SET_PERMISSIONS", user.practice_detail.role.permissions)
+      } else {
+        this.$store.commit("SET_PERMISSIONS", [])
       }
     },
 
-    logout() {
+    getInit () {
+      this.user = this.$auth.user
+    },
+
+    logout () {
       this.$axios
         .post("/api/v1/logout")
         .then(() => {
-          this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
-          this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
-          this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
-          this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
-          console.log("Socket Logged Out");
-          console.log("One Signal Logged Out");
+          this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION")
+          this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
+          this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
+          this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION")
+          console.log("Socket Logged Out")
+          console.log("One Signal Logged Out")
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
+              text: [`${err.response.data.message}`,],
+            })
           }
         })
         .finally(() => {
-          this.$emit("modal", false);
-          this.$store.commit("TOGGLE_SIDEBAR", false);
-          return this.loggedOutHandler();
+          this.$emit("modal", false)
+          this.$store.commit("TOGGLE_SIDEBAR", false)
+          return this.loggedOutHandler()
         })
         .then(() => {
-          this.$loggedOutBroadcastChannel.postMessage();
+          this.$loggedOutBroadcastChannel.postMessage()
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
+              text: [`${err.response.data.message}`,],
+            })
           }
-        });
+        })
     },
 
-    async loggedOutHandler() {
+    async loggedOutHandler () {
       try {
-        await this.$auth.logout();
-        this.$auth.$storage.setUniversal("_token.local", "");
-        this.$router.push("/");
+        await this.$auth.logout()
+        this.$auth.$storage.setUniversal("_token.local", "")
+        this.$router.push("/")
       } catch (err) {
-        console.log("err", err);
+        console.log("err", err)
       }
     },
 
-    async confirm() {
-      await this.$auth.logout();
-      this.$auth.$storage.setUniversal("_token.local", "");
-      this.$router.push("/");
+    async confirm () {
+      await this.$auth.logout()
+      this.$auth.$storage.setUniversal("_token.local", "")
+      this.$router.push("/")
     },
 
-    isDisabled(routeName) {
-      return this.$route.path.includes(routeName) ? "" : "click";
+    close () {
+      this.$store.commit("TOGGLE_SIDEBAR", false)
+      document.body.style.overflow = "auto"
     },
-
-    close() {
-      this.$store.commit("TOGGLE_SIDEBAR", false);
-      document.body.style.overflow = "auto";
-    }
-  }
-};
+  },
+}
 </script>
 
 <style scoped>

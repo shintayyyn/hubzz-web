@@ -86,10 +86,6 @@
       "strict": "off",
       "class-methods-use-this": "off",
       "no-nested-ternary": "off",
-      "semi": [
-        "error",
-        "never"
-      ],
       "space-before-function-paren": [
         "error",
         "always"
@@ -101,7 +97,13 @@
       "no-await-in-loop": "off",
       "func-names": "off",
       "global-require": "off",
-      "import/no-dynamic-require": "off"
+      "import/no-dynamic-require": "off",
+
+      "semi": ["warn", "never"],
+      "comma-dangle": ["warn", "always"],
+      "indent": ["warn", 2],
+      "operator-linebreak": ["warn", "before"],
+      "eol-last": ["warn", "always"]
     }
   },
   "husky": {

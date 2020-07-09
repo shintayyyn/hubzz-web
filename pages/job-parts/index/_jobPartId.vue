@@ -2,54 +2,58 @@
   <div class="modal-container shadow-lg">
     <AppLoading :loading="initialLoading" spinner />
 
-    <JobDetailModalAppointment
-      v-if="job && job.type === 'Private'"
-      :job="job"
+    <SessionPartDetailModal
+      v-if="jobPart"
+      :job-part="jobPart"
+      :loadingJobPart="loadingJobPart"
       @close="close"
-      @appointmentUpdated="$emit('appointmentUpdated')"
-    />
-
-    <JobDetailModal
-      v-if="job && job.type === 'Platform'"
-      :job="job"
-      @close="close"
-      @applied="$emit('applied', $event)"
-      @cancelled="$emit('cancelled', $event)"
-      @unassign="$emit('unassign', $event)"
     />
   </div>
 </template>
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
-import JobDetailModal from "@/components/Jobs/JobDetailModal"
-import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 
 export default {
   transition: {
-    name: "slide",
-    mode: "out-in",
+    name: 'slide',
+    mode: 'out-in',
   },
 
   components: {
     AppLoading,
-    JobDetailModal,
-    JobDetailModalAppointment,
+    SessionPartDetailModal,
   },
 
   data () {
     return {
       initialLoading: false,
-      loadingJob: false,
-      job: null,
+      loadingJobPart: false,
     }
   },
-  
+
+  computed: {
+    jobPart: {
+      get () {
+        return this.$store.getters['jobParts/getJobPart']
+      },
+
+      set (jobPart) {
+        this.$store.commit('jobParts/setJobPart', jobPart)
+      },
+    },
+
+    jobPartId () {
+      return this.jobPart ? this.jobPart.id : null
+    },
+  },
+
   watch: {
     $route () {
-      this.loadingJob = true
-      this.getLocumJob().finally(() => {
-        this.loadingJob = false
+      this.loadingJobPart = true
+      this.getJobPart().finally(() => {
+        this.loadingJobPart = false
       })
     },
   },
@@ -57,22 +61,22 @@ export default {
   mounted () {
     this.jobPart = null
     this.initialLoading = true
-    this.getLocumJob().finally(() => {
+    this.getJobPart().finally(() => {
       this.initialLoading = false
     })
   },
 
   methods: {
-    getLocumJob () {
-      return this.$axios.get(`/api/v1/locum/jobs/${this.$route.params.id}`).then((response) => {
-        this.job = response.data.data.job
+    getJobPart () {
+      return this.$axios.get(`/api/v1/practice/job-parts/${this.$route.params.jobPartId}`).then((response) => {
+        this.jobPart = response.data.data.job_part
       }).catch((err) => {
         console.log('err', err.response || err)
 
         if (err.response && err.response.status === 404) {
           this.$nuxt.error({
             status: 404,
-            message: "This job could not be found.",
+            message: "This session could not be found.",
           })
         } else {
           this.$nuxt.error(err)
@@ -84,7 +88,7 @@ export default {
       const { query, } = this.$route
 
       this.$router.push({
-        name: "jobs-index",
+        name: "job-parts-index",
         query,
       })
     },
@@ -96,7 +100,7 @@ export default {
   .modal-container {
     z-index: 510;
   }
-
+  
   @media screen and (min-width: 1200px) {
     .modal-container {
       width: 90%;

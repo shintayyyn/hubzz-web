@@ -4,205 +4,216 @@
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+    </transition>
 
-      <div v-if="!initialLoading">
-        <div class="flex">
-          <AppButton
-            class="mr-2"
-            :label="'Filter'"
-            :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-            @click="filterModal = !filterModal"
-          />
+    <div>
+      <div class="flex">
+        <AppButton
+          class="mr-2"
+          :label="'Filter'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          @click="filterModal = !filterModal"
+        />
+        
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          @click="refreshJobs"
+        />
+      </div>
 
-          <AppButton
-            v-if="showRefresh"
-            :label="'Refresh'"
-            :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-            @click="refreshJobs"
+      <div
+        class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+        :class="filterModal ? 'flex' : 'hidden'"
+      >
+        <div class="flex flex-col md:flex-row g-full items-end">
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_part_number_includes"
+              class="px-1"
+              :type="'text'"
+              :name="'job_part_number'"
+              :label="'Job part number'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_title_includes"
+              class="px-1"
+              :type="'text'"
+              :name="'job_title'"
+              :label="'Job Title'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_rate"
+              class="px-1"
+              :type="'text'"
+              :name="'job_rate'"
+              :label="'Rate £'"
+              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :limit="8"
+              @keydown="isNumber($event)"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_rate_type_id"
+              class="px-1"
+              :type="'select'"
+              :name="'job_rate_type_id'"
+              :label="'per'"
+              :items="rates"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row g-full items-end">
+          <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="profession_id"
+              :type="'select'"
+              :name="'profession_id'"
+              :label="'Roles'"
+              :placeholder="'Select...'"
+              :items="professions"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="job_shift_id"
+              class="px-1"
+              :type="'select'"
+              :name="'job_shift_id'"
+              :label="'Shift'"
+              :items="shifts"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppDate
+              v-model="calendar_date_start"
+              :name="'calendar_date_start'"
+              :label="'From'"
+              :format="'YYYY-MM-DD'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppDate
+              v-model="calendar_date_end"
+              :name="'calendar_date_end'"
+              :label="'To'"
+              :format="'YYYY-MM-DD'"
+            />
+          </div>
+        </div>
+
+        <div
+          v-if="$route.query.status && $route.query.status === 'Ongoing'"
+          class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+        >
+          <AppInput
+            v-model="ended"
+            class="px-1"
+            :type="'select'"
+            :name="'ended'"
+            :label="'Status'"
+            :items="[{label: 'All', value: null}, {label: 'For Completion', value: true}, {label: 'Ongoing', value: false}]"
           />
         </div>
 
         <div
-          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
+          v-if="$route.query.status && $route.query.status !== 'Ongoing'"
+          class="md:px-1 w-full lg:w-1/4 md:w-1/3"
         >
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_number_includes"
-                class="px-1"
-                :type="'text'"
-                :name="'job_number'"
-                :label="'Job number'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="title_includes"
-                class="px-1"
-                :type="'text'"
-                :name="'title'"
-                :label="'Job Title'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="rate"
-                class="px-1"
-                :type="'text'"
-                :name="'rate'"
-                :label="'Rate £'"
-                :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-                :limit="8"
-                @keydown="isNumber($event)"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="rate_type_id"
-                class="px-1"
-                :type="'select'"
-                :name="'rate_type_id'"
-                :label="'per'"
-                :items="rates"
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="profession_id"
-                :type="'select'"
-                :name="'profession_id'"
-                :label="'Roles'"
-                :placeholder="'Select...'"
-                :items="professions"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="shift_id"
-                class="px-1"
-                :type="'select'"
-                :name="'shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
-            <template v-if="this.$route.query.status === 'Live'">
-              <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-                <AppInput
-                  v-model="favorite_only"
-                  :type="'select'"
-                  :name="'favorite_only'"
-                  :label="'Favorite Only'"
-                  :placeholder="'Select...'"
-                  :items="[{label: 'All', value: ''}, {label: 'Yes', value: true}, {label: 'No', value: false}]"
-                />
-              </div>
-            </template>
-          </div>
-
-          <div class="md:px-1 h-full flex w-full">
-            <AppButton
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-            
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJob"
-            />
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
-        </div>
-
-        <AppTable
-          v-if="jobs.length > 0"
-          :total="total"
-          :items="jobs"
-          :current-page="current_page"
-          :per-page="limit"
-          :columns="columns"
-          :order-by="order_by"
-          :loading="loading"
-          :routerLink="routerLink"
-          :min-height="'55vh'"
-          :customWidth="1400"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
-        >
-          <template v-slot:shifts="slotProps">
-            {{ slotProps.item.shifts.map(item => item.name).join(', ') }}
-          </template>
-
-          <template v-slot:rate_type="slotProps">
-            {{ slotProps.item.locum_detail_rate_types.map(item => item.name).join(', ') }}
-          </template>
-
-          <template v-slot:rates="slotProps">
-            {{ slotProps.item.min_rate === slotProps.item.max_rate ? `£${slotProps.item.max_rate}` : `£${slotProps.item.min_rate} - £${ slotProps.item.max_rate}` }}
-          </template>
-
-          <template v-slot:ended="slotProps">
-            <div class="flex items-center justify-center">
-              <div class="rounded-full px-6 py-1">
-                {{ slotProps.item.ended ? "For Completion" : "Ongoing" }}
-              </div>
-            </div>
-          </template>
-        </AppTable>
-
-        <div v-if="!jobs.length && !loading && !isFiltered" class="flex justify-center py-4">
-          {{ noJobsToDisplay }}
-        </div>
-
-        <div v-if="!jobs.length && !loading && isFiltered" class="flex justify-center py-4">
-          No Jobs Found
-        </div>
-
-        <transition name="fade" mode="out-in">
-          <nuxt-link
-            v-if="$route.name === 'sessions-index-id' || $route.name === 'sessions-index-id-job-parts-jobPartId'"
-            class="shield"
-            :to="{ path: `/sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+          <AppInput
+            v-model="invoice_status"
+            class="px-1"
+            :type="'select'"
+            :name="'invoice_status'"
+            :label="'Invoice Status'"
+            :items="invoiceStatusList"
           />
-        </transition>
-
-        <div>
-          <nuxt-child @cancelled="filterJobList" @appointed="filterJobList" />
+        </div>
+        <div class="md:px-1 flex w-full">
+          <AppButton
+            :label="'Clear'"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="clearFilters"
+          />
+          <AppButton
+            class="mx-2"
+            :label="'Search'"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterJob"
+          />
+          <AppButton
+            class="mx-2 md:hidden"
+            :label="'Close'"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterModal = false"
+          />
         </div>
       </div>
-    </transition>
+
+      <AppTable
+        v-if="jobs.length > 0 && !initialLoading"
+        :total="total"
+        :items="jobs"
+        :current-page="current_page"
+        :per-page="limit"
+        :columns="columns"
+        :order-by="order_by"
+        :loading="loading"
+        :routerLink="routerLink"
+        :min-height="'55vh'"
+        :customWidth="1400"
+        @pagechanged="pagechanged"
+        @limitchanged="limitchanged"
+        @sorted="sorted"
+      >
+        <template v-slot:shifts="slotProps">
+          {{ slotProps.item.shifts.map(item => item.name).join(', ') }}
+        </template>
+
+        <template v-slot:rate_type="slotProps">
+          {{ slotProps.item.locum_detail_rate_types.map(item => item.name).join(', ') }}
+        </template>
+
+        <template v-slot:rates="slotProps">
+          {{ slotProps.item.min_rate === slotProps.item.max_rate ? `£${slotProps.item.max_rate}` : `£${slotProps.item.min_rate} - £${ slotProps.item.max_rate}` }}
+        </template>
+
+        <template v-slot:ended="slotProps">
+          <div class="flex items-center justify-center">
+            <div class="rounded-full px-6 py-1">
+              {{ slotProps.item.ended ? "For Completion" : "Ongoing" }}
+            </div>
+          </div>
+        </template>
+      </AppTable>
+
+      <div v-if="!jobs.length && !initialLoading && !loading && !isFiltered" class="flex justify-center py-4">
+        {{ noJobsToDisplay }}
+      </div>
+
+      <div v-if="!jobs.length && !initialLoading && !loading && isFiltered" class="flex justify-center py-4">
+        No Jobs Found
+      </div>
+
+      <transition name="fade" mode="out-in">
+        <nuxt-link
+          v-if="showShield"
+          class="shield"
+          :to="{ name: 'job-parts-index', query: $route.query }"
+        />
+      </transition>
+
+      <div>
+        <nuxt-child @cancelled="filterJobList" @appointed="filterJobList" />
+      </div>
+    </div>
   </section>
 </template>
 
@@ -253,6 +264,7 @@ export default {
 
   data () {
     return {
+      showShield: false,
       total: 0,
       jobs: [],
       initialLoading: false,
@@ -285,6 +297,7 @@ export default {
       time_start: "",
       time_end: "",
       invoice_status: "",
+      viewing_locum_user_id: [],
       title_includes: "",
       job_title_includes: "",
       job_number_includes: "",
@@ -300,28 +313,8 @@ export default {
   },
 
   computed: {
-    getRequestQueryFilters () {
-      return {
-        practice_id: this.$auth.user.practice_detail.practice.id,
-        status: this.$route.query.status
-          ? [`${this.$route.query.status}`,]
-          : ["Allocated",],
-        type: this.type,
-        shift_id: this.shift_id,
-        rate: this.rate,
-        rate_type_id: this.rate_type_id,
-        near_post_code: this.near_post_code,
-        miles: this.miles,
-        calendar_date_start: this.calendar_date_start,
-        calendar_date_end: this.calendar_date_end,
-        time_start: this.time_start,
-        time_end: this.time_end,
-        title_includes: this.title_includes,
-        job_number_includes: this.job_number_includes,
-        profession_id: this.profession_id,
-        favorite_only: this.favorite_only,
-        ended: this.ended,
-      }
+    isJobPart () {
+      return true
     },
 
     noJobsToDisplay () {
@@ -357,8 +350,8 @@ export default {
 
       columns.push(
         {
-          name: "Job Number",
-          dataIndex: "job_number",
+          name: "Job Part Number",
+          dataIndex: "job_part_number",
           sortable: true,
         },
         {
@@ -375,29 +368,29 @@ export default {
         },
         {
           name: "Title",
-          dataIndex: "title",
-          class: "text-center break-words",
+          dataIndex: "job_title",
+          class: "text-center",
           sortable: true,
         },
         {
           name: "Shifts",
-          dataIndex: "shift_name",
+          dataIndex: "job.shift.name",
           slotName: "shifts",
           class: "text-center",
           sortable: true,
         },
         {
           name: "Rates",
-          dataIndex: "rate",
-          sortable: true,
+          dataIndex: "job.rate",
           slotName: "rates",
+          sortable: true,
           class: "text-center currency",
         },
         {
           name: "Rate Type",
-          dataIndex: "rate_type_name",
-          slotName: "rate_type",
+          dataIndex: "job.locum_detail_rate_type.name",
           class: "text-center",
+          slotName: "rate_type",
           sortable: true,
         }
       )
@@ -522,13 +515,19 @@ export default {
         this.clearFilters()
         this.isFiltered = false
         this.initialLoading = true
-        await this.getSessions()
+        await this.getJobsPromiseAll()
         this.initialLoading = false
       }
     },
-  },
 
+    $route () {
+      this.showShield = this.$route.name === 'job-parts-index-jobPartId'
+    },
+  },
+  
   mounted () {
+    this.showShield = this.$route.name === 'job-parts-index-jobPartId'
+
     this.$socket.on('Practice Notification Job Available', this.getAvailableJobsRealTime)
     this.$socket.on('Practice Notification Job Application', this.getAppliedJobsRealTime)
     this.$socket.on('Practice Notification Job Application Cancelled', this.getAppliedCancelledJobsRealTime)
@@ -552,7 +551,7 @@ export default {
     this.clearFilters()
     this.isFiltered = false
     this.initialLoading = true
-    this.getSessions().finally(() => {
+    this.getJobsPromiseAll().finally(() => {
       this.initialLoading = false
     })
 
@@ -603,12 +602,11 @@ export default {
   },
 
   methods: {
-
     routerLink (jobOrJobPart) {
       return {
-        name: "sessions-index-id",
+        name: "job-parts-index-jobPartId",
         params: {
-          id: jobOrJobPart.id,
+          jobPartId: jobOrJobPart.id,
         },
         query: {
           ...this.$route.query,
@@ -620,33 +618,129 @@ export default {
       this.jobs = this.jobs.filter(item => item.id !== id)
     },
 
-    getSessions () {
+    getJobsPromiseAll () {
+      let status = []
+      let queryStatus = this.$route.query.status
+      // let bankStatus = this.$route.query.bank;
+
+      if (!queryStatus) {
+        status = ["Allocated",]
+      } else if (queryStatus) {
+        switch (queryStatus) {
+        case "Completed":
+          status = ["Completed", "Terminated",]
+          break
+        default:
+          status = [`${queryStatus}`,]
+          break
+        }
+      }
+
       return Promise.all([
-        this.$axios.get('/api/v1/practice/jobs/count', {
+        this.$axios.$get('/api/v1/practice/job-parts/count', {
           params: {
-            ...this.getRequestQueryFilters,
+            status,
+            order_by: [],
+            type: !this.isJobPart ? this.type : "",
+            job_type: this.isJobPart ? this.job_type : "",
+            practice_id: !this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            job_practice_id: this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            shift_id: !this.isJobPart ? this.shift_id : "",
+            job_shift_id: this.isJobPart ? this.job_shift_id : "",
+            rate: !this.isJobPart ? this.rate : "",
+            job_rate: this.isJobPart ? this.job_rate : "",
+            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
+            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+            near_post_code: this.near_post_code,
+            miles: this.miles,
+            calendar_date_start: this.calendar_date_start,
+            calendar_date_end: this.calendar_date_end,
+            time_start: this.time_start,
+            time_end: this.time_end,
+            invoice_status: this.invoice_status,
+            viewing_locum_user_id: this.viewing_locum_user_id,
+            title_includes: !this.isJobPart ? this.title_includes : "",
+            job_title_includes: this.isJobPart ? this.job_title_includes : "",
+            job_number_includes: !this.isJobPart
+              ? this.job_number_includes
+              : "",
+            job_part_number_includes: this.isJobPart
+              ? this.job_part_number_includes
+              : "",
+            // has_favorite_applicants:
+            //   queryStatus === "Applied" && bankStatus === "true"
+            //     ? true
+            //     : queryStatus === "Applied" &&
+            //       (bankStatus === "false" || !bankStatus)
+            //     ? false
+            //     : null,
+            profession_id: this.profession_id,
+            favorite_only: this.favorite_only,
+            ended: this.ended,
           },
         }),
-
-        this.$axios.get('/api/v1/practice/jobs', {
+        this.$axios.$get('/api/v1/practice/job-parts', {
           params: {
-            ...this.getRequestQueryFilters,
             offset: 0,
             limit: 5,
+            status,
             order_by: [],
+            type: !this.isJobPart ? this.type : "",
+            job_type: this.isJobPart ? this.job_type : "",
+            practice_id: !this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            job_practice_id: this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            shift_id: !this.isJobPart ? this.shift_id : "",
+            job_shift_id: this.isJobPart ? this.job_shift_id : "",
+            rate: !this.isJobPart ? this.rate : "",
+            job_rate: this.isJobPart ? this.job_rate : "",
+            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
+            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+            near_post_code: this.near_post_code,
+            miles: this.miles,
+            calendar_date_start: this.calendar_date_start,
+            calendar_date_end: this.calendar_date_end,
+            time_start: this.time_start,
+            time_end: this.time_end,
+            invoice_status: this.isJobPart ? this.invoice_status : "",
+            viewing_locum_user_id: this.viewing_locum_user_id,
+            title_includes: !this.isJobPart ? this.title_includes : "",
+            job_title_includes: this.isJobPart ? this.job_title_includes : "",
+            job_number_includes: !this.isJobPart
+              ? this.job_number_includes
+              : "",
+            job_part_number_includes: this.isJobPart
+              ? this.job_part_number_includes
+              : "",
+            // has_favorite_applicants:
+            //   queryStatus === "Applied" && bankStatus === "true"
+            //     ? true
+            //     : queryStatus === "Applied" &&
+            //       (bankStatus === "false" || !bankStatus)
+            //     ? false
+            //     : null,
+            profession_id: this.profession_id,
+            favorite_only: this.favorite_only,
+            ended: this.ended,
           },
         }),
       ]).then(([responseCount, responseJobs,]) => {
-        this.total = responseCount.data.data.count
-        
-        this.jobs = responseJobs.data.data.jobs.map(item => {
+        this.jobs = responseJobs.data.job_parts.map(item => {
           return {
             ...item,
-            profession_name: item.platform_job.profession.name,
-            assigned_to: item.platform_job.appointed_to_locum.user
-              ? item.platform_job.appointed_to_locum.user
-                .personal_detail.name
+            profession_name: item.profession.name,
+            // isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
+            assigned_to: item.job.platform_job.appointed_to_locum && item.job.platform_job.appointed_to_locum.user
+              ? item.job.platform_job.appointed_to_locum.user.personal_detail.name
               : null,
+            tag_status: item.terminated ? "Terminated" : item.status,
             date_time_start: `${this.$moment(item.date_start).format(
               "DD-MM-YYYY"
             )} | ${item.time_start}`,
@@ -655,41 +749,125 @@ export default {
             )} | ${item.time_end}`,
           }
         })
+        
+        this.total = responseCount.data.count
       }).catch(err => {
         console.log("err", err.response || err)
         throw err
+      }).finally(() => {
+        return
       })
     },
 
     getJobs () {
-      return this.$axios.get('/api/v1/practice/jobs', {
-        params: {
-          ...this.getRequestQueryFilters,
-          offset: 0,
-          limit: 5,
-          order_by: this.order_by,
-        },
-      }).then(responseJobs => {
-        this.jobs = responseJobs.data.data.jobs.map(item => {
-          return {
-            ...item,
-            profession_name: item.platform_job.profession.name,
-            assigned_to: item.platform_job.appointed_to_locum.user
-              ? item.platform_job.appointed_to_locum.user
-                .personal_detail.name
-              : null,
-            date_time_start: `${this.$moment(item.date_start).format(
-              "DD-MM-YYYY"
-            )} | ${item.time_start}`,
-            date_time_end: `${this.$moment(item.date_end).format(
-              "DD-MM-YYYY"
-            )} | ${item.time_end}`,
-          }
+      let status = []
+      let queryStatus = this.$route.query.status
+      // let bankStatus = this.$route.query.bank;
+
+      if (!queryStatus) {
+        status = ["Allocated",]
+      } else if (queryStatus) {
+        switch (queryStatus) {
+        case "Completed":
+          status = ["Completed", "Terminated",]
+          break
+        default:
+          status = [`${queryStatus}`,]
+          break
+        }
+      }
+
+      return this.$axios
+        .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+          params: {
+            offset: this.offset,
+            limit: this.limit,
+            status,
+            order_by: this.order_by,
+            type: !this.isJobPart ? this.type : "",
+            job_type: this.isJobPart ? this.job_type : "",
+            practice_id: !this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            job_practice_id: this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            shift_id: !this.isJobPart ? this.shift_id : "",
+            job_shift_id: this.isJobPart ? this.job_shift_id : "",
+            rate: !this.isJobPart ? this.rate : "",
+            job_rate: this.isJobPart ? this.job_rate : "",
+            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
+            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+            near_post_code: this.isJobPart ? this.near_post_code : "",
+            miles: this.isJobPart ? this.miles : "",
+            calendar_date_start: this.isJobPart ? this.calendar_date_start : "",
+            calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
+            time_start: this.isJobPart ? this.time_start : "",
+            time_end: this.isJobPart ? this.time_end : "",
+            invoice_status: this.isJobPart ? this.invoice_status : "",
+            viewing_locum_user_id: this.viewing_locum_user_id,
+            title_includes: !this.isJobPart ? this.title_includes : "",
+            job_title_includes: this.isJobPart ? this.job_title_includes : "",
+            job_number_includes: !this.isJobPart
+              ? this.job_number_includes
+              : "",
+            job_part_number_includes: this.isJobPart
+              ? this.job_part_number_includes
+              : "",
+            ended: this.ended,
+            // has_favorite_applicants:
+            //   queryStatus === "Applied" && bankStatus === "true"
+            //     ? true
+            //     : queryStatus === "Applied" &&
+            //       (bankStatus === "false" || !bankStatus)
+            //     ? false
+            //     : null
+          },
         })
-      }).catch(err => {
-        console.log("err", err.response || err)
-        throw err
-      })
+        .then(res => {
+          this.jobs
+            = res.data && res.data.jobs
+              ? res.data.jobs.map(item => {
+                return {
+                  ...item,
+                  isGp:
+                      item.platform_job.profession.name === "GP"
+                        ? "GP"
+                        : "Non-GP",
+                  profession_name: item.platform_job.profession.name,
+                  assigned_to: item.platform_job.appointed_to_locum.user
+                    ? item.platform_job.appointed_to_locum.user
+                      .personal_detail.name
+                    : null,
+                  date_time_start: `${this.$moment(item.date_start).format(
+                    "DD-MM-YYYY"
+                  )} | ${item.time_start}`,
+                  date_time_end: `${this.$moment(item.date_end).format(
+                    "DD-MM-YYYY"
+                  )} | ${item.time_end}`,
+                }
+              })
+              : res.data.job_parts
+                ? res.data.job_parts.map(item => {
+                  return {
+                    ...item,
+                    profession_name: item.profession.name,
+                    isGp: item.profession.name === "GP" ? "GP" : "Non-GP",
+                    tag_status: item.terminated ? "Terminated" : item.status,
+                    date_time_start: `${this.$moment(item.date_start).format(
+                      "DD-MM-YYYY"
+                    )} | ${item.time_start}`,
+                    date_time_end: `${this.$moment(item.date_end).format(
+                      "DD-MM-YYYY"
+                    )} | ${item.time_end}`,
+                  }
+                })
+                : []
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+          throw err
+        })
     },
 
     async getAvailableJobsRealTime (job) {
@@ -876,7 +1054,7 @@ export default {
       this.offset = 0
       this.limit = 5
       this.initialLoading = true
-      await this.getSessions()
+      await this.getJobsPromiseAll()
       this.initialLoading = false
       this.showRefresh = false
     },
@@ -887,7 +1065,7 @@ export default {
       this.limit = 5
       this.initialLoading = true
       this.isFiltered = true
-      await this.getSessions()
+      await this.getJobsPromiseAll()
       this.initialLoading = false
       this.filterModal = false
     },
@@ -956,7 +1134,7 @@ export default {
       await this.getJobs()
       this.loading = false
     },
-
+    
     clearFilters () {
       this.offset = 0
       this.limit = 5
@@ -982,6 +1160,7 @@ export default {
       this.time_start = ""
       this.time_end = ""
       this.invoice_status = ""
+      this.viewing_locum_user_id = []
       this.title_includes = ""
       this.job_title_includes = ""
       this.job_number_includes = ""
@@ -990,8 +1169,6 @@ export default {
       this.favorite_only = ""
       this.ended = null
     },
-
   },
-
 }
 </script>

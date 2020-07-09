@@ -3,53 +3,66 @@
     <AppLoading :loading="initialLoading" spinner />
 
     <JobDetailModalAppointment
-      v-if="job && job.type === 'Private'"
-      :job="job"
+      v-if="jobPart && jobPart.job && jobPart.job.type === 'Private'"
+      :job="jobPart.job"
       @close="close"
       @appointmentUpdated="$emit('appointmentUpdated')"
     />
 
-    <JobDetailModal
-      v-if="job && job.type === 'Platform'"
-      :job="job"
+    <JobPartDetailModal
+      v-if="jobPart && jobPart.job && jobPart.job.type === 'Platform'"
+      :job_part="jobPart"
+      :loadingJobPart="loadingJobPart"
       @close="close"
-      @applied="$emit('applied', $event)"
-      @cancelled="$emit('cancelled', $event)"
-      @unassign="$emit('unassign', $event)"
     />
   </div>
 </template>
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
-import JobDetailModal from "@/components/Jobs/JobDetailModal"
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
 export default {
   transition: {
-    name: "slide",
-    mode: "out-in",
+    name: 'slide',
+    mode: 'out-in',
   },
 
   components: {
     AppLoading,
-    JobDetailModal,
+    JobPartDetailModal,
     JobDetailModalAppointment,
   },
 
   data () {
     return {
       initialLoading: false,
-      loadingJob: false,
-      job: null,
+      loadingJobPart: false,
     }
   },
-  
+
+  computed: {
+    jobPart: {
+      get () {
+        return this.$store.getters['locumJobParts/getLocumJobPart']
+      },
+
+      set (jobPart) {
+        this.$store.commit('locumJobParts/setLocumJobPart', jobPart)
+      },
+    },
+
+    jobPartId () {
+      return this.jobPart ? this.jobPart.id : null
+    },
+  },
+
   watch: {
     $route () {
-      this.loadingJob = true
-      this.getLocumJob().finally(() => {
-        this.loadingJob = false
+      this.loadingJobPart = true
+      this.getLocumJobPart().finally(() => {
+        this.loadingJobPart = false
       })
     },
   },
@@ -57,15 +70,15 @@ export default {
   mounted () {
     this.jobPart = null
     this.initialLoading = true
-    this.getLocumJob().finally(() => {
+    this.getLocumJobPart().finally(() => {
       this.initialLoading = false
     })
   },
 
   methods: {
-    getLocumJob () {
-      return this.$axios.get(`/api/v1/locum/jobs/${this.$route.params.id}`).then((response) => {
-        this.job = response.data.data.job
+    getLocumJobPart () {
+      return this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.jobPartId}`).then((response) => {
+        this.jobPart = response.data.data.job_part
       }).catch((err) => {
         console.log('err', err.response || err)
 
@@ -84,7 +97,7 @@ export default {
       const { query, } = this.$route
 
       this.$router.push({
-        name: "jobs-index",
+        name: 'locum-job-parts-index',
         query,
       })
     },
