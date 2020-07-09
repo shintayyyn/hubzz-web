@@ -49,6 +49,24 @@
                   :error="formErrors.find(({ field }) => field === 'view_permanent_jobs')"
                 />
 
+                <div v-if="viewPermanentJobs" class="px-4">
+                  <AppInput
+                    v-model="viewPermanentJobsFullTime"
+                    :type="'single-checkbox'"
+                    :name="'view_permanent_jobs_full_time'"
+                    :label="'Full Time'"
+                    :error="formErrors.find(({ field }) => field === 'view_permanent_jobs_full_time')"
+                  />
+
+                  <AppInput
+                    v-model="viewPermanentJobsPartTime"
+                    :type="'single-checkbox'"
+                    :name="'view_permanent_jobs_part_time'"
+                    :label="'Part Time'"
+                    :error="formErrors.find(({ field }) => field === 'view_permanent_jobs_part_time')"
+                  />
+                </div>
+
                 <AppInput
                   v-model="professionId"
                   type="select"
@@ -223,6 +241,8 @@ export default {
 
       viewPermanentJobs: false,
       viewLocumJobs: false,
+      viewPermanentJobsFullTime: false,
+      viewPermanentJobsPartTime: false,
       professionId: '',
       title: '',
       firstName: '',
@@ -379,6 +399,8 @@ export default {
         const data = {
           view_locum_jobs: this.viewLocumJobs,
           view_permanent_jobs: this.viewPermanentJobs,
+          view_permanent_jobs_full_time: this.viewPermanentJobsFullTime,
+          view_permanent_jobs_part_time: this.viewPermanentJobsPartTime,
           profession_id: this.professionId,
           title: this.title,
           first_name: this.firstName,
@@ -393,6 +415,8 @@ export default {
         this.formErrors = await this.$validator(data, {
           view_locum_jobs: 'boolean',
           view_permanent_jobs: 'boolean',
+          view_permanent_jobs_full_time: 'boolean',
+          view_permanent_jobs_part_time: 'boolean',
 
           profession_id: 'required',
 
@@ -410,6 +434,10 @@ export default {
           'view_locum_jobs.boolean': 'Invalid view locum jobs.',
 
           'view_permanent_jobs.boolean': 'Invalid view permanent jobs.',
+
+          'view_permanent_jobs_full_time.boolean': 'Invalid view permanent jobs full time.',
+
+          'view_permanent_jobs_part_time.boolean': 'Invalid view permanent jobs part time.',
 
           'profession_id.required': 'Profession is required.',
           'profession_id.exists': 'Invalid profession.',
