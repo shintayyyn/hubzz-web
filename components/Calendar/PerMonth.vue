@@ -410,7 +410,9 @@ export default {
 										);
 										if (shiftSchedule.length) {
 											shiftSchedule.forEach(sched => {
-												shifts.push(sched.shift.name);
+												if (!shifts.includes(sched.shift.name)) {
+													shifts.push(sched.shift.name);
+												}
 											});
 										}
 										jobsInMonth.push({
@@ -448,7 +450,9 @@ export default {
 											);
 											if (shiftSchedule.length) {
 												shiftSchedule.forEach(sched => {
-													shifts.push(sched.shift.name);
+													if (!shifts.includes(sched.shift.name)) {
+														shifts.push(sched.shift.name);
+													}
 												});
 											}
 											jobsInMonth.push({
@@ -469,7 +473,9 @@ export default {
 										);
 										if (shiftSchedule.length) {
 											shiftSchedule.forEach(sched => {
-												shifts.push(sched.shift.name);
+												if (!shifts.includes(sched.shift.name)) {
+													shifts.push(sched.shift.name);
+												}
 											});
 										}
 										jobsInMonth.push({
@@ -509,7 +515,9 @@ export default {
 											);
 											if (shiftSchedule.length) {
 												shiftSchedule.forEach(sched => {
-													shifts.push(sched.shift.name);
+													if (!shifts.includes(sched.shift.name)) {
+														shifts.push(sched.shift.name);
+													}
 												});
 											}
 											jobsInMonth.push({
@@ -534,7 +542,9 @@ export default {
 									);
 									if (shiftSchedule.length) {
 										shiftSchedule.forEach(sched => {
-											shifts.push(sched.shift.name);
+											if (!shifts.includes(sched.shift.name)) {
+												shifts.push(sched.shift.name);
+											}
 										});
 									}
 									jobsInMonth.push({
@@ -575,7 +585,9 @@ export default {
 										);
 										if (shiftSchedule.length) {
 											shiftSchedule.forEach(sched => {
-												shifts.push(sched.shift.name);
+												if (!shifts.includes(sched.shift.name)) {
+													shifts.push(sched.shift.name);
+												}
 											});
 										}
 										jobsInMonth.push({
@@ -605,7 +617,9 @@ export default {
 									let shifts = [];
 									if (job.shifts.length) {
 										job.shifts.forEach(shift => {
-											shifts.push(shift.name);
+											if (!shifts.includes(shift.name)) {
+												shifts.push(shift.name);
+											}
 										});
 									}
 									jobsInMonth.push({
@@ -639,7 +653,9 @@ export default {
 										let shifts = [];
 										if (job.shifts.length) {
 											job.shifts.forEach(shift => {
-												shifts.push(shift.name);
+												if (!shifts.includes(shift.name)) {
+													shifts.push(shift.name);
+												}
 											});
 										}
 										jobsInMonth.push({
@@ -668,7 +684,9 @@ export default {
 									);
 									if (shiftSchedule.length) {
 										shiftSchedule.forEach(sched => {
-											shifts.push(sched.shift.name);
+											if (!shifts.includes(sched.shift.name)) {
+												shifts.push(sched.shift.name);
+											}
 										});
 									}
 									jobsInMonth.push({
@@ -709,7 +727,9 @@ export default {
 										);
 										if (shiftSchedule.length) {
 											shiftSchedule.forEach(sched => {
-												shifts.push(sched.shift.name);
+												if (!shifts.includes(sched.shift.name)) {
+													shifts.push(sched.shift.name);
+												}
 											});
 										}
 										jobsInMonth.push({
