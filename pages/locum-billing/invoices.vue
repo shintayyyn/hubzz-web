@@ -581,6 +581,7 @@ export default {
       let locum_invoiceable;
       let nhs_claimable;
       let ooh;
+      let generate_form;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -607,6 +608,7 @@ export default {
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
           locum_invoiceable = true;
+          generate_form = true;
           ooh = true;
           break;
         case "pension-form-a":
@@ -615,6 +617,7 @@ export default {
           locum_invoiceable = true;
           nhs_claimable = true;
           ooh = false;
+          generate_form = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -635,6 +638,7 @@ export default {
               locum_invoiceable,
               nhs_claimable,
               ooh,
+              generate_form,
               viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform"
@@ -652,6 +656,7 @@ export default {
               locum_invoiceable,
               nhs_claimable,
               ooh,
+              generate_form,
               viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform",
@@ -858,6 +863,7 @@ export default {
       let locum_invoiceable = null;
       let nhs_claimable = null;
       let ooh = null;
+      let generate_form = null;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -886,6 +892,7 @@ export default {
           locum_status.push("Approved");
           locum_invoiceable = true;
           ooh = true;
+          generate_form = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
@@ -893,6 +900,7 @@ export default {
           locum_invoiceable = true;
           nhs_claimable = true;
           ooh = false;
+          generate_form = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -910,6 +918,7 @@ export default {
             locum_invoiceable,
             nhs_claimable,
             ooh,
+            generate_form,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
@@ -926,6 +935,7 @@ export default {
             locum_invoiceable,
             nhs_claimable,
             ooh,
+            generate_form,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
@@ -1040,6 +1050,7 @@ export default {
       let locum_invoiceable;
       let nhs_claimable;
       let ooh;
+      let generate_form;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -1068,6 +1079,7 @@ export default {
           locum_status.push("Approved");
           locum_invoiceable = true;
           ooh = true;
+          generate_form = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
@@ -1075,6 +1087,7 @@ export default {
           locum_invoiceable = true;
           nhs_claimable = true;
           ooh = false;
+          generate_form = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -1092,6 +1105,7 @@ export default {
             locum_invoiceable,
             nhs_claimable,
             ooh,
+            generate_form,
             job_type: "Platform",
             type: "Platform",
             viewing_locum_user_id: this.$auth.user.id,

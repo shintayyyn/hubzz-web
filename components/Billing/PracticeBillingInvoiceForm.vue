@@ -113,8 +113,18 @@
             <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
           </div>
           <div class="flex flex-wrap justify-between">
+            <p class="text-sm w-1/2">OOH:</p>
+            <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Yes' : 'No' }}</p>
+          </div>
+          <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">STATUS:</p>
             <p class="font-bold w-1/2 text-right">{{ propInvoice && propInvoice.status }}</p>
+          </div>
+          <div class="flex flex-wrap justify-between" v-if="!propJobPart && propInvoice">
+            <p class="text-sm w-1/2">GENERATE FORM:</p>
+            <p
+              class="font-bold w-1/2 text-right"
+            >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No'}}</p>
           </div>
         </div>
         <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
@@ -134,7 +144,10 @@
               <p class="text-sm w-1/2">GRAND TOTAL:</p>
               <p class="font-bold w-1/2 text-right">£ {{ grand_total | currency }}</p>
             </div>
-            <div class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300">
+            <div
+              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
+              v-if="propInvoice && (propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+            >
               <p class="text-sm w-1/2">PENSION AMOUNT:</p>
               <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
             </div>
@@ -594,6 +607,14 @@ export default {
   },
 
   computed: {
+    isOOH() {
+      return this.propInvoice && this.propInvoice.ooh
+        ? true
+        : this.propJobPart && this.propJobPart.ooh
+        ? true
+        : false;
+    },
+
     ni_paye_amount() {
       let ni_amount =
         this.propInvoice && this.propInvoice.ni
@@ -611,7 +632,13 @@ export default {
     },
 
     pension_amount() {
-      return this.total_gross_locum_wages * 0.9 * 0.1438;
+      let pension_amount = 0;
+
+      if (this.propInvoice && !this.propInvoice.ooh) {
+        return this.total_gross_locum_wages * 0.9 * 0.1438;
+      }
+
+      return 0;
     },
 
     subTotal() {
