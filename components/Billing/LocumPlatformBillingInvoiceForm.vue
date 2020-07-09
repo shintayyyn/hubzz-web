@@ -142,10 +142,20 @@
               <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
             </div>
             <div class="flex flex-wrap justify-between">
+              <p class="text-sm w-1/2">OOH:</p>
+              <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Yes' : 'No' }}</p>
+            </div>
+            <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">STATUS:</p>
               <p
                 class="font-bold w-1/2 text-right"
               >{{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}</p>
+            </div>
+            <div class="flex flex-wrap justify-between" v-if="!propJobPart && propInvoice">
+              <p class="text-sm w-1/2">GENERATE FORM:</p>
+              <p
+                class="font-bold w-1/2 text-right"
+              >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No'}}</p>
             </div>
           </div>
           <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
@@ -167,6 +177,7 @@
               </div>
               <div
                 class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
+                v-if="propInvoice && (propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
               >
                 <p class="text-sm w-1/2">PENSION AMOUNT:</p>
                 <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
@@ -224,6 +235,15 @@
       </div>
     </template>
     <div>
+      <div class="flex flex-wrap items-center mx-2" v-if="propJobPart && !propInvoice && claimNhs">
+        <AppInput
+          v-model="form.generate_form"
+          :type="'single-checkbox'"
+          :name="'generate_form'"
+          :label="`Generate ${isOOH ? 'solo form' : 'form A'}?`"
+        />
+        <!-- :disabled="!Boolean(propJobPart) && Boolean(propInvoice)" -->
+      </div>
       <!-- save buttons -->
       <div class="flex flex-wrap items-center mb-6">
         <AppButton
@@ -284,6 +304,10 @@ export default {
     propJobPart: {
       type: Object,
       default: () => null
+    },
+    claimNhs: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -299,6 +323,7 @@ export default {
         total_amount: 0,
         final: false,
         ir35: false,
+        generate_form: false,
         // minutes: 0,
         // hours: 0,
         // late_hours: 0,
@@ -320,6 +345,14 @@ export default {
   },
 
   computed: {
+    isOOH() {
+      return this.propInvoice && this.propInvoice.ooh
+        ? true
+        : this.propJobPart && this.propJobPart.ooh
+        ? true
+        : false;
+    },
+
     ni_paye_amount() {
       let ni_amount =
         this.propInvoice && this.propInvoice.ni
@@ -337,7 +370,13 @@ export default {
     },
 
     pension_amount() {
-      return this.total_gross_locum_wages * 0.9 * 0.1438;
+      let pension_amount = 0;
+
+      if (this.propInvoice && !this.propInvoice.ooh) {
+        return this.total_gross_locum_wages * 0.9 * 0.1438;
+      }
+
+      return 0;
     },
 
     subTotal() {
@@ -774,6 +813,7 @@ export default {
         this.form.total_amount = this.propInvoice.total_amount;
         this.form.final = false;
         this.form.ir35 = this.propInvoice.ir35;
+        this.form.generate_form = this.propInvoice.generate_form;
       }
 
       this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
@@ -837,7 +877,8 @@ export default {
         "hours",
         "minutes",
         "late_hours",
-        "late_minutes"
+        "late_minutes",
+        "generate_form"
       ]);
 
       if (!this.formError.length && !this.shiftErrors.length) {
