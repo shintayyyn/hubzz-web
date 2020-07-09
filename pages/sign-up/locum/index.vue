@@ -199,291 +199,291 @@
 </template>
 
 <script>
-  import AppLoading from "@/components/Base/AppLoading"
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
-  import TermsAndConditions from "@/components/TermsAndConditions"
-  import debounce from "lodash.debounce"
+import AppLoading from "@/components/Base/AppLoading"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import TermsAndConditions from "@/components/TermsAndConditions"
+import debounce from "lodash.debounce"
 
-  export default {
+export default {
 
-    components: {
-      AppLoading,
-      AppInput,
-      AppButton,
-      TermsAndConditions,
+  components: {
+    AppLoading,
+    AppInput,
+    AppButton,
+    TermsAndConditions,
+  },
+
+  layout: "auth",
+
+  data () {
+    return {
+      loading: false,
+      professions: [],
+
+      viewPermanentJobs: false,
+      viewLocumJobs: false,
+      professionId: '',
+      title: '',
+      firstName: '',
+      lastName: '',
+      suffix: '',
+      mobileNumber: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+
+      hasReferral: false,
+      referralCode: '',
+      agreePrivacyPolicy: false,
+
+      showPrivacyPolicyError: false,
+
+      signingUp: false,
+      formErrors: [],
+
+      modal: false,
+    }
+  },
+
+  computed: {
+    professionsSelectionList () {
+      return this.professions.map(profession => ({
+        label: profession.name,
+        value: profession.id,
+      }))
+    },
+  },
+
+  watch: {
+    agreePrivacyPolicy () {
+      this.showPrivacyPolicyError = !this.agreePrivacyPolicy
     },
 
-    layout: "auth",
+    viewLocumJobs () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_locum_jobs')
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_permanent_jobs')
+    },
 
-    data () {
-      return {
-        loading: false,
-        professions: [],
+    viewPermanentJobs () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_locum_jobs')
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_permanent_jobs')
+    },
 
-        viewPermanentJobs: false,
-        viewLocumJobs: false,
-        professionId: '',
-        title: '',
-        firstName: '',
-        lastName: '',
-        suffix: '',
-        mobileNumber: '',
-        email: '',
-        password: '',
-        passwordConfirmation: '',
+    professionId () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'profession_id')
 
-        hasReferral: false,
-        referralCode: '',
-        agreePrivacyPolicy: false,
-
-        showPrivacyPolicyError: false,
-
-        signingUp: false,
-        formErrors: [],
-
-        modal: false,
+      if (!this.professionId) {
+        this.formErrors.push({
+          field: 'profession_id',
+          message: 'Profession is required.',
+          validation: 'required',
+        })
+        
+        return
       }
     },
 
-    computed: {
-      professionsSelectionList () {
-        return this.professions.map(profession => ({
-          label: profession.name,
-          value: profession.id,
-        }))
-      },
+    firstName () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'first_name')
+
+      if (!this.firstName) {
+        this.formErrors.push({
+          field: 'first_name',
+          message: 'First name is required.',
+          validation: 'required',
+        })
+        
+        return
+      }
     },
 
-    watch: {
-      agreePrivacyPolicy () {
-        this.showPrivacyPolicyError = !this.agreePrivacyPolicy
-      },
+    lastName () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'last_name')
 
-      viewLocumJobs () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_locum_jobs')
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_permanent_jobs')
-      },
-
-      viewPermanentJobs () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_locum_jobs')
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_permanent_jobs')
-      },
-
-      professionId () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'profession_id')
-
-        if (!this.professionId) {
-          this.formErrors.push({
-            field: 'profession_id',
-            message: 'Profession is required.',
-            validation: 'required',
-          })
-          
-          return
-        }
-      },
-
-      firstName () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'first_name')
-
-        if (!this.firstName) {
-          this.formErrors.push({
-            field: 'first_name',
-            message: 'First name is required.',
-            validation: 'required',
-          })
-          
-          return
-        }
-      },
-
-      lastName () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'last_name')
-
-        if (!this.lastName) {
-          this.formErrors.push({
-            field: 'last_name',
-            message: 'Last name is required.',
-            validation: 'required',
-          })
-          
-          return
-        }
-      },
-
-      email () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'email')
-
-        if (!this.email) {
-          this.formErrors.push({
-            field: 'email',
-            message: 'Email is required.',
-            validation: 'required',
-          })
-          
-          return
-        }
-      },
-
-      password () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'password')
-
-        if (!this.password) {
-          this.formErrors.push({
-            field: 'password',
-            message: 'Password is required.',
-            validation: 'required',
-          })
-          
-          return
-        }
-      },
-
-      passwordConfirmation () {
-        this.formErrors = this.formErrors.filter(formError => formError.field !== 'password_confirmation')
-
-        if (!this.passwordConfirmation) {
-          this.formErrors.push({
-            field: 'password_confirmation',
-            message: 'Password confirmation is required.',
-            validation: 'required',
-          })
-          
-          return
-        }
-      },
+      if (!this.lastName) {
+        this.formErrors.push({
+          field: 'last_name',
+          message: 'Last name is required.',
+          validation: 'required',
+        })
+        
+        return
+      }
     },
 
-    mounted () {
-      this.loading = true
-      this.$axios.get('/api/v1/professions?limit=999').then((response) => {
-        this.professions = response.data.data.professions
-      }).finally(() => {
-        this.loading = false
-      })
+    email () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'email')
+
+      if (!this.email) {
+        this.formErrors.push({
+          field: 'email',
+          message: 'Email is required.',
+          validation: 'required',
+        })
+        
+        return
+      }
     },
 
-    methods: {
+    password () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'password')
 
-      signUp: debounce(async function () {
-        try {
-          if (!this.agreePrivacyPolicy) {
-            this.showPrivacyPolicyError = true
-          }
+      if (!this.password) {
+        this.formErrors.push({
+          field: 'password',
+          message: 'Password is required.',
+          validation: 'required',
+        })
+        
+        return
+      }
+    },
 
-          if (this.signingUp) {
-            return
-          }
+    passwordConfirmation () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'password_confirmation')
 
-          const data = {
-            view_locum_jobs: this.viewLocumJobs,
-            view_permanent_jobs: this.viewPermanentJobs,
-            profession_id: this.professionId,
-            title: this.title,
-            first_name: this.firstName,
-            last_name: this.lastName,
-            suffix: this.suffix,
-            mobile_number: this.mobileNumber,
-            email: this.email,
-            password: this.password,
-            password_confirmation: this.password,
-          }
+      if (!this.passwordConfirmation) {
+        this.formErrors.push({
+          field: 'password_confirmation',
+          message: 'Password confirmation is required.',
+          validation: 'required',
+        })
+        
+        return
+      }
+    },
+  },
 
-          this.formErrors = await this.$validator(data, {
-            view_locum_jobs: 'boolean',
-            view_permanent_jobs: 'boolean',
+  mounted () {
+    this.loading = true
+    this.$axios.get('/api/v1/professions?limit=999').then((response) => {
+      this.professions = response.data.data.professions
+    }).finally(() => {
+      this.loading = false
+    })
+  },
 
-            profession_id: 'required',
+  methods: {
 
-            title: 'string',
-            first_name: 'required|string',
-            last_name: 'required|string',
-            suffix: 'string',
+    signUp: debounce(async function () {
+      try {
+        if (!this.agreePrivacyPolicy) {
+          this.showPrivacyPolicyError = true
+        }
 
-            mobile_number: 'string',
+        if (this.signingUp) {
+          return
+        }
 
-            email: 'required|email',
-            password: 'required|string|min:6',
-            password_confirmation: 'required|string|min:6|same:password',
-          }, {
-            'view_locum_jobs.boolean': 'Invalid view locum jobs.',
+        const data = {
+          view_locum_jobs: this.viewLocumJobs,
+          view_permanent_jobs: this.viewPermanentJobs,
+          profession_id: this.professionId,
+          title: this.title,
+          first_name: this.firstName,
+          last_name: this.lastName,
+          suffix: this.suffix,
+          mobile_number: this.mobileNumber,
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.password,
+        }
 
-            'view_permanent_jobs.boolean': 'Invalid view permanent jobs.',
+        this.formErrors = await this.$validator(data, {
+          view_locum_jobs: 'boolean',
+          view_permanent_jobs: 'boolean',
 
-            'profession_id.required': 'Profession is required.',
-            'profession_id.exists': 'Invalid profession.',
+          profession_id: 'required',
 
-            'title.string': 'Invalid title.',
+          title: 'string',
+          first_name: 'required|string',
+          last_name: 'required|string',
+          suffix: 'string',
 
-            'first_name.required': 'First name is required.',
-            'first_name.string': 'Invalid first name.',
+          mobile_number: 'string',
 
-            'last_name.required': 'Last name is required.',
-            'last_name.string': 'Invalid last name.',
+          email: 'required|email',
+          password: 'required|string|min:6',
+          password_confirmation: 'required|string|min:6|same:password',
+        }, {
+          'view_locum_jobs.boolean': 'Invalid view locum jobs.',
 
-            'suffix.string': 'Invalid suffix.',
+          'view_permanent_jobs.boolean': 'Invalid view permanent jobs.',
 
-            'mobile_number.string': 'Invalid mobile number.',
+          'profession_id.required': 'Profession is required.',
+          'profession_id.exists': 'Invalid profession.',
 
-            'email.required': 'Email is required.',
-            'email.email': 'Invalid email.',
+          'title.string': 'Invalid title.',
 
-            'password.required': 'Password is required.',
-            'password.string': 'Invalid password.',
-            'password.min': 'Password must be at least {{ argument.0 }} characters.',
+          'first_name.required': 'First name is required.',
+          'first_name.string': 'Invalid first name.',
 
-            'password_confirmation.required': 'Password confirmation is required.',
-            'password_confirmation.string': 'Invalid password confirmation.',
-            'password_confirmation.min': 'Password confirmation must be at least {{ argument.0 }} characters.',
-            'password_confirmation.same': 'Password do not match.',
-          }).then(() => []).catch((errors) => errors)
+          'last_name.required': 'Last name is required.',
+          'last_name.string': 'Invalid last name.',
 
-          if (this.formErrors.length || this.showPrivacyPolicyError) {
-            return
-          }
+          'suffix.string': 'Invalid suffix.',
 
-          this.signingUp = true
+          'mobile_number.string': 'Invalid mobile number.',
 
-          await this.$axios.post('/api/v1/locum/register', data, {
-            params: {
-              referral_code: this.referralCode,
-            },
-          })
-          
-          this.signingUp = false
+          'email.required': 'Email is required.',
+          'email.email': 'Invalid email.',
 
-          this.$router.push('/sign-up/success')
-        } catch (err) {
-          console.log('err', err.response || err)
+          'password.required': 'Password is required.',
+          'password.string': 'Invalid password.',
+          'password.min': 'Password must be at least {{ argument.0 }} characters.',
 
-          let message = null
+          'password_confirmation.required': 'Password confirmation is required.',
+          'password_confirmation.string': 'Invalid password confirmation.',
+          'password_confirmation.min': 'Password confirmation must be at least {{ argument.0 }} characters.',
+          'password_confirmation.same': 'Password do not match.',
+        }).then(() => []).catch((errors) => errors)
 
-          if (err.response) {
-            if (err.response.status === 400 && err.response.data.error_messages) {
-              this.formErrors = err.response.data.error_messages
-            } else {
-              message = err.response.data.message
-            }
-          } else if (err.request) {
-            message = 'Something went wrong!'
+        if (this.formErrors.length || this.showPrivacyPolicyError) {
+          return
+        }
+
+        this.signingUp = true
+
+        await this.$axios.post('/api/v1/locum/register', data, {
+          params: {
+            referral_code: this.referralCode,
+          },
+        })
+        
+        this.signingUp = false
+
+        this.$router.push('/sign-up/success')
+      } catch (err) {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formErrors = err.response.data.error_messages
           } else {
-            message = err.message
+            message = err.response.data.message
           }
-
-          if (message) {
-            this.$store.commit('SET_NOTIFICATION', {
-              enabled: true,
-              status: 'danger',
-              text: [`${message}`],
-            })
-          }
-
-          this.signingUp = false
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
         }
-      }, 10),
-    },
-  }
+
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
+
+        this.signingUp = false
+      }
+    }, 10),
+  },
+}
 </script>
 
 <style scoped>
