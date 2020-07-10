@@ -370,10 +370,22 @@ export default {
     },
 
     pension_amount() {
-      let pension_amount = 0;
+      // form a pension
+      if (
+        this.propInvoice &&
+        this.propInvoice.locum_form_a_id &&
+        this.propInvoice.locum_form_a_pension_amount
+      ) {
+        return this.propInvoice.locum_form_a_pension_amount;
+      }
 
-      if (this.propInvoice && !this.propInvoice.ooh) {
-        return this.total_gross_locum_wages * 0.9 * 0.1438;
+      // solo form pension
+      if (
+        this.propInvoice &&
+        this.propInvoice.locum_solo_form_id &&
+        this.propInvoice.locum_solo_form_pension_amount
+      ) {
+        return this.propInvoice.locum_solo_form_pension_amount;
       }
 
       return 0;
