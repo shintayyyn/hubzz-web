@@ -189,6 +189,9 @@ export default {
         "Locum Notification Compliance Expired",
         "Locum Notification Compliance Expiring",
 
+        "Locum Notification Permanent Job Matched",
+        "Locum Notification Permanent Job Invited",
+
         "Locum Notification Job Allocated",
         "Locum Notification Job Amended",
         "Locum Notification Job Application Cancelled",
@@ -600,6 +603,11 @@ export default {
         "Locum Notification Compliance Expiring",
       ]
 
+      const locumPermanentJobNotifications = [
+        "Locum Notification Permanent Job Matched",
+        "Locum Notification Permanent Job Invited",
+      ]
+
       const locumJobNotifications = [
         "Locum Notification Job Allocated",
         "Locum Notification Job Amended",
@@ -754,6 +762,44 @@ export default {
               })
             }, 500)
           }
+        }
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+        return
+      }
+
+      if(locumPermanentJobNotifications.includes(notificationTypeName)) {
+        const permanentJob = payload
+
+        const {
+          id: permanentJobId,
+        } = payload
+
+        if (
+          notificationTypeName
+            === "Locum Notification Permanent Job Matched"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
+        }
+
+        if (
+          notificationTypeName
+            === "Locum Notification Permanent Job Invited"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
         }
 
         this.showNotificationsDropdown = false
