@@ -195,16 +195,18 @@
                   class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                 >View Form A</div>
+
                 <div
                   v-if="
                     $route.query.status && $route.query.status === 'pension-form-a'
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
+                      && slotProps.item.locum_form_a_sent_to_practice === 0
                   "
                   class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
                   :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
                   @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_form_a_sent_to_practice)"
-                >{{ `${slotProps.item.locum_form_a_sent_to_practice === 1 ? 'Already Sent' : 'Send Form to Practice'}` }}</div>
+                >Send Form to Practice</div>
 
                 <div
                   v-if="
@@ -215,6 +217,28 @@
                   class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
                 >View Solo Form</div>
+
+                <div
+                  v-if="
+                    $route.query.status && $route.query.status === 'approved'
+                      && slotProps.item.locum_invoice_item
+                      && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
+                  "
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'payInvoice')"
+                >Mark as Paid</div>
+
+                <div
+                  v-if="
+                    $route.query.status && $route.query.status === 'pension-form-a'
+                      && slotProps.item.nhs_claimable
+                      && slotProps.item.locum_form_a_id
+                      && slotProps.item.locum_form_a_sent_to_practice === 1
+                      && slotProps.item.locum_form_a_paid === 0
+                  "
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click.stop.prevent="select_invoice(slotProps.item.locum_form_a_id, 'payFormA')"
+                >Mark as Paid</div>
               </div>
             </template>
           </AppTable>
@@ -274,6 +298,89 @@
       @cancel="delete_invoice_modal = false, invoice_id = null"
     />
 
+    <div v-if="pay_form_a_modal" class="p-2">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Payment made on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+          is-before
+        />
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton class="mx-1" :label="'Save'" :in-style="'padding:5px 10px'" @click="payFormA" />
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="pay_form_a_modal = false,  invoice_id = null"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div v-if="pay_invoice_modal" class="p-2">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Payment made on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+          is-before
+        />
+        <template v-if="ir35">
+          <AppInput
+            v-model="form.ni"
+            :type="'select'"
+            :name="'ni'"
+            :label="'NI'"
+            :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
+          />
+          <AppInput
+            v-if="[true, 'true'].includes(form.ni)"
+            v-model="form.ni_amount"
+            :type="'number'"
+            :name="'ni_amount'"
+            :label="'NI Amount'"
+            :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+            :limit="8"
+            :error="formError.find(item => item.field === 'ni_amount')"
+          />
+          <AppInput
+            v-model="form.paye"
+            :type="'select'"
+            :name="'paye'"
+            :label="'PAYE'"
+            :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
+          />
+          <AppInput
+            v-if="[true, 'true'].includes(form.paye)"
+            v-model="form.paye_amount"
+            :type="'number'"
+            :name="'paye_amount'"
+            :label="'PAYE Amount'"
+            :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+            :limit="8"
+            :error="formError.find(item => item.field === 'paye_amount')"
+          />
+        </template>
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            :in-style="'padding:5px 10px'"
+            @click="payInvoice"
+          />
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="pay_invoice_modal = false"
+          />
+        </div>
+      </div>
+    </div>
+
     <AppConfirmationModal
       :label="'Generate NHS Form A for this Invoice?'"
       :confirm-label="'Yes'"
@@ -301,7 +408,7 @@
             'locum-billing-invoices-id-edit',
             'locum-billing-invoices-form-b-create',
           ].includes($route.name)
-            || delete_invoice_modal
+            || delete_invoice_modal || pay_form_a_modal || pay_invoice_modal
         "
         :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
         class="shield"
@@ -321,6 +428,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
 import AppLoading from "@/components/Base/AppLoading";
 export default {
   transition: {
@@ -329,6 +437,7 @@ export default {
   },
   components: {
     AppInput,
+    AppDate,
     AppLoading,
     AppButton,
     AppConfirmationModal,
@@ -379,13 +488,34 @@ export default {
         }
       ],
 
+      pay_form_a_modal: false,
+      pay_invoice_modal: false,
       delete_invoice_modal: false,
       generate_form_a_modal: false,
       send_form_a_modal: false,
-      invoice_id: null
+      invoice_id: null,
+
+      form: {
+        paid_at: null,
+        ni: false,
+        ni_amount: null,
+        paye: false,
+        paye_amount: null
+      },
+
+      formError: []
     };
   },
   computed: {
+    ir35() {
+      if (!this.invoice_id) {
+        return false;
+      }
+      let selectedInvoice = this.job_parts.find(
+        item => item.locum_invoice_id === this.invoice_id
+      );
+      return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
+    },
     columns() {
       let columns = [];
       let queryStatus = this.$route.query.status
@@ -432,10 +562,18 @@ export default {
         }
       );
 
-      if (["approved", "solo-form", "pension-form-a"].includes(queryStatus)) {
+      if (["approved", "solo-form"].includes(queryStatus)) {
         columns.push({
-          name: "Paid",
-          dataIndex: "paid",
+          name: "Paid Invoice",
+          dataIndex: "invoice_paid",
+          class: "text-center"
+        });
+      }
+
+      if (["pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid Form A",
+          dataIndex: "form_paid",
           class: "text-center"
         });
       }
@@ -726,14 +864,15 @@ export default {
               ? jobPart.locum_invoice_item.locum_invoice.invoice_number
               : null,
             total_amount: total,
-            paid:
+            nhs_claimable: jobPart.locum_invoice_id
+              ? jobPart.locum_invoices_nhs_claimable
+              : jobPart.locum_details_nhs_claimable,
+            invoice_paid:
               jobPart.locum_status === "Approved" &&
               jobPart.locum_invoice_item.locum_invoice.paid_at
                 ? "Yes"
                 : "No",
-            nhs_claimable: jobPart.locum_invoice_id
-              ? jobPart.locum_invoices_nhs_claimable
-              : jobPart.locum_details_nhs_claimable
+            form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No"
           };
         });
       }
@@ -1005,14 +1144,15 @@ export default {
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
                 total_amount: total,
-                paid:
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable,
+                invoice_paid:
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at
                     ? "Yes"
                     : "No",
-                nhs_claimable: jobPart.locum_invoice_id
-                  ? jobPart.locum_invoices_nhs_claimable
-                  : jobPart.locum_details_nhs_claimable
+                form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No"
               };
             });
           } else if (response.data && response.data.locum_form_bs) {
@@ -1175,14 +1315,15 @@ export default {
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
                 total_amount: total,
-                paid:
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable,
+                invoice_paid:
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at
                     ? "Yes"
                     : "No",
-                nhs_claimable: jobPart.locum_invoice_id
-                  ? jobPart.locum_invoices_nhs_claimable
-                  : jobPart.locum_details_nhs_claimable
+                form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No"
               };
             });
           } else if (res.data && res.data.locum_form_bs) {
@@ -1229,10 +1370,17 @@ export default {
     },
     select_invoice(id, type) {
       this.invoice_id = id;
+      this.form.paid_at = null;
+      this.form.ni = false;
+      this.form.ni_amount = null;
+      this.form.paye = false;
+      this.form.paye_amount = null;
       if (type === "deleteInvoice") {
         this.delete_invoice_modal = true;
-      } else if (type === "generateFormA") {
-        this.generate_form_a_modal = true;
+      } else if (type === "payFormA") {
+        this.pay_form_a_modal = true;
+      } else if (type === "payInvoice") {
+        this.pay_invoice_modal = true;
       }
     },
     deleteInvoice() {
@@ -1280,6 +1428,71 @@ export default {
         })
         .finally(() => {
           this.delete_invoice_modal = false;
+        });
+    },
+    payInvoice() {
+      this.$axios
+        .$put(`/api/v1/locum/locum-invoices/${this.invoice_id}/paid`, this.form)
+        .then(res => {
+          let updatedInvoice = this.job_parts.find(
+            jobPart => jobPart.locum_invoice_id === res.data.locum_invoice.id
+          );
+
+          updatedInvoice.locum_invoice_item.locum_invoice.paid_at =
+            res.data.locum_invoice.paid_at;
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`]
+            });
+          }
+          throw err;
+        })
+        .finally(() => {
+          this.pay_invoice_modal = false;
+        });
+    },
+    payFormA() {
+      this.$axios
+        .$put(`/api/v1/locum/locum-form-as/${this.invoice_id}/paid`, this.form)
+        .then(res => {
+          let updatedFormA = this.job_parts.find(
+            jobPart =>
+              jobPart.locum_invoice_id ===
+              res.data.locum_form_a.locum_invoice_id
+          );
+
+          updatedFormA.locum_form_a_paid = 1;
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`]
+            });
+          }
+          throw err;
+        })
+        .finally(() => {
+          this.pay_form_a_modal = false;
         });
     },
     async createFormB() {
@@ -1409,5 +1622,13 @@ export default {
 <style scoped>
 .shield {
   z-index: 511;
+}
+.payment-modal {
+  position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
