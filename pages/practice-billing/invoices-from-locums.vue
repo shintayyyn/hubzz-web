@@ -153,12 +153,12 @@
                 @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
               >View Form A</div>
 
-              <button
+              <!-- <button
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
                   && $route.query.status !== 'pension-form-a'"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
-              >Mark as Paid</button>
+              >Mark as Paid</button>-->
             </div>
             <div v-else class="text-gray-600">Disabled by Hub</div>
           </template>
@@ -345,10 +345,18 @@ export default {
         }
       );
 
-      if (["approved", "pension-form-a"].includes(queryStatus)) {
+      if (["approved"].includes(queryStatus)) {
         columns.push({
-          name: "Paid",
-          dataIndex: "paid",
+          name: "Paid Invoice",
+          dataIndex: "invoice_paid",
+          class: "text-center"
+        });
+      }
+
+      if (["pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid Form A",
+          dataIndex: "form_paid",
           class: "text-center"
         });
       }
@@ -611,12 +619,13 @@ export default {
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
           total_amount: total,
-          paid:
+          under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
+          invoice_paid:
             jobPart.status === "Approved" &&
             jobPart.locum_invoice_item.locum_invoice.paid_at
               ? "Yes"
               : "No",
-          under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
+          form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No"
         };
       });
 
@@ -801,12 +810,13 @@ export default {
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
               total_amount: total,
-              paid:
+              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
+              invoice_paid:
                 jobPart.status === "Approved" &&
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
-              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
+              form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No"
             };
           });
         })
@@ -942,12 +952,13 @@ export default {
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
               total_amount: total,
-              paid:
+              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
+              invoice_paid:
                 jobPart.status === "Approved" &&
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
-              under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No"
+              form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No"
             };
           });
         })
@@ -986,6 +997,7 @@ export default {
     },
     select_invoice(id) {
       this.payment_modal = true;
+      this.form.paid_at = null;
       this.form.ni = false;
       this.form.ni_amount = null;
       this.form.paye = false;
