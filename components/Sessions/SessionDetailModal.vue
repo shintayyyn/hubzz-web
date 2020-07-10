@@ -140,10 +140,7 @@
             </div>
 
             <SessionDetailModalUpdateForm
-              v-if="job.status === 'Allocated' && toEdit === true && canEdit === true || 
-                job.status === 'Applied' && toEdit === true || 
-                job.status === 'Live' && toEdit === true ||
-                job.status === 'Pending' && toEdit === true"
+              v-if="toEdit"
               :job="job"
               @updateJob="updateJob"
               @scrollToTop="$emit('scrollToTop')"
@@ -182,114 +179,142 @@
 </template>
 
 <script>
-  import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts"
-  import SessionDetailModalInfo from "@/components/Sessions/SessionDetailModalInfo"
-  import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailModalUpdateForm"
-  import SessionDetailModalCandidates from "@/components/Sessions/SessionDetailModalCandidates"
-  import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum"
-  import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm"
-  import SessionDetailModalMap from "@/components/Sessions/SessionDetailModalMap"
-  import AppButton from "@/components/Base/AppButton"
-  import AppInput from "@/components/Base/AppInput"
-  import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts"
+import SessionDetailModalInfo from "@/components/Sessions/SessionDetailModalInfo"
+import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailModalUpdateForm"
+import SessionDetailModalCandidates from "@/components/Sessions/SessionDetailModalCandidates"
+import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum"
+import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm"
+import SessionDetailModalMap from "@/components/Sessions/SessionDetailModalMap"
+import AppButton from "@/components/Base/AppButton"
+import AppInput from "@/components/Base/AppInput"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
-  export default {
-    components: {
-      AppConfirmationModal,
-      SessionDetailModalInfo,
-      SessionPartDetailModalParts,
-      SessionDetailModalUpdateForm,
-      SessionDetailModalCandidates,
-      SessionDetailModalLocum,
-      SessionDetailModalCancelForm,
-      SessionDetailModalMap,
-      AppInput,
-      AppButton
+export default {
+  components: {
+    AppConfirmationModal,
+    SessionDetailModalInfo,
+    SessionPartDetailModalParts,
+    SessionDetailModalUpdateForm,
+    SessionDetailModalCandidates,
+    SessionDetailModalLocum,
+    SessionDetailModalCancelForm,
+    SessionDetailModalMap,
+    AppInput,
+    AppButton,
+  },
+
+  props: {
+    job: {
+      type: Object,
+      required: true,
     },
+  },
 
-    props: {
-      job: {
-        type: Object,
-        required: true
-      }
-    },
-
-    data () {
-      return {
-        formError: [],
-        form: {
-          rejected_reason: ""
-        },
-        approve_modal: false,
-        reject_modal: false,
-        user: null,
-        toEdit: false,
-        practice: "",
-        showMap: false,
-        deadline: {
-          hours: 0,
-          minutes: 0
-        }
-      }
-    },
-
-    computed: {
-      authPermissions () {
-        return this.$store.getters["permissions"]
+  data () {
+    return {
+      formError: [],
+      form: {
+        rejected_reason: "",
       },
-
-      canEdit () {
-        return (
-          this.$moment(
-            `${this.job.date_start} ${this.job.time_start}`,
-            "YYYY-MM-DD HH:mm"
-          ).diff(
-            this.$moment()
-              .utc()
-              .format("YYYY-MM-DD HH:mm"),
-            "hours"
-          ) >= 12
-        )
+      approve_modal: false,
+      reject_modal: false,
+      user: null,
+      toEdit: false,
+      practice: "",
+      showMap: false,
+      deadline: {
+        hours: 0,
+        minutes: 0,
       },
+    }
+  },
+
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
 
-    created () {
-      this.practice = this.$auth.user.practice_detail.practice
+    canEdit () {
+      return (
+        this.$moment(
+          `${this.job.date_start} ${this.job.time_start}`,
+          "YYYY-MM-DD HH:mm"
+        ).diff(
+          this.$moment()
+            .utc()
+            .format("YYYY-MM-DD HH:mm"),
+          "hours"
+        ) >= 12
+      )
     },
+  },
 
-    mounted () {
+  created () {
+    this.practice = this.$auth.user.practice_detail.practice
+  },
+
+  mounted () {
+    setTimeout(() => {
+      this.showMap = true
+    }, 1)
+  },
+
+  methods: {
+    updateJob ({ newJobId, oldJobId, }) {
+      this.$emit("close")
+
       setTimeout(() => {
-        this.showMap = true
-      }, 1)
+        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", oldJobId)
+        this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", oldJobId)
+        this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", oldJobId)
+        this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", oldJobId)
+        if (this.$route.name === "sessions-index-id") {
+          this.$router.push({
+            path: `/sessions/${newJobId}`,
+            query: { ...this.$route.query, },
+          })
+        }
+      }, 500)
     },
 
-    methods: {
-      updateJob ({ newJobId, oldJobId }) {
-        this.$emit("close")
+    approveJob () {
+      this.$axios
+        .$put(`/api/v1/practice/jobs/${this.job.id}/approve`)
+        .then(res => {
+          console.log(res)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`Job Successfully approved`,],
+          })
+          this.$emit("close")
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+        })
+        .finally(() => {
+          this.approve_modal = false
+        })
+    },
 
-        setTimeout(() => {
-          this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", oldJobId)
-          this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", oldJobId)
-          this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", oldJobId)
-          this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", oldJobId)
-          if (this.$route.name === "sessions-index-id") {
-            this.$router.push({
-              path: `/sessions/${newJobId}`,
-              query: { ...this.$route.query }
-            })
-          }
-        }, 500)
-      },
+    toggleRejectModal () {
+      this.reject_modal = true
+      this.form.rejected_reason = ""
+    },
 
-      approveJob () {
+    rejectJob () {
+      this.formError = []
+      this.Validate(this.form)
+      if (!this.formError.length) {
         this.$axios
-          .$put(`/api/v1/practice/jobs/${this.job.id}/approve`)
+          .$put(`/api/v1/practice/jobs/${this.job.id}/reject`, this.form)
           .then(res => {
             console.log(res)
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "success",
-              text: [`Job Successfully approved`]
+              status: "danger",
+              text: [`Job Successfully rejected`,],
             })
             this.$emit("close")
           })
@@ -297,79 +322,51 @@
             console.log("err", err.response || err)
           })
           .finally(() => {
-            this.approve_modal = false
+            this.reject_modal = false
           })
-      },
-
-      toggleRejectModal () {
-        this.reject_modal = true
-        this.form.rejected_reason = ""
-      },
-
-      rejectJob () {
-        this.formError = []
-        this.Validate(this.form)
-        if (!this.formError.length) {
-          this.$axios
-            .$put(`/api/v1/practice/jobs/${this.job.id}/reject`, this.form)
-            .then(res => {
-              console.log(res)
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`Job Successfully rejected`]
-              })
-              this.$emit("close")
-            })
-            .catch(err => {
-              console.log("err", err.response || err)
-            })
-            .finally(() => {
-              this.reject_modal = false
-            })
-        }
-      },
-
-      status (status) {
-        return status.toUpperCase()
-      },
-
-      bgStatus (status) {
-        let str
-        switch (status) {
-          case "Live":
-            str = "bg-yellow-500"
-            break
-          case "Applied":
-            str = "bg-orange-500 text-white"
-            break
-          case "Allocated":
-            str = "bg-green-600 text-white"
-            break
-          default:
-            str = "bg-red-500 text-white"
-        }
-        return str
-      },
-
-      repost () {
-        this.$emit("close")
-
-        setTimeout(() => {
-          if (this.$route.name.includes("hub-surgery-management")) {
-            this.$store.commit("calendar/SET_REPOST_JOB", this.job)
-            this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true)
-          } else if (
-            this.$route.name.includes("sessions") ||
-            this.$route.name.includes("dashboard")
-          ) {
-            this.$store.commit("calendar/SET_REPOST_JOB", this.job)
-            this.$store.commit("calendar/CREATE_JOB_MODAL", true)
-          }
-        }, 500)
-      },
+      }
     },
-  }
+
+    status (status) {
+      return status.toUpperCase()
+    },
+
+    bgStatus (status) {
+      let str
+      switch (status) {
+      case "Live":
+        str = "bg-yellow-500"
+        break
+      case "Applied":
+        str = "bg-orange-500 text-white"
+        break
+      case "Allocated":
+        str = "bg-green-600 text-white"
+        break
+      default:
+        str = "bg-red-500 text-white"
+      }
+      return str
+    },
+
+    repost () {
+      this.$emit("close")
+
+      setTimeout(() => {
+        if (this.$route.name.includes("hub-surgery-management")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job)
+          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true)
+        } else if (
+          this.$route.name.includes("sessions")
+          || this.$route.name.includes("dashboard")
+        ) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job)
+          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
+        }
+      }, 500)
+    },
+  },
+}
 </script>
 
 <style scoped>

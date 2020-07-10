@@ -11,19 +11,57 @@
     </div>
 
     <div class="flex flex-row justify-start items-center mt-4">
-      <div class="leading-tight font-bold text-md sm:text-lg mr-2">{{ jobPart.job.title }}</div>
+      <div class="leading-tight font-bold text-md sm:text-lg mr-2">
+        {{ jobPart.job.title }}
+      </div>
 
       <div
         class="py-2 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(jobPart.status)"
         @click="['Approved','Cancelled'].includes(jobPart.status) ? toggle_invoice_modal = true : null"
-      >{{ status(jobPart.status) }}</div>
+      >
+        {{ status(jobPart.status) }}
+      </div>
+
+      <template v-if="authPermissions.includes('Update Sessions Job')">
+        <button
+          v-if="
+            ((job.status === 'Allocated' || job.status === 'Pending' ) &&
+              toEdit === false &&
+              canEdit === true) ||
+              (job.status === 'Pending' && toEdit === false) ||
+              (job.status === 'Applied' && toEdit === false) ||
+              (job.status === 'Live' && toEdit === false)
+          "
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-4 focus:outline-none"
+          @click.prevent="toEdit = true"
+        >
+          Edit this job
+        </button>
+
+        <button
+          v-if="
+            ((job.status === 'Allocated' || job.status === 'Pending' ) &&
+              toEdit === true &&
+              canEdit === true) ||
+              (job.status === 'Pending' && toEdit === true) ||
+              (job.status === 'Applied' && toEdit === true) ||
+              (job.status === 'Live' && toEdit === true)
+          "
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          @click.prevent="toEdit = false"
+        >
+          Cancel Editing
+        </button>
+      </template>
 
       <div
         v-if="['Completed', 'Cancelled'].includes(jobPart.status) && tagStatus(jobPart)"
         class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
-      >{{ tagStatus(jobPart) }}</div>
+      >
+        {{ tagStatus(jobPart) }}
+      </div>
 
       <template
         v-if="[
@@ -39,6 +77,13 @@
       </template>
     </div>
 
+    <template v-if="['Allocated'].includes(job.status)">
+      <div v-if="job.update_accepted_until && !job.update_accepted" class="mt-4">
+        <span>Waiting for locum's approval within {{ job.update_accepted_until_duration_in_minutes_formatted }}, </span>
+        <span>before {{ job.update_accepted_until_formatted }}.</span>
+      </div>
+    </template>
+
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
         <div class="p-0 md:pr-4 w-full md:w-1/2">
@@ -49,20 +94,32 @@
             >
               <template v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn'">
                 <div class="leading-tight pb-4">
-                  <p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
+                  <p class="font-bold text-sm sm:text-md">
+                    Reason for Withdrawal
+                  </p>
                   <p
                     class="text-xs sm:text-sm break-words"
-                  >{{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}</p>
+                  >
+                    {{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}
+                  </p>
                 </div>
                 <div class="leading-tight pb-4">
-                  <p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
+                  <p class="font-bold text-sm sm:text-md">
+                    Date of Withdrawal
+                  </p>
                   <p
                     class="text-xs sm:text-sm"
-                  >{{ jobPart.job.platform_job.declined_at | localDate }}</p>
+                  >
+                    {{ jobPart.job.platform_job.declined_at | localDate }}
+                  </p>
                 </div>
                 <div class="leading-tight pb-4">
-                  <p class="font-bold text-sm sm:text-md">Withdrawn by</p>
-                  <p class="text-xs sm:text-sm">{{ jobPart.locum_first_name }}</p>
+                  <p class="font-bold text-sm sm:text-md">
+                    Withdrawn by
+                  </p>
+                  <p class="text-xs sm:text-sm">
+                    {{ jobPart.locum_first_name }}
+                  </p>
                 </div>
               </template>
 
@@ -70,44 +127,56 @@
                 <div class="leading-tight pb-4">
                   <p
                     class="font-bold text-sm sm:text-md"
-                  >{{ jobPart.terminated ? 'Terminated' : 'Cancelled' }} At</p>
+                  >
+                    {{ jobPart.terminated ? 'Terminated' : 'Cancelled' }} At
+                  </p>
 
                   <p
                     class="text-xs sm:text-sm"
-                  >{{ jobPart.job.platform_job.cancelled_at | localDate }}</p>
+                  >
+                    {{ jobPart.job.platform_job.cancelled_at | localDate }}
+                  </p>
                 </div>
 
                 <div class="leading-tight">
                   <p
                     class="font-bold text-sm sm:text-md"
-                  >Reason for {{ jobPart.terminated ? 'termination' : 'cancellation' }}</p>
+                  >
+                    Reason for {{ jobPart.terminated ? 'termination' : 'cancellation' }}
+                  </p>
 
-                  <p class="text-xs sm:text-sm">{{ jobPart.job.platform_job.cancelled_reason }}</p>
+                  <p class="text-xs sm:text-sm">
+                    {{ jobPart.job.platform_job.cancelled_reason }}
+                  </p>
                 </div>
 
                 <div class="leading-tight mt-4">
                   <p
                     class="font-bold text-sm sm:text-md"
-                  >{{ jobPart.terminated ? 'Terminated By' : 'Cancelled By' }}</p>
+                  >
+                    {{ jobPart.terminated ? 'Terminated By' : 'Cancelled By' }}
+                  </p>
 
                   <div class="flex justify-start">
                     <div class="text-xs sm:text-sm">
                       {{
-                      jobPart.cancelled_by_practice === 'Hub'
-                      ? jobPart.parent_practice_name
-                      : jobPart.cancelled_by_practice === 'Spoke'
-                      ? jobPart.practice_name
-                      : jobPart.practice_name
+                        jobPart.cancelled_by_practice === 'Hub'
+                          ? jobPart.parent_practice_name
+                          : jobPart.cancelled_by_practice === 'Spoke'
+                            ? jobPart.practice_name
+                            : jobPart.practice_name
                       }}
                     </div>
 
-                    <div v-if="jobPart.cancelled_by_user" class="mx-1">-</div>
+                    <div v-if="jobPart.cancelled_by_user" class="mx-1">
+                      -
+                    </div>
 
                     <div v-if="jobPart.cancelled_by_user" class="text-xs sm:text-sm">
                       {{
-                      jobPart.cancelled_by_user.email
-                      ? jobPart.cancelled_by_user.email
-                      : jobPart.cancelled_by_user.name
+                        jobPart.cancelled_by_user.email
+                          ? jobPart.cancelled_by_user.email
+                          : jobPart.cancelled_by_user.name
                       }}
                     </div>
                   </div>
@@ -115,7 +184,18 @@
               </template>
             </div>
 
-            <SessionPartDetailModalInfo :loadingJobPart="loadingJobPart" :job_part="jobPart" />
+            <SessionPartDetailModalInfo
+              v-if="!toEdit"
+              :loadingJobPart="loadingJobPart"
+              :job_part="jobPart"
+            />
+
+            <SessionDetailModalUpdateForm
+              v-if="toEdit && job"
+              :job="job"
+              @updateJob="updateJob"
+              @scrollToTop="$emit('scrollToTop')"
+            />
 
             <div
               v-if="
@@ -188,13 +268,14 @@
 </template>
 
 <script>
-import SessionPartDetailModalInfo from "@/components/Sessions/SessionPart/SessionPartDetailModalInfo";
-import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts";
-import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm";
+import SessionPartDetailModalInfo from "@/components/Sessions/SessionPart/SessionPartDetailModalInfo"
+import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts"
+import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm"
 // import SessionDetailModalCompleteForm from "@/components/Sessions/SessionDetailModalCompleteForm"
-import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum";
-import AppButton from "@/components/Base/AppButton";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum"
+import AppButton from "@/components/Base/AppButton"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailModalUpdateForm"
 
 export default {
   components: {
@@ -204,131 +285,172 @@ export default {
     SessionDetailModalCancelForm,
     SessionDetailModalLocum,
     AppButton,
-    AppConfirmationModal
+    AppConfirmationModal,
+    SessionDetailModalUpdateForm,
   },
 
   props: {
     loadingJobPart: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     jobPart: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
-  data() {
+  data () {
     return {
       user: null,
       practice: null,
-      toggle_invoice_modal: false
-    };
-  },
-  computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+      toggle_invoice_modal: false,
+      toEdit: false,
     }
   },
-  created() {
-    this.user = this.$auth.user;
-    this.practice = this.$auth.user.practice_detail.practice;
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+
+    job () {
+      return this.jobPart ? this.jobPart.job : null 
+    },
+
+    canEdit () {
+      return (
+        this.$moment(
+          `${this.job.date_start} ${this.job.time_start}`,
+          "YYYY-MM-DD HH:mm"
+        ).diff(
+          this.$moment()
+            .utc()
+            .format("YYYY-MM-DD HH:mm"),
+          "hours"
+        ) >= 12
+      )
+    },
+  },
+  created () {
+    this.user = this.$auth.user
+    this.practice = this.$auth.user.practice_detail.practice
   },
   methods: {
-    goToGenerateInvoice() {
-      let hasInvoice = false;
+    updateJob ({ newJobId, oldJobId, }) {
+      this.$emit("close")
+
+      setTimeout(() => {
+        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", oldJobId)
+        this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", oldJobId)
+        this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", oldJobId)
+        this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", oldJobId)
+        if (this.$route.name === "sessions-index-id") {
+          this.$router.push({
+            path: `/sessions/${newJobId}`,
+            query: { ...this.$route.query, },
+          })
+        } else {
+          this.$router.push({
+            path: `/job-parts`,
+          })
+        }
+      }, 500)
+    },
+
+    goToGenerateInvoice () {
+      let hasInvoice = false
       if (this.jobPart.locum_invoice_id) {
-        hasInvoice = true;
+        hasInvoice = true
       }
 
-      let invoiceStatus = null;
+      let invoiceStatus = null
       switch (this.tagStatus(this.jobPart)) {
-        case "TO BE INVOICED":
-          invoiceStatus = "to-be-invoiced";
-          break;
-        case "DISPUTED":
-          invoiceStatus = "disputed";
-          break;
-        case "INVOICED":
-          invoiceStatus = "issued";
-          break;
-        default:
-          invoiceStatus = null;
+      case "TO BE INVOICED":
+        invoiceStatus = "to-be-invoiced"
+        break
+      case "DISPUTED":
+        invoiceStatus = "disputed"
+        break
+      case "INVOICED":
+        invoiceStatus = "issued"
+        break
+      default:
+        invoiceStatus = null
       }
 
-      this.$router.push(`/practice-billing/invoices-from-locums`);
+      this.$router.push(`/practice-billing/invoices-from-locums`)
       setTimeout(() => {
         if (hasInvoice === false) {
-          this.$router.push(`/practice-billing/invoices-from-locums`);
+          this.$router.push(`/practice-billing/invoices-from-locums`)
         } else if (hasInvoice === true && this.jobPart.status !== "Approved") {
           this.$router.push({
             path: `/practice-billing/invoices-from-locums/${this.jobPart.locum_invoice_id}/edit`,
-            query: { ...this.$route.query, status: invoiceStatus }
-          });
+            query: { ...this.$route.query, status: invoiceStatus, },
+          })
         } else if (hasInvoice === true && this.jobPart.status === "Approved") {
           this.$router.push({
             path: `/practice-billing/invoices-from-locums/${this.jobPart.locum_invoice_id}`,
-            query: { ...this.$route.query, status: "Approved" }
-          });
+            query: { ...this.$route.query, status: "Approved", },
+          })
         }
-      }, 500);
+      }, 500)
     },
-    tagStatus(job_part) {
-      let status = "";
+    tagStatus (job_part) {
+      let status = ""
       if (job_part.status === "Completed") {
-        status = "TO BE INVOICED";
+        status = "TO BE INVOICED"
         if (job_part.disputed && job_part.issued) {
-          status = "DISPUTED";
+          status = "DISPUTED"
         } else if (job_part.invoiced && job_part.issued) {
-          status = "INVOICED";
+          status = "INVOICED"
         }
-        return status;
+        return status
       } else if (job_part.status === "Cancelled") {
-        return job_part.terminated ? "TERMINATED" : null;
+        return job_part.terminated ? "TERMINATED" : null
       }
     },
-    status(status) {
-      let jobStatus = status === "Available" ? "Live" : status;
-      return jobStatus.toUpperCase();
+    status (status) {
+      let jobStatus = status === "Available" ? "Live" : status
+      return jobStatus.toUpperCase()
     },
-    bgStatus(status) {
-      let str;
+    bgStatus (status) {
+      let str
       switch (status) {
-        case "Ongoing":
-        case "Completed":
-        case "Approved":
-        case "Allocated":
-          str = "bg-green-600 text-white";
-          break;
-        default:
-          str = "bg-red-500 text-white";
+      case "Ongoing":
+      case "Completed":
+      case "Approved":
+      case "Allocated":
+        str = "bg-green-600 text-white"
+        break
+      default:
+        str = "bg-red-500 text-white"
       }
-      return str;
+      return str
     },
-    repost() {
-      this.$emit("close");
+    repost () {
+      this.$emit("close")
       setTimeout(() => {
         if (this.$route.name.includes("hub-surgery-management")) {
           this.$store.commit("calendar/SET_REPOST_JOB", {
             ...this.jobPart.job,
-            dates: this.jobPart.dates
-          });
-          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true);
+            dates: this.jobPart.dates,
+          })
+          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true)
         } else if (
-          this.$route.name.includes("sessions") ||
-          this.$route.name.includes("dashboard")
+          this.$route.name.includes("sessions")
+          || this.$route.name.includes("dashboard")
         ) {
           this.$store.commit("calendar/SET_REPOST_JOB", {
             ...this.jobPart.job,
-            dates: this.jobPart.dates
-          });
-          this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+            dates: this.jobPart.dates,
+          })
+          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
-      }, 500);
-    }
-  }
-};
+      }, 500)
+    },
+  },
+}
 </script>
 
 <style scoped>
