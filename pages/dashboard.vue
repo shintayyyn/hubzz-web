@@ -91,57 +91,61 @@
 </template>
 
 <script>
-  import Calendar from "@/components/Calendar"
-  import Reminders from "@/components/Dashboard/Reminders"
-  import Statistics from "@/components/Dashboard/Statistics"
-  import AppButton from "@/components/Base/AppButton"
-  import ExpenseReportsModal from "@/components/ExpenseReportsModal"
+import Calendar from "@/components/Calendar"
+import Reminders from "@/components/Dashboard/Reminders"
+import Statistics from "@/components/Dashboard/Statistics"
+import AppButton from "@/components/Base/AppButton"
+import ExpenseReportsModal from "@/components/ExpenseReportsModal"
 
-  export default {
-    components: {
-      Calendar,
-      Reminders,
-      Statistics,
-      AppButton,
-      ExpenseReportsModal
-    },
-    data () {
-      return {
-        expense_modal: false
-      }
-    },
-    computed: {
-      userIsAuthorized () {
-        if (this.$auth.loggedIn) {
-          let domain = this.$auth.user.domain
-          let accountStatus = this.$auth.user.status
-          if (domain === "Locum") {
-            if (accountStatus === "Active" || accountStatus === "Dormant") {
-              return true
-            }
-            return false
-          }
-          if (domain === "Practice") {
-            let practiceStatus = this.$auth.user.practice_detail.practice.status
-            if (accountStatus === "Active" && (practiceStatus === "Active" || practiceStatus === "Dormant")) {
-              return true
-            }
-            return false
-          }
-        }
-        return false
-      }
-    },
-    watch: {
-      "$route.path" (value) {
-        if (value !== "/dashboard") {
-          document.body.style.overflow = "hidden"
-        } else if (value === "/dashboard") {
-          document.body.style.overflow = "auto"
-        }
-      }
+export default {
+  components: {
+    Calendar,
+    Reminders,
+    Statistics,
+    AppButton,
+    ExpenseReportsModal,
+  },
+  
+  data () {
+    return {
+      expense_modal: false,
     }
-  }
+  },
+
+  computed: {
+    userIsAuthorized () {
+      if (this.$auth.loggedIn) {
+        let domain = this.$auth.user.domain
+        let accountStatus = this.$auth.user.status
+        if (domain === "Locum") {
+          if (accountStatus === "Active" || accountStatus === "Dormant") {
+            return true
+          }
+          return false
+        }
+        if (domain === "Practice") {
+          let practiceStatus = this.$auth.user.practice_detail.practice.status
+          if (accountStatus === "Active" && (practiceStatus === "Active" || practiceStatus === "Dormant")) {
+            return true
+          }
+          return false
+        }
+      }
+      return false
+    },
+  },
+
+  watch: {
+    "$route.path" (value) {
+      if (value !== "/dashboard") {
+        document.body.style.overflow = "hidden"
+      } else if (value === "/dashboard") {
+        document.body.style.overflow = "auto"
+      }
+    },
+  },
+
+}
 </script>
 
 <style scoped>

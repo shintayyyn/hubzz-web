@@ -24,48 +24,51 @@ import PerWeek from "@/components/Calendar/PerWeek"
 import Info from "@/components/Calendar/Info"
 
 export default {
-	components: {
-		PerMonth,
-		PerWeek,
-		Info
-	},
-	computed: {
-		loading () {
-			return this.$store.state.calendar.loading
-		},
-		create_job_modal () {
-			return this.$store.state.calendar.create_job_modal
-		},
-		authPermissions () {
-			return this.$store.getters["permissions"]
-		},
-		canCreateJob () {
-			if (this.$auth.user.domain === "Locum") {
-				return false
-			} else if (
-				!this.authPermissions.includes("Create Sessions Job") ||
-				(this.$auth.user.practice_detail.practice.type === "Spoke" &&
-					this.$auth.user.practice_detail.practice.parent_practice_id &&
-					!this.$auth.user.practice_detail.practice
-						.allow_surgery_create_sessions)
-			) {
-				return false
-			}
-			return true
-		}
-	},
-	created () {
-		this.$store.commit("calendar/SET_DATE_TODAY")
-	}
+  components: {
+    PerMonth,
+    PerWeek,
+    Info,
+  },
+  
+  computed: {
+    loading () {
+      return this.$store.state.calendar.loading
+    },
+    create_job_modal () {
+      return this.$store.state.calendar.create_job_modal
+    },
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+    canCreateJob () {
+      if (this.$auth.user.domain === "Locum") {
+        return false
+      } else if (
+        !this.authPermissions.includes("Create Sessions Job")
+        || (this.$auth.user.practice_detail.practice.type === "Spoke"
+          && this.$auth.user.practice_detail.practice.parent_practice_id
+          && !this.$auth.user.practice_detail.practice.allow_surgery_create_sessions
+        )
+      ) {
+        return false
+      }
+      return true
+    },
+  },
+
+  created () {
+    this.$store.commit("calendar/SET_DATE_TODAY")
+  },
 }
 </script>
+
 <style scoped>
-.calendar {
-	height: auto;
-}
-@media screen and (min-width: 991px) {
-	.calendar {
-		height: auto;
-	}
-}
+  .calendar {
+    height: auto;
+  }
+  @media screen and (min-width: 991px) {
+    .calendar {
+      height: auto;
+    }
+  }
 </style>
