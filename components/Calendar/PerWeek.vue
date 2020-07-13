@@ -1024,9 +1024,11 @@ export default {
                 .subtract(1, "days")
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+              reposted: false,
               limit: 100000000,
             },
           }),
+
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
               status: ["Ongoing", "Allocated",],
@@ -1040,18 +1042,19 @@ export default {
               limit: 100000000,
             },
           }),
-          this.$axios.$get("/api/v1/practice/jobs", {
-            params: {
-              status: ["Applied",],
-              platform_selection_date: [
-                `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
-                  .subtract(1, "days")
-                  .format("YYYY-MM-DD")}:gte`,
-                `${this.lastDayOfTheWeek}:lte`,
-              ],
-              limit: 100000000,
-            },
-          }),
+
+          // this.$axios.$get("/api/v1/practice/jobs", {
+          //   params: {
+          //     status: ["Applied",],
+          //     platform_selection_date: [
+          //       `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
+          //         .subtract(1, "days")
+          //         .format("YYYY-MM-DD")}:gte`,
+          //       `${this.lastDayOfTheWeek}:lte`,
+          //     ],
+          //     limit: 100000000,
+          //   },
+          // }),
         ])
           .then(
             ([
