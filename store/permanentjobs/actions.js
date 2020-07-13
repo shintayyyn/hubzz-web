@@ -1,5 +1,5 @@
 export default {
-  async initializePermanentJobListener ({ commit }) {
+  async initializePermanentJobListener ({ commit, }) {
     // =====================================LOCUM=========================================
     this.$socket.on('Locum Notification Permanent Job Matched', async (permanentJob) => {
       let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.notification.payload.id}`)
@@ -10,31 +10,11 @@ export default {
     })
 
     this.$socket.on('Locum Notification Permanent Job Invited', async (permanentJob) => {
+      console.log('is it working?')
       let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.notification.payload.id}`)
 
       if(response.data && response.data.permanent_job) {
         commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {...response.data.permanent_job, notificationType: 'Locum Notification Permanent Job Invited',})
-      }
-    })
-
-    this.$socket.on('Locum Notification Permanent Job Invited', async (permanentJob) => {
-      let permanent_job = null
-      let permanent_job_application = null
-
-      let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.id}`)
-
-      if(response.data && response.data.permanent_job) {
-        permanent_job = response.data.permanent_job
-      }
-
-      response = await this.$axios.$get(`/api/v1/locum/permanent-job-applications/${permanentJob.permanent_job_application_id}`)
-      
-      if(response.data && response.data.permanent_job_application) {
-        permanent_job_application = response.data.permanent_job_application
-      }
-
-      if(permanent_job && permanent_job_application) {
-        commit('ADD_LOCUM_PERMANENT_JOB_NOTIFICATION', {permanent_job, permanent_job_application, notificationType: 'Locum Notification Permanent Job Invited'})
       }
     })
 
