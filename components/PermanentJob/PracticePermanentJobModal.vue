@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section ref="modalContainer">
     <div class="p-4 md:p-8">
       <nuxt-link
         :to="{
@@ -418,336 +418,334 @@ import PermanentJobCandidates from "@/components/PermanentJob/PermanentJobCandid
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap"
 import PermanentJobLocum from "@/components/PermanentJob/PermanentJobLocum"
 export default {
-	components: {
-		AppInput,
-		AppButton,
-		AppDate,
-		PermanentJobCandidates,
-		PermanentJobMap,
-		PermanentJobLocum
-	},
-	data () {
-		return {
-			options: {
-				modules: {
-					toolbar: null
-				}
-			},
-			edit: false,
-			toCloseJob: false,
-			modal: false,
-			permanent_job: "",
+  components: {
+    AppInput,
+    AppButton,
+    AppDate,
+    PermanentJobCandidates,
+    PermanentJobMap,
+    PermanentJobLocum,
+  },
+  data () {
+    return {
+      options: {
+        modules: {
+          toolbar: null
+        }
+      },
+      edit: false,
+      toCloseJob: false,
+      modal: false,
+      permanent_job: "",
 
-			approve_or_reject: {
-				approved_or_rejected: "",
-				rejection_reason: ""
-			},
-			showCancel: false,
+      approve_or_reject: {
+        approved_or_rejected: "",
+        rejection_reason: ""
+      },
+      showCancel: false,
 
-			form: {
+      form: {
         practice_id: "",
         parent_practice_id: "",
-				title: "",
-				description: "",
-				date_posted: this.$moment().format("YYYY-MM-DD"),
-				date_closing: "",
-				email: "",
+        title: "",
+        description: "",
+        date_posted: this.$moment().format("YYYY-MM-DD"),
+        date_closing: "",
+        email: "",
         report_to: "",
         profession_id: "",
-				industry_type: "",
-				salary_amount: null,
-				salary_description_2: "",
-				work_hours: "",
-				hired_through: "",
-				update_remarks: ""
-			},
-			salary_range: false,
-			practice_lists: [],
-			work_hours_type: [],
-			industry_types: [],
-			salary_description_type_1: [],
-			salary_description_type_2: [],
-			professions: [],
-			professions_categories: [],
+        industry_type: "",
+        salary_amount: null,
+        salary_description_2: "",
+        work_hours: "",
+        hired_through: "",
+        update_remarks: ""
+      },
+      salary_range: false,
+      practice_lists: [],
+      work_hours_type: [],
+      industry_types: [],
+      salary_description_type_1: [],
+      salary_description_type_2: [],
+      professions: [],
+      professions_categories: [],
 
-			hired_through: [],
-			put_hired_through: "",
+      hired_through: [],
+      put_hired_through: "",
 
-			postingProfession: "",
+      postingProfession: "",
 
-			assignedLocum: null,
+      assignedLocum: null,
 
-			formError: [],
+      formError: [],
 
-			// quill
-			editorOption: {
-				placeholder: "Please type the description here",
-				modules: {
-					toolbar: [
-						["bold", "italic", "underline", "strike"],
-						["blockquote", "code-block"],
-						[{ header: 1 }, { header: 2 }],
-						[{ list: "ordered" }, { list: "bullet" }],
-						[{ script: "sub" }, { script: "super" }],
-						[{ size: ["small", false, "large", "huge"] }],
-						[{ header: [1, 2, 3, 4, 5, 6, false] }],
-						[{ font: [] }],
-						[{ color: [] }, { background: [] }],
-						[{ align: [] }],
-						["clean"],
-						["link"]
-					]
-				}
-			}
-			// displayOption: {
-			// 	modules: {
-			// 		toolbar: null
-			// 	}date_posted
-			// }
-		}
-	},
-	watch: {
-		edit (value) {
-			if (value === false) {
-				this.getPermanentJob()
-			} else {
+      // quill
+      editorOption: {
+        placeholder: "Please type the description here",
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline", "strike"],
+            ["blockquote", "code-block"],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ script: "sub" }, { script: "super" }],
+            [{ size: ["small", false, "large", "huge"] }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ font: [] }],
+            [{ color: [] }, { background: [] }],
+            [{ align: [] }],
+            ["clean"],
+            ["link"]
+          ]
+        }
+      }
+      // displayOption: {
+      // 	modules: {
+      // 		toolbar: null
+      // 	}date_posted
+      // }
+    }
+  },
+  watch: {
+    edit (value) {
+      if (value === false) {
+        this.getPermanentJob()
+      } else {
         this.form.practice_id = this.permanent_job.practice_id
         this.form.parent_practice_id = this.permanent_job.parent_practice_id 
           || this.$auth.user.practice_detail.practice.parent_practice_id 
           ? this.permanent_job.parent_practice_id
             || this.$auth.user.practice_detail.practice.parent_practice_id : null
-				this.form.title = this.permanent_job.title
-				this.form.description = this.permanent_job.description
-				this.form.date_posted = this.$moment().format("YYYY-MM-DD"),
-				this.form.date_closing = this.$moment(
-					this.permanent_job.date_closing
-				).format("YYYY-MM-DD")
-				this.form.email = this.permanent_job.email
-				this.form.report_to = this.permanent_job.report_to
-				this.form.industry_type = this.permanent_job.industry_type
-				this.form.salary_amount = this.permanent_job.salary_amount
-					? this.permanent_job.salary_amount
-					: 0
-				this.form.salary_description_2 = this.permanent_job.salary_description_2
-				this.form.work_hours = this.permanent_job.work_hours
-				this.form.practice_id = this.permanent_job.practice_id
-				this.form.profession_id = this.permanent_job.profession_id
-				this.loading = false
-			}
-		},
-		"form.date_posted" (value) {
-			if (this.$moment(value).isAfter(this.form.date_closing)) {
-				this.formError.push({
-					field: "date_closing",
-					message: "Date Closing is not valid"
-				})
-			}
-		},
-		"form.date_closing" (value) {
-			if (this.$moment(value).isBefore(this.form.date_posted)) {
-				this.formError.push({
-					field: "date_posted",
-					message: "Date Posted is not valid"
-				})
-			}
-			let index = this.formError.findIndex(
-				item => item.field === "date_closing"
-			)
-			if (this.$moment(value).isAfter(this.form.date_posted)) {
-				this.formError.splice(index, 1)
-			}
-		},
-		"form.salary_amount" (oldValue, value) {
-			if (value) {
-				this.validateNumber(this.form.salary_amount, "salary_amount")
-			}
-		}
-	},
-	created () {
-    console.log('me practice', this.$auth.user.practice_detail.practice)
-    console.log('practice',this.$auth.user.practice_detail.practice.type)
-		this.loading = true
-		Promise.all([
-      this.getPermanentJob(),
-			this.$axios.$get("api/v1/practice/me/practice-job-practices"),
-			this.$axios.$get("/api/v1/locum-detail-rate-types"),
-			this.$axios.$get("/api/v1/shifts"),
-			this.$axios.$get("/api/v1/professions")
-		])
-			.then(
-				([
-					responsePracticeLists,
-					responseRateLists,
-					responseShifts,
-					responseProfessions
-				]) => {
+        this.form.title = this.permanent_job.title
+        this.form.description = this.permanent_job.description
+        this.form.date_posted = this.$moment().format("YYYY-MM-DD"),
+        this.form.date_closing = this.$moment(
+          this.permanent_job.date_closing
+        ).format("YYYY-MM-DD")
+        this.form.email = this.permanent_job.email
+        this.form.report_to = this.permanent_job.report_to
+        this.form.industry_type = this.permanent_job.industry_type
+        this.form.salary_amount = this.permanent_job.salary_amount
+          ? this.permanent_job.salary_amount
+          : 0
+        this.form.salary_description_2 = this.permanent_job.salary_description_2
+        this.form.work_hours = this.permanent_job.work_hours
+        this.form.practice_id = this.permanent_job.practice_id
+        this.form.profession_id = this.permanent_job.profession_id
+        this.loading = false
+      }
+    },
+    "form.date_posted" (value) {
+      if (this.$moment(value).isAfter(this.form.date_closing)) {
+        this.formError.push({
+          field: "date_closing",
+          message: "Date Closing is not valid"
+        })
+      }
+    },
+    "form.date_closing" (value) {
+      if (this.$moment(value).isBefore(this.form.date_posted)) {
+        this.formError.push({
+          field: "date_posted",
+          message: "Date Posted is not valid"
+        })
+      }
+      let index = this.formError.findIndex(
+        item => item.field === "date_closing"
+      )
+      if (this.$moment(value).isAfter(this.form.date_posted)) {
+        this.formError.splice(index, 1)
+      }
+    },
+    "form.salary_amount" (oldValue, value) {
+      if (value) {
+        this.validateNumber(this.form.salary_amount, "salary_amount")
+      }
+    }
+  },
+  created () {
+    console.log('router name', this.$route.name)
+    this.loading = true
+    this.getPermanentJob(),
+    Promise.all([
+      this.$axios.$get("/api/v1/practice/me/practice-job-practices"),
+      this.$axios.$get("/api/v1/locum-detail-rate-types"),
+      this.$axios.$get("/api/v1/shifts"),
+      this.$axios.$get("/api/v1/professions"),
+    ])
+      .then(
+        ([
+          responsePracticeLists,
+          responseRateLists,
+          responseShifts,
+          responseProfessions,
+        ]) => {
           this.practice_lists = []
-					responsePracticeLists.data.practices.forEach(item => {
-						this.practice_lists.push({
-							label: item.surgery.name,
-							value: item.id
-						})
-					})
-					this.rate_lists = []
-					responseRateLists.data.locum_detail_rate_types.forEach(item => {
-						this.rate_lists.push({ label: item.name, value: item.id })
-					})
-					this.shifts = []
-					responseShifts.data.shifts.forEach(item => {
-						this.shifts.push({ label: item.name, value: item.id })
-					})
-					this.professions = []
-					responseProfessions.data.professions.forEach(item => {
-						this.professions.push({ label: item.name, value: item.id })
-						this.professions_categories.push(item)
-					})
-				}
-			)
-			.finally(() => {
-				this.form.title = this.permanent_job.title
-				this.form.description = this.permanent_job.description
-				this.form.date_posted = this.$moment(
-					this.permanent_job.date_posted
-				).format("YYYY-MM-DD")
-				this.form.date_closing = this.$moment(
-					this.permanent_job.date_closing
-				).format("YYYY-MM-DD")
-				this.form.email = this.permanent_job.email
-				this.form.report_to = this.permanent_job.report_to
-				this.form.industry_type = this.permanent_job.industry_type
-				this.form.salary_amount = this.permanent_job.salary_amount
-				this.form.salary_description_2 = this.permanent_job.salary_description_2
-				this.form.work_hours = this.permanent_job.work_hours
+          responsePracticeLists.data.practices.forEach(item => {
+            this.practice_lists.push({
+              label: item.surgery.name,
+              value: item.id,
+            })
+          })
+          this.rate_lists = []
+          responseRateLists.data.locum_detail_rate_types.forEach(item => {
+            this.rate_lists.push({ label: item.name, value: item.id, })
+          })
+          this.shifts = []
+          responseShifts.data.shifts.forEach(item => {
+            this.shifts.push({ label: item.name, value: item.id, })
+          })
+          this.professions = []
+          responseProfessions.data.professions.forEach(item => {
+            this.professions.push({ label: item.name, value: item.id, })
+            this.professions_categories.push(item)
+          })
+        }
+      )
+      .finally(() => {
+        this.form.title = this.permanent_job.title
+        this.form.description = this.permanent_job.description
+        this.form.date_posted = this.$moment(
+          this.permanent_job.date_posted
+        ).format("YYYY-MM-DD")
+        this.form.date_closing = this.$moment(
+          this.permanent_job.date_closing
+        ).format("YYYY-MM-DD")
+        this.form.email = this.permanent_job.email
+        this.form.report_to = this.permanent_job.report_to
+        this.form.industry_type = this.permanent_job.industry_type
+        this.form.salary_amount = this.permanent_job.salary_amount
+        this.form.salary_description_2 = this.permanent_job.salary_description_2
+        this.form.work_hours = this.permanent_job.work_hours
         this.form.practice_id = this.permanent_job.practice_id
         this.form.parent_practice_id = this.permanent_job.parent_practice_id 
           || this.$auth.user.practice_detail.practice.parent_practice_id 
           ? this.permanent_job.parent_practice_id
             || this.$auth.user.practice_detail.practice.parent_practice_id : null
-				this.form.profession_id = this.permanent_job.profession_id
-				this.loading = false
-			})
-		this.work_hours_type = [
-			{
-				label: "Part Time",
-				value: "Part Time"
-			},
-			{
-				label: "Full Time",
-				value: "Full Time"
-			}
-		]
-		this.industry_types = [
-			{
-				label: "NHS",
-				value: "NHS"
-			},
-			{
-				label: "Private",
-				value: "Private"
-			}
-		]
-		this.salary_description_type_2 = [
-			{
-				label: "Negotiable",
-				value: "Negotiable"
-			},
-			{
-				label: "Non-negotiable",
-				value: "Non-negotiable"
-			}
-		]
-		this.hired_through = [
-			{
-				label: "Through HUBZZ",
-				value: "Through HUBZZ"
-			},
-			{
-				label: "Direct Hiring",
-				value: "Direct Hiring"
+        this.form.profession_id = this.permanent_job.profession_id
+        this.loading = false
+      })
+    this.work_hours_type = [
+      {
+        label: "Part Time",
+        value: "Part Time"
       },
       {
-				label: "Closed by Practice",
-				value: "Closed by Practice"
-			}
-		]
-	},
-	methods: {
-		validateNumber (value, fieldName) {
-			let displayFieldName =
-				fieldName.charAt(0).toUpperCase() +
-				fieldName.slice(1).replace(/_/g, " ")
-			let index = this.formError.findIndex(item => item.field === fieldName)
-			if (
-				parseInt(value) < 1 ||
-				value.toString().includes("e") ||
-				value === ""
-			) {
-				this.formError.push({
-					field: fieldName,
-					message: `${displayFieldName} is invalid`
-				})
-			} else {
-				this.formError.splice(index, 1)
-			}
+        label: "Full Time",
+        value: "Full Time",
+      }
+    ]
+    this.industry_types = [
+      {
+        label: "NHS",
+        value: "NHS",
+      },
+      {
+        label: "Private",
+        value: "Private",
+      }
+    ]
+    this.salary_description_type_2 = [
+      {
+        label: "Negotiable",
+        value: "Negotiable",
+      },
+      {
+        label: "Non-negotiable",
+        value: "Non-negotiable",
+      }
+    ]
+    this.hired_through = [
+      {
+        label: "Through HUBZZ",
+        value: "Through HUBZZ",
+      },
+      {
+        label: "Direct Hiring",
+        value: "Direct Hiring",
+      },
+      {
+        label: "Closed by Practice",
+        value: "Closed by Practice",
+      }
+    ]
+  },
+  methods: {
+    validateNumber (value, fieldName) {
+      let displayFieldName =
+        fieldName.charAt(0).toUpperCase() +
+        fieldName.slice(1).replace(/_/g, " ")
+      let index = this.formError.findIndex(item => item.field === fieldName)
+      if (
+        parseInt(value) < 1 ||
+        value.toString().includes("e") ||
+        value === ""
+      ) {
+        this.formError.push({
+          field: fieldName,
+          message: `${displayFieldName} is invalid`,
+        })
+      } else {
+        this.formError.splice(index, 1)
+      }
     },
     
-		async getPermanentJob () {
-			let permJobId = ""
-			if (this.$route.name.includes("hub-surgery-management")) {
-				permJobId = this.$route.params.permJobId
-			} else {
-				permJobId = this.$route.params.id
-			}
+    async getPermanentJob () {
+      let permJobId = ""
+      if (this.$route.name.includes("hub-surgery-management")) {
+        permJobId = this.$route.params.permJobId
+      } else {
+        permJobId = this.$route.params.id
+      }
 
-			this.$axios
-				.$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
-				.then(res => {
-					this.permanent_job = res.data.permanent_job
-				})
-				.finally(() => {
-					console.log("permanent job", this.permanent_job)
-					if (this.permanent_job.appointed_to_locum_user_id) {
-						this.getAssignedLocum(
-							this.permanent_job.appointed_to_locum_user_id
-						)
-					}
-				})
+      this.$axios
+        .$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
+        .then(res => {
+          this.permanent_job = res.data.permanent_job
+        })
+        .finally(() => {
+          if (this.permanent_job.appointed_to_locum_user_id) {
+            this.getAssignedLocum(
+              this.permanent_job.appointed_to_locum_user_id
+            )
+          }
+        })
     },
     
-		getAssignedLocum (userID) {
-			this.$axios.$get(`/api/v1/practice/locums/${userID}`).then(res => {
-				this.assignedLocum = res.data.user
-				console.log("assignedLocum", this.assignedLocum)
-			})
+    getAssignedLocum (userID) {
+      this.$axios.$get(`/api/v1/practice/locums/${userID}`).then(res => {
+        this.assignedLocum = res.data.user
+        console.log("assignedLocum", this.assignedLocum)
+      })
     },
     
-		editJobLabel (edit) {
-			console.log("edit", edit)
-			if (
-				(edit === false &&
-					this.permanent_job.job_posting_status == "Available") ||
-				this.permanent_job.job_posting_status == "Pending"
-			) {
-				console.log("status", this.permanent_job.job_posting_status)
-				return "Edit Closing Date"
-			}
-			if (
-				(edit === false && this.permanent_job.job_posting_status == "Closed") ||
-				this.permanent_job.job_posting_status == "Unfilled"
-			) {
-				console.log("status", this.permanent_job.job_posting_status)
-				return "Re-post Job"
-			}
-			if (edit === true) {
-				console.log("status", this.permanent_job.job_posting_status)
-				return "Cancel"
-			}
+    editJobLabel (edit) {
+      console.log("edit", edit)
+      if (
+        (edit === false &&
+          this.permanent_job.job_posting_status == "Available") ||
+        this.permanent_job.job_posting_status == "Pending"
+      ) {
+        console.log("status", this.permanent_job.job_posting_status)
+        return "Edit Closing Date"
+      }
+      if (
+        (edit === false && this.permanent_job.job_posting_status == "Closed") ||
+        this.permanent_job.job_posting_status == "Unfilled"
+      ) {
+        console.log("status", this.permanent_job.job_posting_status)
+        return "Re-post Job"
+      }
+      if (edit === true) {
+        console.log("status", this.permanent_job.job_posting_status)
+        return "Cancel"
+      }
     },
     
-		editPermanentJob () {
-			this.formError = []
+    editPermanentJob () {
+      this.formError = []
 
-			let notRequired = [
+      let notRequired = [
         "parent_practice_id",
         "salary_amount",
         "salary_description_2",
@@ -755,7 +753,7 @@ export default {
         "update_remarks",
       ]
 
-			if(this.form.salary_amount){
+      if(this.form.salary_amount){
         this.validateNumber(this.form.salary_amount, "salary_amount")
       }
 
@@ -764,27 +762,27 @@ export default {
       console.log("form",this.form)
       console.log("errors: ",this.formError)
 
-			if (!this.formError.length) {
-				this.$axios
-					.$put(
-						`/api/v1/practice/permanent-jobs/${this.permanent_job.id}`,
+      if (!this.formError.length) {
+        this.$axios
+          .$put(
+            `/api/v1/practice/permanent-jobs/${this.permanent_job.id}`,
             {
               ...this.form,
               salary_amount : this.form.salary_amount ? this.form.salary_amount : 0
             }
-					)
-					.then(() => {
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: ["Successfully Edited Job"]
-						})
-						this.edit = false
-					})
-					.catch(err => {
-						this.formError = err.response.data.error_messages
-					})
-			}
+          )
+          .then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Successfully Edited Job"]
+            })
+            this.edit = false
+          })
+          .catch(err => {
+            this.formError = err.response.data.error_messages
+          })
+      }
     },
 
     async repostPermanentJob () {
@@ -802,63 +800,63 @@ export default {
       console.log("form",this.form)
       console.log("errors: ",this.formError)
 
-			if (!this.formError.length) {
-				await this.$axios
-					.post(`/api/v1/practice/permanent-jobs`, {
+      if (!this.formError.length) {
+        await this.$axios
+          .post(`/api/v1/practice/permanent-jobs`, {
             ...this.form,
             salary_amount: this.form.salary_amount ? this.form.salary_amount : 0,
           })
-					.then((res) => {
+          .then((res) => {
             console.log('res', res)
             let goToRoute = this.$route.name.includes("hub-surgery-management") 
               ? `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs`
               :`/permanent-jobs`
 
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: ["Successfully Created Permanent Job"]
-						})
-						this.$router.push(goToRoute)
-					})
-					.catch(err => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Successfully Created Permanent Job"]
+            })
+            this.$router.push(goToRoute)
+          })
+          .catch(err => {
             this.formError = err.response.data.error_messages
             console.log('eror', err)
-						this.$nextTick(() => {
-							this.$refs.modalContainer.scrollTop = 0
-						})
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "danger",
-							text: [err.response.data.message]
-						})
-					})
-			} else {
-				this.$nextTick(() => {
-					// this.$refs.modalContainer.scrollTop = 0
-				})
-			}
+            this.$nextTick(() => {
+              this.$refs.modalContainer.scrollTop = 0
+            })
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [err.response.data.message]
+            })
+          })
+      } else {
+        this.$nextTick(() => {
+          // this.$refs.modalContainer.scrollTop = 0
+        })
+      }
     },
     
-		async forceCloseJob () {
-			await this.$axios
-				.$put(
-					`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
-					{
-						hired_through: this.form.hired_through === 'Closed by Practice' ? null : this.form.hired_through 
-					}
-				)
-				.then(() => {
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: ["Successfully Closed Job"]
-					})
+    async forceCloseJob () {
+      await this.$axios
+        .$put(
+          `/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
+          {
+            hired_through: this.form.hired_through === 'Closed by Practice' ? null : this.form.hired_through 
+          }
+        )
+        .then(() => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Successfully Closed Job"]
+          })
           this.$router.go(-1)
-				})
-		},
+        })
+    },
 
-		async acceptRejectSpokePermanentJob (approveReject) {
+    async acceptRejectSpokePermanentJob (approveReject) {
       this.formError = []
       let notRequired = []
 
@@ -886,41 +884,41 @@ export default {
 			
     },
     
-		onEditorBlur (editor) {
-			console.log ("editor blur!", editor)
+    onEditorBlur (editor) {
+      console.log ("editor blur!", editor)
     },
     
-		onEditorFocus (editor) {
-			console.log ("editor focus!", editor)
+    onEditorFocus (editor) {
+      console.log ("editor focus!", editor)
     },
     
-		onEditorReady (editor) {
-			console.log ("editor ready!", editor)
+    onEditorReady (editor) {
+      console.log ("editor ready!", editor)
     },
     
-		statusStyle (jobPostingStatus) {
-			switch (jobPostingStatus) {
-				case "Available":
-					return "bg-green-500 text-white"
-				case "Closed":
-					return "bg-red-700 text-white"
-				case "Unfilled":
-					return "bg-gray-700 text-white"
-				default:
-					return "bg-yellow-400 text-black"
-			}
+    statusStyle (jobPostingStatus) {
+      switch (jobPostingStatus) {
+      case "Available":
+        return "bg-green-500 text-white"
+      case "Closed":
+        return "bg-red-700 text-white"
+      case "Unfilled":
+        return "bg-gray-700 text-white"
+      default:
+        return "bg-yellow-400 text-black"
+      }
     },
     jobClosingTag (jobClosingTag) {
       switch(jobClosingTag) {
-         case "Direct Hiring":
-          return "Hired Directly"
-        case "Through HUBZZ":
-          return "Hired Through Hubzz"
-        default:
-          return "Closed By Practice"
+      case "Direct Hiring":
+        return "Hired Directly"
+      case "Through HUBZZ":
+        return "Hired Through Hubzz"
+      default:
+        return "Closed By Practice"
       }
-    }
-	}
+    },
+  },
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-	<section ref="modalContainer" class="modal-container shadow-lg p-4">
+	<section ref="modalContainer" class="modal-container shadow-lg p-4 md:py-8">
 		<div class="px-4">
 			<svgicon
 				name="left-arrow"
@@ -10,7 +10,7 @@
 			/>
 		</div>
 		<template v-if="job_part && !dataLoading">
-			<div class="flex items-center mt-3 font-bold px-4">
+			<div class="flex items-center my-4 font-bold px-4">
 				<p class="leading-tight text-md sm:text-lg mr-2">{{ job_part.job.title }}</p>
 				<p class="py-2 px-2 rounded uppercase" :class="bgStatus(job_part.status)">{{ job_part.status }}</p>
 			</div>
@@ -94,6 +94,9 @@ export default {
 	},
 	computed: {
 		practice_rate() {
+			if (this.job_part.practice_rate) {
+				return this.job_part.practice_rate;
+			}
 			let practice_rates = this.$auth.user.practice_detail.practice
 				.practice_rates;
 			let practice_rate = practice_rates.find(

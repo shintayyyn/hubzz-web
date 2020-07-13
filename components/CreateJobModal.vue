@@ -303,38 +303,141 @@
 													:items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
 													required
 												/>
-												<div
-													v-if="bank_first === true || bank_first === 'true'"
-													class="flex flex-row flex-wrap justify-between"
-												>
+												<template v-if="bank_first === true || bank_first === 'true'">
 													<div>Only favorite locum will be notified until this date</div>
-													<div class="px-1 w-full md:w-1/2">
-														<AppDate
-															v-model="favorite_only_until.date"
-															:name="'favorite_only_until'"
-															:label="'Date'"
-															is-after
-															:error="formError.find(item => item.field === 'favorite_only_until')"
-															required
-														/>
+													<div class="flex flex-row flex-wrap justify-between items-end">
+														<div class="px-1 w-full md:w-1/2">
+															<AppDate
+																v-model="favorite_only_until.date"
+																:name="'favorite_only_until'"
+																:label="'Date'"
+																is-after
+																:error="formError.find(item => item.field === 'favorite_only_until')"
+																required
+															/>
+														</div>
+														<div class="px-1 w-full md:w-1/2">
+															<AppTime
+																v-model="favorite_only_until.time"
+																:type="'time'"
+																:name="'time_end'"
+																:label="'Time'"
+																:error="formError.find(item => item.field === 'favorite_only_until')"
+																required
+															/>
+														</div>
 													</div>
-													<div class="px-1 w-full md:w-1/2">
-														<AppTime
-															v-model="favorite_only_until.time"
-															:type="'time'"
-															:name="'time_end'"
-															:label="'Time'"
-															:error="formError.find(item => item.field === 'favorite_only_until')"
-															required
-														/>
-													</div>
-												</div>
+												</template>
 											</template>
 										</template>
 									</div>
 								</div>
 							</div>
 						</div>
+						<!-- 
+            <div class="w-full md:w-1/2 lg:pl-4 mb-4">
+              <h4 class="font-bold mt-4">Overview</h4>
+
+              <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                <AppInput v-model="form.title" :type="'text'" :name="'title'" :label="'Title'" />
+
+                <AppInput
+                  v-model="form.description"
+                  :type="'textarea'"
+                  :name="'description'"
+                  :label="'Description'"
+                  :resize="false"
+                />
+
+                <div class="flex flex-col">
+                  <h4 class="font-bold mt-4">Duration</h4>
+                  <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                    <template v-if="['false', false].includes(auto_assign_job)">
+                      <AppInput
+                        v-model="selection_notification"
+                        :type="'select'"
+                        :name="'selection_notification'"
+                        :label="'Add a selection date?'"
+                        :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                      />
+                      <template
+                        v-if="selection_notification === true || selection_notification === 'true'"
+                      >
+                        <div>Selection will be made and you will receive a notification by this date</div>
+                        <div class="flex flex-row flex-wrap justify-between items-end">
+                          <div class="px-1 w-full md:w-1/2">
+                            <AppDate
+                              v-model="selection_date.date"
+                              :name="'selection_date'"
+                              :label="'Date'"
+                              is-after
+                              :error="formError.find(item => item.field === 'selection_date')"
+                              required
+                            />
+                          </div>
+                          <div class="px-1 w-full md:w-1/2">
+                            <AppTime
+                              v-model="selection_date.time"
+                              :type="'time'"
+                              :name="'time_end'"
+                              :label="'Time'"
+                              :error="formError.find(item => item.field === 'selection_date')"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </template>
+                    </template>
+
+                    <template v-if="hasBanks">
+                      <AppInput
+                        v-model="form.favorite_only"
+                        :type="'select'"
+                        :name="'favorite_only'"
+                        :label="'Make this Job available for Bank Only?'"
+                        :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                        required
+                      />
+                      <template v-if="['false', false].includes(form.favorite_only)">
+                        <AppInput
+                          v-model="bank_first"
+                          :type="'select'"
+                          :name="'bank_first'"
+                          :label="'Make this Job available for Bank First?'"
+                          :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                          required
+                        />
+                        <template v-if="bank_first === true || bank_first === 'true'">
+                          <div>Only favorite locum will be notified until this date</div>
+                          <div class="flex flex-row flex-wrap justify-between items-end">
+                            <div class="px-1 w-full md:w-1/2">
+                              <AppDate
+                                v-model="favorite_only_until.date"
+                                :name="'favorite_only_until'"
+                                :label="'Date'"
+                                is-after
+                                :error="formError.find(item => item.field === 'favorite_only_until')"
+                                required
+                              />
+                            </div>
+                            <div class="px-1 w-full md:w-1/2">
+                              <AppTime
+                                v-model="favorite_only_until.time"
+                                :type="'time'"
+                                :name="'time_end'"
+                                :label="'Time'"
+                                :error="formError.find(item => item.field === 'favorite_only_until')"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </template>
+                      </template>
+                    </template>
+                  </div>
+                </div>
+              </div>
+						</div>-->
 
 						<div class="w-full md:w-1/2 lg:pl-4 mb-4">
 							<h4 class="font-bold mt-4">Overview</h4>
@@ -394,7 +497,6 @@
 									:name="'number_of_patients'"
 									:label="'Number of patients to be seen during the session?'"
 									:placeholder="''"
-									:in-style="'text-align:right;'"
 									:error="formError.find(item => item.field === 'number_of_patients')"
 									required
 									@blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
@@ -627,6 +729,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppTime from "@/components/Base/AppTime";
 import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import JobPartDetailModalInfoVue from "./Jobs/JobPart/JobPartDetailModalInfo.vue";
 
 const session_requirements_lists = [
 	{ label: "Practice admin", value: "Practice admin" },
@@ -698,6 +801,7 @@ export default {
 			shiftErrors: [],
 			toPublish: false,
 			schedules: [],
+			job_parts: [],
 
 			// schedule_dates: [],
 			// shift_schedule: [],
@@ -1075,6 +1179,7 @@ export default {
 	},
 
 	created() {
+		console.log(this.repostJob);
 		this.dataLoading = true;
 
 		Promise.all([
@@ -1445,7 +1550,8 @@ export default {
 			schedule,
 			total_gross_locum_wages,
 			total_working_hours,
-			hasError
+			hasError,
+			job_parts
 		) {
 			this.form.schedules = [];
 			this.schedules = schedule;
@@ -1515,6 +1621,7 @@ export default {
 			this.total_working_hours = total_working_hours;
 			this.total_gross_locum_wages = total_gross_locum_wages;
 			this.hasShiftError = hasError;
+			this.job_parts = job_parts;
 		},
 		canPublish() {
 			this.shiftErrors = [];
@@ -1627,10 +1734,15 @@ export default {
 						: false;
 
 				this.loading = true;
+
 				this.$axios
 					.$post(`/api/v1/practice/jobs/check`, {
 						...this.form,
-						old_job_id: this.repostJob ? this.repostJob.id : null
+						old_job_id:
+							this.repostJob &&
+							!["Cancelled", "Withdrawn"].includes(this.repostJob.status)
+								? this.repostJob.id
+								: null
 					})
 					.then(res => {
 						if (
@@ -1680,7 +1792,6 @@ export default {
 								if (sched_has_conflict) {
 									has_conflict = true;
 									sched_has_conflict.conflictSchedules.forEach(item => {
-										// let sched_index = this.schedules.findIndex(sched => sched.date === this.$moment(item.date, 'YYYY-MM-DD').format('DD/MM/YYYY'))
 										this.shiftErrors.push({
 											field: `conflict-${this.$moment(
 												item.date,
@@ -1689,6 +1800,26 @@ export default {
 											message:
 												"This schedule has a conflict with another schedule."
 										});
+									});
+									let conflictDates = sched_has_conflict.conflictSchedules
+										.map(item => item.date)
+										.filter(item => item);
+									let job_parts = [];
+									conflictDates.forEach(date => {
+										let job_part = this.job_parts.find(item =>
+											item.dates.includes(date)
+										);
+										if (!job_parts.includes(job_part.value)) {
+											job_parts.push(job_part.value);
+										}
+									});
+									this.$store.commit("SET_NOTIFICATION", {
+										enabled: true,
+										status: "danger",
+										text: [
+											`Conflict schedule on Job Part/s (${job_parts.join(",")})`
+										],
+										duration: 3000
 									});
 								}
 							} else {
@@ -1714,6 +1845,47 @@ export default {
 						}
 						this.loading = false;
 					});
+			}
+			if (this.shiftErrors.length) {
+				let has_empty_sched_dates = this.shiftErrors.filter(err =>
+					err.field.includes("shift-")
+				);
+				let job_parts = [];
+				if (has_empty_sched_dates.length) {
+					has_empty_sched_dates.forEach(err => {
+						let empty_date = err.field.split("-")[1];
+						let job_part = this.job_parts.find(part =>
+							part.dates.includes(
+								this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+							)
+						);
+						let exist = job_parts.find(item => item === `${job_part.value}`);
+						if (job_part && !exist) {
+							job_parts.push(`${job_part.value}`);
+						}
+					});
+					let partsLabel = "";
+					job_parts.forEach((item, index) => {
+						if (job_parts.length > 1) {
+							if (index !== job_parts.length - 1) {
+								partsLabel += `${item}, `;
+							} else if (index === job_parts.length - 1) {
+								partsLabel += `${item}`;
+							}
+							//  else {
+							// partsLabel += ` and ${item}`;
+							// }
+						} else {
+							partsLabel += item;
+						}
+					});
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "danger",
+						text: [`Empty schedule on Job Part/s (${partsLabel})`],
+						duration: 3000
+					});
+				}
 			}
 		},
 		// -- END FOR APP SCHEDULE COMPONENT
@@ -1941,13 +2113,19 @@ export default {
 				this.$axios
 					.$post(`/api/v1/practice/jobs`, {
 						...this.form,
-						old_job_id: this.repostJob ? this.repostJob.id : null
+						old_job_id:
+							this.repostJob &&
+							!["Cancelled", "Withdrawn"].includes(this.repostJob.status)
+								? this.repostJob.id
+								: null
 					})
 					.then(res => {
 						if (this.$route.name === "dashboard-create") {
 							this.$router.push("/dashboard");
 						} else if (this.$route.name !== "dashboard-create") {
 							this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+
+							console.log("res.data", res.data);
 						}
 
 						this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", res.data.job);

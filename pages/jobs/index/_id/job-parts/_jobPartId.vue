@@ -1,88 +1,118 @@
 <template>
   <div class="modal-container shadow-lg">
+    <AppLoading :loading="initialLoading" spinner />
+
     <JobDetailModalAppointment
-      v-if="!activeJobTypePlatform"
+      v-if="jobPart && jobPart.job && jobPart.job.type === 'Private'"
       :job="jobPart.job"
       @close="close"
       @appointmentUpdated="$emit('appointmentUpdated')"
     />
-    <JobPartDetailModal v-if="activeJobTypePlatform" :job_part="jobPart" @close="close" />
+
+    <JobPartDetailModal
+      v-if="jobPart && jobPart.job && jobPart.job.type === 'Platform'"
+      :job_part="jobPart"
+      :loadingJobPart="loadingJobPart"
+      @close="close"
+    />
   </div>
 </template>
 
 <script>
-import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
-import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
+import AppLoading from "@/components/Base/AppLoading"
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
 export default {
   transition: {
-    name: "slide",
-    mode: "out-in"
+    name: 'slide',
+    mode: 'out-in',
   },
 
   components: {
+    AppLoading,
     JobPartDetailModal,
-    JobDetailModalAppointment
+    JobDetailModalAppointment,
   },
 
-  data() {
+  data () {
     return {
-      jobPart: null
-    };
+      initialLoading: false,
+      loadingJobPart: false,
+    }
   },
 
   computed: {
-    activeJobTypePlatform() {
-      return this.jobPart && this.jobPart.job.type === "Platform";
-    }
+    jobPart: {
+      get () {
+        return this.$store.getters['locumJobParts/getLocumJobPart']
+      },
+
+      set (jobPart) {
+        this.$store.commit('locumJobParts/setLocumJobPart', jobPart)
+      },
+    },
+
+    jobPartId () {
+      return this.jobPart ? this.jobPart.id : null
+    },
   },
 
-  async asyncData({ app, params, error }) {
-    try {
-      const { jobPartId } = params;
+  watch: {
+    $route () {
+      this.loadingJobPart = true
+      this.getLocumJobPart().finally(() => {
+        this.loadingJobPart = false
+      })
+    },
+  },
 
-      let response = await app.$axios.get(
-        `/api/v1/locum/job-parts/${jobPartId}`
-      );
-
-      let jobPart = response.data.data.job_part;
-
-      return {
-        jobPart
-      };
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        return error({
-          status: 404,
-          message: "This job could not be found."
-        });
-      }
-
-      throw err;
-    }
+  mounted () {
+    this.jobPart = null
+    this.initialLoading = true
+    this.getLocumJobPart().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   methods: {
-    close() {
-      const { query } = this.$route;
+    getLocumJobPart () {
+      return this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.jobPartId}`).then((response) => {
+        this.jobPart = response.data.data.job_part
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        if (err.response && err.response.status === 404) {
+          this.$nuxt.error({
+            status: 404,
+            message: "This job could not be found.",
+          })
+        } else {
+          this.$nuxt.error(err)
+        }
+      })
+    },
+
+    close () {
+      const { query, } = this.$route
 
       this.$router.push({
         name: "jobs-index",
-        query
-      });
-    }
-  }
-};
+        query,
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>
-.modal-container {
-  z-index: 510;
-}
-
-@media screen and (min-width: 1200px) {
   .modal-container {
-    width: 90%;
+    z-index: 510;
   }
-}
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 90%;
+    }
+  }
 </style>

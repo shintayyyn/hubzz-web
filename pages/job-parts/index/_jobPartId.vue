@@ -2,12 +2,11 @@
   <div ref="modalContainer" class="modal-container shadow-lg">
     <AppLoading :loading="initialLoading" spinner />
 
-    <SessionDetailModal
-      v-if="job"
-      :job="job"
+    <SessionPartDetailModal
+      v-if="jobPart"
+      :job-part="jobPart"
+      :loadingJobPart="loadingJobPart"
       @close="close"
-      @appointed="$emit('appointed', $event)"
-      @cancelled="$emit('cancelled', $event)"
       @scrollToTop="scrollToTop()"
     />
   </div>
@@ -15,32 +14,47 @@
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
 
 export default {
   transition: {
-    name: "slide",
-    mode: "out-in",
+    name: 'slide',
+    mode: 'out-in',
   },
 
   components: {
     AppLoading,
-    SessionDetailModal,
+    SessionPartDetailModal,
   },
 
   data () {
     return {
       initialLoading: false,
-      loadingJob: false,
-      job: null,
+      loadingJobPart: false,
     }
+  },
+
+  computed: {
+    jobPart: {
+      get () {
+        return this.$store.getters['jobParts/getJobPart']
+      },
+
+      set (jobPart) {
+        this.$store.commit('jobParts/setJobPart', jobPart)
+      },
+    },
+
+    jobPartId () {
+      return this.jobPart ? this.jobPart.id : null
+    },
   },
 
   watch: {
     $route () {
-      this.loadingJob = true
-      this.getJob().finally(() => {
-        this.loadingJob = false
+      this.loadingJobPart = true
+      this.getJobPart().finally(() => {
+        this.loadingJobPart = false
       })
     },
   },
@@ -48,15 +62,15 @@ export default {
   mounted () {
     this.jobPart = null
     this.initialLoading = true
-    this.getJob().finally(() => {
+    this.getJobPart().finally(() => {
       this.initialLoading = false
     })
   },
 
   methods: {
-    getJob () {
-      return this.$axios.get(`/api/v1/practice/jobs/${this.$route.params.id}`).then((response) => {
-        this.job = response.data.data.job
+    getJobPart () {
+      return this.$axios.get(`/api/v1/practice/job-parts/${this.$route.params.jobPartId}`).then((response) => {
+        this.jobPart = response.data.data.job_part
       }).catch((err) => {
         console.log('err', err.response || err)
 
@@ -72,11 +86,11 @@ export default {
     },
 
     close () {
+      const { query, } = this.$route
+
       this.$router.push({
-        name: "sessions-index",
-        query: {
-          ...this.$route.query,
-        },
+        name: "job-parts-index",
+        query,
       })
     },
 
@@ -93,6 +107,7 @@ export default {
   .modal-container {
     z-index: 510;
   }
+  
   @media screen and (min-width: 1200px) {
     .modal-container {
       width: 90%;

@@ -139,6 +139,16 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
+              <AppInput
+                v-model="form.ea_code"
+                :type="'text'"
+                :name="'ea_code'"
+                :label="'PCSE Code'"
+                :error="formError.find(item => item.field === 'ea_code')"
+                required
+                @submit="save"
+                @blur="CheckEmptyField(form.ea_code, 'ea_code')"
+              />
               <template v-if="isOOH">
                 <AppInput
                   v-model="form.national_insurance_number"
@@ -174,21 +184,11 @@
                   @keypress="inputNumberOnly($event)"
                 />
                 <AppInput
-                  v-model="form.ea_code"
-                  :type="'text'"
-                  :name="'ea_code'"
-                  :label="'EA Code'"
-                  :error="formError.find(item => item.field === 'ea_code')"
-                  required
-                  @submit="save"
-                  @blur="CheckEmptyField(form.ea_code, 'ea_code')"
-                />
-                <AppInput
                   v-model="form.section_scheme_year"
                   :type="'select'"
                   :name="'section_scheme_year'"
                   :label="'NHS Pension Scheme Year?'"
-                  :items="[{ label: '1995/2008', value: '1995/2008' }, { label: '2015', value: '2015' }]"
+                  :items="schemeYearLists"
                   required
                 />
                 <AppInput
@@ -598,6 +598,23 @@ export default {
           }
         );
       }
+    },
+    schemeYearLists() {
+      let defaultDate = 2020;
+      let currentDate = this.$moment().year();
+      let lists = [];
+      while (currentDate >= defaultDate) {
+        lists.push({
+          label: `${currentDate}-${this.$moment(currentDate, "YYYY")
+            .add(1, "years")
+            .year()}`,
+          value: `${currentDate}-${this.$moment(currentDate, "YYYY")
+            .add(1, "years")
+            .year()}`
+        });
+        currentDate = currentDate - 1;
+      }
+      return lists;
     }
   },
   watch: {
@@ -949,7 +966,8 @@ export default {
         "extra_information",
         "vat_registered",
         "practice_profession_compliance_category_compliance_documents",
-        "other_mandatory_training_id"
+        "other_mandatory_training_id",
+        "ea_code"
       ];
 
       if (!this.form.practice_type_id.includes(8)) {
@@ -957,7 +975,6 @@ export default {
           "national_insurance_number",
           "sd_number",
           "paying_reference",
-          "ea_code",
           "professional_nhs_expenses",
           "section_scheme_year",
           "added_year_contributions",

@@ -24,6 +24,13 @@
       :loading="loading"
     />
 
+    <AppButton
+      v-if="!loading && practiceInvoiceFinanceReports.length > 0"
+      :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'"
+      :inStyle="'padding: 5px 14px;'"
+      @click="exportPracticeInvoiceFinanceReportsAsPdf"
+    />
+
     <transition name="fade" mode="out-in">
       <div
         v-if="practiceInvoiceFinanceReports.length === 0 && !loading"
@@ -37,6 +44,7 @@
 
 <script>
   import AppInput from "@/components/Base/AppInput"
+  import AppButton from "@/components/Base/AppButton"
   import AppLoading from "@/components/Base/AppLoading"
   import AppFormError from "@/components/Base/AppFormError"
   import AppTable from "@/components/Base/AppTable"
@@ -49,6 +57,7 @@
 
     components: {
       AppInput,
+      AppButton,
       AppLoading,
       AppFormError,
       AppTable,
@@ -61,6 +70,7 @@
         selectedYearMonth: null,
         count: 0,
         practiceInvoiceFinanceReports: [],
+        exporting: false,
       }
     },
 
@@ -73,11 +83,11 @@
 					},
 					{
 						name: 'Total Hours',
-						dataIndex: 'total_final_hours',
+						dataIndex: 'total_final_hours_formatted',
 					},
 					{
-						name: 'Total Amount',
-						dataIndex: 'total_amount',
+						name: '£ Total Amount',
+						dataIndex: 'total_amount_formatted',
 					},
         ]
       },
@@ -92,9 +102,9 @@
     mounted () {
       const minYearMonth = '2019-01'
 
-      this.selectedYearMonth = this.$moment.utc().startOf('month').subtract(1, 'months').format('YYYY-MM')
+      const selectedYearMonth = this.$moment.utc().startOf('month').subtract(1, 'months').format('YYYY-MM')
 
-      let tempYearMonth = this.selectedYearMonth
+      let tempYearMonth = selectedYearMonth
 
       let yearMonthsValues = []
 
@@ -108,7 +118,7 @@
         label: this.$moment(yearMonthsValue, 'YYYY-MM').format('YYYY MMMM'),
       }))
 
-      this.getPracticeInvoiceFinanceReports()
+      this.selectedYearMonth = selectedYearMonth
     },
 
     methods: {
@@ -128,26 +138,52 @@
         this.loading = true
 
         Promise.all([
-          this.$axios.get(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}/count`).then((responses) => {
-            return responses.data.data.count
-          }),
+          // this.$axios.get(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}/count`).then((responses) => {
+          //   return responses.data.data.count
+          // }),
           this.$axios.get(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}`).then((responses) => {
             return responses.data.data.practice_invoice_finance_reports
           }),
           new Promise((resolve) => setTimeout(resolve, 500))
         ]).then((results) => {
           const [
-            count,
+            // count,
             practiceInvoiceFinanceReports,
           ] = results
 
-          this.count = count
+          // this.count = count
           this.practiceInvoiceFinanceReports = practiceInvoiceFinanceReports
         }).catch((err) => {
           console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
           this.$nuxt.error(err.response ? err.response.data : err)
         }).finally(() => {
           this.loading = false
+        })
+      },
+
+      exportPracticeInvoiceFinanceReportsAsPdf () {
+        if (!this.selectedYearMonth) {
+          return
+        }
+
+        const [
+          year,
+          month,
+        ] = this.selectedYearMonth.split('-')
+
+        this.exporting = true
+
+        const filename = `practice_invoice_finance_reports_${year}_${month}.pdf`
+
+        this.$axios.post(`/api/v1/practice/practice-invoice-finance-reports/${year}/${month}/generate-key`).then((responses) => {
+          const token = responses.data.data.token
+
+          window.open(`${process.env.API_URL}/api/v1/practice-invoice-finance-reports/pdf/${filename}?token=${token}`)
+        }).catch((err) => {
+          console.log('err', err)
+          this.$nuxt.error(err.response ? err.response.data : err)
+        }).finally(() => {
+          this.exporting = false
         })
       },
     },
