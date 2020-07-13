@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div ref="modalContainer" class="modal-container shadow-lg">
     <AppLoading :loading="initialLoading" spinner />
 
     <SessionPartDetailModal
@@ -7,6 +7,7 @@
       :job-part="jobPart"
       :loadingJobPart="loadingJobPart"
       @close="close"
+      @scrollToTop="scrollToTop()"
     />
   </div>
 </template>
@@ -90,6 +91,12 @@ export default {
       this.$router.push({
         name: "job-parts-index",
         query,
+      })
+    },
+
+    scrollToTop () {
+      this.$nextTick(() => {
+        this.$refs.modalContainer.scrollTop = 0
       })
     },
   },

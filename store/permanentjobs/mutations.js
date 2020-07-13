@@ -21,9 +21,9 @@ export default {
   ADD_LOCUM_PERMANENT_JOB_NOTIFICATION (state, payload) {
     let index = state.locum_permanent_job_notifications.findIndex(permJobNotif => permJobNotif.id === payload.permanent_job.id)
     if (index < 0) {
-        state.locum_permanent_job_notifications.unshift(payload)
+      state.locum_permanent_job_notifications.unshift(payload)
     } else if (index >= 0) {
-        state.locum_permanent_job_notifications.splice(index, 1, payload)
+      state.locum_permanent_job_notifications.splice(index, 1, payload)
     }
   },
 
