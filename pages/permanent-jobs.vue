@@ -4,8 +4,8 @@
       <div class="my-1 flex overflow-x-auto items-center">
         <nuxt-link
           v-if="$auth.user.domain === 'Practice' 
-          && $auth.user.practice_detail.practice.type === 'Spoke' 
-          && $auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false"
+            && $auth.user.practice_detail.practice.type === 'Spoke' 
+            && $auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false"
           to="/permanent-jobs?status=Pending"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
@@ -68,15 +68,15 @@
 <script>
 import AppButton from "@/components/Base/AppButton"
 export default {
-	components: {
-		AppButton
-	},
-	data () {
-		return {
+  components: {
+    AppButton,
+  },
+  data () {
+    return {
       spokeIsNotAllowed: false,
     }
-	},
-	created () {
+  },
+  created () {
     if(this.$auth.user.domain === 'Practice') {
       if(this.$auth.user.practice_detail.practice.type == 'Spoke' &&
         this.$auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false) {
