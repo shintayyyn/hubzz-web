@@ -1159,7 +1159,7 @@ export default {
                 status: ["Applied", "Unfilled", "Live",],
                 calendar_date_start: `${this.startOfMonth}:gte`,
                 calendar_date_end: `${this.endOfMonth}:lte`,
-                resposted: false,
+                reposted: false,
                 limit: 100000000,
               },
             })
