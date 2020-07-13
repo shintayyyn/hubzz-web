@@ -166,8 +166,7 @@ export default {
   },
 
   async created () {
-    this.notAllowed
-      = this.$auth.user.domain === "Practice"
+    this.notAllowed = this.$auth.user.domain === "Practice"
       && this.$auth.user.practice_detail.practice.type === "Spoke"
       && this.$auth.user.practice_detail.practice.parent_practice_id
       && !this.$auth.user.practice_detail.practice.allow_surgery_create_sessions
