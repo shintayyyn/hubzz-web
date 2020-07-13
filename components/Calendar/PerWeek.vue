@@ -724,21 +724,23 @@
     <AppLoading :loading="$store.state.calendar.loading" />
   </section>
 </template>
+
 <script>
 import AppLoading from "@/components/Base/AppLoading"
 import AppButton from "@/components/Base/AppButton"
 export default {
   components: {
     AppLoading,
-    AppButton
+    AppButton,
   },
   data () {
     return {
       showRefresh: false,
       firstDayOfTheWeek: null,
-      lastDayOfTheWeek: null
+      lastDayOfTheWeek: null,
     }
   },
+
   computed: {
     // PRACTICE
     // PARTS
@@ -821,18 +823,20 @@ export default {
             .format("YYYY-MM-DD"),
           day: this.$moment(this.firstDayOfTheWeek)
             .add(i, "days")
-            .weekday()
+            .weekday(),
         })
       }
       return weekLists
     },
     selectedYear () {
       return this.$moment(this.firstDayOfTheWeek).format("YYYY")
-    }
+    },
   },
+
   beforeDestroy () {
     this.$store.commit("jobs/CLEAR_JOBS")
   },
+
   created () {
     let selectedDate = this.$store.state.calendar.selected_date
 
@@ -846,6 +850,7 @@ export default {
 
     this.getJobs()
   },
+
   mounted () {
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
@@ -944,6 +949,7 @@ export default {
       )
     }
   },
+  
   destroyed () {
     this.removeListener()
   },
@@ -952,7 +958,7 @@ export default {
     selectDateShift (date, shift) {
       this.$store.commit("calendar/SELECT_DATE_SHIFT", {
         date: date,
-        shift: shift
+        shift: shift,
       })
     },
     adjustWeek (type) {
@@ -971,7 +977,7 @@ export default {
           )
             .add(7, "days")
             .format("YYYY-MM-DD"),
-          shift: "AM"
+          shift: "AM",
         })
       }
       if (type === "previous") {
@@ -989,7 +995,7 @@ export default {
           )
             .subtract(7, "days")
             .format("YYYY-MM-DD"),
-          shift: "AM"
+          shift: "AM",
         })
       }
 
@@ -1005,12 +1011,12 @@ export default {
     getJobs () {
       if (this.$auth.user.domain === "Practice") {
         this.$store.commit("calendar/TOGGLE_LOADING", true)
-              // status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
-              // status: ["Ongoing", "Completed"],
+        // status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
+        // status: ["Ongoing", "Completed"],
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Unfilled", "Withdrawn", "Applied"],
+              status: ["Unfilled", "Withdrawn", "Applied",],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1018,12 +1024,14 @@ export default {
                 .subtract(1, "days")
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000
-            }
+              reposted: false,
+              limit: 100000000,
+            },
           }),
+
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
-              status: ["Ongoing", "Allocated"],
+              status: ["Ongoing", "Allocated",],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1031,21 +1039,22 @@ export default {
                 .subtract(1, "days")
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000
-            }
+              limit: 100000000,
+            },
           }),
-          this.$axios.$get("/api/v1/practice/jobs", {
-            params: {
-              status: ["Applied"],
-              platform_selection_date: [
-                `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
-                  .subtract(1, "days")
-                  .format("YYYY-MM-DD")}:gte`,
-                `${this.lastDayOfTheWeek}:lte`
-              ],
-              limit: 100000000
-            }
-          })
+
+          // this.$axios.$get("/api/v1/practice/jobs", {
+          //   params: {
+          //     status: ["Applied",],
+          //     platform_selection_date: [
+          //       `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
+          //         .subtract(1, "days")
+          //         .format("YYYY-MM-DD")}:gte`,
+          //       `${this.lastDayOfTheWeek}:lte`,
+          //     ],
+          //     limit: 100000000,
+          //   },
+          // }),
         ])
           .then(
             ([
@@ -1126,20 +1135,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Applied"],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000
-            }
-          }),
-          this.$axios.$get("/api/v1/locum/job-parts", {
-            params: {
-              locum_status: ["Ongoing", "Allocated"],
+              locum_status: ["Applied",],
               calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
@@ -1148,21 +1144,34 @@ export default {
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000,
-            }
+            },
           }),
-          this.$axios
-            .$get("/api/v1/locum/permanent-job-applications", {
-              params: {
-                application_status: 'For Interview',
-                calendar_date_start: `${this.$moment(
+          this.$axios.$get("/api/v1/locum/job-parts", {
+            params: {
+              locum_status: ["Ongoing", "Allocated",],
+              calendar_date_start: `${this.$moment(
                 this.firstDayOfTheWeek,
                 "YYYY-MM-DD"
               )
                 .subtract(1, "days")
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-                limit: 100000000
-              }
+              limit: 100000000,
+            },
+          }),
+          this.$axios
+            .$get("/api/v1/locum/permanent-job-applications", {
+              params: {
+                application_status: 'For Interview',
+                calendar_date_start: `${this.$moment(
+                  this.firstDayOfTheWeek,
+                  "YYYY-MM-DD"
+                )
+                  .subtract(1, "days")
+                  .format("YYYY-MM-DD")}:gte`,
+                calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+                limit: 100000000,
+              },
             })
             .then(res => {
               if (this.$auth.user.view_permanent_jobs) {
@@ -1170,7 +1179,7 @@ export default {
               }else {
                 return []
               }
-            })
+            }),
           // this.$axios.$get("/api/v1/locum/jobs", {
           //   params: {
           //     type: ["Private"],
@@ -1198,7 +1207,7 @@ export default {
             ([
               responseAllocatedAndAppliedAndAvailable,
               responseOngoingAndCompleted,
-              responsePermanentJobs
+              responsePermanentJobs,
               // responsePrivate,
               // responseUnavailabilities
             ]) => {
@@ -1409,37 +1418,37 @@ export default {
     // PARTS
     hasPracticeOngoingJobs (date, type) {
       if (
-        this.getPracticeOngoingJobs &&
-        this.getPracticeOngoingJobs.length > 0
+        this.getPracticeOngoingJobs
+        && this.getPracticeOngoingJobs.length > 0
       ) {
         return this.getPracticeOngoingJobs.find(
           job_part =>
-            job_part.dates.includes(date) &&
-            job_part.job.shift.name === type 
+            job_part.dates.includes(date)
+            && job_part.job.shift.name === type 
         )
       }
     },
     hasPracticeCompletedJobs (date, type) {
       if (
-        this.getPracticeCompletedJobs &&
-        this.getPracticeCompletedJobs.length > 0
+        this.getPracticeCompletedJobs
+        && this.getPracticeCompletedJobs.length > 0
       ) {
         return this.getPracticeCompletedJobs.find(
           job_part =>
-            job_part.dates.includes(date) &&
-            job_part.job.shift.name === type 
+            job_part.dates.includes(date)
+            && job_part.job.shift.name === type 
         )
       }
     },
     hasPracticeAllocatedJobs (date, type) {
       if (
-        this.getPracticeAllocatedPartJobs &&
-        this.getPracticeAllocatedPartJobs.length > 0
+        this.getPracticeAllocatedPartJobs
+        && this.getPracticeAllocatedPartJobs.length > 0
       ) {
         return this.getPracticeAllocatedPartJobs.find(
           job_part =>
-            job_part.dates.includes(date) &&
-            job_part.job.shift.name === type
+            job_part.dates.includes(date)
+            && job_part.job.shift.name === type
         )
       }
     },
@@ -1462,57 +1471,57 @@ export default {
     // },
     hasPracticeAppliedJobs (date, type) {
       if (
-        this.getPracticeAppliedJobs &&
-        this.getPracticeAppliedJobs.length > 0
+        this.getPracticeAppliedJobs
+        && this.getPracticeAppliedJobs.length > 0
       ) {
         return this.getPracticeAppliedJobs.find(
           job =>
-            job.dates.includes(date) &&
-            job.shift.name === type
+            job.dates.includes(date)
+            && job.shift.name === type
         )
       }
     },
     hasPracticeUnfilledJobs (date, type) {
       if (
-        this.getPracticeUnfilledJobs &&
-        this.getPracticeUnfilledJobs.length > 0
+        this.getPracticeUnfilledJobs
+        && this.getPracticeUnfilledJobs.length > 0
       ) {
         return this.getPracticeUnfilledJobs.find(
           job =>
-            job.dates.includes(date) &&
-            job.shift.name === type
+            job.dates.includes(date)
+            && job.shift.name === type
         )
       }
     },
     hasPracticeDeclinedJobs (date, type) {
       if (
-        this.getPracticeDeclinedJobs &&
-        this.getPracticeDeclinedJobs.length > 0
+        this.getPracticeDeclinedJobs
+        && this.getPracticeDeclinedJobs.length > 0
       ) {
         return this.getPracticeDeclinedJobs.find(
           job =>
-            job.dates.includes(date) &&
-            job.shift.name === type
+            job.dates.includes(date)
+            && job.shift.name === type
         )
       }
     },
     hasPracticeAvailableJobs (date, type) {
       if (
-        this.getPracticeAvailableJobs &&
-        this.getPracticeAvailableJobs.length > 0
+        this.getPracticeAvailableJobs
+        && this.getPracticeAvailableJobs.length > 0
       ) {
         return this.getPracticeAvailableJobs.find(
           job =>
-            job.dates[0] === date &&
-            job.shift.name === type
+            job.dates[0] === date
+            && job.shift.name === type
         )
       }
     },
     // REMINDERS
     hasPracticeAppliedJobsReminder (date, type) {
       if (
-        this.getPracticeAppliedJobsReminder &&
-        this.getPracticeAppliedJobsReminder.length > 0
+        this.getPracticeAppliedJobsReminder
+        && this.getPracticeAppliedJobsReminder.length > 0
       ) {
         return this.getPracticeAppliedJobsReminder.find(
           job => job.platform_job.selection_date === date && type === "Reminder"
@@ -1521,8 +1530,8 @@ export default {
     },
     hasPracticeAvailableJobsReminder (date, type) {
       if (
-        this.getPracticeAvailableJobsReminder &&
-        this.getPracticeAvailableJobsReminder.length > 0
+        this.getPracticeAvailableJobsReminder
+        && this.getPracticeAvailableJobsReminder.length > 0
       ) {
         return this.getPracticeAvailableJobsReminder.find(
           job => job.platform_job.selection_date === date && type === "Reminder"
@@ -1560,8 +1569,8 @@ export default {
       if (this.getLocumAllocatedPartJobs && this.getLocumAllocatedPartJobs.length > 0) {
         return this.getLocumAllocatedPartJobs.find(
           job_part =>
-            job_part.dates.includes(date) &&
-            job_part.job.shift.name === type
+            job_part.dates.includes(date)
+            && job_part.job.shift.name === type
         )
       }
     },
@@ -1611,26 +1620,26 @@ export default {
     hasLocumPrivateOngoingJobs (date, type) {
       return this.getLocumPrivateJobParts.find(
         job_part =>
-          job_part.locum_status === 'Ongoing' && 
-          job_part.dates.includes(
-              date
-            ) &&
-            job_part.job.shift.name === type
-        )
+          job_part.locum_status === 'Ongoing' 
+          && job_part.dates.includes(
+            date
+          )
+            && job_part.job.shift.name === type
+      )
     },
     hasLocumPrivateAllocatedJobs (date, type) {
       return this.getLocumPrivateJobParts.find(
         job_part =>
-          job_part.locum_status === 'Allocated' && 
-          job_part.dates.includes(
-              date
-            ) &&
-            job_part.job.shift.name === type 
-        )
+          job_part.locum_status === 'Allocated' 
+          && job_part.dates.includes(
+            date
+          )
+            && job_part.job.shift.name === type 
+      )
     },
     hasLocumPermanentJobs (date) {
       return this.getLocumPermanentJobs.find(job => this.$moment(job.invitation_schedule).format('YYYY-MM-DD') === date)
-    }
+    },
     // UNAVAILABILITIES
     // hasLocumUnavailabilities (date, type) {
     //   if (
@@ -1643,7 +1652,7 @@ export default {
     //     )
     //   }
     // }
-  }
+  },
 }
 </script>
 
