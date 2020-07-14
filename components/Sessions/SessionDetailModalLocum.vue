@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-col w-full">
-    <div class="text-xs sm:text-sm font-bold">Locum</div>
+    <div class="text-xs sm:text-sm font-bold">
+      Locum
+    </div>
     <div v-if="!user && loading" class="relative flex w-full" style="min-height:80px">
       <AppLoading :loading="loading" spinner />
     </div>
@@ -15,8 +17,12 @@
               :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
             />
             <div class="flex flex-col w-full">
-              <div class="font-bold text-sm lg:text-lg">{{ user.personal_detail.name }}</div>
-              <div class="text-xs lg:text-sm">{{ user.locum_detail.profession.name }}</div>
+              <div class="font-bold text-sm lg:text-lg">
+                {{ user.personal_detail.name }}
+              </div>
+              <div class="text-xs lg:text-sm">
+                {{ user.locum_detail.profession.name }}
+              </div>
             </div>
           </div>
           <div class="flex justify-start items-start z-50">
@@ -57,62 +63,104 @@
           <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
         </div>
         <div class="body-info my-4">
-          <div class="font-bold text-sm sm:text-md">Headline</div>
+          <div class="font-bold text-sm sm:text-md">
+            Headline
+          </div>
           <div
             class="text-xs sm:text-sm mb-8"
-          >{{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}</div>
-          <div class="font-bold text-sm sm:text-md">Biography</div>
+          >
+            {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
+          </div>
+          <div class="font-bold text-sm sm:text-md">
+            Biography
+          </div>
           <div
             class="text-xs sm:text-sm mb-8"
-          >{{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}</div>
-          <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
+          >
+            {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
+          </div>
+
           <div
-            class="text-xs sm:text-sm mb-8"
-          >{{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}</div>
-          <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>
-          <div class="font-bold text-sm sm:text-md">NHS Smart Card ID Number</div>
-          <div class="text-xs sm:text-sm mb-8">{{ user.locum_detail.nhs_smart_card_id_number }}</div>
-          <div class="font-bold text-sm sm:text-md">Special requirements</div>
-          <div class="text-xs sm:text-sm mb-8">{{ user.locum_detail.special_requirements }}</div>
-          <div class="font-bold text-sm sm:text-md">Preferred rates</div>
+            v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
+            :key="referenceLocumComplianceDocument.compliance_document_id"
+          >
+            <div class="font-bold text-sm sm:text-md">
+              {{ referenceLocumComplianceDocument.compliance_document_name }}
+            </div>
+
+            <div class="text-xs sm:text-sm mb-8">
+              {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+            </div>
+          </div>
+
+          <div class="font-bold text-sm sm:text-md">
+            NHS Smart Card ID Number
+          </div>
+          <div class="text-xs sm:text-sm mb-8">
+            {{ user.locum_detail.nhs_smart_card_id_number }}
+          </div>
+          <div class="font-bold text-sm sm:text-md">
+            Special requirements
+          </div>
+          <div class="text-xs sm:text-sm mb-8">
+            {{ user.locum_detail.special_requirements }}
+          </div>
+          <div class="font-bold text-sm sm:text-md">
+            Preferred rates
+          </div>
           <div class="flex flex-col mb-8">
             <div
               v-for="item in user.locum_detail.rates"
               :key="item.id"
               class="flex flex-row flex-no-wrap mt-2"
             >
-              <div class="text-xs sm:text-sm">{{ item.rate_type.name }}: £ {{ item.min }}</div>
+              <div class="text-xs sm:text-sm">
+                {{ item.rate_type.name }}: £ {{ item.min }}
+              </div>
             </div>
           </div>
-          <div class="font-bold text-sm sm:text-md">Specialty</div>
+          <div class="font-bold text-sm sm:text-md">
+            Specialty
+          </div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
               v-for="item in user.locum_detail.qualifications"
               :key="item.id"
               class="rounded-lg bg-yellow-500 p-2 m-1"
-            >{{ item.name }}</div>
+            >
+              {{ item.name }}
+            </div>
           </div>
-          <div class="font-bold text-sm sm:text-md">Clinical systems</div>
+          <div class="font-bold text-sm sm:text-md">
+            Clinical systems
+          </div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
               v-for="item in user.locum_detail.clinical_systems"
               :key="item.id"
               class="rounded-lg bg-yellow-500 p-2 m-1"
-            >{{ item.name }}</div>
+            >
+              {{ item.name }}
+            </div>
           </div>
-          <div class="font-bold text-sm sm:text-md">Languages</div>
+          <div class="font-bold text-sm sm:text-md">
+            Languages
+          </div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
+            <div class="rounded-lg bg-yellow-500 p-2 m-1">
+              English
+            </div>
             <div
               v-for="item in user.locum_detail.spoken_languages"
               :key="item.id"
               class="rounded-lg bg-yellow-500 p-2 m-1"
-            >{{ item.name }}</div>
+            >
+              {{ item.name }}
+            </div>
           </div>
-          <div class="font-bold text-sm sm:text-md">Compliance documents</div>
+          <div class="font-bold text-sm sm:text-md">
+            Compliance documents
+          </div>
           <div class="flex flex-col mb-8">
             <div
               v-for="item in mandatory"
@@ -134,7 +182,9 @@
             </template>
           </div>
 
-          <div class="font-bold text-sm sm:text-md">Other documents</div>
+          <div class="font-bold text-sm sm:text-md">
+            Other documents
+          </div>
           <div class="flex flex-col mb-8">
             <div
               v-for="item in optional"
@@ -156,14 +206,16 @@
             </template>
           </div>
 
-          <div class="font-bold text-sm sm:text-md">Mandatory Trainings</div>
+          <div class="font-bold text-sm sm:text-md">
+            Mandatory Trainings
+          </div>
           <div class="flex flex-col mb-8">
             <div
               v-for="item in mandatoryTrainings"
               :key="item.id"
               class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
             >
-              <div class="flex flex-row flex-no-wrap" v-if="item.file">
+              <div v-if="item.file" class="flex flex-row flex-no-wrap">
                 <div class="w-5 h-5">
                   <svgicon name="cloud-download" height="24" width="24" />
                 </div>
@@ -180,7 +232,9 @@
             </template>
           </div>
 
-          <div class="font-bold text-sm sm:text-md">Other Mandatory Trainings</div>
+          <div class="font-bold text-sm sm:text-md">
+            Other Mandatory Trainings
+          </div>
           <div class="flex flex-col mb-8">
             <div
               v-for="item in otherMandatoryTrainings"
@@ -188,8 +242,8 @@
               class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
             >
               <div
-                class="flex flex-row flex-no-wrap"
                 v-if="item.locum_other_mandatory_trainings.file"
+                class="flex flex-row flex-no-wrap"
               >
                 <div class="w-5 h-5">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -207,21 +261,31 @@
             </template>
           </div>
 
-          <div class="font-bold text-sm sm:text-md">Referees</div>
+          <div class="font-bold text-sm sm:text-md">
+            Referees
+          </div>
           <div v-if="user.locum_detail.referees.length > 0">
             <div
               v-for="item in user.locum_detail.referees"
               :key="item.id"
               :class="item && item.name ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
             >
-              <div class="text-xs sm:text-sm">{{ item ? item.name:null }}</div>
-              <div class="text-xs sm:text-sm">{{ item ? item.phone_number:null }}</div>
-              <div class="text-xs sm:text-sm">{{ item ? item.email:null }}</div>
+              <div class="text-xs sm:text-sm">
+                {{ item ? item.name:null }}
+              </div>
+              <div class="text-xs sm:text-sm">
+                {{ item ? item.phone_number:null }}
+              </div>
+              <div class="text-xs sm:text-sm">
+                {{ item ? item.email:null }}
+              </div>
             </div>
             <div
               v-if="!user.locum_detail.referees.map(item => item.name !== null).includes(true)"
               class="text-xs md:text-sm"
-            >(none)</div>
+            >
+              (none)
+            </div>
           </div>
         </div>
       </div>
@@ -237,24 +301,24 @@
   </div>
 </template>
 <script>
-import AppAvatar from "~/components/Base/AppAvatar";
-import AppLoading from "~/components/Base/AppLoading";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import SendMessageModal from "@/components/Messages/SendMessageModal";
+import AppAvatar from "~/components/Base/AppAvatar"
+import AppLoading from "~/components/Base/AppLoading"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import SendMessageModal from "@/components/Messages/SendMessageModal"
 export default {
   components: {
     AppAvatar,
     AppLoading,
     AppConfirmationModal,
-    SendMessageModal
+    SendMessageModal,
   },
   props: {
     job: {
       type: Object,
-      default: () => null
-    }
+      default: () => null,
+    },
   },
-  data() {
+  data () {
     return {
       loading: false,
       user: null,
@@ -264,61 +328,61 @@ export default {
       otherMandatoryTrainings: [],
       confirmation_text: "",
       confirmation_modal: false,
-      sendMessageModal: false
-    };
+      sendMessageModal: false,
+    }
   },
-  created() {
-    this.getAppointedLocum();
+  created () {
+    this.getAppointedLocum()
   },
   methods: {
-    message(id) {
+    message (id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        this.user = res.data.user;
-        this.sendMessageModal = true;
+        this.user = res.data.user
+        this.sendMessageModal = true
         // this.$emit("show", user);
-      });
+      })
     },
-    getAppointedLocum() {
-      this.loading = true;
+    getAppointedLocum () {
+      this.loading = true
       this.$axios
         .$get(
           `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
         )
         .then(res => {
-          this.user = res.data.user;
-          this.mandatoryTrainings = [];
+          this.user = res.data.user
+          this.mandatoryTrainings = []
           res.data.user.locum_detail.mandatory_trainings.forEach(
             mandatoryTraining => {
               if (mandatoryTraining.file !== null) {
-                this.mandatoryTrainings.push(mandatoryTraining);
+                this.mandatoryTrainings.push(mandatoryTraining)
               }
             }
-          );
-          this.otherMandatoryTrainings = [];
+          )
+          this.otherMandatoryTrainings = []
           this.user.locum_detail.other_mandatory_trainings.forEach(
             otherMandatoryTraining => {
               if (
-                otherMandatoryTraining.locum_other_mandatory_trainings &&
-                otherMandatoryTraining.locum_other_mandatory_trainings.file !==
-                  null
+                otherMandatoryTraining.locum_other_mandatory_trainings
+                && otherMandatoryTraining.locum_other_mandatory_trainings.file
+                  !== null
               ) {
-                this.otherMandatoryTrainings.push(otherMandatoryTraining);
+                this.otherMandatoryTrainings.push(otherMandatoryTraining)
               }
             }
-          );
+          )
           this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
             res.data.user.locum_detail.profession
               .profession_compliance_category_id
-          );
+          )
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
         })
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
-    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
       locumProfessionProfessionComplianceCategoryId
     ) {
       this.$axios
@@ -330,31 +394,31 @@ export default {
             compliance_document => {
               return res.data.profession_compliance_category.mandatory_compliance_documents.some(
                 mandatory_compliance_document =>
-                  mandatory_compliance_document.id ===
-                  compliance_document.compliance_document.id
-              );
+                  mandatory_compliance_document.id
+                  === compliance_document.compliance_document.id
+              )
             }
-          );
+          )
           this.optional = this.user.locum_detail.compliance_documents.filter(
             compliance_document => {
               return res.data.profession_compliance_category.optional_compliance_documents.some(
                 optional_compliance_document =>
-                  optional_compliance_document.id ===
-                  compliance_document.compliance_document.id
-              );
+                  optional_compliance_document.id
+                  === compliance_document.compliance_document.id
+              )
             }
-          );
-        });
+          )
+        })
     },
-    favorite() {
-      this.confirmation_text = "Add this Locum to MyBanks?";
-      this.confirmation_modal = true;
+    favorite () {
+      this.confirmation_text = "Add this Locum to MyBanks?"
+      this.confirmation_modal = true
     },
-    unfavorite() {
-      this.confirmation_text = "Remove this Locum to My Banks?";
-      this.confirmation_modal = true;
+    unfavorite () {
+      this.confirmation_text = "Remove this Locum to My Banks?"
+      this.confirmation_modal = true
     },
-    confirm() {
+    confirm () {
       if (!this.user.is_favorite) {
         this.$axios
           .$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
@@ -362,11 +426,11 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Added to favourites"]
-            });
-          });
-        this.user.is_favorite = true;
-        this.confirmation_modal = false;
+              text: ["Added to favourites",],
+            })
+          })
+        this.user.is_favorite = true
+        this.confirmation_modal = false
       } else if (this.user.is_favorite) {
         this.$axios
           .$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
@@ -374,31 +438,31 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Remove to favourites"]
-            });
-          });
-        this.user.is_favorite = false;
-        this.confirmation_modal = false;
+              text: ["Remove to favourites",],
+            })
+          })
+        this.user.is_favorite = false
+        this.confirmation_modal = false
       }
     },
-    downloadItem(fileUrl, fileName) {
-      const axios = require("axios");
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
       axios({
         url: fileUrl,
         method: "GET",
-        responseType: "blob" // important
+        responseType: "blob", // important
       }).then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-    }
-  }
-};
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+    },
+  },
+}
 </script>
 <style scoped>
 .avatar {
