@@ -10,7 +10,7 @@
       />
     </div>
 
-    <div class="flex flex-row justify-start mt-4">
+    <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">
         {{ job_part.job.title }}
       </div>
@@ -30,11 +30,89 @@
       >
         {{ tagStatus(job_part) }}
       </div>
+
+      <template v-if="job && job.practice_is_favorite_of_locum">
+        <svgicon
+          name="on-star"
+          height="25"
+          width="25"
+          class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+          @click="unfavorite()"
+        />
+      </template>
+
+      <template v-else-if="job && !job.practice_is_favorite_of_locum">
+        <svgicon
+          name="off-star"
+          height="25"
+          width="25"
+          class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+          @click="favorite()"
+        />
+      </template>
     </div>
 
     <!-- <div
 			class="text-xs sm:text-sm py-3"
     >Posted {{ $moment(job_part.date_created).format("DD/MM/YYYY") }}</div>-->
+
+    <template v-if="job && job.locum_status === 'Allocated' && job.update_accepted_until && !job.update_accepted">
+      <div class="text-md">
+        The Practice made changes on this Job, Accept these changes?
+      </div>
+
+      <div class="text-sm">
+        <span>You must accept the changes within {{ job.update_accepted_until_duration_in_minutes_formatted }}, </span>
+        <span>before {{ job.update_accepted_until_in_gb_formatted }}.</span>
+      </div>
+
+      <div class="flex items-center justify-start mt-1">
+        <div
+          class="bg-red-600 text-white rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
+          @click="decline"
+        >
+          Decline
+        </div>
+
+        <div class="mx-1" />
+
+        <div
+          class="bg-yellow-500 rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
+          @click="accept"
+        >
+          Accept
+        </div>
+      </div>
+    </template>
+
+    <template v-if="job && job.locum_status === 'Applied' && job.applied_update_accepted_until && !job.applied_update_accepted">
+      <div class="text-md">
+        The Practice made changes on this Job, Accept these changes?
+      </div>
+
+      <div class="text-sm">
+        <span>You must accept the changes within {{ job.applied_update_accepted_until_duration_in_minutes_formatted }}, </span>
+        <span>before {{ job.applied_update_accepted_until_in_gb_formatted }}.</span>
+      </div>
+
+      <div class="flex items-center justify-start mt-1">
+        <div
+          class="bg-red-600 text-white rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
+          @click="decline"
+        >
+          Decline
+        </div>
+
+        <div class="mx-1" />
+
+        <div
+          class="bg-yellow-500 rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
+          @click="accept"
+        >
+          Accept
+        </div>
+      </div>
+    </template>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
@@ -89,6 +167,15 @@
     </div>
 
     <AppConfirmationModal
+      :label="'Proceed to cancel your application to this Job?'"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="cancel_application_modal"
+      @confirm="cancel"
+      @cancel="cancel_application_modal = false"
+    />
+
+    <AppConfirmationModal
       :label="'Proceed to Invoice?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'No'"
@@ -130,7 +217,16 @@ export default {
   data () {
     return {
       toggle_invoice_modal: false,
+      cancel_application_modal: false,
     }
+  },
+
+  computed: {
+    job () {
+      return this.job_part && this.job_part.job
+        ? this.job_part.job
+        : null
+    },
   },
 
   methods: {
@@ -215,6 +311,72 @@ export default {
       }
     },
 
+    decline () {
+      if (this.job.locum_status === "Allocated") {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`You can unassign yourself from this job`,],
+        })
+
+        this.$refs["unassignForm"].$refs["unassignTextArea"].$refs[
+          "textarea"
+        ].scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "end",
+        })
+      } else if (this.job.locum_status === "Applied") {
+        this.cancel_application_modal = true
+      }
+    },
+
+    accept () {
+      const jobId = this.job.id
+
+      this.$axios
+        .$post(`/api/v1/locum/jobs/${jobId}/update-accept`)
+        .then(res => {
+          this.$emit("close")
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`,],
+          })
+          setTimeout(() => {
+            this.$router.push({
+              path: `/jobs/${jobId}`,
+              query: { ...this.$route.query, },
+            })
+          }, 500)
+        })
+    },
+
+    cancel () {
+      const jobId = this.job.id
+
+      this.$axios
+        .$delete(`/api/v1/locum/jobs/${jobId}/apply`)
+        .then(() => {
+          this.$store.commit("jobs/REMOVE_LOCUM_APPLIED_JOB", jobId)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Cancelled",],
+          })
+          this.$emit("close")
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
+    },
   },
 
 }

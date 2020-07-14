@@ -25,7 +25,7 @@
           This user has not yet accepted your changes.
         </p>
         <span>Waiting for locum's approval within {{ user.locum_job_applied_update_accepted_until_duration_in_minutes_formatted }},</span>
-        <span>before {{ user.locum_job_applied_update_accepted_until_formatted }}</span>
+        <span>before {{ user.locum_job_applied_update_accepted_until_in_gb_formatted }}</span>
       </div>
 
       <div class="flex flex-row flex-wrap justify-between mt-4">
