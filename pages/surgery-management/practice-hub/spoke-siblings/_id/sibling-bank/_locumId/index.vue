@@ -158,80 +158,81 @@
 </template>
 
 <script>
-  import AppAvatar from "@/components/Base/AppAvatar"
-  export default {
-    transition: {
-      name: "fade",
-      mode: "out-in"
-    },
-    components: {
-      AppAvatar
-    },
-    data () {
-      return {
-        mandatory: [],
-        optional: []
-      }
-    },
-    async asyncData ({ app, params }) {
-      try {
-        const response = await app.$axios.$get(
-          `/api/v1/practice/locums/${params.locumId}`
-        )
-        const user =
-          response.data && response.data.user ? response.data.user : null
-        return {
-          user
-        }
-      } catch (err) {
-        throw err
-      }
-    },
-    created () {
-      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
-        this.user.locum_detail.profession.profession_compliance_category_id
-      )
-    },
-    methods: {
-      getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
-        this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
-          this.mandatory = this.user.locum_detail.compliance_documents.filter(
-            compliance_document => {
-              return res.data.profession_compliance_category.mandatory_compliance_documents.some(
-                mandatory_compliance_document =>
-                  mandatory_compliance_document.id ===
-                  compliance_document.compliance_document.id
-              )
-            }
-          )
-          this.optional = this.user.locum_detail.compliance_documents.filter(
-            compliance_document => {
-              return res.data.profession_compliance_category.optional_compliance_documents.some(
-                optional_compliance_document =>
-                  optional_compliance_document.id ===
-                  compliance_document.compliance_document.id
-              )
-            }
-          )
-        })
-      },
-      downloadItem (fileUrl, fileName) {
-        const axios = require("axios")
-        axios({
-          url: fileUrl,
-          method: "GET",
-          responseType: "blob"
-        }).then(response => {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement("a")
-          link.href = url
-          link.setAttribute("download", fileName)
-          document.body.appendChild(link)
-          link.click()
-        })
-      }
+import AppAvatar from "@/components/Base/AppAvatar"
+
+export default {
+  transition: {
+    name: "fade",
+    mode: "out-in",
+  },
+  components: {
+    AppAvatar,
+  },
+  data () {
+    return {
+      mandatory: [],
+      optional: [],
     }
-  }
+  },
+  async asyncData ({ app, params, }) {
+    try {
+      const response = await app.$axios.$get(
+        `/api/v1/practice/locums/${params.locumId}`
+      )
+      const user
+        = response.data && response.data.user ? response.data.user : null
+      return {
+        user,
+      }
+    } catch (err) {
+      throw err
+    }
+  },
+  created () {
+    this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+      this.user.locum_detail.profession.profession_compliance_category_id
+    )
+  },
+  methods: {
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
+      this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
+        this.mandatory = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_compliance_category.mandatory_compliance_documents.some(
+              mandatory_compliance_document =>
+                mandatory_compliance_document.id
+                === compliance_document.compliance_document.id
+            )
+          }
+        )
+        this.optional = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_compliance_category.optional_compliance_documents.some(
+              optional_compliance_document =>
+                optional_compliance_document.id
+                === compliance_document.compliance_document.id
+            )
+          }
+        )
+      })
+    },
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob",
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>
