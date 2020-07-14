@@ -6,12 +6,15 @@
       </nuxt-link>
     </div>
     <div class="w-full m-4">
-      <div class="flex flex-row flex-no-wrap justify-start">
+      <AppLoading :loading="loading" spinner />
+
+      <div v-if="!loading && user" class="flex flex-row flex-no-wrap justify-start">
         <div class="font-bold text-md sm:text-lg">
           {{ user.personal_detail.name }}
         </div>
       </div>
-      <div class="flex flex-row flex-wrap justify-between mt-4">
+
+      <div v-if="!loading && user" class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
           <div class="rounded-lg shadow-lg p-4">
             <div class="flex flex-col">
@@ -158,6 +161,7 @@
 </template>
 
 <script>
+import AppLoading from "@/components/Base/AppLoading"
 import AppAvatar from "@/components/Base/AppAvatar"
 
 export default {
@@ -165,34 +169,33 @@ export default {
     name: "fade",
     mode: "out-in",
   },
+
   components: {
+    AppLoading,
     AppAvatar,
   },
+
   data () {
     return {
+      loading: false,
+      user: null,
       mandatory: [],
       optional: [],
     }
   },
-  async asyncData ({ app, params, }) {
-    try {
-      const response = await app.$axios.$get(
-        `/api/v1/practice/locums/${params.locumId}`
-      )
-      const user
-        = response.data && response.data.user ? response.data.user : null
-      return {
-        user,
-      }
-    } catch (err) {
-      throw err
-    }
+
+  mounted () {
+    this.loading = true
+    this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`).then((response) => {
+      this.user = response.data.data.user
+
+      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(this.user.locum_detail.profession.profession_compliance_category_id)
+    }).finally(() => {
+      this.loading = false
+    })
   },
-  created () {
-    this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
-      this.user.locum_detail.profession.profession_compliance_category_id
-    )
-  },
+
+
   methods: {
     getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
       this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
