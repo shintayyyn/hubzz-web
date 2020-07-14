@@ -265,17 +265,7 @@ export default {
 
   mounted () {
     this.loading = true
-    this.initialize().finally(() => {
-      this.loading = false
-    })
-  },
-  
-  methods: {
-    async initialize () {
-      this.user = null
-
-      const response = await this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`)
-
+    this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`).then((response) => {
       this.user = response.data.data.user
 
       this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(this.user.locum_detail.profession.profession_compliance_category_id)
@@ -305,8 +295,12 @@ export default {
           this.referees.push(referee)
         }
       })
-    },
-
+    }).finally(() => {
+      this.loading = false
+    })
+  },
+  
+  methods: {
     getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
       this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`)
         .then(res => {

@@ -8,13 +8,17 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
     </div>
+
     <div class="w-full m-4">
-      <div class="flex flex-row flex-no-wrap justify-start">
+      <AppLoading :loading="loading" spinner />
+
+      <div v-if="!loading && user" class="flex flex-row flex-no-wrap justify-start">
         <div class="font-bold text-md sm:text-lg">
           {{ user.personal_detail.name }}
         </div>
       </div>
-      <div class="flex flex-row flex-wrap justify-between mt-4">
+
+      <div v-if="!loading && user" class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
           <div class="rounded-lg shadow-lg p-4">
             <div class="flex flex-col">
@@ -50,18 +54,18 @@
               >
                 {{ user.locum_detail && user.locum_detail.short_biography && user.locum_detail.short_biography.trim() ? user.locum_detail.short_biography : '(none)' }}
               </div>
-              
-              <div class="font-bold text-sm sm:text-md">
-                GMC / NMC Number
-              </div>
-              <div class="text-sm mb-8">
-                {{ user.locum_detail.gmc_or_nmc_number.number }}
-              </div>
-              <div class="font-bold text-sm sm:text-md">
-                MPL / NPL Number
-              </div>
-              <div class="text-sm mb-8">
-                {{ user.locum_detail.mpl_or_npl_number.number }}
+
+              <div
+                v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
+                :key="referenceLocumComplianceDocument.compliance_document_id"
+              >
+                <div class="font-bold text-sm sm:text-md">
+                  {{ referenceLocumComplianceDocument.compliance_document_name }}
+                </div>
+
+                <div class="text-sm mb-8">
+                  {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+                </div>
               </div>
               
               <div class="font-bold text-sm sm:text-md">
@@ -236,65 +240,63 @@
 </template>
 
 <script>
+import AppLoading from "@/components/Base/AppLoading"
 import AppAvatar from "@/components/Base/AppAvatar"
+
 export default {
   components: {
+    AppLoading,
     AppAvatar,
   },
+
   data () {
     return {
+      loading: false,
+      user: null,
       mandatory: [],
       optional: [],
       referees: [],
       mandatoryTrainings: [],
     }
   },
-  async asyncData ({ app, params, error, }) {
-    try {
-      const response = await app.$axios.$get(
-        `/api/v1/practice/locums/${params.locumId}`
-      )
-      const user
-        = response.data && response.data.user ? response.data.user : null
-      return {
-        user,
-      }
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        return error({ status: 404, message: "Page Not Found", })
-      }
 
-      throw err
-    }
-  },
-  created () {
-    this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
-      this.user.locum_detail.profession.profession_compliance_category_id
-    )
-    this.mandatoryTrainings = []
-    this.user.locum_detail.mandatory_trainings.forEach(mandatoryTraining => {
-      if (mandatoryTraining.file !== null) {
-        this.mandatoryTrainings.push(mandatoryTraining)
-      }
-    })
+  mounted () {
+    this.loading = true
+    this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`).then((response) => {
+      this.user = response.data.data.user
 
-    this.referees = []
-    this.user.locum_detail.referees.forEach(referee => {
-      if (
-        referee.name !== null
-        && referee.name
-        && referee.name.trim()
-        && referee.phone_number !== null
-        && referee.phone_number
-        && referee.phone_number.trim()
-        && referee.email !== null
-        && referee.email
-        && referee.email.trim()
-      ) {
-        this.referees.push(referee)
-      }
+      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(this.user.locum_detail.profession.profession_compliance_category_id)
+      
+      this.mandatoryTrainings = []
+
+      this.user.locum_detail.mandatory_trainings.forEach(mandatoryTraining => {
+        if (mandatoryTraining.file !== null) {
+          this.mandatoryTrainings.push(mandatoryTraining)
+        }
+      })
+
+      this.referees = []
+
+      this.user.locum_detail.referees.forEach(referee => {
+        if (
+          referee.name !== null
+          && referee.name
+          && referee.name.trim()
+          && referee.phone_number !== null
+          && referee.phone_number
+          && referee.phone_number.trim()
+          && referee.email !== null
+          && referee.email
+          && referee.email.trim()
+        ) {
+          this.referees.push(referee)
+        }
+      })
+    }).finally(() => {
+      this.loading = false
     })
   },
+
   methods: {
     getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
       locumProfessionProfessionComplianceCategoryId
