@@ -52,7 +52,9 @@
                 }
               ]"
             >
-              {{ item.note }}
+              <span v-if="item.status === 'Rejected'" class="break-word">
+                Reason for Rejection: {{ item.note ? item.note : null }}
+              </span>
             </div>
 
             <div
