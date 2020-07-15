@@ -32,7 +32,7 @@
 
           <div v-if="user && user.email === practiceForm.email" class="-mt-4 mb-4">
             <template v-if="user.email_verified">
-              <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_gb_formatted }}</span>
+              <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_in_gb_formatted }}</span>
             </template>
 
             <template v-if="!user.email_verified">
@@ -159,7 +159,7 @@
 
       <div v-if="user && user.email === locumForm.email" class="-mt-4 mb-4">
         <template v-if="user.email_verified">
-          <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_gb_formatted }}</span>
+          <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_in_gb_formatted }}</span>
         </template>
 
         <template v-if="!user.email_verified">

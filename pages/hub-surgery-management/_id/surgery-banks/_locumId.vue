@@ -9,12 +9,16 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <div class="flex flex-row flex-no-wrap justify-start">
+
+      <AppLoading :loading="loading" spinner />
+
+      <div v-if="!loading && user" class="flex flex-row flex-no-wrap justify-start">
         <div class="font-bold text-md sm:text-lg">
           {{ user.personal_detail.name }}
         </div>
       </div>
-      <div class="flex flex-row flex-wrap justify-between mt-4">
+
+      <div v-if="!loading && user" class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
           <div class="rounded-lg shadow-lg p-4">
             <div class="flex flex-col">
@@ -43,18 +47,20 @@
               <div class="text-sm mb-8">
                 {{ user.locum_detail.short_biography }}
               </div>
-              <div class="font-bold text-sm sm:text-md">
-                GMC / NMC Number
+
+              <div
+                v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
+                :key="referenceLocumComplianceDocument.compliance_document_id"
+              >
+                <div class="font-bold text-sm sm:text-md">
+                  {{ referenceLocumComplianceDocument.compliance_document_name }}
+                </div>
+
+                <div class="text-sm mb-8">
+                  {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+                </div>
               </div>
-              <div class="text-sm mb-8">
-                {{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}
-              </div>
-              <div class="font-bold text-sm sm:text-md">
-                MPL / NPL Number
-              </div>
-              <div class="text-sm mb-8">
-                {{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}
-              </div>
+
               <div class="font-bold text-sm sm:text-md">
                 Specialty
               </div>
@@ -161,76 +167,77 @@
 </template>
 
 <script>
-  import AppAvatar from "@/components/Base/AppAvatar"
-  export default {
-    components: {
-      AppAvatar
-    },
-    data () {
-      return {
-        mandatory: [],
-        optional: []
-      }
-    },
-    async asyncData ({ app, params, error }) {
-      try {
-        const response = await app.$axios.$get(
-          `/api/v1/practice/locums/${params.locumId}`
-        )
-        const user =
-          response.data && response.data.user ? response.data.user : null
-        return {
-          user
-        }
-      } catch (err) {
-        return error({ status: 404, message: "Page Not Found" })
-      }
-    },
-    created () {
-      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
-        this.user.locum_detail.profession.profession_compliance_category_id
-      )
-    },
-    methods: {
-      getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
-        this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
-          this.mandatory = this.user.locum_detail.compliance_documents.filter(
-            compliance_document => {
-              return res.data.profession_compliance_category.mandatory_compliance_documents.some(
-                mandatory_compliance_document =>
-                  mandatory_compliance_document.id ===
-                  compliance_document.compliance_document.id
-              )
-            }
-          )
-          this.optional = this.user.locum_detail.compliance_documents.filter(
-            compliance_document => {
-              return res.data.profession_compliance_category.optional_compliance_documents.some(
-                optional_compliance_document =>
-                  optional_compliance_document.id ===
-                  compliance_document.compliance_document.id
-              )
-            }
-          )
-        })
-      },
-      downloadItem (fileUrl, fileName) {
-        const axios = require("axios")
-        axios({
-          url: fileUrl,
-          method: "GET",
-          responseType: "blob"
-        }).then(response => {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement("a")
-          link.href = url
-          link.setAttribute("download", fileName)
-          document.body.appendChild(link)
-          link.click()
-        })
-      }
+import AppLoading from "@/components/Base/AppLoading"
+import AppAvatar from "@/components/Base/AppAvatar"
+
+export default {
+  components: {
+    AppLoading,
+    AppAvatar,
+  },
+
+  data () {
+    return {
+      loading: false,
+      user: null,
+      mandatory: [],
+      optional: [],
     }
-  }
+  },
+
+  mounted () {
+    this.loading = true
+    this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`).then((response) => {
+      this.user = response.data.data.user
+
+      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(this.user.locum_detail.profession.profession_compliance_category_id)
+    }).finally(() => {
+      this.loading = false
+    })
+  },
+
+  methods: {
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (locumProfessionProfessionComplianceCategoryId) {
+      this.$axios.$get(`/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`).then(res => {
+        this.mandatory = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_compliance_category.mandatory_compliance_documents.some(
+              mandatory_compliance_document =>
+                mandatory_compliance_document.id
+                === compliance_document.compliance_document.id
+            )
+          }
+        )
+        this.optional = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_compliance_category.optional_compliance_documents.some(
+              optional_compliance_document =>
+                optional_compliance_document.id
+                === compliance_document.compliance_document.id
+            )
+          }
+        )
+      })
+    },
+
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob",
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+      })
+    },
+
+  },
+}
 </script>
 
 <style scoped>

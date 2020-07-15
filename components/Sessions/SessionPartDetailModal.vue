@@ -80,7 +80,7 @@
     <template v-if="['Allocated'].includes(job.status)">
       <div v-if="job.update_accepted_until && !job.update_accepted" class="mt-4">
         <span>Waiting for locum's approval within {{ job.update_accepted_until_duration_in_minutes_formatted }}, </span>
-        <span>before {{ job.update_accepted_until_formatted }}.</span>
+        <span>before {{ job.update_accepted_until_in_gb_formatted }}.</span>
       </div>
     </template>
 

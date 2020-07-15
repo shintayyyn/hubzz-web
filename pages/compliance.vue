@@ -16,13 +16,57 @@
           class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0"
         >
           <div class="relative flex flex-col sm:flex-row justify-between sm:items-center text-xs sm:text-sm">
-            <div class="sm:w-1/3 px-2 md:p-1 font-bold md:font-normal text-left">
+            <div
+              class="px-2 md:p-1 font-bold md:font-normal text-left"
+              :style="[
+                {
+                  flex: '1 0 0',
+                  minWidth: '100px',
+                  maxWidth: '400px',
+                }
+              ]"
+            >
               {{ item.compliance_document_name }}
             </div>
-            <div class="sm:w-1/3 px-2">
+            
+            <div
+              class="px-2"
+              :style="[
+                {
+                  flex: '1 0 0',
+                  minWidth: '100px',
+                  maxWidth: '150px',
+                }
+              ]"
+            >
               {{ item.reference }}
             </div>
-            <div class="sm:w-1/3 flex sm:justify-end lg:justify-center px-2">
+            
+            <div
+              class="px-2"
+              :style="[
+                {
+                  flex: '1 0 0',
+                  minWidth: '130px',
+                  maxWidth: '400px',
+                }
+              ]"
+            >
+              <span v-if="item.status === 'Rejected'" class="break-word">
+                Reason for Rejection: {{ item.note ? item.note : null }}
+              </span>
+            </div>
+
+            <div
+              class="px-2"
+              :style="[
+                {
+                  flex: '1 0 0',
+                  minWidth: '100px',
+                  maxWidth: '150px',
+                }
+              ]"
+            >
               <div
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(item ? item.status : '')"
@@ -830,696 +874,696 @@
 </template>
 
 <script>
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
-  import AppLoading from "@/components/Base/AppLoading"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppLoading from "@/components/Base/AppLoading"
 
-  export default {
-    components: {
-      AppInput,
-      AppButton,
-      AppLoading,
-    },
+export default {
+  components: {
+    AppInput,
+    AppButton,
+    AppLoading,
+  },
 
-    data () {
-      return {
-        dataTypeUploading: null,
-        loading: false,
-        initialLoading: false,
-        activeLoading: [],
-        referenceComplianceDocuments: [],
-        mandatoryComplianceDocuments: [],
-        optionalComplianceDocuments: [],
-        mandatory_trainings: [],
-        other_mandatory_trainings: [],
-        modal: false,
-        type: null,
-        selectedComplianceTypeName: null,
+  data () {
+    return {
+      dataTypeUploading: null,
+      loading: false,
+      initialLoading: false,
+      activeLoading: [],
+      referenceComplianceDocuments: [],
+      mandatoryComplianceDocuments: [],
+      optionalComplianceDocuments: [],
+      mandatory_trainings: [],
+      other_mandatory_trainings: [],
+      modal: false,
+      type: null,
+      selectedComplianceTypeName: null,
 
+      file: null,
+      selectedId: null,
+      form: {
+        compliance_document_id: null,
         file: null,
-        selectedId: null,
-        form: {
-          compliance_document_id: null,
-          file: null,
-          has_reference: false,
-          reference: null,
-          country_id: null
-        },
-        formError: [],
-      }
-    },
-
-    computed: {
-      hasVisa () {
-        return this.mandatoryComplianceDocuments.find(item => item.compliance_document_type_name === 'Visa')
-      }
-    },
-
-    watch: {
-      $route (value) {
-        if (
-          ["compliance-id", "compliance-mandatory-training-id"].includes(
-            value.name
-          )
-        ) {
-          document.body.style.overflow = "hidden"
-        } else {
-          document.body.style.overflow = "auto"
-        }
+        has_reference: false,
+        reference: null,
+        country_id: null,
       },
+      formError: [],
+    }
+  },
 
-      "form.reference" (value) {
-        if (value && value.length <= 255) {
-          let index = this.formError.findIndex(item => item.field === 'reference')
+  computed: {
+    hasVisa () {
+      return this.mandatoryComplianceDocuments.find(item => item.compliance_document_type_name === 'Visa')
+    },
+  },
 
-          if (index > -1) {
-            this.formError.splice(index, 1)
+  watch: {
+    $route (value) {
+      if (
+        ["compliance-id", "compliance-mandatory-training-id",].includes(
+          value.name
+        )
+      ) {
+        document.body.style.overflow = "hidden"
+      } else {
+        document.body.style.overflow = "auto"
+      }
+    },
+
+    "form.reference" (value) {
+      if (value && value.length <= 255) {
+        let index = this.formError.findIndex(item => item.field === 'reference')
+
+        if (index > -1) {
+          this.formError.splice(index, 1)
+        }
+      }
+    },
+  },
+
+  mounted () {
+    this.initialLoading = true
+    this.initializeCompliances().finally(() => {
+      this.initialLoading = false
+    })
+    this.addListeners()
+  },
+
+  destroyed () {
+    this.removeListeners()
+  },
+
+  methods: {
+    initializeCompliances () {
+      this.$axios.get("/api/v1/countries?limit=1000000").then(response => {
+        this.countries = response.data.data.countries.map(country => {
+          return {
+            label: country.name,
+            value: country.id,
           }
-        }
-      },
-    },
-
-    mounted () {
-      this.initialLoading = true
-      this.initializeCompliances().finally(() => {
-        this.initialLoading = false
+        })
       })
-      this.addListeners()
+
+      return Promise.all([
+        this.getAllCompliances(),
+        this.getLocumMandatoryTranings(),
+        this.getLocumOtherMandatoryTranings(),
+      ])
     },
 
-    destroyed () {
-      this.removeListeners()
+    addListeners () {
+      this.$socket.on('Locum Notification Number Pending', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Number Rejected', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Number Verified', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Compliance Approved', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Compliance Rejected', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Compliance Pending', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Compliance Expiring', this.getComplianceRealTime)
+      this.$socket.on('Locum Notification Compliance Expired', this.getComplianceRealTime)
     },
 
-    methods: {
-      initializeCompliances () {
-        this.$axios.get("/api/v1/countries?limit=1000000").then(response => {
-          this.countries = response.data.data.countries.map(country => {
-            return {
-              label: country.name,
-              value: country.id,
-            }
-          })
-        })
+    removeListeners () {
+      this.$socket.removeListener('Locum Notification Number Pending', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Number Rejected', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Number Verified', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Compliance Approved', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Compliance Rejected', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Compliance Pending', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Compliance Expiring', this.getComplianceRealTime)
+      this.$socket.removeListener('Locum Notification Compliance Expired', this.getComplianceRealTime)
+    },
 
-        return Promise.all([
-          this.getAllCompliances(),
-          this.getLocumMandatoryTranings(),
-          this.getLocumOtherMandatoryTranings(),
-        ])
-      },
+    async getComplianceRealTime (file) {
+      if (!file) {
+        return
+      }
 
-      addListeners () {
-        this.$socket.on('Locum Notification Number Pending', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Number Rejected', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Number Verified', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Compliance Approved', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Compliance Rejected', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Compliance Pending', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Compliance Expiring', this.getComplianceRealTime)
-        this.$socket.on('Locum Notification Compliance Expired', this.getComplianceRealTime)
-      },
+      this.getAllCompliances()
+    },
 
-      removeListeners () {
-        this.$socket.removeListener('Locum Notification Number Pending', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Number Rejected', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Number Verified', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Compliance Approved', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Compliance Rejected', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Compliance Pending', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Compliance Expiring', this.getComplianceRealTime)
-        this.$socket.removeListener('Locum Notification Compliance Expired', this.getComplianceRealTime)
-      },
+    getAllCompliances () {
+      this.$axios.get("/api/v1/locum/me/compliance").then((response) => {
+        const user = response.data.data.user
 
-      async getComplianceRealTime (file) {
-        if (!file) {
-          return
+        const {
+          reference_locum_compliance_documents: referenceComplianceDocuments,
+          mandatory_locum_compliance_documents: mandatoryComplianceDocuments,
+          optional_locum_compliance_documents: optionalComplianceDocuments,
+        } = user
+
+        this.referenceComplianceDocuments = referenceComplianceDocuments
+        this.mandatoryComplianceDocuments = mandatoryComplianceDocuments
+        this.optionalComplianceDocuments = optionalComplianceDocuments
+      })
+    },
+
+    getLocumMandatoryTranings () {
+      this.$axios.get("/api/v1/locum/locum-detail-mandatory-trainings").then((response) => {
+        this.mandatory_trainings = response.data.data.locum_detail_mandatory_trainings.sort((a, b) => a.id - b.id)
+      })
+    },
+
+    getLocumOtherMandatoryTranings () {
+      this.$axios.get("/api/v1/locum/other-mandatory-training", {
+        params: {
+          user_id: this.$auth.user.id,
+          is_added_only: true,
+        },
+      }).then((response) => {
+        this.other_mandatory_trainings = response.data.data.locum_other_mandatory_trainings.sort((a, b) => a.id - b.id)
+      })
+    },
+
+    async uploadCompliance (...args) {
+      const [
+        id,
+        complianceDocumentId,
+        typeName,
+        file,
+        hasReference,
+        reference,
+        countryId,
+        type,
+      ] = args
+
+      this.selectedId = id
+      this.modal = true
+      this.type = type
+      this.formError = []
+      this.file = file
+      this.selectedComplianceTypeName = typeName
+      this.form.compliance_document_id = complianceDocumentId
+      this.form.file = null
+      this.form.has_reference = ["false", false, "0", 0, null,].includes(hasReference) ? false : true
+      this.form.reference = reference !== "null" ? reference : ""
+      this.form.country_id = countryId
+    },
+
+    async submit () {
+      try {
+        this.formError = []
+
+        let notRequired = ["has_reference",]
+
+        if (this.file) {
+          notRequired.push("file")
         }
 
-        this.getAllCompliances()
-      },
+        if (this.selectedComplianceTypeName !== "Passport") {
+          notRequired.push("country_id")
+        }
 
-      getAllCompliances () {
-        this.$axios.get("/api/v1/locum/me/compliance").then((response) => {
-          const user = response.data.data.user
+        if (
+          !["Reference", "DBS",].includes(this.selectedComplianceTypeName)
+            || ["false", false, "0", 0,].includes(this.form.has_reference)
+        ) {
+          notRequired.push("reference")
+        }
 
-          const {
-            reference_locum_compliance_documents: referenceComplianceDocuments,
-            mandatory_locum_compliance_documents: mandatoryComplianceDocuments,
-            optional_locum_compliance_documents: optionalComplianceDocuments,
-          } = user
+        if (["false", false,].includes(this.form.has_reference)) {
+          this.form.reference = null
+        }
 
-          this.referenceComplianceDocuments = referenceComplianceDocuments
-          this.mandatoryComplianceDocuments = mandatoryComplianceDocuments
-          this.optionalComplianceDocuments = optionalComplianceDocuments
-        })
-      },
-
-      getLocumMandatoryTranings () {
-        this.$axios.get("/api/v1/locum/locum-detail-mandatory-trainings").then((response) => {
-          this.mandatory_trainings = response.data.data.locum_detail_mandatory_trainings.sort((a, b) => a.id - b.id)
-        })
-      },
-
-      getLocumOtherMandatoryTranings () {
-        this.$axios.get("/api/v1/locum/other-mandatory-training", {
-          params: {
-            user_id: this.$auth.user.id,
-            is_added_only: true,
-          }
-        }).then((response) => {
-          this.other_mandatory_trainings = response.data.data.locum_other_mandatory_trainings.sort((a, b) => a.id - b.id)
-        })
-      },
-
-      async uploadCompliance (...args) {
-        const [
-          id,
-          complianceDocumentId,
-          typeName,
-          file,
-          hasReference,
-          reference,
-          countryId,
-          type
-        ] = args
-
-        this.selectedId = id
-        this.modal = true
-        this.type = type
-        this.formError = []
-        this.file = file
-        this.selectedComplianceTypeName = typeName
-        this.form.compliance_document_id = complianceDocumentId
-        this.form.file = null
-        this.form.has_reference = ["false", false, "0", 0, null].includes(hasReference) ? false : true
-        this.form.reference = reference !== "null" ? reference : ""
-        this.form.country_id = countryId
-      },
-
-      async submit () {
-        try {
-          this.formError = []
-
-          let notRequired = ["has_reference"]
-
-          if (this.file) {
-            notRequired.push("file")
-          }
-
-          if (this.selectedComplianceTypeName !== "Passport") {
-            notRequired.push("country_id")
-          }
-
-          if (
-            !["Reference", "DBS"].includes(this.selectedComplianceTypeName) ||
-            ["false", false, "0", 0].includes(this.form.has_reference)
-          ) {
-            notRequired.push("reference")
-          }
-
-          if (["false", false].includes(this.form.has_reference)) {
-            this.form.reference = null
-          }
-
-          if (this.form.has_reference) {
-            if (this.form.reference.length && this.form.reference.length > 255) {
-              this.formError.push({
-                field: "reference",
-                message: "Reference is too long.",
-              })
-            }
-          }
-
-          this.Validate(this.form, notRequired)
-
-          if (this.formError.length === 0) {
-            const formData = new FormData()
-
-            formData.append("user_id", this.$auth.user.id)
-
-            formData.append("compliance_document_id", this.form.compliance_document_id)
-
-            if (this.form.file) {
-              formData.append("file", this.form.file)
-            }
-
-            formData.append("has_reference", this.form.has_reference)
-
-            formData.append("reference", this.form.reference)
-
-            if (this.selectedComplianceTypeName === "Passport") {
-              formData.append("country_id", this.form.country_id)
-            }
-
-            this.activeLoading.push(this.form.compliance_document_id)
-
-            let response
-
-            if (!this.file) {
-              response = await this.$axios.$post(`/api/v1/locum/locum-compliance-documents`, formData)
-            } else if (this.file) {
-              response = await this.$axios.$patch(`/api/v1/locum/locum-compliance-documents/${this.selectedId}`, formData)
-            }
-
-            if (this.type === "mandatory") {
-              let updatedMandatoryComplianceIndex = this.mandatoryComplianceDocuments
-                .findIndex(item => item.compliance_document_id === this.form.compliance_document_id)
-
-              if (updatedMandatoryComplianceIndex > -1) {
-                this.mandatoryComplianceDocuments.splice(updatedMandatoryComplianceIndex, 1, this.getUpdatedObject(response))
-              }
-            }
-
-            if (this.type === "mandatory-child") {
-              let updatedMandatoryComplianceChildrenIndex = this.mandatoryComplianceDocuments
-                .find(item => item.compliance_document_type_name === "Safeguarding")
-                .child_locum_compliance_documents
-                .findIndex(childIndex => childIndex.compliance_document_id === this.form.compliance_document_id)
-
-              if (updatedMandatoryComplianceChildrenIndex > -1) {
-                this.mandatoryComplianceDocuments
-                  .find(item => item.compliance_document_type_name === "Safeguarding")
-                  .child_locum_compliance_documents
-                  .splice(updatedMandatoryComplianceChildrenIndex, 1, this.getUpdatedObject(response))
-              }
-            }
-
-            if (this.type === "optional") {
-              let updatedOptionalComplianceIndex = this.optionalComplianceDocuments
-                .findIndex(item => item.compliance_document_id === this.form.compliance_document_id)
-
-              if (updatedOptionalComplianceIndex > -1) {
-                this.optionalComplianceDocuments.splice(updatedOptionalComplianceIndex, 1, this.getUpdatedObject(response))
-              }
-            }
-
-            if (this.type === "optional-child") {
-              let updatedOptionalComplianceChildrenIndex = this.optionalComplianceDocuments
-                .find(item => item.compliance_document_type_name === "Safeguarding")
-                .child_locum_compliance_documents
-                .findIndex(childIndex => childIndex.compliance_document_id === this.form.compliance_document_id)
-
-              if (updatedOptionalComplianceChildrenIndex > -1) {
-                this.optionalComplianceDocuments
-                  .find(item => item.compliance_document_type_name === "Safeguarding")
-                  .child_locum_compliance_documents
-                  .splice(updatedOptionalComplianceChildrenIndex, 1, this.getUpdatedObject(response))
-              }
-            }
-
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Compliance Updated"]
-            })
-
-            this.activeLoading = this.activeLoading.filter(id => id !== this.form.compliance_document_id)
-
-            this.modal = false
-          }
-        } catch (err) {
-          console.log("err", err.response || err)
-
-          if (err.response.data.message === "File Is Required") {
+        if (this.form.has_reference) {
+          if (this.form.reference.length && this.form.reference.length > 255) {
             this.formError.push({
-              field: "file",
-              message: "File Is Required"
-            })
-          } else {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [err.response.data.message]
+              field: "reference",
+              message: "Reference is too long.",
             })
           }
+        }
+
+        this.Validate(this.form, notRequired)
+
+        if (this.formError.length === 0) {
+          const formData = new FormData()
+
+          formData.append("user_id", this.$auth.user.id)
+
+          formData.append("compliance_document_id", this.form.compliance_document_id)
+
+          if (this.form.file) {
+            formData.append("file", this.form.file)
+          }
+
+          formData.append("has_reference", this.form.has_reference)
+
+          formData.append("reference", this.form.reference)
+
+          if (this.selectedComplianceTypeName === "Passport") {
+            formData.append("country_id", this.form.country_id)
+          }
+
+          this.activeLoading.push(this.form.compliance_document_id)
+
+          let response
+
+          if (!this.file) {
+            response = await this.$axios.$post(`/api/v1/locum/locum-compliance-documents`, formData)
+          } else if (this.file) {
+            response = await this.$axios.$patch(`/api/v1/locum/locum-compliance-documents/${this.selectedId}`, formData)
+          }
+
+          if (this.type === "mandatory") {
+            let updatedMandatoryComplianceIndex = this.mandatoryComplianceDocuments
+              .findIndex(item => item.compliance_document_id === this.form.compliance_document_id)
+
+            if (updatedMandatoryComplianceIndex > -1) {
+              this.mandatoryComplianceDocuments.splice(updatedMandatoryComplianceIndex, 1, this.getUpdatedObject(response))
+            }
+          }
+
+          if (this.type === "mandatory-child") {
+            let updatedMandatoryComplianceChildrenIndex = this.mandatoryComplianceDocuments
+              .find(item => item.compliance_document_type_name === "Safeguarding")
+              .child_locum_compliance_documents
+              .findIndex(childIndex => childIndex.compliance_document_id === this.form.compliance_document_id)
+
+            if (updatedMandatoryComplianceChildrenIndex > -1) {
+              this.mandatoryComplianceDocuments
+                .find(item => item.compliance_document_type_name === "Safeguarding")
+                .child_locum_compliance_documents
+                .splice(updatedMandatoryComplianceChildrenIndex, 1, this.getUpdatedObject(response))
+            }
+          }
+
+          if (this.type === "optional") {
+            let updatedOptionalComplianceIndex = this.optionalComplianceDocuments
+              .findIndex(item => item.compliance_document_id === this.form.compliance_document_id)
+
+            if (updatedOptionalComplianceIndex > -1) {
+              this.optionalComplianceDocuments.splice(updatedOptionalComplianceIndex, 1, this.getUpdatedObject(response))
+            }
+          }
+
+          if (this.type === "optional-child") {
+            let updatedOptionalComplianceChildrenIndex = this.optionalComplianceDocuments
+              .find(item => item.compliance_document_type_name === "Safeguarding")
+              .child_locum_compliance_documents
+              .findIndex(childIndex => childIndex.compliance_document_id === this.form.compliance_document_id)
+
+            if (updatedOptionalComplianceChildrenIndex > -1) {
+              this.optionalComplianceDocuments
+                .find(item => item.compliance_document_type_name === "Safeguarding")
+                .child_locum_compliance_documents
+                .splice(updatedOptionalComplianceChildrenIndex, 1, this.getUpdatedObject(response))
+            }
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Compliance Updated",],
+          })
 
           this.activeLoading = this.activeLoading.filter(id => id !== this.form.compliance_document_id)
-        }
-      },
 
-      getUpdatedObject (responseObject) {
-        return {
-          type: responseObject.data.locum_compliance_document.type,
-          id: responseObject.data.locum_compliance_document.id,
-          has_reference:
+          this.modal = false
+        }
+      } catch (err) {
+        console.log("err", err.response || err)
+
+        if (err.response.data.message === "File Is Required") {
+          this.formError.push({
+            field: "file",
+            message: "File Is Required",
+          })
+        } else {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [err.response.data.message,],
+          })
+        }
+
+        this.activeLoading = this.activeLoading.filter(id => id !== this.form.compliance_document_id)
+      }
+    },
+
+    getUpdatedObject (responseObject) {
+      return {
+        type: responseObject.data.locum_compliance_document.type,
+        id: responseObject.data.locum_compliance_document.id,
+        has_reference:
             responseObject.data.locum_compliance_document.has_reference,
-          reference: responseObject.data.locum_compliance_document.reference,
-          // expired_at: responseObject.data.locum_compliance_document.expired_at,
-          verified_at: responseObject.data.locum_compliance_document.verified_at,
-          rejected_at: responseObject.data.locum_compliance_document.rejected_at,
-          note: responseObject.data.locum_compliance_document.note,
-          status: responseObject.data.locum_compliance_document.status,
-          compliance_document_id:
+        reference: responseObject.data.locum_compliance_document.reference,
+        // expired_at: responseObject.data.locum_compliance_document.expired_at,
+        verified_at: responseObject.data.locum_compliance_document.verified_at,
+        rejected_at: responseObject.data.locum_compliance_document.rejected_at,
+        note: responseObject.data.locum_compliance_document.note,
+        status: responseObject.data.locum_compliance_document.status,
+        compliance_document_id:
             responseObject.data.locum_compliance_document.compliance_document.id,
-          compliance_document_name:
+        compliance_document_name:
             responseObject.data.locum_compliance_document.compliance_document
               .name,
-          compliance_document_type_id:
+        compliance_document_type_id:
             responseObject.data.locum_compliance_document.compliance_document
               .compliance_document_type.id,
-          compliance_document_type_name:
+        compliance_document_type_name:
             responseObject.data.locum_compliance_document.compliance_document
               .compliance_document_type.name,
-          // compliance_document_parent_type_id: responseObject.data.locum_compliance_document,
-          // compliance_document_parent_type_name: responseObject.data.locum_compliance_document,
-          // parent_compliance_document_id: responseObject.data.locum_compliance_document,
-          // parent_compliance_document_name: responseObject.data.locum_compliance_document,
-          file: responseObject.data.locum_compliance_document.file
-        }
-      },
-
-      show (item, type) {
-        if (item.file) {
-          if (type === "compliance") {
-            this.$router.push(`/compliance/${item.id}`)
-          }
-
-          if (type === "mandatory") {
-            this.$router.push(`/compliance/mandatory-training/${item.id}`)
-          }
-        }
-      },
-
-      status (status) {
-        switch (status) {
-          case "Pending":
-          case "Expiring":
-            return "bg-orange-500 text-white "
-          case "Verified":
-          case "Approved":
-            return "bg-green-500 text-white "
-          case "Empty":
-            return "border-2 border-gray-500 text-gray-600"
-          default:
-            return "bg-red-500 text-white "
-        }
-      },
-
-      onFileInput (event) {
-        if (!event.target.files.length) {
-          return
-        }
-
-        // vnd.openxmlformats-officedocument.wordprocessingml.document - docx type
-        let types = [
-          "pdf",
-          "jpeg",
-          "msword",
-          "tiff",
-          "vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "vnd.openxmlformats-officedocument.wordprocessingml.template",
-          "vnd.ms-word.document.macroEnabled.12",
-          "vnd.ms-word.template.macroEnabled.12"
-        ]
-
-        let file = event.target.files[0]
-
-        let fileType = file.type.split("/")[1]
-
-        if (!types.includes(fileType)) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "alert",
-            text: ["Invalid File Format"]
-          })
-
-          return
-        }
-
-        this.form.file = file
-      },
-
-      onMandatoryFileInput (e, id, index) {
-        let types = [
-          "pdf",
-          "jpeg",
-          "msword",
-          "tiff",
-          "vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "vnd.openxmlformats-officedocument.wordprocessingml.template",
-          "vnd.ms-word.document.macroEnabled.12",
-          "vnd.ms-word.template.macroEnabled.12"
-        ]
-
-        let file = e.target.files[0]
-        let fileType = file.type.split("/")[1]
-
-        if (!types.includes(fileType)) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "alert",
-            text: ["Invalid File Format"]
-          })
-
-          return
-        }
-
-        const formData = new FormData()
-
-        formData.append("file", file)
-
-        formData.append("mandatory_training_id", id)
-
-        // post request to API / send file
-        this.loading = true
-
-        this.activeLoading.push(id)
-
-        this.$axios.$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData).then(res => {
-          this.mandatory_trainings.splice(index, 1, res.data.locum_detail_mandatory_training)
-
-          this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
-
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Document uploaded!"]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        }).catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        }).finally(() => {
-          this.loading = false
-        })
-      },
-
-      onMandatoryFileUpdate (e, id, index, loadingId) {
-        if (!e.target.files.length) {
-          return
-        }
-
-        let types = [
-          "pdf",
-          "jpeg",
-          "msword",
-          "tiff",
-          "vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "vnd.openxmlformats-officedocument.wordprocessingml.template",
-          "vnd.ms-word.document.macroEnabled.12",
-          "vnd.ms-word.template.macroEnabled.12"
-        ]
-
-        let file = e.target.files[0]
-
-        let fileType = file.type.split("/")[1]
-
-        if (!types.includes(fileType)) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "alert",
-            text: ["Invalid File Format"]
-          })
-
-          return
-        }
-
-        const formData = new FormData()
-
-        formData.append("file", file)
-
-        // post request to API / send file
-        this.loading = true
-
-        this.activeLoading.push(loadingId)
-
-        this.$axios.$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData).then(res => {
-          this.mandatory_trainings.splice(index, 1, res.data.locum_detail_mandatory_training)
-
-          this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
-
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Document uploaded!"]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
-        }).catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
-        }).finally(() => {
-          this.loading = false
-        })
-      },
-
-      onOtherMandatoryFileInput (e, id, index) {
-        let types = [
-          "pdf",
-          "jpeg",
-          "msword",
-          "tiff",
-          "vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "vnd.openxmlformats-officedocument.wordprocessingml.template",
-          "vnd.ms-word.document.macroEnabled.12",
-          "vnd.ms-word.template.macroEnabled.12"
-        ]
-
-        let file = e.target.files[0]
-
-        let fileType = file.type.split("/")[1]
-
-        if (!types.includes(fileType)) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "alert",
-            text: ["Invalid File Format"]
-          })
-
-          return
-        }
-
-        const formData = new FormData()
-
-        formData.append("file", file)
-
-        formData.append("other_mandatory_training_id", id)
-
-        // post request to API / send file
-        this.loading = true
-
-        this.activeLoading.push(id)
-
-        this.$axios.$patch(`/api/v1/locum/other-mandatory-training/${id}`, formData).then(res => {
-          this.other_mandatory_trainings.splice(index, 1, res.data.locum_other_mandatory_training)
-
-          this.other_mandatory_trainings = this.other_mandatory_trainings.sort((a, b) => a.id - b.id)
-
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Document uploaded!"]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        }).catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== id)
-        }).finally(() => {
-          this.loading = false
-        })
-      },
-
-      onOtherMandatoryFileUpdate (e, id, index, loadingId) {
-        if (!e.target.files.length) {
-          return
-        }
-
-        let types = [
-          "pdf",
-          "jpeg",
-          "msword",
-          "tiff",
-          "vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "vnd.openxmlformats-officedocument.wordprocessingml.template",
-          "vnd.ms-word.document.macroEnabled.12",
-          "vnd.ms-word.template.macroEnabled.12"
-        ]
-
-        let file = e.target.files[0]
-
-        let fileType = file.type.split("/")[1]
-
-        if (!types.includes(fileType)) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "alert",
-            text: ["Invalid File Format"]
-          })
-
-          return
-        }
-
-        const formData = new FormData()
-
-        formData.append("file", file)
-
-        // post request to API / send file
-        this.loading = true
-
-        this.activeLoading.push(loadingId)
-
-        this.$axios.$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData).then(res => {
-          this.mandatory_trainings.splice(index, 1, res.data.locum_detail_mandatory_training)
-
-          this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
-
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Document uploaded!"]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
-        }).catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          })
-
-          this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
-        }).finally(() => {
-          this.loading = false
-        })
-      },
-
-      downloadItem (fileUrl, fileName) {
-        const axios = require("axios")
-
-        axios({
-          url: fileUrl,
-          method: "GET",
-          responseType: "blob" // important
-        }).then(response => {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement("a")
-          link.href = url
-          link.setAttribute("download", fileName)
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        })
+        // compliance_document_parent_type_id: responseObject.data.locum_compliance_document,
+        // compliance_document_parent_type_name: responseObject.data.locum_compliance_document,
+        // parent_compliance_document_id: responseObject.data.locum_compliance_document,
+        // parent_compliance_document_name: responseObject.data.locum_compliance_document,
+        file: responseObject.data.locum_compliance_document.file,
       }
-    }
-  }
+    },
+
+    show (item, type) {
+      if (item.file) {
+        if (type === "compliance") {
+          this.$router.push(`/compliance/${item.id}`)
+        }
+
+        if (type === "mandatory") {
+          this.$router.push(`/compliance/mandatory-training/${item.id}`)
+        }
+      }
+    },
+
+    status (status) {
+      switch (status) {
+      case "Pending":
+      case "Expiring":
+        return "bg-orange-500 text-white "
+      case "Verified":
+      case "Approved":
+        return "bg-green-500 text-white "
+      case "Empty":
+        return "border-2 border-gray-500 text-gray-600"
+      default:
+        return "bg-red-500 text-white "
+      }
+    },
+
+    onFileInput (event) {
+      if (!event.target.files.length) {
+        return
+      }
+
+      // vnd.openxmlformats-officedocument.wordprocessingml.document - docx type
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+
+      let file = event.target.files[0]
+
+      let fileType = file.type.split("/")[1]
+
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format",],
+        })
+
+        return
+      }
+
+      this.form.file = file
+    },
+
+    onMandatoryFileInput (e, id, index) {
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+
+      let file = e.target.files[0]
+      let fileType = file.type.split("/")[1]
+
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format",],
+        })
+
+        return
+      }
+
+      const formData = new FormData()
+
+      formData.append("file", file)
+
+      formData.append("mandatory_training_id", id)
+
+      // post request to API / send file
+      this.loading = true
+
+      this.activeLoading.push(id)
+
+      this.$axios.$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData).then(res => {
+        this.mandatory_trainings.splice(index, 1, res.data.locum_detail_mandatory_training)
+
+        this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Document uploaded!",],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== id)
+      }).catch(err => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`,],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== id)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    onMandatoryFileUpdate (e, id, index, loadingId) {
+      if (!e.target.files.length) {
+        return
+      }
+
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+
+      let file = e.target.files[0]
+
+      let fileType = file.type.split("/")[1]
+
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format",],
+        })
+
+        return
+      }
+
+      const formData = new FormData()
+
+      formData.append("file", file)
+
+      // post request to API / send file
+      this.loading = true
+
+      this.activeLoading.push(loadingId)
+
+      this.$axios.$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData).then(res => {
+        this.mandatory_trainings.splice(index, 1, res.data.locum_detail_mandatory_training)
+
+        this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Document uploaded!",],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
+      }).catch(err => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`,],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    onOtherMandatoryFileInput (e, id, index) {
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+
+      let file = e.target.files[0]
+
+      let fileType = file.type.split("/")[1]
+
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format",],
+        })
+
+        return
+      }
+
+      const formData = new FormData()
+
+      formData.append("file", file)
+
+      formData.append("other_mandatory_training_id", id)
+
+      // post request to API / send file
+      this.loading = true
+
+      this.activeLoading.push(id)
+
+      this.$axios.$patch(`/api/v1/locum/other-mandatory-training/${id}`, formData).then(res => {
+        this.other_mandatory_trainings.splice(index, 1, res.data.locum_other_mandatory_training)
+
+        this.other_mandatory_trainings = this.other_mandatory_trainings.sort((a, b) => a.id - b.id)
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Document uploaded!",],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== id)
+      }).catch(err => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`,],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== id)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    onOtherMandatoryFileUpdate (e, id, index, loadingId) {
+      if (!e.target.files.length) {
+        return
+      }
+
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+
+      let file = e.target.files[0]
+
+      let fileType = file.type.split("/")[1]
+
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format",],
+        })
+
+        return
+      }
+
+      const formData = new FormData()
+
+      formData.append("file", file)
+
+      // post request to API / send file
+      this.loading = true
+
+      this.activeLoading.push(loadingId)
+
+      this.$axios.$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData).then(res => {
+        this.mandatory_trainings.splice(index, 1, res.data.locum_detail_mandatory_training)
+
+        this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Document uploaded!",],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
+      }).catch(err => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`,],
+        })
+
+        this.activeLoading = this.activeLoading.filter(item => item !== loadingId)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob", // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>

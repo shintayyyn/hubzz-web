@@ -25,7 +25,7 @@
           This user has not yet accepted your changes.
         </p>
         <span>Waiting for locum's approval within {{ user.locum_job_applied_update_accepted_until_duration_in_minutes_formatted }},</span>
-        <span>before {{ user.locum_job_applied_update_accepted_until_formatted }}</span>
+        <span>before {{ user.locum_job_applied_update_accepted_until_in_gb_formatted }}</span>
       </div>
 
       <div class="flex flex-row flex-wrap justify-between mt-4">
@@ -63,20 +63,17 @@
               {{ user.locum_detail && user.locum_detail.short_biography && user.locum_detail.short_biography.trim() ? user.locum_detail.short_biography : '(none)' }}
             </div>
 
-            <div class="font-bold text-sm sm:text-md">
-              GMC / NMC Number
-            </div>
+            <div
+              v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
+              :key="referenceLocumComplianceDocument.compliance_document_id"
+            >
+              <div class="font-bold text-sm sm:text-md">
+                {{ referenceLocumComplianceDocument.compliance_document_name }}
+              </div>
 
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">
-              {{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}
-            </div>
-
-            <div class="font-bold text-sm sm:text-md">
-              MPL / NPL Number
-            </div>
-
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">
-              {{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}
+              <div class="text-xs sm:text-sm mb-4 md:mb-8">
+                {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+              </div>
             </div>
 
             <div class="font-bold text-sm sm:text-md">
@@ -347,239 +344,239 @@
 </template>
 
 <script>
-  import AppButton from "@/components/Base/AppButton"
-  import AppAvatar from "@/components/Base/AppAvatar"
-  import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-  import SendMessageModal from "@/components/Messages/SendMessageModal"
+import AppButton from "@/components/Base/AppButton"
+import AppAvatar from "@/components/Base/AppAvatar"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import SendMessageModal from "@/components/Messages/SendMessageModal"
 
-  export default {
-    components: {
-      AppButton,
-      AppConfirmationModal,
-      AppAvatar,
-      SendMessageModal
+export default {
+  components: {
+    AppButton,
+    AppConfirmationModal,
+    AppAvatar,
+    SendMessageModal,
+  },
+
+  props: {
+    user: {
+      type: Object,
+      default: () => null,
     },
+    job: {
+      type: Object,
+      default: () => null,
+    },
+  },
 
-    props: {
-      user: {
-        type: Object,
-        default: () => null
-      },
-      job: {
-        type: Object,
-        default: () => null
+  data () {
+    return {
+      checkLoading: false,
+      warning_modal: false,
+      conflictJobs: [],
+      //
+      confirmation_modal: false,
+      mandatory: [],
+      optional: [],
+      mandatoryTrainings: [],
+      otherMandatoryTrainings: [],
+      referees: [],
+      sendMessageModal: false,
+    }
+  },
+
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+  },
+
+  created () {
+    this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+      this.user.locum_detail.profession.profession_compliance_category_id
+    )
+
+    this.mandatoryTrainings = []
+
+    this.user.locum_detail.mandatory_trainings.forEach(mandatoryTraining => {
+      if (mandatoryTraining.file !== null) {
+        this.mandatoryTrainings.push(mandatoryTraining)
       }
-    },
+    })
 
-    data () {
-      return {
-        checkLoading: false,
-        warning_modal: false,
-        conflictJobs: [],
-        //
-        confirmation_modal: false,
-        mandatory: [],
-        optional: [],
-        mandatoryTrainings: [],
-        otherMandatoryTrainings: [],
-        referees: [],
-        sendMessageModal: false,
-      }
-    },
+    this.otherMandatoryTrainings = []
 
-    computed: {
-      authPermissions () {
-        return this.$store.getters["permissions"]
-      }
-    },
-
-    created () {
-      this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
-        this.user.locum_detail.profession.profession_compliance_category_id
-      )
-
-      this.mandatoryTrainings = []
-
-      this.user.locum_detail.mandatory_trainings.forEach(mandatoryTraining => {
-        if (mandatoryTraining.file !== null) {
-          this.mandatoryTrainings.push(mandatoryTraining)
-        }
-      })
-
-      this.otherMandatoryTrainings = []
-
-      this.user.locum_detail.other_mandatory_trainings.forEach(
-        otherMandatoryTraining => {
-          if (
-            otherMandatoryTraining.locum_other_mandatory_trainings &&
-            otherMandatoryTraining.locum_other_mandatory_trainings.file !== null
-          ) {
-            this.otherMandatoryTrainings.push(otherMandatoryTraining)
-          }
-        }
-      )
-
-      this.referees = []
-
-      this.user.locum_detail.referees.forEach(referee => {
+    this.user.locum_detail.other_mandatory_trainings.forEach(
+      otherMandatoryTraining => {
         if (
-          referee.name !== null &&
-          referee.name &&
-          referee.name.trim() &&
-          referee.phone_number !== null &&
-          referee.phone_number &&
-          referee.phone_number.trim() &&
-          referee.email !== null &&
-          referee.email &&
-          referee.email.trim()
+          otherMandatoryTraining.locum_other_mandatory_trainings
+            && otherMandatoryTraining.locum_other_mandatory_trainings.file !== null
         ) {
-          this.referees.push(referee)
+          this.otherMandatoryTrainings.push(otherMandatoryTraining)
         }
-      })
+      }
+    )
 
-      // this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings;
+    this.referees = []
+
+    this.user.locum_detail.referees.forEach(referee => {
+      if (
+        referee.name !== null
+          && referee.name
+          && referee.name.trim()
+          && referee.phone_number !== null
+          && referee.phone_number
+          && referee.phone_number.trim()
+          && referee.email !== null
+          && referee.email
+          && referee.email.trim()
+      ) {
+        this.referees.push(referee)
+      }
+    })
+
+    // this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings;
+  },
+
+  methods: {
+    message (user) {
+      this.user = user
+      this.sendMessageModal = true
     },
 
-    methods: {
-      message (user) {
-        this.user = user
-        this.sendMessageModal = true
-      },
-
-      getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
-        locumProfessionProfessionComplianceCategoryId
-      ) {
-        this.$axios
-          .$get(
-            `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`
-          )
-          .then(res => {
-            this.mandatory = this.user.locum_detail.compliance_documents.filter(
-              compliance_document => {
-                return res.data.profession_compliance_category.mandatory_compliance_documents.some(
-                  mandatory_compliance_document =>
-                    mandatory_compliance_document.id ===
-                    compliance_document.compliance_document.id
-                )
-              }
-            )
-
-            this.optional = this.user.locum_detail.compliance_documents.filter(
-              compliance_document => {
-                return res.data.profession_compliance_category.optional_compliance_documents.some(
-                  optional_compliance_document =>
-                    optional_compliance_document.id ===
-                    compliance_document.compliance_document.id
-                )
-              }
-            )
-          })
-      },
-
-      checkIfLocumAlreadyAppointed () {
-        this.checkLoading = true
-
-        this.$axios
-          .$get(`/api/v1/practice/job-parts`, {
-            params: {
-              appointed_to_locum_user_id: this.user.id,
-              status: ["Allocated", "Ongoing"],
-              job_practice_id: this.job.practice_id
-            }
-          })
-          .then(res => {
-            this.conflictJobs = []
-
-            res.data.job_parts.forEach(jobPart => {
-              if (jobPart.dates.some(date => this.job.dates.includes(date))) {
-                if (jobPart.status === "Ongoing") {
-                  this.conflictJobs.push(jobPart.job_part_number)
-                } else if (jobPart.status === "Allocated") {
-                  this.conflictJobs.push(jobPart.job_job_number)
-                }
-              }
-            })
-
-            this.conflictJobs = [...new Set(this.conflictJobs)]
-
-            if (this.conflictJobs.length > 0) {
-              this.warning_modal = true
-              this.confirmation_modal = false
-            } else if (this.conflictJobs.length === 0) {
-              this.appoint()
-            }
-          })
-          .finally(() => {
-            this.checkLoading = false
-          })
-      },
-
-      appoint () {
-        this.$axios
-          .$put(
-            `/api/v1/practice/jobs/${this.job.id}/applicants/${this.user.id}/appoint`
-          )
-          .then(() => {
-            if (
-              this.$route.path.includes("/dashboard") ||
-              this.$route.path.includes("/sessions")
-            ) {
-              this.$store.commit("jobs/REMOVE_PRACTICE_APPLIED_JOB", this.job.id)
-              this.$store.commit(
-                "jobs/REMOVE_PRACTICE_APPLIED_JOBS_REMINDER",
-                this.job.id
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
+      locumProfessionProfessionComplianceCategoryId
+    ) {
+      this.$axios
+        .$get(
+          `/api/v1/profession-compliance-categories/${locumProfessionProfessionComplianceCategoryId}`
+        )
+        .then(res => {
+          this.mandatory = this.user.locum_detail.compliance_documents.filter(
+            compliance_document => {
+              return res.data.profession_compliance_category.mandatory_compliance_documents.some(
+                mandatory_compliance_document =>
+                  mandatory_compliance_document.id
+                    === compliance_document.compliance_document.id
               )
             }
+          )
 
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Assign locum successfully"]
-            })
+          this.optional = this.user.locum_detail.compliance_documents.filter(
+            compliance_document => {
+              return res.data.profession_compliance_category.optional_compliance_documents.some(
+                optional_compliance_document =>
+                  optional_compliance_document.id
+                    === compliance_document.compliance_document.id
+              )
+            }
+          )
+        })
+    },
 
-            this.$emit("appointed")
-          })
-          .catch(err => {
-            console.log("err", err.reponse | err)
-            if (
-              err.response &&
-              err.response.data &&
-              err.response.data.message === "Locum User Not Accept Update"
-            ) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danget",
-                text: ["Locum has not yet accepted the amendment."]
-              })
-            } else {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danget",
-                text: [`${err.response.data.message}`]
-              })
+    checkIfLocumAlreadyAppointed () {
+      this.checkLoading = true
+
+      this.$axios
+        .$get(`/api/v1/practice/job-parts`, {
+          params: {
+            appointed_to_locum_user_id: this.user.id,
+            status: ["Allocated", "Ongoing",],
+            job_practice_id: this.job.practice_id,
+          },
+        })
+        .then(res => {
+          this.conflictJobs = []
+
+          res.data.job_parts.forEach(jobPart => {
+            if (jobPart.dates.some(date => this.job.dates.includes(date))) {
+              if (jobPart.status === "Ongoing") {
+                this.conflictJobs.push(jobPart.job_part_number)
+              } else if (jobPart.status === "Allocated") {
+                this.conflictJobs.push(jobPart.job_job_number)
+              }
             }
           })
-          .finally(() => {
-            this.warning_modal = false
-          })
-      },
-      downloadItem (fileUrl, fileName) {
-        const axios = require("axios")
-        axios({
-          url: fileUrl,
-          method: "GET",
-          responseType: "blob" // important
-        }).then(response => {
-          const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement("a")
-          link.href = url
-          link.setAttribute("download", fileName)
-          document.body.appendChild(link)
-          link.click()
+
+          this.conflictJobs = [...new Set(this.conflictJobs),]
+
+          if (this.conflictJobs.length > 0) {
+            this.warning_modal = true
+            this.confirmation_modal = false
+          } else if (this.conflictJobs.length === 0) {
+            this.appoint()
+          }
         })
-      },
+        .finally(() => {
+          this.checkLoading = false
+        })
     },
-  }
+
+    appoint () {
+      this.$axios
+        .$put(
+          `/api/v1/practice/jobs/${this.job.id}/applicants/${this.user.id}/appoint`
+        )
+        .then(() => {
+          if (
+            this.$route.path.includes("/dashboard")
+              || this.$route.path.includes("/sessions")
+          ) {
+            this.$store.commit("jobs/REMOVE_PRACTICE_APPLIED_JOB", this.job.id)
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_APPLIED_JOBS_REMINDER",
+              this.job.id
+            )
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Assign locum successfully",],
+          })
+
+          this.$emit("appointed")
+        })
+        .catch(err => {
+          console.log("err", err.reponse | err)
+          if (
+            err.response
+              && err.response.data
+              && err.response.data.message === "Locum User Not Accept Update"
+          ) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danget",
+              text: ["Locum has not yet accepted the amendment.",],
+            })
+          } else {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danget",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
+        .finally(() => {
+          this.warning_modal = false
+        })
+    },
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob", // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>

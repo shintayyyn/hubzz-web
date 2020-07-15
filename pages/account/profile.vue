@@ -60,30 +60,6 @@
             />
           </div>
 
-          <!-- <AppInput
-            v-model="form.gmc_or_nmc_number"
-            :type="'text'"
-            :name="'gmc_or_nmc_number'"
-            :label="'GMC / NMC Number'"
-            :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
-            :info="'For compliance; to be verified by the hubzz team'"
-            @submit="updateLocumProfile"
-            @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
-            @keypress="inputNumberOnly($event)"
-            required
-          />
-
-          <AppInput
-            v-model="form.mpl_or_npl_number"
-            :type="'text'"
-            :name="'mpl_or_npl_number'"
-            :label="'MPL / NPL Number'"
-            :error="formError.find(item => item.field === 'mpl_or_npl_number')"
-            @submit="updateLocumProfile"
-            @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
-            @keypress="inputNumberOnly($event)"
-          />-->
-
           <AppFilterSearch
             v-model="form.qualification_id"
             :name="'qualification_id'"
