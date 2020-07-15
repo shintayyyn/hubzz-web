@@ -68,10 +68,11 @@
               ]"
             >
               <div
+                v-if="item && item.status"
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(item ? item.status : '')"
+                :class="status(item.status)"
               >
-                {{ item ? item.status : '' }}
+                {{ item.status }}
               </div>
             </div>
           </div>
