@@ -182,16 +182,16 @@
 	</div>
 </template>
 <script>
-import AppAvatar from "~/components/Base/AppAvatar";
-import AppLoading from "~/components/Base/AppLoading";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import SendMessageModal from "@/components/Messages/SendMessageModal";
+import AppAvatar from "~/components/Base/AppAvatar"
+import AppLoading from "~/components/Base/AppLoading"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import SendMessageModal from "@/components/Messages/SendMessageModal"
 export default {
 	components: {
 		AppAvatar,
 		AppLoading,
 		AppConfirmationModal,
-		SendMessageModal
+		SendMessageModal,
 	},
 	props: {
 		user: {
@@ -199,7 +199,7 @@ export default {
 			default: () => null
 		}
 	},
-	data() {
+	data () {
 		return {
 			loading: false,
 			// user: null,
@@ -208,13 +208,13 @@ export default {
 			confirmation_text: "",
 			confirmation_modal: false,
 			sendMessageModal: false
-		};
+		}
 	},
-	created() {
-		console.log("locum assigned", this.user);
+	created () {
+		console.log("locum assigned", this.user)
 	},
 	methods: {
-		getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+		getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
 			locumProfessionProfessionComplianceCategoryId
 		) {
 			this.$axios
@@ -228,29 +228,29 @@ export default {
 								mandatory_compliance_document =>
 									mandatory_compliance_document.id ===
 									compliance_document.compliance_document.id
-							);
+							)
 						}
-					);
+					)
 					this.optional = this.user.locum_detail.compliance_documents.filter(
 						compliance_document => {
 							return res.data.profession_compliance_category.optional_compliance_documents.some(
 								optional_compliance_document =>
 									optional_compliance_document.id ===
 									compliance_document.compliance_document.id
-							);
+							)
 						}
-					);
-				});
+					)
+				})
 		},
-		favorite() {
-			this.confirmation_text = "Add this Locum to MyBanks?";
-			this.confirmation_modal = true;
+		favorite () {
+			this.confirmation_text = "Add this Locum to MyBanks?"
+			this.confirmation_modal = true
 		},
-		unfavorite() {
-			this.confirmation_text = "Remove this Locum to My Banks?";
-			this.confirmation_modal = true;
+		unfavorite () {
+			this.confirmation_text = "Remove this Locum to My Banks?"
+			this.confirmation_modal = true
 		},
-		confirm() {
+		confirm () {
 			if (!this.user.is_favorite) {
 				this.$axios
 					.$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
@@ -259,10 +259,10 @@ export default {
 							enabled: true,
 							status: "success",
 							text: ["Added to favourites"]
-						});
-					});
-				this.user.is_favorite = true;
-				this.confirmation_modal = false;
+						})
+					})
+				this.user.is_favorite = true
+				this.confirmation_modal = false
 			} else if (this.user.is_favorite) {
 				this.$axios
 					.$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
@@ -271,30 +271,30 @@ export default {
 							enabled: true,
 							status: "success",
 							text: ["Remove to favourites"]
-						});
-					});
-				this.user.is_favorite = false;
-				this.confirmation_modal = false;
+						})
+					})
+				this.user.is_favorite = false
+				this.confirmation_modal = false
 			}
 		},
-		downloadItem(fileUrl, fileName) {
-			const axios = require("axios");
+		downloadItem (fileUrl, fileName) {
+			const axios = require("axios")
 			axios({
 				url: fileUrl,
 				method: "GET",
 				responseType: "blob" // important
 			}).then(response => {
-				const url = window.URL.createObjectURL(new Blob([response.data]));
-				const link = document.createElement("a");
-				link.href = url;
-				link.setAttribute("download", fileName);
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-			});
+				const url = window.URL.createObjectURL(new Blob([response.data]))
+				const link = document.createElement("a")
+				link.href = url
+				link.setAttribute("download", fileName)
+				document.body.appendChild(link)
+				link.click()
+				document.body.removeChild(link)
+			})
 		}
 	}
-};
+}
 </script>
 <style scoped>
 .avatar {
