@@ -121,7 +121,8 @@
         </p>
       </div>
       <div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
-        Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
+        Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
+        <!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
         <!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ jobClosingTag(permanent_job.hired_through) }} -->
       </div>
       <div v-if="permanent_job_application && permanent_job_application.invitation_schedule">

@@ -317,7 +317,7 @@ export default {
                 slot: true,
                 slotName: "status_slot",
                 dataIndex: "",
-                class: "text-center"
+                class: "text-center",
               },
             ]
           }
@@ -327,8 +327,8 @@ export default {
               ...this.defaultColumns,
               {
                 name: "Closed At",
-                dataIndex: "closed_at",
-                class: "text-center localDate",
+                dataIndex: "closed_at_in_gb_formatted",
+                class: "text-center",
               },
               {
                 name: "Status",
@@ -351,8 +351,8 @@ export default {
               ...this.defaultColumns,
               {
                 name: "Closed At",
-                dataIndex: "closed_at",
-                class: "text-center localDate",
+                dataIndex: "closed_at_in_gb_formatted",
+                class: "text-center",
               },
               {
                 name: "Status",

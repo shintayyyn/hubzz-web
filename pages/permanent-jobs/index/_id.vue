@@ -16,7 +16,7 @@ import PracticePermanentJobModal from "@/components/PermanentJob/PracticePermane
 export default {
 	components: {
 		LocumPermanentJobModal,
-		PracticePermanentJobModal
+		PracticePermanentJobModal,
 	},
 	data () {
 		return {
