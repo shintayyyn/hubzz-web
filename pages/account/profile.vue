@@ -1385,8 +1385,11 @@ export default {
 
       if (["true", true,].includes(this.form.claim_nhs)) {
         if (
-          !this.form.ni_number.substring(0, 8).match(/[A-Za-z0-9]/g)
-          || this.form.ni_number.substring(0, 8).match(/[A-Za-z0-9]/g).length !== 8
+          this.form.nhs_number
+          && (
+            !this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
+            || this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g).length !== 8
+          )
         ) {
           this.formError.push({
             field: "nhs_number",
@@ -1395,10 +1398,13 @@ export default {
         }
 
         if (
-          !this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
-          || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !== 2
-          || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
-          || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6
+          this.form.ni_number
+          && (
+            !this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
+            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !== 2
+            || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
+            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6
+          )
         ) {
           this.formError.push({
             field: "ni_number",

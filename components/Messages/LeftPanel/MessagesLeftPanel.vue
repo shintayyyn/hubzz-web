@@ -6,12 +6,11 @@
         :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'"
       >
         <AppInput
-          v-model="search_text"
+          v-model="inboxSearch"
           :type="'search'"
-          :name="'search_text'"
+          :name="'inboxSearch'"
           :placeholder="'Search Messages'"
           class="w-full"
-          @keydown.enter="search"
         />
 
         <span class="ml-4 pb-2 flex items-center">
@@ -31,13 +30,20 @@
           class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
           @scroll="scrollHandler"
         >
-          <template v-if="showResult === false || $route.params.slug == '/messages'">
+          <template v-if="!showResult || $route.params.slug == '/messages'">
             <transition-group name="slide" tag="p">
               <div
                 v-for="item in conversations"
                 :key="item.id"
                 class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-                :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.seen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
+                :class="
+                  parseInt($route.params.slug) === item.id
+                    ? 'bg-gray-300'
+                    : !item.latest_conversation_message.seen_by_receiver
+                      && item.latest_conversation_message.user_id !== $auth.user.id
+                      ? 'font-bold bg-gray-400'
+                      : 'hover:bg-gray-200'
+                "
                 @click.stop="goTo(item)"
               >
                 <div>
@@ -116,36 +122,30 @@
             </transition-group>
           </template>
 
-          <template v-if="(messages.length === 0 && showResult === true) || conversations.length === 0">
+          <template v-if="(messages.length === 0 && showResult) || conversations.length === 0">
             <div class="flex flex-col h-full items-center pt-20 font-bold text-gray-500">
-              <span v-if="showResult === true" class="text-center break-words break-words px-4">
-                No messages found for
+              <span v-if="showResult" class="text-center break-words break-words px-4">
+                <span>No messages found for</span>
                 <br>
-                "{{ search_text }}"
+                <span>"{{ inboxSearch }}"</span>
               </span>
               <span v-else>No messages</span>
             </div>
           </template>
           
           <transition name="fade">
-            <div
-              v-if="nothingToLoad"
-              class="text-center py-1 w-full text-sm text-gray-700"
-            >
+            <div v-if="nothingToLoad" class="text-center py-1 w-full text-sm text-gray-700">
               That's all we got for you
             </div>
           </transition>
         </div>
       </div>
-      <!-- <button
-        class="bg-yellow-500 border-yellow-500 text-sm p-4 md:text-lg focus:outline-none"
-        @click="createMessage"
-			>Create Message</button>-->
     </div>
   </div>
 </template>
 
 <script>
+import debounce from "lodash.debounce"
 import AppInput from "~/components/Base/AppInput"
 import AppAvatar from "~/components/Base/AppAvatar"
 
@@ -157,7 +157,7 @@ export default {
   
   data () {
     return {
-      search_text: "",
+      inboxSearch: "",
       messages: [],
       showResult: false,
       loadMore: false,
@@ -170,7 +170,7 @@ export default {
     conversations () {
       return this.$store.getters["chat/getConversations"]
     },
-    
+
     conversationsCount () {
       return this.$store.state.chat.conversations_count
     },
@@ -186,20 +186,50 @@ export default {
   },
   
   watch: {
-    search_text (value) {
+    inboxSearch () {
       this.nothingToLoad = false
-      if (!value) {
+      if (!this.inboxSearch) {
         this.showResult = false
       } else {
-        this.getResults(value)
+        this.searchSubmit(this.inboxSearch)
       }
     },
   },
   
   methods: {
+    searchSubmit: debounce(function (inboxSearch) {
+      this.loadingInbox = true
+      this.$axios.get(`/api/v1/conversations?search=${inboxSearch}`).then((response) => {
+        this.messages = response.data.data.conversations
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          message = err.response.data.message
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
+        }
+
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
+      }).finally(() => {
+        this.showResult = true
+        this.loadingInbox = false
+      })
+    }, 500),
+
     goTo (message) {
       this.showResult = false
-      this.search_text = ""
+      this.inboxSearch = ""
       this.messages = []
       this.$store.dispatch("chat/setActiveConversation", message.id)
       if (!this.conversations.find(item => item.id == message.id)) {
@@ -221,13 +251,6 @@ export default {
       }
 
       // console.log("conversations", this.conversations);
-    },
-    
-    getResults (value) {
-      this.$axios.$get(`/api/v1/conversations?search=${value}`).then(res => {
-        this.messages = res.data.conversations
-        this.showResult = true
-      })
     },
     
     senderFullname (item) {
