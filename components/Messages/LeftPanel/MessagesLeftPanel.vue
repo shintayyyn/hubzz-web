@@ -33,25 +33,25 @@
           <template v-if="!showResult || $route.params.slug == '/messages'">
             <transition-group name="slide" tag="p">
               <div
-                v-for="item in conversations"
-                :key="item.id"
+                v-for="conversation in conversations"
+                :key="conversation.id"
                 class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
                 :class="
-                  parseInt($route.params.slug) === item.id
+                  parseInt($route.params.slug) === conversation.id
                     ? 'bg-gray-300'
-                    : !item.latest_conversation_message.seen_by_receiver
-                      && item.latest_conversation_message.user_id !== $auth.user.id
+                    : !conversation.latest_conversation_message.seen_by_receiver
+                      && conversation.latest_conversation_message.user_id !== $auth.user.id
                       ? 'font-bold bg-gray-400'
                       : 'hover:bg-gray-200'
                 "
-                @click.stop="goTo(item)"
+                @click.stop="goTo(conversation)"
               >
                 <div>
                   <AppAvatar
                     v-if="$auth.user.domain === 'Practice'"
                     :height="'50px'"
                     :width="'50px'"
-                    :src="userAvatar(item)"
+                    :src="userAvatar(conversation)"
                   />
                 </div>
 
@@ -59,22 +59,45 @@
                   <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
                     <p
                       class="truncate"
-                      :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
                     >
-                      {{ userFullname(item) }}
+                      <span>{{ userFullname(conversation) }}</span>
                     </p>
+
+                    <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
+                      <span>{{ conversation.display_user.practice_detail_practice_role }}</span>
+                      <span>({{ conversation.display_user.practice_name }})</span>
+                    </p>
+
                     <p
                       class="text-sm truncate text-gray-700"
-                      :class="item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? 'italic':''"
+                      :class="
+                        conversation.latest_conversation_message.deleted_by_receiver
+                          || conversation.latest_conversation_message.deleted_by_sender
+                          ? 'italic'
+                          :''
+                      "
                     >
-                      {{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}
+                      {{
+                        conversation.latest_conversation_message.deleted_by_receiver
+                          || conversation.latest_conversation_message.deleted_by_sender
+                          ? `${senderFullname(conversation)} deleted a message.`
+                          : `${senderFullname(conversation)}: ${conversation.latest_conversation_message.message}`
+                      }}
                     </p>
                   </div>
 
                   <span
                     class="absolute w-10 h-full right-0 flex items-center text-right text-xs text-gray-600 leading-none mx-2"
-                    :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.seen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
-                  >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
+                    :class="
+                      parseInt($route.params.slug) === conversation.id
+                        ? 'bg-gray-300'
+                        : !conversation.latest_conversation_message.seen_by_receiver
+                          && conversation.latest_conversation_message.user_id !== $auth.user.id
+                          ? 'font-bold bg-gray-400'
+                          : 'hover:bg-gray-200'
+                    "
+                  >{{ $moment(conversation.latest_conversation_message.created_at).fromNow() }}</span>
                 </div>
               </div>
             </transition-group>
@@ -83,18 +106,25 @@
           <template v-if="showResult && messages.length > 0">
             <transition-group name="slide" tag="p">
               <div
-                v-for="item in messages"
-                :key="item.id"
+                v-for="conversation in messages"
+                :key="conversation.id"
                 class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-                :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.sen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
-                @click.stop="goTo(item)"
+                :class="
+                  parseInt($route.params.slug) === conversation.id
+                    ? 'bg-gray-300'
+                    : !conversation.latest_conversation_message.sen_by_receiver
+                      && conversation.latest_conversation_message.user_id !== $auth.user.id
+                      ? 'font-bold bg-gray-400'
+                      : 'hover:bg-gray-200'
+                "
+                @click.stop="goTo(conversation)"
               >
                 <div>
                   <AppAvatar
                     v-if="$auth.user.domain === 'Practice'"
                     :height="'50px'"
                     :width="'50px'"
-                    :src="userAvatar(item)"
+                    :src="userAvatar(conversation)"
                   />
                 </div>
 
@@ -102,21 +132,45 @@
                   <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
                     <p
                       class="truncate"
-                      :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                      :class="parseInt($route.params.slug) === conversation.id ? 'font-bold' : ''"
                     >
-                      {{ userFullname(item) }}
+                      {{ userFullname(conversation) }}
                     </p>
+
+                    <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
+                      <span>{{ conversation.display_user.practice_detail_practice_role }}</span>
+                      <span>({{ conversation.display_user.practice_name }})</span>
+                    </p>
+                    
                     <p
                       class="text-sm truncate text-gray-700"
-                      :class="item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? 'italic':''"
+                      :class="
+                        conversation.latest_conversation_message.deleted_by_receiver
+                          || conversation.latest_conversation_message.deleted_by_sender
+                          ? 'italic'
+                          :''
+                      "
                     >
-                      {{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}
+                      {{
+                        conversation.latest_conversation_message.deleted_by_receiver
+                          || conversation.latest_conversation_message.deleted_by_sender
+                          ? `${senderFullname(conversation)} deleted a message.`
+                          : `${senderFullname(conversation)}: ${conversation.latest_conversation_message.message}`
+                      }}
                     </p>
                   </div>
+
                   <span
                     class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                    :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.sen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
-                  >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
+                    :class="
+                      parseInt($route.params.slug) === conversation.id
+                        ? 'bg-gray-300'
+                        : !conversation.latest_conversation_message.sen_by_receiver
+                          && conversation.latest_conversation_message.user_id !== $auth.user.id
+                          ? 'font-bold bg-gray-400'
+                          : 'hover:bg-gray-200'
+                    "
+                  >{{ $moment(conversation.latest_conversation_message.created_at).fromNow() }}</span>
                 </div>
               </div>
             </transition-group>
@@ -232,7 +286,7 @@ export default {
       this.inboxSearch = ""
       this.messages = []
       this.$store.dispatch("chat/setActiveConversation", message.id)
-      if (!this.conversations.find(item => item.id == message.id)) {
+      if (!this.conversations.find(conversation => conversation.id == message.id)) {
         this.loadMoreConversation()
       }
       if (window.innerWidth < 768) {
@@ -253,28 +307,21 @@ export default {
       // console.log("conversations", this.conversations);
     },
     
-    senderFullname (item) {
-      return item.latest_conversation_message.user.id === this.$auth.user.id
+    senderFullname (conversation) {
+      return conversation.latest_conversation_message.user.id === this.$auth.user.id
         ? "You"
-        : `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`
+        : `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`
     },
     
-    userFullname (item) {
-      let user = item.conversation_member_users.find(
-        item => item.id != this.$auth.user.id
-      )
-      let fullName
-      fullName = `${user.first_name} ${user.last_name}`
-      // if (user.email) {
-      // } else {
-      // 	fullName = "Hubzz User";
-      // }
-      return fullName
+    userFullname (conversation) {
+      let user = conversation.conversation_member_users.find(user => user.id !== this.$auth.user.id)
+
+      return user ? `${user.first_name} ${user.last_name}` : null
     },
     
-    userAvatar (item) {
-      let user_detail = item.conversation_member_users.find(
-        item => item.id != this.$auth.user.id
+    userAvatar (conversation) {
+      let user_detail = conversation.conversation_member_users.find(
+        user => user.id != this.$auth.user.id
       )
       console.log(user_detail)
       return user_detail.avatar ? user_detail.avatar.file.url : ""
