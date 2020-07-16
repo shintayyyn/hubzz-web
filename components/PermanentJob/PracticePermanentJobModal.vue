@@ -34,7 +34,8 @@
         class="bg-red-300 p-4 rounded-lg my-2"
       >
         <div>
-          Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }}
+          Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
+          <!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
         </div>
         <div 
           v-if="$auth.user.domain === 'Practice'

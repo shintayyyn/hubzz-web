@@ -6,20 +6,20 @@ export default {
       let notifObj = null
 
       switch (notif.notificationType) {
-        case 'Locum Notification Permanent Job Applied':
-          message = 'You have Applied to a Permanent Job'
-          break
-        case 'Locum Notification Permanent Job Invited':
-          message = 'You have been invited for an Interview for a Permanent Job Position'
-          break
-        case 'Locum Notification Permanent Job Rejected':
-          message = 'Your application for a Permanent Job position has been rejected'
-          break
-        case 'Locum Notification Permanent Job Unsuccessful':
-          message = 'Your application for a Permanent Job position has been Unsuccessful'
-          break
-        default:
-          message = ''
+      case 'Locum Notification Permanent Job Applied':
+        message = 'You have Applied to a Permanent Job'
+        break
+      case 'Locum Notification Permanent Job Invited':
+        message = 'You have been invited for an Interview for a Permanent Job Position'
+        break
+      case 'Locum Notification Permanent Job Rejected':
+        message = 'Your application for a Permanent Job position has been rejected'
+        break
+      case 'Locum Notification Permanent Job Unsuccessful':
+        message = 'Your application for a Permanent Job position has been Unsuccessful'
+        break
+      default:
+        message = ''
       }
 
       notifObj = {
@@ -44,26 +44,26 @@ export default {
       let notifObj = null
 
       switch (notif.notificationType) {
-        case 'Practice Notification Permanent Job Applied':
-          message = 'A Locum has applied to a Permanent Job'
-          break
-        case 'Practice Notification Permanent Job Invited':
-          message = 'You have invited a Locum for a Permanent Job Position'
-          break
-        case 'Practice Notification Permanent Job Approved':
-          message = 'Your job posting has been approved by your Hub'
-          break
-        case 'Practice Notification Permanent Job Rejected':
-          message =  'Your job posting has been rejected by your Hub'
-          break
-        case 'Practice Notification Hub Posted Permanent Job Posting':
-          message =  'Your Hub created a permanent job posting'
-          break
-        case 'Practice Notification Spoke Posted Pending Permanent Job':
-            message = 'Your Spoke has posted a pending permanent job'
-            break
-        default:
-          message = ''
+      case 'Practice Notification Permanent Job Applied':
+        message = 'A Locum has applied to a Permanent Job'
+        break
+      case 'Practice Notification Permanent Job Invited':
+        message = 'You have invited a Locum for a Permanent Job Position'
+        break
+      case 'Practice Notification Permanent Job Approved':
+        message = 'Your job posting has been approved by your Hub'
+        break
+      case 'Practice Notification Permanent Job Rejected':
+        message =  'Your job posting has been rejected by your Hub'
+        break
+      case 'Practice Notification Hub Posted Permanent Job Posting':
+        message =  'Your Hub created a permanent job posting'
+        break
+      case 'Practice Notification Spoke Posted Pending Permanent Job':
+        message = 'Your Spoke has posted a pending permanent job'
+        break
+      default:
+        message = ''
       }
 
       notifObj = {

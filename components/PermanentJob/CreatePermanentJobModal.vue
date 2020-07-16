@@ -208,7 +208,7 @@ export default {
 	components: {
 		AppInput,
 		AppButton,
-		AppDate
+		AppDate,
 	},
 	data () {
 		return {
@@ -238,41 +238,41 @@ export default {
 			industry_types: [
 				{
 					label: "NHS",
-					value: "NHS"
+					value: "NHS",
 				},
 				{
 					label: "Private",
-					value: "Private"
+					value: "Private",
 				}
 			],
 			work_hours_type: [
 				{
 					label: "Part Time",
-					value: "Part Time"
+					value: "Part Time",
 				},
 				{
 					label: "Full Time",
-					value: "Full Time"
+					value: "Full Time",
 				}
 			],
 			salary_description_type_1: [
 				{
 					label: "Attractive",
-					value: "Attractive"
+					value: "Attractive",
 				},
 				{
 					label: "Average",
-					value: "Average"
+					value: "Average",
 				}
 			],
 			salary_description_type_2: [
 				{
 					label: "Negotiable",
-					value: "Negotiable"
+					value: "Negotiable",
 				},
 				{
 					label: "Non-negotiable",
-					value: "Non-negotiable"
+					value: "Non-negotiable",
 				}
 			],
 			formError: [],
@@ -317,24 +317,20 @@ export default {
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
-			(this.practice = this.$auth.user.practice_detail.practice)
+			(this.practice = this.$auth.user.practice_detail.practice),
 		])
 			.then(
 				([
 					responsePracticeLists,
 					responseRateLists,
 					responseShifts,
-					responseProfessions
+					responseProfessions,
 				]) => {
 					this.practice_lists = []
-					console.log(
-						"practice job practices",
-						responsePracticeLists.data.practices
-					)
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
-							value: item.id
+							value: item.id,
 						})
 					})
 					this.rate_lists = []
@@ -357,7 +353,6 @@ export default {
 					this.practice.type === "Spoke" && this.practice.parent_practice_id
 						? this.practice.parent_practice_id
 						: null
-				console.log('this.practice', this.practice)
 				this.form.email = this.practice.email ? this.practice.email : null
 				this.form.report_to = this.practice.report_to ? this.practice.report_to : null
 				this.loading = false
@@ -370,13 +365,13 @@ export default {
 				fieldName.slice(1).replace(/_/g, " ")
 			let index = this.formError.findIndex(item => item.field === fieldName)
 			if (
-				parseInt(value) < 1 ||
-				value.toString().includes("e") ||
-				value === ""
-			) {
+        parseInt(value) < 1 
+				||value.toString().includes("e")
+				||value === ""
+      ) {
 				this.formError.push({
 					field: fieldName,
-					message: `${displayFieldName} is invalid`
+					message: `${displayFieldName} is invalid`,
 				})
 			} else {
 				this.formError.splice(index, 1)
@@ -404,7 +399,7 @@ export default {
 			let notRequired = [
 				"parent_practice_id",
 				"salary_amount",
-				"salary_description_2"
+				"salary_description_2",
 			]
 
 			this.Validate(this.form, notRequired)
@@ -433,7 +428,7 @@ export default {
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,
 							status: "danger",
-							text: [err.response.data.message]
+							text: [err.response.data.message,]
 						})
 					})
 			} else {

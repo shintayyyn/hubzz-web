@@ -3,15 +3,13 @@
 </template>
 
 <script>
-  import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal"
-
-  export default {
-    components: {
-      CreatePermanentJobModal
-    },
-  }
+import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal"
+export default {
+  components: {
+    CreatePermanentJobModal,
+  },
+}
 </script>
-
 <style>
   .wrapper {
     position: relative;
