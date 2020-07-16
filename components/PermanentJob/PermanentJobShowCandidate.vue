@@ -313,7 +313,7 @@ export default {
     SendMessageModal,
     AppAvatar,
     AppDate,
-    AppTime
+    AppTime,
   },
   props: {
     user: {
@@ -322,14 +322,14 @@ export default {
     },
     permanent_job: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     permanent_job_application: {
       type: Object,
-      default: () => null
+      default: () => null,
     }
   },
-  data() {
+  data () {
     return {
       permanentJobApp: "",
       confirmation_modal: false,
@@ -340,29 +340,24 @@ export default {
       sendMessageModal: false,
       form: {
         invitation_date: "",
-        invitation_time: ""
+        invitation_time: "",
       },
       formError: [],
       accepted: false,
       options: {
         modules: {
-          toolbar: null
+          toolbar: null,
         }
       }
     };
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     }
   },
 
-  created() {
-    // console.log(this.user)
-    // console.log("permanent job app", this.permanent_job_application)
-    // console.log("referees", this.user.locum_detail.referees)
-    // console.log("permanentJobApp", this.permanentJobApp)
-
+  created () {
     this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
       this.user.locum_detail.profession.profession_compliance_category_id
     );
@@ -371,12 +366,12 @@ export default {
   },
 
   methods: {
-    message(user) {
+    message (user) {
       this.user = user;
       this.sendMessageModal = true;
     },
 
-    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
+    getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId (
       locumProfessionProfessionComplianceCategoryId
     ) {
       this.$axios
@@ -405,7 +400,7 @@ export default {
         });
     },
 
-    async inviteLocum() {
+    async inviteLocum () {
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
@@ -414,7 +409,7 @@ export default {
             `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,
             {
               invitation_schedule:
-                this.form.invitation_date + " " + this.form.invitation_time
+                this.form.invitation_date + " " + this.form.invitation_time,
             }
           )
           .then(res => {
@@ -440,7 +435,7 @@ export default {
       }
     },
 
-    async rejectLocum() {
+    async rejectLocum () {
       await this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/reject-application`
@@ -464,7 +459,7 @@ export default {
         });
     },
 
-    appoint() {
+    appoint () {
       this.$axios
         .$put(
           `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/appoint-locum-to-job/${this.permanent_job_application.permanent_job_id}`
@@ -491,7 +486,7 @@ export default {
         });
     },
 
-    downloadItem(fileUrl, fileName) {
+    downloadItem (fileUrl, fileName) {
       const axios = require("axios");
       axios({
         url: fileUrl,
@@ -507,7 +502,7 @@ export default {
       });
     },
 
-    statusStyle(jobStatus) {
+    statusStyle (jobStatus) {
       switch (jobStatus) {
         case "Available":
           return "bg-green-500 text-white";

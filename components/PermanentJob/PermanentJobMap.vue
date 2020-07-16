@@ -34,7 +34,12 @@ export default {
 	components: {
 		AppLoading
 	},
-	props: ["permanent_job"],
+	props: {
+		permanent_job: {
+      type: Object,
+      default: () => null,
+		}
+	},
 	data () {
 		return {
 			loading: false,

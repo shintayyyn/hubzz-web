@@ -150,20 +150,18 @@
   </section>
 </template>
 <script>
-// var moment = require("moment")
 import debounce from "lodash.debounce"
 import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
 export default {
   components: {
-    // AppButton,
     AppLoading,
     AppTable,
     AppInput,
   },
-  // eslint-disable-next-line no-unused-vars
-  middleware ({ query, redirect, error, }) {
+
+  middleware ({ query, error, }) {
     if (
       query.status &&
       !["available", "closed", "unfilled", "pending"].includes(query.status.toLowerCase())
@@ -222,11 +220,6 @@ export default {
           slotName: "date_closing",
           class: "text-center",
         },
-        // {
-        // 	name: "Role",
-        // 	dataIndex: "role",
-        // 	class: "text-center"
-        // },
         {
           name: "Work Hours",
           dataIndex: "work_hours",
@@ -280,8 +273,7 @@ export default {
   },
 
   watch: {
-    // eslint-disable-next-line no-unused-vars
-    "$route.query.status" (newStatus, oldStatus) {
+    "$route.query.status" (newStatus,) {
       this.params = {}
       this.current_page = 1
       this.search = ''
@@ -306,7 +298,7 @@ export default {
                 slot: true,
                 slotName: "status_slot",
                 dataIndex: "",
-                class: "text-center"
+                class: "text-center",
               },
             ]
           } else if (this.$auth.user.domain === "Practice") {
@@ -372,7 +364,6 @@ export default {
           }
         }
         if (this.$auth.user.domain === "Locum") {
-          console.log('get for locum in watch')
           this.params = {
             job_posting_status: newStatus ? newStatus : 'Available',
             locum_user_id: this.$auth.user.id,
@@ -392,8 +383,6 @@ export default {
             practice_id: this.$auth.user.practice_id,
             limit: 5,
           }
-          console.log('get for practice in watch', this.params)
-
           setTimeout(async () => {
             this.loading = true
             await this.getPermanentJobsForPractice(this.params)
@@ -502,7 +491,7 @@ export default {
         }
         let response = await app.$axios.$get(
           `/api/v1/practice/permanent-jobs/count`,
-          { params }
+          { params, }
         )
         permanent_jobs_for_practice_count =
           response.data && response.data.count ? response.data.count : null
@@ -564,7 +553,6 @@ export default {
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        console.log('something went wrong')
         error(err.response.data)
         return
       }
@@ -573,10 +561,6 @@ export default {
   },
   
   created () {
-    // console.log("states")
-    // console.log("locum permanent job", this.locum_permanent_job_count, this.locum_permanent_jobs)
-    // console.log("practice permanent jobs", this.practice_permanent_job_count, this.practice_permanent_jobs)
-    // console.log("permanent job applications", this.permanent)
     if(this.$auth.user.domain === "Locum") {
       this.locumColumns = [
         ...this.defaultColumns,
@@ -585,7 +569,7 @@ export default {
           slot: true,
           slotName: "status_slot",
           dataIndex: "",
-          class: "text-center"
+          class: "text-center",
         },
       ]
 
@@ -595,21 +579,21 @@ export default {
           {
             name: "Closed At",
             dataIndex: "closed_at",
-            class: "text-center localDate"
+            class: "text-center localDate",
           },
           {
             name: "Status",
             slot: true,
             slotName: "status_slot",
             dataIndex: "",
-            class: "text-center"
+            class: "text-center",
           },
           {
             name: "Closing Tag",
             slot: true,
             slotName: "closing_tag",
             dataIndex: "",
-            class: "text-center"
+            class: "text-center",
           },
         ]
       }
@@ -621,7 +605,7 @@ export default {
           slot: true,
           slotName: "status_slot",
           dataIndex: "",
-          class: "text-center"
+          class: "text-center",
         },
       ]
       if(this.$route.query.status){
@@ -630,21 +614,21 @@ export default {
           {
             name: "Closed At",
             dataIndex: "closed_at",
-            class: "text-center localDate"
+            class: "text-center localDate",
           },
           {
             name: "Status",
             slot: true,
             slotName: "status_slot",
             dataIndex: "",
-            class: "text-center"
+            class: "text-center",
           },
           {
             name: "Closing Tag",
             slot: true,
             slotName: "closing_tag",
             dataIndex: "",
-            class: "text-center"
+            class: "text-center",
           },
         ]
       }
@@ -703,17 +687,14 @@ export default {
     },
     getJobs (params) {
       if (this.$auth.user.domain === "Locum") {
-        console.log('get for locum in pagechanged')
         this.getPermanentJobsForLocum(params)
       }
       if (this.$auth.user.domain === "Practice") {
-        console.log('get for practice in page changed')
         this.getPermanentJobsForPractice(params)
       }
     },
     
     searchSubmit: debounce(function (value) {
-      console.log('get for locum in search')
       this.params.search = value
       
       if (this.$auth.user.domain === "Locum") {
@@ -726,11 +707,6 @@ export default {
     }, 500),
 
     async getPermanentJobsForLocum (params) {
-      // params = {
-      //   ...params,
-      //   search: this.params.search,
-      // }
-      
       await this.$axios
         .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
         .then(res => {
@@ -762,7 +738,6 @@ export default {
               ? res.data.permanent_job_applications
               : null
         })
-      console.log('get for locum in function', this.permanent_jobs_for_locum)
 
       this.permanent_jobs_for_locum = await this.permanent_jobs_for_locum.map(permanent_job => {
         const permanent_job_app_found = this.permanent_job_applications.find(
@@ -825,8 +800,6 @@ export default {
               ? res.data.permanent_job_applications
               : null
         })
-
-      console.log('get for practice in function', this.permanent_jobs_for_practice)
 
       this.permanent_jobs_for_practice = await this.permanent_jobs_for_practice.map(permanent_job => {
         const permanent_job_app_found = this.permanent_job_applications.find(

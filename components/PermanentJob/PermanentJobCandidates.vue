@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-col w-full">
-    <div class="text-xs sm:text-sm font-bold">Applicants</div>
+    <div class="text-xs sm:text-sm font-bold">
+      Applicants
+    </div>
     <div
       v-for="application in permanent_job_applications"
       :key="application.id"
@@ -19,12 +21,16 @@
           <div
             class="text-sm font-bold md:w-full md:px-2 md:text-center cursor-pointer leading-tight"
             @click.prevent="show(application.id)"
-          >{{ application.locum_user.first_name +' '+application.locum_user.last_name }}</div>
+          >
+            {{ application.locum_user.first_name +' '+application.locum_user.last_name }}
+          </div>
 
           <div
             class="flex md:block md:py-1 md:px-4 rounded-full whitespace-no-wrap text-xs md:text-sm font-bold text-center md:mx-auto"
             :class="statusStyle(application.application_status)"
-          >{{ application.application_status === 'Applied' ? 'Pending' : application.application_status }}</div>
+          >
+            {{ application.application_status === 'Applied' ? 'Pending' : application.application_status }}
+          </div>
         </div>
 
         <div class="flex items-center">
@@ -43,7 +49,9 @@
     <p
       v-if="permanent_job_applications.length === 0"
       class="text-gray-600 text-sm"
-    >There's no applicants for this job at the moment.</p>
+    >
+      There's no applicants for this job at the moment.
+    </p>
     <div v-if="total > 0" class="bottom-0 w-full">
       <AppPagination
         :total="total"
@@ -83,20 +91,25 @@
   </div>
 </template>
 <script>
-import AppAvatar from "~/components/Base/AppAvatar";
-import AppPagination from "@/components/Base/AppPagination";
-import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate";
-import SendMessageModal from "@/components/Messages/SendMessageModal";
+import AppAvatar from "~/components/Base/AppAvatar"
+import AppPagination from "@/components/Base/AppPagination"
+import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate"
+import SendMessageModal from "@/components/Messages/SendMessageModal"
 
 export default {
   components: {
     AppAvatar,
     AppPagination,
     PermanentJobShowCandidate,
-    SendMessageModal
+    SendMessageModal,
   },
-  props: ["permanent_job"],
-  data() {
+  props: {
+    permanent_job: {
+      type: Object,
+      default: () => null,
+    },
+  },
+  data () {
     return {
       total: 0,
       permanent_job_applications: [],
@@ -106,122 +119,102 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        permanent_job_id: this.permanent_job.id
+        permanent_job_id: this.permanent_job.id,
       },
       user: null,
       modal: false,
-      sendMessageModal: false
+      sendMessageModal: false,
     };
   },
   computed: {
-    totalPages() {
-      return Math.ceil(this.total / this.params.limit);
+    totalPages () {
+      return Math.ceil(this.total / this.params.limit)
     }
   },
-  created() {
-    this.getApplicantsCount();
+  created () {
+    this.getApplicantsCount()
   },
   methods: {
-    async getApplicantsCount() {
+    async getApplicantsCount () {
       await this.$axios
         .$get(`/api/v1/practice/permanent-job-applications/count`, {
-          params: this.params
+          params: this.params,
         })
         .then(res => {
-          this.total = res.data.count;
-          this.getApplicants(this.params);
-        });
+          this.total = res.data.count
+          this.getApplicants(this.params)
+        })
     },
-    async getApplicants(params) {
+    async getApplicants (params) {
       await this.$axios
-        .$get(`/api/v1/practice/permanent-job-applications`, { params })
+        .$get(`/api/v1/practice/permanent-job-applications`, { params, })
         .then(res => {
-          console.log("res", res);
-          this.permanent_job_applications = res.data.permanent_job_applications;
-        });
-      console.log(
-        "permanent_job_applications",
-        this.permanent_job_applications
-      );
+          this.permanent_job_applications = res.data.permanent_job_applications
+        })
     },
-    pagechanged(page) {
-      this.current_page = page;
-      this.params.offset = this.params.limit * (page - 1);
-      this.getApplicants(this.params);
+    pagechanged (page) {
+      this.current_page = page
+      this.params.offset = this.params.limit * (page - 1)
+      this.getApplicants(this.params)
     },
-    limitchanged(limit) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = limit;
-      this.getApplicants(this.params);
+    limitchanged (limit) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.limit = limit
+      this.getApplicants(this.params)
     },
-    statusStyle(applicationStatus) {
+    statusStyle (applicationStatus) {
       switch (applicationStatus) {
-        case "Available":
-          return "md:bg-green-500 text-green-600 md:text-white";
-        case "Applied":
-          return "md:bg-yellow-600 text-yellow-600 md:text-white";
-        case "For Interview":
-          return "md:bg-green-600 text-green-700 md:text-white";
-        case "Accepted":
-          return "md:bg-green-700 text-green-700 md:text-white";
-        case "Unsuccessful":
-        case "Rejected":
-          return "md:bg-red-700 text-red-700 md:text-white";
-        case "Closed":
-          return "md:bg-gray-700 text-gray-700 md:text-white";
-        default:
-          return "md:bg-yellow-400 text-gray-500 md:text-black";
+      case "Available":
+        return "md:bg-green-500 text-green-600 md:text-white"
+      case "Applied":
+        return "md:bg-yellow-600 text-yellow-600 md:text-white"
+      case "For Interview":
+        return "md:bg-green-600 text-green-700 md:text-white"
+      case "Accepted":
+        return "md:bg-green-700 text-green-700 md:text-white"
+      case "Unsuccessful":
+      case "Rejected":
+        return "md:bg-red-700 text-red-700 md:text-white"
+      case "Closed":
+        return "md:bg-gray-700 text-gray-700 md:text-white"
+      default:
+        return "md:bg-yellow-400 text-gray-500 md:text-black"
       }
     },
-    async show(id) {
+    async show (id) {
       await this.$axios
         .$get(`/api/v1/practice/permanent-job-applications/${id}`)
         .then(res => {
-          this.permanent_job_application = res.data.permanent_job_application;
-        });
+          this.permanent_job_application = res.data.permanent_job_application
+        })
 
       await this.$axios
         .$get(
           `/api/v1/practice/locums/${this.permanent_job_application.locum_user.id}`
         )
         .then(res => {
-          this.user = res.data.user;
-          this.modal = true;
-        });
-      console.log("permanent job app", this.permanent_job_application);
-
-      // this.$axios.$put(`/api/v1/practice/permanent-job-applications/${id}/process-application`)
-      //   .then(res => {
-      //     this.$store.commit("SET_NOTIFICATION", {
-      //       enabled: true,
-      //       status: "success",
-      //       text: ["This application is now being processed"]
-      //     })
-      //   });
-
-      // this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-      // 	this.user = res.data.user;
-      // 	this.modal = true;
-      // });
+          this.user = res.data.user
+          this.modal = true
+        })
     },
-    async message(application) {
+    async message (application) {
       await this.$axios
         .$get(`/api/v1/practice/locums/${application.applicant_locum_user_id}`)
         .then(res => {
-          this.user = res.data.user;
-          this.sendMessageModal = true;
-        });
+          this.user = res.data.user
+          this.sendMessageModal = true
+        })
     },
-    closeModal() {
+    closeModal () {
       if (this.modal) {
-        this.modal = false;
+        this.modal = false
       } else if (this.sendMessageModal) {
-        this.sendMessageModal = false;
+        this.sendMessageModal = false
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 <style scoped>
 .avatar {
@@ -242,7 +235,7 @@ img {
 }
 @media screen and (min-width: 1200px) {
   .modal-container {
-    width: 60%;
+    width: 80%;
   }
 }
 .message-shield {
