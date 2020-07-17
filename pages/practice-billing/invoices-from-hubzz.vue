@@ -140,14 +140,14 @@ export default {
         },
         {
           name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
+          dataIndex: "date_created_in_gb_formatted",
+          class: "text-center",
           sortable: true,
         },
         {
           name: "Due Date",
-          dataIndex: "due_date",
-          class: "text-center localDate",
+          dataIndex: "due_date_in_gb_formatted",
+          class: "text-center",
         },
         {
           name: "£ Amount",
