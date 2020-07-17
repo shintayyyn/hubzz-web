@@ -112,7 +112,7 @@
             <p class="text-sm w-1/2">TOTAL DEDUCTIONS:</p>
             <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
           </div>
-          <div class="flex flex-wrap justify-between">
+          <div class="flex flex-wrap justify-between" v-if="propInvoice && propInvoice.generate_form">
             <p class="text-sm w-1/2">Form Type:</p>
             <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Solo Form' : 'Form A' }}</p>
           </div>
