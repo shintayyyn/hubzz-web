@@ -154,7 +154,10 @@
                 class="font-bold w-1/2 text-right"
               >{{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}</p>
             </div>
-            <div class="flex flex-wrap justify-between" v-if="!propJobPart && propInvoice">
+            <div
+              class="flex flex-wrap justify-between"
+              v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+            >
               <p class="text-sm w-1/2">GENERATE FORM:</p>
               <p
                 class="font-bold w-1/2 text-right"
