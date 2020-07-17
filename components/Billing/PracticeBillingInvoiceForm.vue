@@ -112,15 +112,21 @@
             <p class="text-sm w-1/2">TOTAL DEDUCTIONS:</p>
             <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
           </div>
-          <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">OOH:</p>
-            <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Yes' : 'No' }}</p>
+          <div
+            class="flex flex-wrap justify-between"
+            v-if="propInvoice && propInvoice.generate_form"
+          >
+            <p class="text-sm w-1/2">Form Type:</p>
+            <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Solo Form' : 'Form A' }}</p>
           </div>
           <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">STATUS:</p>
             <p class="font-bold w-1/2 text-right">{{ propInvoice && propInvoice.status }}</p>
           </div>
-          <div class="flex flex-wrap justify-between" v-if="propInvoice">
+          <div
+            class="flex flex-wrap justify-between"
+            v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+          >
             <p class="text-sm w-1/2">GENERATE FORM:</p>
             <p
               class="font-bold w-1/2 text-right"
@@ -603,8 +609,8 @@ export default {
       total_absences: 0,
       hasShiftError: false,
       sched_has_changes: false,
-      practice: null,
-      solo_form_pension_amount: 0
+      practice: null
+      // solo_form_pension_amount: 0
     };
   },
 
@@ -629,15 +635,41 @@ export default {
       return this.total_gross_locum_wages - this.ni_paye_amount;
     },
 
+    total_work_payment() {
+      return this.total_gross_locum_wages;
+    },
+
     pension_amount() {
       if (this.propInvoice && this.propInvoice.generate_form) {
-        // form A pension
-        if (!this.propInvoice.ooh) {
-          return this.propInvoice.total_amount * 0.9 * 0.1438;
+        if (["Approved", "Paid"].includes(this.propInvoice.status)) {
+          if (this.propInvoice.locum_form_a_id) {
+            return this.propInvoice.locum_form_a_pension_amount;
+          }
+          if (this.propInvoice.locum_solo_form_id) {
+            return this.propInvoice.locum_solo_form_pension_amount;
+          }
         }
-        // solo form
-        if (this.propInvoice.ooh) {
-          return this.practice ? this.solo_form_pension_amount : 0;
+
+        if (!["Approved", "Paid"].includes(this.propInvoice.status)) {
+          if (!this.propInvoice.ooh) {
+            return this.total_work_payment * 0.9 * 0.1438;
+          }
+          if (this.propInvoice.ooh && this.practice) {
+            let boxA = this.total_work_payment;
+            let boxB = this.practice.professional_nhs_expenses;
+            let boxC = boxA - boxB;
+            let boxD = boxC * (this.practice.percentage_rate / 100);
+            let boxE = boxC * boxD;
+            let boxF = this.practice.added_year_contributions;
+            let boxG = this.practice.added_early_retirement_contributions;
+            let boxH = boxE + boxF + boxG;
+            let boxI = boxC - boxH;
+            let boxJ =
+              this.practice.nhsps_employer_contributions + boxC * 0.1438;
+            let boxK = boxH + boxJ;
+
+            return boxK;
+          }
         }
       }
 
@@ -851,34 +883,14 @@ export default {
     this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
     this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
 
-    if (
-      this.propInvoice &&
-      this.propInvoice.generate_form &&
-      this.propInvoice.ooh
-    ) {
-      this.getPracticeProfile();
-    }
+    this.getPracticeProfile();
   },
 
   methods: {
     getPracticeProfile() {
       this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
-        if (res.data && res.data.practice) {
-          let practice = res.data.practice;
-          this.practice = res.data.practice;
-          let boxA = this.propInvoice.total_amount;
-          let boxB = practice.professional_nhs_expenses;
-          let boxC = boxA - boxB;
-          let boxD = boxC * (practice.percentage_rate / 100);
-          let boxE = boxC * boxD;
-          let boxF = practice.added_year_contributions;
-          let boxG = practice.added_early_retirement_contributions;
-          let boxH = boxE + boxF + boxG;
-          let boxI = boxC - boxH;
-          let boxJ = practice.nhsps_employer_contributions + boxC * 0.1438;
-          let boxK = boxH + boxJ;
-          this.solo_form_pension_amount = boxK;
-        }
+        this.practice =
+          res.data && res.data.practice ? res.data.practice : null;
       });
     },
     getSchedule(
