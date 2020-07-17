@@ -157,8 +157,8 @@ export default {
         },
         {
           name: "Paid At",
-          dataIndex: "paid_at",
-          class: "text-center localDate",
+          dataIndex: "paid_at_in_gb_formatted",
+          class: "text-center",
           sortable: true,
         },
       ],
