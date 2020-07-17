@@ -631,7 +631,7 @@ export default {
         this.$axios.get('/api/v1/practice/jobs', {
           params: {
             ...this.getRequestQueryFilters,
-            offset: 0,
+            offset: this.offset,
             limit: 5,
             order_by: [],
           },
@@ -665,7 +665,7 @@ export default {
       return this.$axios.get('/api/v1/practice/jobs', {
         params: {
           ...this.getRequestQueryFilters,
-          offset: 0,
+          offset: this.offset,
           limit: 5,
           order_by: this.order_by,
         },
