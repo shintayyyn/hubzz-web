@@ -120,7 +120,7 @@
             <p class="text-sm w-1/2">STATUS:</p>
             <p class="font-bold w-1/2 text-right">{{ propInvoice && propInvoice.status }}</p>
           </div>
-          <div class="flex flex-wrap justify-between" v-if="!propJobPart && propInvoice">
+          <div class="flex flex-wrap justify-between" v-if="propInvoice">
             <p class="text-sm w-1/2">GENERATE FORM:</p>
             <p
               class="font-bold w-1/2 text-right"
@@ -144,14 +144,14 @@
               <p class="text-sm w-1/2">GRAND TOTAL:</p>
               <p class="font-bold w-1/2 text-right">£ {{ grand_total | currency }}</p>
             </div>
-            <div
-              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
-              v-if="propInvoice && (propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
-            >
-              <p class="text-sm w-1/2">PENSION AMOUNT:</p>
-              <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
-            </div>
           </template>
+          <div
+            class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
+            v-if="propInvoice && propInvoice.generate_form"
+          >
+            <p class="text-sm w-1/2">PENSION AMOUNT:</p>
+            <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
+          </div>
         </div>
       </div>
 
@@ -602,17 +602,15 @@ export default {
       total_late_hours: "",
       total_absences: 0,
       hasShiftError: false,
-      sched_has_changes: false
+      sched_has_changes: false,
+      practice: null,
+      solo_form_pension_amount: 0
     };
   },
 
   computed: {
     isOOH() {
-      return this.propInvoice && this.propInvoice.ooh
-        ? true
-        : this.propJobPart && this.propJobPart.ooh
-        ? true
-        : false;
+      return this.propInvoice && this.propInvoice.ooh ? true : false;
     },
 
     ni_paye_amount() {
@@ -632,10 +630,15 @@ export default {
     },
 
     pension_amount() {
-      let pension_amount = 0;
-
-      if (this.propInvoice && !this.propInvoice.ooh) {
-        return this.total_gross_locum_wages * 0.9 * 0.1438;
+      if (this.propInvoice && this.propInvoice.generate_form) {
+        // form A pension
+        if (!this.propInvoice.ooh) {
+          return this.propInvoice.total_amount * 0.9 * 0.1438;
+        }
+        // solo form
+        if (this.propInvoice.ooh) {
+          return this.practice ? this.solo_form_pension_amount : 0;
+        }
       }
 
       return 0;
@@ -847,9 +850,37 @@ export default {
     this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
     this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
     this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
+
+    if (
+      this.propInvoice &&
+      this.propInvoice.generate_form &&
+      this.propInvoice.ooh
+    ) {
+      this.getPracticeProfile();
+    }
   },
 
   methods: {
+    getPracticeProfile() {
+      this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
+        if (res.data && res.data.practice) {
+          let practice = res.data.practice;
+          this.practice = res.data.practice;
+          let boxA = this.propInvoice.total_amount;
+          let boxB = practice.professional_nhs_expenses;
+          let boxC = boxA - boxB;
+          let boxD = boxC * (practice.percentage_rate / 100);
+          let boxE = boxC * boxD;
+          let boxF = practice.added_year_contributions;
+          let boxG = practice.added_early_retirement_contributions;
+          let boxH = boxE + boxF + boxG;
+          let boxI = boxC - boxH;
+          let boxJ = practice.nhsps_employer_contributions + boxC * 0.1438;
+          let boxK = boxH + boxJ;
+          this.solo_form_pension_amount = boxK;
+        }
+      });
+    },
     getSchedule(
       schedule,
       total_gross_locum_wages,

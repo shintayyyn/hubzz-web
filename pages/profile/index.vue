@@ -184,13 +184,29 @@
                   @keypress="inputNumberOnly($event)"
                 />
                 <AppInput
+                  v-model="form.percentage_rate"
+                  :type="'select'"
+                  :name="'percentage_rate'"
+                  :label="'Percentage rate'"
+                  :items="[
+                  { label: '5%', value: 5 },
+                  { label: '5.6%', value: 5.6 },
+                  { label: '7.1%', value: 7.1 },
+                  { label: '9.3%', value: 9.3 },
+                  { label: '12.5%', value: 12.5 },
+                  { label: '13.5%', value: 13.5 },
+                  { label: '14.5%', value: 14.5 },
+                ]"
+                  required
+                />
+                <!-- <AppInput
                   v-model="form.section_scheme_year"
                   :type="'select'"
                   :name="'section_scheme_year'"
                   :label="'NHS Pension Scheme Year?'"
                   :items="schemeYearLists"
                   required
-                />
+                />-->
                 <AppInput
                   v-model="form.professional_nhs_expenses"
                   :type="'text'"
@@ -553,6 +569,7 @@ export default {
         paying_reference: null,
         ea_code: null,
         professional_nhs_expenses: null,
+        percentage_rate: 0,
         section_scheme_year: null,
         added_year_contributions: null,
         added_early_retirement_contributions: null,
@@ -784,6 +801,7 @@ export default {
     this.form.paying_reference = this.practice.paying_reference;
     this.form.ea_code = this.practice.ea_code;
     this.form.professional_nhs_expenses = this.practice.professional_nhs_expenses;
+    this.form.percentage_rate = this.practice.percentage_rate;
     this.form.section_scheme_year = this.practice.section_scheme_year;
     this.form.added_year_contributions = this.practice.added_year_contributions;
     this.form.added_early_retirement_contributions = this.practice.added_early_retirement_contributions;
@@ -976,6 +994,7 @@ export default {
           "sd_number",
           "paying_reference",
           "professional_nhs_expenses",
+          "percentage_rate",
           "section_scheme_year",
           "added_year_contributions",
           "added_early_retirement_contributions",
