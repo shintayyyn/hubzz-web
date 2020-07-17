@@ -178,7 +178,7 @@
             </template>
             <div
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
-              v-if="propInvoice && propInvoice.generate_form"
+              v-if="(propJobPart && form.generate_form) || (propInvoice && propInvoice.generate_form)"
             >
               <p class="text-sm w-1/2">PENSION AMOUNT:</p>
               <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
@@ -379,6 +379,17 @@ export default {
         }
         // solo form
         if (this.propInvoice.ooh) {
+          return this.practice ? this.solo_form_pension_amount : 0;
+        }
+      }
+
+      if (this.propJobPart && this.form.generate_form) {
+        // form A pension
+        if (!this.propJobPart.ooh) {
+          return this.total_gross_locum_wages * 0.9 * 0.1438;
+        }
+        // solo form
+        if (this.propJobPart.ooh) {
           return this.practice ? this.solo_form_pension_amount : 0;
         }
       }
@@ -636,22 +647,28 @@ export default {
 
   mounted() {
     this.setInitialState();
-    if (
-      this.propInvoice &&
-      this.propInvoice.generate_form &&
-      this.propInvoice.ooh
-    ) {
-      this.getPractice(this.propInvoice.practice_id);
-    }
+    let practice_id =
+      this.propInvoice && this.propInvoice.practice_id
+        ? this.propInvoice.practice_id
+        : this.propJobPart && this.propJobPart.practice_id
+        ? this.propJobPart.practice_id
+        : null;
+
+    let total_work_payment =
+      this.propInvoice && this.propInvoice.total_amount
+        ? this.propInvoice.total_amount
+        : this.total_gross_locum_wages;
+
+    this.getPractice(practice_id, total_work_payment);
   },
 
   methods: {
-    getPractice(practice_id) {
+    getPractice(practice_id, total_work_payment) {
       this.$axios.$get(`/api/v1/locum/practices/${practice_id}`).then(res => {
         if (res.data && res.data.practice) {
           let practice = res.data.practice;
           this.practice = res.data.practice;
-          let boxA = this.propInvoice.total_amount;
+          let boxA = total_work_payment;
           let boxB = practice.professional_nhs_expenses;
           let boxC = boxA - boxB;
           let boxD = boxC * (practice.percentage_rate / 100);
