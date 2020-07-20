@@ -50,6 +50,7 @@
                 />
 
                 <div v-if="viewPermanentJobs" class="px-4">
+                  <div>Please Pick at least One(1) Salaried Role Work Hours</div>
                   <AppInput
                     v-model="viewPermanentJobsFullTime"
                     :type="'single-checkbox'"
@@ -285,9 +286,26 @@ export default {
       this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_permanent_jobs')
     },
 
-    viewPermanentJobs () {
+    viewPermanentJobs (value) {
       this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_locum_jobs')
       this.formErrors = this.formErrors.filter(formError => formError.field !== 'view_permanent_jobs')
+
+      if(value === true){
+        this.viewPermanentJobsFullTime = true
+        this.viewPermanentJobsPartTime = true
+      }
+    },
+
+    viewPermanentJobsFullTime (value) {
+      if(value === false && this.viewPermanentJobsPartTime === false) {
+        this.viewPermanentJobs = false
+      }
+    },
+
+    viewPermanentJobsPartTime (value) {
+      if(value === false && this.viewPermanentJobsFullTime === false) {
+        this.viewPermanentJobs = false
+      }
     },
 
     professionId () {
