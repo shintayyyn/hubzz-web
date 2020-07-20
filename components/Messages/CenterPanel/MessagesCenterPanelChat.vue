@@ -253,6 +253,7 @@ export default {
       this.hoverId = id
       this.showHidden = true
     },
+    
     userFullname (item) {
       let fullName
       if (item.user.personal_detail) {
@@ -264,6 +265,7 @@ export default {
       }
       return fullName
     },
+
     deleteMessageModal (id) {
       this.modal = true
       this.selectedMessageId = id
@@ -271,16 +273,19 @@ export default {
       //   this.$store.dispatch("chat/deleteMessage", id);
       // }
     },
+
     deleteMessage () {
       this.$store.dispatch("chat/deleteMessage", this.selectedMessageId)
       this.modal = false
     },
+
     scrollToBottom () {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight
       })
       this.newMessage = false
     },
+
     scrollHandler (e) {
       if (
         e.target.scrollHeight > e.target.clientHeight
@@ -301,6 +306,7 @@ export default {
         this.loadMore = false
       }
     },
+
     loadMoreMessages () {
       this.$store.dispatch("chat/fetchMoreMessage", {
         offset: this.messages.length,
@@ -317,9 +323,11 @@ export default {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight
       })
     },
+
     isReceiver (item) {
       return this.$auth.user.id != item.user.id
     },
+
     isDeleted (sender_id, sender_deleted, receiver_deleted) {
       if (sender_deleted) {
         return true
@@ -332,6 +340,7 @@ export default {
         }
       }
     },
+
     setAvatar (item) {
       if (item.avatar === null) {
         return "https://via.placeholder.com/300/"
@@ -342,63 +351,64 @@ export default {
   },
 }
 </script>
+
 <style scoped>
-.message-chat:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
-.message-chat {
-  background-color: white;
-  transition: background-color 0.5s ease-in-out;
-}
-.chat-message {
-  word-wrap: wrap;
-  word-break: break-word;
-}
-
-/* bubble mesage */
-/* .chat-message-right, .chat-message-left  {
-  position: relative;
-}
-.chat-message-right::after, .chat-message-left::after{
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 0;
-  border: 8px solid transparent;
-  margin-top: -8.5px;
+  .message-chat:hover {
+    background-color: #dee1e5;
+    transition: background-color 0.5s ease-in-out;
   }
-.chat-message-right::after{
-  right: 0;
-  bottom: 10px;
-  border-left-color: #4299e1;
-  border-right: 0;
-  border-bottom: 0;
-  margin-right: -8px;
-}
-.chat-message-left::after{
-  left: 0;
-  top: 16px;
-  border-right-color: #e2e8f0;
-  border-left: 0;
-  border-top: 0;
-  margin-left: -8px;
-} */
+  .message-chat {
+    background-color: white;
+    transition: background-color 0.5s ease-in-out;
+  }
+  .chat-message {
+    word-wrap: wrap;
+    word-break: break-word;
+  }
 
-.panel-chat {
-  scroll-behavior: smooth;
-}
+  /* bubble mesage */
+  /* .chat-message-right, .chat-message-left  {
+    position: relative;
+  }
+  .chat-message-right::after, .chat-message-left::after{
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    margin-top: -8.5px;
+    }
+  .chat-message-right::after{
+    right: 0;
+    bottom: 10px;
+    border-left-color: #4299e1;
+    border-right: 0;
+    border-bottom: 0;
+    margin-right: -8px;
+  }
+  .chat-message-left::after{
+    left: 0;
+    top: 16px;
+    border-right-color: #e2e8f0;
+    border-left: 0;
+    border-top: 0;
+    margin-left: -8px;
+  } */
 
-.panel-chat::-webkit-scrollbar {
-  width: 8px;
-}
+  .panel-chat {
+    scroll-behavior: smooth;
+  }
 
-.panel-chat::-webkit-scrollbar-track {
-  background: transparent;
-}
+  .panel-chat::-webkit-scrollbar {
+    width: 8px;
+  }
 
-.panel-chat::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 50px;
-}
+  .panel-chat::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .panel-chat::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 50px;
+  }
 </style>
