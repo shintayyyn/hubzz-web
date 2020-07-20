@@ -156,6 +156,7 @@
           />
 
           <div v-if="form.view_permanent_jobs" class="px-4">
+            <div>Please Pick at least One(1) Salaried Role Work Hours</div>
             <AppInput
               v-model="form.view_permanent_jobs_full_time"
               :type="'single-checkbox'"
@@ -990,6 +991,29 @@ export default {
         }
       )
     },
+
+    "form.view_permanent_jobs" (value) {
+      if(value === false) {
+        this.form.view_permanent_jobs_full_time = false
+        this.form.view_permanent_jobs_part_time = false
+      }
+      if(value === true && this.user && this.user.view_permanent_jobs === false) {
+        this.form.view_permanent_jobs_full_time = true
+        this.form.view_permanent_jobs_part_time = true
+      }
+    },
+
+    "form.view_permanent_jobs_full_time" (value) {
+      if(value === false && this.form.view_permanent_jobs_part_time === false) {
+        this.form.view_permanent_jobs = false
+      }
+    },
+
+    "form.view_permanent_jobs_part_time" (value) {
+      if(value === false && this.form.view_permanent_jobs_full_time === false) {
+        this.form.view_permanent_jobs = false
+      }
+    },
   },
 
   mounted () {
@@ -1084,6 +1108,7 @@ export default {
     },
 
     initialize () {
+      console.log('user', this.user)
       const {
         profession_id: professionId,
         sub_profession_ids: subProfessionIds,
