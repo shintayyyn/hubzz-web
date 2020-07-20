@@ -8,7 +8,9 @@
         Message Sent to {{ user.personal_detail.name }}
       </div>
     </transition>
+
     <div v-if="messageSent" class="bg-white h-full w-full absolute opacity-50" />
+
     <div class="relative message-box border-t w-full p-2" :class="hasDeactiveUser ? 'disabled' : ''">
       <textarea
         v-model="message"
@@ -19,6 +21,7 @@
         @keyup.enter.exact="send"
         @keydown.enter.shift.exact="newline"
       />
+
       <p
         class="flex items-center text-xs absolute bottom-0 right-0 mr-4"
         :class="message.length > textLimit ? 'text-red-600 font-bold' : 'text-gray-600'"
@@ -36,9 +39,14 @@
         {{ trimmedMessage(message).length }}/{{ textLimit }}
       </p>
     </div>
+
     <button
       :disabled="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)"
-      :class="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit) ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-500 hover:bg-blue-600 '"
+      :class="
+        hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)
+          ? 'cursor-not-allowed bg-gray-500'
+          : 'bg-blue-500 hover:bg-blue-600 '
+      "
       class="px-8 text-white focus:outline-none"
       @click="send"
     >
@@ -61,7 +69,7 @@ export default {
     },
 
     user: {
-      type: String,
+      type: Object,
       default: () => null,
     },
   },
@@ -82,6 +90,7 @@ export default {
       return this.$store.getters["chat/getConversations"]
     },
   },
+
   watch: {
     // message (value) {
     //   value = this.trimmedMessage(value)
@@ -95,39 +104,42 @@ export default {
       )
       if (conversation_members.includes(false)) {
         this.hasDeactiveUser = true
-      } else [(this.hasDeactiveUser = false),]
+      } else {
+        this.hasDeactiveUser = false
+      }
     },
   },
+
   created () {
     let findConversation = this.conversations.find(
       item => item.id === parseInt(this.$route.params.slug)
     )
+
     let conversation_members = findConversation
       ? findConversation.conversation_member_users.map(item => item.email !== null)
       : []
+
     if (conversation_members.includes(false)) {
       this.hasDeactiveUser = true
-    } else [(this.hasDeactiveUser = false),]
+    } else {
+      this.hasDeactiveUser = false
+    }
   },
+
   methods: {
     newline () {
       this.message = `${this.message}`
     },
+
     trimmedMessage (message) {
       return message.replace(/^\s*/, "").replace(/\s*$/, "")
     },
+
     send (e) {
       if (this.trimmedMessage(this.message).length <= this.textLimit) {
-        let user_id = null
-        if (
-          !this.$route.name.includes("messages")
-					|| !this.$route.name.includes("message")
-        ) {
-          user_id = this.user.id
-        }
         if (this.trimmedMessage(this.message)) {
           this.$store.dispatch("chat/sendMessage", {
-            user_id: user_id,
+            user_id: this.user.id,
             message: this.message,
             type: this.$route.name,
           })
@@ -141,38 +153,44 @@ export default {
 </script>
 
 <style>
-.message-box::-webkit-scrollbar {
-	width: 8px;
-}
-.message-box::-webkit-scrollbar-thumb {
-	background: #ccc;
-}
-.message-box::-webkit-scrollbar-track {
-	background: #eee;
-}
-.message-box.disabled {
-	position: relative;
-}
-.message-box.disabled::after {
-	content: "";
-	position: absolute;
-	background-color: rgba(215, 215, 215, 0.5);
-	width: 100%;
-	height: 100%;
-	left: 0;
-	top: 0;
-	cursor: not-allowed;
-}
-.message-modal {
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 60;
-}
-@media screen and (max-width: 767px) {
-	.message-modal {
-		min-width: 85%;
-	}
-}
+  .message-box::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .message-box::-webkit-scrollbar-thumb {
+    background: #ccc;
+  }
+
+  .message-box::-webkit-scrollbar-track {
+    background: #eee;
+  }
+
+  .message-box.disabled {
+    position: relative;
+  }
+
+  .message-box.disabled::after {
+    content: "";
+    position: absolute;
+    background-color: rgba(215, 215, 215, 0.5);
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    cursor: not-allowed;
+  }
+
+  .message-modal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 60;
+  }
+
+  @media screen and (max-width: 767px) {
+    .message-modal {
+      min-width: 85%;
+    }
+  }
 </style>

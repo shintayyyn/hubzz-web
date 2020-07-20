@@ -13,8 +13,9 @@
         Create Message
       </button>
     </div>
+
     <template v-if="show()">
-      <MessagesCenterPanelTop v-if="$store.state.chat.activeConversationId" class="mt-10 md:mt-0" />
+      <MessagesCenterPanelTop :user="user" class="mt-10 md:mt-0" />
       <MessagesCenterPanelChat />
       <MessagesCenterPanelForm />
     </template>
@@ -31,6 +32,48 @@ export default {
     MessagesCenterPanelForm,
     MessagesCenterPanelTop,
   },
+
+  computed: {
+    activeConversationId () {
+      return this.$store.state.chat.activeConversationId
+    },
+
+    conversations () {
+      return this.$store.getters["chat/getConversations"].map((conversation) => {
+        const displayUser = this.$auth.loggedIn && this.$auth.user.id
+          ? conversation.conversation_member_users.find(({ id, }) => id !== this.$auth.user.id)
+          : null
+
+        return {
+          ...conversation,
+          display_user: displayUser,
+        }
+      })
+    },
+
+    newUserMessage () {
+      return this.$store.state.chat.newMessageUser
+    },
+
+    conversation () {
+      return this.activeConversationId
+        ? this.conversations.find(conversation => conversation.id.toString() === this.activeConversationId.toString())
+        : null
+    },
+
+    user () {
+      if (this.conversation) {
+        return this.conversation.display_user
+      }
+
+      return {
+        name: "Hubzz User",
+        profession: null,
+        status: null,
+      }
+    },
+  },
+
   created () {
     if (this.$route.path === "/messages/") {
       this.$router.push(`/messages`)

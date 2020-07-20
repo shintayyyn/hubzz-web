@@ -4,17 +4,23 @@ export default {
     this.$socket.on("newMessage", message => {
       // dispatch("setConversation")
       dispatch("fetchTotalUnreadMessages")
-      let findMessage = state.messages.find(
-        item => item.id == message.latest_conversation_message_id
-      )
-      let findConversation = state.conversations.find(
-        item => item.id == message.id
-      )
-      let user
-				= this.$auth.user.id === message.latest_conversation_message.user.id
+
+      let findMessage = state.messages.find(item => item.id == message.latest_conversation_message_id)
+
+      let findConversation = state.conversations.find(item => item.id == message.id)
+
+      let authUserIsTheSender = this.$auth.user.id === message.latest_conversation_message.user.id
+
       if (!findConversation) {
         commit("ADD_CONVERSATION", message)
-        if (user && this.$router.app._route.name === "messages-create") {
+
+        if (
+          authUserIsTheSender
+          && (
+            this.$router.app._route.name === "messages-create"
+            || this.$router.app._route.name === "messages-create-userId"
+          )
+        ) {
           this.$router.push(`/messages/${message.id}`)
           commit("SET_ACTIVE_CONVERSATION", message.id)
         }
@@ -23,20 +29,21 @@ export default {
         // }
         // commit("ADD_UNREAD_MESSAGE", message);
       } else {
-        if (!user) {
+        if (!authUserIsTheSender) {
           if (!findMessage) {
             // if (findConversation.latest_conversation_message.seen_by_receiver) {
             // 	commit("ADD_TOTAL_UNREAD_MESSAGES")
             // }
             commit("ADD_MESSAGE", message)
           }
-        } else if (user) {
+        } else if (authUserIsTheSender) {
           if (!findMessage) {
             commit("ADD_MESSAGE", message)
           }
         }
       }
     })
+
     this.$socket.on("deleteMessage", message => {
       commit("DELETE_MESSAGE", message)
     })
@@ -103,22 +110,23 @@ export default {
   },
 
   async sendMessage ({ state, commit, }, payload) {
-    if (payload.type === "messages-create") {
-      payload.user_id = state.newMessageUser.id
-    } else if (payload.type.includes("messages")) {
-      let foundConversation = state.conversations.find(
-        conversation => conversation.id == state.activeConversationId
-      )
-      if (
-        foundConversation.conversation_member_users[0].id
-				== this.$auth.user.id
-      ) {
-        payload.user_id
-					= foundConversation.conversation_member_users[1].id
-      } else {
-        payload.user_id
-					= foundConversation.conversation_member_users[0].id
-      }
+    console.log('payload', payload)
+
+    if (!payload.user_id) {
+      if (payload.type === "messages-create") {
+        payload.user_id = state.newMessageUser.id
+      } else if (payload.type.includes("messages")) {
+        let foundConversation = state.conversations.find(
+          conversation => conversation.id == state.activeConversationId
+        )
+
+        if (foundConversation.conversation_member_users[0].id == this.$auth.user.id
+        ) {
+          payload.user_id = foundConversation.conversation_member_users[1].id
+        } else {
+          payload.user_id = foundConversation.conversation_member_users[0].id
+        }
+      } 
     } else {
       commit("MESSAGE_SENT_TIMEOUT", true)
       setTimeout(() => {
@@ -126,12 +134,27 @@ export default {
       }, 1000)
     }
 
-    const response = await this.$axios.$post(`/api/v1/conversations`, {
+    const response = await this.$axios.post(`/api/v1/conversations`, {
       user_id: payload.user_id,
       message: payload.message,
     })
+
+    const conversation = response.data.data.conversation
+
+    let authUserIsTheSender = this.$auth.user.id === conversation.latest_conversation_message.user.id
+
+    if (
+      authUserIsTheSender
+      && (
+        this.$router.app._route.name === "messages-create"
+        || this.$router.app._route.name === "messages-create-userId"
+      )
+    ) {
+      this.$router.push(`/messages/${conversation.id}`)
+      commit("SET_ACTIVE_CONVERSATION", conversation.id)
+    }
     
-    commit("ADD_MESSAGE", response.data.conversation)
+    commit("ADD_MESSAGE", conversation)
   },
   async deleteMessage ({ commit, }, payload) {
     // let receiver_user_id = null;

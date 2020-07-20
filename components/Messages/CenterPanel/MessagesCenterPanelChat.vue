@@ -253,7 +253,7 @@ export default {
       this.hoverId = id
       this.showHidden = true
     },
-    
+
     userFullname (item) {
       let fullName
       if (item.user.personal_detail) {
@@ -281,7 +281,9 @@ export default {
 
     scrollToBottom () {
       this.$nextTick(() => {
-        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight
+        if (this.$refs.messagesContainer) {
+          this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight
+        }
       })
       this.newMessage = false
     },

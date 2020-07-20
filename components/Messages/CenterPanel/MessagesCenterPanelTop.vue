@@ -8,28 +8,29 @@
         <svgicon name="left-arrow" height="20" width="20" />
       </button>
     </div>
-    <div v-if="userDetail" class="flex flex-col justify-center leading-tight">
+
+    <div v-if="displayUser" class="flex flex-col justify-center leading-tight">
       <div class="font-bold md:text-lg">
-        <span>{{ userDetail.name }}</span>
+        <span>{{ displayUser.name }}</span>
       </div>
+
       <div
-        v-if="userDetail.profession && userDetail.status !== null"
+        v-if="displayUser.profession && displayUser.status !== null"
         class="flex items-center text-xs md:text-sm text-gray-600"
       >
-        <span class>{{ userDetail.profession }}</span>
-        <span v-if="$route.name === 'messages-slug'" class="mx-1 text-lg">|</span>
+        <span class>{{ displayUser.profession }}</span>
+
+        <span class="mx-1 text-lg">|</span>
+
         <div class="flex items-center">
           <span
-            v-if="$route.name === 'messages-slug'"
-            :class="userDetail.status ? 'bg-green-400' : 'bg-gray-300'"
+            :class="displayUser.status ? 'bg-green-400' : 'bg-gray-300'"
             class="rounded-full mr-1"
             style="padding: 5px"
           />
-          <p
-            v-if="$route.name === 'messages-slug'"
-            class="inline-block"
-          >
-            {{ userDetail.status ? 'Online' : 'Offline' }}
+
+          <p class="inline-block">
+            {{ displayUser.status ? 'Online' : 'Offline' }}
           </p>
         </div>
       </div>
@@ -40,84 +41,28 @@
 
 <script>
 export default {
-  data () {
-    return {
-      messages: [],
-    }
+  props: {
+    user: {
+      type: Object,
+      default: () => null,
+    },
   },
 
   computed: {
-    activeConversationId () {
-      return this.$store.state.chat.activeConversationId
-    },
+    displayUser () {
+      const user = this.user
 
-    conversations () {
-      return this.$store.getters["chat/getConversations"]
-    },
-
-    newUserMessage () {
-      return this.$store.state.chat.newMessageUser
-    },
-
-    conversation () {
-      return this.activeConversationId
-        ? this.conversations.find(conversation => conversation.id.toString() === this.activeConversationId.toString())
-        : null
-    },
-
-    userDetail () {
-      if (this.activeConversationId) {
-        let active_conversation = this.conversations.find(
-          conversation => conversation.id == parseInt(this.activeConversationId)
-        )
-        if (active_conversation) {
-          let user = active_conversation.conversation_member_users.find(
-            member => member.id !== this.$auth.user.id
-          )
-          let detail = {
-            name: `${user.first_name} ${user.last_name}`,
-            profession: user.locum_detail_profession_name
-              ? user.locum_detail_profession_name
-              : user.practice_detail_practice_role
-                ? `${user.practice_detail_practice_role} (${user.practice_name})`
-                : null,
-            status: user.is_online,
-          }
-          // if (user.email) {
-          // 	detail = {
-          // 		name: `${user.first_name} ${user.last_name}`,
-          // 		profession: user.locum_detail_profession_name
-          // 			? user.locum_detail_profession_name
-          // 			: user.practice_detail_practice_role,
-          // 		status: user.is_online
-          // 	};
-          // } else {
-          // 	detail = {
-          // 		name: "Hubzz User",
-          // 		profession: null,
-          // 		status: null
-          // 	};
-          // }
-          return detail
+      if (user) {
+        return {
+          ...user,
+          name: `${user.first_name} ${user.last_name}`,
+          profession: user.locum_detail_profession_name
+            ? user.locum_detail_profession_name
+            : user.practice_detail_practice_role
+              ? `${user.practice_detail_practice_role} (${user.practice_name})`
+              : null,
+          status: user.is_online,
         }
-      } else {
-        let detail
-        if (this.newUserMessage.email) {
-          detail = {
-            name: `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`,
-            profession: this.newUserMessage.locum_detail
-              ? this.newUserMessage.locum_detail.profession.name
-              : this.newUserMessage.practice_detail.practice_role,
-            status: this.newUserMessage.is_online,
-          }
-        } else {
-          detail = {
-            name: "Hubzz User",
-            profession: null,
-            status: null,
-          }
-        }
-        return detail
       }
 
       return null
@@ -131,6 +76,7 @@ export default {
       }
     },
   },
+  
 }
 </script>
 
