@@ -3,19 +3,23 @@
     <MessagesCenterPanelNewChat />
   </section>
 </template>
+
 <script>
-import MessagesCenterPanelNewChat from "@/components/Messages/CenterPanel/MessagesCenterPanelNewChat";
+import MessagesCenterPanelNewChat from "@/components/Messages/CenterPanel/MessagesCenterPanelNewChat"
+
 export default {
   components: {
-    MessagesCenterPanelNewChat
+    MessagesCenterPanelNewChat,
   },
-  mounted() {
+
+  mounted () {
     if (window.innerWidth < 768) {
-      this.$store.commit("IS_MOBILE", false);
+      this.$store.commit("IS_MOBILE", false)
     }
   },
-  created() {
-    this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
-  }
-};
+
+  created () {
+    this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION")
+  },
+}
 </script>
