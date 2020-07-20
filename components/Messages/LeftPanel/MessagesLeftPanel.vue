@@ -222,7 +222,16 @@ export default {
   
   computed: {
     conversations () {
-      return this.$store.getters["chat/getConversations"]
+      return this.$store.getters["chat/getConversations"].map((conversation) => {
+        const displayUser = this.$auth.loggedIn && this.$auth.user.id
+          ? conversation.conversation_member_users.find(({ id, }) => id !== this.$auth.user.id)
+          : null
+
+        return {
+          ...conversation,
+          display_user: displayUser,
+        }
+      })
     },
 
     conversationsCount () {

@@ -3,28 +3,28 @@
     <MessagesCenterPanel />
   </section>
 </template>
+
 <script>
-import MessagesCenterPanel from "@/components/Messages/CenterPanel/MessagesCenterPanel";
-import * as chatApi from "@/api/chat";
+import MessagesCenterPanel from "@/components/Messages/CenterPanel/MessagesCenterPanel"
 export default {
   components: {
-    MessagesCenterPanel
+    MessagesCenterPanel,
   },
 
   computed: {
-    conversations() {
-      return this.$store.state.chat.conversations;
-    }
+    conversations () {
+      return this.$store.state.chat.conversations
+    },
   },
-  mounted() {
+  mounted () {
     if (window.innerWidth > 768) {
-      this.$store.commit("IS_MOBILE", true);
+      this.$store.commit("IS_MOBILE", true)
     } else {
       this.$store.dispatch(
         "chat/setActiveConversation",
         this.$route.params.slug
-      );
+      )
     }
-  }
-};
+  },
+}
 </script>
