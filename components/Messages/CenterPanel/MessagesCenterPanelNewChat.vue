@@ -12,6 +12,7 @@
           </button>
           <span class="font-bold text-lg">Create Message</span>
         </div>
+
         <AppAutoComplete
           v-model="search_user"
           :name="'search_user'"
@@ -51,10 +52,11 @@ export default {
       return this.$store.state.chat.newMessageUser
     },
   },
-  
+
   methods: {
-    newConversation (value) {
-      this.$store.commit("chat/ADD_NEW_MESSAGE_USER", value)
+    newConversation (user) {
+      console.log('newConversation', user)
+      this.$store.commit("chat/ADD_NEW_MESSAGE_USER", user)
       this.$router.push(`/messages/create?new=true`)
       this.createMessage = true
     },
