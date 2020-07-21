@@ -523,8 +523,8 @@ export default {
         },
         {
           name: "Date Created",
-          dataIndex: "date_created",
-          class: "text-center localDate",
+          dataIndex: "date_created_in_gb_formatted",
+          class: "text-center",
         },
         {
           name: "Actions",
