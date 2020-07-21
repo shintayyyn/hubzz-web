@@ -8,8 +8,10 @@ export default {
   SET_TOTAL_CONVERSATIONS_COUNT (state, payload) {
     state.conversations_count = payload
   },
-  SET_MESSAGES (state, payload) {
-    state.messages = payload.sort((a, b) => a.id - b.id)
+  SET_MESSAGES (state, messages) {
+    state.messages = messages
+      .filter((v, i, a) => a.findIndex(({ id, }) => id === v.id) === i)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
   },
   SET_ACTIVE_CONVERSATION (state, payload) {
     state.activeConversationId = payload
@@ -37,10 +39,13 @@ export default {
       state.conversations.push(item)
     })
   },
-  GET_MESSAGES (state, payload) {
-    payload.forEach(item => {
-      state.messages.unshift(item)
-    })
+  GET_MESSAGES (state, messages) {
+    state.messages = [
+      ...state.messages,
+      ...messages,
+    ]
+      .filter((v, i, a) => a.findIndex(({ id, }) => id === v.id) === i)
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
   },
   ADD_CONVERSATION (state, payload) {
     state.conversations.push(payload)
@@ -56,10 +61,14 @@ export default {
   },
   
   ADD_MESSAGE (state, payload) {
-    console.log(payload)
+    console.log('ADD_MESSAGE', payload)
     
     if (state.activeConversationId && state.activeConversationId.toString() === payload.id.toString()) {
       state.messages.push(payload.latest_conversation_message)
+
+      state.messages = state.messages
+        .filter((v, i, a) => a.findIndex(({ id, }) => id === v.id) === i)
+        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
     }
     
     let conversation = state.conversations.find(({ id, }) => id === payload.id)
@@ -154,17 +163,23 @@ export default {
   DELETE_ACTIVE_CONVERSATION (state) {
     state.activeConversationId = null
   },
+
   DELETE_MESSAGE (state, payload) {
     let index = state.messages.findIndex(message => message.id == payload.id)
+
     let lastIndex = state.messages.length - 1
+
     if (index >= 0) {
       state.messages.splice(index, 1, payload)
     }
+
     if (index == lastIndex) {
       let conversation = state.conversations.find(
         item => item.latest_conversation_message.id == payload.id
       )
+
       conversation.latest_conversation_message = state.messages[index]
+
       state.conversations = state.conversations.sort(
         (a, b) =>
           new Date(b.latest_conversation_message.created_at)
