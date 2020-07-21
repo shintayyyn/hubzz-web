@@ -505,16 +505,16 @@ export default {
       if (queryStatus === "unsuccessful") {
         columns.push({
           name: "Rejected At",
-          dataIndex: "platform_job.appointed_at",
-          class: "text-center localDate",
+          dataIndex: "platform_job.appointed_at_in_gb_formatted",
+          class: "text-center",
         })
       }
 
       if (queryStatus === "withdrawn") {
         columns.push({
           name: "Withdrawn At",
-          dataIndex: "job.platform_job.declined_at",
-          class: "text-center localDate",
+          dataIndex: "declined_at_in_gb_formatted",
+          class: "text-center",
         })
       }
 
@@ -522,8 +522,8 @@ export default {
         columns.push(
           {
             name: "Cancelled At",
-            dataIndex: "job.platform_job.cancelled_at",
-            class: "text-center localDate",
+            dataIndex: "cancelled_at_in_gb_formatted",
+            class: "text-center",
           },
           {
             name: "Tag",
@@ -537,8 +537,8 @@ export default {
         columns.push(
           {
             name: "Completed At",
-            dataIndex: "completed_at",
-            class: "text-center localDate",
+            dataIndex: "completed_at_in_gb_formatted",
+            class: "text-center",
           },
           {
             name: "Invoice status",
@@ -552,8 +552,8 @@ export default {
         columns.push(
           {
             name: "Approved At",
-            dataIndex: "approved_at",
-            class: "text-center localDate",
+            dataIndex: "approved_at_in_gb_formatted",
+            class: "text-center",
           },
           {
             name: "Invoice status",

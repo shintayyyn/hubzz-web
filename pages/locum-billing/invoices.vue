@@ -627,21 +627,21 @@ export default {
       if (queryStatus === "approved" || queryStatus === "pension-form-a") {
         columns.push({
           name: "Approved At",
-          dataIndex: "approved_at",
-          class: "text-center localDate",
+          dataIndex: "approved_at_in_gb_formatted",
+          class: "text-center",
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
           name: "Completed At",
-          dataIndex: "completed_at",
-          class: "text-center localDate",
+          dataIndex: "completed_at_in_gb_formatted",
+          class: "text-center",
           sortable: true,
         })
       } else {
         columns.push({
           name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
+          dataIndex: "issued_at_in_gb_formatted",
+          class: "text-center",
           sortable: true,
         })
       }
