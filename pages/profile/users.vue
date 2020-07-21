@@ -145,249 +145,296 @@
 </template>
 
 <script>
-  import AppTable from "@/components/Base/AppTable"
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
+import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
 
-  export default {
-    transition: {
-      name: "fade",
-      mode: "out-in"
+export default {
+  transition: {
+    name: "fade",
+    mode: "out-in",
+  },
+
+  components: {
+    AppTable,
+    AppInput,
+    AppButton,
+  },
+
+  data () {
+    return {
+      filterModal: false,
+      total: 0,
+      users: [],
+      loading: false,
+      current_page: 1,
+      // app table filter
+      practiceUserRoles: [],
+      practiceRoles: [
+        {
+          label: 'All',
+          value: null,
+        },
+        {
+          label: 'Practice Staff',
+          value: 'Practice Staff',
+        },
+        {
+          label: 'Practice Manager',
+          value: 'Practice Manager',
+        },
+        {
+          label: 'Partner',
+          value: 'Partner',
+        },
+      ],
+      // app table params
+      offset: 0,
+      limit: 5,
+      order_by: ["created_at:desc",],
+      search: "",
+      practiceUserRoleId: null,
+      practiceRole: null,
+
+      // app table column
+      columns: [
+        {
+          name: "Title",
+          dataIndex: "personal_detail.title",
+          class: "text-left",
+        },
+        {
+          name: "Name",
+          dataIndex: "fullname",
+          class: "text-center",
+        },
+        {
+          name: "Suffix",
+          dataIndex: "personal_detail.suffix",
+          class: "text-center",
+        },
+        {
+          name: "Username",
+          dataIndex: "username",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Email",
+          dataIndex: "email",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Practice Role",
+          dataIndex: "practice_detail.practice_role",
+          class: "text-center",
+        },
+        {
+          name: "User Role",
+          dataIndex: "user_role",
+          class: "text-center",
+        },
+        {
+          name: "Created At",
+          dataIndex: "created_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Status",
+          slot: true,
+          slotName: "status_slot",
+          dataIndex: "",
+          class: "text-center",
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center",
+        },
+      ],
+    }
+  },
+
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
+  },
 
-    components: {
-      AppTable,
-      AppInput,
-      AppButton
-    },
+  async asyncData ({ app, redirect, error, }) {
+    if (app.$auth.user.domain === "Practice") {
+      let permissions = app.$auth.user.practice_detail.role.permissions.map(
+        permission => permission.name
+      )
 
-    data () {
-      return {
-        filterModal: false,
-        total: 0,
-        users: [],
-        loading: false,
-        current_page: 1,
-        // app table filter
-        practiceUserRoles: [],
-        practiceRoles: [
-          {
-            label: 'All',
-            value: null,
-          },
-          {
-            label: 'Practice Staff',
-            value: 'Practice Staff',
-          },
-          {
-            label: 'Practice Manager',
-            value: 'Practice Manager',
-          },
-          {
-            label: 'Partner',
-            value: 'Partner',
-          }
-        ],
-        // app table params
-        offset: 0,
-        limit: 5,
-        order_by: ["created_at:desc"],
-        search: "",
-        practiceUserRoleId: null,
-        practiceRole: null,
-
-        // app table column
-        columns: [
-          {
-            name: "Title",
-            dataIndex: "personal_detail.title",
-            class: "text-left"
-          },
-          {
-            name: "Name",
-            dataIndex: "fullname",
-            class: "text-center"
-          },
-          {
-            name: "Suffix",
-            dataIndex: "personal_detail.suffix",
-            class: "text-center"
-          },
-          {
-            name: "Username",
-            dataIndex: "username",
-            class: "text-center",
-            sortable: true
-          },
-          {
-            name: "Email",
-            dataIndex: "email",
-            class: "text-center",
-            sortable: true
-          },
-          {
-            name: "Practice Role",
-            dataIndex: "practice_detail.practice_role",
-            class: "text-center"
-          },
-          {
-            name: "User Role",
-            dataIndex: "user_role",
-            class: "text-center"
-          },
-          {
-            name: "Created At",
-            dataIndex: "created_at",
-            class: "text-center localDate",
-            sortable: true
-          },
-          {
-            name: "Status",
-            slot: true,
-            slotName: "status_slot",
-            dataIndex: "",
-            class: "text-center"
-          },
-          {
-            name: "Actions",
-            dataIndex: "actions",
-            class: "text-center"
-          }
-        ]
-      }
-    },
-
-    computed: {
-      authPermissions () {
-        return this.$store.getters["permissions"]
-      }
-    },
-
-    async asyncData ({ app, redirect, error }) {
-      if (app.$auth.user.domain === "Practice") {
-        let permissions = app.$auth.user.practice_detail.role.permissions.map(
-          permission => permission.name
-        )
-
-        if (permissions.includes("View Profile Users")) {
-          try {
-            const responseCount = await app.$axios.$get(
-              `/api/v1/practice/practice-users/count`
-            )
-            const total =
-              responseCount.data && responseCount.data.count
+      if (permissions.includes("View Profile Users")) {
+        try {
+          const responseCount = await app.$axios.$get(
+            `/api/v1/practice/practice-users/count`
+          )
+          const total
+              = responseCount.data && responseCount.data.count
                 ? responseCount.data.count
                 : 0
 
-            const responseUsers = await app.$axios.$get(
-              `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`
-            )
+          const responseUsers = await app.$axios.$get(
+            `/api/v1/practice/practice-users?offset=0&limit=5&order_by=created_at:desc`
+          )
 
-            let users = []
+          let users = []
 
-            if (responseUsers.data && responseUsers.data.users) {
-              responseUsers.data.users.forEach(user => {
-                if (
-                  user.practice_detail.role &&
-                  user.practice_detail.role.name == "Practice User Admin"
-                ) {
-                  users.push({
-                    ...user,
-                    fullname: `${user.personal_detail.first_name} ${
-                      user.personal_detail.last_name
-                    }`,
-                    user_role: user.practice_detail.role
-                      ? user.practice_detail.role.name
-                      : null
-                  })
-                } else {
-                  users.push({
-                    ...user,
-                    fullname: `${user.personal_detail.first_name} ${
-                      user.personal_detail.last_name
-                    }`,
-                    user_role: user.practice_detail.role
-                      ? user.practice_detail.role.name
-                      : null,
-                    removable: true
-                  })
-                }
-              })
-            }
-            return {
-              total,
-              users
-            }
-          } catch (err) {
-            if (err.response && err.response.status === 401) {
-              error(err.response.data)
-              return
-            }
-            throw err
+          if (responseUsers.data && responseUsers.data.users) {
+            responseUsers.data.users.forEach(user => {
+              if (
+                user.practice_detail.role
+                  && user.practice_detail.role.name == "Practice User Admin"
+              ) {
+                users.push({
+                  ...user,
+                  fullname: `${user.personal_detail.first_name} ${
+                    user.personal_detail.last_name
+                  }`,
+                  user_role: user.practice_detail.role
+                    ? user.practice_detail.role.name
+                    : null,
+                })
+              } else {
+                users.push({
+                  ...user,
+                  fullname: `${user.personal_detail.first_name} ${
+                    user.personal_detail.last_name
+                  }`,
+                  user_role: user.practice_detail.role
+                    ? user.practice_detail.role.name
+                    : null,
+                  removable: true,
+                })
+              }
+            })
           }
-        } else if (permissions.includes("View Profile Practice")) {
-          redirect("/profile")
-        } else if (permissions.includes("View Profile Practice Document")) {
-          redirect(`/profile/practice-documents`)
-        } else {
-          error({ statusCode: 401, message: "Your Practice is Not Authorized" })
+          return {
+            total,
+            users,
+          }
+        } catch (err) {
+          if (err.response && err.response.status === 401) {
+            error(err.response.data)
+            return
+          }
+          throw err
         }
+      } else if (permissions.includes("View Profile Practice")) {
+        redirect("/profile")
+      } else if (permissions.includes("View Profile Practice Document")) {
+        redirect(`/profile/practice-documents`)
+      } else {
+        error({ statusCode: 401, message: "Your Practice is Not Authorized", })
       }
-    },
+    }
+  },
 
-    mounted () {
-      this.practiceUserRoles = []
-      this.$axios.get(`/api/v1/practice/practice-roles`, {
-        params: {
-          limit: 1000000,
-        },
-      }).then((response) => {
-        const practiceUserRoles = response.data.data.roles
+  mounted () {
+    this.practiceUserRoles = []
+    this.$axios.get(`/api/v1/practice/practice-roles`, {
+      params: {
+        limit: 1000000,
+      },
+    }).then((response) => {
+      const practiceUserRoles = response.data.data.roles
 
+      this.practiceUserRoles.push({
+        label: 'All',
+        value: null,
+      })
+
+      practiceUserRoles.forEach((practiceUserRole) => {
         this.practiceUserRoles.push({
-          label: 'All',
-          value: null,
+          label: practiceUserRole.name,
+          value: practiceUserRole.id,
         })
+      })
+    })
+  },
 
-        practiceUserRoles.forEach((practiceUserRole) => {
-          this.practiceUserRoles.push({
-            label: practiceUserRole.name,
-            value: practiceUserRole.id,
-          })
+  methods: {
+
+    getUsersPromiseAll () {
+      const params = {
+        search: this.search,
+        practice_role: this.practiceRole,
+        role_id: this.practiceUserRoleId,
+      }
+
+      return Promise.all([
+        this.$axios.$get(`/api/v1/practice/practice-users/count`, {
+          params: {
+            ...params,
+          },
+        }),
+        this.$axios.$get(`/api/v1/practice/practice-users`, {
+          params: {
+            ...params,
+            offset: 0,
+            limit: 5,
+          },
+        }),
+      ]).then(([responseCount, responseUsers,]) => {
+        this.total = responseCount.data.count
+
+        this.users = []
+        return responseUsers.data.users.forEach(user => {
+          if (
+            user.practice_detail.role
+              && user.practice_detail.role.name == "Practice User Admin"
+          ) {
+            this.users.push({
+              ...user,
+              fullname: `${user.personal_detail.first_name} ${
+                user.personal_detail.last_name
+              }`,
+              user_role: user.practice_detail.role
+                ? user.practice_detail.role.name
+                : null,
+            })
+          } else {
+            this.users.push({
+              ...user,
+              fullname: `${user.personal_detail.first_name} ${
+                user.personal_detail.last_name
+              }`,
+              user_role: user.practice_detail.role
+                ? user.practice_detail.role.name
+                : null,
+              removable: true,
+            })
+          }
         })
       })
     },
 
-    methods: {
+    getUsers () {
+      const params = {
+        search: this.search,
+        practice_role: this.practiceRole,
+        role_id: this.practiceUserRoleId,
+      }
 
-      getUsersPromiseAll () {
-        const params = {
-          search: this.search,
-          practice_role: this.practiceRole,
-          role_id: this.practiceUserRoleId,
-        }
-
-        return Promise.all([
-          this.$axios.$get(`/api/v1/practice/practice-users/count`, {
-            params: {
-              ...params,
-            }
-          }),
-          this.$axios.$get(`/api/v1/practice/practice-users`, {
-            params: {
-              ...params,
-              offset: 0,
-              limit: 5,
-            }
-          })
-        ]).then(([responseCount, responseUsers]) => {
-          this.total = responseCount.data.count
-
+      return this.$axios
+        .$get(`/api/v1/practice/practice-users`, {
+          params: {
+            ...params,
+            offset: this.offset,
+            limit: 5,
+          },
+        })
+        .then(res => {
           this.users = []
-          return responseUsers.data.users.forEach(user => {
+          return res.data.users.forEach(user => {
             if (
-              user.practice_detail.role &&
-              user.practice_detail.role.name == "Practice User Admin"
+              user.practice_detail.role
+                && user.practice_detail.role.name == "Practice User Admin"
             ) {
               this.users.push({
                 ...user,
@@ -396,7 +443,7 @@
                 }`,
                 user_role: user.practice_detail.role
                   ? user.practice_detail.role.name
-                  : null
+                  : null,
               })
             } else {
               this.users.push({
@@ -407,180 +454,133 @@
                 user_role: user.practice_detail.role
                   ? user.practice_detail.role.name
                   : null,
-                removable: true
+                removable: true,
               })
             }
           })
         })
-      },
-
-      getUsers () {
-        const params = {
-          search: this.search,
-          practice_role: this.practiceRole,
-          role_id: this.practiceUserRoleId,
-        }
-
-        return this.$axios
-          .$get(`/api/v1/practice/practice-users`, {
-            params: {
-              ...params,
-              offset: this.offset,
-              limit: 5,
-            }
-          })
-          .then(res => {
-            this.users = []
-            return res.data.users.forEach(user => {
-              if (
-                user.practice_detail.role &&
-                user.practice_detail.role.name == "Practice User Admin"
-              ) {
-                this.users.push({
-                  ...user,
-                  fullname: `${user.personal_detail.first_name} ${
-                    user.personal_detail.last_name
-                  }`,
-                  user_role: user.practice_detail.role
-                    ? user.practice_detail.role.name
-                    : null
-                })
-              } else {
-                this.users.push({
-                  ...user,
-                  fullname: `${user.personal_detail.first_name} ${
-                    user.personal_detail.last_name
-                  }`,
-                  user_role: user.practice_detail.role
-                    ? user.practice_detail.role.name
-                    : null,
-                  removable: true
-                })
-              }
+        .catch(err => {
+          console.log("err", err.response || err.message)
+          if (err.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [err.response.data.message,],
             })
-          })
-          .catch(err => {
-            console.log("err", err.response || err.message)
-            if (err.response.data.message) {
-              return this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [err.response.data.message]
-              })
-            }
-          })
-      },
+          }
+        })
+    },
 
-      async filterUsers () {
-        this.current_page = 1
-        this.offset = 0
-        this.loading = true
-        await this.getUsersPromiseAll()
-        this.loading = false
-        this.filterModal = false
-      },
+    async filterUsers () {
+      this.current_page = 1
+      this.offset = 0
+      this.loading = true
+      await this.getUsersPromiseAll()
+      this.loading = false
+      this.filterModal = false
+    },
 
-      async sorted (order_by) {
-        this.current_page = 1
-        this.offset = 0
-        this.order_by = order_by
-        this.loading = true
-        await this.getUsers()
-        this.loading = false
-      },
+    async sorted (order_by) {
+      this.current_page = 1
+      this.offset = 0
+      this.order_by = order_by
+      this.loading = true
+      await this.getUsers()
+      this.loading = false
+    },
 
-      async pagechanged (page) {
-        this.current_page = page
-        this.offset = this.limit * (page - 1)
-        this.loading = true
-        await this.getUsers()
-        this.loading = false
-      },
+    async pagechanged (page) {
+      this.current_page = page
+      this.offset = this.limit * (page - 1)
+      this.loading = true
+      await this.getUsers()
+      this.loading = false
+    },
 
-      async limitchanged (limit) {
-        this.current_page = 1
-        this.offset = 0
-        this.limit = limit
-        this.loading = true
-        await this.getUsers()
-        this.loading = false
-      },
+    async limitchanged (limit) {
+      this.current_page = 1
+      this.offset = 0
+      this.limit = limit
+      this.loading = true
+      await this.getUsers()
+      this.loading = false
+    },
 
-      clearFilters () {
-        this.offset = 0
-        this.limit = 5
-        this.order_by = ["created_at:desc"]
-        this.search = ""
-        this.practiceUserRoleId = null
-        this.practiceRole = null
-        this.filterUsers()
-      },
+    clearFilters () {
+      this.offset = 0
+      this.limit = 5
+      this.order_by = ["created_at:desc",]
+      this.search = ""
+      this.practiceUserRoleId = null
+      this.practiceRole = null
+      this.filterUsers()
+    },
 
-      addUser (user) {
-        console.log(user)
-        this.getUsers()
-        // if (
-        //   user.practice_detail.role &&
-        //   user.practice_detail.role.name == "Practice User Admin"
-        // ) {
-        //   this.users.push({
-        //     ...user,
-        //     fullname: `${user.personal_detail.first_name} ${
-        //       user.personal_detail.last_name
-        //     }`,
-        //     user_role: user.practice_detail.role
-        //       ? user.practice_detail.role.name
-        //       : null
-        //   });
-        // } else {
-        //   this.users.push({
-        //     ...user,
-        //     fullname: `${user.personal_detail.first_name} ${
-        //       user.personal_detail.last_name
-        //     }`,
-        //     user_role: user.practice_detail.role
-        //       ? user.practice_detail.role.name
-        //       : null,
-        //     removable: true
-        //   });
-        // }
-        // this.users.push({
-        //   ...user,
-        //   fullname: `${user.personal_detail.first_name} ${
-        //     user.personal_detail.last_name
-        //   }`,
-        //   user_role: user.practice_detail.role
-        //     ? user.practice_detail.role.name
-        //     : null
-        // });
-      },
-      updateUser () {
-        this.getUsers()
-        // let index = this.users.findIndex(item => item.id === user.id);
-        // if (index >= 0) {
-        //   this.users.splice(index, 1, {
-        //     ...user,
-        //     fullname: `${user.personal_detail.first_name} ${
-        //       user.personal_detail.last_name
-        //     }`,
-        //     user_role: user.practice_detail.role
-        //       ? user.practice_detail.role.name
-        //       : null
-        //   });
-        // }
-      },
-      statusStyle (status) {
-        switch (status) {
-          case "Active":
-            return "bg-green-500 text-white"
-          case "Disabled":
-            return "bg-gray-300 text-gray-600"
-          default:
-            return
-        }
+    addUser (user) {
+      console.log(user)
+      this.getUsers()
+      // if (
+      //   user.practice_detail.role &&
+      //   user.practice_detail.role.name == "Practice User Admin"
+      // ) {
+      //   this.users.push({
+      //     ...user,
+      //     fullname: `${user.personal_detail.first_name} ${
+      //       user.personal_detail.last_name
+      //     }`,
+      //     user_role: user.practice_detail.role
+      //       ? user.practice_detail.role.name
+      //       : null
+      //   });
+      // } else {
+      //   this.users.push({
+      //     ...user,
+      //     fullname: `${user.personal_detail.first_name} ${
+      //       user.personal_detail.last_name
+      //     }`,
+      //     user_role: user.practice_detail.role
+      //       ? user.practice_detail.role.name
+      //       : null,
+      //     removable: true
+      //   });
+      // }
+      // this.users.push({
+      //   ...user,
+      //   fullname: `${user.personal_detail.first_name} ${
+      //     user.personal_detail.last_name
+      //   }`,
+      //   user_role: user.practice_detail.role
+      //     ? user.practice_detail.role.name
+      //     : null
+      // });
+    },
+    updateUser () {
+      this.getUsers()
+      // let index = this.users.findIndex(item => item.id === user.id);
+      // if (index >= 0) {
+      //   this.users.splice(index, 1, {
+      //     ...user,
+      //     fullname: `${user.personal_detail.first_name} ${
+      //       user.personal_detail.last_name
+      //     }`,
+      //     user_role: user.practice_detail.role
+      //       ? user.practice_detail.role.name
+      //       : null
+      //   });
+      // }
+    },
+    statusStyle (status) {
+      switch (status) {
+      case "Active":
+        return "bg-green-500 text-white"
+      case "Disabled":
+        return "bg-gray-300 text-gray-600"
+      default:
+        return
       }
-    }
-  }
+    },
+  },
+}
 </script>
 
 <style scoped>

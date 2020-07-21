@@ -148,7 +148,7 @@
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.job.platform_job.cancelled_at | localDate }}
+            {{ job_part.cancelled_at_in_gb_formatted }}
           </div>
 
           <div class="font-bold text-sm sm:text-md">
@@ -166,7 +166,7 @@
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.job.platform_job.cancelled_at | localDate }}
+            {{ job_part.cancelled_at_in_gb_formatted }}
           </div>
 
           <div class="font-bold text-sm sm:text-md">

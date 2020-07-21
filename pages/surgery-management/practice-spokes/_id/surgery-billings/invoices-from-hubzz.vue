@@ -63,17 +63,17 @@
 import AppTable from "@/components/Base/AppTable"
 import AppButton from "@/components/Base/AppButton"
 import AppDate from "@/components/Base/AppDate"
-import { mixin as clickaway } from "vue-clickaway"
+import { mixin as clickaway, } from "vue-clickaway"
 export default {
   components: {
     AppTable,
     AppDate,
-    AppButton
+    AppButton,
   },
-  mixins: [clickaway],
+  mixins: [clickaway,],
   transition: {
     name: "fade",
-    mode: "out-in"
+    mode: "out-in",
   },
   data () {
     return {
@@ -89,56 +89,56 @@ export default {
       paymentModal: false,
       selectedInvoiceId: null,
       form: {
-        paid_at: null
+        paid_at: null,
       },
       formError: [],
       // app table params
       params: {
         offset: 0,
         limit: 5,
-        order_by: []
+        order_by: [],
       },
       // app table column
       columns: [
         {
           name: "Practice / Surgery",
           dataIndex: "practice.name",
-          class: "text-left"
+          class: "text-left",
         },
         {
           name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate"
+          dataIndex: "issued_at_in_gb_formatted",
+          class: "text-center",
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          class: "text-left"
+          class: "text-left",
         },
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Paid At",
           dataIndex: "paid_at",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Created At",
-          dataIndex: "date_created",
-          class: "text-center localDate"
+          dataIndex: "date_created_in_gb_formatted",
+          class: "text-center",
         },
         {
           name: "Actions",
           dataIndex: "actions",
-          class: "text-center"
-        }
-      ]
+          class: "text-center",
+        },
+      ],
     }
   },
-  async asyncData ({ app, route, error }) {
+  async asyncData ({ app, route, error, }) {
     try {
       let response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/${route.params.id}`
@@ -147,40 +147,40 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        practice_id: practiceSurgery.child_practice_id
+        practice_id: practiceSurgery.child_practice_id,
       }
       console.log(practiceSurgery.child_practice_id)
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count"
       )
 
-      const totalInvoices =
-        responseCount.data &&
-        responseCount.data.data &&
-        responseCount.data.data.count
+      const totalInvoices
+        = responseCount.data
+        && responseCount.data.data
+        && responseCount.data.data.count
           ? responseCount.data.data.count
           : 0
 
       response = await app.$axios.get("/api/v1/practice/practice-invoices", {
-        params
+        params,
       })
 
-      const invoices =
-        response.data &&
-        response.data.data &&
-        response.data.data.practice_invoices
+      const invoices
+        = response.data
+        && response.data.data
+        && response.data.data.practice_invoices
           ? response.data.data.practice_invoices
           : []
 
       return {
         totalInvoices,
-        invoices
+        invoices,
       }
     } catch (err) {
       console.log("practice-billing index err", err.response || err)
       error({
         statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
+        message: err.message || "Something went wrong!",
       })
     }
   },
@@ -194,7 +194,7 @@ export default {
     this.removeListener()
   },
   methods: {
-    getPracticeInvoiceRealTime ({ id }) {
+    getPracticeInvoiceRealTime ({ id, }) {
       if (!id) {
         return
       }
@@ -220,7 +220,7 @@ export default {
     },
     getInvoicesCount (params) {
       this.$axios
-        .$get(`/api/v1/practice/practice-invoices/count`, { params })
+        .$get(`/api/v1/practice/practice-invoices/count`, { params, })
         .then(res => {
           this.totalInvoices = res.data.count
           this.getInvoices(this.params)
@@ -229,7 +229,7 @@ export default {
     getInvoices (params) {
       this.loading = true
       this.$axios
-        .$get(`/api/v1/practice/practice-invoices`, { params })
+        .$get(`/api/v1/practice/practice-invoices`, { params, })
         .then(res => {
           this.loading = false
           this.invoices = []
@@ -242,7 +242,7 @@ export default {
           this.loading = false
         })
     },
-    onClick (invoice, index) {
+    onClick (invoice) {
       if (invoice.paid || invoice.disputed_items_count > 0) {
         return
       }
@@ -271,7 +271,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`]
+              text: [`${res.message}`,],
             })
             this.paymentModal = false
           })
@@ -296,8 +296,8 @@ export default {
       this.params.offset = 0
       this.params.limit = limit
       this.getInvoices(this.params)
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>
