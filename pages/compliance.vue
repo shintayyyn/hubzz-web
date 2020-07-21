@@ -178,19 +178,17 @@
                 <div v-if="!(item.file || item.reference)" class="item w-1/6 py-2" />
 
                 <div
-                  v-if="item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding'"
+                  v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
                   class="item w-1/6"
                 >
-                  {{ item.file.created_at | localDate }}
+                  {{ item.uploaded_at_in_gb_formatted }}
                 </div>
 
                 <div v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')" class="item w-1/6 py-2" />
 
-                <div v-if="item && item.expired_at" class="item w-1/6">
-                  {{ item.expired_at | localDate }}
+                <div class="item w-1/6">
+                  {{ item.expired_at_in_gb_formatted }}
                 </div>
-
-                <div v-if="!(item && item.expired_at)" class="item w-1/6 py-2" />
               </template>
 
               <div v-if="item && item.status" class="w-1/6">
@@ -300,17 +298,13 @@
 
                   <div v-else class="item w-1/6" />
 
-                  <div v-if="childItem.file && childItem.file.created_at" class="item w-1/6">
-                    {{ childItem.file.created_at | localDate }}
+                  <div class="item w-1/6">
+                    {{ childItem.uploaded_at_in_gb_formatted }}
                   </div>
 
-                  <div v-if="!(childItem.file && childItem.file.created_at)" class="item w-1/6" />
-
-                  <div v-if="childItem && childItem.expired_at" class="item w-1/6">
-                    {{ childItem.expired_at | localDate }}
+                  <div class="item w-1/6">
+                    {{ childItem.expired_at_in_gb_formatted }}
                   </div>
-
-                  <div v-if="!(childItem && childItem.expired_at)" class="item w-1/6" />
 
                   <div v-if="childItem && childItem.status" class="item w-1/6">
                     <div class="flex justify-start max-w-xs">
@@ -582,11 +576,9 @@
 
                   <td v-if="!item.file" />
 
-                  <td v-if="item && item.file" class="text-center">
-                    {{ item.file.created_at | localDate }}
+                  <td class="text-center">
+                    {{ item.uploaded_at_in_gb_formatted }}
                   </td>
-
-                  <td v-if="!(item && item.file)" />
 
                   <td v-if="!item.file" class="hover:underline" @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()">
                     <div class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer bg-yellow-500 rounded">
@@ -705,11 +697,9 @@
 
                   <td v-if="!item.file" />
 
-                  <td v-if="item && item.file" class="text-center">
-                    {{ item.file.created_at | localDate }}
+                  <td class="text-center">
+                    {{ item.uploaded_at_in_gb_formatted }}
                   </td>
-
-                  <td v-if="!(item && item.file)" />
 
                   <td v-if="!item.file" class="hover:underline" @click.stop="$refs[`${item.id}_file_other_mandatory_training`][0].click()">
                     <div class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer bg-yellow-500 rounded">
@@ -1210,7 +1200,6 @@ export default {
         has_reference:
             responseObject.data.locum_compliance_document.has_reference,
         reference: responseObject.data.locum_compliance_document.reference,
-        // expired_at: responseObject.data.locum_compliance_document.expired_at,
         verified_at: responseObject.data.locum_compliance_document.verified_at,
         rejected_at: responseObject.data.locum_compliance_document.rejected_at,
         note: responseObject.data.locum_compliance_document.note,

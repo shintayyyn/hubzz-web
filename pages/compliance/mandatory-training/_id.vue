@@ -28,93 +28,33 @@
               <p class="font-bold text-lg">
                 Title
               </p>
-              <p
-                class="mt-2 text-sm md:text-base"
-              >
+
+              <p class="mt-2 text-sm md:text-base">
                 {{ mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name: null }}
               </p>
+
               <p class="mt-5 font-bold text-lg">
                 File last uploaded
               </p>
-              <p
-                class="mt-2 text-sm md:text-base"
-              >
-                {{ mandatory_training.file ? $moment(mandatory_training.file.created_at).utc().format('DD/MM/YYYY HH:mm:ss') : null }}
+
+              <p class="mt-2 text-sm md:text-base">
+                {{ mandatory_training.uploaded_at_in_gb_formatted }}
               </p>
-              <div v-if="mandatory_training.status === 'Approved'">
-                <p class="mt-5 font-bold text-lg">
-                  Expiration Date
-                </p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >
-                  {{ mandatory_training.expired_at ? $moment(mandatory_training.expired_at).utc().format('DD/MM/YYYY HH:mm:ss') : null }}
-                </p>
-              </div>
-              <div v-if="mandatory_training.status === 'Rejected'">
-                <p class="mt-5 font-bold text-lg">
-                  Rejected At
-                </p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >
-                  {{ mandatory_training.file ? $moment(mandatory_training.file.created_at).utc().format('DD/MM/YYYY HH:mm:ss') : null }}
-                </p>
-                <div v-if="mandatory_training.status === 'Approved'">
-                  <p class="mt-5 font-bold text-lg">
-                    Expiration Date
-                  </p>
-                  <p
-                    class="mt-2 text-sm md:text-base"
-                  >
-                    {{ mandatory_training.expired_at ? $moment(mandatory_training.expired_at).utc().format('DD/MM/YYYY HH:mm:ss') : null }}
-                  </p>
-                </div>
-                <div v-if="mandatory_training.status === 'Rejected'">
-                  <p class="mt-5 font-bold text-lg">
-                    Rejected At
-                  </p>
-                  <p
-                    class="mt-2 text-sm md:text-base"
-                  >
-                    {{ mandatory_training && mandatory_training.rejected_at ? mandatory_training.rejected_at : null }}
-                  </p>
-                  <p class="mt-5 font-bold text-lg">
-                    Notes
-                  </p>
-                  <p
-                    class="mt-2 text-sm md:text-base"
-                  >
-                    {{ mandatory_training && mandatory_training.note ? mandatory_training.note : null }}
-                  </p>
-                </div>
-                <p class="mt-5 font-bold text-lg">
-                  Expiry date
-                </p>
-                <AppDate
-                  v-model="expiry_date"
-                  :name="'expiry_date'"
-                  isAfter
-                  :error="formError.find(item => item.field === 'expiry_date')"
-                />
-                <template
-                  v-if="formError.find(item => item.field === 'expiry_date')"
-                >
-                  {{ formError.find(item=> item.field === 'expiry_date').message }}
-                </template>
-                <AppButton :label="'Save'" :inStyle="'padding:5px 20px'" @click="update()" />
-              </div>
+
               <p class="mt-5 font-bold text-lg">
                 Expiry date
               </p>
+
               <AppDate
                 v-model="expiry_date"
                 :name="'expiry_date'"
                 isAfter
                 :error="formError.find(item => item.field === 'expiry_date')"
               />
+
               <AppButton :label="'Save'" :inStyle="'padding:5px 20px'" @click="update" />
             </div>
+
             <div v-if="mandatory_training.file" class="mt-5 lg:mt-0 w-full lg:w-3/4">
               <embed
                 class="object-contain object-top w-full"
@@ -167,6 +107,7 @@ export default {
     this.expiry_date = this.mandatory_training.expired_at
     this.file = this.mandatory_training.file
   },
+
   methods: {
     async update () {
       try {
@@ -195,7 +136,7 @@ export default {
         throw err
       }
     },
-    
+
     downloadItem (fileUrl, fileName) {
       const axios = require("axios")
       axios({
@@ -218,6 +159,7 @@ export default {
   },
 }
 </script>
+
 <style scoped>
 .modal-container {
 	z-index: 510;
