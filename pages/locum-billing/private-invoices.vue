@@ -367,8 +367,8 @@ export default {
         },
         {
           name: "Date Created",
-          dataIndex: "date_created",
-          class: "text-center localDate",
+          dataIndex: "date_created_in_gb_formatted",
+          class: "text-center",
         },
         {
           name: "Actions",
@@ -391,8 +391,8 @@ export default {
         },
         {
           name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
+          dataIndex: "issued_at_in_gb_formatted",
+          class: "text-center",
           sortable: true,
         },
         {

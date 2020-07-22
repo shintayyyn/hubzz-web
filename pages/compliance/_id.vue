@@ -56,7 +56,7 @@
               <p
                 class="mt-2 text-sm md:text-base"
               >
-                {{ compliance_document.file ? $moment(compliance_document.file.created_at).utc().format('DD/MM/YYYY HH:mm:ss') : null }}
+                {{ compliance_document.uploaded_at_in_gb_formatted }}
               </p>
               <p class="mt-5 font-bold text-lg">
                 Status
@@ -71,7 +71,7 @@
                 <p
                   class="mt-2 text-sm md:text-base"
                 >
-                  {{ compliance_document.expired_at ? $moment(compliance_document.expired_at).utc().format('DD/MM/YYYY HH:mm:ss') : null }}
+                  {{ compliance_document.expired_at_in_gb_formatted }}
                 </p>
               </div>
               <div v-if="compliance_document.status === 'Rejected'">
@@ -81,7 +81,7 @@
                 <p
                   class="mt-2 text-sm md:text-base"
                 >
-                  {{ compliance_document && compliance_document.rejected_at ? compliance_document.rejected_at : null }}
+                  {{ compliance_document.rejected_at_in_gb_formatted }}
                 </p>
                 <p class="mt-5 font-bold text-lg">
                   Notes
@@ -116,47 +116,47 @@
 </template>
 <script>
 export default {
-	async asyncData ({ app, params, redirect }) {
-		try {
-			const response = await app.$axios.$get(
-				`/api/v1/locum/locum-compliance-documents/${params.id}`
-			)
-			let compliance_document =
-				response.data && response.data.locum_compliance_document
-					? response.data.locum_compliance_document
-					: null
-			return {
-				compliance_document
-			}
-		} catch (err) {
-			if (err.response && err.response.status === 404) {
-				return redirect("/compliance")
-			}
-			throw err
-		}
-	},
-	methods: {
-		downloadItem (fileUrl, fileName) {
-			const axios = require("axios")
-			axios({
-				url: fileUrl,
-				method: "GET",
-				responseType: "blob" // important
-			}).then(response => {
-				const url = window.URL.createObjectURL(new Blob([response.data]))
-				const link = document.createElement("a")
-				link.href = url
-				link.setAttribute("download", fileName)
-				document.body.appendChild(link)
-				link.click()
-				document.body.removeChild(link)
-			})
-		},
-		convertDoc (document) {
-			console.log(document)
-			return `https://docs.google.com/gview?url=${document}&embedded=true`
-		}
-	}
+  async asyncData ({ app, params, redirect, }) {
+    try {
+      const response = await app.$axios.$get(
+        `/api/v1/locum/locum-compliance-documents/${params.id}`
+      )
+      let compliance_document	= response.data && response.data.locum_compliance_document
+        ? response.data.locum_compliance_document
+        : null
+        
+      return {
+        compliance_document,
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        return redirect("/compliance")
+      }
+      throw err
+    }
+  },
+  methods: {
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob", // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+    },
+    convertDoc (document) {
+      console.log(document)
+      return `https://docs.google.com/gview?url=${document}&embedded=true`
+    },
+  },
 }
 </script>
 <style scoped>

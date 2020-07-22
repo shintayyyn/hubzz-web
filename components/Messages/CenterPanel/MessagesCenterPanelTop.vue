@@ -55,7 +55,7 @@ export default {
       if (user) {
         return {
           ...user,
-          name: `${user.first_name} ${user.last_name}`,
+          name: `${user.first_name || ''} ${user.last_name || ''}`,
           profession: user.locum_detail_profession_name
             ? user.locum_detail_profession_name
             : user.practice_detail_practice_role

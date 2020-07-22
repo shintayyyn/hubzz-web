@@ -77,7 +77,7 @@
                   <span>{{ getNotificationMessage(notification) }}&nbsp;</span>
                 </p>
                 <div class="leading-tight text-xs text-gray-600">
-                  <span>{{ $moment(notification.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}&nbsp;</span>
+                  <span>{{ notification.created_at_in_gb_formatted }}&nbsp;</span>
                 </div>
               </div>
               <span v-if="!notification.seen" class="bg-sunglow w-2 h-2 p-1 rounded-full mr-1 mt-1" />

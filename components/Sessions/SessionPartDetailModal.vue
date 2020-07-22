@@ -110,7 +110,7 @@
                   <p
                     class="text-xs sm:text-sm"
                   >
-                    {{ jobPart.job.platform_job.declined_at | localDate }}
+                    {{ jobPart.declined_at_in_gb_formatted }}
                   </p>
                 </div>
                 <div class="leading-tight pb-4">
@@ -134,7 +134,7 @@
                   <p
                     class="text-xs sm:text-sm"
                   >
-                    {{ jobPart.job.platform_job.cancelled_at | localDate }}
+                    {{ jobPart.cancelled_at_in_gb_formatted }}
                   </p>
                 </div>
 
