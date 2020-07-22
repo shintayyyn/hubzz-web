@@ -1170,8 +1170,10 @@ export default {
       this.form.referee_2_phone_number = this.user.referee_2_phone_number
       this.form.referee_2_email = this.user.referee_2_email
 
+      this.form.employment_type = this.user.employment_type
       this.form.utr_number = this.user.utr_number
       this.form.company_registration_number = this.user.company_registration_number
+
       this.form.ir35 = this.user.ir35
       // claim nhs
       this.form.claim_nhs = this.user.claim_nhs
