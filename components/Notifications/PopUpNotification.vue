@@ -102,7 +102,7 @@
         <div
           class="leading-tight text-xs pt-2 text-right text-gray-600"
         >
-          {{ $moment(notification.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY | HH:mm') }}
+          {{ notification.created_at_in_gb_formatted }}
         </div>
       </div>
     </div>
@@ -119,80 +119,80 @@
 </template>
 
 <script>
-  import TimeProgress from "@/components/Notifications/TimeProgress"
+import TimeProgress from "@/components/Notifications/TimeProgress"
 
-  export default {
+export default {
 
-    components: {
-      TimeProgress,
+  components: {
+    TimeProgress,
+  },
+
+  props: {
+    notification: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  computed: {
+    payloadLocumComplianceDocumentStatusClass () {
+      return {
+        Approved: 'bg-green-500 text-white',
+        Pending: 'bg-orange-500 text-white',
+        Rejected: 'bg-red-500 text-white',
+        Verified: 'bg-green-500 text-white',
+      }
     },
 
-    props: {
-      notification: {
-        type: Object,
-        required: true,
-      },
+    payloadLocumJobClass () {
+      return {
+        Allocated: 'bg-green-300 text-white',
+        Ongoing: 'bg-green-500 text-white',
+        Available: 'bg-yellow-500 text-white',
+        Matched: 'bg-yellow-500',
+        Applied: 'bg-orange-400 text-white',
+        Unsuccessful: 'bg-red-500 text-white',
+        Unavailable: 'bg-red-500 text-white',
+        Unqualified: 'bg-red-500 text-white',
+        Withdrawn: 'bg-red-500 text-white',
+        Cancelled: 'bg-red-500 text-white',
+        Completed: 'bg-green-500 text-white',
+        Approved: 'bg-green-500 text-white',
+      }
     },
 
-    computed: {
-      payloadLocumComplianceDocumentStatusClass () {
-        return {
-          Approved: 'bg-green-500 text-white',
-          Pending: 'bg-orange-500 text-white',
-          Rejected: 'bg-red-500 text-white',
-          Verified: 'bg-green-500 text-white',
-        }
-      },
-
-      payloadLocumJobClass () {
-        return {
-          Allocated: 'bg-green-300 text-white',
-          Ongoing: 'bg-green-500 text-white',
-          Available: 'bg-yellow-500 text-white',
-          Matched: 'bg-yellow-500',
-          Applied: 'bg-orange-400 text-white',
-          Unsuccessful: 'bg-red-500 text-white',
-          Unavailable: 'bg-red-500 text-white',
-          Unqualified: 'bg-red-500 text-white',
-          Withdrawn: 'bg-red-500 text-white',
-          Cancelled: 'bg-red-500 text-white',
-          Completed: 'bg-green-500 text-white',
-          Approved: 'bg-green-500 text-white',
-        }
-      },
-
-      payloadJobClass () {
-        return {
-          Pending: 'bg-red-500 text-white',
-          Allocated: 'bg-green-300 text-white',
-          Ongoing: 'bg-green-500 text-white',
-          Live: 'bg-yellow-500',
-          Applied: 'bg-orange-400 text-white',
-          Unfilled: 'bg-red-500 text-white',
-          Withdrawn: 'bg-red-500 text-white',
-          Cancelled: 'bg-red-500 text-white',
-          Completed: 'bg-green-500 text-white',
-          Approved: 'bg-green-500 text-white',
-          Rejected: 'bg-red-500 text-white',
-        }
-      },
-
-      payloadLocumInvoiceStatusClass () {
-        return {
-          Issued: 'bg-green-500 text-white',
-          Disputed: 'bg-red-500 text-white',
-          Approved: 'bg-green-500 text-white',
-          Paid: 'bg-green-500 text-white',
-        }
-      },
-
-      payloadPracticeInvoiceStatusClass () {
-        return {
-          Issued: 'bg-green-500 text-white',
-          Paid: 'bg-green-500 text-white',
-        }
-      },
+    payloadJobClass () {
+      return {
+        Pending: 'bg-red-500 text-white',
+        Allocated: 'bg-green-300 text-white',
+        Ongoing: 'bg-green-500 text-white',
+        Live: 'bg-yellow-500',
+        Applied: 'bg-orange-400 text-white',
+        Unfilled: 'bg-red-500 text-white',
+        Withdrawn: 'bg-red-500 text-white',
+        Cancelled: 'bg-red-500 text-white',
+        Completed: 'bg-green-500 text-white',
+        Approved: 'bg-green-500 text-white',
+        Rejected: 'bg-red-500 text-white',
+      }
     },
+
+    payloadLocumInvoiceStatusClass () {
+      return {
+        Issued: 'bg-green-500 text-white',
+        Disputed: 'bg-red-500 text-white',
+        Approved: 'bg-green-500 text-white',
+        Paid: 'bg-green-500 text-white',
+      }
+    },
+
+    payloadPracticeInvoiceStatusClass () {
+      return {
+        Issued: 'bg-green-500 text-white',
+        Paid: 'bg-green-500 text-white',
+      }
+    },
+  },
     
-  }
+}
 </script>

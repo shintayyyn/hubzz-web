@@ -84,20 +84,20 @@ import AppLoading from "@/components/Base/AppLoading"
 export default {
   components: {
     AppTable,
-    AppLoading
+    AppLoading,
   },
 
   props: {
     spokePracticeId: {
-      type: [String, Number],
-      default: () => null
-    }
+      type: [String, Number,],
+      default: () => null,
+    },
   },
 
-  middleware ({ query, error }) {
+  middleware ({ query, error, }) {
     if (
-      query.jobStatus &&
-      ![
+      query.jobStatus
+      && ![
         "pending",
         "allocated",
         "ongoing",
@@ -107,10 +107,10 @@ export default {
         "withdrawn",
         "cancelled",
         "completed",
-        "approved"
+        "approved",
       ].includes(query.jobStatus.toLowerCase())
     ) {
-      return error({ status: 404, message: "This Session Status is Invalid" })
+      return error({ status: 404, message: "This Session Status is Invalid", })
     }
   },
   data () {
@@ -154,27 +154,27 @@ export default {
       rates: [],
       filterModal: false,
       isFiltered: false,
-      showRefresh: false
+      showRefresh: false,
     }
   },
   computed: {
     isJobPart () {
       if (
-        !this.$route.query.jobStatus ||
-        (this.$route.query.jobStatus &&
-          ![
+        !this.$route.query.jobStatus
+        || (this.$route.query.jobStatus
+          && ![
             "ongoing",
             "completed",
             "approved",
             "cancelled",
-            "withdrawn"
+            "withdrawn",
           ].includes(this.$route.query.jobStatus.toLowerCase()))
       ) {
         return false
       }
       if (
-        this.$route.query.jobStatus &&
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+        this.$route.query.jobStatus
+        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
           this.$route.query.jobStatus.toLowerCase()
         )
       ) {
@@ -189,22 +189,22 @@ export default {
         ? this.$route.query.jobStatus.toLowerCase()
         : ""
       switch (queryStatus) {
-        case "pending":
-        case "allocated":
-        case "ongoing":
-        case "declined":
-        case "withdrawn":
-        case "approved":
-        case "unfilled":
-        case "live":
-          return `You do not have any ${queryStatus} jobs`
-        case "applied":
-          return `There were no Locums who applied on your jobs yet`
-        case "completed":
-        case "cancelled":
-          return `You have not yet ${queryStatus} any job`
-        default:
-          return "You do not have any allocated jobs"
+      case "pending":
+      case "allocated":
+      case "ongoing":
+      case "declined":
+      case "withdrawn":
+      case "approved":
+      case "unfilled":
+      case "live":
+        return `You do not have any ${queryStatus} jobs`
+      case "applied":
+        return `There were no Locums who applied on your jobs yet`
+      case "completed":
+      case "cancelled":
+        return `You have not yet ${queryStatus} any job`
+      default:
+        return "You do not have any allocated jobs"
       }
     },
     columns () {
@@ -213,7 +213,7 @@ export default {
         ? this.$route.query.jobStatus.toLowerCase()
         : "allocated"
       if (
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
           queryStatus
         )
       ) {
@@ -221,37 +221,37 @@ export default {
           {
             name: "Job Part Number",
             dataIndex: "job_part_number",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Practice",
             dataIndex: "practice_name",
             class: "text-center",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Title",
             dataIndex: "job_title",
             class: "text-center",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Shift",
             dataIndex: "job.shift.name",
             class: "text-center",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Rate",
             dataIndex: "job.rate",
             sortable: true,
-            class: "text-center"
+            class: "text-center",
           },
           {
             name: "per",
             dataIndex: "job.locum_detail_rate_type.name",
             class: "text-center",
-            sortable: true
+            sortable: true,
           }
         )
       } else if (
@@ -260,44 +260,44 @@ export default {
           "completed",
           "approved",
           "cancelled",
-          "withdrawn"
+          "withdrawn",
         ].includes(queryStatus)
       ) {
         columns.push(
           {
             name: "Job Number",
             dataIndex: "job_number",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Practice",
             dataIndex: "practice_name",
             class: "text-center",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Title",
             dataIndex: "title",
             class: "text-center",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Shift",
             dataIndex: "shift_name",
             class: "text-center",
-            sortable: true
+            sortable: true,
           },
           {
             name: "Rate",
             dataIndex: "rate",
             sortable: true,
-            class: "text-center"
+            class: "text-center",
           },
           {
             name: "per",
             dataIndex: "rate_type_name",
             class: "text-center",
-            sortable: true
+            sortable: true,
           }
         )
       }
@@ -306,13 +306,13 @@ export default {
           name: "From",
           dataIndex: "date_start",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "To",
           dataIndex: "date_end",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         }
       )
       if (queryStatus === "allocated") {
@@ -320,53 +320,53 @@ export default {
           name: "Assigned",
           dataIndex:
             "platform_job.appointed_to_locum.user.personal_detail.name",
-          class: "text-center"
+          class: "text-center",
         })
       }
       if (queryStatus === "withdrawn") {
         columns.push({
           name: "Withdrawn At",
-          dataIndex: "job.platform_job.declined_at",
-          class: "text-center localDate"
+          dataIndex: "declined_at_in_gb_formatted",
+          class: "text-center",
         })
       }
       if (queryStatus === "cancelled") {
         columns.push({
           name: "Cancelled At",
-          dataIndex: "job.platform_job.cancelled_at",
-          class: "text-center localDate"
+          dataIndex: "cancelled_at_in_gb_formatted",
+          class: "text-center",
         })
       }
-      if (["completed"].includes(queryStatus)) {
+      if (["completed",].includes(queryStatus)) {
         columns.push({
           name: "Completed At",
-          dataIndex: "completed_at",
-          class: "text-center localDate"
+          dataIndex: "completed_at_in_gb_formatted",
+          class: "text-center",
         })
       }
-      if (["approved"].includes(queryStatus)) {
+      if (["approved",].includes(queryStatus)) {
         columns.push({
           name: "Approved At",
-          dataIndex: "approved_at",
-          class: "text-center localDate"
+          dataIndex: "approved_at_in_gb_formatted",
+          class: "text-center",
         })
       }
-      if (["completed", "approved"].includes(queryStatus)) {
+      if (["completed", "approved",].includes(queryStatus)) {
         columns.push(
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
-            class: "text-center"
+            class: "text-center",
           },
           {
             name: "Tag",
             dataIndex: "status",
-            class: "text-center"
+            class: "text-center",
           }
         )
       }
       return columns
-    }
+    },
   },
   watch: {
     async "$route.query" (newValue, oldValue) {
@@ -375,9 +375,9 @@ export default {
       // let newBank = newValue.bank;
       // let oldBank = oldValue.bank;
       if (
-        newStatus &&
-        newStatus !== null &&
-        newStatus !== oldStatus
+        newStatus
+        && newStatus !== null
+        && newStatus !== oldStatus
         // || (newBank && newBank !== null && newBank !== oldBank)
       ) {
         this.current_page = 1
@@ -390,32 +390,32 @@ export default {
         await this.getJobsPromiseAll()
         this.initialLoading = false
       }
-    }
+    },
   },
 
-  async asyncData ({ app, route, query, error }) {
+  async asyncData ({ app, route, query, error, }) {
     try {
       let status = []
       let queryStatus = query.jobStatus
       // let bankStatus = query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"]
+        status = ["Allocated",]
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Completed":
-            status = ["Completed", "Terminated"]
-            break
-          default:
-            status = [`${queryStatus}`]
-            break
+        case "Completed":
+          status = ["Completed", "Terminated",]
+          break
+        default:
+          status = [`${queryStatus}`,]
+          break
         }
       }
 
       let isJobPart = false
       if (
-        queryStatus &&
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+        queryStatus
+        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
           queryStatus.toLowerCase()
         )
       ) {
@@ -446,15 +446,15 @@ export default {
       await app.$axios
         .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
         .then(res => {
-          spokePracticeId =
-            res.data &&
-            res.data.practice_surgery &&
-            res.data.practice_surgery.child_practice_id
+          spokePracticeId
+            = res.data
+            && res.data.practice_surgery
+            && res.data.practice_surgery.child_practice_id
               ? res.data.practice_surgery.child_practice_id
               : null
         })
 
-      const [total, jobs] = await Promise.all([
+      const [total, jobs,] = await Promise.all([
         app.$axios
           .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
             params: {
@@ -485,7 +485,7 @@ export default {
               title_includes: "",
               job_title_includes: "",
               job_number_includes: "",
-              job_part_number_includes: ""
+              job_part_number_includes: "",
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -493,7 +493,7 @@ export default {
               //       (bankStatus === "false" || !bankStatus)
               //     ? false
               //     : null
-            }
+            },
           })
           .then(res => {
             let total = 0
@@ -532,7 +532,7 @@ export default {
               title_includes: "",
               job_title_includes: "",
               job_number_includes: "",
-              job_part_number_includes: ""
+              job_part_number_includes: "",
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -540,23 +540,23 @@ export default {
               //       (bankStatus === "false" || !bankStatus)
               //     ? false
               //     : null
-            }
+            },
           })
           .then(res => {
             let jobs = 0
-            jobs =
-              res.data && res.data.jobs
+            jobs
+              = res.data && res.data.jobs
                 ? res.data.jobs
                 : res.data.job_parts
-                ? res.data.job_parts
-                : []
+                  ? res.data.job_parts
+                  : []
             return jobs
-          })
+          }),
       ])
 
       return {
         total,
-        jobs
+        jobs,
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -575,11 +575,11 @@ export default {
           params: {
             ...this.$route.params,
             sessionId: jobOrJobPart.job_id,
-            jobPartId: jobOrJobPart.id
+            jobPartId: jobOrJobPart.id,
           },
           query: {
-            ...this.$route.query
-          }
+            ...this.$route.query,
+          },
         }
       }
 
@@ -587,11 +587,11 @@ export default {
         name: "hub-surgery-management-id-surgery-sessions-index-sessionId",
         params: {
           ...this.$route.params,
-          sessionId: jobOrJobPart.id
+          sessionId: jobOrJobPart.id,
         },
         query: {
-          ...this.$route.query
-        }
+          ...this.$route.query,
+        },
       }
     },
 
@@ -601,15 +601,15 @@ export default {
       // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"]
+        status = ["Allocated",]
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Completed":
-            status = ["Completed", "Terminated"]
-            break
-          default:
-            status = [`${queryStatus}`]
-            break
+        case "Completed":
+          status = ["Completed", "Terminated",]
+          break
+        default:
+          status = [`${queryStatus}`,]
+          break
         }
       }
       return Promise.all([
@@ -645,7 +645,7 @@ export default {
               viewing_locum_user_id: this.viewing_locum_user_id,
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes
+              job_number_includes: this.job_number_includes,
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
               //     ? true
@@ -653,7 +653,7 @@ export default {
               //       (bankStatus === "false" || !bankStatus)
               //     ? false
               //     : null
-            }
+            },
           }
         ),
         this.$axios.$get(
@@ -691,7 +691,7 @@ export default {
               title_includes: this.title_includes,
               job_title_includes: this.job_title_includes,
               job_number_includes: this.job_number_includes,
-              job_part_number_includes: this.job_part_number_includes
+              job_part_number_includes: this.job_part_number_includes,
 
               // has_favorite_applicants:
               //   queryStatus === "Applied" && bankStatus === "true"
@@ -700,17 +700,17 @@ export default {
               //       (bankStatus === "false" || !bankStatus)
               //     ? false
               //     : null
-            }
+            },
           }
-        )
+        ),
       ])
-        .then(([responseCount, responseJobs]) => {
-          this.jobs =
-            responseJobs.data && responseJobs.data.jobs
+        .then(([responseCount, responseJobs,]) => {
+          this.jobs
+            = responseJobs.data && responseJobs.data.jobs
               ? responseJobs.data.jobs
               : responseJobs.data.job_parts
-              ? responseJobs.data.job_parts
-              : []
+                ? responseJobs.data.job_parts
+                : []
           this.total = responseCount.data.count
         })
         .catch(err => {
@@ -724,15 +724,15 @@ export default {
       // let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"]
+        status = ["Allocated",]
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Completed":
-            status = ["Completed", "Terminated"]
-            break
-          default:
-            status = [`${queryStatus}`]
-            break
+        case "Completed":
+          status = ["Completed", "Terminated",]
+          break
+        default:
+          status = [`${queryStatus}`,]
+          break
         }
       }
 
@@ -767,7 +767,7 @@ export default {
             viewing_locum_user_id: this.viewing_lresponseocum_user_id,
             title_includes: this.title_includes,
             job_title_includes: this.job_title_includes,
-            job_number_includes: this.job_number_includes
+            job_number_includes: this.job_number_includes,
             // has_favorite_applicants:
             //   queryStatus === "Applied" && bankStatus === "true"
             //     ? true
@@ -775,15 +775,15 @@ export default {
             //       (bankStatus === "false" || !bankStatus)
             //     ? false
             //     : null
-          }
+          },
         })
         .then(res => {
-          this.jobs =
-            res.data && res.data.jobs
+          this.jobs
+            = res.data && res.data.jobs
               ? res.data.jobs
               : res.data.job_parts
-              ? res.data.job_parts
-              : []
+                ? res.data.job_parts
+                : []
         })
         .catch(err => {
           if (err.response && err.response.status === 401) {
@@ -808,26 +808,26 @@ export default {
         let order = item.split(":")[1]
         let sorting = item.split(":")[0]
         switch (sorting) {
-          case "date_time_start":
-            sorting = "date_start"
-            break
-          case "date_time_end":
-            sorting = "date_end"
-            break
-          case "calendar_date_start":
-            sorting = "calendar_date_start"
-            break
-          case "calendar_date_end":
-            sorting = "calendar_date_end"
-            break
-          case "job.rate":
-            sorting = "job_rate"
-            break
-          case "job.locum_detail_rate_type.name":
-            sorting = "job_rate_type_name"
-            break
-          default:
-            sorting
+        case "date_time_start":
+          sorting = "date_start"
+          break
+        case "date_time_end":
+          sorting = "date_end"
+          break
+        case "calendar_date_start":
+          sorting = "calendar_date_start"
+          break
+        case "calendar_date_end":
+          sorting = "calendar_date_end"
+          break
+        case "job.rate":
+          sorting = "job_rate"
+          break
+        case "job.locum_detail_rate_type.name":
+          sorting = "job_rate_type_name"
+          break
+        default:
+          sorting
         }
         return `${sorting}:${order}`
       })
@@ -852,8 +852,8 @@ export default {
       this.loading = true
       await this.getJobs()
       this.loading = false
-    }
-  }
+    },
+  },
 }
 </script>
 

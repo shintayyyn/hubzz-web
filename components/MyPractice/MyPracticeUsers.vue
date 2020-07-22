@@ -8,51 +8,56 @@
       :orderBy="params.order_by"
       :sticky="'first'"
       @show="$emit('show', $event.id)"
-    ></AppTable>
+    />
   </section>
 </template>
 <script>
-import AppTable from "@/components/Base/AppTable";
+import AppTable from "@/components/Base/AppTable"
 export default {
-  props: ["practice_users"],
   components: {
-    AppTable
+    AppTable,
   },
-  data() {
+  props: {
+    practice_users:{
+      type: Array,
+      default: () => null,
+    },
+  },
+  data () {
     return {
       // app table column
       columns: [
         {
           name: "User",
           dataIndex: "personal_detail.name",
-          class: "text-left"
+          class: "text-left",
         },
         {
           name: "Practice Role",
           dataIndex: "practice_detail.practice_role",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Surgery",
           dataIndex: "practice_detail.practice.surgery.name",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Email",
           dataIndex: "email",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Created At",
-          dataIndex: "created_at",
-          class: "text-center localDate"
-        }
+          dataIndex: "created_at_in_gb_formatted",
+          class: "text-center",
+        },
       ],
       // app table params
       params: {
-        order_by: ["created_at:desc"]
-      }
-    };
-  }
-};
+        order_by: ["created_at:desc",],
+      },
+    }
+  },
+}
 </script>

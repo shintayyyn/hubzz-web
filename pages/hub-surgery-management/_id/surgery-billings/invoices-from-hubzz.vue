@@ -64,256 +64,256 @@
 </template>
 
 <script>
-  import AppTable from "@/components/Base/AppTable"
-  import AppButton from "@/components/Base/AppButton"
-  import AppDate from "@/components/Base/AppDate"
-  import { mixin as clickaway } from "vue-clickaway"
+import AppTable from "@/components/Base/AppTable"
+import AppButton from "@/components/Base/AppButton"
+import AppDate from "@/components/Base/AppDate"
+import { mixin as clickaway, } from "vue-clickaway"
 
-  export default {
-    components: {
-      AppTable,
-      AppDate,
-      AppButton
-    },
+export default {
+  components: {
+    AppTable,
+    AppDate,
+    AppButton,
+  },
 
-    mixins: [clickaway],
+  mixins: [clickaway,],
 
-    transition: {
-      name: "fade",
-      mode: "out-in"
-    },
+  transition: {
+    name: "fade",
+    mode: "out-in",
+  },
 
-    data () {
+  data () {
+    return {
+      totalInvoices: 0,
+      invoices: [],
+      loading: false,
+      current_page: 1,
+      modal: false,
+      // payment
+      paymentModal: false,
+      selectedInvoiceId: null,
+      form: {
+        paid_at: null,
+      },
+      formError: [],
+      // app table params
+      params: {
+        offset: 0,
+        limit: 5,
+        order_by: [],
+      },
+      // app table column
+      columns: [
+        {
+          name: "Practice / Surgery",
+          dataIndex: "practice.name",
+          class: "text-left",
+        },
+        {
+          name: "Issued",
+          dataIndex: "issued_at_in_gb_formatted",
+          class: "text-center",
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number",
+          class: "text-left",
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center",
+        },
+        {
+          name: "Paid At",
+          dataIndex: "paid_at",
+          class: "text-center",
+        },
+        {
+          name: "Created At",
+          dataIndex: "date_created_in_gb_formatted",
+          class: "text-center",
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center",
+        },
+      ],
+    }
+  },
+
+  async asyncData ({ app, error, params, }) {
+    try {
+      const {
+        id: practiceSurgeryId,
+      } = params
+
+      const [
+        totalInvoices,
+        invoices,
+      ] = await Promise.all([
+        app.$axios.get('/api/v1/practice/practice-invoices/count', {
+          params: {
+            practice_surgery_id: practiceSurgeryId,
+          },
+        }).then(response => response.data.data.count),
+
+        app.$axios.get('/api/v1/practice/practice-invoices', {
+          params: {
+            practice_surgery_id: practiceSurgeryId,
+            limit: 5,
+            offset: 0,
+          },
+        }).then(response => response.data.data.practice_invoices),
+      ])
+
       return {
-        totalInvoices: 0,
-        invoices: [],
-        loading: false,
-        current_page: 1,
-        modal: false,
-        // payment
-        paymentModal: false,
-        selectedInvoiceId: null,
-        form: {
-          paid_at: null
-        },
-        formError: [],
-        // app table params
-        params: {
-          offset: 0,
-          limit: 5,
-          order_by: []
-        },
-        // app table column
-        columns: [
-          {
-            name: "Practice / Surgery",
-            dataIndex: "practice.name",
-            class: "text-left"
-          },
-          {
-            name: "Issued",
-            dataIndex: "issued_at",
-            class: "text-center localDate"
-          },
-          {
-            name: "Invoice Number",
-            dataIndex: "invoice_number",
-            class: "text-left"
-          },
-          {
-            name: "£ Amount",
-            dataIndex: "total_amount",
-            class: "text-center"
-          },
-          {
-            name: "Paid At",
-            dataIndex: "paid_at",
-            class: "text-center"
-          },
-          {
-            name: "Created At",
-            dataIndex: "date_created",
-            class: "text-center localDate"
-          },
-          {
-            name: "Actions",
-            dataIndex: "actions",
-            class: "text-center"
-          }
-        ]
+        totalInvoices,
+        invoices,
+      }
+    } catch (err) {
+      console.log("practice-billing index err", err.response || err)
+      error({
+        statusCode: err.status || 500,
+        message: err.message || "Something went wrong!",
+      })
+    }
+  },
+
+  mounted () {
+    this.$socket.on('Practice Notification Practice Invoice Paid', this.getPracticeInvoiceRealTime)
+  },
+
+  destroyed () {
+    this.$socket.removeListener('Practice Notification Practice Invoice Paid', this.getPracticeInvoiceRealTime)
+  },
+
+  methods: {
+
+    getPracticeInvoiceRealTime (practiceInvoice) {
+      const {
+        id: practiceInvoiceId,
+      } = practiceInvoice
+
+      if (!practiceInvoiceId) {
+        return
+      }
+
+      if (this.invoices.map(practiceInvoice => practiceInvoice.id).includes(practiceInvoiceId)) {
+        this.$axios
+          .get(`/api/v1/practice/practice-invoices/${practiceInvoiceId}`)
+          .then((response) => {
+            let index = this.invoices.findIndex(invoice => invoice.id == practiceInvoiceId)
+            if (index > -1) {
+              this.invoices.splice(index, 1, response.data.data.practice_invoice)
+            }
+          })
       }
     },
+      
+    getInvoices (params) {
+      this.loading = true
 
-    async asyncData ({ app, error, params }) {
-      try {
-        const {
-          id: practiceSurgeryId,
-        } = params
+      const {
+        id: practiceSurgeryId,
+      } = this.$route.params
 
+      this.loading = true
+      Promise.all([
+        this.$axios.get('/api/v1/practice/practice-invoices/count', {
+          params: {
+            practice_surgery_id: practiceSurgeryId,
+          },
+        }).then(response => response.data.data.count),
+
+        this.$axios.get('/api/v1/practice/practice-invoices', {
+          params: {
+            ...params,
+            practice_surgery_id: practiceSurgeryId,
+          },
+        }).then(response => response.data.data.practice_invoices),
+      ]).then((results) => {
         const [
           totalInvoices,
           invoices,
-        ] = await Promise.all([
-          app.$axios.get('/api/v1/practice/practice-invoices/count', {
-            params: {
-              practice_surgery_id: practiceSurgeryId,
-            },
-          }).then(response => response.data.data.count),
+        ] = results
 
-          app.$axios.get('/api/v1/practice/practice-invoices', {
-            params: {
-              practice_surgery_id: practiceSurgeryId,
-              limit: 5,
-              offset: 0,
-            },
-          }).then(response => response.data.data.practice_invoices),
-        ])
+        this.totalInvoices = totalInvoices
+        this.invoices = invoices
+      }).catch((err) => {
+        console.log('err', err.response || err)
+      }).finally(() => {
+        this.loading = true
+      })
+    },
 
-        return {
-          totalInvoices,
-          invoices,
-        }
-      } catch (err) {
-        console.log("practice-billing index err", err.response || err)
-        error({
-          statusCode: err.status || 500,
-          message: err.message || "Something went wrong!"
-        })
+    onClick (invoice) {
+      if (invoice.paid || invoice.disputed_items_count > 0) {
+        return
+      }
+
+      this.selectedInvoiceId = null
+      this.form.paid_at = null
+      this.paymentModal = true
+      this.selectedInvoiceId = invoice.id
+    },
+
+    confirmPayment () {
+      this.Validate(this.form)
+      if (!this.formError.length) {
+        this.$axios
+          .$put(
+            `/api/v1/practice/practice-invoices/${this.selectedInvoiceId}/paid`,
+            this.form
+          )
+          .then(res => {
+            console.log(res)
+            let index = this.invoices.findIndex(
+              invoice => invoice.id == res.data.practice_invoice.id
+            )
+            if (index >= 0) {
+              this.invoices.splice(index, 1, res.data.practice_invoice)
+            }
+
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`,],
+            })
+            this.paymentModal = false
+          })
       }
     },
 
-    mounted () {
-      this.$socket.on('Practice Notification Practice Invoice Paid', this.getPracticeInvoiceRealTime)
+    closePaymentModal () {
+      this.paymentModal = false
     },
 
-    destroyed () {
-      this.$socket.removeListener('Practice Notification Practice Invoice Paid', this.getPracticeInvoiceRealTime)
+    sorted (order_by) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.order_by = order_by
+      this.getInvoices(this.params)
     },
 
-    methods: {
-
-      getPracticeInvoiceRealTime (practiceInvoice) {
-        const {
-          id: practiceInvoiceId,
-        } = practiceInvoice
-
-        if (!practiceInvoiceId) {
-          return
-        }
-
-        if (this.invoices.map(practiceInvoice => practiceInvoice.id).includes(practiceInvoiceId)) {
-          this.$axios
-            .get(`/api/v1/practice/practice-invoices/${practiceInvoiceId}`)
-            .then((response) => {
-              let index = this.invoices.findIndex(invoice => invoice.id == practiceInvoiceId)
-              if (index > -1) {
-                this.invoices.splice(index, 1, response.data.data.practice_invoice)
-              }
-            })
-        }
-      },
-      
-      getInvoices (params) {
-        this.loading = true
-
-        const {
-          id: practiceSurgeryId,
-        } = this.$route.params
-
-        this.loading = true
-        Promise.all([
-          this.$axios.get('/api/v1/practice/practice-invoices/count', {
-            params: {
-              practice_surgery_id: practiceSurgeryId,
-            },
-          }).then(response => response.data.data.count),
-
-          this.$axios.get('/api/v1/practice/practice-invoices', {
-            params: {
-              ...params,
-              practice_surgery_id: practiceSurgeryId,
-            },
-          }).then(response => response.data.data.practice_invoices),
-        ]).then((results) => {
-          const [
-            totalInvoices,
-            invoices,
-          ] = results
-
-          this.totalInvoices = totalInvoices
-          this.invoices = invoices
-        }).catch((err) => {
-          console.log('err', err.response || err)
-        }).finally(() => {
-          this.loading = true
-        })
-      },
-
-      onClick (invoice) {
-        if (invoice.paid || invoice.disputed_items_count > 0) {
-          return
-        }
-
-        this.selectedInvoiceId = null
-        this.form.paid_at = null
-        this.paymentModal = true
-        this.selectedInvoiceId = invoice.id
-      },
-
-      confirmPayment () {
-        this.Validate(this.form)
-        if (!this.formError.length) {
-          this.$axios
-            .$put(
-              `/api/v1/practice/practice-invoices/${this.selectedInvoiceId}/paid`,
-              this.form
-            )
-            .then(res => {
-              console.log(res)
-              let index = this.invoices.findIndex(
-                invoice => invoice.id == res.data.practice_invoice.id
-              )
-              if (index >= 0) {
-                this.invoices.splice(index, 1, res.data.practice_invoice)
-              }
-
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: [`${res.message}`]
-              })
-              this.paymentModal = false
-            })
-        }
-      },
-
-      closePaymentModal () {
-        this.paymentModal = false
-      },
-
-      sorted (order_by) {
-        this.current_page = 1
-        this.params.offset = 0
-        this.params.order_by = order_by
-        this.getInvoices(this.params)
-      },
-
-      pagechanged (page) {
-        this.current_page = page
-        this.params.offset = this.params.limit * (page - 1)
-        this.getInvoices(this.params)
-      },
-
-      limitchanged (limit) {
-        this.current_page = 1
-        this.params.offset = 0
-        this.params.limit = limit
-        this.getInvoices(this.params)
-      },
-
+    pagechanged (page) {
+      this.current_page = page
+      this.params.offset = this.params.limit * (page - 1)
+      this.getInvoices(this.params)
     },
 
-  }
+    limitchanged (limit) {
+      this.current_page = 1
+      this.params.offset = 0
+      this.params.limit = limit
+      this.getInvoices(this.params)
+    },
+
+  },
+
+}
 </script>
 
 <style scoped>

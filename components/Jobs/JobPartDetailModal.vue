@@ -136,7 +136,7 @@
                 Date of Withdrawal
               </p>
               <p class="text-xs sm:text-sm">
-                {{ job_part.job.platform_job.declined_at | localDate }}
+                {{ job_part.declined_at_in_gb_formatted }}
               </p>
             </div>
           </div>
