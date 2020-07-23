@@ -13,6 +13,7 @@
 
     <div class="relative message-box border-t w-full p-2" :class="hasDeactiveUser ? 'disabled' : ''">
       <textarea
+        ref="textArea"
         v-model="message"
         class="resize-none w-full text-sm focus:outline-none"
         :class="inClass"
@@ -124,6 +125,10 @@ export default {
     } else {
       this.hasDeactiveUser = false
     }
+    this.$nextTick(() => {
+      this.$refs.textArea.focus()
+    })
+    
   },
 
   methods: {
