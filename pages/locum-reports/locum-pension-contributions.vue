@@ -68,14 +68,24 @@
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       />
-
-      <ReportPagination
-        :count="count" 
-        :pages="pages" 
-        :page="activePage"
-        @page="setPage" 
-      />
-
+      <div class="w-full flex flex-wrap justfify-between items-center">
+        <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
+          <div class="text-gray-500 w-full md:w-auto text-center md:text-left">
+            <div class="whitespace-no-wrap">
+              {{ itemCountInfo }}
+            </div>
+            <div class="whitespace-no-wrap">
+              Page: {{ activePage }} / {{ pages }}
+            </div>
+          </div>
+        </div>
+        <ReportPagination
+          :count="count" 
+          :pages="pages" 
+          :page="activePage"
+          @page="setPage" 
+        />
+      </div>
       <div
         class="flex-wrap justify-start items-center w-full p-3 flex my-2"
       >
@@ -103,299 +113,306 @@
 </template>
 
 <script>
-  import ReportTable from '@/components/Reports/ReportTable'
-  import ReportPagination from '@/components/Reports/ReportPagination'
-  import AppInput from '@/components/Base/AppInput'
-  import AppButton from '@/components/Base/AppButton'
-  export default {
-    components: {
-      ReportTable,
-      ReportPagination,
-      AppInput,
-      AppButton
+import ReportTable from '@/components/Reports/ReportTable'
+import ReportPagination from '@/components/Reports/ReportPagination'
+import AppInput from '@/components/Base/AppInput'
+import AppButton from '@/components/Base/AppButton'
+export default {
+  components: {
+    ReportTable,
+    ReportPagination,
+    AppInput,
+    AppButton,
+  },
+
+  data () {
+    return {
+      loading: false,
+      downloading: false,
+      count: 0,
+      locumPensionContributions: [],
+      orderBy: [],
+      orderBys: [
+        {
+          title: 'Practice Name (Ascending)',
+          column: 'practice_name',
+          direction: 'asc',
+        },
+        {
+          title: 'Practice Name (Descending)',
+          column: 'practice_name',
+          direction: 'desc',
+        },
+      ],
+      limit: 10,
+      limits: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10,
+        15,
+        20,
+        25,
+      ],
+      activePage: 1,
+
+      practiceNameIncludes: '',
+    }
+  },
+
+  computed: {
+    itemCountInfo () {
+      const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumPensionContributions.length), this.count)
+      
+      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
 
-    data () {
-      return {
-        loading: false,
-        downloading: false,
-        count: 0,
-        locumPensionContributions: [],
-        orderBy: [],
-        orderBys: [
-          {
-            title: 'Practice Name (Ascending)',
-            column: 'practice_name',
-            direction: 'asc',
-          },
-          {
-            title: 'Practice Name (Descending)',
-            column: 'practice_name',
-            direction: 'desc',
-          },
-        ],
-        limit: 10,
-        limits: [
-          1,
-          2,
-          3,
-          4,
-          5,
-          10,
-          15,
-          20,
-          25,
-        ],
-        activePage: 1,
-
-        practiceNameIncludes: '',
-      }
+    offset () {
+      return this.activePage * this.limit - this.limit
     },
 
-    computed: {
-      offset () {
-        return this.activePage * this.limit - this.limit
-      },
-
-      columnDetails () {
-        return [
-          {
-            title: '#',
-            key: 'index',
-            sort_key: null,
-            column: (item, index) => this.offset + index + 1,
-            justify: 'end',
-            flexGrow: 0,
-            flexShrink: 0,
-          },
-          {
-            title: 'Locum',
-            key: 'locum_user_name',
-            sort_key: 'locum_user_name',
-            column: (item) => item.locum_user_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Practice',
-            key: 'practice_name',
-            sort_key: 'practice_name',
-            column: (item) => item.practice_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Job Number',
-            key: 'job_part_number',
-            sort_key: 'job_part_number',
-            column: (item) => item.job_part_number,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Invoice Number',
-            key: 'invoice_number',
-            sort_key: 'invoice_number',
-            column: (item) => item.invoice_number,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Date Paid',
-            key: 'paid_at',
-            sort_key: 'paid_at',
-            column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: '£ NI Amount',
-            key: 'ni_amount',
-            sort_key: 'ni_amount',
-            column: (item) => item.ni_amount.toFixed(2),
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Status',
-            key: 'status',
-            sort_key: 'status',
-            column: (item) => item.status,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-        ]
-      },
-
-      pages () {
-        return Math.max(Math.ceil(this.count / this.limit), 1)
-      },
+    columnDetails () {
+      return [
+        {
+          title: '#',
+          key: 'index',
+          sort_key: null,
+          column: (item, index) => this.offset + index + 1,
+          justify: 'end',
+          flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Locum',
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Practice',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Job Number',
+          key: 'job_part_number',
+          sort_key: 'job_part_number',
+          column: (item) => item.job_part_number,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Invoice Number',
+          key: 'invoice_number',
+          sort_key: 'invoice_number',
+          column: (item) => item.invoice_number,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Date Paid',
+          key: 'paid_at',
+          sort_key: 'paid_at',
+          column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: '£ NI Amount',
+          key: 'ni_amount',
+          sort_key: 'ni_amount',
+          column: (item) => item.ni_amount.toFixed(2),
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Status',
+          key: 'status',
+          sort_key: 'status',
+          column: (item) => item.status,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+      ]
     },
 
-    watch: {
-      orderBy () {
-        this.getLocumPensionContributions()
-      },
-
-      limit () {
-        this.page = 1
-        this.getLocumPensionContributions()
-      },
-
-      activePage () {
-        this.getLocumPensionContributions()
-      },
+    pages () {
+      return Math.max(Math.ceil(this.count / this.limit), 1)
     },
+  },
 
-    mounted () {      
-      const {
-        practice_name_includes: practiceNameIncludes,
-        order_by: orderBy = [],
-        page,
-      } = this.$route.query
-
-      // this.orderBy = orderBy
-      // this.activePage = page ? Number.parseInt(page) : 1
-       this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-      this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
-
-      this.activePage = page ? Number.parseInt(page) : 1
-
+  watch: {
+    orderBy () {
       this.getLocumPensionContributions()
     },
-  
-    methods: {
-      filterReset () {
-        this.practiceNameIncludes = ''
 
-        this.filterSearch()
-      },
+    limit () {
+      this.page = 1
+      this.getLocumPensionContributions()
+    },
 
-      filterSearch () {
-        this.activePage = 1
+    activePage () {
+      this.getLocumPensionContributions()
+    },
+  },
 
-        const query = {
-          ...this.$route.query,
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          order_by: this.orderBy ? this.orderBy : undefined,
-          page: undefined,
-        }
+  mounted () {      
+    const {
+      practice_name_includes: practiceNameIncludes,
+      order_by: orderBy = [],
+      page,
+    } = this.$route.query
 
-        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-          this.$router.replace({ query })
-        }
-        
-        this.getLocumPensionContributions()
-      },
+    // this.orderBy = orderBy
+    // this.activePage = page ? Number.parseInt(page) : 1
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
 
-      setPage (page) {
-        this.activePage = page
+    this.activePage = page ? Number.parseInt(page) : 1
 
-        if (this.activePage === 1) {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: undefined,
-            }
-          })
-        } else {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: this.activePage,
-            }
-          })
-        }
+    this.getLocumPensionContributions()
+  },
 
-        this.getLocumPensionContributions()
-      },
+  methods: {
+    filterReset () {
+      this.practiceNameIncludes = ''
 
-      setOrderBy (orderBy) {
-        this.orderBy = orderBy
-        this.activePage = 1
+      this.filterSearch()
+    },
 
+    filterSearch () {
+      this.activePage = 1
+
+      const query = {
+        ...this.$route.query,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        order_by: this.orderBy ? this.orderBy : undefined,
+        page: undefined,
+      }
+
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query })
+      }
+      
+      this.getLocumPensionContributions()
+    },
+
+    setPage (page) {
+      this.activePage = page
+
+      if (this.activePage === 1) {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            order_by: this.orderBy,
             page: undefined,
           }
         })
-
-        this.getLocumPensionContributions()
-      },
-
-      getLocumPensionContributions () {
-        this.loading = true
-        this.locumPensionContributions = []
-        let params = {
-          locum_user_id: this.$auth.user.id,
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        }
-        Promise.all([
-          this.$axios.get('/api/v1/admin/reports/locum-pension-contributions/count',{
-            params
-          }).then((responses) => {
-            return responses.data.data.count
-          }),
-          this.$axios.get('/api/v1/admin/reports/locum-pension-contributions', {
-            params: {
-              ...params,
-              order_by: this.orderBy,
-              limit: this.limit,
-              offset: this.offset,
-            },
-          }).then((responses) => {
-            return responses.data.data.locum_pension_contributions
-          }),
-          new Promise((resolve) => setTimeout(resolve, 500))
-        ]).then((results) => {
-          const [
-            count,
-            locumPensionContributions,
-          ] = results
-
-          this.count = count
-          this.locumPensionContributions = locumPensionContributions
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err)
-        }).finally(() => {
-          this.loading = false
+      } else {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            page: this.activePage,
+          }
         })
-      },
+      }
 
-      downloadPDF () {
-        let params = {
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          order_by: this.orderBy,
-        }
-
-        this.$axios.post('/api/v1/locum-reports/locum-pension-contributions-report/generate-key', {
-          filename: `locumPensionContributionsReport.pdf`,
-        }, {
-            params: {
-              ...params,
-            },
-        }).then((responses) => {
-          const token = responses.data.data.token
-
-          window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-pension-contributions-report/pdf?token=${token}`)
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.downloading = false
-        })
-      },
+      this.getLocumPensionContributions()
     },
 
-  }
+    setOrderBy (orderBy) {
+      this.orderBy = orderBy
+      this.activePage = 1
+
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          order_by: this.orderBy,
+          page: undefined,
+        }
+      })
+
+      this.getLocumPensionContributions()
+    },
+
+    getLocumPensionContributions () {
+      this.loading = true
+      this.locumPensionContributions = []
+      let params = {
+        locum_user_id: this.$auth.user.id,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+      }
+      Promise.all([
+        this.$axios.get('/api/v1/admin/reports/locum-pension-contributions/count',{
+          params
+        }).then((responses) => {
+          return responses.data.data.count
+        }),
+        this.$axios.get('/api/v1/admin/reports/locum-pension-contributions', {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+            limit: this.limit,
+            offset: this.offset,
+          },
+        }).then((responses) => {
+          return responses.data.data.locum_pension_contributions
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500))
+      ]).then((results) => {
+        const [
+          count,
+          locumPensionContributions,
+        ] = results
+
+        this.count = count
+        this.locumPensionContributions = locumPensionContributions
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    downloadPDF () {
+      let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        order_by: this.orderBy,
+      }
+
+      this.$axios.post('/api/v1/locum-reports/locum-pension-contributions-report/generate-key', {
+        filename: `locumPensionContributionsReport.pdf`,
+      }, {
+          params: {
+            ...params,
+          },
+      }).then((responses) => {
+        const token = responses.data.data.token
+
+        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-pension-contributions-report/pdf?token=${token}`)
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.downloading = false
+      })
+    },
+  },
+
+}
 </script>
