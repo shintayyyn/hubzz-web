@@ -8,6 +8,7 @@
 
         <form v-if="!loading && user" class="w-full">
           <div>Profession</div>
+
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
@@ -178,17 +179,17 @@
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row flex-wrap justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
-                Your preferred rates £
+                <span>Your preferred rates £</span>
                 <small>(minimum)</small>
               </label>
+
               <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
-                To match available jobs with
+                <span>To match available jobs with</span>
               </div>
             </div>
 
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_hour"
@@ -200,21 +201,12 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                   />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_hour"
-                    :type="'number'"
-                    :name="'max_rate_per_hour'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_hour')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
-                    class="w-1/2 px-1"
-                    required
-                  />-->
+
+                  <div class="mx-1" />
                 </div>
               </div>
+
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_half_day_session"
@@ -226,21 +218,12 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                   />
+
                   <div class="mx-1" />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_half_day_session"
-                    :type="'number'"
-                    :name="'max_rate_per_half_day_session'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
-                    required
-                  />-->
                 </div>
               </div>
+
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_whole_day_session"
@@ -252,17 +235,8 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                   />
+
                   <div class="mx-1" />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_whole_day_session"
-                    :type="'number'"
-                    :name="'max_rate_per_whole_day_session'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
-                    required
-                  />-->
                 </div>
               </div>
             </div>
@@ -793,6 +767,8 @@ export default {
         },
         {
           name: "HCPC reference check",
+          min: 8,
+          max: 8,
           limit: 8,
           integer: false,
         },
@@ -806,9 +782,7 @@ export default {
 
     getReferenceLimit () {
       return complianceDocumentName => {
-        const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+        const referenceLimit = this.referenceValidations.find(({ name, }) => name === complianceDocumentName)
 
         return referenceLimit ? referenceLimit.limit : null
       }
@@ -816,9 +790,7 @@ export default {
 
     getReferenceIsInteger () {
       return complianceDocumentName => {
-        const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+        const referenceLimit = this.referenceValidations.find(({ name, }) => name === complianceDocumentName)
 
         return referenceLimit ? referenceLimit.integer : false
       }
@@ -1336,6 +1308,7 @@ export default {
 
       let notRequired = [
         "sub_profession_ids",
+        "reference_locum_compliance_documents",
         "other_mandatory_training_id",
         "nhs_smart_card_id_number",
         "headline",
@@ -1484,30 +1457,21 @@ export default {
         )
       })
 
-      if (
-        this.form.referee_1_phone_number
-        && this.form.referee_1_phone_number.length < 10
-      ) {
+      if (this.form.referee_1_phone_number && this.form.referee_1_phone_number.length < 10) {
         this.formError.push({
           field: "referee_1_phone_number",
           message: "Telephone number should be 10 digits",
         })
       }
 
-      if (
-        this.form.referee_2_phone_number
-        && this.form.referee_2_phone_number.length < 10
-      ) {
+      if (this.form.referee_2_phone_number && this.form.referee_2_phone_number.length < 10) {
         this.formError.push({
           field: "referee_2_phone_number",
           message: "Telephone number should be 10 digits",
         })
       }
 
-      if (
-        this.form.nhs_smart_card_id_number
-        && this.form.nhs_smart_card_id_number.length < 12
-      ) {
+      if (this.form.nhs_smart_card_id_number && this.form.nhs_smart_card_id_number.length < 12) {
         this.formError.push({
           field: "nhs_smart_card_id_number",
           message: "NHS Smart Card ID should be 12 digits",
@@ -1515,10 +1479,7 @@ export default {
       }
 
       if (["true", true,].includes(this.form.paid_under_payroll)) {
-        if (
-          this.form.payroll_sort_code
-          && this.form.payroll_sort_code.length < 6
-        ) {
+        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
           this.formError.push({
             field: "payroll_sort_code",
             message: "Sort Code should be 6 digits",
@@ -1531,6 +1492,7 @@ export default {
             message: "Sort Code should be 6 digits",
           })
         }
+
         if (this.form.account_number && this.form.account_number.length < 8) {
           this.formError.push({
             field: "account_number",
@@ -1543,21 +1505,22 @@ export default {
 
       if (!this.formError.length) {
         this.loading = true
+
         this.selectedClinicalSystem = [...this.form.clinical_system_id,]
-        this.form.clinical_system_id = this.form.clinical_system_id.length
-          ? this.form.clinical_system_id.map(item => item.value)
-          : []
+
+        this.form.clinical_system_id = this.form.clinical_system_id.map(item => item.value)
+
         this.selectedQualification = [...this.form.qualification_id,]
-        this.form.qualification_id = this.form.qualification_id.length
-          ? this.form.qualification_id.map(item => item.value)
-          : []
+
+        this.form.qualification_id = this.form.qualification_id.map(item => item.value)
+
         this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
-        this.form.spoken_language_id = this.form.spoken_language_id.length
-          ? this.form.spoken_language_id.map(item => item.value)
-          : []
+
+        this.form.spoken_language_id = this.form.spoken_language_id.map(item => item.value)
+
         this.form.profession_id = this.form.profession_id.toString()
-        this.form.ir35
-          = this.professionCategoryId === 1 ? this.form.ir35 : false
+
+        this.form.ir35 = this.professionCategoryId === 1 ? this.form.ir35 : false
 
         this.$axios
           .put(`/api/v1/locum/me/profile`, this.form)
