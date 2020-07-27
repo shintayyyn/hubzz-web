@@ -1147,6 +1147,7 @@ export default {
                 status: ["Withdrawn", "Allocated",],
                 calendar_date_start: `${this.startOfMonth}:gte`,
                 calendar_date_end: `${this.endOfMonth}:lte`,
+                reposted: false,
                 limit: 100000000,
               },
             })

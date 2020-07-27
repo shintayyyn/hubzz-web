@@ -1770,7 +1770,7 @@ export default {
             ...this.form,
             old_job_id:
               this.repostJob
-              && !["Cancelled", "Withdrawn",].includes(this.repostJob.status)
+              && !["Cancelled",].includes(this.repostJob.status)
                 ? this.repostJob.id
                 : null,
           })
@@ -2145,7 +2145,7 @@ export default {
             ...this.form,
             old_job_id:
               this.repostJob
-              && !["Cancelled", "Withdrawn",].includes(this.repostJob.status)
+              && !["Cancelled",].includes(this.repostJob.status)
                 ? this.repostJob.id
                 : null,
           })
