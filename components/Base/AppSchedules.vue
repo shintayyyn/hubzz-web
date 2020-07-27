@@ -2099,25 +2099,24 @@ export default {
       let rate_type_name
         = this.type === "create"
           ? this.rate_lists && shift.locum_detail_rate_type_id
-            ? this.rate_lists.find(
-              item =>
-                item.value.toString()
-                  === shift.locum_detail_rate_type_id.toString()
-            ).label
+            ? this.rate_lists
+              .find(item => item.value.toString() === shift.locum_detail_rate_type_id.toString()).label
             : ""
           : shift.locum_detail_rate_type_name
+
       let total_hours = this.totalHours(startTime, endTime, date) / 60
 
       let orig_total_hours = 0
 
       if (shift.orig_time_start && shift.orig_time_end) {
-        orig_total_hours
-          = this.totalHours(shift.orig_time_start, shift.orig_time_end, date)
-          / 60
+        orig_total_hours = this.totalHours(shift.orig_time_start, shift.orig_time_end, date) / 60
       } else {
-        orig_total_hours
-          = this.totalHours(shift.time_start, shift.time_end, date) / 60
+        orig_total_hours = this.totalHours(shift.time_start, shift.time_end, date) / 60
       }
+
+      const calculatePerSessionAmount = (rate, originalHours, finalHours) => originalHours === finalHours
+        ? rate
+        : Math.round(rate / originalHours * 100) / 100 * finalHours
 
       switch (rate_type_name) {
       case "Hourly":
@@ -2126,15 +2125,16 @@ export default {
             ? shift.rate * total_hours
             : 0
           : shift.rate * total_hours
+
       case "Half Day":
       case "Whole Day":
         return type !== "deduction"
           ? !shift.has_absences && startTime && endTime && total_hours !== 0
             ? this.type === "create"
               ? shift.rate
-              : (shift.rate / orig_total_hours) * total_hours
+              : calculatePerSessionAmount(shift.rate, orig_total_hours, total_hours)
             : 0
-          : (shift.rate / orig_total_hours) * total_hours
+          : calculatePerSessionAmount(shift.rate, orig_total_hours, total_hours)
       default:
         return 0
       }
