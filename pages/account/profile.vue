@@ -178,17 +178,17 @@
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row flex-wrap justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
-                Your preferred rates £
+                <span>Your preferred rates £</span>
                 <small>(minimum)</small>
               </label>
+
               <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
-                To match available jobs with
+                <span>To match available jobs with</span>
               </div>
             </div>
 
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_hour"
@@ -200,21 +200,12 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                   />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_hour"
-                    :type="'number'"
-                    :name="'max_rate_per_hour'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_hour')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
-                    class="w-1/2 px-1"
-                    required
-                  />-->
+
+                  <div class="mx-1" />
                 </div>
               </div>
+
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_half_day_session"
@@ -226,21 +217,12 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                   />
+
                   <div class="mx-1" />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_half_day_session"
-                    :type="'number'"
-                    :name="'max_rate_per_half_day_session'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
-                    required
-                  />-->
                 </div>
               </div>
+
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_whole_day_session"
@@ -252,17 +234,8 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                   />
+
                   <div class="mx-1" />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_whole_day_session"
-                    :type="'number'"
-                    :name="'max_rate_per_whole_day_session'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
-                    required
-                  />-->
                 </div>
               </div>
             </div>
