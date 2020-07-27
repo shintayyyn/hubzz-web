@@ -8,6 +8,7 @@
 
         <form v-if="!loading && user" class="w-full">
           <div>Profession</div>
+
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
@@ -766,6 +767,8 @@ export default {
         },
         {
           name: "HCPC reference check",
+          min: 8,
+          max: 8,
           limit: 8,
           integer: false,
         },
@@ -779,9 +782,7 @@ export default {
 
     getReferenceLimit () {
       return complianceDocumentName => {
-        const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+        const referenceLimit = this.referenceValidations.find(({ name, }) => name === complianceDocumentName)
 
         return referenceLimit ? referenceLimit.limit : null
       }
@@ -789,9 +790,7 @@ export default {
 
     getReferenceIsInteger () {
       return complianceDocumentName => {
-        const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+        const referenceLimit = this.referenceValidations.find(({ name, }) => name === complianceDocumentName)
 
         return referenceLimit ? referenceLimit.integer : false
       }
@@ -1458,30 +1457,21 @@ export default {
         )
       })
 
-      if (
-        this.form.referee_1_phone_number
-        && this.form.referee_1_phone_number.length < 10
-      ) {
+      if (this.form.referee_1_phone_number && this.form.referee_1_phone_number.length < 10) {
         this.formError.push({
           field: "referee_1_phone_number",
           message: "Telephone number should be 10 digits",
         })
       }
 
-      if (
-        this.form.referee_2_phone_number
-        && this.form.referee_2_phone_number.length < 10
-      ) {
+      if (this.form.referee_2_phone_number && this.form.referee_2_phone_number.length < 10) {
         this.formError.push({
           field: "referee_2_phone_number",
           message: "Telephone number should be 10 digits",
         })
       }
 
-      if (
-        this.form.nhs_smart_card_id_number
-        && this.form.nhs_smart_card_id_number.length < 12
-      ) {
+      if (this.form.nhs_smart_card_id_number && this.form.nhs_smart_card_id_number.length < 12) {
         this.formError.push({
           field: "nhs_smart_card_id_number",
           message: "NHS Smart Card ID should be 12 digits",
@@ -1489,10 +1479,7 @@ export default {
       }
 
       if (["true", true,].includes(this.form.paid_under_payroll)) {
-        if (
-          this.form.payroll_sort_code
-          && this.form.payroll_sort_code.length < 6
-        ) {
+        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
           this.formError.push({
             field: "payroll_sort_code",
             message: "Sort Code should be 6 digits",
@@ -1505,6 +1492,7 @@ export default {
             message: "Sort Code should be 6 digits",
           })
         }
+
         if (this.form.account_number && this.form.account_number.length < 8) {
           this.formError.push({
             field: "account_number",
@@ -1517,21 +1505,22 @@ export default {
 
       if (!this.formError.length) {
         this.loading = true
+
         this.selectedClinicalSystem = [...this.form.clinical_system_id,]
-        this.form.clinical_system_id = this.form.clinical_system_id.length
-          ? this.form.clinical_system_id.map(item => item.value)
-          : []
+
+        this.form.clinical_system_id = this.form.clinical_system_id.map(item => item.value)
+
         this.selectedQualification = [...this.form.qualification_id,]
-        this.form.qualification_id = this.form.qualification_id.length
-          ? this.form.qualification_id.map(item => item.value)
-          : []
+
+        this.form.qualification_id = this.form.qualification_id.map(item => item.value)
+
         this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
-        this.form.spoken_language_id = this.form.spoken_language_id.length
-          ? this.form.spoken_language_id.map(item => item.value)
-          : []
+
+        this.form.spoken_language_id = this.form.spoken_language_id.map(item => item.value)
+
         this.form.profession_id = this.form.profession_id.toString()
-        this.form.ir35
-          = this.professionCategoryId === 1 ? this.form.ir35 : false
+
+        this.form.ir35 = this.professionCategoryId === 1 ? this.form.ir35 : false
 
         this.$axios
           .put(`/api/v1/locum/me/profile`, this.form)
