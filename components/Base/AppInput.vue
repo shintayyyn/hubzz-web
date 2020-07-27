@@ -127,12 +127,10 @@
             <template v-if="['text','time','email', 'number'].includes(type)">
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">
-                  <p
-                    v-if="format && format === 'mobile'"
-                    class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent"
-                  >
-                    +44
+                  <p v-if="format && format === 'mobile'" class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent">
+                    <span>+44</span>
                   </p>
+
                   <input
                     :value="value"
                     :type="type"
@@ -154,12 +152,9 @@
                     @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
                   >
                 </div>
-                <!-- @keypress="type === 'number' ? isNumber($event) : $emit('keypress')" -->
+
                 <transition name="drop-down">
-                  <div
-                    v-if="error"
-                    class="text-red-500 py-1 text-xs text-white"
-                  >
+                  <div v-if="error" class="text-red-500 py-1 text-xs text-white">
                     {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
                   </div>
                 </transition>
@@ -427,7 +422,9 @@ export default {
     inStyle: String,
     inClass: String,
     wrapperClass: String,
+
     limit: Number,
+
     format: String,
     required: {
       type: Boolean,
@@ -458,6 +455,7 @@ export default {
     },
     isHorizontal: Boolean,
   },
+
   data () {
     return {
       passwordValue: "",
@@ -471,6 +469,7 @@ export default {
       errorMsg: null,
     }
   },
+
   computed: {
     na: {
       get () {
@@ -485,6 +484,7 @@ export default {
       },
     },
   },
+
   methods: {
     // for updatable multi checkbox
     add () {
@@ -561,23 +561,24 @@ export default {
         return ""
       }
     },
+
     limitInput (e) {
       let acceptedKeys = [
         "Backspace",
+        "Delete",
         "Tab",
         "ArrowUp",
         "ArrowDown",
         "ArrowLeft",
         "ArrowRight",
       ]
-      if (
-        e.target.value.length >= this.limit
-				&& !acceptedKeys.includes(e.key)
-      ) {
+
+      if (e.target.value.length >= this.limit && !acceptedKeys.includes(e.key)) {
         e.preventDefault()
       }
     },
   },
+
 }
 </script>
 

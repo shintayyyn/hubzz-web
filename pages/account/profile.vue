@@ -36,7 +36,7 @@
           />
 
           <div
-            v-for="(referenceLocumComplianceDocument) in referenceLocumComplianceDocuments"
+            v-for="referenceLocumComplianceDocument in referenceLocumComplianceDocuments"
             :key="referenceLocumComplianceDocument.compliance_document_id"
           >
             <AppInput
@@ -49,10 +49,7 @@
               :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
               required
               @blur="
-                CheckEmptyField(
-                  referenceLocumComplianceDocument.reference,
-                  referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()
-                ), checkValidation(
+                checkReferenceLocumCompliance(
                   referenceLocumComplianceDocument.compliance_document_name,
                   getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)
                 )
@@ -158,6 +155,7 @@
 
           <div v-if="form.view_permanent_jobs" class="px-4">
             <div>Please Pick at least One(1) Salaried Role Work Hours</div>
+
             <AppInput
               v-model="form.view_permanent_jobs_full_time"
               :type="'single-checkbox'"
@@ -180,6 +178,7 @@
             <div class="relative flex flex-row flex-wrap justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
                 <span>Your preferred rates £</span>
+
                 <small>(minimum)</small>
               </label>
 
@@ -328,6 +327,7 @@
             <div class="font-bold text-sm my-4">
               Payroll Details
             </div>
+
             <AppInput
               v-model="form.payroll_account_name"
               :type="'text'"
@@ -336,6 +336,7 @@
               :error="formError.find(item => item.field === 'payroll_account_name')"
               required
             />
+
             <AppInput
               v-model="form.payroll_bank_name"
               :type="'text'"
@@ -344,6 +345,7 @@
               :error="formError.find(item => item.field === 'payroll_bank_name')"
               required
             />
+
             <AppInput
               v-model="form.payroll_sort_code"
               :type="'text'"
@@ -353,6 +355,7 @@
               :limit="6"
               required
             />
+
             <AppInput
               v-model="form.payroll_account_number"
               :type="'text'"
@@ -367,6 +370,7 @@
             <div class="font-bold text-sm my-4">
               Bank Details
             </div>
+
             <AppInput
               v-model="form.account_name"
               :type="'text'"
@@ -375,6 +379,7 @@
               :error="formError.find(item => item.field === 'account_name')"
               required
             />
+
             <AppInput
               v-model="form.bank_name"
               :type="'text'"
@@ -383,6 +388,7 @@
               :error="formError.find(item => item.field === 'bank_name')"
               required
             />
+
             <AppInput
               v-model="form.sort_code"
               :type="'text'"
@@ -393,6 +399,7 @@
               required
               @keydown="inputNumberOnly($event)"
             />
+
             <AppInput
               v-model="form.account_number"
               :type="'text'"
@@ -549,6 +556,7 @@
               :inStyle="'background-color:#dae1e7;border-color:white'"
               :error="formError.find(item => item.field === 'referee_1_contact_name')"
             />
+
             <AppInput
               v-model="form.referee_1_phone_number"
               :type="'text'"
@@ -559,6 +567,7 @@
               :limit="10"
               @keypress="inputTelephone($event)"
             />
+
             <AppInput
               v-model="form.referee_1_email"
               :type="'text'"
@@ -578,6 +587,7 @@
               :inStyle="'background-color:#dae1e7;border-color:white'"
               :error="formError.find(item => item.field === 'referee_2_contact_name')"
             />
+
             <AppInput
               v-model="form.referee_2_phone_number"
               :type="'text'"
@@ -588,6 +598,7 @@
               :limit="10"
               @keypress="inputTelephone($event)"
             />
+
             <AppInput
               v-model="form.referee_2_email"
               :type="'text'"
@@ -612,10 +623,12 @@
           :type="'update'"
           :src="profile && profile.avatar ? profile.avatar : ''"
         />
+
         <div class="leading-none text-center text-sm pt-4">
           <p class="font-bold">
             {{ profile ? profile.name : '' }}
           </p>
+
           <p>{{ profile ? profile.email : '' }}</p>
         </div>
       </div>
@@ -767,13 +780,31 @@ export default {
         },
         {
           name: "HCPC reference check",
-          min: 8,
-          max: 8,
           limit: 8,
           integer: false,
         },
         {
           name: "GpHc reference check",
+          limit: 8,
+          integer: false,
+        },
+        {
+          name: "Medical Performers List Number",
+          limit: 7,
+          integer: true,
+        },
+        {
+          name: "NMC Number",
+          limit: 8,
+          integer: false,
+        },
+        {
+          name: "HCPC Number",
+          limit: 8,
+          integer: false,
+        },
+        {
+          name: "GpHc Number",
           limit: 8,
           integer: false,
         },
@@ -1253,47 +1284,127 @@ export default {
         })
     },
 
-    checkValidation (name, limit) {
-      let fieldName = name.replace(/ /g, "_").toLowerCase()
+    checkReferenceLocumCompliance (complianceDocumentName) {
+      let fieldName = complianceDocumentName.replace(/ /g, "_").toLowerCase()
 
-      let referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments.find(
-        referenceLocumComplianceDocument =>
-          referenceLocumComplianceDocument.compliance_document_name === name
-      )
+      this.formError = this.formError.filter(({ field, }) => field !== fieldName)
 
-      let index = this.formError.findIndex(
-        err => err.field === fieldName && err.type === "limit"
-      )
+      const referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments
+        .find(referenceLocumComplianceDocument => referenceLocumComplianceDocument.compliance_document_name === complianceDocumentName)
 
-      let requiredIndex = this.formError.findIndex(
-        err => err.field === fieldName && !err.type
-      )
-      if (referenceLocumComplianceDocument.reference) {
-        if (requiredIndex > -1) {
-          this.formError.splice(requiredIndex, 1)
-        }
+      if (!referenceLocumComplianceDocument || !referenceLocumComplianceDocument.reference) {
+        this.formError.push({
+          field: fieldName,
+          message: `${complianceDocumentName} is required`,
+          validation: 'required',
+        })
 
-        if (referenceLocumComplianceDocument.reference.length < limit) {
-          if (index < 0) {
-            this.formError.push({
-              field: fieldName,
-              type: "limit",
-              message: `${name} must be ${limit} characters.`,
-            })
-          }
-        } else {
-          if (index > -1) {
-            this.formError.splice(index, 1)
-          }
-        }
-      } else {
-        if (requiredIndex < 0) {
-          if (index > -1) this.formError.splice(index, 1)
+        return
+      }
+
+      if (complianceDocumentName === 'GMC Number') {
+        if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
-            message: `${name} is required`,
+            message: `${complianceDocumentName} must be 7 characters.`,
+            validation: 'limit',
           })
+
+          return
         }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'Medical Performers List reference check'
+        || complianceDocumentName === 'Medical Performers List Number'
+      ) {
+        if (referenceLocumComplianceDocument.reference.length < 7) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be 7 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'NMC reference check'
+        || complianceDocumentName === 'NMC Number'
+      ) {
+        if (referenceLocumComplianceDocument.reference.length < 8) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be 8 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'HCPC reference check'
+        || complianceDocumentName === 'HCPC Number'
+      ) {
+        if (
+          referenceLocumComplianceDocument.reference.length >= 2
+          && !(/^[a-zA-Z]+$/.test(referenceLocumComplianceDocument.reference.substring(0, 2)))
+        ) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must start with 2 letters.`,
+            validation: 'first_2_letters',
+          })
+
+          return
+        }
+
+        if (referenceLocumComplianceDocument.reference.length < 7) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be atleast 7 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        if (!(/^[0-9]+$/.test(referenceLocumComplianceDocument.reference.substring(2)))) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must end with 5 or 6 numbers.`,
+            validation: 'last_numbers',
+          })
+
+          return
+        }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'GpHc reference check'
+        || complianceDocumentName === 'GpHc Number'
+      ) {
+        if (referenceLocumComplianceDocument.reference.length < 8) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be 8 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        return
       }
     },
 
@@ -1449,7 +1560,7 @@ export default {
       notRequired.push("view_permanent_jobs_full_time", "view_permanent_jobs_part_time")
 
       this.referenceComplianceDocuments.forEach(referenceComplianceDocument => {
-        this.checkValidation(
+        this.checkReferenceLocumCompliance(
           referenceComplianceDocument.compliance_document_name,
           this.getReferenceLimit(
             referenceComplianceDocument.compliance_document_name
