@@ -48,12 +48,7 @@
               :info="'For compliance; to be verified by the hubzz team'"
               :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
               required
-              @blur="
-                checkReferenceLocumCompliance(
-                  referenceLocumComplianceDocument.compliance_document_name,
-                  getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)
-                )
-              "
+              @blur="checkReferenceLocumCompliance(referenceLocumComplianceDocument.compliance_document_name)"
               @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? inputNumberOnly($event) : alphaNumeric($event)"
             />
           </div>
@@ -1560,12 +1555,7 @@ export default {
       notRequired.push("view_permanent_jobs_full_time", "view_permanent_jobs_part_time")
 
       this.referenceComplianceDocuments.forEach(referenceComplianceDocument => {
-        this.checkReferenceLocumCompliance(
-          referenceComplianceDocument.compliance_document_name,
-          this.getReferenceLimit(
-            referenceComplianceDocument.compliance_document_name
-          )
-        )
+        this.checkReferenceLocumCompliance(referenceComplianceDocument.compliance_document_name)
       })
 
       if (this.form.referee_1_phone_number && this.form.referee_1_phone_number.length < 10) {
