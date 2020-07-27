@@ -1,9 +1,11 @@
 <template>
   <section class="relative">
     <AppLoading :loading="!propInvoice && !propJobPart" spinner :message="'Loading'" />
+
     <template v-if="propInvoice || propJobPart">
       <div class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4">
         <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
+
         <AppLoading :loading="saveLoading" spinner />
 
         <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
@@ -16,7 +18,9 @@
                   <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-base py-1">To: Accounts Department</label>
                   </div>
-                  <div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
+                  <div class="font-bold text-lg mt-2">
+                    {{ propInvoice.practice.name }}
+                  </div>
                 </div>
               </section>
               <div class="text-xs sm:text-sm">
@@ -36,7 +40,9 @@
                   <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-base py-1">To: Accounts Department</label>
                   </div>
-                  <div class="font-bold text-lg mt-2">{{ propJobPart.practice_name }}</div>
+                  <div class="font-bold text-lg mt-2">
+                    {{ propJobPart.practice_name }}
+                  </div>
                 </div>
               </section>
               <div class="text-xs sm:text-sm">
@@ -49,7 +55,9 @@
           </div>
 
           <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
-            <div v-if="propInvoice">{{ propInvoice.invoice_number }}</div>
+            <div v-if="propInvoice">
+              {{ propInvoice.invoice_number }}
+            </div>
             <div>{{ $auth.user.personal_detail.name }}</div>
             <div>{{ $auth.user.address_detail.address.line_1 }}</div>
             <div>{{ $auth.user.address_detail.address.line_2 }}</div>
@@ -64,23 +72,31 @@
           v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
         >
           <div
-            class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
             v-if="(propInvoice && propInvoice.disputed_items_count > 0 && waitingForPracticeReply(propInvoice.items[0])) && propInvoice.status !== 'Draft'"
-          >DISPUTED - Awaiting Practice Reply</div>
+            class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
+          >
+            DISPUTED - Awaiting Practice Reply
+          </div>
         </template>
         <p
           class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
-        >INVOICE DETAILS</p>
+        >
+          INVOICE DETAILS
+        </p>
         <div class="w-full flex justify-between px-4 text-gray-600">
           <div class="flex items-center">
             <p>Job No.</p>
             <p
               class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-            >{{ job_part.job_part_number }}</p>
+            >
+              {{ job_part.job_part_number }}
+            </p>
           </div>
           <div class="flex items-center">
             <p>Job Type</p>
-            <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">{{ job_part.type }}</p>
+            <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
+              {{ job_part.type }}
+            </p>
           </div>
           <div class="flex items-center">
             <p>Duration</p>
@@ -93,17 +109,20 @@
           <div class="flex items-center">
             <p>Total Work Hours</p>
             <p
-              class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
               v-if="total_working_hours>0"
-            >{{ total_working_hours | hoursMinutes }}</p>
-            <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700" v-else>0</p>
+              class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
+            >
+              {{ total_working_hours | hoursMinutes }}
+            </p>
+            <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
+              0
+            </p>
           </div>
         </div>
 
         <div class="w-full border-b">
           <AppSchedules
             :practice_rate="practice_rate"
-            @getSchedule="getSchedule"
             :schedule="propJobPart? propJobPart.schedules : propInvoice.job_part_schedule_items"
             :error="formError.find(err => err.field === 'schedules')"
             :shiftErrors="shiftErrors"
@@ -112,80 +131,125 @@
             :toDisplay="propInvoice && ['Approved', 'Issued', 'Paid'].includes(propInvoice.status)"
             :type="'invoice'"
             :invoiceStatus="$route.query.status"
+            @getSchedule="getSchedule"
           />
         </div>
 
         <div class="w-full flex flex-wrap justify-between py-4">
           <div class="flex flex-col w-full sm:w-1/2 px-2">
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">TOTAL LATES:</p>
+              <p class="text-sm w-1/2">
+                TOTAL LATES:
+              </p>
               <p
                 class="font-bold w-1/2 text-right"
-              >{{ total_late_hours === '00:00' ? 'None' : total_late_hours }}</p>
+              >
+                {{ total_late_hours === '00:00' ? 'None' : total_late_hours }}
+              </p>
             </div>
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">TOTAL ABSENCES:</p>
+              <p class="text-sm w-1/2">
+                TOTAL ABSENCES:
+              </p>
               <p
                 class="font-bold w-1/2 text-right"
-              >{{ total_absences > 0 ? total_absences : 'None' }}</p>
+              >
+                {{ total_absences > 0 ? total_absences : 'None' }}
+              </p>
             </div>
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">TOTAL WORK HOURS:</p>
+              <p class="text-sm w-1/2">
+                TOTAL WORK HOURS:
+              </p>
               <p
                 v-if="total_working_hours>0"
                 class="font-bold w-1/2 text-right"
-              >{{ total_working_hours | hoursMinutes }}</p>
-              <p v-else class="font-bold w-1/2 text-right">0</p>
+              >
+                {{ total_working_hours | hoursMinutes }}
+              </p>
+              <p v-else class="font-bold w-1/2 text-right">
+                0
+              </p>
             </div>
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">TOTAL DEDUCTIONS:</p>
-              <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
+              <p class="text-sm w-1/2">
+                TOTAL DEDUCTIONS:
+              </p>
+              <p class="font-bold w-1/2 text-right">
+                £ {{ total_deductions | currency }}
+              </p>
             </div>
             <!-- v-if="form.generate_form || (propInvoice && propInvoice.generate_form)" -->
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">Form Type:</p>
-              <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Solo Form' : 'Form A' }}</p>
+              <p class="text-sm w-1/2">
+                Form Type:
+              </p>
+              <p class="font-bold w-1/2 text-right">
+                {{ isOOH ? 'Solo Form' : 'Form A' }}
+              </p>
             </div>
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">STATUS:</p>
+              <p class="text-sm w-1/2">
+                STATUS:
+              </p>
               <p
                 class="font-bold w-1/2 text-right"
-              >{{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}</p>
+              >
+                {{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}
+              </p>
             </div>
             <div
-              class="flex flex-wrap justify-between"
               v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+              class="flex flex-wrap justify-between"
             >
-              <p class="text-sm w-1/2">GENERATE FORM:</p>
+              <p class="text-sm w-1/2">
+                GENERATE FORM:
+              </p>
               <p
                 class="font-bold w-1/2 text-right"
-              >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No'}}</p>
+              >
+                {{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
+              </p>
             </div>
           </div>
           <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">TOTAL WORK PAYMENT:</p>
-              <p class="font-bold w-1/2 text-right">£ {{ total_gross_locum_wages | currency }}</p>
+              <p class="text-sm w-1/2">
+                TOTAL WORK PAYMENT:
+              </p>
+              <p class="font-bold w-1/2 text-right">
+                £ {{ total_gross_locum_wages | currency }}
+              </p>
             </div>
             <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
               <div class="flex flex-wrap justify-between">
-                <p class="text-sm w-1/2">NI / PAYE:</p>
+                <p class="text-sm w-1/2">
+                  NI / PAYE:
+                </p>
                 <p class="font-bold w-1/2 text-right">
                   <span class="mr-5">-</span>
                   £ {{ ni_paye_amount | currency }}
                 </p>
               </div>
               <div class="flex flex-wrap justify-between border-t-4 pt-2">
-                <p class="text-sm w-1/2">GRAND TOTAL:</p>
-                <p class="font-bold w-1/2 text-right">£ {{ grand_total | currency }}</p>
+                <p class="text-sm w-1/2">
+                  GRAND TOTAL:
+                </p>
+                <p class="font-bold w-1/2 text-right">
+                  £ {{ grand_total | currency }}
+                </p>
               </div>
             </template>
             <div
-              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
               v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
+              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
-              <p class="text-sm w-1/2">PENSION AMOUNT:</p>
-              <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
+              <p class="text-sm w-1/2">
+                PENSION AMOUNT:
+              </p>
+              <p class="font-bold w-1/2 text-right">
+                £ {{ pension_amount | currency }}
+              </p>
             </div>
           </div>
         </div>
@@ -238,10 +302,11 @@
         </div>
       </div>
     </template>
+
     <div>
       <div
-        class="flex flex-wrap items-center mx-2"
         v-if="propJobPart && !propInvoice && claimNhs && !isOOH"
+        class="flex flex-wrap items-center mx-2"
       >
         <AppInput
           v-model="form.generate_form"
@@ -285,41 +350,39 @@
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
-import AppDate from "@/components/Base/AppDate";
-import AppSchedules from "@/components/Base/AppSchedules";
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppLoading from "@/components/Base/AppLoading"
+import AppSchedules from "@/components/Base/AppSchedules"
 
 export default {
   components: {
     AppInput,
-    AppButton,
+    AppButton, 
     AppLoading,
-    AppDate,
-    AppSchedules
+    AppSchedules,
   },
 
   props: {
     propInvoiceDetail: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     propInvoice: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     propJobPart: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     claimNhs: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
-  data() {
+  data () {
     return {
       old: false,
       exportLoading: false,
@@ -336,7 +399,7 @@ export default {
         // hours: 0,
         // late_hours: 0,
         // late_minutes: 0,
-        job_part_schedule_items: []
+        job_part_schedule_items: [],
       },
       formError: [],
       disputed: false,
@@ -349,177 +412,177 @@ export default {
       total_absences: 0,
       hasShiftError: false,
       sched_has_changes: false,
-      practice: null
-    };
+      practice: null,
+    }
   },
 
   computed: {
-    isOOH() {
+    isOOH () {
       return this.propInvoice && this.propInvoice.ooh
         ? true
         : this.propJobPart && this.propJobPart.ooh
-        ? true
-        : false;
+          ? true
+          : false
     },
 
-    ni_paye_amount() {
-      let ni_amount =
-        this.propInvoice && this.propInvoice.ni
+    ni_paye_amount () {
+      let ni_amount
+        = this.propInvoice && this.propInvoice.ni
           ? this.propInvoice.ni_amount
-          : 0;
-      let paye_amount =
-        this.propInvoice && this.propInvoice.paye
+          : 0
+      let paye_amount
+        = this.propInvoice && this.propInvoice.paye
           ? this.propInvoice.paye_amount
-          : 0;
-      return ni_amount + paye_amount;
+          : 0
+      return ni_amount + paye_amount
     },
 
-    grand_total() {
-      return this.total_gross_locum_wages - this.ni_paye_amount;
+    grand_total () {
+      return this.total_gross_locum_wages - this.ni_paye_amount
     },
 
-    total_work_payment() {
-      return this.total_gross_locum_wages;
+    total_work_payment () {
+      return this.total_gross_locum_wages
     },
 
-    pension_amount() {
+    pension_amount () {
       // propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))
       // this.propInvoice && this.propInvoice.generate_form
       if (
-        this.propInvoice &&
-        ((!this.propInvoice.ooh && this.propInvoice.generate_form) ||
-          this.propInvoice.ooh)
+        this.propInvoice
+        && ((!this.propInvoice.ooh && this.propInvoice.generate_form)
+          || this.propInvoice.ooh)
       ) {
-        if (["Approved", "Paid"].includes(this.propInvoice.status)) {
+        if (["Approved", "Paid",].includes(this.propInvoice.status)) {
           if (this.propInvoice.locum_form_a_id) {
-            return this.propInvoice.locum_form_a_pension_amount;
+            return this.propInvoice.locum_form_a_pension_amount
           }
           if (this.propInvoice.locum_solo_form_id) {
-            return this.propInvoice.locum_solo_form_pension_amount;
+            return this.propInvoice.locum_solo_form_pension_amount
           }
         }
 
         // disputed and invoiced and draft
-        if (!["Approved", "Paid"].includes(this.propInvoice.status)) {
+        if (!["Approved", "Paid",].includes(this.propInvoice.status)) {
           if (!this.propInvoice.ooh) {
-            return this.total_work_payment * 0.9 * 0.1438;
+            return this.total_work_payment * 0.9 * 0.1438
           }
           if (this.propInvoice.ooh && this.practice) {
-            let boxA = this.total_work_payment;
-            let boxB = this.practice.professional_nhs_expenses;
-            let boxC = boxA - boxB;
-            let boxD = boxC * (this.practice.percentage_rate / 100);
-            let boxE = boxC * boxD;
-            let boxF = this.practice.added_year_contributions;
-            let boxG = this.practice.added_early_retirement_contributions;
-            let boxH = boxE + boxF + boxG;
-            let boxI = boxC - boxH;
-            let boxJ =
-              this.practice.nhsps_employer_contributions + boxC * 0.1438;
-            let boxK = boxH + boxJ;
+            let boxA = this.total_work_payment
+            let boxB = this.practice.professional_nhs_expenses
+            let boxC = boxA - boxB
+            let boxD = boxC * (this.practice.percentage_rate / 100)
+            let boxE = boxC * boxD
+            let boxF = this.practice.added_year_contributions
+            let boxG = this.practice.added_early_retirement_contributions
+            let boxH = boxE + boxF + boxG
+            // let boxI = boxC - boxH
+            let boxJ
+              = this.practice.nhsps_employer_contributions + boxC * 0.1438
+            let boxK = boxH + boxJ
 
-            return boxK;
+            return boxK
           }
         }
       }
 
       if (this.propJobPart && this.form.generate_form) {
         if (!this.propJobPart.ooh) {
-          return this.total_work_payment * 0.9 * 0.1438;
+          return this.total_work_payment * 0.9 * 0.1438
         }
         if (this.propJobPart.ooh && this.practice) {
-          let boxA = this.total_work_payment;
-          let boxB = this.practice.professional_nhs_expenses;
-          let boxC = boxA - boxB;
-          let boxD = boxC * (this.practice.percentage_rate / 100);
-          let boxE = boxC * boxD;
-          let boxF = this.practice.added_year_contributions;
-          let boxG = this.practice.added_early_retirement_contributions;
-          let boxH = boxE + boxF + boxG;
-          let boxI = boxC - boxH;
-          let boxJ = this.practice.nhsps_employer_contributions + boxC * 0.1438;
-          let boxK = boxH + boxJ;
+          let boxA = this.total_work_payment
+          let boxB = this.practice.professional_nhs_expenses
+          let boxC = boxA - boxB
+          let boxD = boxC * (this.practice.percentage_rate / 100)
+          let boxE = boxC * boxD
+          let boxF = this.practice.added_year_contributions
+          let boxG = this.practice.added_early_retirement_contributions
+          let boxH = boxE + boxF + boxG
+          // let boxI = boxC - boxH
+          let boxJ = this.practice.nhsps_employer_contributions + boxC * 0.1438
+          let boxK = boxH + boxJ
 
-          return boxK;
+          return boxK
         }
       }
 
-      return 0;
+      return 0
     },
 
-    subTotal() {
+    subTotal () {
       if (this.propJobPart && !this.propInvoice) {
-        let type = this.propJobPart.job.locum_detail_rate_type.name;
+        let type = this.propJobPart.job.locum_detail_rate_type.name
 
-        let finalHours =
-          (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60;
+        let finalHours
+          = (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
 
-        let totalHours = this.propJobPart.job.total_hours / 60;
+        let totalHours = this.propJobPart.job.total_hours / 60
 
-        let total = 0;
+        let total = 0
 
         switch (type) {
-          case "Per Hour":
-            total = finalHours * this.propJobPart.job.rate;
-            break;
-          default:
-            total = finalHours * (this.propJobPart.job.rate / totalHours);
-            break;
+        case "Per Hour":
+          total = finalHours * this.propJobPart.job.rate
+          break
+        default:
+          total = finalHours * (this.propJobPart.job.rate / totalHours)
+          break
         }
 
-        return total;
+        return total
       }
 
       if (this.propInvoice && !this.propJobPart) {
         let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-          .name;
+          .name
 
-        let finalHours =
-          (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60;
+        let finalHours
+          = (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
 
-        let totalHours =
-          this.propInvoice.items[0].job_part.job.total_hours / 60;
+        let totalHours
+          = this.propInvoice.items[0].job_part.job.total_hours / 60
 
-        let total = 0;
+        let total = 0
 
         switch (type) {
-          case "Per Hour":
-            total = finalHours * this.propInvoice.items[0].job_part.job.rate;
-            break;
-          default:
-            total =
-              finalHours *
-              (this.propInvoice.items[0].job_part.job.rate / totalHours);
-            break;
+        case "Per Hour":
+          total = finalHours * this.propInvoice.items[0].job_part.job.rate
+          break
+        default:
+          total
+              = finalHours
+              * (this.propInvoice.items[0].job_part.job.rate / totalHours)
+          break
         }
 
-        return total;
+        return total
       }
 
-      return 0;
+      return 0
     },
 
-    totalAmount() {
+    totalAmount () {
       if (this.propJobPart && !this.propInvoice) {
-        let type = this.propJobPart.job.locum_detail_rate_type.name;
+        let type = this.propJobPart.job.locum_detail_rate_type.name
 
-        let finalHours =
-          (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60;
+        let finalHours
+          = (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
 
-        let totalHours = this.propJobPart.job.total_hours / 60;
+        let totalHours = this.propJobPart.job.total_hours / 60
 
-        let total = 0;
+        let total = 0
 
         switch (type) {
-          case "Per Hour":
-            total = finalHours * this.propJobPart.job.rate;
-            break;
-          default:
-            total = finalHours * (this.propJobPart.job.rate / totalHours);
-            break;
+        case "Per Hour":
+          total = finalHours * this.propJobPart.job.rate
+          break
+        default:
+          total = finalHours * (this.propJobPart.job.rate / totalHours)
+          break
         }
 
-        return total;
+        return total
       }
 
       // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
@@ -527,132 +590,132 @@ export default {
 
       if (this.propInvoice && !this.propJobPart) {
         let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-          .name;
+          .name
 
-        let finalHours =
-          (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60;
+        let finalHours
+          = (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
 
-        let totalHours =
-          this.propInvoice.items[0].job_part.job.total_hours / 60;
+        let totalHours
+          = this.propInvoice.items[0].job_part.job.total_hours / 60
 
-        let total = 0;
+        let total = 0
 
         switch (type) {
-          case "Per Hour":
-            total = finalHours * this.propInvoice.items[0].job_part.job.rate;
-            break;
-          default:
-            total =
-              finalHours *
-              (this.propInvoice.items[0].job_part.job.rate / totalHours);
-            break;
+        case "Per Hour":
+          total = finalHours * this.propInvoice.items[0].job_part.job.rate
+          break
+        default:
+          total
+              = finalHours
+              * (this.propInvoice.items[0].job_part.job.rate / totalHours)
+          break
         }
 
         if (this.propInvoice) {
-          total =
-            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+          total
+            = total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
         }
 
-        return total;
+        return total
       }
 
-      return 0;
+      return 0
     },
 
-    description() {
+    description () {
       if (this.propJobPart && !this.propInvoice) {
-        const jobPartNumber = this.propJobPart.job_part_number;
-        const jobType = this.propJobPart.job.type;
-        const jobRate = this.propJobPart.job.rate;
+        const jobPartNumber = this.propJobPart.job_part_number
+        const jobType = this.propJobPart.job.type
+        const jobRate = this.propJobPart.job.rate
         const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type
-          .name;
+          .name
         const formattedDateStart = this.$moment(
           this.propJobPart.date_start
-        ).format("DD/MM/YYYY");
+        ).format("DD/MM/YYYY")
         const formattedDateEnd = this.$moment(this.propJobPart.date_end).format(
           "DD/MM/YYYY"
-        );
-        const shiftName = this.propJobPart.job.shift.name;
-        const finalHoursInMinutesHours = parseInt(this.form.hours);
-        const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : "";
-        const finalHoursInMinutesMinutes = parseInt(this.form.minutes);
-        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : "";
-        const hasMinutes =
-          finalHoursInMinutesMinutes > 0
+        )
+        const shiftName = this.propJobPart.job.shift.name
+        const finalHoursInMinutesHours = parseInt(this.form.hours)
+        const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : ""
+        const finalHoursInMinutesMinutes = parseInt(this.form.minutes)
+        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : ""
+        const hasMinutes
+          = finalHoursInMinutesMinutes > 0
             ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
-            : "";
-        const description =
-          `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}` +
-          ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /` +
-          ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`;
+            : ""
+        const description
+          = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+          + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+          + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
 
-        return description;
+        return description
       }
 
       if (this.propInvoice && !this.propJobPart) {
         const jobPartNumber = this.propInvoice.items[0].job_part
-          .job_part_number;
-        const jobType = this.propInvoice.items[0].job_part.job.type;
-        const jobRate = this.propInvoice.items[0].job_part.job.rate;
+          .job_part_number
+        const jobType = this.propInvoice.items[0].job_part.job.type
+        const jobRate = this.propInvoice.items[0].job_part.job.rate
         const jobRateTypeName = this.propInvoice.items[0].job_part.job
-          .locum_detail_rate_type.name;
+          .locum_detail_rate_type.name
         const formattedDateStart = this.$moment(
           this.propInvoice.date_start
-        ).format("DD/MM/YYYY");
+        ).format("DD/MM/YYYY")
         const formattedDateEnd = this.$moment(this.propInvoice.date_end).format(
           "DD/MM/YYYY"
-        );
-        const shiftName = this.propInvoice.items[0].job_part.job.shift.name;
-        const finalHoursInMinutesHours = parseInt(this.form.hours);
-        const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : "";
-        const finalHoursInMinutesMinutes = parseInt(this.form.minutes);
-        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : "";
-        const hasMinutes =
-          finalHoursInMinutesMinutes > 0
+        )
+        const shiftName = this.propInvoice.items[0].job_part.job.shift.name
+        const finalHoursInMinutesHours = parseInt(this.form.hours)
+        const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : ""
+        const finalHoursInMinutesMinutes = parseInt(this.form.minutes)
+        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : ""
+        const hasMinutes
+          = finalHoursInMinutesMinutes > 0
             ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
-            : "";
-        const description =
-          `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}` +
-          ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /` +
-          ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`;
+            : ""
+        const description
+          = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+          + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+          + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
 
-        return description;
+        return description
       }
 
-      return "";
+      return ""
     },
 
-    job_part() {
-      let jobPartNumber;
-      let jobType;
-      let jobRate;
-      let jobRateTypeName;
-      let formattedDateStart;
-      let formattedDateEnd;
+    job_part () {
+      let jobPartNumber
+      let jobType
+      let jobRate
+      let jobRateTypeName
+      let formattedDateStart
+      let formattedDateEnd
       if (this.propJobPart && !this.propInvoice) {
-        jobPartNumber = this.propJobPart.job_part_number;
-        jobType = this.propJobPart.job.type;
-        jobRate = this.propJobPart.job.rate;
-        jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name;
+        jobPartNumber = this.propJobPart.job_part_number
+        jobType = this.propJobPart.job.type
+        jobRate = this.propJobPart.job.rate
+        jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
         formattedDateStart = this.$moment(this.propJobPart.date_start).format(
           "DD/MM/YYYY"
-        );
+        )
         formattedDateEnd = this.$moment(this.propJobPart.date_end).format(
           "DD/MM/YYYY"
-        );
+        )
       }
       if (this.propInvoice && !this.propJobPart) {
-        jobPartNumber = this.propInvoice.items[0].job_part.job_part_number;
-        jobType = this.propInvoice.items[0].job_part.job.type;
-        jobRate = this.propInvoice.items[0].job_part.job.rate;
+        jobPartNumber = this.propInvoice.items[0].job_part.job_part_number
+        jobType = this.propInvoice.items[0].job_part.job.type
+        jobRate = this.propInvoice.items[0].job_part.job.rate
         jobRateTypeName = this.propInvoice.items[0].job_part.job
-          .locum_detail_rate_type.name;
+          .locum_detail_rate_type.name
         formattedDateStart = this.$moment(this.propInvoice.date_start).format(
           "DD/MM/YYYY"
-        );
+        )
         formattedDateEnd = this.$moment(this.propInvoice.date_end).format(
           "DD/MM/YYYY"
-        );
+        )
       }
       return {
         job_part_number: jobPartNumber,
@@ -660,62 +723,62 @@ export default {
         rate: jobRate,
         locum_detail_rate_type: jobRateTypeName,
         date_start: formattedDateStart,
-        date_end: formattedDateEnd
-      };
+        date_end: formattedDateEnd,
+      }
     },
 
-    practice_rate() {
-      let practice_rate = this.propJobPart ? this.propJobPart.practice_rate : 0;
-      let rate = 0;
+    practice_rate () {
+      let practice_rate = this.propJobPart ? this.propJobPart.practice_rate : 0
+      let rate = 0
       if (practice_rate) {
-        rate = practice_rate.rate;
+        rate = practice_rate.rate
       } else {
-        rate = 0;
+        rate = 0
         // practice_rates[practice_rates.length - 1].rate
       }
-      return rate;
+      return rate
     },
 
-    dispute() {
+    dispute () {
       return (
-        this.form &&
-        this.form.items &&
-        this.form.items.length > 0 &&
-        this.form.items[0].dispute
-      );
-    }
+        this.form
+        && this.form.items
+        && this.form.items.length > 0
+        && this.form.items[0].dispute
+      )
+    },
   },
 
   watch: {
-    dispute() {
+    dispute () {
       if (!this.dispute) {
-        this.setInitialState();
-        this.form.items[0].dispute = false;
+        this.setInitialState()
+        this.form.items[0].dispute = false
       }
-    }
+    },
   },
 
-  mounted() {
-    this.setInitialState();
-    let practice_id =
-      this.propInvoice && this.propInvoice.practice_id
+  mounted () {
+    this.setInitialState()
+    let practice_id
+      = this.propInvoice && this.propInvoice.practice_id
         ? this.propInvoice.practice_id
         : this.propJobPart && this.propJobPart.practice_id
-        ? this.propJobPart.practice_id
-        : null;
+          ? this.propJobPart.practice_id
+          : null
 
-    this.getPractice(practice_id);
+    this.getPractice(practice_id)
   },
 
   methods: {
-    getPractice(practice_id) {
+    getPractice (practice_id) {
       this.$axios.$get(`/api/v1/locum/practices/${practice_id}`).then(res => {
-        this.practice =
-          res.data && res.data.practice ? res.data.practice : null;
-      });
+        this.practice
+          = res.data && res.data.practice ? res.data.practice : null
+      })
     },
 
-    getSchedule(
+    getSchedule (
       schedule,
       total_gross_locum_wages,
       total_working_hours,
@@ -724,18 +787,18 @@ export default {
       hasError,
       hasChanges
     ) {
-      this.schedule = schedule;
-      this.form.job_part_schedule_items = [];
-      let absentCount = 0;
-      schedule.forEach((sched, index) => {
+      this.schedule = schedule
+      this.form.job_part_schedule_items = []
+      let absentCount = 0
+      schedule.forEach((sched) => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach((shift, i) => {
+          sched.shifts.forEach((shift) => {
             let timeStart = shift.final_time_start
               ? shift.final_time_start
-              : shift.time_start;
+              : shift.time_start
             let timeEnd = shift.final_time_end
               ? shift.final_time_end
-              : shift.time_start;
+              : shift.time_start
             this.form.job_part_schedule_items.push({
               id: shift.id,
               time_start: timeStart,
@@ -744,9 +807,9 @@ export default {
               dispute: shift.dispute,
               remarks: shift.remarks,
               late_hours_reason: "",
-              description: ""
-            });
-            shift.has_absences ? (absentCount += 1) : "";
+              description: "",
+            })
+            shift.has_absences ? (absentCount += 1) : ""
 
             // if (shift.final_time_start !== "") {
             // 	let startIndex = this.shiftErrors.findIndex(
@@ -764,73 +827,73 @@ export default {
             // 		this.shiftErrors.splice(endIndex, 1);
             // 	}
             // }
-          });
+          })
         }
-      });
-      this.total_late_hours = total_lates;
-      this.total_absences = absentCount;
-      this.total_deductions = deductions;
-      this.total_working_hours = total_working_hours;
-      this.total_gross_locum_wages = total_gross_locum_wages;
-      this.form.total_amount = total_gross_locum_wages;
-      this.hasShiftError = hasError;
-      this.sched_has_changes = hasChanges;
+      })
+      this.total_late_hours = total_lates
+      this.total_absences = absentCount
+      this.total_deductions = deductions
+      this.total_working_hours = total_working_hours
+      this.total_gross_locum_wages = total_gross_locum_wages
+      this.form.total_amount = total_gross_locum_wages
+      this.hasShiftError = hasError
+      this.sched_has_changes = hasChanges
     },
-    setInitialState() {
+    setInitialState () {
       if (this.propJobPart && !this.propInvoice) {
-        this.form.type = this.propJobPart.job.type;
-        this.form.practice_id = this.propJobPart.job.practice_id;
-        this.form.date_start = this.propJobPart.date_start;
-        this.form.date_end = this.propJobPart.date_end;
-        this.form.job_part_schedule_items = this.propJobPart.schedules;
+        this.form.type = this.propJobPart.job.type
+        this.form.practice_id = this.propJobPart.job.practice_id
+        this.form.date_start = this.propJobPart.date_start
+        this.form.date_end = this.propJobPart.date_end
+        this.form.job_part_schedule_items = this.propJobPart.schedules
         // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
         // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
-        let type = this.propJobPart.job.locum_detail_rate_type.name;
+        let type = this.propJobPart.job.locum_detail_rate_type.name
 
-        let finalHours = this.propJobPart.final_hours / 60;
+        let finalHours = this.propJobPart.final_hours / 60
 
-        let totalHours = this.propJobPart.job.total_hours / 60;
+        let totalHours = this.propJobPart.job.total_hours / 60
 
-        let total = 0;
+        let total = 0
 
         switch (type) {
-          case "Per Hour":
-            total = finalHours * this.propJobPart.job.rate;
-            break;
-          default:
-            total = finalHours * (this.propJobPart.job.rate / totalHours);
-            break;
+        case "Per Hour":
+          total = finalHours * this.propJobPart.job.rate
+          break
+        default:
+          total = finalHours * (this.propJobPart.job.rate / totalHours)
+          break
         }
 
-        const jobPartNumber = this.propJobPart.job_part_number;
-        const jobType = this.propJobPart.job.type;
-        const jobRate = this.propJobPart.job.rate;
+        const jobPartNumber = this.propJobPart.job_part_number
+        const jobType = this.propJobPart.job.type
+        const jobRate = this.propJobPart.job.rate
         const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type
-          .name;
+          .name
         const formattedDateStart = this.$moment(
           this.propJobPart.date_start
-        ).format("DD/MM/YYYY");
+        ).format("DD/MM/YYYY")
         const formattedDateEnd = this.$moment(this.propJobPart.date_end).format(
           "DD/MM/YYYY"
-        );
-        const shiftName = this.propJobPart.job.shift.name;
+        )
+        const shiftName = this.propJobPart.job.shift.name
         const finalHoursInMinutesHours = Math.floor(
           this.propJobPart.final_hours / 60
-        );
-        const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : "";
+        )
+        const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : ""
         const finalHoursInMinutesMinutes = Math.floor(
           this.propJobPart.final_hours % 60
-        );
-        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : "";
-        const hasMinutes =
-          finalHoursInMinutesMinutes > 0
+        )
+        const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : ""
+        const hasMinutes
+          = finalHoursInMinutesMinutes > 0
             ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
-            : "";
-        const description =
-          `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}` +
-          ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /` +
-          ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`;
+            : ""
+        const description
+          = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+          + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+          + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
 
         this.form.items = [
           {
@@ -842,20 +905,20 @@ export default {
             absent_days: this.propJobPart.absent_days,
             final_hours: this.propJobPart.final_hours.toFixed(2),
             late_hours: this.propJobPart.late_hours,
-            remarks: ""
-          }
-        ];
+            remarks: "",
+          },
+        ]
 
-        this.form.total_amount = total;
-        this.form.final = false;
-        this.form.ir35 = this.propJobPart.job_ir35;
+        this.form.total_amount = total
+        this.form.final = false
+        this.form.ir35 = this.propJobPart.job_ir35
       }
 
       if (this.propInvoice && !this.propJobPart) {
-        this.form.locum_invoice_id = this.propInvoice.id;
-        this.form.date_start = this.propInvoice.date_start;
-        this.form.date_end = this.propInvoice.date_end;
-        this.form.job_part_schedule_items = this.propInvoice.job_part_schedule_items;
+        this.form.locum_invoice_id = this.propInvoice.id
+        this.form.date_start = this.propInvoice.date_start
+        this.form.date_end = this.propInvoice.date_end
+        this.form.job_part_schedule_items = this.propInvoice.job_part_schedule_items
 
         this.form.items = [
           {
@@ -868,48 +931,48 @@ export default {
             absent_days: this.propInvoice.items[0].absent_days,
             final_hours: this.propInvoice.items[0].final_hours,
             late_hours: this.propInvoice.items[0].late_hours,
-            remarks: this.propInvoice.items[0].remarks
-          }
-        ];
+            remarks: this.propInvoice.items[0].remarks,
+          },
+        ]
 
-        this.form.total_amount = this.propInvoice.total_amount;
-        this.form.final = false;
-        this.form.ir35 = this.propInvoice.ir35;
-        this.form.generate_form = this.propInvoice.generate_form;
+        this.form.total_amount = this.propInvoice.total_amount
+        this.form.final = false
+        this.form.ir35 = this.propInvoice.ir35
+        this.form.generate_form = this.propInvoice.generate_form
       }
 
-      this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
-      this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
-      this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
-      this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
+      this.form.hours = Math.floor(this.form.items[0].final_hours / 60)
+      this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
+      this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
+      this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
     },
 
-    handleKeyDownEvent(e, formField, limit) {
+    handleKeyDownEvent (e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
         "Tab",
         "ArrowUp",
         "ArrowDown",
         "ArrowLeft",
-        "ArrowRight"
-      ];
+        "ArrowRight",
+      ]
       if (
-        this.form[formField].length >= limit &&
-        !acceptedKeys.includes(e.key)
+        this.form[formField].length >= limit
+        && !acceptedKeys.includes(e.key)
       ) {
-        e.preventDefault();
+        e.preventDefault()
       }
     },
 
-    hasValue(value, field) {
+    hasValue (value, field) {
       if (value == 0) {
-        this.form[field] = "";
+        this.form[field] = ""
       }
     },
 
-    save(final) {
-      this.formError = [];
-      this.shiftErrors = [];
+    save (final) {
+      this.formError = []
+      this.shiftErrors = []
 
       if (this.schedule.length) {
         this.schedule.forEach((sched, index) => {
@@ -918,18 +981,18 @@ export default {
               if (!shift.final_time_start) {
                 this.shiftErrors.push({
                   field: `final_time_start-s${index}-${i}`,
-                  message: "Final Start is required"
-                });
+                  message: "Final Start is required",
+                })
               }
               if (!shift.final_time_end) {
                 this.shiftErrors.push({
                   field: `final_time_end-s${index}-${i}`,
-                  message: "Final End is required"
-                });
+                  message: "Final End is required",
+                })
               }
             }
-          });
-        });
+          })
+        })
       }
 
       this.Validate(this.form, [
@@ -940,16 +1003,16 @@ export default {
         "minutes",
         "late_hours",
         "late_minutes",
-        "generate_form"
-      ]);
+        "generate_form",
+      ])
 
       if (!this.formError.length && !this.shiftErrors.length) {
-        this.saveLoading = true;
+        this.saveLoading = true
 
         if (this.propJobPart && !this.propInvoice) {
-          this.form.total_amount = this.total_gross_locum_wages;
+          this.form.total_amount = this.total_gross_locum_wages
 
-          this.form.final = final;
+          this.form.final = final
 
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
@@ -957,37 +1020,37 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`${res.message}`]
-              });
+                text: [`${res.message}`,],
+              })
 
-              this.$emit("createInvoice", res.data.locum_invoice);
+              this.$emit("createInvoice", res.data.locum_invoice)
             })
             .catch(err => {
-              console.log("err", err.response || err);
+              console.log("err", err.response || err)
 
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "error",
-                  text: [`${err.response.data.message}`]
-                });
+                  text: [`${err.response.data.message}`,],
+                })
               } else if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error);
-                });
+                  this.formError.push(error)
+                })
               } else {
-                this.formError.push(err.response.data);
+                this.formError.push(err.response.data)
               }
 
-              throw err;
+              throw err
             })
             .finally(() => {
-              this.saveLoading = false;
-            });
+              this.saveLoading = false
+            })
         } else if (this.propInvoice && !this.propJobPart) {
-          this.form.total_amount = this.total_gross_locum_wages;
+          this.form.total_amount = this.total_gross_locum_wages
 
-          this.form.final = final;
+          this.form.final = final
 
           this.$axios
             .$put(
@@ -998,56 +1061,56 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`${res.message}`]
-              });
+                text: [`${res.message}`,],
+              })
 
-              this.$emit("updateInvoice", res.data.locum_invoice);
+              this.$emit("updateInvoice", res.data.locum_invoice)
             })
             .catch(err => {
-              console.log("err", err.response || err);
+              console.log("err", err.response || err)
 
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "success",
-                  text: [`${err.response.data.message}`]
-                });
+                  text: [`${err.response.data.message}`,],
+                })
               } else if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error);
-                });
+                  this.formError.push(error)
+                })
               } else {
-                this.formError.push(err.response.data);
+                this.formError.push(err.response.data)
               }
 
-              throw err;
+              throw err
             })
             .finally(() => {
-              this.saveLoading = false;
-            });
+              this.saveLoading = false
+            })
         }
       } else {
-        console.log(this.formError);
+        console.log(this.formError)
       }
     },
 
-    waitingForPracticeReply(item) {
+    waitingForPracticeReply (item) {
       return (
-        !item.disputed_by_practice_at ||
-        this.$moment(item.disputed_by_practice_at).diff(
+        !item.disputed_by_practice_at
+        || this.$moment(item.disputed_by_practice_at).diff(
           item.disputed_by_locum_at,
           "seconds"
         ) < 0
-      );
+      )
     },
 
-    viewAsPdf(invoiceId) {
+    viewAsPdf (invoiceId) {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      );
-    }
-  }
-};
+      )
+    },
+  },
+}
 </script>
 
 <style scoped>
