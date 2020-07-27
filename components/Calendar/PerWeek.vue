@@ -1039,6 +1039,7 @@ export default {
                 .subtract(1, "days")
                 .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+              reposted: false,
               limit: 100000000,
             },
           }),
