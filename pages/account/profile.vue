@@ -8,6 +8,7 @@
 
         <form v-if="!loading && user" class="w-full">
           <div>Profession</div>
+
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
@@ -35,7 +36,7 @@
           />
 
           <div
-            v-for="(referenceLocumComplianceDocument) in referenceLocumComplianceDocuments"
+            v-for="referenceLocumComplianceDocument in referenceLocumComplianceDocuments"
             :key="referenceLocumComplianceDocument.compliance_document_id"
           >
             <AppInput
@@ -48,10 +49,7 @@
               :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
               required
               @blur="
-                CheckEmptyField(
-                  referenceLocumComplianceDocument.reference,
-                  referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()
-                ), checkValidation(
+                checkReferenceLocumCompliance(
                   referenceLocumComplianceDocument.compliance_document_name,
                   getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)
                 )
@@ -157,6 +155,7 @@
 
           <div v-if="form.view_permanent_jobs" class="px-4">
             <div>Please Pick at least One(1) Salaried Role Work Hours</div>
+
             <AppInput
               v-model="form.view_permanent_jobs_full_time"
               :type="'single-checkbox'"
@@ -178,17 +177,18 @@
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row flex-wrap justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
-                Your preferred rates £
+                <span>Your preferred rates £</span>
+
                 <small>(minimum)</small>
               </label>
+
               <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
-                To match available jobs with
+                <span>To match available jobs with</span>
               </div>
             </div>
 
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_hour"
@@ -200,21 +200,12 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                   />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_hour"
-                    :type="'number'"
-                    :name="'max_rate_per_hour'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_hour')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
-                    class="w-1/2 px-1"
-                    required
-                  />-->
+
+                  <div class="mx-1" />
                 </div>
               </div>
+
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_half_day_session"
@@ -226,21 +217,12 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
                   />
+
                   <div class="mx-1" />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_half_day_session"
-                    :type="'number'"
-                    :name="'max_rate_per_half_day_session'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
-                    required
-                  />-->
                 </div>
               </div>
+
               <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <!-- <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label> -->
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_whole_day_session"
@@ -252,17 +234,8 @@
                     @submit="updateLocumProfile"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
                   />
+
                   <div class="mx-1" />
-                  <!-- <AppInput
-                    v-model="form.max_rate_per_whole_day_session"
-                    :type="'number'"
-                    :name="'max_rate_per_whole_day_session'"
-                    :label="'To £'"
-                    :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
-                    required
-                  />-->
                 </div>
               </div>
             </div>
@@ -354,6 +327,7 @@
             <div class="font-bold text-sm my-4">
               Payroll Details
             </div>
+
             <AppInput
               v-model="form.payroll_account_name"
               :type="'text'"
@@ -362,6 +336,7 @@
               :error="formError.find(item => item.field === 'payroll_account_name')"
               required
             />
+
             <AppInput
               v-model="form.payroll_bank_name"
               :type="'text'"
@@ -370,6 +345,7 @@
               :error="formError.find(item => item.field === 'payroll_bank_name')"
               required
             />
+
             <AppInput
               v-model="form.payroll_sort_code"
               :type="'text'"
@@ -379,6 +355,7 @@
               :limit="6"
               required
             />
+
             <AppInput
               v-model="form.payroll_account_number"
               :type="'text'"
@@ -393,6 +370,7 @@
             <div class="font-bold text-sm my-4">
               Bank Details
             </div>
+
             <AppInput
               v-model="form.account_name"
               :type="'text'"
@@ -401,6 +379,7 @@
               :error="formError.find(item => item.field === 'account_name')"
               required
             />
+
             <AppInput
               v-model="form.bank_name"
               :type="'text'"
@@ -409,6 +388,7 @@
               :error="formError.find(item => item.field === 'bank_name')"
               required
             />
+
             <AppInput
               v-model="form.sort_code"
               :type="'text'"
@@ -419,6 +399,7 @@
               required
               @keydown="inputNumberOnly($event)"
             />
+
             <AppInput
               v-model="form.account_number"
               :type="'text'"
@@ -575,6 +556,7 @@
               :inStyle="'background-color:#dae1e7;border-color:white'"
               :error="formError.find(item => item.field === 'referee_1_contact_name')"
             />
+
             <AppInput
               v-model="form.referee_1_phone_number"
               :type="'text'"
@@ -585,6 +567,7 @@
               :limit="10"
               @keypress="inputTelephone($event)"
             />
+
             <AppInput
               v-model="form.referee_1_email"
               :type="'text'"
@@ -604,6 +587,7 @@
               :inStyle="'background-color:#dae1e7;border-color:white'"
               :error="formError.find(item => item.field === 'referee_2_contact_name')"
             />
+
             <AppInput
               v-model="form.referee_2_phone_number"
               :type="'text'"
@@ -614,6 +598,7 @@
               :limit="10"
               @keypress="inputTelephone($event)"
             />
+
             <AppInput
               v-model="form.referee_2_email"
               :type="'text'"
@@ -638,10 +623,12 @@
           :type="'update'"
           :src="profile && profile.avatar ? profile.avatar : ''"
         />
+
         <div class="leading-none text-center text-sm pt-4">
           <p class="font-bold">
             {{ profile ? profile.name : '' }}
           </p>
+
           <p>{{ profile ? profile.email : '' }}</p>
         </div>
       </div>
@@ -801,14 +788,32 @@ export default {
           limit: 8,
           integer: false,
         },
+        {
+          name: "Medical Performers List Number",
+          limit: 7,
+          integer: true,
+        },
+        {
+          name: "NMC Number",
+          limit: 8,
+          integer: false,
+        },
+        {
+          name: "HCPC Number",
+          limit: 8,
+          integer: false,
+        },
+        {
+          name: "GpHc Number",
+          limit: 8,
+          integer: false,
+        },
       ]
     },
 
     getReferenceLimit () {
       return complianceDocumentName => {
-        const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+        const referenceLimit = this.referenceValidations.find(({ name, }) => name === complianceDocumentName)
 
         return referenceLimit ? referenceLimit.limit : null
       }
@@ -816,9 +821,7 @@ export default {
 
     getReferenceIsInteger () {
       return complianceDocumentName => {
-        const referenceLimit = this.referenceValidations.find(
-          ({ name, }) => name === complianceDocumentName
-        )
+        const referenceLimit = this.referenceValidations.find(({ name, }) => name === complianceDocumentName)
 
         return referenceLimit ? referenceLimit.integer : false
       }
@@ -1281,47 +1284,127 @@ export default {
         })
     },
 
-    checkValidation (name, limit) {
-      let fieldName = name.replace(/ /g, "_").toLowerCase()
+    checkReferenceLocumCompliance (complianceDocumentName) {
+      let fieldName = complianceDocumentName.replace(/ /g, "_").toLowerCase()
 
-      let referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments.find(
-        referenceLocumComplianceDocument =>
-          referenceLocumComplianceDocument.compliance_document_name === name
-      )
+      this.formError = this.formError.filter(({ field, }) => field !== fieldName)
 
-      let index = this.formError.findIndex(
-        err => err.field === fieldName && err.type === "limit"
-      )
+      const referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments
+        .find(referenceLocumComplianceDocument => referenceLocumComplianceDocument.compliance_document_name === complianceDocumentName)
 
-      let requiredIndex = this.formError.findIndex(
-        err => err.field === fieldName && !err.type
-      )
-      if (referenceLocumComplianceDocument.reference) {
-        if (requiredIndex > -1) {
-          this.formError.splice(requiredIndex, 1)
-        }
+      if (!referenceLocumComplianceDocument || !referenceLocumComplianceDocument.reference) {
+        this.formError.push({
+          field: fieldName,
+          message: `${complianceDocumentName} is required`,
+          validation: 'required',
+        })
 
-        if (referenceLocumComplianceDocument.reference.length < limit) {
-          if (index < 0) {
-            this.formError.push({
-              field: fieldName,
-              type: "limit",
-              message: `${name} must be ${limit} characters.`,
-            })
-          }
-        } else {
-          if (index > -1) {
-            this.formError.splice(index, 1)
-          }
-        }
-      } else {
-        if (requiredIndex < 0) {
-          if (index > -1) this.formError.splice(index, 1)
+        return
+      }
+
+      if (complianceDocumentName === 'GMC Number') {
+        if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
-            message: `${name} is required`,
+            message: `${complianceDocumentName} must be 7 characters.`,
+            validation: 'limit',
           })
+
+          return
         }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'Medical Performers List reference check'
+        || complianceDocumentName === 'Medical Performers List Number'
+      ) {
+        if (referenceLocumComplianceDocument.reference.length < 7) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be 7 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'NMC reference check'
+        || complianceDocumentName === 'NMC Number'
+      ) {
+        if (referenceLocumComplianceDocument.reference.length < 8) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be 8 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'HCPC reference check'
+        || complianceDocumentName === 'HCPC Number'
+      ) {
+        if (
+          referenceLocumComplianceDocument.reference.length >= 2
+          && !(/^[a-zA-Z]+$/.test(referenceLocumComplianceDocument.reference.substring(0, 2)))
+        ) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must start with 2 letters.`,
+            validation: 'first_2_letters',
+          })
+
+          return
+        }
+
+        if (referenceLocumComplianceDocument.reference.length < 7) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be atleast 7 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        if (!(/^[0-9]+$/.test(referenceLocumComplianceDocument.reference.substring(2)))) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must end with 5 or 6 numbers.`,
+            validation: 'last_numbers',
+          })
+
+          return
+        }
+
+        return
+      }
+
+      if (
+        complianceDocumentName === 'GpHc reference check'
+        || complianceDocumentName === 'GpHc Number'
+      ) {
+        if (referenceLocumComplianceDocument.reference.length < 8) {
+          this.formError.push({
+            field: fieldName,
+            message: `${complianceDocumentName} must be 8 characters.`,
+            validation: 'limit',
+          })
+
+          return
+        }
+
+        return
       }
     },
 
@@ -1477,7 +1560,7 @@ export default {
       notRequired.push("view_permanent_jobs_full_time", "view_permanent_jobs_part_time")
 
       this.referenceComplianceDocuments.forEach(referenceComplianceDocument => {
-        this.checkValidation(
+        this.checkReferenceLocumCompliance(
           referenceComplianceDocument.compliance_document_name,
           this.getReferenceLimit(
             referenceComplianceDocument.compliance_document_name
@@ -1485,30 +1568,21 @@ export default {
         )
       })
 
-      if (
-        this.form.referee_1_phone_number
-        && this.form.referee_1_phone_number.length < 10
-      ) {
+      if (this.form.referee_1_phone_number && this.form.referee_1_phone_number.length < 10) {
         this.formError.push({
           field: "referee_1_phone_number",
           message: "Telephone number should be 10 digits",
         })
       }
 
-      if (
-        this.form.referee_2_phone_number
-        && this.form.referee_2_phone_number.length < 10
-      ) {
+      if (this.form.referee_2_phone_number && this.form.referee_2_phone_number.length < 10) {
         this.formError.push({
           field: "referee_2_phone_number",
           message: "Telephone number should be 10 digits",
         })
       }
 
-      if (
-        this.form.nhs_smart_card_id_number
-        && this.form.nhs_smart_card_id_number.length < 12
-      ) {
+      if (this.form.nhs_smart_card_id_number && this.form.nhs_smart_card_id_number.length < 12) {
         this.formError.push({
           field: "nhs_smart_card_id_number",
           message: "NHS Smart Card ID should be 12 digits",
@@ -1516,10 +1590,7 @@ export default {
       }
 
       if (["true", true,].includes(this.form.paid_under_payroll)) {
-        if (
-          this.form.payroll_sort_code
-          && this.form.payroll_sort_code.length < 6
-        ) {
+        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
           this.formError.push({
             field: "payroll_sort_code",
             message: "Sort Code should be 6 digits",
@@ -1532,6 +1603,7 @@ export default {
             message: "Sort Code should be 6 digits",
           })
         }
+
         if (this.form.account_number && this.form.account_number.length < 8) {
           this.formError.push({
             field: "account_number",
@@ -1544,21 +1616,22 @@ export default {
 
       if (!this.formError.length) {
         this.loading = true
+
         this.selectedClinicalSystem = [...this.form.clinical_system_id,]
-        this.form.clinical_system_id = this.form.clinical_system_id.length
-          ? this.form.clinical_system_id.map(item => item.value)
-          : []
+
+        this.form.clinical_system_id = this.form.clinical_system_id.map(item => item.value)
+
         this.selectedQualification = [...this.form.qualification_id,]
-        this.form.qualification_id = this.form.qualification_id.length
-          ? this.form.qualification_id.map(item => item.value)
-          : []
+
+        this.form.qualification_id = this.form.qualification_id.map(item => item.value)
+
         this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
-        this.form.spoken_language_id = this.form.spoken_language_id.length
-          ? this.form.spoken_language_id.map(item => item.value)
-          : []
+
+        this.form.spoken_language_id = this.form.spoken_language_id.map(item => item.value)
+
         this.form.profession_id = this.form.profession_id.toString()
-        this.form.ir35
-          = this.professionCategoryId === 1 ? this.form.ir35 : false
+
+        this.form.ir35 = this.professionCategoryId === 1 ? this.form.ir35 : false
 
         this.$axios
           .put(`/api/v1/locum/me/profile`, this.form)
