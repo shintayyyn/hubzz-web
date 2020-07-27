@@ -117,346 +117,346 @@
 </template>
 
 <script>
-  import ReportTable from '@/components/Reports/ReportTable'
-  import ReportPagination from '@/components/Reports/ReportPagination'
-  import AppButton from '@/components/Base/AppButton'
-  import AppInput from '@/components/Base/AppInput'
-  export default {
-    components: {
-      ReportTable,
-      ReportPagination,
-      AppButton,
-      AppInput,
+import ReportTable from '@/components/Reports/ReportTable'
+import ReportPagination from '@/components/Reports/ReportPagination'
+import AppButton from '@/components/Base/AppButton'
+import AppInput from '@/components/Base/AppInput'
+export default {
+  components: {
+    ReportTable,
+    ReportPagination,
+    AppButton,
+    AppInput,
+  },
+
+  data () {
+    return {
+      loading: false,
+      count: 0,
+      downloading: false,
+      locumNameIncludes: '',
+      practiceNameIncludes: '',
+      professionNameIncludes:'',
+      practiceLocums: [],
+      orderBy: [],
+      orderBys: [
+        {
+          title: 'Practice Name (Ascending)',
+          column: 'practice_name',
+          direction: 'asc',
+        },
+        {
+          title: 'Practice Name (Descending)',
+          column: 'practice_name',
+          direction: 'desc',
+        },
+      ],
+      limit: 10,
+      limits: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10,
+        15,
+        20,
+        25,
+      ],
+      activePage: 1,
+    }
+  },
+
+  computed: {
+    offset () {
+      return this.activePage * this.limit - this.limit
     },
 
-    data () {
-      return {
-        loading: false,
-        count: 0,
-        downloading: false,
-        locumNameIncludes: '',
-        practiceNameIncludes: '',
-        professionNameIncludes:'',
-        practiceLocums: [],
-        orderBy: [],
-        orderBys: [
-          {
-            title: 'Practice Name (Ascending)',
-            column: 'practice_name',
-            direction: 'asc',
-          },
-          {
-            title: 'Practice Name (Descending)',
-            column: 'practice_name',
-            direction: 'desc',
-          },
-        ],
-        limit: 10,
-        limits: [
-          1,
-          2,
-          3,
-          4,
-          5,
-          10,
-          15,
-          20,
-          25,
-        ],
-        activePage: 1,
-      }
+    columnDetails () {
+      return [
+        {
+          title: '#',
+          key: 'index',
+          sort_key: null,
+          column: (item, index) => this.offset + index + 1,
+          justify: 'end',
+          flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Practice',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Locum',
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Profession',
+          key: 'profession_name',
+          sort_key: 'profession_name',
+          column: (item) => item.profession_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Area',
+          key: 'user_postcode',
+          sort_key: 'user_postcode',
+          column: (item) => item.user_postcode,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Min Rate per Hour',
+          key: 'min_rate_per_hour',
+          sort_key: 'min_rate_per_hour',
+          column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
+          justify: 'end',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Max Rate per Hour',
+          key: 'max_rate_per_hour',
+          sort_key: 'max_rate_per_hour',
+          column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Min Rate per Half Day Session',
+          key: 'min_rate_per_half_day_session',
+          sort_key: 'min_rate_per_half_day_session',
+          column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
+          justify: 'end',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Max Rate per Half Day Session',
+          key: 'max_rate_per_half_day_session',
+          sort_key: 'max_rate_per_half_day_session',
+          column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Min Rate per Whole Day Session',
+          key: 'min_rate_per_whole_day_session',
+          sort_key: 'min_rate_per_whole_day_session',
+          column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
+          justify: 'end',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Max Rate per Whole Day Session',
+          key: 'max_rate_per_whole_day_session',
+          sort_key: 'max_rate_per_whole_day_session',
+          column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Marked as Bank',
+          key: 'locum_is_favorite_of_practice',
+          sort_key: 'locum_is_favorite_of_practice',
+          column: (item) => item.locum_is_favorite_of_practice ? 'Yes' : 'No',
+          justify: 'center',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+      ]
     },
 
-    computed: {
-      offset () {
-        return this.activePage * this.limit - this.limit
-      },
-
-      columnDetails () {
-        return [
-          {
-            title: '#',
-            key: 'index',
-            sort_key: null,
-            column: (item, index) => this.offset + index + 1,
-            justify: 'end',
-            flexGrow: 0,
-            flexShrink: 0,
-          },
-          {
-            title: 'Practice',
-            key: 'practice_name',
-            sort_key: 'practice_name',
-            column: (item) => item.practice_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Locum',
-            key: 'locum_user_name',
-            sort_key: 'locum_user_name',
-            column: (item) => item.locum_user_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Profession',
-            key: 'profession_name',
-            sort_key: 'profession_name',
-            column: (item) => item.profession_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Area',
-            key: 'user_postcode',
-            sort_key: 'user_postcode',
-            column: (item) => item.user_postcode,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Min Rate per Hour',
-            key: 'min_rate_per_hour',
-            sort_key: 'min_rate_per_hour',
-            column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
-            justify: 'end',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Max Rate per Hour',
-            key: 'max_rate_per_hour',
-            sort_key: 'max_rate_per_hour',
-            column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Min Rate per Half Day Session',
-            key: 'min_rate_per_half_day_session',
-            sort_key: 'min_rate_per_half_day_session',
-            column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
-            justify: 'end',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Max Rate per Half Day Session',
-            key: 'max_rate_per_half_day_session',
-            sort_key: 'max_rate_per_half_day_session',
-            column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Min Rate per Whole Day Session',
-            key: 'min_rate_per_whole_day_session',
-            sort_key: 'min_rate_per_whole_day_session',
-            column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
-            justify: 'end',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Max Rate per Whole Day Session',
-            key: 'max_rate_per_whole_day_session',
-            sort_key: 'max_rate_per_whole_day_session',
-            column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Marked as Bank',
-            key: 'locum_is_favorite_of_practice',
-            sort_key: 'locum_is_favorite_of_practice',
-            column: (item) => item.locum_is_favorite_of_practice ? 'Yes' : 'No',
-            justify: 'center',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-        ]
-      },
-
-      pages () {
-        return Math.max(Math.ceil(this.count / this.limit), 1)
-      },
+    pages () {
+      return Math.max(Math.ceil(this.count / this.limit), 1)
     },
+  },
 
-    watch: {
-      orderBy () {
-        this.getPracticeLocums()
-      },
-
-      limit () {
-        this.page = 1
-        this.getPracticeLocums()
-      },
-
-      activePage () {
-        this.getPracticeLocums()
-      },
-    },
-
-    mounted () {      
-      // const {
-      //   order_by: orderBy = [],
-      //   page,
-      // } = this.$route.query
-
-      // this.orderBy = orderBy
-      // this.activePage = page ? Number.parseInt(page) : 1
-      const {
-        locum_name_includes: locumNameIncludes,
-        profession_name_includes: professionNameIncludes,
-      } = this.$route.query
-
-      this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-      this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+  watch: {
+    orderBy () {
       this.getPracticeLocums()
     },
 
-    methods: {
-      filterReset () {
-        this.locumNameIncludes = ''
-        this.practiceNameIncludes = ''
-        this.professionNameIncludes = ''
+    limit () {
+      this.page = 1
+      this.getPracticeLocums()
+    },
 
-        this.filterSearch()
-      },
+    activePage () {
+      this.getPracticeLocums()
+    },
+  },
 
-      filterSearch () {
-        this.activePage = 1
+  mounted () {      
+    // const {
+    //   order_by: orderBy = [],
+    //   page,
+    // } = this.$route.query
 
-        const query = {
-          ...this.$route.query,
-          locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          page: undefined,
-        }
+    // this.orderBy = orderBy
+    // this.activePage = page ? Number.parseInt(page) : 1
+    const {
+      locum_name_includes: locumNameIncludes,
+      profession_name_includes: professionNameIncludes,
+    } = this.$route.query
 
-        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-          this.$router.replace({ query })
-        }
-        
-        this.getPracticeLocums()
-      },
+    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+    this.getPracticeLocums()
+  },
 
-      setPage (page) {
-        this.activePage = page
+  methods: {
+    filterReset () {
+      this.locumNameIncludes = ''
+      this.practiceNameIncludes = ''
+      this.professionNameIncludes = ''
 
-        if (this.activePage === 1) {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: undefined,
-            }
-          })
-        } else {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: this.activePage,
-            }
-          })
-        }
+      this.filterSearch()
+    },
 
-        this.getPracticeLocums()
-      },
+    filterSearch () {
+      this.activePage = 1
 
-      setOrderBy (orderBy) {
-        this.orderBy = orderBy
-        this.activePage = 1
+      const query = {
+        ...this.$route.query,
+        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        page: undefined,
+      }
 
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query })
+      }
+      
+      this.getPracticeLocums()
+    },
+
+    setPage (page) {
+      this.activePage = page
+
+      if (this.activePage === 1) {
         this.$router.replace({
           query: {
             ...this.$route.query,
-            order_by: this.orderBy,
             page: undefined,
           }
         })
-
-        this.getPracticeLocums()
-      },
-
-      getPracticeLocums () {
-        this.loading = true
-        this.practiceLocums = []
-
-        const params = {
-          practice_id: this.$auth.user.practice_detail.practice.id,
-          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-          profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        }
-        Promise.all([
-          this.$axios.get('/api/v1/admin/reports/practice-locums/count',{
-            params
-          }).then((responses) => {
-            return responses.data.data.count
-          }),
-          this.$axios.get('/api/v1/admin/reports/practice-locums', {
-            params: {
-              ...params,
-              order_by: this.orderBy,
-              limit: this.limit,
-              offset: this.offset,
-            },
-          }).then((responses) => {
-            return responses.data.data.practice_locums
-          }),
-          new Promise((resolve) => setTimeout(resolve, 500))
-        ]).then((results) => {
-          const [
-            count,
-            practiceLocums,
-          ] = results
-
-          this.count = count
-          this.practiceLocums = practiceLocums
-        }).catch((err) => {
-          console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.loading = false
+      } else {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            page: this.activePage,
+          }
         })
-      },
+      }
 
-      downloadCsv () {
-        this.downloading = true
-        const params = {
-          locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          order_by: this.orderBy,
-          limit: 999,
-          offset: 0,
-        }
-
-        this.$axios.post('/api/v1/admin/reports/practice-locums/generate-key', {
-          filename: `practice-locums.csv`,
-        }, {
-          params: {
-            ...params,
-          },
-        }).then((responses) => {
-          const token = responses.data.data.token
-
-          window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-locums/csv?token=${token}`)
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.downloading = false
-        })
-      },
+      this.getPracticeLocums()
     },
 
-  }
+    setOrderBy (orderBy) {
+      this.orderBy = orderBy
+      this.activePage = 1
+
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          order_by: this.orderBy,
+          page: undefined,
+        }
+      })
+
+      this.getPracticeLocums()
+    },
+
+    getPracticeLocums () {
+      this.loading = true
+      this.practiceLocums = []
+
+      const params = {
+        practice_id: this.$auth.user.practice_detail.practice.id,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+      }
+      Promise.all([
+        this.$axios.get('/api/v1/admin/reports/practice-locums/count',{
+          params
+        }).then((responses) => {
+          return responses.data.data.count
+        }),
+        this.$axios.get('/api/v1/admin/reports/practice-locums', {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+            limit: this.limit,
+            offset: this.offset,
+          },
+        }).then((responses) => {
+          return responses.data.data.practice_locums
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500))
+      ]).then((results) => {
+        const [
+          count,
+          practiceLocums,
+        ] = results
+
+        this.count = count
+        this.practiceLocums = practiceLocums
+      }).catch((err) => {
+        console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    downloadCsv () {
+      this.downloading = true
+      const params = {
+        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        order_by: this.orderBy,
+        limit: 999,
+        offset: 0,
+      }
+
+      this.$axios.post('/api/v1/admin/reports/practice-locums/generate-key', {
+        filename: `practice-locums.csv`,
+      }, {
+        params: {
+          ...params,
+        },
+      }).then((responses) => {
+        const token = responses.data.data.token
+
+        window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-locums/csv?token=${token}`)
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.downloading = false
+      })
+    },
+  },
+
+}
 </script>

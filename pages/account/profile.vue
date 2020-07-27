@@ -1336,6 +1336,7 @@ export default {
 
       let notRequired = [
         "sub_profession_ids",
+        "reference_locum_compliance_documents",
         "other_mandatory_training_id",
         "nhs_smart_card_id_number",
         "headline",
