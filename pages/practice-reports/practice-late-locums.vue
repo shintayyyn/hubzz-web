@@ -86,14 +86,24 @@
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       />
-
-      <ReportPagination
-        :count="count" 
-        :pages="pages" 
-        :page="activePage"
-        @page="setPage" 
-      />
-
+      <div class="w-full flex flex-wrap justfify-between items-center">
+        <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
+          <div class="text-gray-500 w-full md:w-auto text-center md:text-left">
+            <div class="whitespace-no-wrap">
+              {{ itemCountInfo }}
+            </div>
+            <div class="whitespace-no-wrap">
+              Page: {{ activePage }} / {{ pages }}
+            </div>
+          </div>
+        </div>
+        <ReportPagination
+          :count="count" 
+          :pages="pages" 
+          :page="activePage"
+          @page="setPage" 
+        />
+      </div>
       <div
         class="flex-wrap justify-start items-center w-full p-3 flex my-2"
       >
@@ -121,270 +131,276 @@
 </template>
 
 <script>
-  import ReportTable from '@/components/Reports/ReportTable'
-  import ReportPagination from '@/components/Reports/ReportPagination'
-  import AppButton from '@/components/Base/AppButton'
-  import AppInput from '@/components/Base/AppInput'
-  export default {
-    components: {
-      ReportTable,
-      ReportPagination,
-      AppButton,
-      AppInput,
+import ReportTable from '@/components/Reports/ReportTable'
+import ReportPagination from '@/components/Reports/ReportPagination'
+import AppButton from '@/components/Base/AppButton'
+import AppInput from '@/components/Base/AppInput'
+export default {
+  components: {
+    ReportTable,
+    ReportPagination,
+    AppButton,
+    AppInput,
+  },
+
+  data () {
+    return {
+      loading: false,
+      downloading: false,
+      count: 0,
+      practiceLateLocums: [],
+      orderBy: [],
+      orderBys: [
+        {
+          title: 'Practice Name (Ascending)',
+          column: 'practice_name',
+          direction: 'asc',
+        },
+        {
+          title: 'Practice Name (Descending)',
+          column: 'practice_name',
+          direction: 'desc',
+        },
+      ],
+      limit: 10,
+      limits: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10,
+        15,
+        20,
+        25,
+      ],
+      activePage: 1,
+      locumNameIncludes:'',
+      professionNameIncludes:'',
+    }
+  },
+
+  computed: {
+    itemCountInfo () {
+      const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceLateLocums.length), this.count)
+      
+      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
+    },
+    offset () {
+      return this.activePage * this.limit - this.limit
     },
 
-    data () {
-      return {
-        loading: false,
-        downloading: false,
-        count: 0,
-        practiceLateLocums: [],
-        orderBy: [],
-        orderBys: [
-          {
-            title: 'Practice Name (Ascending)',
-            column: 'practice_name',
-            direction: 'asc',
-          },
-          {
-            title: 'Practice Name (Descending)',
-            column: 'practice_name',
-            direction: 'desc',
-          },
-        ],
-        limit: 10,
-        limits: [
-          1,
-          2,
-          3,
-          4,
-          5,
-          10,
-          15,
-          20,
-          25,
-        ],
-        activePage: 1,
-        locumNameIncludes:'',
-        professionNameIncludes:'',
+    columnDetails () {
+      return [
+        {
+          title: '#',
+          key: 'index',
+          sort_key: null,
+          column: (item, index) => this.offset + index + 1,
+          justify: 'end',
+          flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Practice',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Locum',
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Note',
+          key: 'late_hours_reason',
+          sort_key: 'late_hours_reason',
+          column: (item) => item.late_hours_reason,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+      ]
+    },
+
+    pages () {
+      return Math.max(Math.ceil(this.count / this.limit), 1)
+    },
+  },
+
+  watch: {
+    orderBy () {
+      this.getPracticeLateLocums()
+    },
+
+    limit () {
+      this.page = 1
+      this.getPracticeLateLocums()
+    },
+
+    activePage () {
+      this.getPracticeLateLocums()
+    },
+  },
+
+  mounted () {      
+    // const {
+    //   order_by: orderBy = [],
+    //   page,
+    // } = this.$route.query
+
+    // this.orderBy = orderBy
+    // this.activePage = page ? Number.parseInt(page) : 1
+
+    const {
+      locum_name_includes: locumNameIncludes,
+      profession_name_includes: professionNameIncludes,
+    } = this.$route.query
+
+    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+
+    this.getPracticeLateLocums()
+  },
+
+  methods: {
+    filterReset () {
+      this.locumNameIncludes = ''
+      this.professionNameIncludes = ''
+
+      this.filterSearch()
+    },
+
+    filterSearch () {
+      this.activePage = 1
+
+      const query = {
+        ...this.$route.query,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        page: undefined,
       }
+
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query })
+      }
+      
+      this.getPracticeLateLocums()
     },
 
-    computed: {
-      offset () {
-        return this.activePage * this.limit - this.limit
-      },
+    setPage (page) {
+      this.activePage = page
 
-      columnDetails () {
-        return [
-          {
-            title: '#',
-            key: 'index',
-            sort_key: null,
-            column: (item, index) => this.offset + index + 1,
-            justify: 'end',
-            flexGrow: 0,
-            flexShrink: 0,
-          },
-          {
-            title: 'Practice',
-            key: 'practice_name',
-            sort_key: 'practice_name',
-            column: (item) => item.practice_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Locum',
-            key: 'locum_user_name',
-            sort_key: 'locum_user_name',
-            column: (item) => item.locum_user_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Note',
-            key: 'late_hours_reason',
-            sort_key: 'late_hours_reason',
-            column: (item) => item.late_hours_reason,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-        ]
-      },
-
-      pages () {
-        return Math.max(Math.ceil(this.count / this.limit), 1)
-      },
-    },
-
-    watch: {
-      orderBy () {
-        this.getPracticeLateLocums()
-      },
-
-      limit () {
-        this.page = 1
-        this.getPracticeLateLocums()
-      },
-
-      activePage () {
-        this.getPracticeLateLocums()
-      },
-    },
-
-    mounted () {      
-      // const {
-      //   order_by: orderBy = [],
-      //   page,
-      // } = this.$route.query
-
-      // this.orderBy = orderBy
-      // this.activePage = page ? Number.parseInt(page) : 1
-
-      const {
-        locum_name_includes: locumNameIncludes,
-        profession_name_includes: professionNameIncludes,
-      } = this.$route.query
-
-      this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-      this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+      if (this.activePage === 1) {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            page: undefined,
+          }
+        })
+      } else {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            page: this.activePage,
+          }
+        })
+      }
 
       this.getPracticeLateLocums()
     },
 
-    methods: {
-      filterReset () {
-        this.locumNameIncludes = ''
-        this.professionNameIncludes = ''
+    setOrderBy (orderBy) {
+      this.orderBy = orderBy
+      this.activePage = 1
 
-        this.filterSearch()
-      },
-
-      filterSearch () {
-        this.activePage = 1
-
-        const query = {
+      this.$router.replace({
+        query: {
           ...this.$route.query,
-          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+          order_by: this.orderBy,
           page: undefined,
         }
+      })
 
-        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-          this.$router.replace({ query })
-        }
-        
-        this.getPracticeLateLocums()
-      },
-
-      setPage (page) {
-        this.activePage = page
-
-        if (this.activePage === 1) {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: undefined,
-            }
-          })
-        } else {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: this.activePage,
-            }
-          })
-        }
-
-        this.getPracticeLateLocums()
-      },
-
-      setOrderBy (orderBy) {
-        this.orderBy = orderBy
-        this.activePage = 1
-
-        this.$router.replace({
-          query: {
-            ...this.$route.query,
-            order_by: this.orderBy,
-            page: undefined,
-          }
-        })
-
-        this.getPracticeLateLocums()
-      },
-
-      getPracticeLateLocums () {
-        this.loading = true
-        this.practiceLateLocums = []
-        let params = {
-          practice_id: this.$auth.user.practice_detail.practice.id,
-          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        }
-        Promise.all([
-          this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {
-            params
-          }).then((responses) => {
-            return responses.data.data.count
-          }),
-          this.$axios.get('/api/v1/admin/reports/practice-late-locums', {
-            params: {
-              ...params,
-              order_by: this.orderBy,
-              limit: this.limit,
-              offset: this.offset,
-            },
-          }).then((responses) => {
-            return responses.data.data.practice_late_locums
-          }),
-          new Promise((resolve) => setTimeout(resolve, 500))
-        ]).then((results) => {
-          const [
-            count,
-            practiceLateLocums,
-          ] = results
-
-          this.count = count
-          this.practiceLateLocums = practiceLateLocums
-        }).catch((err) => {
-          console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.loading = false
-        })
-      },
-
-      downloadPDF () {
-        let params = {
-          practice_id: this.$auth.user.practice_detail.practice.id,
-          locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          order_by: this.orderBy,
-        }
-
-        this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
-          filename: `practiceLateLocumsReport.pdf`,
-        }, {
-            params: {
-              ...params,
-            },
-        }).then((responses) => {
-          const token = responses.data.data.token
-
-          window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-late-locums-report/pdf?token=${token}`)
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.downloading = false
-        })
-      },
+      this.getPracticeLateLocums()
     },
 
-  }
+    getPracticeLateLocums () {
+      this.loading = true
+      this.practiceLateLocums = []
+      let params = {
+        practice_id: this.$auth.user.practice_detail.practice.id,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+      }
+      Promise.all([
+        this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {
+          params
+        }).then((responses) => {
+          return responses.data.data.count
+        }),
+        this.$axios.get('/api/v1/admin/reports/practice-late-locums', {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+            limit: this.limit,
+            offset: this.offset,
+          },
+        }).then((responses) => {
+          return responses.data.data.practice_late_locums
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500))
+      ]).then((results) => {
+        const [
+          count,
+          practiceLateLocums,
+        ] = results
+
+        this.count = count
+        this.practiceLateLocums = practiceLateLocums
+      }).catch((err) => {
+        console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    downloadPDF () {
+      let params = {
+        practice_id: this.$auth.user.practice_detail.practice.id,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        order_by: this.orderBy,
+      }
+
+      this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
+        filename: `practiceLateLocumsReport.pdf`,
+      }, {
+          params: {
+            ...params,
+          },
+      }).then((responses) => {
+        const token = responses.data.data.token
+
+        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-late-locums-report/pdf?token=${token}`)
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.downloading = false
+      })
+    },
+  },
+
+}
 </script>
