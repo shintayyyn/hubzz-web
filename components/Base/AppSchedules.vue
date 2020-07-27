@@ -728,7 +728,7 @@
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Total Hours:
                 </p>
                 <p class="w-1/3">
-                  {{ 0 >= getTotalHours(filteredSchedule) ? '-' : '' }}{{ getTotalHours(filteredSchedule) | hoursMinutes }}
+                  {{ getTotalHours(filteredSchedule) > 0 ? '' : '-' }}{{ getTotalHours(filteredSchedule) | hoursMinutes }}
                 </p>
               </div>
               <div class="flex justify-between">
