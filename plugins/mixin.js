@@ -4,7 +4,7 @@ import isEmail from 'validator/lib/isEmail'
 
 Vue.mixin({
   methods: {
-    async CheckIfUserIsDeactivated() {
+    async CheckIfUserIsDeactivated () {
       if (this.$auth.loggedIn) {
         await this.$auth.fetchUser()
         if (this.$auth.user.status === 'Deactivated') {
@@ -12,38 +12,38 @@ Vue.mixin({
         }
       }
     },
-    async CheckUserVerification() {
+    async CheckUserVerification () {
       if (this.$auth.user.domain === 'Locum') {
         let oldStatus = this.$auth.user.status
         const response = await this.$axios.$get(`/api/v1/me`)
         let newStatus = response.data.user.status
         if (newStatus !== oldStatus) {
-          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' ? 'verified' : 'not verified' })
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' ? 'verified' : 'not verified', })
         }
       } else if (this.$auth.user.domain === 'Practice') {
         let oldPracticeUserStatus = this.$auth.user.status
         let oldPracticeUserVerified = oldPracticeUserStatus === 'Disabled' ? 'false' : 'true'
         let oldPracticeStatus = this.$auth.user.practice_detail.practice.status
-        let oldPracticeVerified = ['Inactive', 'Suspended', 'Deactivated'].includes(oldPracticeStatus) ? 'false' : 'true'
-        let oldVerified = [oldPracticeUserStatus, oldPracticeUserVerified, oldPracticeStatus, oldPracticeVerified].includes('false') ? 'false' : 'true'
+        let oldPracticeVerified = ['Inactive', 'Suspended', 'Deactivated',].includes(oldPracticeStatus) ? 'false' : 'true'
+        let oldVerified = [oldPracticeUserStatus, oldPracticeUserVerified, oldPracticeStatus, oldPracticeVerified,].includes('false') ? 'false' : 'true'
 
         const response = await this.$axios.$get(`/api/v1/me`)
 
         let newPracticeUserStatus = response.data.user.status
         let newPracticeUserVerified = newPracticeUserStatus === 'Disabled' ? 'false' : 'true'
         let newPracticeStatus = response.data.user.practice_detail.practice.status
-        let newPracticeVerified = ['Inactive', 'Suspended', 'Deactivated'].includes(newPracticeStatus) ? 'false' : 'true'
-        let newVerified = [newPracticeUserStatus, newPracticeUserVerified, newPracticeStatus, newPracticeVerified].includes('false') ? 'false' : 'true'
+        let newPracticeVerified = ['Inactive', 'Suspended', 'Deactivated',].includes(newPracticeStatus) ? 'false' : 'true'
+        let newVerified = [newPracticeUserStatus, newPracticeUserVerified, newPracticeStatus, newPracticeVerified,].includes('false') ? 'false' : 'true'
 
         if (oldVerified !== newVerified) {
-          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newVerified === 'true' ? 'verified' : 'not verified' })
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newVerified === 'true' ? 'verified' : 'not verified', })
         }
       }
     },
-    scrollToTop() {
+    scrollToTop () {
       window.scrollTo(0, 0)
     },
-    getDateArray(start, end) {
+    getDateArray (start, end) {
       let arr = new Array()
       let dt = new Date(start)
       while (dt <= new Date(end)) {
@@ -52,16 +52,21 @@ Vue.mixin({
       }
       return arr
     },
-    CheckEmptyField(inputField, fieldName, preferredDisplayName) {
+
+    CheckEmptyField (inputField, fieldName, preferredDisplayName) {
       let trimmedFieldName = fieldName
+
       let displayFieldName = null
+
       if (!preferredDisplayName) {
         if (fieldName.includes('_id')) {
           trimmedFieldName = fieldName.replace(/_id/g, "")
         }
+
         if (fieldName.includes('_or_')) {
           trimmedFieldName = fieldName.replace(/_or_/g, "/")
         }
+
         displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
       }
 
@@ -78,21 +83,24 @@ Vue.mixin({
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
-          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
+          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `,
         })
       }
+
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({
           field: fieldName,
-          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
+          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `,
         })
       }
+
       if (typeof inputField === "boolean" && inputField === false) {
         this.formError.push({
           field: fieldName,
-          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
+          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `,
         })
       }
+
       if (inputField) {
         // if (fieldName === 'email') {
         //   let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -105,9 +113,9 @@ Vue.mixin({
         // }
       }
     },
-    Validate(form, lists, preferredDisplayName) {
+    Validate (form, lists, preferredDisplayName) {
       let items = Object.entries(form)
-      for (const [key, value] of items) {
+      for (const [key, value,] of items) {
         let trimmedFieldName = key
         let displayFieldName = null
 
@@ -131,13 +139,13 @@ Vue.mixin({
             if (!lists) {
               this.formError.push({
                 field: key,
-                message: `${displayFieldName} is required`
+                message: `${displayFieldName} is required`,
               })
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
-                message: `${displayFieldName} is required`
+                message: `${displayFieldName} is required`,
               })
             }
           }
@@ -146,13 +154,13 @@ Vue.mixin({
             if (!lists) {
               this.formError.push({
                 field: key,
-                message: `${displayFieldName} is required`
+                message: `${displayFieldName} is required`,
               })
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
-                message: `${displayFieldName} is required`
+                message: `${displayFieldName} is required`,
               })
             }
           }
@@ -165,80 +173,80 @@ Vue.mixin({
             if (!isEmail(value)) {
               this.formError.push({
                 field: trimmedFieldName,
-                message: "This is not a valid email"
+                message: "This is not a valid email",
               })
             }
           }
         }
       }
     },
-    CheckPermissions(permissions) {
+    CheckPermissions (permissions) {
       let hasPermission = true
       switch (this.$route.name) {
-        case "profile-practice":
-          if (!permissions.includes("View Profile Practice")) {
-            hasPermission = false
-          }
-          break
-        case "profile-branches-surgeries":
-          if (!permissions.includes("View Surgery Management")) {
-            hasPermission = false
-          }
-          break
-        case "profile-branches-surgeries-id":
-          if (!permissions.includes("View Surgery Management")) {
-            hasPermission = false
-          }
-          break
-        case "profile-branches-surgeries-create":
-          if (!permissions.includes("View Surgery Management")) {
-            hasPermission = false
-          }
-          break
-        case "profile-users":
-          if (!permissions.includes("View Profile Users")) {
-            hasPermission = false
-          }
-          break
-        case "profile-users-id":
-          if (!permissions.includes("Show Profile Users")) {
-            hasPermission = false
-          }
-          break
-        case "profile-users-create":
-          if (!permissions.includes("Create Profile Users")) {
-            hasPermission = false
-          }
-          break
-        case "profile-practice-documents":
-          if (!permissions.includes("View Profile Practice Document")) {
-            hasPermission = false
-          }
-          break
-        case "profile-practice-documents-id":
-          if (!permissions.includes("Show Profile Practice Document")) {
-            hasPermission = false
-          }
-          break
-        case "sessions-index":
-          if (!permissions.includes("View Sessions Job")) {
-            hasPermission = false
-          }
-          break
-        case "sessions-index-id":
-          if (!permissions.includes("Show Sessions Job")) {
-            hasPermission = false
-          }
-          break
+      case "profile-practice":
+        if (!permissions.includes("View Profile Practice")) {
+          hasPermission = false
+        }
+        break
+      case "profile-branches-surgeries":
+        if (!permissions.includes("View Surgery Management")) {
+          hasPermission = false
+        }
+        break
+      case "profile-branches-surgeries-id":
+        if (!permissions.includes("View Surgery Management")) {
+          hasPermission = false
+        }
+        break
+      case "profile-branches-surgeries-create":
+        if (!permissions.includes("View Surgery Management")) {
+          hasPermission = false
+        }
+        break
+      case "profile-users":
+        if (!permissions.includes("View Profile Users")) {
+          hasPermission = false
+        }
+        break
+      case "profile-users-id":
+        if (!permissions.includes("Show Profile Users")) {
+          hasPermission = false
+        }
+        break
+      case "profile-users-create":
+        if (!permissions.includes("Create Profile Users")) {
+          hasPermission = false
+        }
+        break
+      case "profile-practice-documents":
+        if (!permissions.includes("View Profile Practice Document")) {
+          hasPermission = false
+        }
+        break
+      case "profile-practice-documents-id":
+        if (!permissions.includes("Show Profile Practice Document")) {
+          hasPermission = false
+        }
+        break
+      case "sessions-index":
+        if (!permissions.includes("View Sessions Job")) {
+          hasPermission = false
+        }
+        break
+      case "sessions-index-id":
+        if (!permissions.includes("Show Sessions Job")) {
+          hasPermission = false
+        }
+        break
       }
       return {
-        hasPermission
+        hasPermission,
       }
     },
-    changeDateFormat(form, dates, oldFormat, newFormat) {
-      let submitForm = { ...form }
+    changeDateFormat (form, dates, oldFormat, newFormat) {
+      let submitForm = { ...form, }
       let items = Object.entries(form)
-      for (const [key, value] of items) {
+      for (const [key, value,] of items) {
         if (dates.includes(key)) {
           let newValueFormat = this.$moment(value, oldFormat).format(newFormat)
           submitForm[key] = newValueFormat
@@ -247,14 +255,14 @@ Vue.mixin({
       return submitForm
     },
 
-    isNumber(e) {
+    isNumber (e) {
       let acceptedKeys = [
         "Backspace",
         "Tab",
         "ArrowUp",
         "ArrowDown",
         "ArrowLeft",
-        "ArrowRight"
+        "ArrowRight",
       ]
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
@@ -281,9 +289,9 @@ Vue.mixin({
           const decimal = value.split('.')[1]
 
           if (
-            decimal.length === 2 &&
-            selectionStart === selectionEnd &&
-            selectionStart > value.length - 3
+            decimal.length === 2
+            && selectionStart === selectionEnd
+            && selectionStart > value.length - 3
           ) {
             e.preventDefault()
           }
@@ -301,7 +309,7 @@ Vue.mixin({
       }
     },
 
-    inputNumberOnly(e) {
+    inputNumberOnly (e) {
       // numbers only [0-9]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
@@ -311,11 +319,11 @@ Vue.mixin({
         return true
       }
     },
-    alphaNumeric(e) {
+    alphaNumeric (e) {
       // numbers only [0-9, A-Z, a-z]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
-      let specialKeys = [8, 9, 46, 36, 35, 37, 38, 39, 40]
+      let specialKeys = [8, 9, 46, 36, 35, 37, 38, 39, 40,]
       if (e.shiftKey) {
         if ((charCode => 48 || charCode <= 57) && (charCode < 65 || charCode > 122)) {
           e.preventDefault()
@@ -331,7 +339,7 @@ Vue.mixin({
       }
 
     },
-    inputTelephone(e) {
+    inputTelephone (e) {
       // [0-9,+,-,#]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
@@ -349,7 +357,7 @@ Vue.mixin({
       }
     },
 
-    limitInput(e, value, limit) {
+    limitInput (e, value, limit) {
       if (value.length >= limit) {
         // e.quill.emitter._events.preventDefault()
         // e.preventDefault();
@@ -358,7 +366,7 @@ Vue.mixin({
       }
     },
 
-    datesToJobParts(dates) {
+    datesToJobParts (dates) {
       const datesDays = dates
         .reduce((datesDays, date) => {
           datesDays[date] = this.$moment(date, 'YYYY-MM-DD').format('dddd')
@@ -419,5 +427,5 @@ Vue.mixin({
 
       return jobParts
     },
-  }
+  },
 })

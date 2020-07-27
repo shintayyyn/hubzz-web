@@ -141,10 +141,8 @@
               <p class="text-sm w-1/2">TOTAL DEDUCTIONS:</p>
               <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
             </div>
-            <div
-              class="flex flex-wrap justify-between"
-              v-if="form.generate_form || (propInvoice && propInvoice.generate_form)"
-            >
+            <!-- v-if="form.generate_form || (propInvoice && propInvoice.generate_form)" -->
+            <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">Form Type:</p>
               <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Solo Form' : 'Form A' }}</p>
             </div>
@@ -184,7 +182,7 @@
             </template>
             <div
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
-              v-if="form.generate_form || (propInvoice && propInvoice.generate_form)"
+              v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
             >
               <p class="text-sm w-1/2">PENSION AMOUNT:</p>
               <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
@@ -241,13 +239,17 @@
       </div>
     </template>
     <div>
-      <div class="flex flex-wrap items-center mx-2" v-if="propJobPart && !propInvoice && claimNhs">
+      <div
+        class="flex flex-wrap items-center mx-2"
+        v-if="propJobPart && !propInvoice && claimNhs && !isOOH"
+      >
         <AppInput
           v-model="form.generate_form"
           :type="'single-checkbox'"
           :name="'generate_form'"
-          :label="`Generate ${isOOH ? 'solo form' : 'form A'}?`"
+          :label="'Generate form A?'"
         />
+        <!-- :label="`Generate ${isOOH ? 'solo form' : 'form A'}?`" -->
         <!-- :disabled="!Boolean(propJobPart) && Boolean(propInvoice)" -->
       </div>
       <!-- save buttons -->
@@ -381,7 +383,13 @@ export default {
     },
 
     pension_amount() {
-      if (this.propInvoice && this.propInvoice.generate_form) {
+      // propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))
+      // this.propInvoice && this.propInvoice.generate_form
+      if (
+        this.propInvoice &&
+        ((!this.propInvoice.ooh && this.propInvoice.generate_form) ||
+          this.propInvoice.ooh)
+      ) {
         if (["Approved", "Paid"].includes(this.propInvoice.status)) {
           if (this.propInvoice.locum_form_a_id) {
             return this.propInvoice.locum_form_a_pension_amount;
