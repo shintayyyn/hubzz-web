@@ -973,6 +973,10 @@ export default {
         this.form.view_permanent_jobs_full_time = true
         this.form.view_permanent_jobs_part_time = true
       }
+      if(value === true && this.user && this.user.view_permanent_jobs === true) {
+        this.form.view_permanent_jobs_full_time = this.user.view_permanent_jobs_full_time
+        this.form.view_permanent_jobs_part_time = this.user.view_permanent_jobs_part_time
+      }
     },
 
     "form.view_permanent_jobs_full_time" (value) {
@@ -1297,6 +1301,8 @@ export default {
       }
     },
 
+
+
     updateLocumProfile () {
       this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
       this.form.sub_profession_ids
@@ -1500,9 +1506,8 @@ export default {
           })
         }
       }
-
+      
       this.Validate(this.form, notRequired)
-
       if (!this.formError.length) {
         this.loading = true
 
