@@ -144,12 +144,15 @@ export default {
     create_job_modal () {
       return this.$store.state.calendar.create_job_modal
     },
+    
     unreadMessages () {
       return this.$store.getters["chat/getUnreadMessagesTotal"]
     },
+
     authPermissions () {
       return this.$store.getters["permissions"]
     },
+
     repost_job () {
       return this.$store.state.calendar.repost_job
     },
