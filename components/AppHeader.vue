@@ -112,11 +112,9 @@
     </transition>
 
     <transition name="slide" mode="out-in">
-      <template v-if="create_job_modal">
-        <div class="modal-container shadow-lg">
-          <CreateJobModal :job="repost_job" />
-        </div>
-      </template>
+      <div v-if="create_job_modal" class="modal-container shadow-lg">
+        <CreateJobModal :job="repost_job" />
+      </div>
     </transition>
   </section>
 </template>
@@ -144,7 +142,7 @@ export default {
     create_job_modal () {
       return this.$store.state.calendar.create_job_modal
     },
-    
+
     unreadMessages () {
       return this.$store.getters["chat/getUnreadMessagesTotal"]
     },
@@ -199,69 +197,81 @@ export default {
 </script>
 
 <style scoped>
-.shield {
-  z-index: 600;
-}
-.expense-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 4px #ccc;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  scroll-behavior: smooth;
-  z-index: 601;
-}
-.modal-container {
-  z-index: 601;
-}
-@media (min-width: 1200px) {
-  .modal-container {
-    width: 90%;
+  .shield {
+    z-index: 600;
   }
+
   .expense-modal {
-    width: 80%;
-    /* height: 80%; */
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border-left: solid 4px #ccc;
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+    scroll-behavior: smooth;
+    z-index: 601;
   }
-}
-.burger {
-  display: block;
-}
-.burger div:first-child {
-  width: 30px;
-  height: 2px;
-}
-.burger div:nth-child(2) {
-  width: 20px;
-  height: 2px;
-}
-.logo {
-  width: 25px;
-}
-.header-section {
-  padding: 0 20px;
-  min-height: 50px;
-}
-@media (min-width: 1280px) {
+
+  .modal-container {
+    z-index: 601;
+  }
+
+  @media (min-width: 1200px) {
+    .modal-container {
+      width: 90%;
+    }
+    .expense-modal {
+      width: 80%;
+      /* height: 80%; */
+    }
+  }
+
   .burger {
-    display: none;
+    display: block;
   }
-}
-@media (min-width: 480px) {
+
+  .burger div:first-child {
+    width: 30px;
+    height: 2px;
+  }
+
+  .burger div:nth-child(2) {
+    width: 20px;
+    height: 2px;
+  }
+
+  .logo {
+    width: 25px;
+  }
+
   .header-section {
-    padding: 0 5%;
+    padding: 0 20px;
+    min-height: 50px;
   }
-}
-@media (min-width: 320px) {
-  .header-section {
-    padding: 0 3%;
+
+  @media (min-width: 1280px) {
+    .burger {
+      display: none;
+    }
   }
-}
-a {
-  text-decoration: none;
-  color: black;
-}
+
+  @media (min-width: 480px) {
+    .header-section {
+      padding: 0 5%;
+    }
+  }
+
+  @media (min-width: 320px) {
+    .header-section {
+      padding: 0 3%;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
 </style>

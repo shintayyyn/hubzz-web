@@ -703,30 +703,30 @@ export default {
 
   mounted () {
     if (this.$auth.loggedIn && this.$auth.user.domain === 'Locum') {
-      this.$socket.on('Locum Notification Job Allocated', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Ongoing', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Locum Invoice Updated', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Cancelled', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Amended', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Updated', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Declined', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Auto Declined', this.getJobsRealTime)
-      this.$socket.on('Locum Notification Job Unqualified', this.getJobsRealTime)
+      this.$socket.on('Locum Notification Job Allocated', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Ongoing', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Locum Invoice Updated', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Cancelled', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Amended', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Updated', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Declined', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Auto Declined', this.jobsRealTimeHandler)
+      this.$socket.on('Locum Notification Job Unqualified', this.jobsRealTimeHandler)
     }
 
     if (this.$auth.loggedIn && this.$auth.user.domain === 'Practice') {
-      this.$socket.on('Practice Notification Job Updated', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Application', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Application Cancelled', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Allocated', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Ongoing', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Locum Invoice Updated', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Cancelled', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Amended', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Declined', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Auto Declined', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Update Accept', this.getJobsRealTime)
-      this.$socket.on('Practice Notification Job Unfilled', this.getJobsRealTime)
+      this.$socket.on('Practice Notification Job Updated', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Application', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Application Cancelled', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Allocated', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Ongoing', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Locum Invoice Updated', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Cancelled', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Amended', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Declined', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Auto Declined', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Update Accept', this.jobsRealTimeHandler)
+      this.$socket.on('Practice Notification Job Unfilled', this.jobsRealTimeHandler)
     }
 
     const selectedDate = this.$store.state.calendar.selected_date
@@ -745,30 +745,30 @@ export default {
 
   destroyed () {
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-      this.$socket.removeListener('Locum Notification Job Allocated', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Ongoing', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Locum Invoice Updated', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Cancelled', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Amended', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Updated', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Declined', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Auto Declined', this.getJobsRealTime)
-      this.$socket.removeListener('Locum Notification Job Unqualified', this.getJobsRealTime)
+      this.$socket.removeListener('Locum Notification Job Allocated', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Ongoing', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Locum Invoice Updated', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Cancelled', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Amended', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Updated', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Declined', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Auto Declined', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Locum Notification Job Unqualified', this.jobsRealTimeHandler)
     }
     
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-      this.$socket.removeListener('Practice Notification Job Updated', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Application', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Application Cancelled', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Allocated', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Ongoing', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Locum Invoice Updated', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Cancelled', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Amended', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Declined', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Auto Declined', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Update Accept', this.getJobsRealTime)
-      this.$socket.removeListener('Practice Notification Job Unfilled', this.getJobsRealTime)
+      this.$socket.removeListener('Practice Notification Job Updated', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Application', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Application Cancelled', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Allocated', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Ongoing', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Locum Invoice Updated', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Cancelled', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Amended', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Declined', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Auto Declined', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Update Accept', this.jobsRealTimeHandler)
+      this.$socket.removeListener('Practice Notification Job Unfilled', this.jobsRealTimeHandler)
     }
   },
 
@@ -830,281 +830,10 @@ export default {
     },
 
     getJobs () {
-      if (this.$auth.user.domain === "Practice") {
-        this.$store.commit("calendar/TOGGLE_LOADING", true)
-        // status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
-        // status: ["Ongoing", "Completed"],
-        Promise.all([
-          this.$axios.$get("/api/v1/practice/jobs", {
-            params: {
-              status: ["Unfilled", "Withdrawn", "Applied",],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              reposted: false,
-              limit: 100000000,
-            },
-          }),
-
-          this.$axios.$get("/api/v1/practice/job-parts", {
-            params: {
-              status: ["Ongoing", "Allocated",],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              reposted: false,
-              limit: 100000000,
-            },
-          }),
-
-          // this.$axios.$get("/api/v1/practice/jobs", {
-          //   params: {
-          //     status: ["Applied",],
-          //     platform_selection_date: [
-          //       `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
-          //         .subtract(1, "days")
-          //         .format("YYYY-MM-DD")}:gte`,
-          //       `${this.lastDayOfTheWeek}:lte`,
-          //     ],
-          //     limit: 100000000,
-          //   },
-          // }),
-        ])
-          .then(
-            ([
-              responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
-              responseOngoingAndCompleted,
-              // responseReminders
-            ]) => {
-              // this.$store.commit(
-              //   "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-              //   responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-              //     job => job.status === "Allocated"
-              //   )
-              // )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Applied"
-                )
-              )
-              
-              this.$store.commit(
-                "jobs/SET_PRACTICE_UNFILLED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Unfilled"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_DECLINED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-                  job => job.status === "Withdrawn"
-                )
-              )
-              // this.$store.commit(
-              //   "jobs/SET_PRACTICE_AVAILABLE_JOBS",
-              //   responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
-              //     job => job.status === "Live"
-              //   )
-              // )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.status === "Ongoing"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_PRACTICE_ALLOCATED_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.status === "Allocated"
-                )
-              )
-              // this.$store.commit(
-              //   "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
-              //   responseOngoingAndCompleted.data.job_parts.filter(
-              //     jobPart => jobPart.status === "Completed"
-              //   )
-              // )
-              // this.$store.commit(
-              //   "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-              //   responseReminders.data.jobs.filter(job => job.status === "Live")
-              // )
-              // this.$store.commit(
-              //   "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
-              //   responseReminders.data.jobs.filter(
-              //     job => job.status === "Applied"
-              //   )
-              // )
-            }
-          )
-          .finally(() => {
-            this.$store.commit("calendar/TOGGLE_LOADING", false)
-          })
-      }
-      // LOCUM
-      if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-        this.$store.commit("calendar/TOGGLE_LOADING", true)
-        // locum_status: ["Allocated", "Applied", "Available", "Matched"],
-        // locum_status: ["Ongoing", "Completed"],
-        Promise.all([
-          this.$axios.$get("/api/v1/locum/jobs", {
-            params: {
-              locum_status: ["Applied",],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000,
-            },
-          }),
-          this.$axios.$get("/api/v1/locum/job-parts", {
-            params: {
-              locum_status: ["Ongoing", "Allocated",],
-              calendar_date_start: `${this.$moment(
-                this.firstDayOfTheWeek,
-                "YYYY-MM-DD"
-              )
-                .subtract(1, "days")
-                .format("YYYY-MM-DD")}:gte`,
-              calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-              limit: 100000000,
-            },
-          }),
-          this.$axios
-            .$get("/api/v1/locum/permanent-job-applications", {
-              params: {
-                application_status: 'For Interview',
-                calendar_date_start: `${this.$moment(
-                  this.firstDayOfTheWeek,
-                  "YYYY-MM-DD"
-                )
-                  .subtract(1, "days")
-                  .format("YYYY-MM-DD")}:gte`,
-                calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-                limit: 100000000,
-              },
-            })
-            .then(res => {
-              if (this.$auth.user.view_permanent_jobs) {
-                return res.data.permanent_job_applications
-              }else {
-                return []
-              }
-            }),
-          // this.$axios.$get("/api/v1/locum/jobs", {
-          //   params: {
-          //     type: ["Private"],
-          //     calendar_date_start: `${this.$moment(
-          //       this.firstDayOfTheWeek,
-          //       "YYYY-MM-DD"
-          //     )
-          //       .subtract(1, "days")
-          //       .format("YYYY-MM-DD")}:gte`,
-          //     calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-          //     limit: 100000000
-          //   }
-          // }),
-          // this.$axios.$get("/api/v1/locum/unavailabilities", {
-          //   params: {
-          //     date_start: `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
-          //       .subtract(1, "days")
-          //       .format("YYYY-MM-DD")}:gte`,
-          //     date_end: `${this.lastDayOfTheWeek}:lte`,
-          //     limit: 100000000
-          //   }
-          // })
-        ])
-          .then(
-            ([
-              responseAllocatedAndAppliedAndAvailable,
-              responseOngoingAndCompleted,
-              responsePermanentJobs,
-              // responsePrivate,
-              // responseUnavailabilities
-            ]) => {
-              this.$store.commit(
-                "jobs/SET_LOCUM_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-                  job => job.locum_status === "Applied"
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_PRIVATE_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(jobPart => jobPart.job.type === 'Private')
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_PERMANENT_JOBS",
-                responsePermanentJobs
-              )
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_AVAILABLE_JOBS",
-              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-              //     job => job.locum_status === "Available"
-              //   )
-              // )
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_MATCHED_JOBS",
-              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-              //     job => job.locum_status === "Matched"
-              //   )
-              // )
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_BANK_JOBS",
-              //   responseBank.data.jobs.filter(
-              //     job => job.locum_status === "Matched"
-              //   )
-              // )
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_ALLOCATED_JOBS",
-              //   responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
-              //     job => job.locum_status === "Allocated"
-              //   )
-              // )
-              this.$store.commit(
-                "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.locum_status === "Ongoing" && jobPart.job.type === 'Platform'
-                )
-              )
-              this.$store.commit(
-                "jobs/SET_LOCUM_ALLOCATED_JOB_PARTS",
-                responseOngoingAndCompleted.data.job_parts.filter(
-                  jobPart => jobPart.locum_status === "Allocated" && jobPart.job.type === 'Platform'
-                )
-              )
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_COMPLETED_JOB_PARTS",
-              //   responseOngoingAndCompleted.data.job_parts.filter(
-              //     jobPart => jobPart.locum_status === "Completed"
-              //   )
-              // )
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_UNAVAILABILITIES",
-              //   responseUnavailabilities.data.unavailabilities.filter(
-              //     unavailable =>
-              //       unavailable.shifts && unavailable.shifts.length !== 0
-              //   )
-              // )
-            }
-          )
-          .finally(() => {
-            this.$store.commit("calendar/TOGGLE_LOADING", false)
-          })
-      }
+      this.$emit('getCalendarJobAndJobParts', this.firstDayOfTheWeek, this.lastDayOfTheWeek)
     },
 
-    async getJobsRealTime (job) {
+    async jobsRealTimeHandler (job) {
       if (!job) {
         return
       }
