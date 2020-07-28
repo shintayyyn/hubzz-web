@@ -346,7 +346,7 @@
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
-          :label="'Payment made on'"
+          :label="'Received Payment on'"
           :error="formError.find(item => item.field === 'paid_at')"
           is-before
         />
@@ -367,7 +367,7 @@
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
-          :label="'Payment made on'"
+          :label="'Received Payment on'"
           :error="formError.find(item => item.field === 'paid_at')"
           is-before
         />
