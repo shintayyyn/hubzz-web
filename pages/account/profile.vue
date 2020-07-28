@@ -1365,7 +1365,7 @@ export default {
         if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
-            message: `${complianceDocumentName} must be atleast 7 characters.`,
+            message: `${complianceDocumentName} must be at least 7 characters.`,
             validation: 'limit',
           })
 
