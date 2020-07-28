@@ -9,25 +9,39 @@
         <div class="text-sm sm:text-base font-bold">
           Appointments
         </div>
+
         <div v-if="$auth.user.domain === 'Locum'" class="flex">
-          <AppButton :label="'Create Appointment'" class="hidden md:block mr-2"
-                     :inStyle="'padding-top: 6px; padding-bottom: 6px;'" @click="$router.push('/dashboard/create')"
+          <AppButton
+            :label="'Create Appointment'"
+            class="hidden md:block mr-2"
+            :inStyle="'padding-top: 6px; padding-bottom: 6px;'"
+            @click="$router.push('/dashboard/create')"
           />
-          <button class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mr-2"
-                  @click="$router.push('/dashboard/create')"
+
+          <button
+            class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mr-2"
+            @click="$router.push('/dashboard/create')"
           >
             <svgicon name="create-job" color="#444 #555" width="21" height="21" />
           </button>
-          <AppButton v-if="$auth.user.view_locum_jobs" :label="'Expenses'" class="hidden md:block"
-                     :inStyle="'padding-top: 6px; padding-bottom: 6px;'" @click="expense_modal = true"
+
+          <AppButton
+            v-if="$auth.user.view_locum_jobs"
+            :label="'Expenses'"
+            class="hidden md:block"
+            :inStyle="'padding-top: 6px; padding-bottom: 6px;'"
+            @click="expense_modal = true"
           />
-          <button class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
-                  @click="expense_modal = true"
+
+          <button
+            class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+            @click="expense_modal = true"
           >
             <svgicon name="billing" color="#444 #555" width="22" height="22" />
           </button>
         </div>
       </div>
+
       <Calendar />
     </div>
 
@@ -38,6 +52,7 @@
       <div class="text-sm sm:text-base font-bold pt-4">
         Quick Statistics
       </div>
+
       <Statistics />
     </div>
 
@@ -48,6 +63,7 @@
       >
         Your account has been suspended by Hubzz. Please contact the administrator to activate it.
       </div>
+
       <div
         v-if="$auth.user.practice_detail.practice.status !== 'Suspended'"
         class="text-sm sm:text-base font-bold"
@@ -55,24 +71,28 @@
         Hubzz is in the process of verifying your registration. You will
         receive a notification when this has been completed, with full access to the platform.
       </div>
-      <!-- <div
-				class="text-sm sm:text-base font-bold"
-			>Please complete the Practice Verification Steps in order to have a complete access in the platform.</div>-->
     </div>
 
     <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
-      <div v-if="$auth.user.locum_detail.compliance_documents.length === 0" class="text-sm sm:text-base font-bold">
+      <div
+        v-if="$auth.user.locum_detail.compliance_documents.length === 0"
+        class="text-sm sm:text-base font-bold"
+      >
         Please complete the required Locum Compliance Documents in order to have a complete access in the platform.
       </div>
 
-      <div v-else-if="$auth.user.locum_detail.compliance_documents.length > 0" class="text-sm sm:text-base font-bold">
+      <div
+        v-else-if="$auth.user.locum_detail.compliance_documents.length > 0"
+        class="text-sm sm:text-base font-bold"
+      >
         Please wait for HUBZZ to verify your compliance requirements.
       </div>
     </div>
 
     <transition name="fade" mode="out-in">
-      <nuxt-link v-if="['dashboard-id','dashboard-create'].includes($route.name) || expense_modal" class="shield"
-                 :to="'/dashboard'"
+      <nuxt-link
+        v-if="['dashboard-id','dashboard-create'].includes($route.name) || expense_modal" class="shield"
+        :to="'/dashboard'"
       />
     </transition>
 
@@ -116,21 +136,28 @@ export default {
     userIsAuthorized () {
       if (this.$auth.loggedIn) {
         let domain = this.$auth.user.domain
+
         let accountStatus = this.$auth.user.status
-        if (domain === "Locum") {
-          if (accountStatus === "Active" || accountStatus === "Dormant") {
+
+        if (domain === 'Locum') {
+          if (accountStatus === 'Active' || accountStatus === 'Dormant') {
             return true
           }
+
           return false
         }
-        if (domain === "Practice") {
+
+        if (domain === 'Practice') {
           let practiceStatus = this.$auth.user.practice_detail.practice.status
-          if (accountStatus === "Active" && (practiceStatus === "Active" || practiceStatus === "Dormant")) {
+
+          if (accountStatus === 'Active' && (practiceStatus === 'Active' || practiceStatus === 'Dormant')) {
             return true
           }
+
           return false
         }
       }
+
       return false
     },
   },

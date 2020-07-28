@@ -11,9 +11,7 @@
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="font-bold text-lg mt-2">
-                  {{ propInvoice.practice.name }}
-                </div>
+                <div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
               </div>
             </section>
 
@@ -25,7 +23,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{ propInvoice.locum_user.name }}</div>
           <div>{{ propInvoice.address_line_1 }}</div>
@@ -41,34 +39,24 @@
       <div
         v-if="waitingForLocumReply(propInvoice.items[0])"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
-      >
-        DISPUTED - Awaiting Locum Reply
-      </div>
+      >DISPUTED - Awaiting Locum Reply</div>
       <div
         v-if="propInvoice.disputed_items_count > 0 && propInvoice.status === 'Disputed'"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
-      >
-        Disputed by Locum
-      </div>
+      >Disputed by Locum</div>
       <p
         class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
-      >
-        INVOICE DETAILS
-      </p>
+      >INVOICE DETAILS</p>
       <div class="w-full flex justify-between px-4 text-gray-600">
         <div class="flex items-center">
           <p>Job No.</p>
           <p
             class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
-            {{ job_part.job_part_number }}
-          </p>
+          >{{ job_part.job_part_number }}</p>
         </div>
         <div class="flex items-center">
           <p>Job Type</p>
-          <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
-            {{ job_part.type }}
-          </p>
+          <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">{{ job_part.type }}</p>
         </div>
         <div class="flex items-center">
           <p>Duration</p>
@@ -83,12 +71,8 @@
           <p
             v-if="total_working_hours>0"
             class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
-            {{ total_working_hours | hoursMinutes }}
-          </p>
-          <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
-            0
-          </p>
+          >{{ total_working_hours | hoursMinutes }}</p>
+          <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">0</p>
         </div>
       </div>
       <div class="w-full border-b">
@@ -109,114 +93,73 @@
       <div class="w-full flex flex-wrap justify-between py-4">
         <div class="flex flex-col w-full sm:w-1/2 px-2">
           <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              TOTAL LATES:
-            </p>
+            <p class="text-sm w-1/2">TOTAL LATES:</p>
             <p
               class="font-bold w-1/2 text-right"
-            >
-              {{ total_late_hours === '00:00' ? 'None' : total_late_hours }}
-            </p>
+            >{{ total_late_hours === '00:00' ? 'None' : total_late_hours }}</p>
           </div>
           <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              TOTAL ABSENCES:
-            </p>
-            <p class="font-bold w-1/2 text-right">
-              {{ total_absences > 0 ? total_absences : 'None' }}
-            </p>
+            <p class="text-sm w-1/2">TOTAL ABSENCES:</p>
+            <p class="font-bold w-1/2 text-right">{{ total_absences > 0 ? total_absences : 'None' }}</p>
           </div>
           <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              TOTAL WORK HOURS:
-            </p>
+            <p class="text-sm w-1/2">TOTAL WORK HOURS:</p>
             <p
               v-if="total_working_hours>0"
               class="font-bold w-1/2 text-right"
-            >
-              {{ total_working_hours | hoursMinutes }}
-            </p>
-            <p v-else class="font-bold w-1/2 text-right">
-              0
-            </p>
+            >{{ total_working_hours | hoursMinutes }}</p>
+            <p v-else class="font-bold w-1/2 text-right">0</p>
           </div>
           <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              TOTAL DEDUCTIONS:
-            </p>
-            <p class="font-bold w-1/2 text-right">
-              £ {{ total_deductions | currency }}
-            </p>
+            <p class="text-sm w-1/2">TOTAL DEDUCTIONS:</p>
+            <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
           </div>
           <!-- v-if="propInvoice && propInvoice.generate_form" -->
-          <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              Form Type:
-            </p>
-            <p class="font-bold w-1/2 text-right">
-              {{ isOOH ? 'Solo Form' : 'Form A' }}
-            </p>
+          <div
+            class="flex flex-wrap justify-between"
+            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+          >
+            <p class="text-sm w-1/2">Form Type:</p>
+            <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Solo Form' : 'Form A' }}</p>
           </div>
           <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              STATUS:
-            </p>
-            <p class="font-bold w-1/2 text-right">
-              {{ propInvoice && propInvoice.status }}
-            </p>
+            <p class="text-sm w-1/2">STATUS:</p>
+            <p class="font-bold w-1/2 text-right">{{ propInvoice && propInvoice.status }}</p>
           </div>
           <div
             v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
             class="flex flex-wrap justify-between"
           >
-            <p class="text-sm w-1/2">
-              GENERATE FORM:
-            </p>
+            <p class="text-sm w-1/2">GENERATE FORM:</p>
             <p
               class="font-bold w-1/2 text-right"
-            >
-              {{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
-            </p>
+            >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}</p>
           </div>
         </div>
         <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
           <div class="flex flex-wrap justify-between">
-            <p class="text-sm w-1/2">
-              TOTAL WORK PAYMENT:
-            </p>
-            <p class="font-bold w-1/2 text-right">
-              £ {{ total_gross_locum_wages | currency }}
-            </p>
+            <p class="text-sm w-1/2">TOTAL WORK PAYMENT:</p>
+            <p class="font-bold w-1/2 text-right">£ {{ total_gross_locum_wages | currency }}</p>
           </div>
           <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
             <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">
-                NI / PAYE:
-              </p>
+              <p class="text-sm w-1/2">NI / PAYE:</p>
               <p class="font-bold w-1/2 text-right">
                 <span class="mr-5">-</span>
                 £ {{ ni_paye_amount | currency }}
               </p>
             </div>
             <div class="flex flex-wrap justify-between border-t-4 pt-2">
-              <p class="text-sm w-1/2">
-                GRAND TOTAL:
-              </p>
-              <p class="font-bold w-1/2 text-right">
-                £ {{ grand_total | currency }}
-              </p>
+              <p class="text-sm w-1/2">GRAND TOTAL:</p>
+              <p class="font-bold w-1/2 text-right">£ {{ grand_total | currency }}</p>
             </div>
           </template>
           <div
             v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
             class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
-            <p class="text-sm w-1/2">
-              PENSION AMOUNT:
-            </p>
-            <p class="font-bold w-1/2 text-right">
-              £ {{ pension_amount | currency }}
-            </p>
+            <p class="text-sm w-1/2">PENSION AMOUNT:</p>
+            <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
           </div>
         </div>
       </div>
@@ -250,24 +193,54 @@
     </div>
 
     <transition name="fade">
-      <div v-if="toggle_modal" class="message-modal mini-modal fixed bg-white p-4 center relative">
-        <AppLoading :loading="loading_form" spinner />
-        <p class="font-bold uppercase">
-          Solo Form Details
-        </p>
+      <div
+        class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3"
+        v-if="toggle_modal"
+      >
+        <p class="font-bold uppercase">Solo Form Details</p>
 
-        <div class="flex flex-col">
+        <div class="flex flex-col my-8" style="max-height:500px;overflow:auto">
           <AppInput
-            v-model="profileForm.professional_nhs_expenses"
+            v-model="form.ea_code"
             :type="'text'"
-            :name="'professional_nhs_expenses'"
-            :label="'Professional NHS Expense'"
-            :error="formError.find(item => item.field === 'professional_nhs_expenses')"
+            :name="'ea_code'"
+            :label="'PCSE Code'"
+            :error="formError.find(item => item.field === 'ea_code')"
             required
-            @blur="CheckEmptyField(profileForm.professional_nhs_expenses, 'professional_nhs_expenses')"
+            @blur="CheckEmptyField(form.ea_code, 'ea_code')"
           />
           <AppInput
-            v-model="profileForm.percentage_rate"
+            v-model="form.national_insurance_number"
+            :type="'text'"
+            :name="'national_insurance_number'"
+            :label="'National Insurance number'"
+            :error="formError.find(item => item.field === 'national_insurance_number')"
+            required
+            @blur="CheckEmptyField(form.national_insurance_number, 'national_insurance_number')"
+            @keypress="inputNumberOnly($event)"
+          />
+          <AppInput
+            v-model="form.sd_number"
+            :type="'text'"
+            :name="'sd_number'"
+            :label="'NHS Pension Scheme Membership number'"
+            :error="formError.find(item => item.field === 'sd_number')"
+            required
+            @blur="CheckEmptyField(form.sd_number, 'sd_number')"
+            @keypress="inputNumberOnly($event)"
+          />
+          <AppInput
+            v-model="form.paying_reference"
+            :type="'text'"
+            :name="'paying_reference'"
+            :label="'Paying reference number'"
+            :error="formError.find(item => item.field === 'paying_reference')"
+            required
+            @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
+            @keypress="inputNumberOnly($event)"
+          />
+          <AppInput
+            v-model="form.percentage_rate"
             :type="'select'"
             :name="'percentage_rate'"
             :label="'Percentage rate'"
@@ -283,46 +256,55 @@
             required
           />
           <AppInput
-            v-model="profileForm.added_year_contributions"
+            v-model="form.professional_nhs_expenses"
+            :type="'text'"
+            :name="'professional_nhs_expenses'"
+            :label="'Professional NHS Expense'"
+            :error="formError.find(item => item.field === 'professional_nhs_expenses')"
+            required
+            @blur="CheckEmptyField(form.professional_nhs_expenses, 'professional_nhs_expenses')"
+          />
+          <AppInput
+            v-model="form.added_year_contributions"
             :type="'text'"
             :name="'added_year_contributions'"
             :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
             :error="formError.find(item => item.field === 'added_year_contributions')"
             required
-            @blur="CheckEmptyField(profileForm.added_year_contributions, 'added_year_contributions')"
+            @blur="CheckEmptyField(form.added_year_contributions, 'added_year_contributions')"
           />
           <AppInput
-            v-model="profileForm.added_early_retirement_contributions"
+            v-model="form.added_early_retirement_contributions"
             :type="'text'"
             :name="'added_early_retirement_contributions'"
             :label="'Additional contributions for Early Retirement Reduction Buy Out'"
             :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
             required
-            @blur="CheckEmptyField(profileForm.added_early_retirement_contributions, 'added_early_retirement_contributions')"
+            @blur="CheckEmptyField(form.added_early_retirement_contributions, 'added_early_retirement_contributions')"
           />
           <AppInput
-            v-model="profileForm.nhsps_employer_contributions"
+            v-model="form.nhsps_employer_contributions"
             :type="'text'"
             :name="'nhsps_employer_contributions'"
             :label="'NHSPS employer contributions'"
             :error="formError.find(item => item.field === 'nhsps_employer_contributions')"
             required
-            @blur="CheckEmptyField(profileForm.nhsps_employer_contributions, 'nhsps_employer_contributions')"
+            @blur="CheckEmptyField(form.nhsps_employer_contributions, 'nhsps_employer_contributions')"
           />
           <AppInput
-            v-model="profileForm.nhs_pension_scheme_employing_authority_name"
+            v-model="form.nhs_pension_scheme_employing_authority_name"
             :type="'text'"
             :name="'nhs_pension_scheme_employing_authority_name'"
             :label="'NHSPS employing authority name'"
             :error="formError.find(item => item.field === 'nhs_pension_scheme_employing_authority_name')"
             required
-            @blur="CheckEmptyField(profileForm.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
+            @blur="CheckEmptyField(form.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
           />
         </div>
 
         <div class="flex justify-end">
-          <AppButton :label="'Cancel'" class="mr-2" @click="toggle_modal = false" />
-          <AppButton :label="'Accept'" @click="saveProfile" />
+          <AppButton @click="toggle_modal = false" :label="'Cancel'" class="mr-2" />
+          <AppButton :label="'Accept'" @click="save(true)" />
         </div>
       </div>
     </transition>
@@ -333,9 +315,7 @@
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
-        >
-          Platform
-        </div>
+        >Platform</div>
       </div>
       <div
         id="htmlpdf"
@@ -364,9 +344,7 @@
                   <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-base py-1">To: Accounts Department</label>
                   </div>
-                  <div class="font-bold text-lg mt-2">
-                    {{ propInvoice.practice.name }}
-                  </div>
+                  <div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
                 </div>
               </section>
               <div class="text-xs sm:text-sm">
@@ -395,9 +373,7 @@
               </div>-->
               <div
                 class="w-full bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-              >
-                Description
-              </div>
+              >Description</div>
             </div>
             <!-- items / selected invoice -->
             <div
@@ -418,9 +394,7 @@
               </div>
               -->
               <div class="relative flex justify-start mt-2">
-                <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">
-                  {{ description }}
-                </div>
+                <div class="w-full text-xs sm:text-sm px-4 py-1 border-gray-300">{{ description }}</div>
                 <div
                   v-if="(propInvoice && !['Paid','Approved'].includes(propInvoice.status))"
                   class="flex items-center align-middle sticky right-0 bg-white shadow-md"
@@ -462,7 +436,7 @@
                       name="absent_days"
                       class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                       @keypress="isNumber($event)"
-                    >
+                    />
                   </div>
                   <div class="w-2/5 flex flex-col pr-2 text-sm">
                     <label for="late_hours">Hours of late</label>
@@ -485,7 +459,7 @@
                           class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs focus:border-yellow-500"
                           @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'late_hours', 8)"
                           @blur="!form.late_hours ? form.late_hours = 0 : form.late_hours"
-                        >
+                        />
                         <label for="late_hours" class="text-xs md:text-sm">hours</label>
                       </div>
                       <div class="flex items-center">
@@ -499,7 +473,7 @@
                           max="60"
                           @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'late_minutes', 2)"
                           @blur="!form.late_minutes ? form.late_minutes = 0 : form.late_minutes"
-                        >
+                        />
                         <label for="late_minutes" class="text-xs md:text-sm">minutes</label>
                       </div>
                     </div>
@@ -520,7 +494,7 @@
                           :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
                           @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'hours', 8)"
                           @blur="!form.hours ? form.hours = 0 : form.hours"
-                        >
+                        />
                         <label for="hours" class="text-xs md:text-sm">hours</label>
                       </div>
                       <div class="flex items-center">
@@ -535,16 +509,14 @@
                           :class="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes') ? 'border-red-500' : ''"
                           @keydown="inputNumberOnly($event), handleKeyDownEvent($event, 'minutes', 2)"
                           @blur="!form.minutes ? form.minutes = 0 : form.minutes"
-                        >
+                        />
                         <label for="minutes" class="text-xs md:text-sm">minutes</label>
                       </div>
                     </div>
                     <p
                       v-if="formError.find(item => item.field === 'hours') && formError.find(item => item.field === 'minutes')"
                       class="text-xs mx-2 text-red-500"
-                    >
-                      Final hours is required
-                    </p>
+                    >Final hours is required</p>
                   </div>
                 </div>
               </div>
@@ -576,12 +548,8 @@
           >
             <span class="w-3/4 font-bold">Subtotal</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right">
-                £
-              </div>
-              <div class="w-full text-right">
-                {{ subTotal | currency }}
-              </div>
+              <div class="w-full text-right">£</div>
+              <div class="w-full text-right">{{ subTotal | currency }}</div>
             </div>
           </div>
           <div
@@ -591,12 +559,8 @@
           >
             <span class="w-3/4 pl-2 text-sm">NI amount</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right text-sm">
-                £
-              </div>
-              <div class="w-full text-right text-sm">
-                {{ propInvoice.ni_amount | currency }}
-              </div>
+              <div class="w-full text-right text-sm">£</div>
+              <div class="w-full text-right text-sm">{{ propInvoice.ni_amount | currency }}</div>
             </div>
           </div>
           <div
@@ -606,24 +570,16 @@
           >
             <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right text-sm">
-                £
-              </div>
-              <div class="w-full text-right text-sm">
-                {{ propInvoice.paye_amount | currency }}
-              </div>
+              <div class="w-full text-right text-sm">£</div>
+              <div class="w-full text-right text-sm">{{ propInvoice.paye_amount | currency }}</div>
             </div>
           </div>
           <!-- ITEMS TOTAL -->
           <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3 py-2">
             <span class="w-3/4 font-bold">Total</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right">
-                £
-              </div>
-              <div class="w-full text-right">
-                {{ totalAmount | currency }}
-              </div>
+              <div class="w-full text-right">£</div>
+              <div class="w-full text-right">{{ totalAmount | currency }}</div>
             </div>
           </div>
         </div>
@@ -715,12 +671,12 @@
 </template>
 
 <script>
-import AppLoading from "@/components/Base/AppLoading"
-import AppButton from "@/components/Base/AppButton"
-import AppDate from "@/components/Base/AppDate"
-import AppInput from "@/components/Base/AppInput"
-import { mixin as clickaway, } from "vue-clickaway"
-import AppSchedules from "@/components/Base/AppSchedules"
+import AppLoading from "@/components/Base/AppLoading";
+import AppButton from "@/components/Base/AppButton";
+import AppDate from "@/components/Base/AppDate";
+import AppInput from "@/components/Base/AppInput";
+import { mixin as clickaway } from "vue-clickaway";
+import AppSchedules from "@/components/Base/AppSchedules";
 
 export default {
   components: {
@@ -728,26 +684,25 @@ export default {
     AppButton,
     AppDate,
     AppInput,
-    AppSchedules,
+    AppSchedules
   },
 
-  mixins: [clickaway,],
+  mixins: [clickaway],
 
   props: {
     propInvoice: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
     propId: {
-      type: [String, Number,],
-      default: () => null,
-    },
+      type: [String, Number],
+      default: () => null
+    }
   },
 
-  data () {
+  data() {
     return {
       toggle_modal: false,
-      loading_form: false,
 
       old: false,
       exportLoading: false,
@@ -762,36 +717,19 @@ export default {
         hours: 0,
         late_minutes: 0,
         late_hours: 0,
-      },
-
-      profileForm: {
-        other_mandatory_training_id: [],
-        phone_number: "",
-        report_to: "",
-        email: "",
-        extra_information: "",
-        practice_type_id: [],
-        mandatory_training_id: [],
-        use_variation_terms: false,
-        vat_registered: false,
-        vat_number: null,
-        tax_year_end_date: null,
-        account_name: "",
-        bank_name: "",
-        sort_code: "",
-        account_number: "",
-        practice_profession_compliance_category_compliance_documents: [],
+        //
+        ea_code: null,
         national_insurance_number: null,
         sd_number: null,
         paying_reference: null,
-        ea_code: null,
-        professional_nhs_expenses: 0,
-        percentage_rate: 0,
-        added_year_contributions: 0,
-        added_early_retirement_contributions: 0,
-        nhsps_employer_contributions: 0,
-        nhs_pension_scheme_employing_authority_name: "",
+        percentage_rate: null,
+        professional_nhs_expenses: null,
+        added_year_contributions: null,
+        added_early_retirement_contributions: null,
+        nhsps_employer_contributions: null,
+        nhs_pension_scheme_employing_authority_name: null
       },
+
       formError: [],
 
       isApproved: false,
@@ -807,211 +745,215 @@ export default {
       total_absences: 0,
       hasShiftError: false,
       sched_has_changes: false,
-      practice: null,
+      practice: null
       // solo_form_pension_amount: 0
-    }
+    };
   },
 
   computed: {
-    isOOH () {
-      return this.propInvoice && this.propInvoice.ooh ? true : false
+    isOOH() {
+      return this.propInvoice && this.propInvoice.ooh ? true : false;
     },
 
-    ni_paye_amount () {
-      let ni_amount
-        = this.propInvoice && this.propInvoice.ni
+    ni_paye_amount() {
+      let ni_amount =
+        this.propInvoice && this.propInvoice.ni
           ? this.propInvoice.ni_amount
-          : 0
-      let paye_amount
-        = this.propInvoice && this.propInvoice.paye
+          : 0;
+      let paye_amount =
+        this.propInvoice && this.propInvoice.paye
           ? this.propInvoice.paye_amount
-          : 0
-      return ni_amount + paye_amount
+          : 0;
+      return ni_amount + paye_amount;
     },
 
-    grand_total () {
-      return this.total_gross_locum_wages - this.ni_paye_amount
+    grand_total() {
+      return this.total_gross_locum_wages - this.ni_paye_amount;
     },
 
-    total_work_payment () {
-      return this.total_gross_locum_wages
+    total_work_payment() {
+      return this.total_gross_locum_wages;
     },
 
-    pension_amount () {
+    pension_amount() {
       // propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))
       // this.propInvoice && this.propInvoice.generate_form
       if (
-        this.propInvoice
-        && ((!this.propInvoice.ooh && this.propInvoice.generate_form)
-          || this.propInvoice.ooh)
+        this.propInvoice &&
+        ((!this.propInvoice.ooh && this.propInvoice.generate_form) ||
+          this.propInvoice.ooh)
       ) {
-        if (["Approved", "Paid",].includes(this.propInvoice.status)) {
+        if (["Approved", "Paid"].includes(this.propInvoice.status)) {
           if (this.propInvoice.locum_form_a_id) {
-            return this.propInvoice.locum_form_a_pension_amount
+            return this.propInvoice.locum_form_a_pension_amount;
           }
           if (this.propInvoice.locum_solo_form_id) {
-            return this.propInvoice.locum_solo_form_pension_amount
+            return this.propInvoice.locum_solo_form_pension_amount;
           }
         }
 
-        if (!["Approved", "Paid",].includes(this.propInvoice.status)) {
+        if (!["Approved", "Paid"].includes(this.propInvoice.status)) {
           if (!this.propInvoice.ooh) {
-            return this.total_work_payment * 0.9 * 0.1438
+            return this.total_work_payment * 0.9 * 0.1438;
           }
-          if (this.propInvoice.ooh && this.practice) {
-            let boxA = this.total_work_payment
-            let boxB = this.practice.professional_nhs_expenses
-            let boxC = boxA - boxB
-            let boxD = boxC * (this.practice.percentage_rate / 100)
-            let boxE = boxC * boxD
-            let boxF = this.practice.added_year_contributions
-            let boxG = this.practice.added_early_retirement_contributions
-            let boxH = boxE + boxF + boxG
-            // let boxI = boxC - boxH
-            let boxJ
-              = this.practice.nhsps_employer_contributions + boxC * 0.1438
-            let boxK = boxH + boxJ
-
-            return boxK
+          if (this.propInvoice.ooh) {
+            let boxA = this.total_work_payment;
+            // let boxB = this.practice.professional_nhs_expenses;
+            let boxB = 0;
+            let boxC = boxA - boxB;
+            // let boxD = boxC * (this.practice.percentage_rate / 100);
+            let boxD = boxC * (0 / 100);
+            let boxE = boxC * boxD;
+            let boxF = 0;
+            let boxG = 0;
+            // let boxF = this.practice.added_year_contributions;
+            // let boxG = this.practice.added_early_retirement_contributions;
+            let boxH = boxE + boxF + boxG;
+            let boxI = boxC - boxH;
+            let boxJ = 0 + boxC * 0.1438;
+            // let boxJ =
+            //   this.practice.nhsps_employer_contributions + boxC * 0.1438;
+            let boxK = boxH + boxJ;
+            return boxK;
           }
         }
       }
 
-      return 0
+      return 0;
     },
 
-    subTotal () {
+    subTotal() {
       let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-        .name
+        .name;
 
-      let finalHours
-        = (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+      let finalHours =
+        (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60;
 
-      let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60
+      let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60;
 
-      let total = 0
+      let total = 0;
 
       switch (type) {
-      case "Per Hour":
-        total = finalHours * this.propInvoice.items[0].job_part.job.rate
-        break
-      default:
-        total
-            = finalHours
-            * (this.propInvoice.items[0].job_part.job.rate / totalHours)
-        break
+        case "Per Hour":
+          total = finalHours * this.propInvoice.items[0].job_part.job.rate;
+          break;
+        default:
+          total =
+            finalHours *
+            (this.propInvoice.items[0].job_part.job.rate / totalHours);
+          break;
       }
 
-      return total
+      return total;
     },
 
-    totalAmount () {
+    totalAmount() {
       // Job Part Total Rate (Per Hour) = (Final Hours + (Final Minutes / 60)) * Rate
       // Job Part Total Rate (Per Session) = (Final Hours + (Final Minutes / 60)) * (Rate / (Total Hours + (Total Minutes / 60)))
 
       let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-        .name
+        .name;
 
-      let finalHours
-        = (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60
+      let finalHours =
+        (parseInt(this.form.hours) * 60 + parseInt(this.form.minutes)) / 60;
 
-      let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60
+      let totalHours = this.propInvoice.items[0].job_part.job.total_hours / 60;
 
-      let total = 0
+      let total = 0;
 
       switch (type) {
-      case "Per Hour":
-        total = finalHours * this.propInvoice.items[0].job_part.job.rate
-        break
-      default:
-        total
-            = finalHours
-            * (this.propInvoice.items[0].job_part.job.rate / totalHours)
-        break
+        case "Per Hour":
+          total = finalHours * this.propInvoice.items[0].job_part.job.rate;
+          break;
+        default:
+          total =
+            finalHours *
+            (this.propInvoice.items[0].job_part.job.rate / totalHours);
+          break;
       }
 
       if (this.propInvoice) {
-        total
-          = total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
+        total =
+          total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
       }
 
-      return total
+      return total;
     },
 
-    description () {
-      const jobPartNumber = this.propInvoice.items[0].job_part.job_part_number
-      const jobType = this.propInvoice.items[0].job_part.job.type
-      const jobRate = this.propInvoice.items[0].job_part.job.rate
+    description() {
+      const jobPartNumber = this.propInvoice.items[0].job_part.job_part_number;
+      const jobType = this.propInvoice.items[0].job_part.job.type;
+      const jobRate = this.propInvoice.items[0].job_part.job.rate;
       const jobRateTypeName = this.propInvoice.items[0].job_part.job
-        .locum_detail_rate_type.name
+        .locum_detail_rate_type.name;
       const formattedDateStart = this.$moment(
         this.propInvoice.date_start
-      ).format("DD/MM/YYYY")
+      ).format("DD/MM/YYYY");
       const formattedDateEnd = this.$moment(this.propInvoice.date_end).format(
         "DD/MM/YYYY"
-      )
-      const shiftName = this.propInvoice.items[0].job_part.job.shift.name
-      const finalHoursInMinutesHours = parseInt(this.form.hours)
-      const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : ""
-      const finalHoursInMinutesMinutes = parseInt(this.form.minutes)
-      const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : ""
-      const hasMinutes
-        = finalHoursInMinutesMinutes > 0
+      );
+      const shiftName = this.propInvoice.items[0].job_part.job.shift.name;
+      const finalHoursInMinutesHours = parseInt(this.form.hours);
+      const hourOrHours = finalHoursInMinutesHours > 1 ? "s" : "";
+      const finalHoursInMinutesMinutes = parseInt(this.form.minutes);
+      const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? "s" : "";
+      const hasMinutes =
+        finalHoursInMinutesMinutes > 0
           ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
-          : ""
-      const description
-        = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
-        + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
-        + ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
+          : "";
+      const description =
+        `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}` +
+        ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /` +
+        ` Total of ${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`;
 
-      return description
+      return description;
     },
-    job_part () {
-      let jobPartNumber
-      let jobType
-      let jobRate
-      let jobRateTypeName
-      let formattedDateStart
-      let formattedDateEnd
-      jobPartNumber = this.propInvoice.items[0].job_part.job_part_number
-      jobType = this.propInvoice.items[0].job_part.job.type
-      jobRate = this.propInvoice.items[0].job_part.job.rate
+    job_part() {
+      let jobPartNumber;
+      let jobType;
+      let jobRate;
+      let jobRateTypeName;
+      let formattedDateStart;
+      let formattedDateEnd;
+      jobPartNumber = this.propInvoice.items[0].job_part.job_part_number;
+      jobType = this.propInvoice.items[0].job_part.job.type;
+      jobRate = this.propInvoice.items[0].job_part.job.rate;
       jobRateTypeName = this.propInvoice.items[0].job_part.job
-        .locum_detail_rate_type.name
+        .locum_detail_rate_type.name;
       formattedDateStart = this.$moment(this.propInvoice.date_start).format(
         "DD/MM/YYYY"
-      )
+      );
       formattedDateEnd = this.$moment(this.propInvoice.date_end).format(
         "DD/MM/YYYY"
-      )
+      );
       return {
         job_part_number: jobPartNumber,
         type: jobType,
         rate: jobRate,
         locum_detail_rate_type: jobRateTypeName,
         date_start: formattedDateStart,
-        date_end: formattedDateEnd,
-      }
+        date_end: formattedDateEnd
+      };
     },
-    practice_rate () {
-      let practice_rates = this.$auth.user.practice_detail.practice.rates
+    practice_rate() {
+      let practice_rates = this.$auth.user.practice_detail.practice.rates;
       let rate_type_id = this.propInvoice.items[0].job_part.job
-        .locum_detail_rate_type.id
+        .locum_detail_rate_type.id;
       let practice_rate = practice_rates.find(
         item => item.id.toString() === rate_type_id.toString()
-      )
-      let rate = 0
+      );
+      let rate = 0;
       if (practice_rate) {
-        rate = practice_rate.rate
+        rate = practice_rate.rate;
       } else {
-        rate = 0
+        rate = 0;
       }
-      return rate
-    },
+      return rate;
+    }
   },
 
   watch: {
-    isApproved (value) {
+    isApproved(value) {
       // if (value) {
       //   this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`
       //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days
@@ -1038,14 +980,14 @@ export default {
       //   this.form.items[0].remarks = this.propInvoice.items[0].remarks
       //   this.form.items[0].total = this.propInvoice.items[0].total
       // }
-      this.form.items[0].approve = value
-    },
+      this.form.items[0].approve = value;
+    }
   },
 
-  mounted () {
+  mounted() {
     if (this.propInvoice) {
-      this.form.date_start = this.propInvoice.date_start
-      this.form.date_end = this.propInvoice.date_end
+      this.form.date_start = this.propInvoice.date_start;
+      this.form.date_end = this.propInvoice.date_end;
 
       this.form.items = [
         {
@@ -1057,47 +999,47 @@ export default {
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
           late_hours: this.propInvoice.items[0].late_hours,
-          remarks: this.propInvoice.items[0].remarks,
-        },
-      ]
-      this.form.total_amount = this.propInvoice.total_amount
-      this.isApproved = this.propInvoice.items[0].approved
+          remarks: this.propInvoice.items[0].remarks
+        }
+      ];
+      this.form.total_amount = this.propInvoice.total_amount;
+      this.isApproved = this.propInvoice.items[0].approved;
 
       if (
-        this.$auth.user.practice_detail
-        && this.$auth.user.practice_detail.practice.type !== "Spoke"
+        this.$auth.user.practice_detail &&
+        this.$auth.user.practice_detail.practice.type !== "Spoke"
       ) {
-        this.allowToBill = true
+        this.allowToBill = true;
       } else if (
-        this.$auth.user.practice_detail.practice.type === "Spoke"
-        && !this.$auth.user.practice_detail.practice.parent_practice_id
+        this.$auth.user.practice_detail.practice.type === "Spoke" &&
+        !this.$auth.user.practice_detail.practice.parent_practice_id
       ) {
-        this.allowToBill = true
+        this.allowToBill = true;
       } else if (
-        this.$auth.user.practice_detail.practice.parent_practice_id
-        && this.$auth.user.practice_detail.practice.allow_surgery_bill_locum
-          === true
+        this.$auth.user.practice_detail.practice.parent_practice_id &&
+        this.$auth.user.practice_detail.practice.allow_surgery_bill_locum ===
+          true
       ) {
-        this.allowToBill = true
+        this.allowToBill = true;
       }
     }
 
-    this.form.hours = Math.floor(this.form.items[0].final_hours / 60)
-    this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
-    this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
-    this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
+    this.form.hours = Math.floor(this.form.items[0].final_hours / 60);
+    this.form.minutes = Math.floor(this.form.items[0].final_hours % 60);
+    this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
+    this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
 
-    this.getPracticeProfile()
+    // this.getPracticeProfile();
   },
 
   methods: {
-    getPracticeProfile () {
-      this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
-        this.practice
-          = res.data && res.data.practice ? res.data.practice : null
-      })
-    },
-    getSchedule (
+    // getPracticeProfile() {
+    //   this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
+    //     this.practice =
+    //       res.data && res.data.practice ? res.data.practice : null;
+    //   });
+    // },
+    getSchedule(
       schedule,
       total_gross_locum_wages,
       total_working_hours,
@@ -1106,18 +1048,18 @@ export default {
       hasError,
       hasChanges
     ) {
-      this.schedule = schedule
-      this.form.job_part_schedule_items = []
-      let absentCount = 0
+      this.schedule = schedule;
+      this.form.job_part_schedule_items = [];
+      let absentCount = 0;
       schedule.forEach((sched, index) => {
         if (sched.shifts && sched.shifts.length) {
           sched.shifts.forEach((shift, i) => {
             let timeStart = shift.has_absences
               ? shift.time_start
-              : shift.final_time_start
+              : shift.final_time_start;
             let timeEnd = shift.has_absences
               ? shift.time_start
-              : shift.final_time_end
+              : shift.final_time_end;
             this.form.job_part_schedule_items.push({
               id: shift.id,
               time_start: timeStart,
@@ -1126,164 +1068,86 @@ export default {
               approve: shift.dispute,
               remarks: shift.remarks,
               late_hours_reason: "",
-              description: "",
-            })
+              description: ""
+            });
 
-            shift.has_absences ? (absentCount += 1) : ""
+            shift.has_absences ? (absentCount += 1) : "";
 
             if (shift.final_time_start) {
               let startIndex = this.shiftErrors.findIndex(
                 err => err.field === `final_time_start-s${index}-${i}`
-              )
+              );
               if (startIndex > -1) {
-                this.shiftErrors.splice(startIndex, 1)
+                this.shiftErrors.splice(startIndex, 1);
               }
             }
             if (shift.final_time_end) {
               let endIndex = this.shiftErrors.findIndex(
                 err => err.field === `final_time_end-s${index}-${i}`
-              )
+              );
               if (endIndex > -1) {
-                this.shiftErrors.splice(endIndex, 1)
+                this.shiftErrors.splice(endIndex, 1);
               }
             }
-          })
+          });
         }
-      })
-      this.total_late_hours = total_lates
-      this.total_absences = absentCount
-      this.total_deductions = deductions
-      this.total_working_hours = total_working_hours
-      this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = total_gross_locum_wages
-      this.hasShiftError = hasError
-      this.sched_has_changes
-        = this.$route.query.status === "issued" ? false : hasChanges
+      });
+      this.total_late_hours = total_lates;
+      this.total_absences = absentCount;
+      this.total_deductions = deductions;
+      this.total_working_hours = total_working_hours;
+      this.total_gross_locum_wages = total_gross_locum_wages;
+      this.form.total_amount = total_gross_locum_wages;
+      this.hasShiftError = hasError;
+      this.sched_has_changes =
+        this.$route.query.status === "issued" ? false : hasChanges;
     },
-    handleKeyDownEvent (e, formField, limit) {
+    handleKeyDownEvent(e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
         "Tab",
         "ArrowUp",
         "ArrowDown",
         "ArrowLeft",
-        "ArrowRight",
-      ]
+        "ArrowRight"
+      ];
       if (
-        this.form[formField].length >= limit
-        && !acceptedKeys.includes(e.key)
+        this.form[formField].length >= limit &&
+        !acceptedKeys.includes(e.key)
       ) {
-        e.preventDefault()
+        e.preventDefault();
       }
     },
 
-    hasValue (value, field) {
+    hasValue(value, field) {
       if (value == 0) {
-        this.form[field] = ""
+        this.form[field] = "";
       }
     },
 
-    async toggleModal (approved) {
+    async toggleModal(approved) {
       if (this.propInvoice.ooh) {
-        this.toggle_modal = true
-        this.loading_form = true
-        let res = await this.$axios.$get(`api/v1/practice/me/practice`)
-        this.loading_form = false
-
-        if (res.data && res.data.practice) {
-          this.profileForm.percentage_rate = res.data.practice.percentage_rate
-          this.profileForm.professional_nhs_expenses
-            = res.data.practice.professional_nhs_expenses
-          this.profileForm.added_year_contributions
-            = res.data.practice.added_year_contributions
-          this.profileForm.added_early_retirement_contributions
-            = res.data.practice.added_early_retirement_contributions
-          this.profileForm.nhsps_employer_contributions
-            = res.data.practice.nhsps_employer_contributions
-          this.profileForm.nhs_pension_scheme_employing_authority_name
-            = res.data.practice.nhs_pension_scheme_employing_authority_name
-          //   //
-          this.profileForm.phone_number = res.data.practice.phone_number
-          this.profileForm.report_to = res.data.practice.report_to
-          this.profileForm.email = res.data.practice.email
-          this.profileForm.extra_information
-            = res.data.practice.extra_information
-          this.profileForm.practice_type_id = []
-          res.data.practice.practice_types.forEach(item => {
-            this.profileForm.practice_type_id.push(item.id)
-          })
-          this.profileForm.mandatory_training_id = []
-          res.data.practice.mandatory_trainings.forEach(item => {
-            this.profileForm.mandatory_training_id.push(item.id)
-          })
-          this.profileForm.other_mandatory_training_id = []
-          res.data.practice.other_mandatory_trainings.forEach(item => {
-            this.profileForm.other_mandatory_training_id.push(item.id)
-          })
-          this.profileForm.use_variation_terms
-            = res.data.practice.use_variation_terms
-          this.profileForm.vat_registered = res.data.practice.vat_registered
-          this.profileForm.vat_number = res.data.practice.vat_number
-          this.profileForm.tax_year_end_date
-            = res.data.practice.tax_year_end_date
-          this.profileForm.account_name = res.data.practice.account_name
-          this.profileForm.bank_name = res.data.practice.bank_name
-          this.profileForm.sort_code = res.data.practice.sort_code
-          this.profileForm.account_number = res.data.practice.account_number
-          this.profileForm.practice_profession_compliance_category_compliance_documents = res.data.practice.practice_profession_compliance_category_compliance_documents.map(
-            item => {
-              return {
-                profession_compliance_category_id:
-                  item.profession_compliance_category_id,
-                compliance_document_id: item.compliance_document_id,
-              }
-            }
-          )
-          this.profileForm.national_insurance_number
-            = res.data.practice.national_insurance_number
-          this.profileForm.sd_number = res.data.practice.sd_number
-          this.profileForm.paying_reference
-            = res.data.practice.paying_reference
-          this.profileForm.ea_code = res.data.practice.ea_code
-          this.profileForm.professional_nhs_expenses
-            = res.data.practice.professional_nhs_expenses
-          this.profileForm.percentage_rate = res.data.practice.percentage_rate
-          this.profileForm.section_scheme_year
-            = res.data.practice.section_scheme_year
-          this.profileForm.added_year_contributions
-            = res.data.practice.added_year_contributions
-          this.profileForm.added_early_retirement_contributions
-            = res.data.practice.added_early_retirement_contributions
-          this.profileForm.nhsps_employer_contributions
-            = res.data.practice.nhsps_employer_contributions
-          this.profileForm.nhs_pension_scheme_employing_authority_name
-            = res.data.practice.nhs_pension_scheme_employing_authority_name
-        }
+        this.toggle_modal = true;
+        this.form.ea_code = null;
+        this.form.national_insurance_number = null;
+        this.form.sd_number = null;
+        this.form.paying_reference = null;
+        this.form.percentage_rate = 0;
+        this.form.professional_nhs_expenses = 0;
+        this.form.added_year_contributions = 0;
+        this.form.added_early_retirement_contributions = 0;
+        this.form.nhsps_employer_contributions = 0;
+        this.form.nhs_pension_scheme_employing_authority_name = null;
       } else {
-        this.save(approved)
+        this.save(approved);
       }
     },
 
-    async saveProfile () {
-      this.loading_form = true
-      try {
-        await this.$axios.$put(
-          `/api/v1/practice/me/practice-profile`,
-          this.profileForm
-        )
-      } catch (err) {
-        console.log(err || err.response)
-      }
-      this.loading_form = false
-      this.save(true)
-    },
+    save(approved) {
+      console.log("approved", approved);
+      this.formError = [];
 
-    save (approved) {
-      this.toggle_modal = false
-
-      this.formError = []
-
-      this.shiftErrors = []
+      this.shiftErrors = [];
       if (this.schedule.length) {
         this.schedule.forEach((sched, index) => {
           sched.shifts.forEach((shift, i) => {
@@ -1291,35 +1155,52 @@ export default {
               if (!shift.final_time_start) {
                 this.shiftErrors.push({
                   field: `final_time_start-s${index}-${i}`,
-                  message: "Final Start is required",
-                })
+                  message: "Final Start is required"
+                });
               }
               if (!shift.final_time_end) {
                 this.shiftErrors.push({
                   field: `final_time_end-s${index}-${i}`,
-                  message: "Final End is required",
-                })
+                  message: "Final End is required"
+                });
               }
             }
-          })
-        })
+          });
+        });
       }
 
-      this.Validate(this.form, [
+      let notRequired = [
         "total_amount",
         "hours",
         "minutes",
         "late_hours",
-        "late_minutes",
-      ])
+        "late_minutes"
+      ];
+
+      if (!this.propInvoice.ooh) {
+        notRequired.push(
+          "ea_code",
+          "national_insurance_number",
+          "sd_number",
+          "paying_reference",
+          "percentage_rate",
+          "professional_nhs_expenses",
+          "added_year_contributions",
+          "added_early_retirement_contributions",
+          "nhsps_employer_contributions",
+          "nhs_pension_scheme_employing_authority_name"
+        );
+      }
+
+      this.Validate(this.form, notRequired);
 
       if (!this.formError.length && !this.shiftErrors.length) {
-        this.form.total_amount = this.total_gross_locum_wages
+        this.form.total_amount = this.total_gross_locum_wages;
         this.form.job_part_schedule_items.forEach(item => {
-          item.approve = approved
-        })
+          item.approve = approved;
+        });
 
-        this.saveLoading = true
+        this.saveLoading = true;
 
         this.$axios
           .$put(
@@ -1327,65 +1208,61 @@ export default {
               this.propId ? this.propId : this.$route.params.id
             }`,
             {
-              ...this.form,
+              ...this.form
             }
           )
           .then(res => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`,],
-            })
-
-            this.$emit("updateInvoice", res.data.locum_invoice)
+              text: [`${res.message}`]
+            });
+            this.toggle_modal = false;
+            this.$emit("updateInvoice", res.data.locum_invoice);
           })
           .catch(err => {
-            console.log("err", err.response || err)
-
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
-            } else if (err.response.data.error_messages) {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error)
-              })
-            } else {
-              this.formError.push(err.response.data)
+            console.log("err", err.response || err);
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages;
             }
           })
           .finally(() => {
-            this.saveLoading = false
-          })
+            this.saveLoading = false;
+          });
       }
     },
 
-    waitingForLocumReply (item) {
+    waitingForLocumReply(item) {
       let count = this.$moment(item.disputed_by_locum_at).diff(
         item.disputed_by_practice_at,
         "seconds"
-      )
+      );
       if (count < 0) {
-        return true
+        return true;
       }
-      return false
+      return false;
     },
 
-    viewAsPdf (invoiceId) {
+    viewAsPdf(invoiceId) {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      )
-    },
-  },
-}
+      );
+    }
+  }
+};
 </script>
 <style scoped>
-.message-modal.mini-modal {
-  min-width: 25vw;
-  z-index: 56;
+.accept-modal {
   position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .items-table {
   width: 733px;

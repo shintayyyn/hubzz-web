@@ -143,7 +143,7 @@
                 class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
               >Edit</div>
-              <!-- v-if="(slotProps.item.status === 'Approved' || $route.query.status === 'issued'&& slotProps.item.locum_invoice_item && $route.query.status !== 'pension-form-a') -->
+
               <div
                 v-if="['approved', 'issued'].includes($route.query.status)"
                 class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
@@ -169,12 +169,25 @@
                 @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
               >View Solo Form</div>
 
-              <!-- <button
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
-                  && $route.query.status !== 'pension-form-a'"
+              <!-- v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
+              && $route.query.status === 'approved'"-->
+              <button
+                v-if="$route.query.status === 'approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
-              >Mark as Paid</button>-->
+              >Mark as Paid</button>
+
+              <div
+                v-if="
+                    $route.query.status && $route.query.status === 'solo-form'
+                      && slotProps.item.ooh
+                      && slotProps.item.locum_solo_form_id
+                      && slotProps.item.locum_solo_form_sent_to_locum === 0
+                  "
+                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
+                :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
+                @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_solo_form_sent_to_locum)"
+              >Send Form to Locum</div>
             </div>
             <div v-else class="text-gray-600">Disabled by Hub</div>
           </template>
@@ -247,6 +260,15 @@
           </div>
         </div>
 
+        <AppConfirmationModal
+          :label="'Send this Solo Form to Locum?'"
+          :confirm-label="'Yes'"
+          :cancel-label="'Cancel'"
+          :modal="send_solo_form_modal"
+          @confirm="sendForm"
+          @cancel="send_solo_form_modal = false"
+        />
+
         <transition name="fade" mode="out-in">
           <nuxt-link
             v-if="['practice-billing-invoices-from-locums-id', 'practice-billing-invoices-from-locums-id-edit'].includes($route.name) || payment_modal"
@@ -260,6 +282,7 @@
   </section>
 </template>
 <script>
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppTable from "@/components/Base/AppTable";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
@@ -271,6 +294,7 @@ export default {
     mode: "out-in"
   },
   components: {
+    AppConfirmationModal,
     AppTable,
     AppDate,
     AppButton,
@@ -302,6 +326,7 @@ export default {
 
       payment_modal: false,
       invoice_id: null,
+      send_solo_form_modal: false,
       form: {
         paid_at: null,
         ni: false,
@@ -697,6 +722,32 @@ export default {
     this.removeListener();
   },
   methods: {
+    toggleSendFormAModal(locumInvoiceId, alreadySent) {
+      if (alreadySent) return;
+      this.send_solo_form_modal = true;
+      this.invoice_id = locumInvoiceId;
+    },
+    sendForm() {
+      this.$axios
+        .$put(
+          `/api/v1/practice/locum-invoices-solo-form/${this.invoice_id}/send-to-locum`
+        )
+        .then(res => {
+          console.log(res);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.send_solo_form_modal = false;
+          let updatedSoloForm = this.job_parts.find(
+            jobPart =>
+              jobPart.locum_invoice_id ===
+              res.data.locum_solo_form.locum_invoice_id
+          );
+          updatedSoloForm.locum_solo_form_sent_to_locum = 1;
+        });
+    },
     viewAsPdf(formId, type) {
       let url =
         type === "form-a"

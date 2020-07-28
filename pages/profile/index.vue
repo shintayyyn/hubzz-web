@@ -149,7 +149,7 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.ea_code, 'ea_code')"
               />
-              <template v-if="isOOH">
+              <!-- <template v-if="isOOH">
                 <AppInput
                   v-model="form.national_insurance_number"
                   :type="'text'"
@@ -199,14 +199,14 @@
                 ]"
                   required
                 />
-                <!-- <AppInput
+                <AppInput
                   v-model="form.section_scheme_year"
                   :type="'select'"
                   :name="'section_scheme_year'"
                   :label="'NHS Pension Scheme Year?'"
                   :items="schemeYearLists"
                   required
-                />-->
+                />
                 <AppInput
                   v-model="form.professional_nhs_expenses"
                   :type="'text'"
@@ -257,7 +257,7 @@
                   @submit="save"
                   @blur="CheckEmptyField(form.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
                 />
-              </template>
+              </template>-->
             </div>
             <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput
@@ -568,12 +568,12 @@ export default {
         sd_number: null,
         paying_reference: null,
         ea_code: null,
-        professional_nhs_expenses: null,
+        professional_nhs_expenses: 0,
         percentage_rate: 0,
         section_scheme_year: null,
-        added_year_contributions: null,
-        added_early_retirement_contributions: null,
-        nhsps_employer_contributions: null,
+        added_year_contributions: 0,
+        added_early_retirement_contributions: 0,
+        nhsps_employer_contributions: 0,
         nhs_pension_scheme_employing_authority_name: null
       },
       name: "",
@@ -985,23 +985,41 @@ export default {
         "vat_registered",
         "practice_profession_compliance_category_compliance_documents",
         "other_mandatory_training_id",
-        "ea_code"
+        "ea_code",
+        "national_insurance_number",
+        "sd_number",
+        "paying_reference",
+        "professional_nhs_expenses",
+        "percentage_rate",
+        "section_scheme_year",
+        "added_year_contributions",
+        "added_early_retirement_contributions",
+        "nhsps_employer_contributions",
+        "nhs_pension_scheme_employing_authority_name"
       ];
 
-      if (!this.form.practice_type_id.includes(8)) {
-        notRequired.push(
-          "national_insurance_number",
-          "sd_number",
-          "paying_reference",
-          "professional_nhs_expenses",
-          "percentage_rate",
-          "section_scheme_year",
-          "added_year_contributions",
-          "added_early_retirement_contributions",
-          "nhsps_employer_contributions",
-          "nhs_pension_scheme_employing_authority_name"
-        );
-      }
+      // if (!this.form.practice_type_id.includes(8)) {
+      //   notRequired.push(
+      //     "national_insurance_number",
+      //     "sd_number",
+      //     "paying_reference",
+      //     "professional_nhs_expenses",
+      //     "percentage_rate",
+      //     "section_scheme_year",
+      //     "added_year_contributions",
+      //     "added_early_retirement_contributions",
+      //     "nhsps_employer_contributions",
+      //     "nhs_pension_scheme_employing_authority_name"
+      //   );
+      // }
+
+      // temporary
+      this.form.professional_nhs_expenses = 0;
+      this.form.section_scheme_year = null;
+      this.form.percentage_rate = 0;
+      this.form.added_year_contributions = 0;
+      this.form.added_early_retirement_contributions = 0;
+      this.form.nhsps_employer_contributions = 0;
 
       if (
         this.form.use_variation_terms === false ||

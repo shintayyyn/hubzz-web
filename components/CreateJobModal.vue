@@ -1576,6 +1576,7 @@ export default {
         })
       }
     },
+
     getSchedule (
       schedule,
       total_gross_locum_wages,
@@ -1653,6 +1654,7 @@ export default {
       this.hasShiftError = hasError
       this.job_parts = job_parts
     },
+
     canPublish () {
       this.shiftErrors = []
       this.formError = []
@@ -1918,12 +1920,14 @@ export default {
         }
       }
     },
+
     // -- END FOR APP SCHEDULE COMPONENT
     hasValue (value, field) {
       if (value == 0) {
         this.form[field] = ""
       }
     },
+
     handleKeyDownEvent (e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
@@ -1940,6 +1944,7 @@ export default {
         e.preventDefault()
       }
     },
+
     // getListofDays (days) {
     //   // if (days.includes(6) && days.length > 1) {
     //   //   this.show_saturday = true
@@ -2140,106 +2145,106 @@ export default {
 
         this.loading = true
 
-        this.$axios
-          .$post(`/api/v1/practice/jobs`, {
-            ...this.form,
-            old_job_id:
-              this.repostJob
-              && !["Cancelled",].includes(this.repostJob.status)
-                ? this.repostJob.id
-                : null,
+        this.$axios.$post(`/api/v1/practice/jobs`, {
+          ...this.form,
+          old_job_id:
+            this.repostJob
+            && !["Cancelled",].includes(this.repostJob.status)
+              ? this.repostJob.id
+              : null,
+        }).then(res => {
+          if (this.$route.name === "dashboard-create") {
+            this.$router.push("/dashboard")
+          } else if (this.$route.name !== "dashboard-create") {
+            this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+
+            console.log("res.data", res.data)
+          }
+          
+          const job = res.data.job
+
+          if (job.status === 'Live') {
+            this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", job)
+          }
+
+          if (this.repostJob) {
+            if (this.repostJob.status === 'Unfilled') {
+              this.$store.commit("jobs/REMOVE_PRACTICE_UNFILLED_JOB", this.repostJob.id)
+            }
+
+            if (this.repostJob.status === 'Withdrawn') {
+              this.$store.commit("jobs/REMOVE_PRACTICE_WITHDRAWN_JOB_PARTS_WHERE_JOB_ID_IS", this.repostJob.id)
+            }
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Successfully created job",],
           })
-          .then(res => {
-            if (this.$route.name === "dashboard-create") {
-              this.$router.push("/dashboard")
-            } else if (this.$route.name !== "dashboard-create") {
-              this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+        }).catch(err => {
+          console.log("err", err.response || err)
 
-              console.log("res.data", res.data)
-            }
-            
-            const job = res.data.job
+          this.$refs.modalContainer.scrollTop = 0
 
-            if (job.status === 'Live') {
-              this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", job)
-            }
+          this.form.clinical_system = this.selectedClinicalSystem
 
-            if (this.repostJob) {
-              this.$store.commit(
-                "jobs/REMOVE_PRACTICE_UNFILLED_JOB",
-                this.repostJob.id
-              )
+          this.form.specialty = this.selectedQualification
+
+          this.form.spoken_language_id = this.selectedSpokenLanguage
+
+          this.form.session_requirements = this.form.session_requirements
+            ? this.form.session_requirements.split(",")
+            : []
+
+          let message = null
+
+          if (err.response) {
+            if (
+              err.response.status === 400
+              || err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages
+              let detailsError = [
+                "practice_id",
+                "number_of_patients",
+                "duration_for_each_appointment",
+                "role",
+                "specialty",
+                "clinical_system",
+              ]
+              let hasDetailsError = this.formError
+                .map(err => detailsError.includes(err.field))
+                .includes(true)
+              if (hasDetailsError) {
+                this.tabActive = "details"
+              } else if (
+                this.formError
+                  .map(err => ["schedules", "dates",].includes(err.field))
+                  .includes(true)
+              ) {
+                this.tabActive = "schedule"
+              }
+            } else {
+              message = err.response.data.message
             }
+          } else if (err.request) {
+            message = "Something weng wrong!"
+          } else {
+            message = err.message
+          }
+
+          if (message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "success",
-              text: ["Successfully created job",],
+              status: "danger",
+              text: [`${message}`,],
             })
-          })
-          .catch(err => {
-            console.log("err", err.response || err)
-
-            this.$refs.modalContainer.scrollTop = 0
-
-            this.form.clinical_system = this.selectedClinicalSystem
-
-            this.form.specialty = this.selectedQualification
-
-            this.form.spoken_language_id = this.selectedSpokenLanguage
-
-            this.form.session_requirements = this.form.session_requirements
-              ? this.form.session_requirements.split(",")
-              : []
-
-            let message = null
-
-            if (err.response) {
-              if (
-                err.response.status === 400
-                || err.response.data.error_messages
-              ) {
-                this.formError = err.response.data.error_messages
-                let detailsError = [
-                  "practice_id",
-                  "number_of_patients",
-                  "duration_for_each_appointment",
-                  "role",
-                  "specialty",
-                  "clinical_system",
-                ]
-                let hasDetailsError = this.formError
-                  .map(err => detailsError.includes(err.field))
-                  .includes(true)
-                if (hasDetailsError) {
-                  this.tabActive = "details"
-                } else if (
-                  this.formError
-                    .map(err => ["schedules", "dates",].includes(err.field))
-                    .includes(true)
-                ) {
-                  this.tabActive = "schedule"
-                }
-              } else {
-                message = err.response.data.message
-              }
-            } else if (err.request) {
-              message = "Something weng wrong!"
-            } else {
-              message = err.message
-            }
-
-            if (message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${message}`,],
-              })
-            }
-          })
-          .finally(() => {
-            this.toPublish = false
-            this.loading = false
-          })
+          }
+        }).finally(() => {
+          this.toPublish = false
+          this.loading = false
+        })
       } else {
         let detailsError = [
           "practice_id",
