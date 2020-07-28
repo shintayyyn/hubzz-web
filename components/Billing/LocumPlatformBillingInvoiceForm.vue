@@ -180,7 +180,10 @@
               </p>
             </div>
             <!-- v-if="form.generate_form || (propInvoice && propInvoice.generate_form)" -->
-            <div class="flex flex-wrap justify-between">
+            <div
+              v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
+              class="flex flex-wrap justify-between"
+            >
               <p class="text-sm w-1/2">
                 Form Type:
               </p>
@@ -358,7 +361,7 @@ import AppSchedules from "@/components/Base/AppSchedules"
 export default {
   components: {
     AppInput,
-    AppButton, 
+    AppButton,
     AppLoading,
     AppSchedules,
   },
@@ -490,19 +493,24 @@ export default {
         if (!this.propJobPart.ooh) {
           return this.total_work_payment * 0.9 * 0.1438
         }
-        if (this.propJobPart.ooh && this.practice) {
+        if (this.propJobPart.ooh) {
           let boxA = this.total_work_payment
-          let boxB = this.practice.professional_nhs_expenses
+          // let boxB = this.practice.professional_nhs_expenses;
+          let boxB = 0
           let boxC = boxA - boxB
-          let boxD = boxC * (this.practice.percentage_rate / 100)
+          // let boxD = boxC * (this.practice.percentage_rate / 100);
+          let boxD = boxC * (0 / 100)
           let boxE = boxC * boxD
-          let boxF = this.practice.added_year_contributions
-          let boxG = this.practice.added_early_retirement_contributions
+          let boxF = 0
+          let boxG = 0
+          // let boxF = this.practice.added_year_contributions;
+          // let boxG = this.practice.added_early_retirement_contributions;
           let boxH = boxE + boxF + boxG
           // let boxI = boxC - boxH
-          let boxJ = this.practice.nhsps_employer_contributions + boxC * 0.1438
+          let boxJ = 0 + boxC * 0.1438
+          // let boxJ =
+          //   this.practice.nhsps_employer_contributions + boxC * 0.1438;
           let boxK = boxH + boxJ
-
           return boxK
         }
       }
@@ -790,9 +798,9 @@ export default {
       this.schedule = schedule
       this.form.job_part_schedule_items = []
       let absentCount = 0
-      schedule.forEach((sched) => {
+      schedule.forEach(sched => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach((shift) => {
+          sched.shifts.forEach(shift => {
             let timeStart = shift.final_time_start
               ? shift.final_time_start
               : shift.time_start

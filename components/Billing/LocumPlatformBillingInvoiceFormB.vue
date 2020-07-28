@@ -145,9 +145,13 @@ export default {
           dataIndex: "job_part_number",
         },
         {
+          name: "Job Title",
+          dataIndex: "job_title",
+        },
+        {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center",
+          class: "text-center currency",
           sortable: true,
         },
         {
@@ -195,6 +199,7 @@ export default {
             nhs_claimable: true,
             job_type: this.type,
             type: this.type,
+            generate_form: true,
             can_generate_form_b: true,
           },
         }),
@@ -207,6 +212,7 @@ export default {
             job_type: this.type,
             type: this.type,
             can_generate_form_b: true,
+            generate_form: true,
             offset: 0,
             limit: 5,
           },
@@ -217,36 +223,8 @@ export default {
           let job_parts = response.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let total = 0
+            let total = jobPart.locum_invoice_item.locum_invoice.total_amount
 
-            jobPart.schedules.forEach(schedule => {
-              if (!schedule.absent_reason) {
-                let finalHours = schedule.final_hours_in_minutes / 60
-                let totalHours = schedule.original_hours_in_minutes / 60
-
-                switch (schedule.locum_detail_rate_type.name) {
-                case "Hourly":
-                  total = total + schedule.rate * finalHours
-                  break
-                case "Whole Day":
-                case "Half Day":
-                  total = total + (schedule.rate / totalHours) * finalHours
-                  break
-                default:
-                  total = total + schedule.rate * finalHours
-                  break
-                }
-              }
-            })
-
-            total
-              = jobPart.locum_invoice_item
-              && jobPart.locum_invoice_item.locum_invoice
-              && jobPart.locum_invoice_item.locum_invoice.paid_at
-                ? total
-                  - jobPart.locum_invoice_item.locum_invoice.ni_amount
-                  - jobPart.locum_invoice_item.locum_invoice.paye_amount
-                : total
             return {
               ...jobPart,
               practice_name:
@@ -259,9 +237,7 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total
-                .toFixed(2)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              total_amount: total,
               paid:
                 jobPart.locum_status === "Approved"
                 && jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -292,6 +268,7 @@ export default {
             job_type: this.type,
             type: this.type,
             can_generate_form_b: true,
+            generate_form: true,
             offset: this.offset,
             limit: this.limit,
           },
@@ -300,21 +277,7 @@ export default {
           let job_parts = res.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let total = jobPart.locum_invoice_id
-              ? jobPart.locum_invoice_item.total
-              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                ? jobPart.job.rate * jobPart.final_hours
-                : (jobPart.job.rate / jobPart.job.total_hours)
-                * jobPart.final_hours
-
-            total
-              = jobPart.locum_invoice_item
-              && jobPart.locum_invoice_item.locum_invoice
-              && jobPart.locum_invoice_item.locum_invoice.paid_at
-                ? total
-                  - jobPart.locum_invoice_item.locum_invoice.ni_amount
-                  - jobPart.locum_invoice_item.locum_invoice.paye_amount
-                : total
+            let total = jobPart.locum_invoice_item.locum_invoice.total_amount
 
             return {
               ...jobPart,
@@ -328,9 +291,7 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total
-                .toFixed(2)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              total_amount: total,
               paid:
                 jobPart.locum_status === "Approved"
                 && jobPart.locum_invoice_item.locum_invoice.paid_at
