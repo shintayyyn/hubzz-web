@@ -9,20 +9,6 @@
         :icon="'cloud-download'"
         @click="toPDF()"
       />
-      <!-- <AppButton
-        v-if="forViewing == true" 
-				class="mr-2"
-				:label="'Test HTML'"
-				:icon="'cloud-download'"
-				@click="testHtml()"
-			/>-->
-      <!-- <AppButton
-        v-if="forViewing == true" 
-				class="mr-2"
-				:label="'Test Multiple Page'"
-				:icon="'cloud-download'"
-				@click="testMultiplePage()"
-			/>-->
       <AppButton
         v-if="forViewing == false"
         class="m-2"
@@ -30,19 +16,6 @@
         :icon="'save-icon'"
         @click="createInvoice()"
       />
-      <!-- <AppButton
-        v-if="forViewing == false"
-        class="m-2" 
-        :label="'Save as Draft'" 
-        :icon="'save-icon'"
-			/>-->
-      <!-- <AppButton
-        v-if="forViewing == false"
-        class="m-2" 
-        :label="'Clear Entries'" 
-        :icon="'save-icon'"
-        @click="clearEntries()"
-			/>-->
     </div>
     <!-- HEADER ENDS HERE -->
 
@@ -175,7 +148,7 @@
                   >
                 </template>
                 <p v-else class="px-2 py-1 text-right text-black">
-                  {{ item.total }}
+                  {{ item.total | currency }}
                 </p>
               </div>
               <template v-if="forViewing == false">
@@ -260,7 +233,7 @@
                   >
                 </template>
                 <p v-else class="px-2 py-1 text-right text-black">
-                  {{ item.total }}
+                  {{ item.total | currency }}
                 </p>
               </div>
               <template v-if="forViewing == false">
@@ -342,7 +315,7 @@
                   >
                 </template>
                 <p v-else class="px-2 py-1 text-right text-md font-semibold">
-                  {{ item.total }}
+                  {{ item.total | currency }}
                 </p>
               </div>
               <template v-if="forViewing == false">
@@ -424,7 +397,7 @@
                   >
                 </template>
                 <p v-else class="px-2 py-1 text-right text-md font-semibold">
-                  {{ '- '+item.total }}
+                  - {{ item.total | currency }}
                 </p>
               </div>
               <template v-if="forViewing == false">
@@ -444,7 +417,7 @@
             Total
           </div>
           <div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">
-            {{ "£ " + practiceInvoice.total_amount.toFixed(2) }}
+            £ {{ practiceInvoice.total_amount | currency }}
           </div>
         </div>
         <div class="flex flex-row justify-between px-4 w-full">
