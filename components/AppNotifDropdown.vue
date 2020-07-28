@@ -217,6 +217,7 @@ export default {
         "Locum Notification Locum Invoice Paid",
 
         "Locum Notification Locum Form A Paid",
+        "Locum Notification Locum Form A Sent To Practice",
 
         "Practice Notification Practice Actived",
         "Practice Notification Practice Reactivated",
@@ -256,6 +257,7 @@ export default {
         "Practice Notification Locum Invoice Paid",
 
         "Practice Notification Locum Form A Paid",
+        "Practice Notification Locum Form A Sent To Practice",
 
         "Practice Notification Practice Invoice Issued",
         "Practice Notification Practice Invoice Paid",
@@ -582,7 +584,9 @@ export default {
 
       const validNotificationUrl = [
         "Locum Notification Locum Form A Paid",
+        "Locum Notification Locum Form A Sent To Practice",
         "Practice Notification Locum Form A Paid",
+        "Practice Notification Locum Form A Sent To Practice",
       ]
 
       if (validNotificationUrl.includes(notificationTypeName)) {

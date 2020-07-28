@@ -1,44 +1,38 @@
 <template>
   <section>
-    <!-- text / email / password / time / select / textarea / multicheckbox / number -->
-    <template
-      v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
-    >
+    <template v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)">
       <div class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-6 py-2'">
-        <div
-          v-if="label || info"
-          class="relative flex flex-wrap leading-none"
-          :class="info ? 'flex-wrap justify-between' : 'items-center'"
-        >
+        <div v-if="label || info" class="relative flex flex-wrap leading-none" :class="info ? 'flex-wrap justify-between' : 'items-center'">
           <label :for="name" class="text-xs sm:text-sm py-1">
-            {{ label }}
+            <span>{{ label }}</span>
+
             <span v-if="required" class="text-red-500">*</span>
           </label>
+
           <div v-if="info || error" class="flex">
             <div v-if="info" class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm">
-              {{ info }}
+              <span>{{ info }}</span>
             </div>
-            <div
-              v-if="error && type.includes('checkbox')"
-              class="text-red-500 text-xs px-2"
-            >
-              {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+
+            <div v-if="error && type.includes('checkbox')" class="text-red-500 text-xs px-2">
+              <span>{{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}</span>
             </div>
           </div>
         </div>
+
         <template v-if="type === 'multi-checkbox'">
           <div v-if="updatable" class="flex flex-row justify-start items-center mt-1">
-            <div
-              class="mb-1 bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
-              @click="add"
-            >
+            <div class="mb-1 bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white" @click="add">
               Add mandatory training
             </div>
           </div>
+
           <div v-if="!required" class="flex flex-row justify-start items-center mt-1">
             <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
+
             <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
           </div>
+
           <template v-if="toAdd">
             <div class="flex flex-row justify-start items-center mt-1">
               <div class="flex flex-col w-full">
@@ -48,29 +42,23 @@
                   placeholder="Type Training Title Here"
                   type="text"
                 >
+
                 <div v-if="errorMsg" class="text-sm text-red-500">
-                  {{ errorMsg }}
+                  <span>{{ errorMsg }}</span>
                 </div>
               </div>
-              <div
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
-                @click="save(null, 'add')"
-              >
-                Add
+
+              <div class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600" @click="save(null, 'add')">
+                <span>Add</span>
               </div>
-              <div
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
-                @click="cancel"
-              >
-                Cancel
+
+              <div class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400" @click="cancel">
+                <span>Cancel</span>
               </div>
             </div>
           </template>
-          <div
-            v-for="(item, index) in lists"
-            :key="index"
-            class="flex flex-row justify-start items-center mt-1"
-          >
+
+          <div v-for="(item, index) in lists" :key="index" class="flex flex-row justify-start items-center mt-1">
             <template v-if="toEdit && editId === item.value && updatable">
               <div class="flex flex-col w-full">
                 <input
@@ -84,6 +72,7 @@
                 </div>
               </div>
             </template>
+
             <template v-else>
               <input
                 :id="`${name}-${index}`"
@@ -99,6 +88,7 @@
                 class="text-xs sm:text-sm flex items-center"
               >{{ item.label }}</label>
             </template>
+
             <template v-if="updatable">
               <div
                 v-if="editId !== item.value"
@@ -131,17 +121,16 @@
             </template>
           </div>
         </template>
+
         <template v-else>
           <div class="flex flex-row justify-start mt-1">
             <template v-if="['text','time','email', 'number'].includes(type)">
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">
-                  <p
-                    v-if="format && format === 'mobile'"
-                    class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent"
-                  >
-                    +44
+                  <p v-if="format && format === 'mobile'" class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent">
+                    <span>+44</span>
                   </p>
+
                   <input
                     :value="value"
                     :type="type"
@@ -163,12 +152,9 @@
                     @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
                   >
                 </div>
-                <!-- @keypress="type === 'number' ? isNumber($event) : $emit('keypress')" -->
+
                 <transition name="drop-down">
-                  <div
-                    v-if="error"
-                    class="text-red-500 py-1 text-xs text-white"
-                  >
+                  <div v-if="error" class="text-red-500 py-1 text-xs text-white">
                     {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
                   </div>
                 </transition>
@@ -418,6 +404,7 @@
     </template>
   </section>
 </template>
+
 <script>
 export default {
   props: {
@@ -435,7 +422,9 @@ export default {
     inStyle: String,
     inClass: String,
     wrapperClass: String,
+
     limit: Number,
+
     format: String,
     required: {
       type: Boolean,
@@ -466,6 +455,7 @@ export default {
     },
     isHorizontal: Boolean,
   },
+
   data () {
     return {
       passwordValue: "",
@@ -479,6 +469,7 @@ export default {
       errorMsg: null,
     }
   },
+
   computed: {
     na: {
       get () {
@@ -493,6 +484,7 @@ export default {
       },
     },
   },
+
   methods: {
     // for updatable multi checkbox
     add () {
@@ -569,23 +561,24 @@ export default {
         return ""
       }
     },
+
     limitInput (e) {
       let acceptedKeys = [
         "Backspace",
+        "Delete",
         "Tab",
         "ArrowUp",
         "ArrowDown",
         "ArrowLeft",
         "ArrowRight",
       ]
-      if (
-        e.target.value.length >= this.limit
-				&& !acceptedKeys.includes(e.key)
-      ) {
+
+      if (e.target.value.length >= this.limit && !acceptedKeys.includes(e.key)) {
         e.preventDefault()
       }
     },
   },
+
 }
 </script>
 

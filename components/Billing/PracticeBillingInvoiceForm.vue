@@ -14,6 +14,7 @@
                 <div class="font-bold text-lg mt-2">{{ propInvoice.practice.name }}</div>
               </div>
             </section>
+
             <div class="text-xs sm:text-sm">
               <div>{{ propInvoice.practice.address_line_1 }}</div>
               <div>{{ propInvoice.practice.address_line_2 }}</div>
@@ -22,6 +23,7 @@
             </div>
           </div>
         </div>
+
         <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{ propInvoice.locum_user.name }}</div>
           <div>{{ propInvoice.address_line_1 }}</div>
@@ -125,13 +127,13 @@
             <p class="font-bold w-1/2 text-right">{{ propInvoice && propInvoice.status }}</p>
           </div>
           <div
-            class="flex flex-wrap justify-between"
             v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+            class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">GENERATE FORM:</p>
             <p
               class="font-bold w-1/2 text-right"
-            >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No'}}</p>
+            >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}</p>
           </div>
         </div>
         <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
@@ -153,8 +155,8 @@
             </div>
           </template>
           <div
-            class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+            class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
             <p class="text-sm w-1/2">PENSION AMOUNT:</p>
             <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
@@ -243,14 +245,14 @@
             :name="'percentage_rate'"
             :label="'Percentage rate'"
             :items="[
-                  { label: '5%', value: 5 },
-                  { label: '5.6%', value: 5.6 },
-                  { label: '7.1%', value: 7.1 },
-                  { label: '9.3%', value: 9.3 },
-                  { label: '12.5%', value: 12.5 },
-                  { label: '13.5%', value: 13.5 },
-                  { label: '14.5%', value: 14.5 },
-                ]"
+              { label: '5%', value: 5 },
+              { label: '5.6%', value: 5.6 },
+              { label: '7.1%', value: 7.1 },
+              { label: '9.3%', value: 9.3 },
+              { label: '12.5%', value: 12.5 },
+              { label: '13.5%', value: 13.5 },
+              { label: '14.5%', value: 14.5 },
+            ]"
             required
           />
           <AppInput
@@ -306,7 +308,7 @@
         </div>
       </div>
     </transition>
-    <div class="shield" v-if="toggle_modal"></div>
+    <div v-if="toggle_modal" class="shield" />
 
     <template v-if="old">
       <div class="flex items-center justify-end py-2">

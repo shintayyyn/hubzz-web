@@ -202,7 +202,7 @@
                     $route.query.status && $route.query.status === 'pension-form-a'
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
-                      && slotProps.item.locum_form_a_sent_to_practice === 0
+                      && !slotProps.item.locum_form_a_sent_to_practice
                   "
                   class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
                   :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"

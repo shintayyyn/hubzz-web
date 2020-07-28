@@ -1,9 +1,11 @@
 <template>
   <section class="relative">
     <AppLoading :loading="!propInvoice && !propJobPart" spinner :message="'Loading'" />
+
     <template v-if="propInvoice || propJobPart">
       <div class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4">
         <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
+
         <AppLoading :loading="saveLoading" spinner />
 
         <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
@@ -64,8 +66,8 @@
           v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
         >
           <div
-            class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
             v-if="(propInvoice && propInvoice.disputed_items_count > 0 && waitingForPracticeReply(propInvoice.items[0])) && propInvoice.status !== 'Draft'"
+            class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
           >DISPUTED - Awaiting Practice Reply</div>
         </template>
         <p
@@ -93,17 +95,16 @@
           <div class="flex items-center">
             <p>Total Work Hours</p>
             <p
-              class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
               v-if="total_working_hours>0"
+              class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
             >{{ total_working_hours | hoursMinutes }}</p>
-            <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700" v-else>0</p>
+            <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">0</p>
           </div>
         </div>
 
         <div class="w-full border-b">
           <AppSchedules
             :practice_rate="practice_rate"
-            @getSchedule="getSchedule"
             :schedule="propJobPart? propJobPart.schedules : propInvoice.job_part_schedule_items"
             :error="formError.find(err => err.field === 'schedules')"
             :shiftErrors="shiftErrors"
@@ -112,6 +113,7 @@
             :toDisplay="propInvoice && ['Approved', 'Issued', 'Paid'].includes(propInvoice.status)"
             :type="'invoice'"
             :invoiceStatus="$route.query.status"
+            @getSchedule="getSchedule"
           />
         </div>
 
@@ -156,13 +158,13 @@
               >{{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}</p>
             </div>
             <div
-              class="flex flex-wrap justify-between"
               v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+              class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">GENERATE FORM:</p>
               <p
                 class="font-bold w-1/2 text-right"
-              >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No'}}</p>
+              >{{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}</p>
             </div>
           </div>
           <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
@@ -184,8 +186,8 @@
               </div>
             </template>
             <div
-              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
               v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
+              class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
               <p class="text-sm w-1/2">PENSION AMOUNT:</p>
               <p class="font-bold w-1/2 text-right">£ {{ pension_amount | currency }}</p>
@@ -241,10 +243,11 @@
         </div>
       </div>
     </template>
+
     <div>
       <div
-        class="flex flex-wrap items-center mx-2"
         v-if="propJobPart && !propInvoice && claimNhs && !isOOH"
+        class="flex flex-wrap items-center mx-2"
       >
         <AppInput
           v-model="form.generate_form"
@@ -291,7 +294,6 @@
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
-import AppDate from "@/components/Base/AppDate";
 import AppSchedules from "@/components/Base/AppSchedules";
 
 export default {
@@ -299,7 +301,6 @@ export default {
     AppInput,
     AppButton,
     AppLoading,
-    AppDate,
     AppSchedules
   },
 
@@ -416,7 +417,7 @@ export default {
             let boxF = this.practice.added_year_contributions;
             let boxG = this.practice.added_early_retirement_contributions;
             let boxH = boxE + boxF + boxG;
-            let boxI = boxC - boxH;
+            // let boxI = boxC - boxH
             let boxJ =
               this.practice.nhsps_employer_contributions + boxC * 0.1438;
             let boxK = boxH + boxJ;
@@ -735,9 +736,9 @@ export default {
       this.schedule = schedule;
       this.form.job_part_schedule_items = [];
       let absentCount = 0;
-      schedule.forEach((sched, index) => {
+      schedule.forEach(sched => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach((shift, i) => {
+          sched.shifts.forEach(shift => {
             let timeStart = shift.final_time_start
               ? shift.final_time_start
               : shift.time_start;
