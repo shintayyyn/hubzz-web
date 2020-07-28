@@ -2168,7 +2168,13 @@ export default {
           }
 
           if (this.repostJob) {
-            this.$store.commit("jobs/REMOVE_PRACTICE_UNFILLED_JOB", this.repostJob.id)
+            if (this.repostJob.status === 'Unfilled') {
+              this.$store.commit("jobs/REMOVE_PRACTICE_UNFILLED_JOB", this.repostJob.id)
+            }
+
+            if (this.repostJob.status === 'Withdrawn') {
+              this.$store.commit("jobs/REMOVE_PRACTICE_WITHDRAWN_JOB_PARTS_WHERE_JOB_ID_IS", this.repostJob.id)
+            }
           }
 
           this.$store.commit("SET_NOTIFICATION", {

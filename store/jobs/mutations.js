@@ -161,12 +161,8 @@ export default {
     state.practice_cancelled_job_parts = payload
   },
 
-  SET_PRACTICE_WITHDRAWN_JOB_PARTS_COUNT (state, payload) {
-    state.practice_withdrawn_job_parts_count = payload
-  },
-
-  SET_PRACTICE_WITHDRAWN_JOB_PARTS (state, payload) {
-    state.practice_withdrawn_job_parts = payload
+  SET_PRACTICE_WITHDRAWN_JOB_PARTS (state, jobParts) {
+    state.practice_withdrawn_job_parts = jobParts
   },
 
   // WHOLE
@@ -307,6 +303,11 @@ export default {
   REMOVE_PRACTICE_UNFILLED_JOB (state, payload) {
     state.practice_unfilled_jobs = state.practice_unfilled_jobs.filter(job => job.id !== payload)
     state.practice_unfilled_jobs_count = state.practice_unfilled_jobs_count - 1
+  },
+
+  REMOVE_PRACTICE_WITHDRAWN_JOB_PARTS_WHERE_JOB_ID_IS (state, jobId) {
+    state.practice_withdrawn_job_parts = state.practice_withdrawn_job_parts
+      .filter(({ job_id: jobPartJobId, }) => jobPartJobId !== jobId)
   },
 
   // SET_PRACTICE_CANCELLED_JOBS (state, payload) {
@@ -739,7 +740,7 @@ export default {
       state.locum_private_jobs_count = state.locum_private_jobs_count + 1
     })
   },
-  
+
   REMOVE_LOCUM_PRIVATE_JOB_PARTS (state, payload) {
     let jobIndex = state.locum_private_job_parts.findIndex(job => job.job_id === payload)
     state.locum_private_job_parts.splice(jobIndex, 1)
