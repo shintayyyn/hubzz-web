@@ -339,7 +339,7 @@ export default {
           this.statistics.push({
             label: "Allocated Jobs",
             value: allocatedJobCount,
-            route: "/jobs?status=Allocated",
+            route: "/locum-job-parts?status=Allocated",
           })
 
           this.statistics.push({
@@ -351,13 +351,13 @@ export default {
           this.statistics.push({
             label: "Ongoing Job Parts",
             value: ongoingJobPartCount,
-            route: "/jobs?status=Ongoing",
+            route: "/locum-job-parts?status=Ongoing",
           })
 
           this.statistics.push({
             label: "Completed Job Parts",
             value: completedJobPartCount,
-            route: "/jobs?status=Completed",
+            route: "/locum-job-parts?status=Completed",
           })
         })
         .catch(err => {
