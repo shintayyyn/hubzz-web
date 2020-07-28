@@ -29,7 +29,7 @@
                   <div>Select which jobs to view:</div>
 
                   <div class="bg-gray-300 rounded px-2">
-                    Must select atleast one
+                    Must select at least one
                   </div>
                 </div>
 
