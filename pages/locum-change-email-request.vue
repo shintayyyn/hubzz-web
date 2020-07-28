@@ -106,7 +106,7 @@
                 v-model="mandatoryTrainingIds"
                 type="multi-checkbox"
                 :name="'mandatory_training_id'"
-                label="Please select atleast 3 mandatory training courses completed."
+                label="Please select at least 3 mandatory training courses completed."
                 :lists="mandatoryTrainingsSelectionList"
                 @checked="(mandatoryTrainingId) => mandatoryTrainingIds.push(parseInt(mandatoryTrainingId))"
                 @unchecked="(mandatoryTrainingId) => mandatoryTrainingIds = mandatoryTrainingIds.filter(id => id !== parseInt(mandatoryTrainingId))"
@@ -138,345 +138,345 @@
 </template>
 
 <script>
-  import AppInput from "@/components/Base/AppInput"
+import AppInput from "@/components/Base/AppInput"
 
-  export default {
+export default {
 
-    components: {
-      AppInput,
+  components: {
+    AppInput,
+  },
+
+  layout: 'auth',
+
+  data () {
+    return {
+      loading: false,
+
+      professions: [],
+      mandatoryTrainings: [],
+
+      title: '',
+      firstName: '',
+      lastName: '',
+      suffix: '',
+      mobileNumber: '',
+      professionId: null,
+      reference: '',
+      nhsSmartCardIdNumber: '',
+      mandatoryTrainingIds: [],
+      email: '',
+        
+      formErrors: [],
+      setFocus: '',
+      // sample
+      success: false,
+    }
+  },
+
+  computed: {
+
+    professionsSelectionList () {
+      return this.professions.map(({ id, name, }) => ({ label: name, value: id, }))
     },
 
-    layout: 'auth',
+    mandatoryTrainingsSelectionList () {
+      return this.mandatoryTrainings.map(({ id, name, }) => ({ label: name, value: id, }))
+    },
 
-    data () {
+    selectedProfession () {
+      return this.professionId
+        ? this.professions.find(profession => profession.id.toString() === this.professionId.toString()) || null
+        : null
+    },
+
+    complianceDocument () {
+      return this.selectedProfession
+            && this.selectedProfession.profession_compliance_category
+        ? this.selectedProfession.profession_compliance_category.locum_change_email_request_compliance_document
+        : null
+    },
+
+    complianceDocumentId () {
+      return this.complianceDocument
+        ? this.complianceDocument.compliance_document_id
+        : null
+    },
+
+    complianceDocumentName () {
+      return this.complianceDocument
+        ? this.complianceDocument.compliance_document_name
+        : null
+    },
+
+    form () {
       return {
-        loading: false,
-
-        professions: [],
-        mandatoryTrainings: [],
-
-        title: '',
-        firstName: '',
-        lastName: '',
-        suffix: '',
-        mobileNumber: '',
-        professionId: null,
-        reference: '',
-        nhsSmartCardIdNumber: '',
-        mandatoryTrainingIds: [],
-        email: '',
-        
-        formErrors: [],
-        setFocus: '',
-        // sample
-        success: false
+        title: this.title,
+        first_name: this.firstName,
+        last_name: this.lastName,
+        suffix: this.suffix,
+        mobile_number: this.mobileNumber,
+        profession_id: this.professionId,
+        compliance_document_id: this.professionId && this.complianceDocumentId,
+        reference: this.complianceDocumentId
+          ? this.reference
+          : null,
+        nhs_smart_card_id_number: this.professionId && !this.complianceDocumentId
+          ? this.nhsSmartCardIdNumber
+          : null,
+        email: this.email,
       }
     },
 
-    computed: {
-
-      professionsSelectionList () {
-        return this.professions.map(({ id, name }) => ({ label: name, value: id }))
-      },
-
-      mandatoryTrainingsSelectionList () {
-        return this.mandatoryTrainings.map(({ id, name }) => ({ label: name, value: id }))
-      },
-
-      selectedProfession () {
-        return this.professionId
-          ? this.professions.find(profession => profession.id.toString() === this.professionId.toString()) || null
-          : null
-      },
-
-      complianceDocument () {
-        return this.selectedProfession
-            && this.selectedProfession.profession_compliance_category
-          ? this.selectedProfession.profession_compliance_category.locum_change_email_request_compliance_document
-          : null
-      },
-
-      complianceDocumentId () {
-        return this.complianceDocument
-          ? this.complianceDocument.compliance_document_id
-          : null
-      },
-
-      complianceDocumentName () {
-        return this.complianceDocument
-          ? this.complianceDocument.compliance_document_name
-          : null
-      },
-
-      form () {
-        return {
-          title: this.title,
-          first_name: this.firstName,
-          last_name: this.lastName,
-          suffix: this.suffix,
-          mobile_number: this.mobileNumber,
-          profession_id: this.professionId,
-          compliance_document_id: this.professionId && this.complianceDocumentId,
-          reference: this.complianceDocumentId
-            ? this.reference
-            : null,
-          nhs_smart_card_id_number: this.professionId && !this.complianceDocumentId
-            ? this.nhsSmartCardIdNumber
-            : null,
-          email: this.email,
-        }
-      },
-
-      rules () {
-        return {
-          title: 'string',
-          first_name: 'required|string',
-          last_name: 'required|string',
-          suffix: 'string',
-          mobile_number: 'string',
-          profession_id: 'required',
-          reference: 'required_with_all:compliance_document_id',
-          nhs_smart_card_id_number: 'required_without_all:compliance_document_id',
-          email: 'required|email',
-        }
-      },
-
-      messages () {
-        return {
-          'title.string': 'Invalid title.',
-          'first_name.required': 'First name is required.',
-          'first_name.string': 'Invalid first name.',
-          'last_name.required': 'Last name is required.',
-          'last_name.string': 'Invalid last name.',
-          'suffix.string': 'Invalid suffix.',
-          'mobile_number.string': 'Invalid mobile number.',
-          'profession_id.required': 'Profession is required.',
-          'reference.required_with_all': `${this.complianceDocumentName || 'Reference'} is required.`,
-          'nhs_smart_card_id_number.required_without_all': 'NHS smart card ID number is required.',
-          'email.required': 'New email is required.',
-          'email.email': 'Invalid new email.',
-        }
-      },
-
+    rules () {
+      return {
+        title: 'string',
+        first_name: 'required|string',
+        last_name: 'required|string',
+        suffix: 'string',
+        mobile_number: 'string',
+        profession_id: 'required',
+        reference: 'required_with_all:compliance_document_id',
+        nhs_smart_card_id_number: 'required_without_all:compliance_document_id',
+        email: 'required|email',
+      }
     },
 
-    watch: {
-
-      firstName () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'first_name')
-
-        if (this.firstName) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'first_name',
-              message: 'First name is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      lastName () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'last_name')
-
-        if (this.lastName) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'last_name',
-              message: 'Last name is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      professionId () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'profession_id')
-
-        if (this.professionId) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'profession_id',
-              message: 'Profession is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      complianceDocumentId () {
-        const referenceIndex = this.formErrors.findIndex((formError) => formError.field === 'reference')
-
-        if (referenceIndex > -1) {
-          this.formErrors.splice(referenceIndex, 1)
-        }
-
-        const nhsSmartCardIdNumberIndex = this.formErrors.findIndex((formError) => formError.field === 'nhs_smart_card_id_number')
-
-        if (this.complianceDocumentId && nhsSmartCardIdNumberIndex > -1) {
-          this.formErrors.splice(nhsSmartCardIdNumberIndex, 1)
-        }
-      },
-
-      reference () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'reference')
-
-        if (!this.professionId) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-          return
-        }
-
-        if (!this.complianceDocumentId) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-          return
-        }
-
-        if (this.reference) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'reference',
-              message: `${this.complianceDocumentName || 'Reference'} is required.`,
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      nhsSmartCardIdNumber () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'nhs_smart_card_id_number')
-
-        if (!this.professionId) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-          return
-        }
-
-        if (this.complianceDocumentId) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-          return
-        }
-
-        if (this.nhsSmartCardIdNumber) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'nhs_smart_card_id_number',
-              message: 'NHS smart card ID number is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      email () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'email')
-
-        if (this.email) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'email',
-              message: 'Email is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
+    messages () {
+      return {
+        'title.string': 'Invalid title.',
+        'first_name.required': 'First name is required.',
+        'first_name.string': 'Invalid first name.',
+        'last_name.required': 'Last name is required.',
+        'last_name.string': 'Invalid last name.',
+        'suffix.string': 'Invalid suffix.',
+        'mobile_number.string': 'Invalid mobile number.',
+        'profession_id.required': 'Profession is required.',
+        'reference.required_with_all': `${this.complianceDocumentName || 'Reference'} is required.`,
+        'nhs_smart_card_id_number.required_without_all': 'NHS smart card ID number is required.',
+        'email.required': 'New email is required.',
+        'email.email': 'Invalid new email.',
+      }
     },
 
-    mounted () {
-      this.success = false
+  },
 
-      this.$axios.get('/api/v1/professions', {
-        params: {
-          limit: 999,
-        },
-      }).then((response) => {
-        this.professions = response.data.data.professions
-      })
+  watch: {
 
-      this.$axios.get('/api/v1/mandatory-trainings', {
-        params: {
-          limit: 999,
-        },
-      }).then((response) => {
-        this.mandatoryTrainings = response.data.data.mandatory_trainings
-      })
+    firstName () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'first_name')
+
+      if (this.firstName) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'first_name',
+            message: 'First name is required.',
+            validation: 'required',
+          })
+        }
+      }
     },
 
-    methods: {
+    lastName () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'last_name')
 
-      async submit () {
-        try {
-          this.formErrors = await this.$validator(this.form, this.rules, this.messages).then(() => []).catch((errors) => errors)
+      if (this.lastName) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'last_name',
+            message: 'Last name is required.',
+            validation: 'required',
+          })
+        }
+      }
+    },
 
-          if (this.formErrors.length) {
-            return
-          }
+    professionId () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'profession_id')
 
-          await this.$axios.post(`/api/v1/locum-change-email-requests`, this.form)
+      if (this.professionId) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'profession_id',
+            message: 'Profession is required.',
+            validation: 'required',
+          })
+        }
+      }
+    },
 
-          this.success = true
-        } catch (err) {
-          console.log('err', err.response || err)
+    complianceDocumentId () {
+      const referenceIndex = this.formErrors.findIndex((formError) => formError.field === 'reference')
 
-          let message = null
+      if (referenceIndex > -1) {
+        this.formErrors.splice(referenceIndex, 1)
+      }
 
-          if (err.response) {
-            if (err.response.status === 400 && err.response.data.error_messages) {
-              this.formErrors = err.response.data.error_messages
-            } else {
-              message = err.response.data.message
-            }
-          } else if (err.request) {
-            message = 'Something went wrong!'
+      const nhsSmartCardIdNumberIndex = this.formErrors.findIndex((formError) => formError.field === 'nhs_smart_card_id_number')
+
+      if (this.complianceDocumentId && nhsSmartCardIdNumberIndex > -1) {
+        this.formErrors.splice(nhsSmartCardIdNumberIndex, 1)
+      }
+    },
+
+    reference () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'reference')
+
+      if (!this.professionId) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+        return
+      }
+
+      if (!this.complianceDocumentId) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+        return
+      }
+
+      if (this.reference) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'reference',
+            message: `${this.complianceDocumentName || 'Reference'} is required.`,
+            validation: 'required',
+          })
+        }
+      }
+    },
+
+    nhsSmartCardIdNumber () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'nhs_smart_card_id_number')
+
+      if (!this.professionId) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+        return
+      }
+
+      if (this.complianceDocumentId) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+        return
+      }
+
+      if (this.nhsSmartCardIdNumber) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'nhs_smart_card_id_number',
+            message: 'NHS smart card ID number is required.',
+            validation: 'required',
+          })
+        }
+      }
+    },
+
+    email () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'email')
+
+      if (this.email) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'email',
+            message: 'Email is required.',
+            validation: 'required',
+          })
+        }
+      }
+    },
+
+  },
+
+  mounted () {
+    this.success = false
+
+    this.$axios.get('/api/v1/professions', {
+      params: {
+        limit: 999,
+      },
+    }).then((response) => {
+      this.professions = response.data.data.professions
+    })
+
+    this.$axios.get('/api/v1/mandatory-trainings', {
+      params: {
+        limit: 999,
+      },
+    }).then((response) => {
+      this.mandatoryTrainings = response.data.data.mandatory_trainings
+    })
+  },
+
+  methods: {
+
+    async submit () {
+      try {
+        this.formErrors = await this.$validator(this.form, this.rules, this.messages).then(() => []).catch((errors) => errors)
+
+        if (this.formErrors.length) {
+          return
+        }
+
+        await this.$axios.post(`/api/v1/locum-change-email-requests`, this.form)
+
+        this.success = true
+      } catch (err) {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formErrors = err.response.data.error_messages
           } else {
-            message = err.message
+            message = err.response.data.message
           }
-
-          if (message) {
-            this.$store.commit('SET_NOTIFICATION', {
-              enabled: true,
-              status: 'danger',
-              text: [`${message}`],
-            })
-          }
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
         }
-      },
-      
-    },
 
-  }
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
+      }
+    },
+      
+  },
+
+}
 </script>
 
 <style scoped>

@@ -47,7 +47,7 @@
         <div class="mx-4 mt-4">
           <div class="w-full">
             <p class="font-bold text-sm">
-              Must submit atleast one (Pitch/Cover Email)
+              Must submit at least one (Pitch/Cover Email)
             </p>
             <p class="text-sm">
               Please write a short pitch to apply for this Permanent Job (Optional)
@@ -237,7 +237,7 @@
           </div>
         </div>
         <div class="w-full md:w-2/5 lg:w-1/3 md:pl-2">
-          <PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job"/>
+          <PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
         </div>
       </div>
     </div>
@@ -247,61 +247,61 @@
 import AppButton from "@/components/Base/AppButton"
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap"
 export default {
-	components: {
-		AppButton,
-		PermanentJobMap,
-	},
-	data () {
-		return {
-			toApply: false,
-			toShowLink: false,
-			site: "",
-			job_application: {
-				locum_user_id: "",
-				job_application_pitch: "",
-				file: ""
-			},
-			job: {
-				description: "",
-				applied: false
-			},
-			options: {
-				modules: {
-					toolbar: null
-				}
-			},
-			permanent_job: "",
-			permanent_job_applications: "",
-			permanent_job_application: "",
+  components: {
+    AppButton,
+    PermanentJobMap,
+  },
+  data () {
+    return {
+      toApply: false,
+      toShowLink: false,
+      site: "",
+      job_application: {
+        locum_user_id: "",
+        job_application_pitch: "",
+        file: "",
+      },
+      job: {
+        description: "",
+        applied: false,
+      },
+      options: {
+        modules: {
+          toolbar: null,
+        },
+      },
+      permanent_job: "",
+      permanent_job_applications: "",
+      permanent_job_application: "",
 
-			uploadedFile: null,
+      uploadedFile: null,
 
-			canApply: false,
+      canApply: false,
 
-			// quill
-			editorOption: {
-				placeholder: "Please write your pitch here",
-				modules: {
-					toolbar: [
-						["bold", "italic", "underline", "strike"],
-						["blockquote", "code-block"],
-						[{ header: 1 }, { header: 2 }],
-						[{ list: "ordered" }, { list: "bullet" }],
-						[{ script: "sub" }, { script: "super" }],
-						[{ indent: "-1" }, { indent: "+1" }],
-						[{ direction: "rtl" }],
-						[{ size: ["small", false, "large", "huge"] }],
-						[{ header: [1, 2, 3, 4, 5, 6, false] }],
-						[{ font: [] }],
-						[{ color: [] }, { background: [] }],
-						[{ align: [] }],
-						["clean"],
-						["link"]
-					]
-				}
-			}
-		}
-	},
+      // quill
+      editorOption: {
+        placeholder: "Please write your pitch here",
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline", "strike",],
+            ["blockquote", "code-block",],
+            [{ header: 1, }, { header: 2, },],
+            [{ list: "ordered", }, { list: "bullet", },],
+            [{ script: "sub", }, { script: "super", },],
+            [{ indent: "-1", }, { indent: "+1", },],
+            [{ direction: "rtl", },],
+            [{ size: ["small", false, "large", "huge",], },],
+            [{ header: [1, 2, 3, 4, 5, 6, false,], },],
+            [{ font: [], },],
+            [{ color: [], }, { background: [], },],
+            [{ align: [], },],
+            ["clean",],
+            ["link",],
+          ],
+        },
+      },
+    }
+  },
 
   computed: {
     jobApplicationPitchLength () {
@@ -309,236 +309,236 @@ export default {
     },
   },
 
-	async beforeMount () {
-		// this.site = await window && window.location.origin ? window.location.origin :"https://locum.halcyondigitalhost.com/"
-		this.site = await window.location.origin
-	},
-	async created () {
-		let complianceDocs = []
-		await this.$axios
-			.$get(`/api/v1/locum/locum-compliance-documents`)
-			.then(res => {
-				complianceDocs = res.data.locum_compliance_documents
-				const found = complianceDocs.find(
-					complianceDoc => complianceDoc.compliance_document.name == "CV"
-				)
-				if (found) {
-					this.canApply = true
-				}
-			})
+  async beforeMount () {
+    // this.site = await window && window.location.origin ? window.location.origin :"https://locum.halcyondigitalhost.com/"
+    this.site = await window.location.origin
+  },
+  async created () {
+    let complianceDocs = []
+    await this.$axios
+      .$get(`/api/v1/locum/locum-compliance-documents`)
+      .then(res => {
+        complianceDocs = res.data.locum_compliance_documents
+        const found = complianceDocs.find(
+          complianceDoc => complianceDoc.compliance_document.name == "CV"
+        )
+        if (found) {
+          this.canApply = true
+        }
+      })
 
-		await this.getJob()
-	},
-	methods: {
-		async getJob () {
-			let permanent_job = ""
-			let permanent_job_applications = ""
-			let permanent_job_application = ""
+    await this.getJob()
+  },
+  methods: {
+    async getJob () {
+      let permanent_job = ""
+      let permanent_job_applications = ""
+      let permanent_job_application = ""
 
-			const params = {
-				locum_user_id: this.$auth.user.id,
-				permanent_job_id: this.$route.params.id
-			}
-			await this.$axios
-				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
-				.then(res => {
-					permanent_job = res.data.permanent_job
-				})
+      const params = {
+        locum_user_id: this.$auth.user.id,
+        permanent_job_id: this.$route.params.id,
+      }
+      await this.$axios
+        .$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
+        .then(res => {
+          permanent_job = res.data.permanent_job
+        })
 
-			await this.$axios
-				.$get(`/api/v1/locum/permanent-job-applications`, { params })
-				.then(res => {
-					permanent_job_applications = res.data.permanent_job_applications
-				})
+      await this.$axios
+        .$get(`/api/v1/locum/permanent-job-applications`, { params, })
+        .then(res => {
+          permanent_job_applications = res.data.permanent_job_applications
+        })
 
-			permanent_job_application = permanent_job_applications.find(
-				item => item.permanent_job_id === permanent_job.id
-			)
+      permanent_job_application = permanent_job_applications.find(
+        item => item.permanent_job_id === permanent_job.id
+      )
 
-			this.permanent_job_application = permanent_job_application
+      this.permanent_job_application = permanent_job_application
 
-			if (this.permanent_job_application) {
-				permanent_job.status = this.permanent_job_application.application_status
-				this.permanent_job = permanent_job
-			} else if (permanent_job.job_posting_status === "Closed") {
-				permanent_job.status = "Closed"
-				this.permanent_job = permanent_job
-			} else if (permanent_job.job_posting_status === "Unfilled") {
-				permanent_job.status = "Unfilled"
-				this.permanent_job = permanent_job
-			} else if (permanent_job.job_posting_status === "Available") {
-				permanent_job.status = "Available"
-				this.permanent_job = permanent_job
-			}
-		},
+      if (this.permanent_job_application) {
+        permanent_job.status = this.permanent_job_application.application_status
+        this.permanent_job = permanent_job
+      } else if (permanent_job.job_posting_status === "Closed") {
+        permanent_job.status = "Closed"
+        this.permanent_job = permanent_job
+      } else if (permanent_job.job_posting_status === "Unfilled") {
+        permanent_job.status = "Unfilled"
+        this.permanent_job = permanent_job
+      } else if (permanent_job.job_posting_status === "Available") {
+        permanent_job.status = "Available"
+        this.permanent_job = permanent_job
+      }
+    },
 
-		copyToClipboard (text) {
-			// 1) Add the text to the DOM (usually achieved with a hidden input field)
-			const input = document.createElement("input")
-			input.setAttribute("id", "copiedText")
-			document.body.appendChild(input)
-			input.value = text
+    copyToClipboard (text) {
+      // 1) Add the text to the DOM (usually achieved with a hidden input field)
+      const input = document.createElement("input")
+      input.setAttribute("id", "copiedText")
+      document.body.appendChild(input)
+      input.value = text
 
-			// 2) Select the text
-			input.focus()
-			input.select()
+      // 2) Select the text
+      input.focus()
+      input.select()
 
-			// 3) Copy text to clipboard
-			const isSuccessful = document.execCommand("copy")
+      // 3) Copy text to clipboard
+      const isSuccessful = document.execCommand("copy")
 
-			// 4) Catch errors
-			if (!isSuccessful) {
-				console.error("Failed to copy text.")
-			} else {
-				this.$store.commit("SET_NOTIFICATION", {
-					enabled: true,
-					status: "success",
-					text: [`Copied to Clipboard`]
-				})
-				let copiedText = document.getElementById("copiedText")
-				copiedText.parentNode.removeChild(copiedText)
-			}
-		},
+      // 4) Catch errors
+      if (!isSuccessful) {
+        console.error("Failed to copy text.")
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`Copied to Clipboard`,],
+        })
+        let copiedText = document.getElementById("copiedText")
+        copiedText.parentNode.removeChild(copiedText)
+      }
+    },
 
-		onEditorBlur (editor) {
-			console.log("editor blur!", editor)
-		},
+    onEditorBlur (editor) {
+      console.log("editor blur!", editor)
+    },
 
-		onEditorFocus (editor) {
-			console.log("editor focus!", editor)
-		},
+    onEditorFocus (editor) {
+      console.log("editor focus!", editor)
+    },
 
-		onEditorReady (editor) {
-			console.log("editor ready!", editor)
-		},
+    onEditorReady (editor) {
+      console.log("editor ready!", editor)
+    },
 
-		uploadFile (e) {
-			let types = [
-				"pdf",
-				"jpeg",
-				"msword",
-				"vnd.openxmlformats-officedocument.wordprocessingml.document",
-				"vnd.openxmlformats-officedocument.wordprocessingml.template",
-				"vnd.ms-word.document.macroEnabled.12",
-				"vnd.ms-word.template.macroEnabled.12"
-			]
-			let file = e.target.files[0]
-			this.file
-			let fileType = file.type.split("/")[1]
-			if (!types.includes(fileType)) {
-				this.$store.commit("SET_NOTIFICATION", {
-					enabled: true,
-					status: "alert",
-					text: ["Invalid File Format"]
-				})
-				return
-			}
-			this.job_application.file = file
-			this.uploadedFile = file.name
-		},
+    uploadFile (e) {
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+      let file = e.target.files[0]
+      this.file
+      let fileType = file.type.split("/")[1]
+      if (!types.includes(fileType)) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: ["Invalid File Format",],
+        })
+        return
+      }
+      this.job_application.file = file
+      this.uploadedFile = file.name
+    },
 
-		async apply () {
-			if (this.canApply === false) {
-				this.$store.commit("SET_NOTIFICATION", {
-					enabled: true,
-					status: "danger",
-					text: ["Please Upload your CV first in Compliance Documents Page"]
-				})
-			} else {
-				this.job_application.locum_user_id = this.$auth.user.id
-				if (
-					this.job_application.job_application_pitch ||
-					this.job_application.file
-				) {
-					const formData = new FormData()
-					formData.append("locum_user_id", this.$auth.user.id)
-					if (this.job_application.job_application_pitch) {
-						formData.append(
-							"job_application_pitch",
-							this.job_application.job_application_pitch
-						)
-					}
-					if (this.job_application.file) {
-						formData.append("file", this.job_application.file)
-					}
-					await this.$axios
-						.$put(
-							`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
-							formData
-						)
-						.then(() => {
-							this.job.applied = true
-							this.toApply = false
-							this.$store.commit("SET_NOTIFICATION", {
-								enabled: true,
-								status: "success",
-								text: ["You have successfully Applied to this job"]
-							})
-							this.getJob()
-						})
-				}
-			}
-		},
+    async apply () {
+      if (this.canApply === false) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please Upload your CV first in Compliance Documents Page",],
+        })
+      } else {
+        this.job_application.locum_user_id = this.$auth.user.id
+        if (
+          this.job_application.job_application_pitch
+					|| this.job_application.file
+        ) {
+          const formData = new FormData()
+          formData.append("locum_user_id", this.$auth.user.id)
+          if (this.job_application.job_application_pitch) {
+            formData.append(
+              "job_application_pitch",
+              this.job_application.job_application_pitch
+            )
+          }
+          if (this.job_application.file) {
+            formData.append("file", this.job_application.file)
+          }
+          await this.$axios
+            .$put(
+              `/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
+              formData
+            )
+            .then(() => {
+              this.job.applied = true
+              this.toApply = false
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: ["You have successfully Applied to this job",],
+              })
+              this.getJob()
+            })
+        }
+      }
+    },
 
-		async cancelApplication () {
-			await this.$axios
-				.$delete(
-					`/api/v1/locum/permanent-job-applications/${this.permanent_job_application.id}/delete-application`
-				)
-				.then(res => {
-					this.$router.push("/permanent-jobs")
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: [res.message]
-					})
-				})
-		},
+    async cancelApplication () {
+      await this.$axios
+        .$delete(
+          `/api/v1/locum/permanent-job-applications/${this.permanent_job_application.id}/delete-application`
+        )
+        .then(res => {
+          this.$router.push("/permanent-jobs")
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message,],
+          })
+        })
+    },
 
-		statusStyle (jobStatus) {
-			switch (jobStatus) {
-				case "Available":
-					return "px-4 bg-green-500 text-white"
-				case "Applied":
-					return "px-4 bg-yellow-600 text-white"
-				case "For Interview":
-					return "px-4 bg-green-600 text-white"
-				case "Accepted":
-					return "px-4 bg-green-700 text-white"
-				case "Rejected":
-					return "px-4 bg-red-700 text-white"
-				case "Closed":
-					return "px-4 bg-gray-700 text-white"
-				case "Unsuccessful":
-					return "px-4 bg-gray-400"
-				default:
-					return
-			}
-		},
+    statusStyle (jobStatus) {
+      switch (jobStatus) {
+      case "Available":
+        return "px-4 bg-green-500 text-white"
+      case "Applied":
+        return "px-4 bg-yellow-600 text-white"
+      case "For Interview":
+        return "px-4 bg-green-600 text-white"
+      case "Accepted":
+        return "px-4 bg-green-700 text-white"
+      case "Rejected":
+        return "px-4 bg-red-700 text-white"
+      case "Closed":
+        return "px-4 bg-gray-700 text-white"
+      case "Unsuccessful":
+        return "px-4 bg-gray-400"
+      default:
+        return
+      }
+    },
 
-		jobClosingTag (item) {
-			let closingTag = ""
-			if (
-				this.permanent_job_application &&
-				this.permanent_job_application.application_status === "Rejected"
-			) {
-				closingTag = "Rejected"
-			} else {
-				closingTag = item.hired_through
-			}
+    jobClosingTag (item) {
+      let closingTag = ""
+      if (
+        this.permanent_job_application
+				&& this.permanent_job_application.application_status === "Rejected"
+      ) {
+        closingTag = "Rejected"
+      } else {
+        closingTag = item.hired_through
+      }
 
-			switch (closingTag) {
-				case "Direct Hiring":
-					return "Hired Directly"
-				case "Through HUBZZ":
-					return "Hired Through Hubzz"
-				case "Unfilled":
-					return "Unfilled"
-				default:
-					return "Closed By Practice"
-			}
-		}
-	}
+      switch (closingTag) {
+      case "Direct Hiring":
+        return "Hired Directly"
+      case "Through HUBZZ":
+        return "Hired Through Hubzz"
+      case "Unfilled":
+        return "Unfilled"
+      default:
+        return "Closed By Practice"
+      }
+    },
+  },
 }
 </script>
 
