@@ -1024,7 +1024,7 @@ export default {
           let d = new Date(newValue)
 
           this.selectedMonth = d.getMonth()
-          
+
           this.selectedYear = d.getFullYear()
 
           this.getDaysInMonth(this.selectedMonth, this.selectedYear)
@@ -1039,26 +1039,6 @@ export default {
         this.getJobs()
       }
     },
-  },
-
-  created () {
-    this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
-      .startOf("month")
-      .format("YYYY-MM-DD")
-
-    this.endOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
-      .endOf("month")
-      .format("YYYY-MM-DD")
-
-    let d = new Date(this.selectedDate)
-
-    this.selectedMonth = d.getMonth()
-
-    this.selectedYear = d.getFullYear()
-
-    this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-
-    this.getJobs()
   },
 
   mounted () {
@@ -1088,6 +1068,24 @@ export default {
       this.$socket.on('Practice Notification Job Update Accept', this.getJobsRealTime)
       this.$socket.on('Practice Notification Job Unfilled', this.getJobsRealTime)
     }
+
+    this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
+      .startOf("month")
+      .format("YYYY-MM-DD")
+
+    this.endOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
+      .endOf("month")
+      .format("YYYY-MM-DD")
+
+    let d = new Date(this.selectedDate)
+
+    this.selectedMonth = d.getMonth()
+
+    this.selectedYear = d.getFullYear()
+
+    this.getDaysInMonth(this.selectedMonth, this.selectedYear)
+
+    this.getJobs()
   },
 
   destroyed () {
