@@ -219,7 +219,7 @@
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
                 >View Solo Form</div>
 
-                <div
+                <!-- <div
                   v-if="
                     $route.query.status && $route.query.status === 'approved'
                       && slotProps.item.locum_invoice_item
@@ -227,7 +227,7 @@
                   "
                   class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'payInvoice')"
-                >Mark as Paid</div>
+                >Mark as Paid</div>-->
 
                 <div
                   v-if="
@@ -239,6 +239,18 @@
                   "
                   class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_form_a_id, 'payFormA')"
+                >Mark as Paid</div>
+
+                <div
+                  v-if="
+                    $route.query.status && $route.query.status === 'solo-form'
+                      && slotProps.item.ooh
+                      && slotProps.item.locum_solo_form_id
+                      && slotProps.item.locum_solo_form_sent_to_locum === 1
+                      && slotProps.item.locum_solo_form_paid === 0
+                  "
+                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click.stop.prevent="select_invoice(slotProps.item.locum_solo_form_id, 'paySoloForm')"
                 >Mark as Paid</div>
               </div>
             </template>
@@ -315,6 +327,32 @@
             :label="'Cancel'"
             :in-style="'padding:5px 10px'"
             @click="pay_form_a_modal = false, invoice_id = null"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div v-if="pay_solo_form_modal" class="p-2">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Payment made on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+          is-before
+        />
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            :in-style="'padding:5px 10px'"
+            @click="paySoloForm"
+          />
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="pay_solo_form_modal = false, invoice_id = null"
           />
         </div>
       </div>
@@ -409,7 +447,7 @@
             'locum-billing-invoices-id-edit',
             'locum-billing-invoices-form-b-create',
           ].includes($route.name)
-            || delete_invoice_modal || pay_form_a_modal || pay_invoice_modal
+            || delete_invoice_modal || pay_form_a_modal || pay_invoice_modal || pay_solo_form_modal
         "
         :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
         class="shield"
@@ -492,6 +530,7 @@ export default {
       ],
 
       pay_form_a_modal: false,
+      pay_solo_form_modal: false,
       pay_invoice_modal: false,
       delete_invoice_modal: false,
       generate_form_a_modal: false,
@@ -688,36 +727,6 @@ export default {
 
   async asyncData({ app, query }) {
     try {
-      // let [hasFormA, hasFormB] = await Promise.all([
-      //   app.$axios
-      //     .$get(`/api/v1/locum/job-parts/count`, {
-      //       params: {
-      //         invoice_status: ["Invoiced"],
-      //         locum_status: ["Approved"],
-      //         locum_invoiceable: true,
-      //         nhs_claimable: true,
-      //         ooh: false,
-      //         viewing_locum_user_id: app.$auth.user.id,
-      //         job_type: "Platform",
-      //         type: "Platform"
-      //       }
-      //     })
-      //     .then(res => {
-      //       return res.data.count > 0 ? true : false;
-      //     }),
-      //   app.$axios
-      //     .$get(`/api/v1/locum/locum-invoices-form-b/count`, {
-      //       params: {
-      //         viewing_locum_user_id: app.$auth.user.id,
-      //         job_type: "Platform",
-      //         type: "Platform"
-      //       }
-      //     })
-      //     .then(res => {
-      //       return res.data.count > 0 ? true : false;
-      //     })
-      // ]);
-
       let url = `/api/v1/locum/job-parts`;
       let invoice_status = [];
       let locum_status = [];
@@ -725,6 +734,7 @@ export default {
       let nhs_claimable;
       let ooh;
       let generate_form;
+      let sent_to_locum;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -753,6 +763,7 @@ export default {
           locum_invoiceable = true;
           generate_form = true;
           ooh = true;
+          sent_to_locum = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
@@ -781,6 +792,7 @@ export default {
               locum_invoiceable,
               nhs_claimable,
               ooh,
+              sent_to_locum,
               generate_form,
               viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
@@ -799,6 +811,7 @@ export default {
               locum_invoiceable,
               nhs_claimable,
               ooh,
+              sent_to_locum,
               generate_form,
               viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
@@ -1008,6 +1021,7 @@ export default {
       let nhs_claimable = null;
       let ooh = null;
       let generate_form = null;
+      let sent_to_locum = null;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -1037,6 +1051,7 @@ export default {
           locum_invoiceable = true;
           ooh = true;
           generate_form = true;
+          sent_to_locum = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
@@ -1062,6 +1077,7 @@ export default {
             locum_invoiceable,
             nhs_claimable,
             ooh,
+            sent_to_locum,
             generate_form,
             job_type: "Platform",
             type: "Platform",
@@ -1079,6 +1095,7 @@ export default {
             locum_invoiceable,
             nhs_claimable,
             ooh,
+            sent_to_locum,
             generate_form,
             job_type: "Platform",
             type: "Platform",
@@ -1196,6 +1213,7 @@ export default {
       let locum_invoiceable;
       let nhs_claimable;
       let ooh;
+      let sent_to_locum;
       let generate_form;
       let queryStatus = this.$route.query.status;
 
@@ -1226,6 +1244,7 @@ export default {
           locum_invoiceable = true;
           ooh = true;
           generate_form = true;
+          sent_to_locum = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
@@ -1251,6 +1270,7 @@ export default {
             locum_invoiceable,
             nhs_claimable,
             ooh,
+            sent_to_locum,
             generate_form,
             job_type: "Platform",
             type: "Platform",
@@ -1387,6 +1407,8 @@ export default {
         this.pay_form_a_modal = true;
       } else if (type === "payInvoice") {
         this.pay_invoice_modal = true;
+      } else if (type === "paySoloForm") {
+        this.pay_solo_form_modal = true;
       }
     },
     deleteInvoice() {
@@ -1466,6 +1488,42 @@ export default {
         })
         .finally(() => {
           this.pay_invoice_modal = false;
+        });
+    },
+    paySoloForm() {
+      this.$axios
+        .$put(
+          `/api/v1/locum/locum-solo-forms/${this.invoice_id}/paid`,
+          this.form
+        )
+        .then(res => {
+          let updatedSoloForm = this.job_parts.find(
+            jobPart =>
+              jobPart.locum_invoice_id ===
+              res.data.locum_solo_form.locum_invoice_id
+          );
+
+          updatedSoloForm.locum_solo_form_paid = 1;
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${err.response.data.message}`]
+            });
+          }
+          throw err;
+        })
+        .finally(() => {
+          this.pay_solo_form_modal = false;
         });
     },
     payFormA() {

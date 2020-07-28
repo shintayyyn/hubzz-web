@@ -113,7 +113,10 @@
             <p class="font-bold w-1/2 text-right">£ {{ total_deductions | currency }}</p>
           </div>
           <!-- v-if="propInvoice && propInvoice.generate_form" -->
-          <div class="flex flex-wrap justify-between">
+          <div
+            class="flex flex-wrap justify-between"
+            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+          >
             <p class="text-sm w-1/2">Form Type:</p>
             <p class="font-bold w-1/2 text-right">{{ isOOH ? 'Solo Form' : 'Form A' }}</p>
           </div>
@@ -188,22 +191,54 @@
     </div>
 
     <transition name="fade">
-      <div class="message-modal mini-modal fixed bg-white p-4 center relative" v-if="toggle_modal">
-        <AppLoading :loading="loading_form" spinner />
+      <div
+        class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3"
+        v-if="toggle_modal"
+      >
         <p class="font-bold uppercase">Solo Form Details</p>
 
-        <div class="flex flex-col">
+        <div class="flex flex-col my-8" style="max-height:500px;overflow:auto">
           <AppInput
-            v-model="profileForm.professional_nhs_expenses"
+            v-model="form.ea_code"
             :type="'text'"
-            :name="'professional_nhs_expenses'"
-            :label="'Professional NHS Expense'"
-            :error="formError.find(item => item.field === 'professional_nhs_expenses')"
+            :name="'ea_code'"
+            :label="'PCSE Code'"
+            :error="formError.find(item => item.field === 'ea_code')"
             required
-            @blur="CheckEmptyField(profileForm.professional_nhs_expenses, 'professional_nhs_expenses')"
+            @blur="CheckEmptyField(form.ea_code, 'ea_code')"
           />
           <AppInput
-            v-model="profileForm.percentage_rate"
+            v-model="form.national_insurance_number"
+            :type="'text'"
+            :name="'national_insurance_number'"
+            :label="'National Insurance number'"
+            :error="formError.find(item => item.field === 'national_insurance_number')"
+            required
+            @blur="CheckEmptyField(form.national_insurance_number, 'national_insurance_number')"
+            @keypress="inputNumberOnly($event)"
+          />
+          <AppInput
+            v-model="form.sd_number"
+            :type="'text'"
+            :name="'sd_number'"
+            :label="'NHS Pension Scheme Membership number'"
+            :error="formError.find(item => item.field === 'sd_number')"
+            required
+            @blur="CheckEmptyField(form.sd_number, 'sd_number')"
+            @keypress="inputNumberOnly($event)"
+          />
+          <AppInput
+            v-model="form.paying_reference"
+            :type="'text'"
+            :name="'paying_reference'"
+            :label="'Paying reference number'"
+            :error="formError.find(item => item.field === 'paying_reference')"
+            required
+            @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
+            @keypress="inputNumberOnly($event)"
+          />
+          <AppInput
+            v-model="form.percentage_rate"
             :type="'select'"
             :name="'percentage_rate'"
             :label="'Percentage rate'"
@@ -219,46 +254,55 @@
             required
           />
           <AppInput
-            v-model="profileForm.added_year_contributions"
+            v-model="form.professional_nhs_expenses"
+            :type="'text'"
+            :name="'professional_nhs_expenses'"
+            :label="'Professional NHS Expense'"
+            :error="formError.find(item => item.field === 'professional_nhs_expenses')"
+            required
+            @blur="CheckEmptyField(form.professional_nhs_expenses, 'professional_nhs_expenses')"
+          />
+          <AppInput
+            v-model="form.added_year_contributions"
             :type="'text'"
             :name="'added_year_contributions'"
             :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
             :error="formError.find(item => item.field === 'added_year_contributions')"
             required
-            @blur="CheckEmptyField(profileForm.added_year_contributions, 'added_year_contributions')"
+            @blur="CheckEmptyField(form.added_year_contributions, 'added_year_contributions')"
           />
           <AppInput
-            v-model="profileForm.added_early_retirement_contributions"
+            v-model="form.added_early_retirement_contributions"
             :type="'text'"
             :name="'added_early_retirement_contributions'"
             :label="'Additional contributions for Early Retirement Reduction Buy Out'"
             :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
             required
-            @blur="CheckEmptyField(profileForm.added_early_retirement_contributions, 'added_early_retirement_contributions')"
+            @blur="CheckEmptyField(form.added_early_retirement_contributions, 'added_early_retirement_contributions')"
           />
           <AppInput
-            v-model="profileForm.nhsps_employer_contributions"
+            v-model="form.nhsps_employer_contributions"
             :type="'text'"
             :name="'nhsps_employer_contributions'"
             :label="'NHSPS employer contributions'"
             :error="formError.find(item => item.field === 'nhsps_employer_contributions')"
             required
-            @blur="CheckEmptyField(profileForm.nhsps_employer_contributions, 'nhsps_employer_contributions')"
+            @blur="CheckEmptyField(form.nhsps_employer_contributions, 'nhsps_employer_contributions')"
           />
           <AppInput
-            v-model="profileForm.nhs_pension_scheme_employing_authority_name"
+            v-model="form.nhs_pension_scheme_employing_authority_name"
             :type="'text'"
             :name="'nhs_pension_scheme_employing_authority_name'"
             :label="'NHSPS employing authority name'"
             :error="formError.find(item => item.field === 'nhs_pension_scheme_employing_authority_name')"
             required
-            @blur="CheckEmptyField(profileForm.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
+            @blur="CheckEmptyField(form.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
           />
         </div>
 
         <div class="flex justify-end">
           <AppButton @click="toggle_modal = false" :label="'Cancel'" class="mr-2" />
-          <AppButton :label="'Accept'" @click="saveProfile" />
+          <AppButton :label="'Accept'" @click="save(true)" />
         </div>
       </div>
     </transition>
@@ -657,7 +701,6 @@ export default {
   data() {
     return {
       toggle_modal: false,
-      loading_form: false,
 
       old: false,
       exportLoading: false,
@@ -671,37 +714,20 @@ export default {
         minutes: 0,
         hours: 0,
         late_minutes: 0,
-        late_hours: 0
-      },
-
-      profileForm: {
-        other_mandatory_training_id: [],
-        phone_number: "",
-        report_to: "",
-        email: "",
-        extra_information: "",
-        practice_type_id: [],
-        mandatory_training_id: [],
-        use_variation_terms: false,
-        vat_registered: false,
-        vat_number: null,
-        tax_year_end_date: null,
-        account_name: "",
-        bank_name: "",
-        sort_code: "",
-        account_number: "",
-        practice_profession_compliance_category_compliance_documents: [],
+        late_hours: 0,
+        //
+        ea_code: null,
         national_insurance_number: null,
         sd_number: null,
         paying_reference: null,
-        ea_code: null,
-        professional_nhs_expenses: 0,
-        percentage_rate: 0,
-        added_year_contributions: 0,
-        added_early_retirement_contributions: 0,
-        nhsps_employer_contributions: 0,
-        nhs_pension_scheme_employing_authority_name: ""
+        percentage_rate: null,
+        professional_nhs_expenses: null,
+        added_year_contributions: null,
+        added_early_retirement_contributions: null,
+        nhsps_employer_contributions: null,
+        nhs_pension_scheme_employing_authority_name: null
       },
+
       formError: [],
 
       isApproved: false,
@@ -768,20 +794,24 @@ export default {
           if (!this.propInvoice.ooh) {
             return this.total_work_payment * 0.9 * 0.1438;
           }
-          if (this.propInvoice.ooh && this.practice) {
+          if (this.propInvoice.ooh) {
             let boxA = this.total_work_payment;
-            let boxB = this.practice.professional_nhs_expenses;
+            // let boxB = this.practice.professional_nhs_expenses;
+            let boxB = 0;
             let boxC = boxA - boxB;
-            let boxD = boxC * (this.practice.percentage_rate / 100);
+            // let boxD = boxC * (this.practice.percentage_rate / 100);
+            let boxD = boxC * (0 / 100);
             let boxE = boxC * boxD;
-            let boxF = this.practice.added_year_contributions;
-            let boxG = this.practice.added_early_retirement_contributions;
+            let boxF = 0;
+            let boxG = 0;
+            // let boxF = this.practice.added_year_contributions;
+            // let boxG = this.practice.added_early_retirement_contributions;
             let boxH = boxE + boxF + boxG;
             let boxI = boxC - boxH;
-            let boxJ =
-              this.practice.nhsps_employer_contributions + boxC * 0.1438;
+            let boxJ = 0 + boxC * 0.1438;
+            // let boxJ =
+            //   this.practice.nhsps_employer_contributions + boxC * 0.1438;
             let boxK = boxH + boxJ;
-
             return boxK;
           }
         }
@@ -997,16 +1027,16 @@ export default {
     this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60);
     this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60);
 
-    this.getPracticeProfile();
+    // this.getPracticeProfile();
   },
 
   methods: {
-    getPracticeProfile() {
-      this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
-        this.practice =
-          res.data && res.data.practice ? res.data.practice : null;
-      });
-    },
+    // getPracticeProfile() {
+    //   this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
+    //     this.practice =
+    //       res.data && res.data.practice ? res.data.practice : null;
+    //   });
+    // },
     getSchedule(
       schedule,
       total_gross_locum_wages,
@@ -1096,101 +1126,23 @@ export default {
     async toggleModal(approved) {
       if (this.propInvoice.ooh) {
         this.toggle_modal = true;
-        this.loading_form = true;
-        let res = await this.$axios.$get(`api/v1/practice/me/practice`);
-        this.loading_form = false;
-
-        if (res.data && res.data.practice) {
-          this.profileForm.percentage_rate = res.data.practice.percentage_rate;
-          this.profileForm.professional_nhs_expenses =
-            res.data.practice.professional_nhs_expenses;
-          this.profileForm.added_year_contributions =
-            res.data.practice.added_year_contributions;
-          this.profileForm.added_early_retirement_contributions =
-            res.data.practice.added_early_retirement_contributions;
-          this.profileForm.nhsps_employer_contributions =
-            res.data.practice.nhsps_employer_contributions;
-          this.profileForm.nhs_pension_scheme_employing_authority_name =
-            res.data.practice.nhs_pension_scheme_employing_authority_name;
-          //   //
-          this.profileForm.phone_number = res.data.practice.phone_number;
-          this.profileForm.report_to = res.data.practice.report_to;
-          this.profileForm.email = res.data.practice.email;
-          this.profileForm.extra_information =
-            res.data.practice.extra_information;
-          this.profileForm.practice_type_id = [];
-          res.data.practice.practice_types.forEach(item => {
-            this.profileForm.practice_type_id.push(item.id);
-          });
-          this.profileForm.mandatory_training_id = [];
-          res.data.practice.mandatory_trainings.forEach(item => {
-            this.profileForm.mandatory_training_id.push(item.id);
-          });
-          this.profileForm.other_mandatory_training_id = [];
-          res.data.practice.other_mandatory_trainings.forEach(item => {
-            this.profileForm.other_mandatory_training_id.push(item.id);
-          });
-          this.profileForm.use_variation_terms =
-            res.data.practice.use_variation_terms;
-          this.profileForm.vat_registered = res.data.practice.vat_registered;
-          this.profileForm.vat_number = res.data.practice.vat_number;
-          this.profileForm.tax_year_end_date =
-            res.data.practice.tax_year_end_date;
-          this.profileForm.account_name = res.data.practice.account_name;
-          this.profileForm.bank_name = res.data.practice.bank_name;
-          this.profileForm.sort_code = res.data.practice.sort_code;
-          this.profileForm.account_number = res.data.practice.account_number;
-          this.profileForm.practice_profession_compliance_category_compliance_documents = res.data.practice.practice_profession_compliance_category_compliance_documents.map(
-            item => {
-              return {
-                profession_compliance_category_id:
-                  item.profession_compliance_category_id,
-                compliance_document_id: item.compliance_document_id
-              };
-            }
-          );
-          this.profileForm.national_insurance_number =
-            res.data.practice.national_insurance_number;
-          this.profileForm.sd_number = res.data.practice.sd_number;
-          this.profileForm.paying_reference =
-            res.data.practice.paying_reference;
-          this.profileForm.ea_code = res.data.practice.ea_code;
-          this.profileForm.professional_nhs_expenses =
-            res.data.practice.professional_nhs_expenses;
-          this.profileForm.percentage_rate = res.data.practice.percentage_rate;
-          this.profileForm.section_scheme_year =
-            res.data.practice.section_scheme_year;
-          this.profileForm.added_year_contributions =
-            res.data.practice.added_year_contributions;
-          this.profileForm.added_early_retirement_contributions =
-            res.data.practice.added_early_retirement_contributions;
-          this.profileForm.nhsps_employer_contributions =
-            res.data.practice.nhsps_employer_contributions;
-          this.profileForm.nhs_pension_scheme_employing_authority_name =
-            res.data.practice.nhs_pension_scheme_employing_authority_name;
-        }
+        this.form.ea_code = null;
+        this.form.national_insurance_number = null;
+        this.form.sd_number = null;
+        this.form.paying_reference = null;
+        this.form.percentage_rate = 0;
+        this.form.professional_nhs_expenses = 0;
+        this.form.added_year_contributions = 0;
+        this.form.added_early_retirement_contributions = 0;
+        this.form.nhsps_employer_contributions = 0;
+        this.form.nhs_pension_scheme_employing_authority_name = null;
       } else {
         this.save(approved);
       }
     },
 
-    async saveProfile() {
-      this.loading_form = true;
-      try {
-        let res = await this.$axios.$put(
-          `/api/v1/practice/me/practice-profile`,
-          this.profileForm
-        );
-      } catch (err) {
-        console.log(err || err.response);
-      }
-      this.loading_form = false;
-      this.save(true);
-    },
-
     save(approved) {
-      this.toggle_modal = false;
-
+      console.log("approved", approved);
       this.formError = [];
 
       this.shiftErrors = [];
@@ -1215,13 +1167,30 @@ export default {
         });
       }
 
-      this.Validate(this.form, [
+      let notRequired = [
         "total_amount",
         "hours",
         "minutes",
         "late_hours",
         "late_minutes"
-      ]);
+      ];
+
+      if (!this.propInvoice.ooh) {
+        notRequired.push(
+          "ea_code",
+          "national_insurance_number",
+          "sd_number",
+          "paying_reference",
+          "percentage_rate",
+          "professional_nhs_expenses",
+          "added_year_contributions",
+          "added_early_retirement_contributions",
+          "nhsps_employer_contributions",
+          "nhs_pension_scheme_employing_authority_name"
+        );
+      }
+
+      this.Validate(this.form, notRequired);
 
       if (!this.formError.length && !this.shiftErrors.length) {
         this.form.total_amount = this.total_gross_locum_wages;
@@ -1246,24 +1215,17 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-
+            this.toggle_modal = false;
             this.$emit("updateInvoice", res.data.locum_invoice);
           })
           .catch(err => {
             console.log("err", err.response || err);
-
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`]
-              });
-            } else if (err.response.data.error_messages) {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
-            } else {
-              this.formError.push(err.response.data);
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages;
             }
           })
           .finally(() => {
@@ -1292,10 +1254,13 @@ export default {
 };
 </script>
 <style scoped>
-.message-modal.mini-modal {
-  min-width: 25vw;
-  z-index: 56;
+.accept-modal {
   position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .items-table {
   width: 733px;
