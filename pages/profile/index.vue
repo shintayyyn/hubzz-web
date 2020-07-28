@@ -6,26 +6,48 @@
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 h-full">
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full lg:w-1/2 xl:w-2/5 p-1">
-                <div class="text-xs sm:text-sm">Practice name</div>
-                <div class="text-xs font-bold py-2">{{ practice.name }}</div>
-                <div class="text-xs sm:text-sm mt-4">CCG</div>
-                <div class="text-xs font-bold py-2">{{ practice.clinical_commissioning_group_name }}</div>
+                <div class="text-xs sm:text-sm">
+                  Practice name
+                </div>
+                <div class="text-xs font-bold py-2">
+                  {{ practice.name }}
+                </div>
+                <div class="text-xs sm:text-sm mt-4">
+                  CCG
+                </div>
+                <div class="text-xs font-bold py-2">
+                  {{ practice.clinical_commissioning_group_name }}
+                </div>
               </div>
               <div class="flex flex-col w-full lg:w-1/2 xl:w-1/5 p-1">
-                <div class="text-xs sm:text-sm" mt-4>Practice code</div>
-                <div class="text-xs font-bold py-2">{{ practice.code }}</div>
-                <div class="text-xs sm:text-sm mt-4">Phone number</div>
-                <div class="text-xs font-bold py-2">{{ practice.phone_number }}</div>
+                <div class="text-xs sm:text-sm" mt-4>
+                  Practice code
+                </div>
+                <div class="text-xs font-bold py-2">
+                  {{ practice.code }}
+                </div>
+                <div class="text-xs sm:text-sm mt-4">
+                  Phone number
+                </div>
+                <div class="text-xs font-bold py-2">
+                  {{ practice.phone_number }}
+                </div>
               </div>
               <div class="flex flex-col lg:flex-row xl:flex-col w-full xl:w-2/5 p-1">
                 <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
-                  <div class="text-xs sm:text-sm">Type</div>
+                  <div class="text-xs sm:text-sm">
+                    Type
+                  </div>
                   <div
                     class="text-xs font-bold py-2"
-                  >{{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board' }}</div>
+                  >
+                    {{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board' }}
+                  </div>
                 </div>
                 <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
-                  <div class="text-xs sm:text-sm">Address</div>
+                  <div class="text-xs sm:text-sm">
+                    Address
+                  </div>
                   <div class="text-xs font-bold py-2">
                     {{ practice.address_line_1 }} {{ practice.address_line_2 }}
                     {{ practice.address_line_3 }} {{ practice.address_line_4 }} {{ practice.address_line_5 }}
@@ -47,7 +69,7 @@
                   type="radio"
                   name="standard_terms"
                   :value="false"
-                />
+                >
                 <label for="use_standard_terms">Use Standard Terms with Locum</label>
               </div>
               <div class="pb-2">
@@ -57,13 +79,15 @@
                   type="radio"
                   name="standard_terms"
                   :value="true"
-                />
+                >
                 <label for="variation_terms_file">Use Variation to Standard Terms</label>
               </div>
               <div class="relative">
                 <div v-if="form.use_variation_terms" class="relative">
                   <div class="flex flex-row flex-wrap justify-between items-center">
-                    <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                    <div class="text-xs sm:text-sm">
+                      Your Practice's standard terms
+                    </div>
                     <div
                       v-if="authPermissions.includes('Update Profile Practice')"
                       class="flex justify-start items-center"
@@ -81,19 +105,23 @@
                         type="file"
                         class="hidden"
                         @input="onFileInput($event)"
-                      />
+                      >
                     </div>
                   </div>
                   <div v-if="!input_file_loading" class="bg-gray-300 rounded-lg px-4 py-2">
                     <div class="flex flex-no-wrap justify-between items-center">
                       <div
                         class="text-xs sm:text-sm document-filename"
-                      >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : 'Upload File' }}</div>
+                      >
+                        {{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : 'Upload File' }}
+                      </div>
                       <div
                         v-if="practice.variation_terms_file"
                         class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
                         @click="modal = true"
-                      >x</div>
+                      >
+                        x
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -274,7 +302,9 @@
             </div>
           </div>
           <div class="flex flex-col">
-            <div class="text-xs sm:text-sm mt-3 px-2">Compliance Documents</div>
+            <div class="text-xs sm:text-sm mt-3 px-2">
+              Compliance Documents
+            </div>
             <div class="flex flex-row flex-wrap justify-bettwen">
               <template v-for="profession_compliance_category in profession_compliance_categories">
                 <div
@@ -289,12 +319,14 @@
                       type="checkbox"
                       :value="profession_compliance_category.id"
                       :disabled="empty_profession_compliance_category_ids.includes(profession_compliance_category.id)"
-                    />
+                    >
                     <label
                       :for="`${profession_compliance_category.id}-${profession_compliance_category.name}`"
                     >N/A</label>
                   </div>
-                  <div class="ml-2">Reference</div>
+                  <div class="ml-2">
+                    Reference
+                  </div>
                   <template
                     v-for="compliance_document in profession_compliance_category.reference_compliance_documents"
                   >
@@ -307,16 +339,18 @@
                         v-model="form.practice_profession_compliance_category_compliance_documents"
                         type="checkbox"
                         :value="{
-                               profession_compliance_category_id: profession_compliance_category.id,
-                               compliance_document_id: compliance_document.id
-                             }"
-                      />
+                          profession_compliance_category_id: profession_compliance_category.id,
+                          compliance_document_id: compliance_document.id
+                        }"
+                      >
                       <label
                         :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
                       >{{ compliance_document.name }}</label>
                     </div>
                   </template>
-                  <div class="ml-2">Mandatory</div>
+                  <div class="ml-2">
+                    Mandatory
+                  </div>
                   <template
                     v-for="compliance_document in profession_compliance_category.mandatory_compliance_documents"
                   >
@@ -330,17 +364,19 @@
                         v-model="form.practice_profession_compliance_category_compliance_documents"
                         type="checkbox"
                         :value="{
-                               profession_compliance_category_id: profession_compliance_category.id,
-                               compliance_document_id: compliance_document.id
-                             }"
-                      />
+                          profession_compliance_category_id: profession_compliance_category.id,
+                          compliance_document_id: compliance_document.id
+                        }"
+                      >
                       <label
                         :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
                       >{{ compliance_document.name }}</label>
                     </div>
                     <div
-                      v-for="child_compliance_document in compliance_document.child_compliance_documents"
-                      v-if="compliance_document.compliance_document_type_name === 'Safeguarding'"
+                      v-for="
+                        child_compliance_document in compliance_document.child_compliance_documents
+                          .filter(child_compliance_document => compliance_document.compliance_document_type_name === 'Safeguarding')
+                      "
                       :key="`${child_compliance_document.id}-${child_compliance_document.name}`"
                       class="ml-4 flex flex-row justify-start items-center"
                     >
@@ -349,16 +385,18 @@
                         v-model="form.practice_profession_compliance_category_compliance_documents"
                         type="checkbox"
                         :value="{
-                               profession_compliance_category_id: profession_compliance_category.id,
-                               compliance_document_id: child_compliance_document.id
-                             }"
-                      />
+                          profession_compliance_category_id: profession_compliance_category.id,
+                          compliance_document_id: child_compliance_document.id
+                        }"
+                      >
                       <label
                         :for="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
                       >{{ child_compliance_document.name }}</label>
                     </div>
                   </template>
-                  <div class="ml-2">Optional</div>
+                  <div class="ml-2">
+                    Optional
+                  </div>
                   <template
                     v-for="compliance_document in profession_compliance_category.optional_compliance_documents"
                   >
@@ -371,10 +409,10 @@
                         v-model="form.practice_profession_compliance_category_compliance_documents"
                         type="checkbox"
                         :value="{
-                               profession_compliance_category_id: profession_compliance_category.id,
-                               compliance_document_id: compliance_document.id
-                             }"
-                      />
+                          profession_compliance_category_id: profession_compliance_category.id,
+                          compliance_document_id: compliance_document.id
+                        }"
+                      >
                       <label
                         :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
                       >{{ compliance_document.name }}</label>
@@ -404,10 +442,10 @@
                 :name="'other_mandatory_training_id'"
                 :label="'Other Mandatory Training:'"
                 :lists="practice_other_mandatory_trainings"
+                updatable
                 @checked="form.other_mandatory_training_id.push(parseInt($event))"
                 @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
                 @uncheckAll="form.other_mandatory_training_id = []"
-                updatable
                 @addList="addList"
                 @updateList="updateList"
                 @remove="toggleRemoveMandatoryModal"
@@ -435,7 +473,9 @@
                   :error="formError.find(item => item.field === 'tax_year_end_date')"
                 />
               </template>
-              <div class="font-bold text-sm my-4">Bank Details</div>
+              <div class="font-bold text-sm my-4">
+                Bank Details
+              </div>
               <AppInput
                 v-model="form.account_name"
                 :type="'text'"
@@ -509,25 +549,25 @@
     />
     <transition name="fade" mode="out-in">
       <div
-        class="shield"
         v-if="$route.name === 'profile-index-create'"
+        class="shield"
         @click="$router.push('/profile')"
-      ></div>
+      />
     </transition>
     <nuxt-child />
   </section>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
-import AppButton from "@/components/Base/AppButton";
-import AppFormError from "@/components/Base/AppFormError";
-import AppLoading from "@/components/Base/AppLoading";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppInput from "@/components/Base/AppInput"
+import AppDate from "@/components/Base/AppDate"
+import AppButton from "@/components/Base/AppButton"
+import AppFormError from "@/components/Base/AppFormError"
+import AppLoading from "@/components/Base/AppLoading"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
   transition: {
     name: "fade",
-    mode: "out-in"
+    mode: "out-in",
   },
   components: {
     AppInput,
@@ -535,9 +575,9 @@ export default {
     AppButton,
     AppFormError,
     AppLoading,
-    AppConfirmationModal
+    AppConfirmationModal,
   },
-  data() {
+  data () {
     return {
       // surgery: null,
       toggle_remove_mandatory_modal: false,
@@ -574,52 +614,52 @@ export default {
         added_year_contributions: 0,
         added_early_retirement_contributions: 0,
         nhsps_employer_contributions: 0,
-        nhs_pension_scheme_employing_authority_name: null
+        nhs_pension_scheme_employing_authority_name: null,
       },
       name: "",
-      formError: []
-    };
+      formError: [],
+    }
   },
   computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
     empty_profession_compliance_category_ids: {
-      get() {
+      get () {
         return this.profession_compliance_categories
           .filter(profession_compliance_category => {
             return !this.form.practice_profession_compliance_category_compliance_documents.some(
               value => {
                 return (
-                  value.profession_compliance_category_id ===
-                  profession_compliance_category.id
-                );
+                  value.profession_compliance_category_id
+                  === profession_compliance_category.id
+                )
               }
-            );
+            )
           })
           .map(profession_compliance_category => {
-            return profession_compliance_category.id;
-          });
+            return profession_compliance_category.id
+          })
       },
-      set(empty_profession_compliance_category_ids) {
+      set (empty_profession_compliance_category_ids) {
         this.form.practice_profession_compliance_category_compliance_documents = this.form.practice_profession_compliance_category_compliance_documents.filter(
           value => {
             return !empty_profession_compliance_category_ids.some(
               empty_profession_compliance_category => {
                 return (
-                  empty_profession_compliance_category ===
-                  value.profession_compliance_category_id
-                );
+                  empty_profession_compliance_category
+                  === value.profession_compliance_category_id
+                )
               }
-            );
+            )
           }
-        );
-      }
+        )
+      },
     },
-    schemeYearLists() {
-      let defaultDate = 2020;
-      let currentDate = this.$moment().year();
-      let lists = [];
+    schemeYearLists () {
+      let defaultDate = 2020
+      let currentDate = this.$moment().year()
+      let lists = []
       while (currentDate >= defaultDate) {
         lists.push({
           label: `${currentDate}-${this.$moment(currentDate, "YYYY")
@@ -627,101 +667,101 @@ export default {
             .year()}`,
           value: `${currentDate}-${this.$moment(currentDate, "YYYY")
             .add(1, "years")
-            .year()}`
-        });
-        currentDate = currentDate - 1;
+            .year()}`,
+        })
+        currentDate = currentDate - 1
       }
-      return lists;
-    }
+      return lists
+    },
   },
   watch: {
-    modal(value) {
+    modal (value) {
       value
         ? (document.body.style.overflow = "hidden")
-        : (document.body.style.overflow = "auto");
+        : (document.body.style.overflow = "auto")
     },
-    "form.practice_type_id"(newValue, oldValue) {
-      this.isOOH = newValue.includes(8) ? true : false;
-    }
+    "form.practice_type_id" (newValue) {
+      this.isOOH = newValue.includes(8) ? true : false
+    },
   },
-  async asyncData({ app, store, redirect, error }) {
+  async asyncData ({ app, store, redirect, error, }) {
     if (app.$auth.user.domain === "Practice") {
       let permissions = app.$auth.user.practice_detail.role.permissions.map(
         permission => permission.name
-      );
+      )
       if (permissions.includes("View Profile Practice")) {
         try {
           const [
-            [practice],
+            [practice,],
             practice_types,
             mandatory_trainings,
             profession_compliance_categories,
-            practice_other_mandatory_trainings
+            practice_other_mandatory_trainings,
           ] = await Promise.all([
             app.$axios
               .$get("/api/v1/practice/me/practice")
               .then(responsePractice => {
-                const practice =
-                  responsePractice.data && responsePractice.data.practice
+                const practice
+                  = responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
-                    : null;
-                return [practice];
+                    : null
+                return [practice,]
               }),
 
             app.$axios
               .$get("/api/v1/practice-types")
               .then(responsePracticeTypes => {
-                let practice_types =
-                  responsePracticeTypes.data &&
-                  responsePracticeTypes.data.practice_types &&
-                  responsePracticeTypes.data.practice_types.length
+                let practice_types
+                  = responsePracticeTypes.data
+                  && responsePracticeTypes.data.practice_types
+                  && responsePracticeTypes.data.practice_types.length
                     ? responsePracticeTypes.data.practice_types
-                    : [];
+                    : []
                 practice_types = practice_types.map(practiceType => {
-                  return { label: practiceType.name, value: practiceType.id };
-                });
-                return practice_types;
+                  return { label: practiceType.name, value: practiceType.id, }
+                })
+                return practice_types
               }),
 
             app.$axios
               .$get("/api/v1/mandatory-trainings")
               .then(responseMandatoryTrainings => {
-                let mandatory_trainings =
-                  responseMandatoryTrainings.data &&
-                  responseMandatoryTrainings.data.mandatory_trainings &&
-                  responseMandatoryTrainings.data.mandatory_trainings.length
+                let mandatory_trainings
+                  = responseMandatoryTrainings.data
+                  && responseMandatoryTrainings.data.mandatory_trainings
+                  && responseMandatoryTrainings.data.mandatory_trainings.length
                     ? responseMandatoryTrainings.data.mandatory_trainings
-                    : [];
+                    : []
                 mandatory_trainings = mandatory_trainings.map(
                   mandatoryTraining => {
                     return {
                       label: mandatoryTraining.name,
-                      value: mandatoryTraining.id
-                    };
+                      value: mandatoryTraining.id,
+                    }
                   }
-                );
-                return mandatory_trainings;
+                )
+                return mandatory_trainings
               }),
 
             app.$axios
               .$get(`/api/v1/profession-compliance-categories`)
               .then(res => {
-                let profession_compliance_categories = [];
+                let profession_compliance_categories = []
 
                 res.data.profession_compliance_categories.forEach(item => {
-                  let tempArray2 = [];
+                  let tempArray2 = []
                   item.mandatory_compliance_documents.forEach(docs => {
                     if (docs.name !== "Visa (for non-EU)") {
-                      tempArray2.push(docs);
+                      tempArray2.push(docs)
                     }
-                  });
+                  })
                   profession_compliance_categories.push({
                     ...item,
-                    mandatory_compliance_documents: tempArray2
-                  });
-                });
+                    mandatory_compliance_documents: tempArray2,
+                  })
+                })
 
-                return profession_compliance_categories;
+                return profession_compliance_categories
               }),
 
             app.$axios
@@ -730,131 +770,131 @@ export default {
                 return res.data.practice_other_mandatory_trainings.map(item => {
                   return {
                     label: item.name,
-                    value: item.id
-                  };
-                });
-              })
-          ]);
+                    value: item.id,
+                  }
+                })
+              }),
+          ])
 
           return {
             practice,
             practice_types,
             mandatory_trainings,
             profession_compliance_categories,
-            practice_other_mandatory_trainings
-          };
+            practice_other_mandatory_trainings,
+          }
         } catch (err) {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
+              text: [`${err.response.data.message}`,],
+            })
           }
-          error({ statusCode: 401, message: err.response.data.message });
-          throw err;
+          error({ statusCode: 401, message: err.response.data.message, })
+          throw err
         }
       } else if (permissions.includes("View Profile Users")) {
-        redirect(`/profile/users`);
+        redirect(`/profile/users`)
       } else if (permissions.includes("View Profile Practice Document")) {
-        redirect(`/profile/practice-documents`);
+        redirect(`/profile/practice-documents`)
       } else {
-        error({ statusCode: 401, message: "Your Practice is Not Authorized" });
+        error({ statusCode: 401, message: "Your Practice is Not Authorized", })
       }
     }
   },
-  mounted() {
-    this.form.phone_number = this.practice.phone_number;
-    this.form.report_to = this.practice.report_to;
-    this.form.email = this.practice.email;
-    this.form.extra_information = this.practice.extra_information;
+  mounted () {
+    this.form.phone_number = this.practice.phone_number
+    this.form.report_to = this.practice.report_to
+    this.form.email = this.practice.email
+    this.form.extra_information = this.practice.extra_information
     this.practice.practice_types.forEach(item => {
-      this.form.practice_type_id.push(item.id);
-    });
-    this.isOOH = this.form.practice_type_id.includes(8) ? true : false;
+      this.form.practice_type_id.push(item.id)
+    })
+    this.isOOH = this.form.practice_type_id.includes(8) ? true : false
     this.practice.mandatory_trainings.forEach(item => {
-      this.form.mandatory_training_id.push(item.id);
-    });
+      this.form.mandatory_training_id.push(item.id)
+    })
     this.practice.other_mandatory_trainings.forEach(item => {
-      this.form.other_mandatory_training_id.push(item.id);
-    });
-    this.form.use_variation_terms = this.practice.use_variation_terms;
-    this.form.vat_registered = this.practice.vat_registered;
-    this.form.vat_number = this.practice.vat_number;
-    this.form.tax_year_end_date = this.practice.tax_year_end_date;
-    this.form.account_name = this.practice.account_name;
-    this.form.bank_name = this.practice.bank_name;
-    this.form.sort_code = this.practice.sort_code;
-    this.form.account_number = this.practice.account_number;
+      this.form.other_mandatory_training_id.push(item.id)
+    })
+    this.form.use_variation_terms = this.practice.use_variation_terms
+    this.form.vat_registered = this.practice.vat_registered
+    this.form.vat_number = this.practice.vat_number
+    this.form.tax_year_end_date = this.practice.tax_year_end_date
+    this.form.account_name = this.practice.account_name
+    this.form.bank_name = this.practice.bank_name
+    this.form.sort_code = this.practice.sort_code
+    this.form.account_number = this.practice.account_number
     this.form.practice_profession_compliance_category_compliance_documents = this.practice.practice_profession_compliance_category_compliance_documents.map(
       item => {
         return {
           profession_compliance_category_id:
             item.profession_compliance_category_id,
-          compliance_document_id: item.compliance_document_id
-        };
+          compliance_document_id: item.compliance_document_id,
+        }
       }
-    );
-    this.form.national_insurance_number = this.practice.national_insurance_number;
-    this.form.sd_number = this.practice.sd_number;
-    this.form.paying_reference = this.practice.paying_reference;
-    this.form.ea_code = this.practice.ea_code;
-    this.form.professional_nhs_expenses = this.practice.professional_nhs_expenses;
-    this.form.percentage_rate = this.practice.percentage_rate;
-    this.form.section_scheme_year = this.practice.section_scheme_year;
-    this.form.added_year_contributions = this.practice.added_year_contributions;
-    this.form.added_early_retirement_contributions = this.practice.added_early_retirement_contributions;
-    this.form.nhsps_employer_contributions = this.practice.nhsps_employer_contributions;
-    this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name;
+    )
+    this.form.national_insurance_number = this.practice.national_insurance_number
+    this.form.sd_number = this.practice.sd_number
+    this.form.paying_reference = this.practice.paying_reference
+    this.form.ea_code = this.practice.ea_code
+    this.form.professional_nhs_expenses = this.practice.professional_nhs_expenses
+    this.form.percentage_rate = this.practice.percentage_rate
+    this.form.section_scheme_year = this.practice.section_scheme_year
+    this.form.added_year_contributions = this.practice.added_year_contributions
+    this.form.added_early_retirement_contributions = this.practice.added_early_retirement_contributions
+    this.form.nhsps_employer_contributions = this.practice.nhsps_employer_contributions
+    this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name
   },
   methods: {
-    addList(payload) {
+    addList (payload) {
       this.$axios
-        .$post(`/api/v1/practice/other-mandatory-training`, { name: payload })
+        .$post(`/api/v1/practice/other-mandatory-training`, { name: payload, })
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`]
-          });
+            text: [`${res.message}`,],
+          })
           let index = this.practice_other_mandatory_trainings.findIndex(
             item =>
-              item.value === res.data.practice_other_mandatory_training.id &&
-              item.label === res.data.practice_other_mandatory_training.name
-          );
+              item.value === res.data.practice_other_mandatory_training.id
+              && item.label === res.data.practice_other_mandatory_training.name
+          )
           if (index < 0) {
             this.practice_other_mandatory_trainings.push({
               label: res.data.practice_other_mandatory_training.name,
-              value: res.data.practice_other_mandatory_training.id
-            });
+              value: res.data.practice_other_mandatory_training.id,
+            })
           }
-        });
+        })
     },
-    updateList(payload) {
+    updateList (payload) {
       this.$axios
         .$put(`/api/v1/practice/other-mandatory-training/${payload.value}`, {
-          name: payload.label
+          name: payload.label,
         })
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`]
-          });
+            text: [`${res.message}`,],
+          })
           let index = this.practice_other_mandatory_trainings.findIndex(
             item => item.value === payload.value
-          );
+          )
           if (index >= 0) {
-            this.practice_other_mandatory_trainings.splice(index, 1, payload);
+            this.practice_other_mandatory_trainings.splice(index, 1, payload)
           }
-        });
+        })
     },
-    toggleRemoveMandatoryModal(payload) {
-      this.selectedMandatory = payload;
-      this.toggle_remove_mandatory_modal = true;
+    toggleRemoveMandatoryModal (payload) {
+      this.selectedMandatory = payload
+      this.toggle_remove_mandatory_modal = true
     },
-    removeMandatory() {
+    removeMandatory () {
       this.$axios
         .$delete(
           `/api/v1/practice/other-mandatory-training/${this.selectedMandatory.value}`
@@ -863,33 +903,33 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`]
-          });
+            text: [`${res.message}`,],
+          })
           let index = this.practice_other_mandatory_trainings.findIndex(
             item => item.value === this.selectedMandatory.value
-          );
+          )
           if (index >= 0) {
-            this.practice_other_mandatory_trainings.splice(index, 1);
+            this.practice_other_mandatory_trainings.splice(index, 1)
           }
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [`${err.response.data.message}`]
-          });
+            text: [`${err.response.data.message}`,],
+          })
         })
         .finally(() => {
-          this.toggle_remove_mandatory_modal = false;
-          this.selectedMandatory = null;
-        });
+          this.toggle_remove_mandatory_modal = false
+          this.selectedMandatory = null
+        })
     },
-    async onFileInput(e) {
+    async onFileInput (e) {
       if (!e.target.files.length) {
-        return;
+        return
       }
-      this.formError = [];
+      this.formError = []
       let types = [
         "pdf",
         "jpeg",
@@ -898,87 +938,87 @@ export default {
         "vnd.openxmlformats-officedocument.wordprocessingml.document",
         "vnd.openxmlformats-officedocument.wordprocessingml.template",
         "vnd.ms-word.document.macroEnabled.12",
-        "vnd.ms-word.template.macroEnabled.12"
-      ];
-      let file = e.target.files[0];
-      let fileType = file.type.split("/")[1];
+        "vnd.ms-word.template.macroEnabled.12",
+      ]
+      let file = e.target.files[0]
+      let fileType = file.type.split("/")[1]
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: ["Invalid File Format"]
-        });
-        return;
+          text: ["Invalid File Format",],
+        })
+        return
       }
       let variation_terms_file = {
         filename: file.name,
         size: file.size,
         subtype: file.type.split("/")[1],
-        type: file.type.split("/")[0]
-      };
-      const formData = new FormData();
-      formData.append("file", file);
-      this.input_file_loading = true;
+        type: file.type.split("/")[0],
+      }
+      const formData = new FormData()
+      formData.append("file", file)
+      this.input_file_loading = true
       this.$axios
         .$put(`/api/v1/practice/me/practice-variation-term`, formData)
         .then(res => {
-          this.practice.variation_terms_file = variation_terms_file;
+          this.practice.variation_terms_file = variation_terms_file
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [res.message]
-          });
+            text: [res.message,],
+          })
         })
         .catch(err => {
-          console.log("err", err.response);
+          console.log("err", err.response)
           if (err.response.status === 500) {
             if (err.response.data.message.includes("File size")) {
               this.formError.push({
                 field: "use_standard_terms",
-                message: err.response.data.message
-              });
+                message: err.response.data.message,
+              })
             } else {
               this.formError.push({
                 field: "",
-                message: "Something went wrong"
-              });
+                message: "Something went wrong",
+              })
             }
           }
         })
         .finally(() => {
-          this.input_file_loading = false;
-        });
+          this.input_file_loading = false
+        })
     },
-    remove() {
-      this.input_file_loading = true;
-      this.modal = false;
+    remove () {
+      this.input_file_loading = true
+      this.modal = false
       this.$axios
         .$delete(`/api/v1/practice/me/practice-variation-term`)
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [res.message]
-          });
-          this.practice.variation_terms_file = null;
-          document.getElementById("file-upload").value = "";
+            text: [res.message,],
+          })
+          this.practice.variation_terms_file = null
+          document.getElementById("file-upload").value = ""
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [err.response.data.message]
-            });
+              text: [err.response.data.message,],
+            })
           }
         })
         .finally(() => {
-          this.input_file_loading = false;
-        });
+          this.input_file_loading = false
+        })
     },
-    save() {
-      this.formError = [];
+    save () {
+      this.formError = []
       let notRequired = [
         "mandatory_training_id",
         "extra_information",
@@ -995,8 +1035,8 @@ export default {
         "added_year_contributions",
         "added_early_retirement_contributions",
         "nhsps_employer_contributions",
-        "nhs_pension_scheme_employing_authority_name"
-      ];
+        "nhs_pension_scheme_employing_authority_name",
+      ]
 
       // if (!this.form.practice_type_id.includes(8)) {
       //   notRequired.push(
@@ -1014,26 +1054,26 @@ export default {
       // }
 
       // temporary
-      this.form.professional_nhs_expenses = 0;
-      this.form.section_scheme_year = null;
-      this.form.percentage_rate = 0;
-      this.form.added_year_contributions = 0;
-      this.form.added_early_retirement_contributions = 0;
-      this.form.nhsps_employer_contributions = 0;
+      this.form.professional_nhs_expenses = 0
+      this.form.section_scheme_year = null
+      this.form.percentage_rate = 0
+      this.form.added_year_contributions = 0
+      this.form.added_early_retirement_contributions = 0
+      this.form.nhsps_employer_contributions = 0
 
       if (
-        this.form.use_variation_terms === false ||
-        (this.form.use_variation_terms === true &&
-          this.practice.variation_terms_file !== null)
+        this.form.use_variation_terms === false
+        || (this.form.use_variation_terms === true
+          && this.practice.variation_terms_file !== null)
       ) {
-        notRequired.push("use_variation_terms");
+        notRequired.push("use_variation_terms")
       }
-      if (["false", false].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number", "tax_year_end_date");
+      if (["false", false,].includes(this.form.vat_registered)) {
+        notRequired.push("vat_number", "tax_year_end_date")
       }
-      this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        this.loading = true;
+        this.loading = true
 
         return this.$axios
           .$put(`/api/v1/practice/me/practice-profile`, this.form)
@@ -1041,35 +1081,35 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [res.message]
-            });
+              text: [res.message,],
+            })
           })
           .catch(err => {
-            console.log("err", err.response || err);
+            console.log("err", err.response || err)
             if (
-              err.response &&
-              err.response.data &&
-              err.response.data.error_messages
+              err.response
+              && err.response.data
+              && err.response.data.error_messages
             ) {
-              this.formError = err.response.data.error_messages;
+              this.formError = err.response.data.error_messages
             }
             // throw err;
           })
           .finally(() => {
-            this.scrollToTop();
-            this.loading = false;
-          });
+            this.scrollToTop()
+            this.loading = false
+          })
       } else {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: ["Please fill up all the forms"]
-        });
-        this.scrollToTop();
+          text: ["Please fill up all the forms",],
+        })
+        this.scrollToTop()
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 <style scoped>
 .document-filename {

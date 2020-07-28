@@ -72,7 +72,7 @@
             <AppDate
               v-model="form.paid_at"
               :name="'paid_at'"
-              :label="'Payment made on'"
+              :label="'Received Payment on'"
               :error="formError.find(item => item.field === 'paid_at')"
               isBefore
             />
@@ -108,18 +108,25 @@
 import AppTable from "@/components/Base/AppTable"
 import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
-import { mixin as clickaway } from "vue-clickaway"
+import { mixin as clickaway, } from "vue-clickaway"
 export default {
   components: {
     AppTable,
     AppDate,
-    AppButton
+    AppButton,
   },
-  mixins: [clickaway],
-  props: ["childPracticeId"],
+  mixins: [clickaway,],
+
+  props: {
+    childPracticeId: {
+      type: [String, Number,],
+      default: null,
+    },
+  },
+
   transition: {
     name: "fade",
-    mode: "out-in"
+    mode: "out-in",
   },
   data () {
     return {
@@ -133,15 +140,15 @@ export default {
       paymentModal: false,
       selectedInvoiceId: null,
       form: {
-        paid_at: null
+        paid_at: null,
       },
       formError: [],
       // app table params
       params: {
         offset: 0,
         limit: 5,
-        status: ["Issued", "Disputed", "Paid"],
-        order_by: []
+        status: ["Issued", "Disputed", "Paid",],
+        order_by: [],
       },
       // app table column
       columns: [
@@ -149,75 +156,75 @@ export default {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Practice / Surgery",
           dataIndex: "job.platform_job.practice.surgery.name",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Title",
           dataIndex: "job.title",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Shift",
           dataIndex: "job.shift.name",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Rate",
           dataIndex: "job.rate",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "per",
           dataIndex: "job.locum_detail_rate_type.name",
           class: "text-center",
-          sortable: true
+          sortable: true,
         },
         {
           name: "From",
           dataIndex: "job.date_start",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "To",
           dataIndex: "job.date_end",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Completed At",
           dataIndex: "completed_at",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Invoice status",
           dataIndex: "invoice_status",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Tag",
           dataIndex: "status",
           sortable: true,
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Actions",
           dataIndex: "actions",
-          class: "text-center"
-        }
+          class: "text-center",
+        },
       ],
-      showTable: false
+      showTable: false,
     }
   },
   computed: {
@@ -229,23 +236,23 @@ export default {
       switch (
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
-        case "to-be-invoiced":
-          str = "This spoke do not have any completed job parts from Locums"
-          break
-        case "disputed":
-          str = "This spoke do not have any disputed job parts from Locums"
-          break
-        case "invoiced":
-          str = "This spoke do not have any invoiced job parts from Locums"
-          break
-        case "approved":
-          str = "This spoke do not have any approved job parts from Locums"
-          break
-        default:
-          str = "This spoke do not have any completed job parts from Locums"
+      case "to-be-invoiced":
+        str = "This spoke do not have any completed job parts from Locums"
+        break
+      case "disputed":
+        str = "This spoke do not have any disputed job parts from Locums"
+        break
+      case "invoiced":
+        str = "This spoke do not have any invoiced job parts from Locums"
+        break
+      case "approved":
+        str = "This spoke do not have any approved job parts from Locums"
+        break
+      default:
+        str = "This spoke do not have any completed job parts from Locums"
       }
       return str
-    }
+    },
   },
   watch: {
     "$route.query" (newValue, oldValue) {
@@ -262,9 +269,9 @@ export default {
           this.showTable = true
         }, 200)
       }
-    }
+    },
   },
-  async asyncData ({ app, query, route, error }) {
+  async asyncData ({ app, query, route, error, }) {
     try {
       // get child practice id
       let childPracticeId = null
@@ -277,25 +284,25 @@ export default {
       let status = []
       let invoice_status = []
       switch (query.status) {
-        case "to-be-invoiced":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["To Be Invoice"]
-          break
-        case "disputed":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["Disputed"]
-          break
-        case "invoiced":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["Invoiced"]
-          break
-        case "approved":
-          status = ["Approved"]
-          invoice_status = []
-          break
-        default:
-          status = ["Completed", "Terminated"]
-          invoice_status = ["To Be Invoice"]
+      case "to-be-invoiced":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["To Be Invoice",]
+        break
+      case "disputed":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["Disputed",]
+        break
+      case "invoiced":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["Invoiced",]
+        break
+      case "approved":
+        status = ["Approved",]
+        invoice_status = []
+        break
+      default:
+        status = ["Completed", "Terminated",]
+        invoice_status = ["To Be Invoice",]
       }
 
       const params = {
@@ -304,22 +311,22 @@ export default {
         status,
         invoice_status,
         type: "Platform",
-        job_practice_id: [childPracticeId]
+        job_practice_id: [childPracticeId,],
       }
 
-      const [total, job_parts] = await Promise.all([
+      const [total, job_parts,] = await Promise.all([
         app.$axios
-          .$get(`/api/v1/practice/job-parts/count`, { params })
+          .$get(`/api/v1/practice/job-parts/count`, { params, })
           .then(res => {
             const total = res.data.count
             return total
           }),
         app.$axios
-          .$get(`/api/v1/practice/job-parts?offset=0&limit=5`, { params })
+          .$get(`/api/v1/practice/job-parts?offset=0&limit=5`, { params, })
           .then(res => {
             const job_parts = res.data.job_parts
             return job_parts
-          })
+          }),
       ])
 
       const showTable = true
@@ -327,13 +334,13 @@ export default {
       return {
         total,
         job_parts,
-        showTable
+        showTable,
       }
     } catch (err) {
       console.log("practice-billing index err", err.response || err)
       error({
         statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
+        message: err.message || "Something went wrong!",
       })
     }
   },
@@ -361,25 +368,25 @@ export default {
       switch (
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
-        case "to-be-invoiced":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["To Be Invoice"]
-          break
-        case "disputed":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["Disputed"]
-          break
-        case "issued":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["Invoiced"]
-          break
-        case "approved":
-          status = ["Approved"]
-          invoice_status = []
-          break
-        default:
-          status = ["Completed", "Terminated"]
-          invoice_status = ["To Be Invoice"]
+      case "to-be-invoiced":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["To Be Invoice",]
+        break
+      case "disputed":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["Disputed",]
+        break
+      case "issued":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["Invoiced",]
+        break
+      case "approved":
+        status = ["Approved",]
+        invoice_status = []
+        break
+      default:
+        status = ["Completed", "Terminated",]
+        invoice_status = ["To Be Invoice",]
       }
 
       const params = {
@@ -388,20 +395,20 @@ export default {
         status,
         invoice_status,
         type: "Platform",
-        job_practice_id: [this.childPracticeId]
+        job_practice_id: [this.childPracticeId,],
       }
 
       return Promise.all([
-        this.$axios.$get(`/api/v1/practice/job-parts/count`, { params }),
+        this.$axios.$get(`/api/v1/practice/job-parts/count`, { params, }),
         this.$axios.$get(`/api/v1/practice/job-parts?offset=0&limit=5`, {
-          params
-        })
+          params,
+        }),
       ])
-        .then(([responseTotal, responseJobParts]) => {
+        .then(([responseTotal, responseJobParts,]) => {
           this.total = responseTotal.data.count
           this.job_parts = responseJobParts.data.job_parts
         })
-        .catch(([errTotal, errJobParts]) => {
+        .catch(([errTotal, errJobParts,]) => {
           console.log(
             "err",
             errTotal.response || errTotal || errJobParts.response || errJobParts
@@ -410,14 +417,14 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${errTotal.response.data.message}`]
+              text: [`${errTotal.response.data.message}`,],
             })
           }
           if (errJobParts.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${errJobParts.response.data.message}`]
+              text: [`${errJobParts.response.data.message}`,],
             })
           }
         })
@@ -435,25 +442,25 @@ export default {
       switch (
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
-        case "to-be-invoiced":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["To Be Invoice"]
-          break
-        case "disputed":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["Disputed"]
-          break
-        case "invoiced":
-          status = ["Completed", "Terminated"]
-          invoice_status = ["Invoiced"]
-          break
-        case "approved":
-          status = ["Approved"]
-          invoice_status = []
-          break
-        default:
-          status = ["Completed", "Terminated"]
-          invoice_status = ["To Be Invoice"]
+      case "to-be-invoiced":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["To Be Invoice",]
+        break
+      case "disputed":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["Disputed",]
+        break
+      case "invoiced":
+        status = ["Completed", "Terminated",]
+        invoice_status = ["Invoiced",]
+        break
+      case "approved":
+        status = ["Approved",]
+        invoice_status = []
+        break
+      default:
+        status = ["Completed", "Terminated",]
+        invoice_status = ["To Be Invoice",]
       }
 
       const params = {
@@ -462,12 +469,12 @@ export default {
         status,
         invoice_status,
         type: "Platform",
-        job_practice_id: [this.childPracticeId],
-        order_by: this.params.order_by
+        job_practice_id: [this.childPracticeId,],
+        order_by: this.params.order_by,
       }
 
       return this.$axios
-        .$get(`/api/v1/practice/job-parts`, { params })
+        .$get(`/api/v1/practice/job-parts`, { params, })
         .then(res => {
           this.job_parts = res.data.job_parts
         })
@@ -477,7 +484,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
+              text: [`${err.response.data.message}`,],
             })
           }
         })
@@ -488,7 +495,7 @@ export default {
         this.job_parts.splice(index, 1, invoice)
       }
     },
-    getLocumInvoiceRealTime ({ id }) {
+    getLocumInvoiceRealTime ({ id, }) {
       if (!id) {
         return
       }
@@ -508,7 +515,7 @@ export default {
         this.getLocumInvoiceRealTime
       )
     },
-    onClick (invoice, index) {
+    onClick (invoice) {
       this.selectedInvoiceId = null
       this.form.paid_at = null
       this.paymentModal = true
@@ -536,7 +543,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`]
+              text: [`${res.message}`,],
             })
             this.paymentModal = false
           })
@@ -564,8 +571,8 @@ export default {
       this.loading = true
       await this.getJobParts()
       this.loading = false
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>
