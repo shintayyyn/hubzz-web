@@ -142,11 +142,18 @@ export default {
     AppPagination,
     SendMessageModal,
   },
-  middleware ({ query, redirect, error, }) {
+  middleware ({ route, query, redirect, error, }) {
     if (!query.status) {
       // api (Favorite only)
-      redirect(`/my-banks?status=Favorite`)
+      redirect({
+        ...route,
+        query: {
+          status: 'Favorite',
+        },
+      })
+      return
     }
+
     if (
       query.status
       && ![
