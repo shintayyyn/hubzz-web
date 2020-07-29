@@ -1,6 +1,6 @@
 <template>
   <div class="error-container flex flex-col justify-center px-4">
-    <h1 v-if="error.statusCode === 401">
+    <h1 v-if="error.statusCode === 401 || error.statusCode === 403">
       <span>You are not authorized to view this page.</span>
     </h1>
 
@@ -8,27 +8,35 @@
       <span class="text-xl">Page not found</span>
     </h1>
 
-    <h1 v-if="error.statusCode !== 401 && error.statusCode !== 404">
+    <h1 v-if="error.statusCode !== 401 && error.statusCode !== 403 &&error.statusCode !== 404">
       <span>{{ error.message || 'Something Went Wrong!' }}</span>
     </h1>
     
     <p>
-      Go back to
+      <span>Go back to</span>
       <nuxt-link :to="'/'" class="font-bold cursor-pointer hover:underline">
         Home page
-      </nuxt-link>.
+      </nuxt-link>
+      <span>.</span>
     </p>
   </div>
 </template>
 
 <script>
-  export default {
-    props: ["error"],
-    layout: "auth",
-    mounted () {
-      console.log(this.error)
-    }
-  }
+export default {
+  props: {
+    error: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  layout: "auth",
+
+  mounted () {
+    console.log(this.error)
+  },
+}
 </script>
 
 <style scoped>
