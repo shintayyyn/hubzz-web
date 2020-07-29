@@ -1205,6 +1205,7 @@ export default {
       console.log("shiftErrors", value)
     },
   },
+
   created () {
     if (this.schedule.length) {
       let status = this.$route.query.status ? this.$route.query.status : ""
@@ -1645,6 +1646,7 @@ export default {
       })
     }
   },
+  
   methods: {
     emitSchedule () {
       if (this.type === "invoice") {
