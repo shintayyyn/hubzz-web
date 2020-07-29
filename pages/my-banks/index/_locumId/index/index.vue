@@ -100,7 +100,116 @@
               </div>
             </div>
           </div>
+
+          <div class="rounded-lg shadow-lg p-4">
+            <div class="flex flex-col">
+              <div class="flex flex-row flex-wrap justify-between items-center">
+                <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
+                  <div class="font-bold text-sm sm:text-md">
+                    Payment Details
+                  </div>
+
+                  <div class="text-sm mb-4" />
+                </div>
+              </div>
+              
+              <div class="ml-4">
+                <div class="font-bold text-sm sm:text-md">
+                  Paid Under Payroll
+                </div>
+
+                <div class="text-sm mb-4">
+                  {{ user.paid_under_payroll ? 'Yes' : 'No' }}
+                </div>
+
+                <div v-if="user.paid_under_payroll">
+                  <div class="font-bold text-sm sm:text-md">
+                    Payroll Details
+                  </div>
+
+                  <div class="text-sm mb-4" />
+
+                  <div class="ml-4">
+                    <div class="font-bold text-sm sm:text-md">
+                      Payroll Company Name
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.payroll_account_name }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Bank Name
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.payroll_bank_name }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Sort Code
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.payroll_sort_code }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Payroll Reference Number
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.payroll_account_number }}
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="!user.paid_under_payroll">
+                  <div class="font-bold text-sm sm:text-md">
+                    Bank Details
+                  </div>
+
+                  <div class="text-sm mb-4" />
+
+                  <div class="ml-4">
+                    <div class="font-bold text-sm sm:text-md">
+                      Account Name
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.account_name }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Bank Name
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.bank_name }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Sort Code
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.sort_code }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Account Number
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.account_number }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
           <div class="rounded-lg shadow-lg p-4 mb-4">
             <div class="font-bold text-sm sm:text-md">
