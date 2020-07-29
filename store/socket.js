@@ -9,7 +9,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async init ({ getters, commit, dispatch }) {
+  async init () {
     console.log('Socket Initialize')
 
     this.$socket.on('connect', () => {

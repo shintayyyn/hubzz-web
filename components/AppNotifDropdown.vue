@@ -219,6 +219,8 @@ export default {
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Sent To Practice",
 
+        "Locum Notification Locum Payment Details Updated",
+
         "Practice Notification Practice Actived",
         "Practice Notification Practice Reactivated",
         "Practice Notification Practice Suspended",
@@ -258,6 +260,8 @@ export default {
 
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
+
+        "Practice Notification Locum Payment Details Updated",
 
         "Practice Notification Practice Invoice Issued",
         "Practice Notification Practice Invoice Paid",
@@ -585,8 +589,11 @@ export default {
       const validNotificationUrl = [
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Sent To Practice",
+        "Locum Notification Locum Payment Details Updated",
+        
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
+        "Practice Notification Locum Payment Details Updated",
       ]
 
       if (validNotificationUrl.includes(notificationTypeName)) {
@@ -2020,89 +2027,91 @@ export default {
 </script>
 
 <style scoped>
-.wrapper {
-  overflow: hidden auto;
-}
-
-.dropdown {
-  width: 94%;
-  margin-left: 3%;
-  margin-right: 3%;
-  max-height: 80vh;
-}
-
-.modal {
-  height: 100vh;
-}
-
-@media screen and (min-width: 640px) {
-  .container {
-    min-width: 350px;
-    max-width: 350px;
+  .wrapper {
+    overflow: hidden auto;
   }
 
   .dropdown {
-    width: auto;
-    max-height: 500px;
-    /* margin-right: 2rem; */
+    width: 94%;
+    margin-left: 3%;
+    margin-right: 3%;
+    max-height: 80vh;
   }
-}
 
-.job-notification {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 700;
-  display: flex;
-  flex-direction: column;
-  max-height: 95%;
-  margin: 50px 20px 0;
-  padding: 0 4px 10px;
-}
+  .modal {
+    height: 100vh;
+  }
 
-.notifications:hover .cards {
-  opacity: 1;
-}
+  @media screen and (min-width: 640px) {
+    .container {
+      min-width: 350px;
+      max-width: 350px;
+    }
 
-.notifications::-webkit-scrollbar {
-  display: none;
-}
+    .dropdown {
+      width: auto;
+      max-height: 500px;
+      /* margin-right: 2rem; */
+    }
+  }
 
-@media screen and (min-width: 1200px) {
   .job-notification {
-    margin-left: 200px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 700;
+    display: flex;
+    flex-direction: column;
+    max-height: 95%;
+    margin: 50px 20px 0;
+    padding: 0 4px 10px;
   }
-}
 
-@media screen and (min-width: 480px) {
-  .job-notification {
-    margin: 50px 5% 0;
+  .notifications:hover .cards {
+    opacity: 1;
   }
-}
 
-@media screen and (min-width: 320px) {
-  .job-notification {
-    margin: 50px 3% 0;
+  .notifications::-webkit-scrollbar {
+    display: none;
   }
-}
-.truncate-title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: all 0.3s linear;
-}
-.truncate-title:hover {
-  display: block;
-}
 
-.truncate-info {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: all 0.3s linear;
-}
+  @media screen and (min-width: 1200px) {
+    .job-notification {
+      margin-left: 200px;
+    }
+  }
+
+  @media screen and (min-width: 480px) {
+    .job-notification {
+      margin: 50px 5% 0;
+    }
+  }
+
+  @media screen and (min-width: 320px) {
+    .job-notification {
+      margin: 50px 3% 0;
+    }
+  }
+
+  .truncate-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s linear;
+  }
+
+  .truncate-title:hover {
+    display: block;
+  }
+
+  .truncate-info {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s linear;
+  }
 </style>
