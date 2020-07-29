@@ -8,6 +8,7 @@
       >
         To be Invoiced
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -15,6 +16,7 @@
       >
         Disputed Invoices
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -22,6 +24,7 @@
       >
         Invoiced
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -29,6 +32,7 @@
       >
         Approved Invoices
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'solo-form' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -36,6 +40,7 @@
       >
         Solo Forms
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -44,10 +49,12 @@
         NHS Pension Form A
       </nuxt-link>
     </div>
+
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+
       <div v-if="!initialLoading">
         <AppButton
           v-if="!['pension-form-b'].includes($route.query.status)"
@@ -311,6 +318,7 @@
     </transition>
   </section>
 </template>
+
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppTable from "@/components/Base/AppTable"
@@ -318,11 +326,13 @@ import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
+
 export default {
   transition: {
     name: "fade",
     mode: "out-in",
   },
+
   components: {
     AppConfirmationModal,
     AppTable,
@@ -331,6 +341,7 @@ export default {
     AppLoading,
     AppInput,
   },
+
   data () {
     return {
       user: "",
@@ -367,6 +378,7 @@ export default {
       formError: [],
     }
   },
+
   computed: {
     columns () {
       let columns = []
@@ -530,6 +542,7 @@ export default {
       return false
     },
   },
+
   watch: {
     async "$route.query" (newValue, oldValue) {
       let newStatus = newValue.status
@@ -558,182 +571,14 @@ export default {
       }
     },
   },
-  async asyncData ({ app, query, error, }) {
-    try {
-      let invoice_status = []
-      let status = []
-      let locum_invoiceable
-      let nhs_claimable
-      let ooh
-      // let generate_form
-      let sent_to_practice
-      let queryStatus = query.status
 
-      switch (queryStatus && queryStatus.toLowerCase()) {
-      case "to-be-invoiced":
-        invoice_status.push("To Be Invoiced")
-        status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-        break
-      case "disputed":
-        invoice_status.push("Disputed")
-        status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-        break
-      case "issued":
-        invoice_status.push("Invoiced")
-        status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-        break
-      case "approved":
-        invoice_status.push("Invoiced")
-        status.push("Approved")
-        locum_invoiceable = true
-        break
-      case "solo-form":
-        invoice_status.push("Invoiced")
-        status.push("Approved")
-        locum_invoiceable = true
-        ooh = true
-        // generate_form = true
-        break
-      case "pension-form-a":
-        invoice_status.push("Invoiced")
-        status.push("Approved")
-        locum_invoiceable = true
-        nhs_claimable = true
-        sent_to_practice = true
-        break
-      default:
-        invoice_status.push("To Be Invoiced")
-        status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-      }
-
-      let [total, job_parts,] = await Promise.all([
-        app.$axios
-          .$get(`/api/v1/practice/job-parts/count`, {
-            params: {
-              invoice_status,
-              status,
-              locum_invoiceable,
-              nhs_claimable,
-              ooh,
-              sent_to_practice,
-              type: "Platform",
-              job_practice_id: [app.$auth.user.practice_id,],
-            },
-          })
-          .then(res => {
-            const total = res.data.count
-            return total
-          }),
-        app.$axios
-          .$get(`/api/v1/practice/job-parts`, {
-            params: {
-              invoice_status,
-              status,
-              locum_invoiceable,
-              nhs_claimable,
-              ooh,
-              sent_to_practice,
-              type: "Platform",
-              job_practice_id: [app.$auth.user.practice_id,],
-              offset: 0,
-              limit: 5,
-            },
-          })
-          .then(res => {
-            const job_parts = res.data.job_parts
-            return job_parts
-          }),
-      ])
-
-      job_parts = job_parts.map(jobPart => {
-        // let type
-        // let finalHours
-        // let totalHours
-        let total = 0
-
-        if (jobPart.locum_invoice_item) {
-          total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
-          // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-          // 	total =
-          // 		total -
-          // 		jobPart.locum_invoice_item.locum_invoice.ni_amount -
-          // 		jobPart.locum_invoice_item.locum_invoice.paye_amount;
-          // }
-        } else if (!jobPart.locum_invoice_item) {
-          // rate * final_hours_in_minutes
-          // rate / original_hours_in_minutes * final_hours_in_minutes
-
-          jobPart.schedules.forEach(schedule => {
-            if (!schedule.absent_reason) {
-              let finalHours = schedule.final_hours_in_minutes / 60
-              let totalHours = schedule.original_hours_in_minutes / 60
-              switch (schedule.locum_detail_rate_type.name) {
-              case "Hourly":
-                total = total + schedule.rate * finalHours
-                break
-              case "Whole Day":
-              case "Half Day":
-                total = total + (schedule.rate / totalHours) * finalHours
-                break
-              default:
-                total = total + schedule.rate * finalHours
-                break
-              }
-            }
-          })
-        }
-
-        return {
-          ...jobPart,
-          practice_name:
-            jobPart.job.type === "Platform"
-              ? jobPart.job.platform_job.practice.name
-              : jobPart.job.private_job.private_practice.name,
-          issued_at: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.issued_at
-            : null,
-          invoice_number: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-            : null,
-          total_amount: total,
-          under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-          invoice_paid:
-            jobPart.status === "Approved"
-            && jobPart.locum_invoice_item.locum_invoice.paid_at
-              ? "Yes"
-              : "No",
-          form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
-        }
-      })
-
-      return {
-        total,
-        job_parts,
-      }
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        console.log("something went wrong")
-        error(err.response.data)
-        return
-      } else {
-        console.log("practice-billing index err", err.response || err)
-        error({
-          statusCode: err.status || 500,
-          message: err.message || "Something went wrong!",
-        })
-      }
-      throw err
-    }
-  },
   created () {
     this.user = this.$auth.user
-    this.practice = this.$auth.user.practice_detail.practice
+    this.practice = this.$auth.user && this.$auth.user.domain === 'Practice' && this.$auth.user.practice_detail
+      ? this.$auth.user.practice_detail.practice
+      : null
   },
+
   mounted () {
     this.$socket.on(
       "Practice Notification Locum Invoice Created",
@@ -747,10 +592,19 @@ export default {
       "Practice Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
     )
+
+    this.initialLoading = true
+    this.getJobPartsPromiseAll().catch((err) => {
+      console.log('err', err.response || err)
+    }).finally(() => {
+      this.initialLoading = false
+    })
   },
+
   destroyed () {
     this.removeListener()
   },
+
   methods: {
     toggleSendFormAModal (locumInvoiceId, alreadySent) {
       if (alreadySent) return
@@ -787,6 +641,7 @@ export default {
             : `/api/v1/locum-form-b`
       window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
     },
+    
     getJobPartsPromiseAll () {
       let status = []
       let invoice_status = []
@@ -939,13 +794,12 @@ export default {
             }
           })
         })
-        .catch(([errTotal, errJobParts,]) => {
-          console.log(
-            "err",
-            errTotal.response || errTotal || errJobParts.response || errJobParts
-          )
+        .catch((err) => {
+          console.log('err', err.response || err)
+          this.$nuxt.error(err)
         })
     },
+
     async filterJobParts () {
       this.current_page = 1
       this.offset = 0
@@ -956,6 +810,7 @@ export default {
       this.initialLoading = false
       this.filterModal = false
     },
+
     getJobParts () {
       let status = []
       let invoice_status = []
@@ -965,6 +820,7 @@ export default {
       // let generate_form
       let sent_to_practice
       let queryStatus = this.$route.query.status
+
       switch (queryStatus && queryStatus.toLowerCase()) {
       case "to-be-invoiced":
         invoice_status.push("To Be Invoiced")
@@ -1308,16 +1164,18 @@ export default {
   },
 }
 </script>
+
 <style scoped>
-.shield {
-  z-index: 511;
-}
-.payment-modal {
-  position: fixed;
-  background-color: white;
-  z-index: 512;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+  .shield {
+    z-index: 511;
+  }
+
+  .payment-modal {
+    position: fixed;
+    background-color: white;
+    z-index: 512;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>
