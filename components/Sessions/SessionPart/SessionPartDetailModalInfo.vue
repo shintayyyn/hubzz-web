@@ -175,7 +175,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobPartHubzzFee(job_part.schedules) | currency }}
+          £ {{ job_part ? job_part.job_part_hubzz_fee_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -183,7 +183,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobPartHubzzFee(job_part.job.schedules) | currency }}
+          £ {{ job ? job.job_hubzz_fee_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -191,7 +191,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobPartGrossRate(job_part.schedules) | currency }}
+          £ {{ job_part ? job_part.job_part_gross_rate_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -199,7 +199,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobPartGrossRate(job_part.job.schedules) | currency }}
+          £ {{ job ? job.job_gross_rate_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -793,11 +793,16 @@ export default {
   },
 
   computed: {
+    job () {
+      return this.job_part ? this.job_part.job : null
+    },
+
     session_requirements () {
       return this.job_part.job.platform_job.session_requirements
         ? this.job_part.job.platform_job.session_requirements.split(",")
         : []
     },
+
     late_hours () {
       let originalHours = this.job_part.schedules
         .map(item => item.original_hours_in_minutes)
@@ -814,72 +819,21 @@ export default {
   },
 
   methods: {
-    getJobPartHubzzFee (schedules) {
-      // HUBB FEE (final_hours_in_minutes / 60) * practice_rate
-      let rate = 0
-
-      if (this.job_part.practice_rate) {
-        rate = this.job_part.practice_rate
-      } else {
-        let practice_rates = this.$auth.user.practice_detail.practice
-          .practice_rates
-        let practice_rate = practice_rates.find(
-          item => item.type === this.job_part.profession.name
-        )
-
-        if (practice_rate) {
-          rate = practice_rate.rate
-        } else {
-          rate = practice_rates[practice_rates.length - 1].rate
-        }
-      }
-
-      let total = 0
-
-      total = schedules
-        .map(schedule => schedule.final_hours_in_minutes)
-        .reduce((acc, cur) => acc + cur)
-      return (total / 60) * rate
-    },
-    
-    getJobPartGrossRate (schedules) {
-      // PER HOUR rate * final_hours_in_minutes
-      // PER WHOLE HALF DAY rate / original_hours_in_minutes * final_hours_in_minutes
-      let total = 0
-
-      schedules.forEach(schedule => {
-        if (!schedule.absent_reason) {
-          let finalHours = schedule.final_hours_in_minutes / 60
-          let totalHours = schedule.original_hours_in_minutes / 60
-          switch (schedule.locum_detail_rate_type.name) {
-          case "Hourly":
-            total = total + schedule.rate * finalHours
-            break
-          case "Whole Day":
-          case "Half Day":
-            total = total + (schedule.rate / totalHours) * finalHours
-            break
-          default:
-            total = total + schedule.rate * finalHours
-            break
-          }
-        }
-      })
-
-      return total
-    },
     convertDoc (document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`
     },
+
     convertTimeToMinutes (payload) {
       let hour = parseInt(payload.split(":")[0]) * 60
       let minute = parseInt(payload.split(":")[1])
 
       return hour + minute
     },
+
     isAbsent (payload) {
       return payload.absent > 0
     },
+
     isLate (payload) {
       return (
         this.convertTimeToMinutes(payload.final_time_start)
@@ -891,13 +845,13 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
-	z-index: 510;
-}
+  .modal-container {
+    z-index: 510;
+  }
 
-@media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 70%;
-	}
-}
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>

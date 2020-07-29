@@ -1205,6 +1205,7 @@ export default {
       console.log("shiftErrors", value)
     },
   },
+
   created () {
     if (this.schedule.length) {
       let status = this.$route.query.status ? this.$route.query.status : ""
@@ -1645,20 +1646,10 @@ export default {
       })
     }
   },
+  
   methods: {
     emitSchedule () {
       if (this.type === "invoice") {
-        // schedule,
-        // total_gross_locum_wages,
-        // total_working_hours,
-        // deductions,
-        // total_lates,
-        // hasError,
-        // hasChanges
-        // let deduction
-        //   = this.getJobGrossRate(this.schedules)
-        //   - this.getJobGrossRate(this.schedules, true)
-
         this.$emit(
           "getSchedule",
           this.schedules,
@@ -1680,6 +1671,7 @@ export default {
         )
       }
     },
+
     cancelReason () {
       if (this.selectedShift.type === "late") {
         let sched = this.schedules.find(
@@ -2141,31 +2133,13 @@ export default {
     },
 
     getJobGrossRate (schedules, final, type) {
+      
       let rate = 0
       let rates = []
+
       schedules.map(item => {
         if (item.shifts && item.shifts.length) {
-          if (["complete", "terminate",].includes(this.type)) {
-            rates.push(
-              ...item.shifts.map(shift =>
-                shift.has_absences
-                  ? 0
-                  : final
-                    ? this.getRate(
-                      shift,
-                      shift.final_time_start,
-                      shift.final_time_end,
-                      item.date
-                    )
-                    : this.getRate(
-                      shift,
-                      shift.time_start,
-                      shift.time_end,
-                      item.date
-                    )
-              )
-            )
-          } else if (this.type === "invoice") {
+          if (this.type === "invoice") {
             rates.push(
               ...item.shifts.map(shift =>
                 type === "deduction"
@@ -2216,7 +2190,13 @@ export default {
         }
         rate += Number(num)
       }
-      return rate.toFixed(2)
+
+      const qwe = rate.toFixed(2)
+
+      // console.log('schedules', JSON.stringify(schedules, null, 2))
+      // console.log('qwe', qwe)
+
+      return qwe
     },
 
     getTotalHours (schedule, final) {

@@ -1067,21 +1067,19 @@ export default {
     },
 
     practice_rate () {
-      let profession = this.professions.find(
-        item => item.value.toString() === this.form.role.toString()
-      )
-      let practice_rates = this.$auth.user.practice_detail.practice
-        .practice_rates
-      let practice_rate = practice_rates.find(
-        item => item.type === profession.label
-      )
-      let rate = 0
-      if (practice_rate) {
-        rate = practice_rate.rate
-      } else {
-        rate = practice_rates[practice_rates.length - 1].rate
-      }
-      return rate
+      const profession = this.professions
+        .find(item => item.value.toString() === this.form.role.toString())
+
+      const practiceRates = this.$auth.user
+        && this.$auth.user.practice_detail
+        && this.$auth.user.practice_detail.practice
+        ? this.$auth.user.practice_detail.practice.practice_rates
+        : []
+        
+      const practiceRate = practiceRates
+        .find(item => item.type === profession.label)
+
+      return practiceRate ? practiceRate.rate : 0
     },
 
     hubzz_fee () {
@@ -1089,6 +1087,7 @@ export default {
         let hours = this.total_working_hours / 60
         return (hours * this.practice_rate).toFixed(2)
       }
+      
       return 0
     },
   },
@@ -1467,7 +1466,7 @@ export default {
 
   methods: {
     // FOR APP SCHEDULE COMPONENT
-    getScheduleTemplates (shift_schedule) {
+    getTemplateSchedules (shift_schedule) {
       console.log("shift_schedule", shift_schedule)
       this.form.schedule_templates = []
       shift_schedule.forEach(shift => {
@@ -1585,15 +1584,19 @@ export default {
       job_parts
     ) {
       this.form.schedules = []
+
       this.schedules = schedule
+
       schedule.forEach((sched, index) => {
         if (sched.shifts && sched.shifts.length) {
           let dateErrIndex = this.shiftErrors.findIndex(
             err => err.field === `shift-${sched.date}`
           )
+
           if (dateErrIndex > -1) {
             this.shiftErrors.splice(dateErrIndex, 1)
           }
+
           sched.shifts.forEach((shift, i) => {
             this.form.schedules.push({
               date: this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
@@ -1603,22 +1606,27 @@ export default {
               locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
               rate: shift.rate,
             })
+
             if (shift.time_start) {
               let startIndex = this.shiftErrors.findIndex(
                 err => err.field === `time_start-s${index}-${i}`
               )
+
               if (startIndex > -1) {
                 this.shiftErrors.splice(startIndex, 1)
               }
             }
+
             if (shift.time_end) {
               let endIndex = this.shiftErrors.findIndex(
                 err => err.field === `time_end-s${index}-${i}`
               )
+
               if (endIndex > -1) {
                 this.shiftErrors.splice(endIndex, 1)
               }
             }
+
             if (
               shift.locum_detail_rate_type_id !== 0
               && shift.locum_detail_rate_type_id !== ""
@@ -1626,22 +1634,27 @@ export default {
               let rateTypeIndex = this.shiftErrors.findIndex(
                 err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
               )
+
               if (rateTypeIndex > -1) {
                 this.shiftErrors.splice(rateTypeIndex, 1)
               }
             }
+
             if (shift.shift_id !== 0 && shift.shift_id !== "") {
               let shiftIdIndex = this.shiftErrors.findIndex(
                 err => err.field === `shift_id-s${index}-${i}`
               )
+
               if (shiftIdIndex > -1) {
                 this.shiftErrors.splice(shiftIdIndex, 1)
               }
             }
+
             if (shift.rate !== 0 && shift.rate !== "") {
               let rateIndex = this.shiftErrors.findIndex(
                 err => err.field === `rate-s${index}-${i}`
               )
+              
               if (rateIndex > -1) {
                 this.shiftErrors.splice(rateIndex, 1)
               }
@@ -1649,9 +1662,13 @@ export default {
           })
         }
       })
+
       this.total_working_hours = total_working_hours
+
       this.total_gross_locum_wages = total_gross_locum_wages
+
       this.hasShiftError = hasError
+
       this.job_parts = job_parts
     },
 
