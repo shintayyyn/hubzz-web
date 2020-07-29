@@ -74,26 +74,27 @@
         <div class="font-bold text-sm sm:text-md">
           Job Gross Rate
         </div>
+
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobGrossRate(job.schedules) | currency }}
+          £ {{ job ? job.job_gross_rate_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
           Job Total Hours
         </div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-        >
+
+        <div class="text-xs sm:text-sm mb-8">
           {{ job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
         </div>
+
         <div class="font-bold text-sm sm:text-md">
           Extra information
         </div>
-        <div
-          class="text-xs sm:text-sm mb-8 break-words"
-        >
+
+        <div class="text-xs sm:text-sm mb-8 break-words">
           {{ job.platform_job && job.platform_job.extra_information?job.platform_job.extra_information:`(none)` }}
         </div>
+
         <div class="font-bold text-sm sm:text-md">
           Report to
         </div>
@@ -462,35 +463,6 @@ export default {
   },
 
   methods: {
-    getJobGrossRate (schedules) {
-      // PER HOUR rate * final_hours_in_minutes
-      // PER WHOLE HALF DAY rate / original_hours_in_minutes * final_hours_in_minutes
-      let total = 0
-
-      schedules.forEach(schedule => {
-        if (!schedule.absent_reason) {
-          let finalHours = schedule.final_hours_in_minutes / 60
-          let totalHours = schedule.original_hours_in_minutes / 60
-          switch (schedule.locum_detail_rate_type.name) {
-          case "Hourly":
-            total = total + schedule.rate * finalHours
-            break
-          case "Whole Day":
-          case "Half Day":
-            total
-								= total
-								+ (schedule.rate / totalHours)
-									* finalHours
-            break
-          default:
-            total = total + schedule.rate * finalHours
-            break
-          }
-        }
-      })
-
-      return total
-    },
     convertDoc (document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`
     },
@@ -499,13 +471,13 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
-	z-index: 510;
-}
+  .modal-container {
+    z-index: 510;
+  }
 
-@media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 70%;
-	}
-}
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>

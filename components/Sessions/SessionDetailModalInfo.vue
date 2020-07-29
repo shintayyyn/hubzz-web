@@ -81,7 +81,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobPartHubzzFee(job.schedules) | currency }}
+          £ {{ job ? job.job_hubzz_fee_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -89,7 +89,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          £ {{ getJobGrossRate(job.schedules) | currency }}
+          £ {{ job ? job.job_gross_rate_formatted : null }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -541,63 +541,6 @@ export default {
   },
 
   methods: {
-    getJobPartHubzzFee (schedules) {
-      // HUBB FEE (final_hours_in_minutes / 60) * practice_rate
-      let rate = 0
-      if (this.job.practice_rate) {
-        rate = this.job.practice_rate
-      } else {
-        let practice_rates = this.$auth.user.practice_detail.practice
-          .practice_rates
-        let practice_rate = practice_rates.find(
-          item => item.type === this.job.profession.name
-        )
-
-        if (practice_rate) {
-          rate = practice_rate.rate
-        } else {
-          rate = practice_rates[practice_rates.length - 1].rate
-        }
-      }
-
-      let total = 0
-
-      total = schedules
-        .map(schedule => schedule.final_hours_in_minutes)
-        .reduce((acc, cur) => acc + cur)
-
-      return (total / 60) * rate
-    },
-
-    getJobGrossRate (schedules) {
-      // PER HOUR rate * final_hours_in_minutes
-      // PER WHOLE HALF DAY rate / original_hours_in_minutes * final_hours_in_minutes
-      let total = 0
-
-      schedules.forEach(schedule => {
-        if (!schedule.absent_reason) {
-          let finalHours = schedule.final_hours_in_minutes / 60
-          
-          let totalHours = schedule.original_hours_in_minutes / 60
-
-          switch (schedule.locum_detail_rate_type.name) {
-          case "Hourly":
-            total = total + schedule.rate * finalHours
-            break
-          case "Whole Day":
-          case "Half Day":
-            total = total + (schedule.rate / totalHours) * finalHours
-            break
-          default:
-            total = total + schedule.rate * finalHours
-            break
-          }
-        }
-      })
-
-      return total
-    },
-
     convertDoc (document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`
     },
