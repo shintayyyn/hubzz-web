@@ -4,7 +4,7 @@
       <div class="text-sm sm:text-base mb-4">
         This job is still open
       </div>
-      
+
       <AppButton :label="'Apply now'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
     </template>
 
@@ -117,11 +117,7 @@ export default {
 
           res.data.job_parts.forEach(jobPart => {
             if (jobPart.dates.some(date => this.job.dates.includes(date))) {
-              if (jobPart.status === "Ongoing") {
-                this.conflictJobs.push(jobPart.job_part_number)
-              } else if (jobPart.status === "Allocated") {
-                this.conflictJobs.push(jobPart.job_job_number)
-              }
+              this.conflictJobs.push(jobPart.job_part_number)
             }
           })
 
@@ -137,6 +133,7 @@ export default {
           this.loading = false
         })
     },
+
     apply () {
       this.loading = true
       this.$axios
