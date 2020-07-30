@@ -1083,12 +1083,27 @@ export default {
     },
 
     hubzz_fee () {
-      if (this.form.role) {
-        let hours = this.total_working_hours / 60
-        return (hours * this.practice_rate).toFixed(2)
-      }
-      
-      return 0
+      return this.schedules.reduce((scheduleTotal, sched) => {
+        const shiftTotal = sched.shifts.reduce((shiftTotal, shift) => {
+          const time_start = shift.time_start
+
+          const time_end = shift.time_end
+
+          const total_hours = this.totalHours(time_start, time_end, sched.date)
+
+          if (total_hours > 0) {
+            const num = parseInt(total_hours)
+
+            if (!isNaN(num)) {
+              shiftTotal = shiftTotal + Math.round(Math.round(num / 60 * 100) / 100 * this.practice_rate * 100) / 100
+            }
+          }
+
+          return shiftTotal
+        }, 0)
+
+        return scheduleTotal + shiftTotal
+      }, 0).toFixed(2)
     },
   },
 
@@ -1465,6 +1480,14 @@ export default {
   },
 
   methods: {
+    totalHours (start, end, date) {
+      let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
+      let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
+      return start && end
+        ? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
+        : 0
+    },
+
     // FOR APP SCHEDULE COMPONENT
     getTemplateSchedules (shift_schedule) {
       console.log("shift_schedule", shift_schedule)
