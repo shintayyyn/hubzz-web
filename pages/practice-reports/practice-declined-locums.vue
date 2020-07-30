@@ -81,12 +81,15 @@
 
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
-          <div class="text-gray-500 w-full md:w-auto text-center md:text-left">
+          <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
+            </div>
+            <div class="whitespace-no-wrap">
+              Order By: {{ orderBy.join(',') }}
             </div>
           </div>
         </div>
@@ -110,14 +113,6 @@
             <span>Download PDF</span>
           </button>
         </div>
-      </div>
-
-      <div v-if="false" class=""> 
-        <span>Count: {{ count }}</span>
-        <br>
-        <span>Order By: {{ orderBy.join(',') }}</span>
-        <br>
-        <span>Page {{ activePage }} of {{ pages }} pages</span>
       </div>
     </div>
   </div>
