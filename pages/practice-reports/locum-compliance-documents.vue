@@ -334,6 +334,7 @@ export default {
       this.loading = true
       this.locumComplianceDocuments = []
       const params = {
+        practice_id: this.$auth.user.practice_id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
@@ -371,6 +372,7 @@ export default {
     },
     downloadPDF () {
       const params = {
+        practice_id: this.$auth.user.practice_id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
@@ -379,9 +381,9 @@ export default {
       this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
         filename: `practiceExpiringLocumCompliance.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

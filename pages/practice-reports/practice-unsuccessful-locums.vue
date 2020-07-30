@@ -70,8 +70,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || practiceUnsuccessfulLocums.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="practiceUnsuccessfulLocums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -86,7 +87,6 @@
 <script>
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
-
 export default {
   components: {
     ReportTable,
@@ -153,15 +153,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
@@ -188,15 +179,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
-        {
-          title: 'Max Rate per Hour',
-          key: 'max_rate_per_hour',
-          sort_key: 'max_rate_per_hour',
-          column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Max Rate per Hour',
+        //   key: 'max_rate_per_hour',
+        //   sort_key: 'max_rate_per_hour',
+        //   column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Min Rate per Half Day Session',
           key: 'min_rate_per_half_day_session',
@@ -206,15 +197,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
-        {
-          title: 'Max Rate per Half Day Session',
-          key: 'max_rate_per_half_day_session',
-          sort_key: 'max_rate_per_half_day_session',
-          column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Max Rate per Half Day Session',
+        //   key: 'max_rate_per_half_day_session',
+        //   sort_key: 'max_rate_per_half_day_session',
+        //   column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Min Rate per Whole Day Session',
           key: 'min_rate_per_whole_day_session',
@@ -224,15 +215,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
-        {
-          title: 'Max Rate per Whole Day Session',
-          key: 'max_rate_per_whole_day_session',
-          sort_key: 'max_rate_per_whole_day_session',
-          column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Max Rate per Whole Day Session',
+        //   key: 'max_rate_per_whole_day_session',
+        //   sort_key: 'max_rate_per_whole_day_session',
+        //   column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
       ]
     },
 

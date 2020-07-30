@@ -27,6 +27,15 @@
           />
         </div>
 
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="userPostcode"
+            placeholder="Search Area"
+            type="text"
+            label="Area"
+          />
+        </div>
+
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <AppButton
             label="Reset"
@@ -92,13 +101,12 @@
       />
     </div>
     
-    <div
-      class="flex-wrap justify-start items-center w-full p-3 flex my-2"
-    >
+    <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
       <div class="md:px-1 flex flex-wrap w-full justify-end">
         <button
-          :disabled="downloading"
-          class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+          :disabled="downloading || locums.length === 0"
+          class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+          :class="locums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
           @click="downloadCsv"
         >
           <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -108,7 +116,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
@@ -146,6 +153,7 @@ export default {
       ],
       locumNameIncudes: '',
       professionNameIncludes: '',
+      userPostcode: '',
       limit: 10,
       limits: [
         1,
@@ -220,15 +228,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
-        {
-          title: 'Max Rate per Hour',
-          key: 'max_rate_per_hour',
-          sort_key: 'max_rate_per_hour',
-          column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Max Rate per Hour',
+        //   key: 'max_rate_per_hour',
+        //   sort_key: 'max_rate_per_hour',
+        //   column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Min Rate per Half Day Session',
           key: 'min_rate_per_half_day_session',
@@ -238,15 +246,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
-        {
-          title: 'Max Rate per Half Day Session',
-          key: 'max_rate_per_half_day_session',
-          sort_key: 'max_rate_per_half_day_session',
-          column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Max Rate per Half Day Session',
+        //   key: 'max_rate_per_half_day_session',
+        //   sort_key: 'max_rate_per_half_day_session',
+        //   column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Min Rate per Whole Day Session',
           key: 'min_rate_per_whole_day_session',
@@ -256,15 +264,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
-        {
-          title: 'Max Rate per Whole Day Session',
-          key: 'max_rate_per_whole_day_session',
-          sort_key: 'max_rate_per_whole_day_session',
-          column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Max Rate per Whole Day Session',
+        //   key: 'max_rate_per_whole_day_session',
+        //   sort_key: 'max_rate_per_whole_day_session',
+        //   column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
       ]
     },
 
@@ -299,10 +307,12 @@ export default {
     const {
       locum_name_includes: locumNameIncudes,
       profession_name_includes: professionNameIncludes,
+      user_postcode: userPostcode,
     } = this.$route.query
 
     this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+    this.userPostcode = userPostcode ? userPostcode : ''
     this.getLocums()
   },
 
@@ -319,8 +329,9 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+        locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        user_postcode: this.userPostcode ? this.userPostcode : undefined,
         page: undefined,
       }
 
@@ -371,10 +382,12 @@ export default {
     getLocums () {
       this.loading = true
       this.locums = []
-
+      // console.log('this.$auth.user', this.$auth.user)
       const params = {
+        practice_id: this.$auth.user.practice_id,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        user_postcode: this.userPostcode ? this.userPostcode : undefined,
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/locums/count',{
@@ -418,8 +431,10 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+        practice_id: this.$auth.user.practice_id,
+        locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        user_postcode: this.userPostcode ? this.userPostcode : undefined,
         order_by: this.orderBy,
         limit: 999,
         offset: 0,
