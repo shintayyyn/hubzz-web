@@ -4,13 +4,16 @@
       <div class="text-sm sm:text-base mb-4">
         This job is still open
       </div>
+
       <AppButton :label="'Apply now'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
     </template>
+
     <template v-if="false && !isReadyToApply">
       <div class="text-sm sm:text-base mb-4">
         Please complete your
         <strong>compliance</strong> requirements to be eligible to apply for this job
       </div>
+
       <nuxt-link
         :to="{ path: '/compliance' }"
         class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
@@ -18,8 +21,11 @@
         Go to Compliance
       </nuxt-link>
     </template>
+
     <AppLoading :loading="loading" spinner />
+
     <!-- :label="`You already appointed to one of this Practice Job.`" -->
+
     <AppConfirmationModal
       :label="`This Job is conflict on one of your appointed Job.`"
       :label2="`${conflictJobs.length > 2 ? `${conflictJobs.slice(0,2)},etc..` : `${conflictJobs}`}`"
@@ -33,6 +39,7 @@
     />
   </div>
 </template>
+
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppLoading from "@/components/Base/AppLoading"
@@ -41,13 +48,13 @@ export default {
   components: {
     AppConfirmationModal,
     AppButton,
-    AppLoading
+    AppLoading,
   },
   props: {
     job: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data () {
     return {
@@ -56,7 +63,7 @@ export default {
       loading: false,
       userCompliance: [],
       gmc_or_nmc_number_status: null,
-      mpl_or_npl_number_status: null
+      mpl_or_npl_number_status: null,
     }
   },
   computed: {
@@ -70,13 +77,13 @@ export default {
           }
         })
       if (
-        this.gmc_or_nmc_number_status === "Expired" ||
-        this.mpl_or_npl_number_status === "Expired"
+        this.gmc_or_nmc_number_status === "Expired"
+        || this.mpl_or_npl_number_status === "Expired"
       ) {
         isComplete = false
       }
       return isComplete
-    }
+    },
   },
 
   mounted () {
@@ -101,24 +108,20 @@ export default {
         .$get(`/api/v1/locum/job-parts`, {
           params: {
             appointed_to_locum_user_id: this.$auth.user.id,
-            status: ["Allocated", "Ongoing"],
-            job_practice_id: this.job.practice_id
-          }
+            status: ["Allocated", "Ongoing",],
+            job_practice_id: this.job.practice_id,
+          },
         })
         .then(res => {
           this.conflictJobs = []
 
           res.data.job_parts.forEach(jobPart => {
             if (jobPart.dates.some(date => this.job.dates.includes(date))) {
-              if (jobPart.status === "Ongoing") {
-                this.conflictJobs.push(jobPart.job_part_number)
-              } else if (jobPart.status === "Allocated") {
-                this.conflictJobs.push(jobPart.job_job_number)
-              }
+              this.conflictJobs.push(jobPart.job_part_number)
             }
           })
 
-          this.conflictJobs = [...new Set(this.conflictJobs)]
+          this.conflictJobs = [...new Set(this.conflictJobs),]
 
           if (this.conflictJobs.length > 0) {
             this.warning_modal = true
@@ -130,6 +133,7 @@ export default {
           this.loading = false
         })
     },
+
     apply () {
       this.loading = true
       this.$axios
@@ -140,7 +144,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`]
+            text: [`${res.message}`,],
           })
           this.$emit("applied", this.job.id) // FILTERS THE JOBS DATATABLE
         })
@@ -150,14 +154,14 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
+              text: [`${err.response.data.message}`,],
             })
           }
         })
         .finally(() => {
           this.loading = false
         })
-    }
-  }
+    },
+  },
 }
 </script>

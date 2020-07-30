@@ -489,11 +489,7 @@ export default {
 
           res.data.job_parts.forEach(jobPart => {
             if (jobPart.dates.some(date => this.job.dates.includes(date))) {
-              if (jobPart.status === "Ongoing") {
-                this.conflictJobs.push(jobPart.job_part_number)
-              } else if (jobPart.status === "Allocated") {
-                this.conflictJobs.push(jobPart.job_job_number)
-              }
+              this.conflictJobs.push(jobPart.job_part_number)
             }
           })
 
