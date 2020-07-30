@@ -27,16 +27,6 @@
           />
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="practiceNameIncludes"
-            placeholder="Search practice name"
-            type="text"
-            label="Practice Name"
-          />
-        </div>
-
-
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <AppButton
             label="Reset"
@@ -111,8 +101,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || practiceLocums.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="practiceLocums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
             @click="downloadCsv"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -143,7 +134,6 @@ export default {
       count: 0,
       downloading: false,
       locumNameIncludes: '',
-      practiceNameIncludes: '',
       professionNameIncludes:'',
       practiceLocums: [],
       orderBy: [],
@@ -341,7 +331,6 @@ export default {
   methods: {
     filterReset () {
       this.locumNameIncludes = ''
-      this.practiceNameIncludes = ''
       this.professionNameIncludes = ''
 
       this.filterSearch()
@@ -409,7 +398,6 @@ export default {
         practice_id: this.$auth.user.practice_detail.practice.id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-locums/count',{
@@ -447,6 +435,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
+        practice_id: this.$auth.user.practice_detail.practice.id,
         locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
