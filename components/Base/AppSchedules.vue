@@ -2439,7 +2439,7 @@ export default {
 
       schedules.map(item => {
         if (item.shifts && item.shifts.length) {
-          if (this.type === "invoice") {
+          if (this.type === "invoice" || final) {
             rates.push(
               ...item.shifts.map(shift =>
                 shift.has_absences
