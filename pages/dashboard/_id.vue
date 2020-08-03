@@ -15,21 +15,21 @@
     </template>
 
     <template v-if="locum_modal">
-      <LocumJobDetailModal
+      <JobDetailModal
         :job="locum_job"
         @close="close"
       />
     </template>
 
     <template v-if="locum_appointment_modal">
-      <LocumJobDetailModalAppointment
+      <JobDetailModalAppointment
         :job="locum_appointment_job"
         @close="close"
       />
     </template>
 
     <template v-if="locum_modal_part">
-      <LocumJobPartDetailModal
+      <JobPartDetailModal
         :job_part="locum_job_part"
         @close="close"
       />
@@ -40,17 +40,17 @@
 <script>
 import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
-import LocumJobDetailModal from "@/components/Jobs/JobDetailModal"
-import LocumJobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
-import LocumJobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
+import JobDetailModal from "@/components/Jobs/JobDetailModal"
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
 
 export default {
   components: {
     SessionDetailModal,
     SessionPartDetailModal,
-    LocumJobDetailModal,
-    LocumJobDetailModalAppointment,
-    LocumJobPartDetailModal,
+    JobDetailModal,
+    JobDetailModalAppointment,
+    JobPartDetailModal,
   },
 
   data () {
