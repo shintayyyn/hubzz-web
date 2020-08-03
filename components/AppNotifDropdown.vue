@@ -199,6 +199,7 @@ export default {
         "Locum Notification Job Auto Withdrawn",
         "Locum Notification Job Available",
         "Locum Notification Job Cancelled",
+        "Locum Notification Job Conflict",
         "Locum Notification Job Matched",
         "Locum Notification Job Ongoing",
         "Locum Notification Job Reminder",
@@ -626,6 +627,7 @@ export default {
         "Locum Notification Job Applied",
         "Locum Notification Job Auto Withdrawn",
         "Locum Notification Job Cancelled",
+        "Locum Notification Job Conflict",
         "Locum Notification Job Available",
         "Locum Notification Job Matched",
         "Locum Notification Job Ongoing",
@@ -856,6 +858,18 @@ export default {
           const jobPart = jobParts.find(jobPart => jobPart.status === "Cancelled")
           
           if (jobPart) {
+            routeParamJobPartId = jobPart.id
+          }
+        }
+
+        if (
+          notificationTypeName === "Locum Notification Job Conflict"
+          && jobParts
+          && jobParts.length > 0
+        ) {
+          const jobPart = jobParts[0]
+
+          if (jobPart.status === 'Allocated' || jobPart.status === 'Ongoing') {
             routeParamJobPartId = jobPart.id
           }
         }

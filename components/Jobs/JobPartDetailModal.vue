@@ -52,6 +52,24 @@
       </template>
     </div>
 
+    <div v-if="job && job.conflict" class="flex flex-col">
+      <div class="flex flex-wrap justify-start">
+        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+            <div class="leading-tight">
+              <p class="font-bold text-sm sm:text-md pb-2">
+                Job Conflicts
+              </p>
+
+              <p v-for="conflictJob in job.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm">
+                {{ conflictJob.job_number }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- <div
 			class="text-xs sm:text-sm py-3"
     >Posted {{ $moment(job_part.date_created).format("DD/MM/YYYY") }}</div>-->

@@ -325,7 +325,7 @@
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="confirmation_modal"
-      :loading="checkLoading"
+      :loading="checkLoading || appointing"
       @confirm="checkIfLocumAlreadyAppointed"
       @cancel="confirmation_modal = false"
     />
@@ -370,6 +370,7 @@ export default {
 
   data () {
     return {
+      appointing: false,
       checkLoading: false,
       warning_modal: false,
       conflictJobs: [],
@@ -508,6 +509,7 @@ export default {
     },
 
     appoint () {
+      this.appointing = true
       this.$axios
         .$put(
           `/api/v1/practice/jobs/${this.job.id}/applicants/${this.user.id}/appoint`
@@ -553,6 +555,7 @@ export default {
           }
         })
         .finally(() => {
+          this.appointing = false
           this.warning_modal = false
         })
     },

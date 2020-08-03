@@ -407,7 +407,7 @@
     mounted () {      
       const {
         invoice_number_includes: invoiceNumberIncludes,
-        locum_name_incudes: locumNameIncudes,
+        locum_name_includes: locumNameIncudes,
         practice_name_includes: practiceNameIncludes,
         tax_number_includes: taxNumberIncludes,
         min_ni_amount: minNiAmount,
@@ -465,7 +465,7 @@
         const query = {
           ...this.$route.query,
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
           min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
@@ -530,7 +530,7 @@
 
         const params = {
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
           min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
@@ -584,7 +584,7 @@
         this.downloading = true
         const params = {
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
           min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
