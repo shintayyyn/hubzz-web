@@ -72,6 +72,7 @@ export default {
     job () {
       return this.isJobPart ? this.propJob.job : this.propJob
     },
+
     isJobPart () {
       if (
         (this.propJob && this.propJob.job)
@@ -79,6 +80,7 @@ export default {
       ) {
         return true
       }
+
       return (
         this.propJob.locum_status
 				&& ["ongoing", "allocated",].includes(this.propJob.locum_status.toLowerCase())
@@ -87,22 +89,32 @@ export default {
 
     link () {
       let job = this.propJob
-      if (job.locum_status !== "Permanent") {
-        let status = job.type === "Private" ? "Private" : job.status
-        let id = ["Ongoing",].includes(this.propJob.status)
-          && this.propJob.job.type === "Platform"
-          ? this.propJob.id
-          : this.propJob.job.id
 
-        return {
-          path: this.job.type
-            ? `/dashboard/${id}?status=${status}`
-            : `/availability/${this.job.date}`,
-          query: { ...this.$route.query, },
-        }
+      console.log('link', job)
 
-      } else {
+      if (job.locum_status === "Permanent") {
         return `/permanent-jobs/${this.propJob.permanent_job_id}`
+      }
+
+      if (!this.job.type) {
+        return {
+          path: `/availability/${this.job.date}`,
+        }
+      }
+
+      let status = job.type === "Private"
+        ? "Private"
+        : job.status
+
+      let id = ["Ongoing",].includes(this.propJob.status) && this.propJob.job.type === "Platform"
+        ? this.propJob.id
+        : this.propJob.job
+          ? this.propJob.job.id
+          : this.propJob.id
+
+      return {
+        path: `/dashboard/${id}?status=${status}`,
+        query: { ...this.$route.query, },
       }
     },
 

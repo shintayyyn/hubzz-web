@@ -94,7 +94,6 @@ export default () => ({
   locum_bank_jobs_count: 0,
 
   locum_applied_jobs: [],
-  locum_applied_jobs_count: 0,
 
   locum_applied_job_parts: [],
   locum_applied_job_parts_count: 0,
