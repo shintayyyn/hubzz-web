@@ -1,23 +1,38 @@
 <template>
   <div class="modal-container shadow-lg">
     <template v-if="practice_modal">
-      <SessionDetailModal :job="practice_job" @close="close" />
+      <SessionDetailModal
+        :job="practice_job"
+        @close="close"
+      />
     </template>
 
     <template v-if="practice_modal_part">
-      <SessionPartDetailModal :job-part="practice_job_part" @close="close" />
+      <SessionPartDetailModal
+        :job-part="practice_job_part"
+        @close="close"
+      />
     </template>
 
     <template v-if="locum_modal">
-      <LocumJobDetailModal :job="locum_job" @close="close" />
+      <JobDetailModal
+        :job="locum_job"
+        @close="close"
+      />
     </template>
 
     <template v-if="locum_appointment_modal">
-      <LocumJobDetailModalAppointment :job="locum_appointment_job" @close="close" />
+      <JobDetailModalAppointment
+        :job="locum_appointment_job"
+        @close="close"
+      />
     </template>
 
     <template v-if="locum_modal_part">
-      <LocumJobPartDetailModal :job_part="locum_job_part" @close="close" />
+      <JobPartDetailModal
+        :job_part="locum_job_part"
+        @close="close"
+      />
     </template>
   </div>
 </template>
@@ -25,17 +40,17 @@
 <script>
 import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
-import LocumJobDetailModal from "@/components/Jobs/JobDetailModal"
-import LocumJobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
-import LocumJobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
+import JobDetailModal from "@/components/Jobs/JobDetailModal"
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
 
 export default {
   components: {
     SessionDetailModal,
     SessionPartDetailModal,
-    LocumJobDetailModal,
-    LocumJobDetailModalAppointment,
-    LocumJobPartDetailModal,
+    JobDetailModal,
+    JobDetailModalAppointment,
+    JobPartDetailModal,
   },
 
   data () {
