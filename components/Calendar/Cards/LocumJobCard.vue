@@ -106,7 +106,7 @@ export default {
         ? "Private"
         : job.status
 
-      let id = ["Ongoing",].includes(this.propJob.status) && this.propJob.job.type === "Platform"
+      let id = ["Ongoing", "Allocated",].includes(this.propJob.status) && this.propJob.job.type === "Platform"
         ? this.propJob.id
         : this.propJob.job
           ? this.propJob.job.id

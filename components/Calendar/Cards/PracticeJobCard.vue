@@ -64,10 +64,14 @@ export default {
 				&& ["ongoing", "completed", "approved", "withdrawn", "allocated",].includes(this.propJob.status.toLowerCase())
       )
     },
-    
+
     link () {
       let job = this.isJobPart ? this.propJob.job : this.propJob
-      let id = this.propJob.status === "Ongoing" ? this.propJob.id : job.id
+
+      let id = this.propJob.status === "Ongoing" || this.propJob.status === "Allocated"
+        ? this.propJob.id
+        : job.id
+
       return {
         path: this.hasPermissionToShow
           ? `/dashboard/${id}?status=${this.propJob.status}`

@@ -61,7 +61,7 @@ export default {
         if (
           query
           && query.status
-          && ["ongoing", "completed", "approved",].includes(query.status.toLowerCase())
+          && ["ongoing", "completed", "approved", "allocated",].includes(query.status.toLowerCase())
         ) {
           url = `/api/v1/practice/job-parts`
         }
@@ -93,7 +93,7 @@ export default {
         if (
           query
           && query.status
-          && ["ongoing", "completed", "approved",].includes(query.status.toLowerCase())
+          && ["ongoing", "completed", "approved", "allocated",].includes(query.status.toLowerCase())
         ) {
           url = `/api/v1/locum/job-parts`
         }
