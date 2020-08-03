@@ -198,15 +198,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
