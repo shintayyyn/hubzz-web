@@ -53,7 +53,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderBy.join(',').replace(/_/g, ' ') }}
             </div>
           </div>
         </div>
@@ -162,10 +162,10 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Area',
-          key: 'user_postcode',
-          sort_key: 'user_postcode',
-          column: (item) => item.user_postcode,
+          title: 'Compliance',
+          key: 'compliance_status',
+          sort_key: 'compliance_status',
+          column: (item) => item.compliance_status,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -224,6 +224,15 @@ export default {
         //   flexGrow: 1,
         //   flexShrink: 0,
         // },
+        {
+          title: 'Area',
+          key: 'user_postcode',
+          sort_key: 'user_postcode',
+          column: (item) => item.user_postcode,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
       ]
     },
 

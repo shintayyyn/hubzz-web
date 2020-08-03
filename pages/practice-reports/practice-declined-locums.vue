@@ -139,18 +139,6 @@ export default {
       locumNameIncludes: '',
       practiceDeclinedLocums: [],
       orderBy: [],
-      orderBys: [
-        {
-          title: 'Practice Name (Ascending)',
-          column: 'practice_name',
-          direction: 'asc',
-        },
-        {
-          title: 'Practice Name (Descending)',
-          column: 'practice_name',
-          direction: 'desc',
-        },
-      ],
       limit: 10,
       limits: [
         1,
@@ -186,15 +174,6 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
-          flexShrink: 0,
-        },
-        {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
           flexShrink: 0,
         },
         {
