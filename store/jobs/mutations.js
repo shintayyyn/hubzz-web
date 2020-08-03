@@ -539,19 +539,9 @@ export default {
     state.locum_applied_jobs = payload
   },
 
-  SET_LOCUM_APPLIED_JOBS_COUNT (state, payload) {
-    state.locum_applied_jobs_count = payload
-  },
-
-  ADD_LOCUM_APPLIED_JOB (state, payload) {
-    state.locum_applied_jobs.push(payload)
-    state.locum_applied_jobs_count = state.locum_applied_jobs_count + 1
-  },
-
   REMOVE_LOCUM_APPLIED_JOB (state, payload) {
     if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === payload)) {
       state.locum_applied_jobs = state.locum_applied_jobs.filter(job => job.id !== payload)
-      state.locum_applied_jobs_count = state.locum_applied_jobs_count - 1
     }
   },
 
