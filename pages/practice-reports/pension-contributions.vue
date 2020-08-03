@@ -336,7 +336,7 @@
     mounted () {      
       const {
         invoice_number_includes: invoiceNumberIncludes,
-        locum_name_incudes: locumNameIncudes,
+        locum_name_includes: locumNameIncudes,
         practice_name_includes: practiceNameIncludes,
         profession_name_includes: professionNameIncludes,
         job_part_number_includes: jobPartNumberIncludes,
@@ -392,7 +392,7 @@
         const query = {
           ...this.$route.query,
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
@@ -456,7 +456,7 @@
 
         const params = {
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
@@ -509,7 +509,7 @@
         this.downloading = true
         const params = {
           invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_incudes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
           practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
           profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
           job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
