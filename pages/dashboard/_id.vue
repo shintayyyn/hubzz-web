@@ -1,23 +1,38 @@
 <template>
   <div class="modal-container shadow-lg">
     <template v-if="practice_modal">
-      <SessionDetailModal :job="practice_job" @close="close" />
+      <SessionDetailModal
+        :job="practice_job"
+        @close="close"
+      />
     </template>
 
     <template v-if="practice_modal_part">
-      <SessionPartDetailModal :job-part="practice_job_part" @close="close" />
+      <SessionPartDetailModal
+        :job-part="practice_job_part"
+        @close="close"
+      />
     </template>
 
     <template v-if="locum_modal">
-      <LocumJobDetailModal :job="locum_job" @close="close" />
+      <LocumJobDetailModal
+        :job="locum_job"
+        @close="close"
+      />
     </template>
 
     <template v-if="locum_appointment_modal">
-      <LocumJobDetailModalAppointment :job="locum_appointment_job" @close="close" />
+      <LocumJobDetailModalAppointment
+        :job="locum_appointment_job"
+        @close="close"
+      />
     </template>
 
     <template v-if="locum_modal_part">
-      <LocumJobPartDetailModal :job_part="locum_job_part" @close="close" />
+      <LocumJobPartDetailModal
+        :job_part="locum_job_part"
+        @close="close"
+      />
     </template>
   </div>
 </template>
