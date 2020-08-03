@@ -863,6 +863,18 @@ export default {
         }
 
         if (
+          notificationTypeName === "Locum Notification Job Conflict"
+          && jobParts
+          && jobParts.length > 0
+        ) {
+          const jobPart = jobParts[0]
+
+          if (jobPart.status === 'Allocated' || jobPart.status === 'Ongoing') {
+            routeParamJobPartId = jobPart.id
+          }
+        }
+
+        if (
           jobType === "Platform"
           && notificationTypeName === "Locum Notification Job Ongoing"
           && jobParts
