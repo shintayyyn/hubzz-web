@@ -30,7 +30,10 @@
             index !== item.length - 1 ? 'border-dotted border-b border-gray-800' : '',
           ]"
         >
-          <span class="whitespace-no-wrap p-2">&nbsp;{{ columnDetail.column(item, index) }}</span>
+          <template v-if="columnDetail.slotName">
+            <slot :name="columnDetail.slotName" :item="item" @click="$emit(columnDetail.eventName, item)" />
+          </template>
+          <span v-else class="whitespace-no-wrap p-2">&nbsp;{{ columnDetail.column(item, index) }}</span>
         </div>
         <div v-if="loading && items.length === 0">
           <div v-for="(item, index) in limit"  :key="`limit_${index}`" class="flex bg-white-smoke">
@@ -48,91 +51,91 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      limit: {
-        type: Number,
-        default: 10,
-      },
-      loading: {
-        type: Boolean,
-        default: false,
-      },
-      items: {
-        type: Array,
-        required: true,
-      },
-      orderBy: {
-        type: Array,
-        default: () => [],
-      },
-      columnDetails: {
-        type: Array,
-        default: () => [],
-      },
-      getItemKey: {
-        type: Function,
-        default: (item, index) => index,
-      },
+export default {
+  props: {
+    limit: {
+      type: Number,
+      default: 10,
     },
-
-    computed: {
-      getColumnOrderByDirection () {
-        return column => {
-          const index = this.orderBy.findIndex((orderBy) => {
-            const [_col] = orderBy.split(":")
-            const col = _col ? _col.toLowerCase() : null
-            return col === column
-          })
-
-          if (index > -1) {
-            const _dir = this.orderBy[index].split(":")[1]
-
-            return _dir && _dir.toLowerCase() === 'desc' ? 'desc' : 'asc'
-          }
-
-          return null
-        }
-      },
-
-      columnStyle () {
-        return (columnDetail) => {
-          return {
-            flexGrow: columnDetail.flexGrow,
-            flexShrink: columnDetail.flexShrink,
-          }
-        }
-      },
+    loading: {
+      type: Boolean,
+      default: false,
     },
+    items: {
+      type: Array,
+      required: true,
+    },
+    orderBy: {
+      type: Array,
+      default: () => [],
+    },
+    columnDetails: {
+      type: Array,
+      default: () => [],
+    },
+    getItemKey: {
+      type: Function,
+      default: (item, index) => index,
+    },
+  },
 
-    methods: {
-      setOrderBy (column) {
-        let orderBy = [...this.orderBy]
-
-        const index = orderBy.findIndex((orderBy) => {
+  computed: {
+    getColumnOrderByDirection () {
+      return column => {
+        const index = this.orderBy.findIndex((orderBy) => {
           const [_col] = orderBy.split(":")
           const col = _col ? _col.toLowerCase() : null
           return col === column
         })
 
         if (index > -1) {
-          let direction = this.getColumnOrderByDirection(column)
+          const _dir = this.orderBy[index].split(":")[1]
 
-          orderBy.splice(index, 1)
-
-          if (direction === "asc") {
-            // orderBy.push(`${column}:desc`)
-            orderBy = [`${column}:desc`]
-          }
-        } else {
-          // orderBy.push(column)
-          orderBy = [column]
+          return _dir && _dir.toLowerCase() === 'desc' ? 'desc' : 'asc'
         }
 
-        this.$emit('setOrderBy', orderBy)
-      },
+        return null
+      }
     },
-  }
+
+    columnStyle () {
+      return (columnDetail) => {
+        return {
+          flexGrow: columnDetail.flexGrow,
+          flexShrink: columnDetail.flexShrink,
+        }
+      }
+    },
+  },
+
+  methods: {
+    setOrderBy (column) {
+      let orderBy = [...this.orderBy]
+
+      const index = orderBy.findIndex((orderBy) => {
+        const [_col] = orderBy.split(":")
+        const col = _col ? _col.toLowerCase() : null
+        return col === column
+      })
+
+      if (index > -1) {
+        let direction = this.getColumnOrderByDirection(column)
+
+        orderBy.splice(index, 1)
+
+        if (direction === "asc") {
+          // orderBy.push(`${column}:desc`)
+          orderBy = [`${column}:desc`]
+        }
+      } else {
+        // orderBy.push(column)
+        orderBy = [column]
+      }
+
+      this.$emit('setOrderBy', orderBy)
+    },
+  },
+}
 
 </script>
 
