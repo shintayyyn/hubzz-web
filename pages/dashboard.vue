@@ -93,15 +93,14 @@
       <nuxt-link
         v-if="['dashboard-id','dashboard-create'].includes($route.name) || expense_modal" class="shield"
         :to="'/dashboard'"
+        @click.native="expense_modal = false"
       />
     </transition>
 
     <transition name="slide" mode="out-in">
-      <template v-if="expense_modal">
-        <div class="expense-modal shadow-lg">
-          <ExpenseReportsModal @close="expense_modal = false" />
-        </div>
-      </template>
+      <div v-if="expense_modal" class="expense-modal shadow-lg">
+        <ExpenseReportsModal @close="expense_modal = false" />
+      </div>
     </transition>
 
     <div>
