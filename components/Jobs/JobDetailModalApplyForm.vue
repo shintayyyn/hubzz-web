@@ -27,8 +27,8 @@
     <!-- :label="`You already appointed to one of this Practice Job.`" -->
 
     <AppConfirmationModal
-      :label="`This Job is conflict on one of your appointed Job.`"
-      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.slice(0,2)},etc..` : `${conflictJobs}`}`"
+      :label="`This Job is conflict on ${conflictJobNumbers.length} of your appointed Job.`"
+      :label2="`${conflictJobNumbers.length > 2 ? `${conflictJobNumbers.slice(0,2)},etc..` : `${conflictJobNumbers}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -58,7 +58,7 @@ export default {
   },
   data () {
     return {
-      conflictJobs: [],
+      conflictJobNumbers: [],
       warning_modal: false,
       loading: false,
       userCompliance: [],
@@ -104,34 +104,18 @@ export default {
   methods: {
     checkIfLocumAlreadyAppointed () {
       this.loading = true
-      this.$axios
-        .$get(`/api/v1/locum/job-parts`, {
-          params: {
-            appointed_to_locum_user_id: this.$auth.user.id,
-            status: ["Allocated", "Ongoing",],
-            job_practice_id: this.job.practice_id,
-          },
-        })
-        .then(res => {
-          this.conflictJobs = []
+      this.conflictJobNumbers = []
+      this.$axios.get(`/api/v1/locum/jobs/${this.job.id}/has-conflict`).then((response) => {
+        this.conflictJobNumbers = response.data.data.job.conflict_job_job_numbers
 
-          res.data.job_parts.forEach(jobPart => {
-            if (jobPart.dates.some(date => this.job.dates.includes(date))) {
-              this.conflictJobs.push(jobPart.job_part_number)
-            }
-          })
-
-          this.conflictJobs = [...new Set(this.conflictJobs),]
-
-          if (this.conflictJobs.length > 0) {
-            this.warning_modal = true
-          } else if (this.conflictJobs.length === 0) {
-            this.apply()
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
+        if (this.conflictJobNumbers.length > 0) {
+          this.warning_modal = true
+        } else if (this.conflictJobNumbers.length === 0) {
+          this.apply()
+        }
+      }).finally(() => {
+        this.loading = false
+      })
     },
 
     apply () {
