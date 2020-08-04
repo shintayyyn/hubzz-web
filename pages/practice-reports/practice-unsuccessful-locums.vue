@@ -355,9 +355,9 @@ export default {
       this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
         filename: `practiceUnsuccessfulReport.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

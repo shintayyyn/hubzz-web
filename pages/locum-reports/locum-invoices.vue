@@ -94,8 +94,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || locumInvoices.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="locumInvoices.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -178,15 +179,15 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Locum',
+        //   key: 'locum_user_name',
+        //   sort_key: 'locum_user_name',
+        //   column: (item) => item.locum_user_name,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Practice',
           key: 'practice_name',
