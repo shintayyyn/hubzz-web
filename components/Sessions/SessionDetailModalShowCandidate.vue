@@ -325,14 +325,14 @@
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="confirmation_modal"
-      :loading="checkLoading || appointing"
+      :loading="checkingConflict || appointing"
       @confirm="checkIfLocumAlreadyAppointed"
       @cancel="confirmation_modal = false"
     />
 
     <AppConfirmationModal
-      :label="`This Locum is already appointed on one of ${$auth.user.practice_id === job.practice_id ? 'your' : 'this Spoke'} Job.`"
-      :label2="`${conflictJobs.length > 2 ? `${conflictJobs.slice(0,2)},etc..` : `${conflictJobs}`}`"
+      :label="`This Locum is already appointed on ${conflictJobNumbers.length} of ${$auth.user.practice_id === job.practice_id ? 'your' : 'this Spoke'} Job.`"
+      :label2="`${conflictJobNumbers.length > 2 ? `${conflictJobNumbers.slice(0,2)},etc..` : `${conflictJobNumbers}`}`"
       :label3="`Are you sure you want to continue?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -371,9 +371,9 @@ export default {
   data () {
     return {
       appointing: false,
-      checkLoading: false,
+      checkingConflict: false,
       warning_modal: false,
-      conflictJobs: [],
+      conflictJobNumbers: [],
       //
       confirmation_modal: false,
       mandatory: [],
@@ -475,37 +475,24 @@ export default {
     },
 
     checkIfLocumAlreadyAppointed () {
-      this.checkLoading = true
+      this.checkingConflict = true
+      this.conflictJobNumbers = []
+      this.$axios.get(`/api/v1/practice/jobs/${this.job.id}/has-conflict`, {
+        params: {
+          locum_user_id: this.user.id,
+        },
+      }).then((response) => {
+        this.conflictJobNumbers = response.data.data.job.conflict_job_job_numbers
 
-      this.$axios
-        .$get(`/api/v1/practice/job-parts`, {
-          params: {
-            appointed_to_locum_user_id: this.user.id,
-            status: ["Allocated", "Ongoing",],
-            job_practice_id: this.job.practice_id,
-          },
-        })
-        .then(res => {
-          this.conflictJobs = []
-
-          res.data.job_parts.forEach(jobPart => {
-            if (jobPart.dates.some(date => this.job.dates.includes(date))) {
-              this.conflictJobs.push(jobPart.job_part_number)
-            }
-          })
-
-          this.conflictJobs = [...new Set(this.conflictJobs),]
-
-          if (this.conflictJobs.length > 0) {
-            this.warning_modal = true
-            this.confirmation_modal = false
-          } else if (this.conflictJobs.length === 0) {
-            this.appoint()
-          }
-        })
-        .finally(() => {
-          this.checkLoading = false
-        })
+        if (this.conflictJobNumbers.length > 0) {
+          this.warning_modal = true
+          this.confirmation_modal = false
+        } else if (this.conflictJobNumbers.length === 0) {
+          this.appoint()
+        }
+      }).finally(() => {
+        this.checkingConflict = false
+      })
     },
 
     appoint () {
