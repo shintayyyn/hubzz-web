@@ -1,197 +1,201 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
-      <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="$emit('close')" />
-    </div>
-
-    <div class="flex flex-row flex-wrap justify-between items-center">
-      <div class="font-bold text-lg mt-4">
-        EXPENSES REPORTS
+  <div class="expense-modal shadow-lg">
+    <div class="p-4 md:p-8">
+      <div>
+        <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="$router.push('/dashboard')" />
       </div>
 
-      <AppButton :label="'Add expense report'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="addExpenseReports" />
-    </div>
-
-    <div class="flex flex-row flex-wrap justify-start items-center">
-      <AppDate v-model="date_start" :name="'date_start'" :label="'From'" :inStyle="'margin-bottom:0px'" />
-
-      <div class="mx-2" />
-
-      <AppDate v-model="date_end" :name="'date_end'" :label="'To'" :inStyle="'margin-bottom:0px'" />
-    </div>
-
-    <AppButton
-      :label="'Show expense reports'"
-      :inStyle="'padding:5px 14px;'"
-      class="mb-4"
-      @click="getExpenseReportsPromiseAll"
-    />
-
-    <transition name="slide" mode="out-in">
-      <div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
-        <div>
-          <svgicon
-            name="left-arrow"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="modal = false"
-          />
+      <div class="flex flex-row flex-wrap justify-between items-center">
+        <div class="font-bold text-lg mt-4">
+          EXPENSES REPORTS
         </div>
 
-        <div class="flex flex-col mb-4 relative">
-          <AppInput
-            v-model="form.description"
-            :type="'textarea'"
-            :name="'description'"
-            :label="'Description'"
-            :error="formError.find(item => item.field === 'description')"
-            :resize="false" :limit="225"
-            @input="CheckEmptyField(form.description, 'description')"
-          />
-
-          <AppInput
-            v-model="form.total"
-            :type="'number'"
-            :name="'total'"
-            :label="'Total'"
-            :error="formError.find(item => item.field === 'total')"
-            :inStyle="'text-align:right'"
-            @input="CheckEmptyField(form.total, 'total')"
-          />
-
-          <AppDate
-            v-model="form.date"
-            :name="'date'"
-            :label="'Date'"
-            :isBefore="true"
-            :error="formError.find(item => item.field === 'date')"
-            @input="CheckEmptyField(form.date, 'date')"
-          />
-
-          <AppLoading :loading="loading" spinner />
-        </div>
-
-        <AppButton :label="'Save report'" :inStyle="'padding:5px 14px;'" :disabled="loading" @click="save" />
-      </div>
-    </transition>
-
-    <transition name="fade" mode="out-in">
-      <div v-if="modal" class="shield" @click="modal = false" />
-    </transition>
-
-    <AppConfirmationModal
-      :label="'Proceed to delete this expense report?'"
-      :confirmLabel="'Delete'"
-      :cancelLabel="'Cancel'"
-      :modal="delete_modal"
-      @confirm="remove"
-      @cancel="delete_modal = false"
-    />
-
-    <AppLoading :loading="initialLoading" spinner />
-
-    <template v-if="!initialLoading">
-      <div class="flex flex-row flex-wrap justify-start">
-        <div class="w-full lg:w-1/3">
-          <div
-            class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
-          >
-            <transition name="fade" mode="out-in">
-              <AppLoading :loading="initialLoading" spinner />
-            </transition>
-
-            <div class="flex justify-start text-md sm:text-md">
-              Filtered Date
-            </div>
-
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
-              £ {{ filter_date_total.toFixed(2) | currency }}
-            </div>
-          </div>
-        </div>
-
-        <div class="w-full lg:w-1/3">
-          <div
-            class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
-            @click="filterExpenseReport('week')"
-          >
-            <transition name="fade" mode="out-in">
-              <AppLoading :loading="initialLoading" spinner />
-            </transition>
-
-            <div class="flex justify-start text-md sm:text-md">
-              This Week
-            </div>
-
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
-              £ {{ week_total.toFixed(2) | currency }}
-            </div>
-          </div>
-        </div>
-
-        <div class="w-full lg:w-1/3">
-          <div
-            class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
-            @click="filterExpenseReport('month')"
-          >
-            <transition name="fade" mode="out-in">
-              <AppLoading :loading="initialLoading" spinner />
-            </transition>
-
-            <div class="flex justify-start text-md sm:text-md">
-              This Month
-            </div>
-
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
-              £ {{ month_total.toFixed(2) | currency }}
-            </div>
-          </div>
-        </div>
+        <AppButton :label="'Add expense report'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="addExpenseReports" />
       </div>
 
-      <AppTable v-if="expense_reports.length > 0" :total="total" :items="expense_reports" :currentPage="current_page"
-                :perPage="limit" :columns="columns" :orderBy="order_by" :loading="loading" :customWidth="480"
-                @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
-      >
-        <template v-slot:actions="slotProps">
-          <div class="flex flex-wrap justify-center">
+      <div class="flex flex-row flex-wrap justify-start items-center">
+        <AppDate v-model="date_start" :name="'date_start'" :label="'From'" :inStyle="'margin-bottom:0px'" />
+
+        <div class="mx-2" />
+
+        <AppDate v-model="date_end" :name="'date_end'" :label="'To'" :inStyle="'margin-bottom:0px'" />
+      </div>
+
+      <AppButton
+        :label="'Show expense reports'"
+        :inStyle="'padding:5px 14px;'"
+        class="mb-4"
+        @click="getExpenseReportsPromiseAll"
+      />
+
+      <transition name="slide" mode="out-in">
+        <div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
+          <div>
+            <svgicon
+              name="left-arrow"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="modal = false"
+            />
+          </div>
+
+          <div class="flex flex-col mb-4 relative">
+            <AppInput
+              v-model="form.description"
+              :type="'textarea'"
+              :name="'description'"
+              :label="'Description'"
+              :error="formError.find(item => item.field === 'description')"
+              :resize="false" :limit="225"
+              @input="CheckEmptyField(form.description, 'description')"
+            />
+
+            <AppInput
+              v-model="form.total"
+              :type="'number'"
+              :name="'total'"
+              :label="'Total'"
+              :error="formError.find(item => item.field === 'total')"
+              :inStyle="'text-align:right'"
+              @input="CheckEmptyField(form.total, 'total')"
+            />
+
+            <AppDate
+              v-model="form.date"
+              :name="'date'"
+              :label="'Date'"
+              :isBefore="true"
+              :error="formError.find(item => item.field === 'date')"
+              @input="CheckEmptyField(form.date, 'date')"
+            />
+
+            <AppLoading :loading="loading" spinner />
+          </div>
+
+          <AppButton :label="'Save report'" :inStyle="'padding:5px 14px;'" :disabled="loading" @click="save" />
+        </div>
+      </transition>
+
+      <transition name="fade" mode="out-in">
+        <div v-if="modal" class="shield" @click="modal = false" />
+      </transition>
+
+      <AppConfirmationModal
+        :label="'Proceed to delete this expense report?'"
+        :confirmLabel="'Delete'"
+        :cancelLabel="'Cancel'"
+        :modal="delete_modal"
+        @confirm="remove"
+        @cancel="delete_modal = false"
+      />
+
+      <AppLoading :loading="initialLoading" spinner />
+
+      <template v-if="!initialLoading">
+        <div class="flex flex-row flex-wrap justify-start">
+          <div class="w-full lg:w-1/3">
             <div
-              class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-              @click="editExpenseReports(slotProps.item.id)"
+              class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
             >
-              Edit
-            </div>
+              <transition name="fade" mode="out-in">
+                <AppLoading :loading="initialLoading" spinner />
+              </transition>
 
-            <div
-              class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
-              @click="removeExpenseReports(slotProps.item.id)"
-            >
-              Delete
+              <div class="flex justify-start text-md sm:text-md">
+                Filtered Date
+              </div>
+
+              <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
+                £ {{ filter_date_total.toFixed(2) | currency }}
+              </div>
             </div>
           </div>
-        </template>
 
-        <template v-slot:date="slotProps">
-          {{ $moment(slotProps.item.date).format("DD/MM/YYYY") }}
-        </template>
+          <div class="w-full lg:w-1/3">
+            <div
+              class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+              @click="filterExpenseReport('week')"
+            >
+              <transition name="fade" mode="out-in">
+                <AppLoading :loading="initialLoading" spinner />
+              </transition>
 
-        <template v-slot:total="slotProps">
-          £ {{ slotProps.item.total.toFixed(2) | currency }}
-        </template>
-      </AppTable>
+              <div class="flex justify-start text-md sm:text-md">
+                This Week
+              </div>
 
-      <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
-        You haven't added any Expense
-        Reports on this date.
-      </div>
+              <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
+                £ {{ week_total.toFixed(2) | currency }}
+              </div>
+            </div>
+          </div>
 
-      <div v-if="expense_reports.length > 0" class="flex justify-end">
-        <AppButton :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'" :inStyle="'padding: 5px 14px;'"
-                   :disabled="exporting" @click="exportExpenseReportAsPdf"
-        />
-      </div>
-    </template>
+          <div class="w-full lg:w-1/3">
+            <div
+              class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+              @click="filterExpenseReport('month')"
+            >
+              <transition name="fade" mode="out-in">
+                <AppLoading :loading="initialLoading" spinner />
+              </transition>
+
+              <div class="flex justify-start text-md sm:text-md">
+                This Month
+              </div>
+
+              <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
+                £ {{ month_total.toFixed(2) | currency }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <AppTable v-if="expense_reports.length > 0" :total="total" :items="expense_reports" :currentPage="current_page"
+                  :perPage="limit" :columns="columns" :orderBy="order_by" :loading="loading" :customWidth="480"
+                  @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
+        >
+          <template v-slot:actions="slotProps">
+            <div class="flex flex-wrap justify-center">
+              <div
+                class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                @click="editExpenseReports(slotProps.item.id)"
+              >
+                Edit
+              </div>
+
+              <div
+                class="mx-1 p-2 bg-red-500 hover:bg-red-400 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+                @click="removeExpenseReports(slotProps.item.id)"
+              >
+                Delete
+              </div>
+            </div>
+          </template>
+
+          <template v-slot:date="slotProps">
+            {{ $moment(slotProps.item.date).format("DD/MM/YYYY") }}
+          </template>
+
+          <template v-slot:total="slotProps">
+            £ {{ slotProps.item.total.toFixed(2) | currency }}
+          </template>
+        </AppTable>
+
+        <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
+          You haven't added any Expense
+          Reports on this date.
+        </div>
+
+        <div v-if="expense_reports.length > 0" class="flex justify-end">
+          <AppButton
+            :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'"
+            :inStyle="'padding: 5px 14px;'"
+            :disabled="exporting" @click="exportExpenseReportAsPdf"
+          />
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -204,6 +208,11 @@ import AppButton from "@/components/Base/AppButton"
 import AppTable from "@/components/Base/AppTable"
 
 export default {
+  transition: {
+    name: 'slide',
+    mode: 'out-in',
+  },
+
   components: {
     AppConfirmationModal,
     AppLoading,
@@ -274,14 +283,6 @@ export default {
       )
 
       return columns
-    },
-
-    totalAmount () {
-      return this.expense_reports && this.expense_reports.length > 0
-        ? this.expense_reports
-          .map(item => item.total)
-          .reduce((acc, currentVal) => acc + currentVal)
-        : 0
     },
   },
 
@@ -696,6 +697,27 @@ export default {
 </script>
 
 <style scoped>
+  .expense-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border-left: solid 4px #ccc;
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+    scroll-behavior: smooth;
+    z-index: 601;
+  }
+
+  @media (min-width: 1200px) {
+    .expense-modal {
+      width: 80%;
+      /* height: 80%; */
+    }
+  }
+
   .statistics-card {
     min-height: 130px;
     /* display: flex;

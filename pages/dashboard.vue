@@ -30,12 +30,12 @@
             :label="'Expenses'"
             class="hidden md:block"
             :inStyle="'padding-top: 6px; padding-bottom: 6px;'"
-            @click="expense_modal = true"
+            @click="$router.push('/dashboard/expenses')"
           />
 
           <button
             class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
-            @click="expense_modal = true"
+            @click="$router.push('/dashboard/expenses')"
           >
             <svgicon name="billing" color="#444 #555" width="22" height="22" />
           </button>
@@ -91,16 +91,9 @@
 
     <transition name="fade" mode="out-in">
       <nuxt-link
-        v-if="['dashboard-id','dashboard-create'].includes($route.name) || expense_modal" class="shield"
+        v-if="['dashboard-id','dashboard-create','dashboard-expenses'].includes($route.name)" class="shield"
         :to="'/dashboard'"
-        @click.native="expense_modal = false"
       />
-    </transition>
-
-    <transition name="slide" mode="out-in">
-      <div v-if="expense_modal" class="expense-modal shadow-lg">
-        <ExpenseReportsModal @close="expense_modal = false" />
-      </div>
     </transition>
 
     <div>
@@ -114,7 +107,6 @@ import Calendar from "@/components/Calendar"
 import Reminders from "@/components/Dashboard/Reminders"
 import Statistics from "@/components/Dashboard/Statistics"
 import AppButton from "@/components/Base/AppButton"
-import ExpenseReportsModal from "@/components/ExpenseReportsModal"
 
 export default {
   components: {
@@ -122,13 +114,6 @@ export default {
     Reminders,
     Statistics,
     AppButton,
-    ExpenseReportsModal,
-  },
-  
-  data () {
-    return {
-      expense_modal: false,
-    }
   },
 
   computed: {
@@ -182,26 +167,5 @@ export default {
   .dashboard-section {
     height: auto;
     width: 100%;
-  }
-
-  .expense-modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    border-left: solid 4px #ccc;
-    transition: all 0.3s ease-in-out;
-    background-color: white;
-    scroll-behavior: smooth;
-    z-index: 601;
-  }
-
-  @media (min-width: 1200px) {
-    .expense-modal {
-      width: 80%;
-      /* height: 80%; */
-    }
   }
 </style>
