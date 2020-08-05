@@ -393,16 +393,16 @@ export default {
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/locum-reports/locum-pension-contributions-report/generate-key', {
-        filename: `locumPensionContributionsReport.pdf`,
+      this.$axios.post('/api/v1/locum-reports/locum-tax-reporting-report/generate-key', {
+        filename: `locumTaxReportingReport.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-pension-contributions-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-tax-reporting-report/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)

@@ -33,11 +33,10 @@
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="professionNameIncludes"
-            placeholder="Search profession"
-            type="text"
-            label="Profession"
+          <AppDate
+            v-model="expiredAt"
+            label="Expiry Date"
+            format="YYYY-MM-DD"
           />
         </div>
 
@@ -132,12 +131,14 @@ import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppButton from '@/components/Base/AppButton'
 import AppInput from '@/components/Base/AppInput'
+import AppDate from '@/components/Base/AppDate'
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppButton,
     AppInput,
+    AppDate,
   },
 
   data () {
@@ -174,6 +175,7 @@ export default {
       ],
       activePage: 1,
       locumNameIncludes:'',
+      expiredAt: '',
       professionNameIncludes:'',
     }
   },
@@ -271,8 +273,10 @@ export default {
     const {
       locum_name_includes: locumNameIncludes,
       profession_name_includes: professionNameIncludes,
+      expired_at: expiredAt,
     } = this.$route.query
 
+    this.expiredAt = expiredAt ? expiredAt : ''
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
 
@@ -283,6 +287,7 @@ export default {
     filterReset () {
       this.locumNameIncludes = ''
       this.professionNameIncludes = ''
+      this.expiredAt = ''
 
       this.filterSearch()
     },
@@ -292,6 +297,7 @@ export default {
 
       const query = {
         ...this.$route.query,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
         locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
@@ -346,6 +352,7 @@ export default {
       this.locumComplianceDocuments = []
       const params = {
         practice_id: this.$auth.user.practice_id,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
@@ -385,6 +392,7 @@ export default {
       const params = {
         practice_id: this.$auth.user.practice_id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
       }
