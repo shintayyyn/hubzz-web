@@ -30,24 +30,45 @@
     <transition name="slide" mode="out-in">
       <div v-if="modal" class="modal-container shadow-lg p-4 md:p-8">
         <div>
-          <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="modal = false" />
+          <svgicon
+            name="left-arrow"
+            height="32"
+            width="32"
+            class="cursor-pointer"
+            @click="modal = false"
+          />
         </div>
 
         <div class="flex flex-col mb-4 relative">
-          <AppInput v-model="form.description" :type="'textarea'" :name="'description'" :label="'Description'"
-                    :error="formError.find(item => item.field === 'description')" :resize="false" :limit="225"
-                    @input="CheckEmptyField(form.description, 'description')"
+          <AppInput
+            v-model="form.description"
+            :type="'textarea'"
+            :name="'description'"
+            :label="'Description'"
+            :error="formError.find(item => item.field === 'description')"
+            :resize="false" :limit="225"
+            @input="CheckEmptyField(form.description, 'description')"
           />
 
-          <AppInput v-model="form.total" :type="'number'" :name="'total'" :label="'Total'"
-                    :error="formError.find(item => item.field === 'total')" :inStyle="'text-align:right'"
-                    @input="CheckEmptyField(form.total, 'total')"
+          <AppInput
+            v-model="form.total"
+            :type="'number'"
+            :name="'total'"
+            :label="'Total'"
+            :error="formError.find(item => item.field === 'total')"
+            :inStyle="'text-align:right'"
+            @input="CheckEmptyField(form.total, 'total')"
           />
 
-          <AppDate v-model="form.date" :name="'date'" :label="'Date'"
-                   :isBefore="true"
-                   :error="formError.find(item => item.field === 'date')" @input="CheckEmptyField(form.date, 'date')"
+          <AppDate
+            v-model="form.date"
+            :name="'date'"
+            :label="'Date'"
+            :isBefore="true"
+            :error="formError.find(item => item.field === 'date')"
+            @input="CheckEmptyField(form.date, 'date')"
           />
+
           <AppLoading :loading="loading" spinner />
         </div>
 
@@ -84,7 +105,7 @@
               Filtered Date
             </div>
 
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
               £ {{ filter_date_total.toFixed(2) | currency }}
             </div>
           </div>
@@ -103,7 +124,7 @@
               This Week
             </div>
 
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
               £ {{ week_total.toFixed(2) | currency }}
             </div>
           </div>
@@ -122,7 +143,7 @@
               This Month
             </div>
 
-            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl">
+            <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
               £ {{ month_total.toFixed(2) | currency }}
             </div>
           </div>
@@ -419,15 +440,21 @@ export default {
 
     async save () {
       this.formError = []
+
       if (this.form.description && this.form.description.length > 255) {
         this.formError.push({field: 'description', message: 'Description is too long.',})
       }
+
       this.Validate(this.form)
+
       this.form.date = this.$moment(this.form.date).format("YYYY-MM-DD")
+
       if (!this.formError.length) {
         try {
           this.loading = true
+
           let response
+
           if (this.selectedExpenseReportId) {
             response = await this.$axios.$put(
               `/api/v1/locum/locum-expenses/${this.selectedExpenseReportId}`,
@@ -439,21 +466,54 @@ export default {
               this.form
             )
           }
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${response.message}`,],
           })
+
           this.selectedExpenseReportId = null
+
           this.form.description = ""
+
           this.form.total = 0
+
           this.form.date = null
+
           this.modal = false
+
           await this.getExpenseReportsTotal()
+
           await this.getExpenseReports()
+
           this.loading = false
-        } catch (e) {
-          throw e
+        } catch (err) {
+          console.log('err', err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.status === 400 && err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages
+            }
+
+            message = err.response.data.message
+          } else if (err.request) {
+            message = 'Something went wrong!'
+          } else {
+            message = err.message
+          }
+
+          if (message) {
+            this.$store.commit('SET_NOTIFICATION', {
+              enabled: true,
+              status: 'danger',
+              text: [`${message}`,],
+            })
+          }
+
+          this.loading = false
         }
       }
     },
