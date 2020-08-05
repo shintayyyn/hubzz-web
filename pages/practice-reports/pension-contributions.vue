@@ -517,6 +517,7 @@ export default {
         calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
         paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
         paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
+        practice_id: this.$auth.user.practice_detail.practice.id,
         order_by: this.orderBy,
         limit: 999,
         offset: 0,

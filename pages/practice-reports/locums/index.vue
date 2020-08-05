@@ -9,14 +9,14 @@
           <label class="text-md md:text-lg text-bold">Filters</label>
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
             v-model="locumNameIncudes"
             placeholder="Search locum"
             type="text"
             label="Locum"
           />
-        </div>
+        </div> -->
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput

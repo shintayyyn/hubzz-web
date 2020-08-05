@@ -208,15 +208,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
@@ -326,7 +317,7 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
@@ -421,7 +412,7 @@ export default {
       this.downloading = true
       const params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
         limit: 999,
