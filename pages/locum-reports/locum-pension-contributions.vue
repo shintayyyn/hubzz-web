@@ -78,7 +78,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -136,6 +136,7 @@ export default {
       count: 0,
       locumPensionContributions: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -189,15 +190,6 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Locum',
-        //   key: 'locum_user_name',
-        //   sort_key: 'locum_user_name',
-        //   column: (item) => item.locum_user_name,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Practice',
           key: 'practice_name',
@@ -261,7 +253,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getLocumPensionContributions()
     },
 
@@ -282,8 +283,6 @@ export default {
       page,
     } = this.$route.query
 
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
     this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
 

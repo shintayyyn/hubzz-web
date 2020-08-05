@@ -24,15 +24,6 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="practiceNameIncludes"
-            placeholder="Search practice"
-            type="text"
-            label="Practice"
-          />
-        </div>
-
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
             v-model="invoiceNumberIncludes"
             placeholder="Search invoice number"
             type="text"
@@ -181,7 +172,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -208,14 +199,6 @@
             <span>Download CSV</span>
           </button>
         </div>
-      </div>
-
-      <div v-if="false" class="text-white"> 
-        <span>Count: {{ count }}</span>
-        <br>
-        <span>Order By: {{ orderBy.join(',') }}</span>
-        <br>
-        <span>Page {{ activePage }} of {{ pages }} pages</span>
       </div>
     </div>
   </div>
@@ -245,18 +228,7 @@ export default {
       count: 0,
       locumInvoiceReports: [],
       orderBy: [],
-      orderBys: [
-        {
-          title: 'Practice Name (Ascending)',
-          column: 'practice_name',
-          direction: 'asc',
-        },
-        {
-          title: 'Practice Name (Descending)',
-          column: 'practice_name',
-          direction: 'desc',
-        },
-      ],
+      orderByProcessed: '',
       limit: 10,
       limits: [
         1,
@@ -310,24 +282,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Invoice Number',
-          key: 'invoice_number',
-          sort_key: 'invoice_number',
-          column: (item) => item.invoice_number,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
@@ -345,6 +299,17 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
+        {
+          title: 'Invoice Number',
+          key: 'invoice_number',
+          sort_key: 'invoice_number',
+          column: (item) => item.invoice_number,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        
+        
         {
           title: 'NI Amount',
           key: 'ni_amount',
@@ -402,6 +367,17 @@ export default {
     limit () {
       this.page = 1
       this.getLocumInvoiceReportDeductions()
+    },
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
     },
   },
 

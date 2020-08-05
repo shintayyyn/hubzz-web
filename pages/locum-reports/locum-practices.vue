@@ -53,7 +53,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -68,14 +68,14 @@
         class="flex-wrap justify-start items-center w-full p-3 flex my-2"
       >
         <button
-            :disabled="downloading || locumPractices.length === 0"
-            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="locumPractices.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
-            @click="downloadPDF"
-          >
-            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
-            <span>Download PDF</span>
-          </button>
+          :disabled="downloading || locumPractices.length === 0"
+          class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+          :class="locumPractices.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
+          @click="downloadPDF"
+        >
+          <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+          <span>Download PDF</span>
+        </button>
       </div>
     </div>
   </div>
@@ -97,6 +97,7 @@ export default {
       count: 0,
       locumPractices: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -148,15 +149,6 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Locum',
-        //   key: 'locum_user_name',
-        //   sort_key: 'locum_user_name',
-        //   column: (item) => item.locum_user_name,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Practice',
           key: 'practice_name',
@@ -229,7 +221,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getLocumPractices()
     },
 

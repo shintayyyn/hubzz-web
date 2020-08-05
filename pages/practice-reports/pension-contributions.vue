@@ -25,15 +25,6 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="practiceNameIncludes"
-            placeholder="Search practice"
-            type="text"
-            label="Practice"
-          />
-        </div>
-
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
             v-model="locumNameIncudes"
             placeholder="Search locum"
             type="text"
@@ -148,6 +139,9 @@
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
+            <div class="whitespace-no-wrap">
+              Order By: {{ orderByProcessed }}
+            </div>
           </div>
         </div>
   
@@ -179,370 +173,373 @@
 </template>
 
 <script>
-  import AppButton from '@/components/Base/AppButton'
-  import AppInput from '@/components/Base/AppInput'
-  import AppDate from '@/components/Base/AppDate'
+import AppButton from '@/components/Base/AppButton'
+import AppInput from '@/components/Base/AppInput'
+import AppDate from '@/components/Base/AppDate'
 
-  import ReportTable from '@/components/Reports/ReportTable'
-  import ReportPagination from '@/components/Reports/ReportPagination'
+import ReportTable from '@/components/Reports/ReportTable'
+import ReportPagination from '@/components/Reports/ReportPagination'
 
-  export default {
-    components: {
-      ReportTable,
-      ReportPagination,
-      AppButton,
-      AppInput,
-      AppDate,
+export default {
+  components: {
+    ReportTable,
+    ReportPagination,
+    AppButton,
+    AppInput,
+    AppDate,
+  },
+
+  data () {
+    return {
+      loading: false,
+      downloading: false,
+      count: 0,
+      locumInvoiceReports: [],
+      orderBy: [],
+      orderByProcessed: '',
+      orderBys: [
+        {
+          title: 'Practice Name (Ascending)',
+          column: 'practice_name',
+          direction: 'asc',
+        },
+        {
+          title: 'Practice Name (Descending)',
+          column: 'practice_name',
+          direction: 'desc',
+        },
+      ],
+      limit: 10,
+      limits: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10,
+        15,
+        20,
+        25,
+      ],
+      activePage: 1,
+
+      invoiceNumberIncludes: '',
+      locumNameIncudes: '',
+      practiceNameIncludes: '',
+      professionNameIncludes: '',
+      jobPartNumberIncludes: '',
+      maxNiAmount: '',
+      minPensionAmount: '',
+      maxPensionAmount: '',
+      calendarDateStart: '',
+      calendarDateEnd: '',
+      paidDateStart: '',
+      paidDateEnd: '',
+    }
+  },
+
+  computed: {
+    itemCountInfo () {
+      const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumInvoiceReports.length), this.count)
+      
+      return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
 
-    data () {
-      return {
-        loading: false,
-        downloading: false,
-        count: 0,
-        locumInvoiceReports: [],
-        orderBy: [],
-        orderBys: [
-          {
-            title: 'Practice Name (Ascending)',
-            column: 'practice_name',
-            direction: 'asc',
-          },
-          {
-            title: 'Practice Name (Descending)',
-            column: 'practice_name',
-            direction: 'desc',
-          },
-        ],
-        limit: 10,
-        limits: [
-          1,
-          2,
-          3,
-          4,
-          5,
-          10,
-          15,
-          20,
-          25,
-        ],
-        activePage: 1,
+    offset () {
+      return this.activePage * this.limit - this.limit
+    },
 
-        invoiceNumberIncludes: '',
-        locumNameIncudes: '',
-        practiceNameIncludes: '',
-        professionNameIncludes: '',
-        jobPartNumberIncludes: '',
-        maxNiAmount: '',
-        minPensionAmount: '',
-        maxPensionAmount: '',
-        calendarDateStart: '',
-        calendarDateEnd: '',
-        paidDateStart: '',
-        paidDateEnd: '',
+    columnDetails () {
+      return [
+        {
+          title: '#',
+          key: 'index',
+          sort_key: null,
+          column: (item, index) => this.offset + index + 1,
+          justify: 'end',
+          flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Locum',
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: '£ Paid',
+          key: 'pension_amount',
+          sort_key: 'pension_amount',
+          column: (item) => item.pension_amount ? '£ ' + item.pension_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '£ 0.00',
+          justify: 'end',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Invoice Number',
+          key: 'invoice_number',
+          sort_key: 'invoice_number',
+          column: (item) => item.invoice_number,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Job Number',
+          key: 'job_part_number',
+          sort_key: 'job_part_number',
+          column: (item) => item.job_part_number,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },          {
+          title: 'Date Paid',
+          key: 'paid_at',
+          sort_key: 'paid_at',
+          column: (item) => item.paid_at ? this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : 'N/A',
+          justify: 'left',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+      ]
+    },
+
+    pages () {
+      return Math.max(Math.ceil(this.count / this.limit), 1)
+    },
+  },
+
+  watch: {
+    limit () {
+      this.page = 1
+      this.getLocumInvoiceReportPensionContributions()
+    },
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
+    },
+  },
+
+  mounted () {      
+    const {
+      invoice_number_includes: invoiceNumberIncludes,
+      locum_name_includes: locumNameIncudes,
+      practice_name_includes: practiceNameIncludes,
+      profession_name_includes: professionNameIncludes,
+      job_part_number_includes: jobPartNumberIncludes,
+      min_pension_amount: minPensionAmount,
+      max_pension_amount: maxPensionAmount,
+      calendar_date_start: calendarDateStart,
+      calendar_date_end: calendarDateEnd,
+      paid_date_start: paidDateStart,
+      paid_date_end: paidDateEnd,
+      order_by: orderBy = [],
+      page,
+    } = this.$route.query
+
+    this.invoiceNumberIncludes = invoiceNumberIncludes ? invoiceNumberIncludes : ''
+    this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
+    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
+    this.jobPartNumberIncludes = jobPartNumberIncludes ? jobPartNumberIncludes : ''
+    this.minPensionAmount = minPensionAmount ? minPensionAmount : ''
+    this.maxPensionAmount = maxPensionAmount ? maxPensionAmount : ''
+    this.calendarDateStart = calendarDateStart ? calendarDateStart : ''
+    this.calendarDateEnd = calendarDateEnd ? calendarDateEnd : ''
+    this.paidDateStart = paidDateStart ? paidDateStart : ''
+    this.paidDateEnd = paidDateEnd ? paidDateEnd : ''
+
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
+
+    this.activePage = page ? Number.parseInt(page) : 1
+
+    this.getLocumInvoiceReportPensionContributions()
+  },
+
+  methods: {
+    filterReset () {
+      this.invoiceNumberIncludes = ''
+      this.locumNameIncudes = ''
+      this.practiceNameIncludes = ''
+      this.professionNameIncludes = ''
+      this.jobPartNumberIncludes = ''
+      this.minPensionAmount = ''
+      this.maxPensionAmount = ''
+      this.calendarDateStart = ''
+      this.calendarDateEnd = ''
+      this.paidDateStart = ''
+      this.paidDateEnd = ''
+
+      this.filterSearch()
+    },
+
+    filterSearch () {
+      this.activePage = 1
+
+      const query = {
+        ...this.$route.query,
+        invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
+        locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
+        min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
+        max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+        calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
+        calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
+        paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
+        paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
+        order_by: this.orderBy ? this.orderBy : undefined,
+        page: undefined,
       }
+
+      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
+        this.$router.replace({ query })
+      }
+      
+      this.getLocumInvoiceReportPensionContributions()
     },
 
-    computed: {
-      itemCountInfo () {
-        const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-        const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumInvoiceReports.length), this.count)
-        
-        return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
-      },
+    setPage (page) {
+      this.activePage = page
 
-      offset () {
-        return this.activePage * this.limit - this.limit
-      },
-
-      columnDetails () {
-        return [
-          {
-            title: '#',
-            key: 'index',
-            sort_key: null,
-            column: (item, index) => this.offset + index + 1,
-            justify: 'end',
-            flexGrow: 0,
-            flexShrink: 0,
-          },
-          {
-            title: 'Practice',
-            key: 'practice_name',
-            sort_key: 'practice_name',
-            column: (item) => item.practice_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Locum',
-            key: 'locum_user_name',
-            sort_key: 'locum_user_name',
-            column: (item) => item.locum_user_name,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: '£ Paid',
-            key: 'pension_amount',
-            sort_key: 'pension_amount',
-            column: (item) => item.pension_amount ? '£ ' + item.pension_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '£ 0.00',
-            justify: 'end',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Invoice Number',
-            key: 'invoice_number',
-            sort_key: 'invoice_number',
-            column: (item) => item.invoice_number,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-          {
-            title: 'Job Number',
-            key: 'job_part_number',
-            sort_key: 'job_part_number',
-            column: (item) => item.job_part_number,
-            justify: 'start',
-            flexGrow: 1,
-            flexShrink: 0,
-          },          {
-            title: 'Date Paid',
-            key: 'paid_at',
-            sort_key: 'paid_at',
-            column: (item) => item.paid_at ? this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : 'N/A',
-            justify: 'center',
-            flexGrow: 1,
-            flexShrink: 0,
-          },
-        ]
-      },
-
-      pages () {
-        return Math.max(Math.ceil(this.count / this.limit), 1)
-      },
-    },
-
-    watch: {
-      limit () {
-        this.page = 1
-        this.getLocumInvoiceReportPensionContributions()
-      },
-    },
-
-    mounted () {      
-      const {
-        invoice_number_includes: invoiceNumberIncludes,
-        locum_name_includes: locumNameIncudes,
-        practice_name_includes: practiceNameIncludes,
-        profession_name_includes: professionNameIncludes,
-        job_part_number_includes: jobPartNumberIncludes,
-        min_pension_amount: minPensionAmount,
-        max_pension_amount: maxPensionAmount,
-        calendar_date_start: calendarDateStart,
-        calendar_date_end: calendarDateEnd,
-        paid_date_start: paidDateStart,
-        paid_date_end: paidDateEnd,
-        order_by: orderBy = [],
-        page,
-      } = this.$route.query
-
-      this.invoiceNumberIncludes = invoiceNumberIncludes ? invoiceNumberIncludes : ''
-      this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
-      this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-      this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
-      this.jobPartNumberIncludes = jobPartNumberIncludes ? jobPartNumberIncludes : ''
-      this.minPensionAmount = minPensionAmount ? minPensionAmount : ''
-      this.maxPensionAmount = maxPensionAmount ? maxPensionAmount : ''
-      this.calendarDateStart = calendarDateStart ? calendarDateStart : ''
-      this.calendarDateEnd = calendarDateEnd ? calendarDateEnd : ''
-      this.paidDateStart = paidDateStart ? paidDateStart : ''
-      this.paidDateEnd = paidDateEnd ? paidDateEnd : ''
-
-      this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
-
-      this.activePage = page ? Number.parseInt(page) : 1
+      if (this.activePage === 1) {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            page: undefined,
+          }
+        })
+      } else {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            page: this.activePage,
+          }
+        })
+      }
 
       this.getLocumInvoiceReportPensionContributions()
     },
 
-    methods: {
-      filterReset () {
-        this.invoiceNumberIncludes = ''
-        this.locumNameIncudes = ''
-        this.practiceNameIncludes = ''
-        this.professionNameIncludes = ''
-        this.jobPartNumberIncludes = ''
-        this.minPensionAmount = ''
-        this.maxPensionAmount = ''
-        this.calendarDateStart = ''
-        this.calendarDateEnd = ''
-        this.paidDateStart = ''
-        this.paidDateEnd = ''
+    setOrderBy (orderBy) {
+      this.orderBy = orderBy
+      this.activePage = 1
 
-        this.filterSearch()
-      },
-
-      filterSearch () {
-        this.activePage = 1
-
-        const query = {
+      this.$router.replace({
+        query: {
           ...this.$route.query,
-          invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
-          calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
-          calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
-          paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
-          paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
-          order_by: this.orderBy ? this.orderBy : undefined,
+          order_by: this.orderBy,
           page: undefined,
         }
+      })
 
-        if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-          this.$router.replace({ query })
-        }
-        
-        this.getLocumInvoiceReportPensionContributions()
-      },
-
-      setPage (page) {
-        this.activePage = page
-
-        if (this.activePage === 1) {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: undefined,
-            }
-          })
-        } else {
-          this.$router.replace({
-            query: {
-              ...this.$route.query,
-              page: this.activePage,
-            }
-          })
-        }
-
-        this.getLocumInvoiceReportPensionContributions()
-      },
-
-      setOrderBy (orderBy) {
-        this.orderBy = orderBy
-        this.activePage = 1
-
-        this.$router.replace({
-          query: {
-            ...this.$route.query,
-            order_by: this.orderBy,
-            page: undefined,
-          }
-        })
-
-        this.getLocumInvoiceReportPensionContributions()
-      },
-
-      getLocumInvoiceReportPensionContributions () {
-        this.loading = true
-        this.locumInvoiceReports = []
-
-        const params = {
-          invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
-          calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
-          calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
-          paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
-          paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
-        }
-
-        Promise.all([
-          this.$axios.get('/api/v1/admin/reports/pension-contributions/count', {
-            params: {
-              ...params,
-              practice_id: this.$auth.user.practice_detail.practice.id,
-            },
-          }).then((responses) => {
-            return responses.data.data.count
-          }),
-          this.$axios.get('/api/v1/admin/reports/pension-contributions', {
-            params: {
-              ...params,
-              practice_id: this.$auth.user.practice_detail.practice.id,
-              order_by: this.orderBy,
-              limit: this.limit,
-              offset: this.offset,
-            },
-          }).then((responses) => {
-            return responses.data.data.pension_contributions
-          }),
-          new Promise((resolve) => setTimeout(resolve, 200))
-        ]).then((results) => {
-          const [
-            count,
-            locumInvoiceReports,
-          ] = results
-
-          this.count = count
-          this.locumInvoiceReports = locumInvoiceReports
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.loading = false
-        })
-      },
-
-      downloadCsv () {
-        this.downloading = true
-        const params = {
-          invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
-          locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
-          practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-          profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-          job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-          min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
-          max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
-          calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
-          calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
-          paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
-          paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
-          order_by: this.orderBy,
-          limit: 999,
-          offset: 0,
-        }
-
-        this.$axios.post('/api/v1/admin/reports/pension-contributions/generate-key', {
-          filename: `pension-contributions.csv`,
-        }, {
-          params: {
-            ...params,
-          },
-        }).then((responses) => {
-          const token = responses.data.data.token
-
-          window.open(`${process.env.API_URL}/api/v1/admin/reports/pension-contributions/csv?token=${token}`)
-        }).catch((err) => {
-          console.log('err', err)
-          this.$nuxt.error(err.response ? err.response.data : err)
-        }).finally(() => {
-          this.downloading = false
-        })
-      },
+      this.getLocumInvoiceReportPensionContributions()
     },
 
-  }
+    getLocumInvoiceReportPensionContributions () {
+      this.loading = true
+      this.locumInvoiceReports = []
+
+      const params = {
+        invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
+        locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
+        min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
+        max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+        calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
+        calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
+        paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
+        paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
+      }
+
+      Promise.all([
+        this.$axios.get('/api/v1/admin/reports/pension-contributions/count', {
+          params: {
+            ...params,
+            practice_id: this.$auth.user.practice_detail.practice.id,
+          },
+        }).then((responses) => {
+          return responses.data.data.count
+        }),
+        this.$axios.get('/api/v1/admin/reports/pension-contributions', {
+          params: {
+            ...params,
+            practice_id: this.$auth.user.practice_detail.practice.id,
+            order_by: this.orderBy,
+            limit: this.limit,
+            offset: this.offset,
+          },
+        }).then((responses) => {
+          return responses.data.data.pension_contributions
+        }),
+        new Promise((resolve) => setTimeout(resolve, 200))
+      ]).then((results) => {
+        const [
+          count,
+          locumInvoiceReports,
+        ] = results
+
+        this.count = count
+        this.locumInvoiceReports = locumInvoiceReports
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+
+    downloadCsv () {
+      this.downloading = true
+      const params = {
+        invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
+        locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
+        min_pension_amount: this.minPensionAmount ? this.minPensionAmount : undefined,
+        max_pension_amount: this.maxPensionAmount ? this.maxPensionAmount : undefined,
+        calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
+        calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
+        paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
+        paid_date_end: this.paidDateEnd ? this.paidDateEnd : undefined,
+        order_by: this.orderBy,
+        limit: 999,
+        offset: 0,
+      }
+
+      this.$axios.post('/api/v1/admin/reports/pension-contributions/generate-key', {
+        filename: `pension-contributions.csv`,
+      }, {
+        params: {
+          ...params,
+        },
+      }).then((responses) => {
+        const token = responses.data.data.token
+
+        window.open(`${process.env.API_URL}/api/v1/admin/reports/pension-contributions/csv?token=${token}`)
+      }).catch((err) => {
+        console.log('err', err)
+        this.$nuxt.error(err.response ? err.response.data : err)
+      }).finally(() => {
+        this.downloading = false
+      })
+    },
+  },
+
+}
 </script>
