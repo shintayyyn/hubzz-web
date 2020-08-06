@@ -366,6 +366,16 @@ export default {
       let columns = []
       columns.push(
         {
+          name: "Type",
+          dataIndex: "type",
+          class: "text-left",
+        },
+        {
+          name: "Practice Name",
+          dataIndex: "locum_expense_practice_name",
+          class: "text-left",
+        },
+        {
           name: "Date",
           dataIndex: "date",
           slotName: "date",
