@@ -156,7 +156,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -183,14 +183,6 @@
             <span>Download CSV</span>
           </button>
         </div>
-      </div>
-
-      <div v-if="false" class="text-white"> 
-        <span>Count: {{ count }}</span>
-        <br>
-        <span>Order By: {{ orderBy.join(',') }}</span>
-        <br>
-        <span>Page {{ activePage }} of {{ pages }} pages</span>
       </div>
     </div>
   </div>
@@ -220,6 +212,7 @@ export default {
       count: 0,
       locumInvoiceReports: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -359,6 +352,17 @@ export default {
     limit () {
       this.page = 1
       this.getLocumInvoiceReportPayments()
+    },
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
     },
   },
 

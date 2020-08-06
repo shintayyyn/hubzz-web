@@ -101,7 +101,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -155,6 +155,7 @@ export default {
       professionNameIncludes:'',
       practiceLocums: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -204,15 +205,6 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
-          flexShrink: 0,
-        },
-        {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
           flexShrink: 0,
         },
         {
@@ -271,7 +263,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getPracticeLocums()
     },
 
@@ -316,7 +317,7 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
@@ -411,7 +412,7 @@ export default {
       this.downloading = true
       const params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
         limit: 999,
