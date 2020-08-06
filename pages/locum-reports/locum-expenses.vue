@@ -160,7 +160,7 @@
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
 
-            <span>Download PDF</span>
+            <span>{{ downloading ? 'Downloading PDF' : 'Download PDF' }}</span>
           </button>
         </div>
       </div>
@@ -472,14 +472,19 @@ export default {
 
     downloadPDF () {
       let params = {
-        locum_user_id: this.$auth.user.id,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        inside_of_scope_ir35: true,
+        locum_expense_practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        type: this.locumExpenseType ? this.locumExpenseType : undefined,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        date_end: this.dateEnd ? this.dateEnd : undefined,
+        description_includes: this.descriptionIncludes ? this.descriptionIncludes : undefined,
+        min_rate: this.minTotal ? this.minTotal : undefined,
+        max_rate: this.maxTotal ? this.maxTotal : undefined,
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/locum-reports/locum-tax-reporting-report/generate-key', {
-        filename: `locumTaxReportingReport.pdf`,
+      this.downloading = true
+      this.$axios.post('/api/v1/locum/locum-expenses/generate-key', {
+        filename: `expenses.pdf`,
       }, {
         params: {
           ...params,
@@ -487,7 +492,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-tax-reporting-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/locum-expenses/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
