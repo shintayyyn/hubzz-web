@@ -41,14 +41,103 @@
           </div>
 
           <div class="flex flex-col mb-4 relative">
+            <div class="flex flex-col mb-3 md:mb-6 py-2">
+              <div class="relative flex flex-wrap leading-none items-center">
+                <label class="text-xs sm:text-sm py-1">
+                  <span>Type</span>
+                  
+                  <span class="text-red-500">*</span>
+                </label>
+              </div>
+
+              <div class="flex flex-row justify-start mt-1">
+                <div class="flex flex-col w-full">
+                  <div class="flex items-center justify-start">
+                    <button
+                      :class="[
+                        'rounded-lg',
+                        'px-3',
+                        'py-1',
+                        'mx-1',
+                        'my-0',
+                        'focus:outline-none',
+                        'transition-all',
+                        'border',
+                        'text-gray-900',
+                        form.type === 'Platform'
+                          ? 'bg-gradient-yellow'
+                          : 'border-gray-900',
+                        'font-bold',
+                      ]"
+                      @click="form.type = form.type === 'Platform' ? null : 'Platform'"
+                    >
+                      Platform
+                    </button>
+
+                    <button
+                      :class="[
+                        'rounded-lg',
+                        'px-3',
+                        'py-1',
+                        'mx-1',
+                        'my-0',
+                        'focus:outline-none',
+                        'transition-all',
+                        'border',
+                        'text-gray-900',
+                        form.type === 'Private'
+                          ? 'bg-gradient-yellow'
+                          : 'border-gray-900',
+                        'font-bold',
+                      ]"
+                      @click="form.type = form.type === 'Private' ? null : 'Private'"
+                    >
+                      Private
+                    </button>
+                  </div>
+
+                  <transition name="drop-down">
+                    <div v-if="formError.find(item => item.field === 'type')" class="text-red-500 py-1 text-xs text-white">
+                      {{ formError.find(item => item.field === 'type').message }}
+                    </div>
+                  </transition>
+                </div>
+              </div>
+            </div>
+
+            <AppInput
+              v-if="form.type === 'Platform'"
+              v-model="form.practice_id"
+              :label="'Practice'"
+              :type="'select'"
+              :name="'practice_id'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'practice_id')"
+              :items="practicesSelectionList"
+              :required="true"
+            />
+
+            <AppInput
+              v-if="form.type === 'Private'"
+              v-model="form.private_practice_id"
+              :label="'Private Practice'"
+              :type="'select'"
+              :name="'private_practice_id'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'private_practice_id')"
+              :items="privatePracticesSelectionList"
+              :required="true"
+            />
+
             <AppInput
               v-model="form.description"
               :type="'textarea'"
               :name="'description'"
               :label="'Description'"
               :error="formError.find(item => item.field === 'description')"
-              :resize="false" :limit="225"
-              @input="CheckEmptyField(form.description, 'description')"
+              :resize="false"
+              :limit="225"
+              :required="true"
             />
 
             <AppInput
@@ -58,7 +147,7 @@
               :label="'Total'"
               :error="formError.find(item => item.field === 'total')"
               :inStyle="'text-align:right'"
-              @input="CheckEmptyField(form.total, 'total')"
+              :required="true"
             />
 
             <AppDate
@@ -67,7 +156,7 @@
               :label="'Date'"
               :isBefore="true"
               :error="formError.find(item => item.field === 'date')"
-              @input="CheckEmptyField(form.date, 'date')"
+              :required="true"
             />
 
             <AppLoading :loading="loading" spinner />
@@ -107,7 +196,7 @@
               </div>
 
               <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
-                £ {{ filter_date_total.toFixed(2) | currency }}
+                £ {{ filterDateTotal.toFixed(2) | currency }}
               </div>
             </div>
           </div>
@@ -126,7 +215,7 @@
               </div>
 
               <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
-                £ {{ week_total.toFixed(2) | currency }}
+                £ {{ weekTotal.toFixed(2) | currency }}
               </div>
             </div>
           </div>
@@ -145,15 +234,25 @@
               </div>
 
               <div v-if="!initialLoading" class="flex justify-end font-bold text-3xl md:text-5xl break-all">
-                £ {{ month_total.toFixed(2) | currency }}
+                £ {{ monthTotal.toFixed(2) | currency }}
               </div>
             </div>
           </div>
         </div>
 
-        <AppTable v-if="expense_reports.length > 0" :total="total" :items="expense_reports" :currentPage="current_page"
-                  :perPage="limit" :columns="columns" :orderBy="order_by" :loading="loading" :customWidth="480"
-                  @pagechanged="pagechanged" @limitchanged="limitchanged" @sorted="sorted"
+        <AppTable
+          v-if="expenseReports.length > 0"
+          :total="total"
+          :items="expenseReports"
+          :currentPage="current_page"
+          :perPage="limit"
+          :columns="columns"
+          :orderBy="order_by"
+          :loading="loading"
+          :customWidth="480"
+          @pagechanged="pagechanged"
+          @limitchanged="limitchanged"
+          @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
             <div class="flex flex-wrap justify-center">
@@ -182,12 +281,12 @@
           </template>
         </AppTable>
 
-        <div v-if="!expense_reports.length && !loading" class="flex justify-center py-4">
+        <div v-if="!expenseReports.length && !loading" class="flex justify-center py-4">
           You haven't added any Expense
           Reports on this date.
         </div>
 
-        <div v-if="expense_reports.length > 0" class="flex justify-end">
+        <div v-if="expenseReports.length > 0" class="flex justify-end">
           <AppButton
             :label="exporting ? 'Exporting as PDF...' : 'Export as PDF'"
             :inStyle="'padding: 5px 14px;'"
@@ -227,12 +326,15 @@ export default {
       selectedExpenseReportId: null,
       initialLoading: false,
       loading: false,
-      expense_reports: [],
+      expenseReports: [],
       total: 0,
 
       modal: false,
       delete_modal: false,
       form: {
+        type: null,
+        practice_id: null,
+        private_practice_id: null,
         description: "",
         total: 0,
         date: null,
@@ -246,11 +348,16 @@ export default {
 
       date_start: null,
       date_end: null,
-      filter_date_total: 0,
-      week_total: 0,
-      month_total: 0,
+      filterDateTotal: 0,
+      weekTotal: 0,
+      monthTotal: 0,
 
       exporting: false,
+
+      gettingPractices: false,
+      practices: [],
+      gettingPrivatePractices: false,
+      privatePractices: [],
     }
   },
 
@@ -258,6 +365,16 @@ export default {
     columns () {
       let columns = []
       columns.push(
+        {
+          name: "Type",
+          dataIndex: "type",
+          class: "text-left",
+        },
+        {
+          name: "Practice Name",
+          dataIndex: "locum_expense_practice_name",
+          class: "text-left",
+        },
         {
           name: "Date",
           dataIndex: "date",
@@ -284,6 +401,94 @@ export default {
 
       return columns
     },
+
+    privatePracticesSelectionList () {
+      return this.privatePractices.map(privatePractice => ({
+        label: privatePractice.name,
+        value: privatePractice.id,
+      }))
+    },
+
+    practicesSelectionList () {
+      return this.practices.map(practice => ({
+        label: practice.name,
+        value: practice.id,
+      }))
+    },
+  },
+
+  watch: {
+    'form.type' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'type')
+
+      if (!this.form.type) {
+        this.formError.push({
+          field: 'type',
+          message: 'Type is required.',
+          validation: 'required',
+        })
+      }
+    },
+
+    'form.practice_id' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'practice_id')
+
+      if (!this.form.practice_id && this.form.type === 'Platform') {
+        this.formError.push({
+          field: 'practice_id',
+          message: 'Practice is required.',
+          validation: 'required',
+        })
+      }
+    },
+
+    'form.private_practice_id' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'private_practice_id')
+
+      if (!this.form.private_practice_id && this.form.type === 'Private') {
+        this.formError.push({
+          field: 'private_practice_id',
+          message: 'Private Practice is required.',
+          validation: 'required',
+        })
+      }
+    },
+
+    'form.description' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'description')
+
+      if (!this.form.description) {
+        this.formError.push({
+          field: 'description',
+          message: 'Description is required.',
+          validation: 'required',
+        })
+      }
+    },
+
+    'form.total' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'total')
+
+      if (!this.form.total) {
+        this.formError.push({
+          field: 'total',
+          message: 'Total is required.',
+          validation: 'required',
+        })
+      }
+    },
+
+    'form.date' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'date')
+
+      if (!this.form.date) {
+        this.formError.push({
+          field: 'date',
+          message: 'Date is required.',
+          validation: 'required',
+        })
+      }
+    },
   },
 
   mounted () {
@@ -296,6 +501,24 @@ export default {
       this.getExpenseReportsPromiseAll(),
     ]).finally(() => {
       this.initialLoading = false
+    })
+
+    this.gettingPrivatePractices = true
+    this.$axios.get('/api/v1/locum/private-practices?limit=999').then((response) => {
+      this.privatePractices = response.data.data.private_practices
+    }).catch((err) => {
+      console.log('err', err.response || err)
+    }).finally(() => {
+      this.gettingPrivatePractices = false
+    })
+
+    this.gettingPrivatePractices = true
+    this.$axios.get('/api/v1/locum/practices?limit=999&locum_practice_type=Completed').then((response) => {
+      this.practices = response.data.data.practices
+    }).catch((err) => {
+      console.log('err', err.response || err)
+    }).finally(() => {
+      this.gettingPrivatePractices = false
     })
   },
 
@@ -344,21 +567,21 @@ export default {
           dateStart: this.date_start,
           dateEnd: this.date_end,
         }).then((expenseTotal) => {
-          this.filter_date_total = expenseTotal
+          this.filterDateTotal = expenseTotal
         }),
 
         this.getExpenseTotal({
           dateStart: this.$moment(week_date_start).format("YYYY-MM-DD"),
           dateEnd: this.$moment(week_date_end).format("YYYY-MM-DD"),
         }).then((expenseTotal) => {
-          this.week_total = expenseTotal
+          this.weekTotal = expenseTotal
         }),
 
         this.getExpenseTotal({
           dateStart: this.$moment(month_date_start).format("YYYY-MM-DD"),
           dateEnd: this.$moment(month_date_end).format("YYYY-MM-DD"),
         }).then((expenseTotal) => {
-          this.month_total = expenseTotal
+          this.monthTotal = expenseTotal
         }),
       ])
     },
@@ -370,7 +593,7 @@ export default {
             dateStart: this.date_start,
             dateEnd: this.date_end,
           }).then((expenseTotal) => {
-            this.filter_date_total = expenseTotal
+            this.filterDateTotal = expenseTotal
           }),
 
           this.pagechanged(1),
@@ -427,7 +650,7 @@ export default {
           }),
         ]).then(([responseCount, responseExpenseReports,]) => {
           this.total = responseCount.data.count
-          this.expense_reports
+          this.expenseReports
             = responseExpenseReports.data
               && responseExpenseReports.data.locum_expenses
               ? responseExpenseReports.data.locum_expenses
@@ -446,9 +669,27 @@ export default {
         this.formError.push({field: 'description', message: 'Description is too long.',})
       }
 
-      this.Validate(this.form)
+      const notRequired = []
 
-      this.form.date = this.$moment(this.form.date).format("YYYY-MM-DD")
+      if (this.form.type === 'Platform') {
+        notRequired.push('private_practice_id')
+      }
+
+      if (this.form.type === 'Private') {
+        notRequired.push('practice_id')
+      }
+
+      if (!this.form.type) {
+        notRequired.push('private_practice_id')
+        notRequired.push('practice_id')
+      }
+
+      this.Validate(this.form, notRequired)
+
+      const formData = {
+        ...this.form,
+        date: this.$moment(this.form.date).format("YYYY-MM-DD"),
+      }
 
       if (!this.formError.length) {
         try {
@@ -457,15 +698,9 @@ export default {
           let response
 
           if (this.selectedExpenseReportId) {
-            response = await this.$axios.$put(
-              `/api/v1/locum/locum-expenses/${this.selectedExpenseReportId}`,
-              this.form
-            )
+            response = await this.$axios.$put(`/api/v1/locum/locum-expenses/${this.selectedExpenseReportId}`, formData)
           } else if (!this.selectedExpenseReportId) {
-            response = await this.$axios.$post(
-              `/api/v1/locum/locum-expenses`,
-              this.form
-            )
+            response = await this.$axios.$post(`/api/v1/locum/locum-expenses`, formData)
           }
 
           this.$store.commit("SET_NOTIFICATION", {
@@ -478,7 +713,7 @@ export default {
 
           this.form.description = ""
 
-          this.form.total = 0
+          this.form.total = '0'
 
           this.form.date = null
 
@@ -532,13 +767,15 @@ export default {
     },
 
     async editExpenseReports (id) {
-      let foundExpenseReport = this.expense_reports.find(
-        item => item.id === id
-      )
+      let foundExpenseReport = this.expenseReports.find(item => item.id === id)
+
       if (foundExpenseReport) {
         this.selectedExpenseReportId = id
+        this.form.type = foundExpenseReport.type
+        this.form.practice_id = foundExpenseReport.practice_id
+        this.form.private_practice_id = foundExpenseReport.private_practice_id
         this.form.description = foundExpenseReport.description
-        this.form.total = foundExpenseReport.total
+        this.form.total = foundExpenseReport.total ? foundExpenseReport.total.toString() : '0'
         this.form.date = foundExpenseReport.date
         this.formError = []
         this.modal = true
@@ -552,8 +789,11 @@ export default {
 
     addExpenseReports () {
       this.selectedExpenseReportId = null
+      this.form.type = null
+      this.form.practice_id = ""
+      this.form.private_practice_id = ""
       this.form.description = ""
-      this.form.total = 0
+      this.form.total = '0'
       this.form.date = null
       this.formError = []
       this.modal = true
@@ -561,7 +801,7 @@ export default {
 
     closeModal () {
       this.form.description = ""
-      this.form.total = 0
+      this.form.total = '0'
       this.form.date = null
       this.modal = false
     },

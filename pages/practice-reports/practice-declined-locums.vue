@@ -107,7 +107,7 @@
           <button
             :disabled="downloading || practiceDeclinedLocums.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceDeclinedLocums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
+            :class="practiceDeclinedLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -286,8 +286,8 @@ export default {
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getPracticeDeclinedLocums()
@@ -301,14 +301,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -324,7 +324,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getPracticeDeclinedLocums()
@@ -343,7 +343,7 @@ export default {
           params: {
             ...params,
             practice_id: this.$auth.user.practice_detail.practice.id,
-          }
+          },
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -358,7 +358,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.practice_declined_locums
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
