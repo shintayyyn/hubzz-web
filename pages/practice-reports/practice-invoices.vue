@@ -201,15 +201,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Date Start',
           key: 'date_start',
           sort_key: 'date_start',
