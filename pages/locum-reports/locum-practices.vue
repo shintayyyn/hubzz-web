@@ -70,7 +70,7 @@
         <button
           :disabled="downloading || locumPractices.length === 0"
           class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-          :class="locumPractices.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
+          :class="locumPractices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
           @click="downloadPDF"
         >
           <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -265,14 +265,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -288,7 +288,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getLocumPractices()
@@ -302,7 +302,7 @@ export default {
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/locum-practices/count', {
-          params
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -316,7 +316,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.locum_practices
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -342,9 +342,9 @@ export default {
       this.$axios.post('/api/v1/locum-reports/locum-practices-worked-report/generate-key', {
         filename: `locumPracticesWorked.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

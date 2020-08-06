@@ -202,13 +202,16 @@
             </template>
 
             <template v-if="type === 'select'">
-              <div class="w-full relative">
+              <div :class="['w-full relative', inClass]">
                 <div class="w-full customized-select flex items-center">
                   <select
                     ref="inputSelect"
                     :value="value"
                     class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                    :class="[(error && !disabled) ? 'border-red-500' : inClass, disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer']"
+                    :class="[
+                      (error && !disabled) ? 'border-red-500' : inClass,
+                      disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
+                    ]"
                     :style="inStyle"
                     :disabled="disabled"
                     @input="$emit('input', $event.target.value)"
