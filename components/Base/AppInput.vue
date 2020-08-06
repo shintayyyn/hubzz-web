@@ -200,6 +200,7 @@
                 </transition>
               </div>
             </template>
+
             <template v-if="type === 'select'">
               <div class="w-full relative">
                 <div class="w-full customized-select flex items-center">
@@ -249,6 +250,7 @@
                 </transition>
               </div>
             </template>
+
             <template v-if="type === 'textarea'">
               <div class="flex flex-col w-full">
                 <textarea
@@ -412,47 +414,111 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: [String, Boolean, Array, Number, Object,],
-    type: String,
-    name: String,
-    label: String,
-    placeholder: String,
-    error: Object,
-    info: String,
-    inStyle: String,
-    inClass: String,
-    wrapperClass: String,
 
-    limit: Number,
+    value: {
+      type: [String, Boolean, Array, Number, Object,],
+      default: null,
+    },
 
-    format: String,
+    type: {
+      type: String,
+      default: null,
+    },
+
+    name: {
+      type: String,
+      default: null,
+    },
+
+    label: {
+      type: String,
+      default: null,
+    },
+
+    placeholder: {
+      type: String,
+      default: null,
+    },
+
+    error: {
+      type: String,
+      default: () => null,
+    },
+
+    info: {
+      type: String,
+      default: null,
+    },
+
+    inStyle: {
+      type: String,
+      default: null,
+    },
+
+    inClass: {
+      type: String,
+      default: null,
+    },
+
+    wrapperClass: {
+      type: String,
+      default: null,
+    },
+
+    limit: {
+      type: Number,
+      default: null,
+    },
+
+    format: {
+      type: String,
+      default: null,
+    },
+
     required: {
       type: Boolean,
       default: false,
     },
-    maxInput: Number,
+
+    maxInput: {
+      type: Number,
+      default: null,
+    },
+
     // for select
-    items: Array,
+    items: {
+      type: Array,
+      default: () => null,
+    },
+
     // for textarea
     cols: {
       default: 30,
       type: Number,
     },
+
     rows: {
       default: 10,
       type: Number,
     },
+
     resize: {
       default: true,
       type: Boolean,
     },
+
     // for multicheckbox
-    lists: Array,
+    lists: {
+      type: Array,
+      default: () => null,
+    },
+
     //
     disabled: {
       type: Boolean,
       default: false,
     },
+
     isHorizontal: Boolean,
   },
 
