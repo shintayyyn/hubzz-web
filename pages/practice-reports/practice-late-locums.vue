@@ -363,15 +363,15 @@ export default {
       })
     },
 
-    downloadPDF () {
-      let params = {
+    async downloadPDF () {
+      let params = await {
         practice_id: this.$auth.user.practice_detail.practice.id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
+      await this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
         filename: `practiceLateLocumsReport.pdf`,
       }, {
         params: {

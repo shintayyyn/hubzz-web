@@ -273,6 +273,7 @@ export default {
   methods: {
     async filterReset () {
       this.locumNameIncludes = await ''
+      this.orderBy = await []
 
       await this.filterSearch()
     },
@@ -375,15 +376,18 @@ export default {
       })
     },
 
-    downloadPDF () {
-      let params = {
+    async downloadPDF () {
+      let params = await {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         practice_id:  this.$auth.user.practice_detail.practice.id,
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/practice-reports/practice-declined-locums-report/generate-key', {
+      await this.$axios.post('/api/v1/practice-reports/practice-declined-locums-report/generate-key', {
         filename: `practiceDeclinedLocumsReport.pdf`,
+        filter: {
+          ...params,
+        },
       }, {
         params: {
           ...params,
