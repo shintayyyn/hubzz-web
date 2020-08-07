@@ -389,11 +389,12 @@ export default {
       })
     },
     downloadPDF () {
+      this.downloading = true
       const params = {
         practice_id: this.$auth.user.practice_id,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        expired_at: this.expiredAt ? this.expiredAt : undefined,
-        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        expired_at: this.expiredAt ? this.expiredAt : null,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,
         order_by: this.orderBy,
       }
 

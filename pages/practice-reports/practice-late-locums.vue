@@ -249,14 +249,6 @@ export default {
   },
 
   mounted () {      
-    // const {
-    //   order_by: orderBy = [],
-    //   page,
-    // } = this.$route.query
-
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
-
     const {
       locum_name_includes: locumNameIncludes,
       profession_name_includes: professionNameIncludes,
@@ -335,8 +327,8 @@ export default {
       this.practiceLateLocums = []
       let params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {

@@ -271,10 +271,10 @@ export default {
   },
 
   methods: {
-    filterReset () {
-      this.locumNameIncludes = ''
+    async filterReset () {
+      this.locumNameIncludes = await ''
 
-      this.filterSearch()
+      await this.filterSearch()
     },
 
     filterSearch () {
@@ -282,7 +282,7 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         page: undefined,
       }
 
@@ -377,7 +377,7 @@ export default {
 
     downloadPDF () {
       let params = {
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         practice_id:  this.$auth.user.practice_detail.practice.id,
         order_by: this.orderBy,
       }
