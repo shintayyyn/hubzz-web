@@ -355,13 +355,14 @@ export default {
       })
     },
 
-    downloadPDF () {
-      let params = {
-        practice_id:  this.$auth.user.practice_detail.practice.id,
+    async downloadPDF () {
+      this.downloading = true
+      let params = await {
+        practice_id: this.$auth.user.practice_detail.practice.id,
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
+      await this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
         filename: `practiceUnsuccessfulReport.pdf`,
       }, {
         params: {

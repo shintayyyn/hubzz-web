@@ -388,9 +388,9 @@ export default {
         this.loading = false
       })
     },
-    downloadPDF () {
+    async downloadPDF () {
       this.downloading = true
-      const params = {
+      const params = await {
         practice_id: this.$auth.user.practice_id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         expired_at: this.expiredAt ? this.expiredAt : null,
@@ -398,7 +398,7 @@ export default {
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
+      await this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
         filename: `practiceExpiringLocumCompliance.pdf`,
       }, {
         params: {
@@ -415,8 +415,6 @@ export default {
         this.downloading = false
       })
     },
-
   },
-
 }
 </script>
