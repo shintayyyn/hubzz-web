@@ -42,15 +42,18 @@
 
       <div v-if="false">
         <div>
-          <label class="">Limit: </label>
+          <label>Limit: </label>
+
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
-          <label class="">Page: </label>
+          <label>Page: </label>
+
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -68,20 +71,20 @@
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       />
+
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
           <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
-            <div class="whitespace-no-wrap">
-              Order By: {{ orderByProcessed }}
-            </div>
           </div>
         </div>
+
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -89,9 +92,8 @@
           @page="setPage" 
         />
       </div>
-      <div
-        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
-      >
+
+      <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
             :disabled="downloading || locumInvoices.length === 0"
@@ -100,6 +102,7 @@
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+
             <span>Download PDF</span>
           </button>
         </div>
@@ -155,6 +158,8 @@ export default {
       activePage: 1,
 
       practiceNameIncludes: '',
+
+      downloading: false,
     }
   },
 
@@ -202,7 +207,7 @@ export default {
           title: 'Gross',
           key: 'gross_amount',
           sort_key: 'gross_amount',
-          column: (item) => item.gross_amount.toFixed(2),
+          column: (item) => item.gross_amount ? item.gross_amount.toFixed(2) : null,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -211,7 +216,7 @@ export default {
           title: 'Tax',
           key: 'paye_amount',
           sort_key: 'paye_amount',
-          column: (item) => item.paye_amount.toFixed(2),
+          column: (item) => item.paye_amount ? item.paye_amount.toFixed(2) : null,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -220,7 +225,7 @@ export default {
           title: 'NI',
           key: 'ni_amount',
           sort_key: 'ni_amount',
-          column: (item) => item.ni_amount.toFixed(2),
+          column: (item) => item.ni_amount ? item.ni_amount.toFixed(2) : null,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -229,7 +234,7 @@ export default {
           title: 'Nett',
           key: 'total_amount',
           sort_key: 'total_amount',
-          column: (item) => item.total_amount.toFixed(2),
+          column: (item) => item.total_amount ? item.total_amount.toFixed(2) : null,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -393,6 +398,7 @@ export default {
         order_by: this.orderBy,
       }
 
+      this.downloading = true
       this.$axios.post('/api/v1/locum-reports/locum-tax-reporting-report/generate-key', {
         filename: `locumTaxReportingReport.pdf`,
       }, {

@@ -235,8 +235,10 @@ export default {
       ],
       dateStart: '',
       dateEnd: '',
+      descriptionIncludes: '',
       minTotal: '',
       maxTotal: '',
+      downloading: false,
     }
   },
 
