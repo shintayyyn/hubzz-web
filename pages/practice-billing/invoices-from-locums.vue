@@ -516,6 +516,9 @@ export default {
       case "pension-form-b":
         str = "You do not have any nhs form b."
         break
+      case "solo-form":
+        str = "You do not have any solo forms."
+        break
       default:
         str = "You do not have any completed job parts."
       }

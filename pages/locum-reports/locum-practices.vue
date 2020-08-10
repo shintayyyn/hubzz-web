@@ -53,7 +53,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -67,16 +67,15 @@
       <div
         class="flex-wrap justify-start items-center w-full p-3 flex my-2"
       >
-        <div class="md:px-1 flex flex-wrap w-full justify-end">
-          <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            @click="downloadPDF"
-          >
-            <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
-            <span>Download PDF</span>
-          </button>
-        </div>
+        <button
+          :disabled="downloading || locumPractices.length === 0"
+          class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+          :class="locumPractices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+          @click="downloadPDF"
+        >
+          <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+          <span>Download PDF</span>
+        </button>
       </div>
     </div>
   </div>
@@ -98,6 +97,7 @@ export default {
       count: 0,
       locumPractices: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -147,15 +147,6 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
-          flexShrink: 0,
-        },
-        {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
-          justify: 'start',
-          flexGrow: 1,
           flexShrink: 0,
         },
         {
@@ -230,7 +221,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getLocumPractices()
     },
 
@@ -265,14 +265,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -288,7 +288,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getLocumPractices()
@@ -302,7 +302,7 @@ export default {
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/locum-practices/count', {
-          params
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -316,7 +316,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.locum_practices
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -342,9 +342,9 @@ export default {
       this.$axios.post('/api/v1/locum-reports/locum-practices-worked-report/generate-key', {
         filename: `locumPracticesWorked.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

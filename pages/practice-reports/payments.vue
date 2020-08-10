@@ -156,7 +156,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -174,22 +174,15 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || locumInvoiceReports.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="locumInvoiceReports.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadCsv"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
             <span>Download CSV</span>
           </button>
         </div>
-      </div>
-
-      <div v-if="false" class="text-white"> 
-        <span>Count: {{ count }}</span>
-        <br>
-        <span>Order By: {{ orderBy.join(',') }}</span>
-        <br>
-        <span>Page {{ activePage }} of {{ pages }} pages</span>
       </div>
     </div>
   </div>
@@ -219,6 +212,7 @@ export default {
       count: 0,
       locumInvoiceReports: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -283,15 +277,15 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Practice',
+        //   key: 'practice_name',
+        //   sort_key: 'practice_name',
+        //   column: (item) => item.practice_name,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Locum',
           key: 'locum_user_name',
@@ -359,6 +353,17 @@ export default {
       this.page = 1
       this.getLocumInvoiceReportPayments()
     },
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
+    },
   },
 
   mounted () {      
@@ -390,7 +395,7 @@ export default {
     this.paidDateStart = paidDateStart ? paidDateStart : ''
     this.paidDateEnd = paidDateEnd ? paidDateEnd : ''
 
-    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
 
     this.activePage = page ? Number.parseInt(page) : 1
 
@@ -434,8 +439,8 @@ export default {
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getLocumInvoiceReportPayments()
@@ -449,14 +454,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -472,7 +477,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getLocumInvoiceReportPayments()
@@ -516,7 +521,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.payments
         }),
-        new Promise((resolve) => setTimeout(resolve, 200))
+        new Promise((resolve) => setTimeout(resolve, 200)),
       ]).then((results) => {
         const [
           count,

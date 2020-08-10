@@ -1,7 +1,7 @@
 <template>
-  <section class="relative">
+  <section>
     <transition name="fade" mode="out-in">
-      <div v-if="showTable">
+      <div>
         <AppLoading :loading="loading" spinner />
         <div class="flex flex-row flex-wrap justify-start">
           <div
@@ -25,27 +25,31 @@
                     @click.prevent.stop="favorite(practice.id)"
                   />
                 </div>
-                <div
-                  class="w-full font-bold text-gray-700 text-xs leading-tight pt-1"
-                >
+
+                <div class="w-full font-bold text-gray-700 text-xs leading-tight pt-1">
                   {{ practice.surgery.address.line_1 }} {{ practice.surgery.address.line_2 }} {{ practice.surgery.address.line_3 }} {{ practice.surgery.address.post_code }}
                 </div>
               </nuxt-link>
+
               <AppLoading :loading="favoriteLoading" spinner />
             </div>
           </div>
         </div>
+
         <div v-if="practices.length > 0 && totalPages > 1" class="mt-5 flex justify-center">
           <AppPagination
             :total="total"
             :totalPages="totalPages"
+            :perPage="perPage"
             :currentPage="current_page"
             @pagechanged="pagechanged"
           />
         </div>
-        <div v-if="!practices.length" class="flex flex-row flex-wrap justify-center">
+
+        <div v-if="!practices.length && !loading" class="flex flex-row flex-wrap justify-center">
           <div>You do not have any Associated Job for any Practices</div>
         </div>
+
         <transition name="fade" mode="out-in">
           <nuxt-link
             v-if="$route.name.includes('my-practice-index-platform-practiceId')"
@@ -53,6 +57,7 @@
             :to="{ path: `/my-practice/platform`, query: { ...$route.query}}"
           />
         </transition>
+
         <div>
           <nuxt-child />
         </div>
@@ -60,14 +65,17 @@
     </transition>
   </section>
 </template>
+
 <script>
 import AppLoading from "@/components/Base/AppLoading"
 import AppPagination from "@/components/Base/AppPagination"
+
 export default {
   components: {
     AppLoading,
     AppPagination,
   },
+
   // middleware({ query, redirect, error, route }) {
   //   if (!query.status && route.name === "my-practice-index") {
   //     // api (Favorite only)
@@ -85,16 +93,17 @@ export default {
   //     });
   //   }
   // },
+
   data () {
     return {
-      loading: false,
+      loading: true,
       favoriteLoading: false,
       current_page: 1,
-      showTable: false,
       practices: [],
       total: 0,
     }
   },
+
   computed: {
     offset () {
       return this.perPage * (this.current_page - 1)
@@ -106,111 +115,78 @@ export default {
       return Math.ceil(this.total / this.perPage)
     },
   },
+
   watch: {
     "$route.query" ({ status: newStatus, }, { status: oldStatus, }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.current_page = 1
-        this.showTable = false
-        setTimeout(async () => {
-          this.$nuxt.$loading.start()
-          await this.getPracticesPromiseAll()
-          this.$nuxt.$loading.finish()
-          this.showTable = true
-        }, 200)
+        this.practices = []
+        this.loading = true
+        this.getPracticesPromiseAll().finally(() => {
+          this.loading = false
+        })
       }
     },
   },
   
-  async asyncData ({ app, query, error, }) {
-    if (
-      query.status
-      && !["favorite", "completed", "applied", "unsuccessful",].includes(
-        query.status.toLowerCase()
-      )
-    ) {
-      return error({
-        status: 404,
-      })
-    }
-
-    try {
-      const [total, practices,] = await Promise.all([
-        app.$axios
-          .$get(
-            `/api/v1/locum/practices/count?locum_practice_type=${
-              query.status ? query.status : "Favorite"
-            }`
-          )
-          .then(res => {
-            const total = res.data && res.data.count ? res.data.count : 0
-            return total
-          }),
-        app.$axios
-          .$get(
-            `/api/v1/locum/practices?locum_practice_type=${
-              query.status ? query.status : "Favorite"
-            }&offset=0&limit=5`
-          )
-          .then(res => {
-            const practices
-              = res.data && res.data.practices ? res.data.practices : []
-            return practices
-          }),
-      ])
-
-      const showTable = true
-
-      return {
-        total,
-        practices,
-        showTable,
-      }
-    } catch (err) {
-      throw err
-    }
+  mounted () {
+    this.loading = true
+    this.getPracticesPromiseAll().finally(() => {
+      this.loading = false
+    })
   },
 
   methods: {
     getPracticesPromiseAll () {
-      let queryStatus
-        = this.$route.query && this.$route.query.status
-          ? this.$route.query.status
-          : "Favorite"
+      const queryStatus = this.$route.query && this.$route.query.status
+        ? this.$route.query.status
+        : "Favorite"
+
       return Promise.all([
-        this.$axios.$get(
-          `/api/v1/locum/practices/count?locum_practice_type=${queryStatus}`
-        ),
-        this.$axios.$get(
-          `/api/v1/locum/practices?locum_practice_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`
-        ),
-      ]).then(([responseCount, responsePractices,]) => {
-        this.total = responseCount.data.count
-        this.practices = responsePractices.data.practices
+        this.$axios.get('/api/v1/locum/practices/count', {
+          params: {
+            locum_practice_type: queryStatus,
+          },
+        }).then(response => this.total = response.data.data.count),
+
+        this.getPractices(),
+      ]).catch((err) => {
+        console.log("err", err.response || err)
+
+        if (err.response.data.message) {
+          return this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${err.response.data.message}`,],
+          })
+        }
       })
     },
+
     getPractices () {
-      let queryStatus
-        = this.$route.query && this.$route.query.status
-          ? this.$route.query.status
-          : "Favorite"
-      return this.$axios
-        .$get(
-          `/api/v1/locum/practices?locum_practice_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`
-        )
-        .then(res => {
-          return (this.practices = res.data.practices)
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          if (err.response.data.message) {
-            return this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${err.response.data.message}`,],
-            })
-          }
-        })
+      const queryStatus = this.$route.query && this.$route.query.status
+        ? this.$route.query.status
+        : "Favorite"
+
+      return this.$axios.get('/api/v1/locum/practices', {
+        params: {
+          locum_practice_type: queryStatus,
+          limit: this.perPage,
+          offset: this.offset,
+        },
+      }).then(response => this.practices = response.data.data.practices).catch((err) => {
+        console.log("err", err.response || err)
+
+        if (err.response.data.message) {
+          return this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${err.response.data.message}`,],
+          })
+        }
+      })
     },
+
     favorite (id) {
       let queryStatus = this.$route.query.status
       let practice = this.practices.find(practice => practice.id === id)
@@ -272,8 +248,9 @@ export default {
           })
       }
     },
-    async pagechanged (e) {
-      this.current_page = e
+
+    async pagechanged (page) {
+      this.current_page = page
       this.loading = true
       await this.getPractices()
       this.loading = false

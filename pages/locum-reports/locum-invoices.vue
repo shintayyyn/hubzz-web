@@ -78,7 +78,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -94,8 +94,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || locumInvoices.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="locumInvoices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -126,6 +127,7 @@ export default {
       count: 0,
       locumInvoices: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -176,15 +178,6 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
-          flexShrink: 0,
-        },
-        {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
-          justify: 'start',
-          flexGrow: 1,
           flexShrink: 0,
         },
         {
@@ -250,7 +243,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getLocumInvoices()
     },
 
@@ -274,7 +276,7 @@ export default {
     // this.orderBy = orderBy
     // this.activePage = page ? Number.parseInt(page) : 1
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
 
     this.activePage = page ? Number.parseInt(page) : 1
 
@@ -298,8 +300,8 @@ export default {
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getLocumInvoices()
@@ -313,14 +315,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -336,7 +338,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getLocumInvoices()
@@ -352,7 +354,7 @@ export default {
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/locum-invoices/count', {
-          params
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -366,7 +368,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.locum_invoices
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -391,16 +393,16 @@ export default {
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/locum-reports/locum-pension-contributions-report/generate-key', {
-        filename: `locumPensionContributionsReport.pdf`,
+      this.$axios.post('/api/v1/locum-reports/locum-tax-reporting-report/generate-key', {
+        filename: `locumTaxReportingReport.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-pension-contributions-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-tax-reporting-report/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)

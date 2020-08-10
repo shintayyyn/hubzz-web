@@ -78,7 +78,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -94,8 +94,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || locumPensionContributions.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="locumPensionContributions.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -135,6 +136,7 @@ export default {
       count: 0,
       locumPensionContributions: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -189,15 +191,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Practice',
           key: 'practice_name',
           sort_key: 'practice_name',
@@ -234,10 +227,10 @@ export default {
           flexShrink: 0,
         },
         {
-          title: '£ NI Amount',
-          key: 'ni_amount',
-          sort_key: 'ni_amount',
-          column: (item) => item.ni_amount.toFixed(2),
+          title: '£ NHSPS Pension Contribution Amount',
+          key: 'nhsps_pension_contributions',
+          sort_key: 'nhsps_pension_contributions',
+          column: (item) => `£ ${item.nhsps_pension_contributions}`,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -260,7 +253,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getLocumPensionContributions()
     },
 
@@ -281,10 +283,8 @@ export default {
       page,
     } = this.$route.query
 
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy]
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
 
     this.activePage = page ? Number.parseInt(page) : 1
 
@@ -308,8 +308,8 @@ export default {
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getLocumPensionContributions()
@@ -323,14 +323,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -346,7 +346,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getLocumPensionContributions()
@@ -361,7 +361,7 @@ export default {
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/locum-pension-contributions/count',{
-          params
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -375,7 +375,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.locum_pension_contributions
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -401,9 +401,9 @@ export default {
       this.$axios.post('/api/v1/locum-reports/locum-pension-contributions-report/generate-key', {
         filename: `locumPensionContributionsReport.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

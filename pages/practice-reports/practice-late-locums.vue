@@ -96,7 +96,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -112,8 +112,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading"
-            class="bg-sunglow hover:bg-sunglow-dark px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :disabled="downloading || practiceLateLocums.length === 0"
+            class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
+            :class="practiceLateLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -145,6 +146,7 @@ export default {
       count: 0,
       practiceLateLocums: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -224,10 +226,18 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getPracticeLateLocums()
     },
-
     limit () {
       this.page = 1
       this.getPracticeLateLocums()
@@ -239,14 +249,6 @@ export default {
   },
 
   mounted () {      
-    // const {
-    //   order_by: orderBy = [],
-    //   page,
-    // } = this.$route.query
-
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
-
     const {
       locum_name_includes: locumNameIncludes,
       profession_name_includes: professionNameIncludes,
@@ -276,8 +278,8 @@ export default {
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getPracticeLateLocums()
@@ -291,14 +293,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -314,7 +316,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getPracticeLateLocums()
@@ -325,12 +327,12 @@ export default {
       this.practiceLateLocums = []
       let params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {
-          params
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -344,7 +346,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.practice_late_locums
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -361,20 +363,20 @@ export default {
       })
     },
 
-    downloadPDF () {
-      let params = {
+    async downloadPDF () {
+      let params = await {
         practice_id: this.$auth.user.practice_detail.practice.id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
+      await this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
         filename: `practiceLateLocumsReport.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

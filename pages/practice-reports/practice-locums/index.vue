@@ -71,7 +71,25 @@
         :orderBy="orderBy"
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
-      />
+      >
+        <template v-slot:rates_of_pay_slot="slotProps">
+          <div class="items-center justify-center">
+            <div v-if="slotProps.item.job_parts.length > 0">
+              <div 
+                v-for="(jobPart, index) in slotProps.item.job_parts"
+                :key="`jobParts-${index}`"
+              >
+                <div>
+                  £ {{ jobPart.rate }} {{ jobPart.locum_detail_rate_type_name }}
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              N/A
+            </div>
+          </div>
+        </template>
+      </ReportTable>
 
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
@@ -83,7 +101,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -103,7 +121,7 @@
           <button
             :disabled="downloading || practiceLocums.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceLocums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
+            :class="practiceLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadCsv"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -137,6 +155,7 @@ export default {
       professionNameIncludes:'',
       practiceLocums: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -189,15 +208,6 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
@@ -228,7 +238,9 @@ export default {
           title: 'Rates of Pay',
           key: 'user_postcode',
           sort_key: 'user_postcode',
-          column: (item) => item.job_parts.length > 0 ? item.job_parts.map(item => `£ ${item.rate} ${item.locum_detail_rate_type_name}`) : "N/A",
+          slot: true,
+          slotName: "rates_of_pay_slot",
+          // column: (item) => item.job_parts.length > 0 ? item.job_parts.map(item => `£ ${item.rate} ${item.locum_detail_rate_type_name}`) : "N/A",
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -251,7 +263,16 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getPracticeLocums()
     },
 
@@ -296,13 +317,13 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getPracticeLocums()
@@ -316,14 +337,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -339,7 +360,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getPracticeLocums()
@@ -356,7 +377,7 @@ export default {
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-locums/count',{
-          params
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -370,7 +391,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.practice_locums
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -391,7 +412,7 @@ export default {
       this.downloading = true
       const params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
-        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
         limit: 999,

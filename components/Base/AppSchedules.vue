@@ -2339,20 +2339,22 @@ export default {
     },
 
     finalHours (shift, date) {
-      let origTotalHours
-        = shift.orig_time_start && shift.orig_time_end
-          ? this.totalHours(shift.orig_time_start, shift.orig_time_end, date)
-          : this.totalHours(shift.time_start, shift.time_end, date)
-      let finalTotalHours = this.totalHours(
-        shift.final_time_start,
-        shift.final_time_end,
-        date
-      )
+      let origTotalHours = shift.orig_time_start && shift.orig_time_end
+        ? this.totalHours(shift.orig_time_start, shift.orig_time_end, date)
+        : this.totalHours(shift.time_start, shift.time_end, date)
+
+      let finalTotalHours = shift.final_time_start === shift.final_time_end
+        ? 0
+        : this.totalHours(shift.final_time_start, shift.final_time_end, date)
 
       let origHours = Math.floor(origTotalHours / 60)
+
       let origMinutes = Math.floor(origTotalHours % 60)
+
       let finalHours = Math.floor(finalTotalHours / 60)
+
       let finalMinutes = Math.floor(finalTotalHours % 60)
+
       let totalFinalHours
         = finalHours === 0 && finalMinutes === 0
           ? "0h"
@@ -2369,6 +2371,7 @@ export default {
                 : ` 0${finalMinutes}m`
               : ""
           }`
+
       let totalOrigHours
         = origHours === 0 && origMinutes === 0
           ? "0h"
@@ -2407,9 +2410,15 @@ export default {
         orig_total_hours = Math.round(this.totalHours(shift.time_start, shift.time_end, date) / 60 * 100) / 100
       }
 
-      const calculatePerSessionAmount = (rate, originalHours, finalHours) => originalHours === finalHours
-        ? rate
-        : Math.round((Math.round(rate / originalHours * 100) / 100) * finalHours * 100) / 100
+      const calculatePerSessionAmount = (rate, originalHours, finalHours) => {
+        if (originalHours === 0) {
+          return 0
+        }
+
+        return originalHours === finalHours
+          ? rate
+          : Math.round((Math.round(rate / originalHours * 100) / 100) * finalHours * 100) / 100
+      }
 
       switch (rate_type_name) {
       case "Hourly":
@@ -2488,22 +2497,29 @@ export default {
     getTotalHours (schedule, final) {
       let hour = 0
       let hours = []
+
       schedule.forEach(sched => {
         sched.shifts.forEach(shift => {
           let time_start
             = ["complete", "terminate",].includes(this.type) || final
               ? shift.final_time_start
               : shift.time_start
+
           let time_end
             = ["complete", "terminate",].includes(this.type) || final
               ? shift.final_time_end
               : shift.time_end
-          let total_hours = this.totalHours(time_start, time_end, sched.date)
+
+          let total_hours = time_start === time_end
+            ? 0
+            : this.totalHours(time_start, time_end, sched.date)
+
           if (total_hours > 0) {
             hours.push(total_hours)
           }
         })
       })
+
       for (let i = 0; i <= hours.length; i++) {
         let num = parseInt(hours[i])
         if (isNaN(num)) {
@@ -2514,12 +2530,13 @@ export default {
       return hour
     },
 
-    totalHours (start, end, date) {
-      let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
-      let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
-      return start && end
-        ? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
-        : 0
+    totalHours (timeStart, timeEnd, date) {
+      const datetimeStart = this.$moment(`${date} ${timeStart}`, 'DD/MM/YYYY HH:mm')
+      const dateTimeEnd = timeStart >= timeEnd
+        ? this.$moment(`${date} ${timeEnd}`, 'DD/MM/YYYY').add(1, 'days')
+        : this.$moment(`${date} ${timeEnd}`, 'DD/MM/YYYY HH:mm')
+
+      return this.$moment.duration(dateTimeEnd.diff(datetimeStart)).asMinutes()
     },
 
     changeShiftId (id, shifts, index, shift) {
@@ -2746,10 +2763,7 @@ export default {
     },
 
     isAbsent (shift) {
-      if (shift.orig_final_start === shift.orig_final_end) {
-        return true
-      }
-      return false
+      return shift.orig_final_start === shift.orig_final_end
     },
 
     onChangeField () {

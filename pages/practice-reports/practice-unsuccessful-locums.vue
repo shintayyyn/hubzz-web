@@ -53,7 +53,7 @@
               Page: {{ activePage }} / {{ pages }}
             </div>
             <div class="whitespace-no-wrap">
-              Order By: {{ orderBy.join(',').replace(/_/g, ' ') }}
+              Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@
           <button
             :disabled="downloading || practiceUnsuccessfulLocums.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceUnsuccessfulLocums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
+            :class="practiceUnsuccessfulLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -100,6 +100,7 @@ export default {
       count: 0,
       practiceUnsuccessfulLocums: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -242,10 +243,18 @@ export default {
   },
 
   watch: {
-    orderBy () {
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getPracticeUnsuccessfulLocums()
     },
-
     limit () {
       this.page = 1
       this.getPracticeUnsuccessfulLocums()
@@ -278,7 +287,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getPracticeUnsuccessfulLocums()
@@ -291,14 +300,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -315,7 +324,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{
           params: {
             ...params,
-          }
+          },
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -329,7 +338,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.practice_unsuccessful_locums
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
@@ -346,18 +355,19 @@ export default {
       })
     },
 
-    downloadPDF () {
-      let params = {
-        practice_id:  this.$auth.user.practice_detail.practice.id,
+    async downloadPDF () {
+      this.downloading = true
+      let params = await {
+        practice_id: this.$auth.user.practice_detail.practice.id,
         order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
+      await this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
         filename: `practiceUnsuccessfulReport.pdf`,
       }, {
-          params: {
-            ...params,
-          },
+        params: {
+          ...params,
+        },
       }).then((responses) => {
         const token = responses.data.data.token
 

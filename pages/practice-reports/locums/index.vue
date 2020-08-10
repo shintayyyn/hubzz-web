@@ -9,14 +9,14 @@
           <label class="text-md md:text-lg text-bold">Filters</label>
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
             v-model="locumNameIncudes"
             placeholder="Search locum"
             type="text"
             label="Locum"
           />
-        </div>
+        </div> -->
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
@@ -89,7 +89,7 @@
             Page: {{ activePage }} / {{ pages }}
           </div>
           <div class="whitespace-no-wrap">
-            Order By: {{ orderBy.join(',') }}
+            Order By: {{ orderByProcessed }}
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@
         <button
           :disabled="downloading || locums.length === 0"
           class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-          :class="locums.length === 0 ? 'bg-gray-500' : 'bg-sunglow hover:bg-sunglow-dark'"
+          :class="locums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
           @click="downloadCsv"
         >
           <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -139,6 +139,7 @@ export default {
       count: 0,
       locums: [],
       orderBy: [],
+      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -192,15 +193,6 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Locum',
-        //   key: 'locum_user_name',
-        //   sort_key: 'locum_user_name',
-        //   column: (item) => item.locum_user_name,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Profession',
           key: 'profession_name',
@@ -281,8 +273,17 @@ export default {
     },
   },
 
-  watch: {
-    orderBy () {
+  watch: { 
+    orderBy (value) {
+      let replaced = ''
+      if(value.length > 0) {
+        replaced = value[0].replace(/_/g, ' ')
+        replaced = replaced.replace(/:/g, ' - ')
+        replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        replaced = replaced.replace('Desc', 'Descending')
+        replaced = replaced.replace('Asc', 'Ascending')
+      } 
+      this.orderByProcessed = replaced
       this.getLocums()
     },
 
@@ -335,8 +336,8 @@ export default {
         page: undefined,
       }
 
-      if (this.$router.resolve({ query }).href !== this.$route.fullPath) {
-        this.$router.replace({ query })
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
       }
       
       this.getLocums()
@@ -350,14 +351,14 @@ export default {
           query: {
             ...this.$route.query,
             page: undefined,
-          }
+          },
         })
       } else {
         this.$router.replace({
           query: {
             ...this.$route.query,
             page: this.activePage,
-          }
+          },
         })
       }
 
@@ -373,7 +374,7 @@ export default {
           ...this.$route.query,
           order_by: this.orderBy,
           page: undefined,
-        }
+        },
       })
 
       this.getLocums()
@@ -410,7 +411,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.locums
         }),
-        new Promise((resolve) => setTimeout(resolve, 500))
+        new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         console.log('results', results)
         const [
