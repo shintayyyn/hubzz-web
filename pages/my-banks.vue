@@ -3,57 +3,85 @@
     <div class="relative flex flex-col md:flex-row justify-between items-end md:items-center">
       <div class="flex w-full md:w-4/5 overflow-x-auto">
         <nuxt-link
-          to="/my-banks?status=Favorite"
+          to="/my-banks"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'my-banks' && !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorite') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            !$route.query.practice_locum_type || $route.query.practice_locum_type.toLowerCase() === 'favorite'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500' 
+              : 'text-gray-600'
+          "
         >
           Favorites
         </nuxt-link>
 
         <nuxt-link
-          to="/my-banks?status=Completed"
+          to="/my-banks?practice_locum_type=Completed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'completed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            $route.query.practice_locum_type && $route.query.practice_locum_type.toLowerCase() === 'completed'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Completed
         </nuxt-link>
 
         <nuxt-link
-          to="/my-banks?status=Applied"
+          to="/my-banks?practice_locum_type=Applied"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            $route.query.practice_locum_type && $route.query.practice_locum_type.toLowerCase() === 'applied'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Applied
         </nuxt-link>
 
         <nuxt-link
-          to="/my-banks?status=Appointed"
+          to="/my-banks?practice_locum_type=Appointed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'appointed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            $route.query.practice_locum_type && $route.query.practice_locum_type.toLowerCase() === 'appointed'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Appointed
         </nuxt-link>
 
         <nuxt-link
-          to="/my-banks?status=Rejected"
+          to="/my-banks?practice_locum_type=Rejected"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'rejected' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            $route.query.practice_locum_type && $route.query.practice_locum_type.toLowerCase() === 'rejected'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Rejected
         </nuxt-link>
 
         <nuxt-link
-          to="/my-banks?status=Withdrawn"
+          to="/my-banks?practice_locum_type=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            $route.query.practice_locum_type && $route.query.practice_locum_type.toLowerCase() === 'withdrawn'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Withdrawn
         </nuxt-link>
 
         <nuxt-link
-          to="/my-banks?status=Lates"
+          to="/my-banks?practice_locum_type=Lates"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'lates' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            $route.query.practice_locum_type && $route.query.practice_locum_type.toLowerCase() === 'lates'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Lates
         </nuxt-link>
@@ -86,6 +114,6 @@
 
 <script>
 export default {
-  middleware: "isVerified",
+  middleware: 'isVerified',
 }
 </script>

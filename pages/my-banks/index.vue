@@ -1,22 +1,76 @@
 <template>
   <section class="relative">
+    <div
+      v-if="
+        [
+          'completed',
+          'applied',
+          'appointed',
+          'rejected',
+          'withdrawn',
+          'lates',
+        ].includes(practiceLocumType.toLowerCase())
+          && loggedInPracticeType === 'Hub'
+      "
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+    >
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: undefined }}"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="
+            !surgeriesBank
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Banks
+        </nuxt-link>
+      </div>
+
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: 'true' }}"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="
+            surgeriesBank
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
+        >
+          Surgeries Banks
+        </nuxt-link>
+      </div>
+    </div>
+
     <div class="flex flex-row justify-start overflow-x-auto py-3 mb-3">
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="{ path: '/my-banks', query: { ...$route.query, type: 'gp' }}"
+          :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: undefined }}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="!$route.query.type || ($route.query.type && $route.query.type.toLowerCase() === 'gp') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            professionCategoryName.toLowerCase() === 'gp'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           GP
         </nuxt-link>
       </div>
+
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="{ path: '/my-banks', query: { ...$route.query, type: 'others' }}"
+          :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: 'Others' }}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.type && $route.query.type.toLowerCase() === 'others' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="
+            professionCategoryName.toLowerCase() === 'others'
+              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              : 'text-gray-600'
+          "
         >
           Others
         </nuxt-link>
@@ -26,6 +80,7 @@
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
         <AppLoading :loading="loading" spinner />
+
         <div class="flex flex-row flex-wrap justify-start">
           <div v-for="locum in locums" :key="locum.id" class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
             <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
@@ -44,6 +99,7 @@
                         @click.prevent.stop="favorite(locum.id)"
                       />
                     </template>
+
                     <template v-else>
                       <svgicon
                         name="off-star"
@@ -54,6 +110,7 @@
                       />
                     </template>
                   </div>
+
                   <button
                     class="ml-2 p-2 focus:outline-none hover:bg-gray-300 rounded-lg"
                     @click.prevent.stop="message(locum)"
@@ -61,6 +118,7 @@
                     <svgicon name="chat" height="24" width="24" color="#6b778b #4a5568 #fff" />
                   </button>
                 </div>
+
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
                   <div class="w-full flex justify-center">
                     <AppAvatar
@@ -68,18 +126,16 @@
                     />
                   </div>
 
-                  <div
-                    class="w-full font-bold text-sm sm:text-lg leading-tight mt-4"
-                  >
-                    {{ locum.personal_detail.name }}
+                  <div class="w-full font-bold text-sm sm:text-lg leading-tight mt-4">
+                    {{ locum.name }}
                   </div>
+
                   <div class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight">
                     {{ locum.email }}
                   </div>
-                  <div
-                    class="w-full mb-2 font-bold text-gray-700 text-sm leading-tight"
-                  >
-                    {{ locum.locum_detail.profession.name }}
+
+                  <div class="w-full mb-2 font-bold text-gray-700 text-sm leading-tight">
+                    {{ locum.profession_name }}
                   </div>
                 </div>
               </nuxt-link>
@@ -97,6 +153,7 @@
             />
           </div>
         </transition>
+        
         <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
 
         <div v-if="locums.length > 0 && totalPages > 1" class="mt-5 flex justify-center">
@@ -108,9 +165,11 @@
             @pagechanged="pagechanged"
           />
         </div>
+
         <div v-if="!locums.length" class="flex flex-row flex-wrap justify-center">
           <div>There are no locums connected to your practice yet.</div>
         </div>
+
         <transition name="fade" mode="out-in">
           <nuxt-link
             v-if="$route.name.includes('my-banks-index-locumId') && !sendMessageModal"
@@ -118,6 +177,7 @@
             :to="{ path: `/my-banks`, query: { ...$route.query}}"
           />
         </transition>
+
         <div>
           <nuxt-child />
         </div>
@@ -131,31 +191,23 @@ import AppLoading from "@/components/Base/AppLoading"
 import AppAvatar from "@/components/Base/AppAvatar"
 import AppPagination from "@/components/Base/AppPagination"
 import SendMessageModal from "@/components/Messages/SendMessageModal"
+
 export default {
   transition: {
     name: "fade",
     mode: "out-in",
   },
+
   components: {
     AppLoading,
     AppAvatar,
     AppPagination,
     SendMessageModal,
   },
-  middleware ({ route, query, redirect, error, }) {
-    if (!query.status) {
-      // api (Favorite only)
-      redirect({
-        ...route,
-        query: {
-          status: 'Favorite',
-        },
-      })
-      return
-    }
 
+  middleware ({ query, error, }) {
     if (
-      query.status
+      query.practice_locum_type
       && ![
         "favorite",
         "completed",
@@ -165,7 +217,7 @@ export default {
         "rejected",
         "withdrawn",
         "lates",
-      ].includes(query.status.toLowerCase())
+      ].includes(query.practice_locum_type.toLowerCase())
     ) {
       return error({
         status: 404,
@@ -173,6 +225,7 @@ export default {
       })
     }
   },
+
   data () {
     return {
       locums: [],
@@ -187,33 +240,65 @@ export default {
       selectedId: null,
     }
   },
+
   computed: {
+    loggedInPracticeType () {
+      if (
+        this.$auth.loggedIn
+        && this.$auth.user
+        && this.$auth.user.domain === 'Practice'
+        && this.$auth.user.practice_detail
+        && this.$auth.user.practice_detail.practice
+      ) {
+        return this.$auth.user.practice_detail.practice.type
+      }
+
+      return 'Stand Alone'
+    },
+
+    practiceLocumType () {
+      return this.$route.query.practice_locum_type || 'Favorite'
+    },
+
+    surgeriesBank () {
+      return this.$route.query.surgeries_bank === 'true'
+    },
+
+    professionCategoryName () {
+      return this.$route.query.profession_category_name || 'GP'
+    },
+
     offset () {
       return this.perPage * (this.current_page - 1)
     },
+
     perPage () {
       return 8
     },
+
     totalPages () {
       return Math.ceil(this.total / this.perPage)
     },
+
     authPermissions () {
       return this.$store.getters["permissions"]
     },
   },
+
   watch: {
-    "$route.query" (
-      { status: newStatus, type: newType, },
-      { status: oldStatus, type: oldType, }
-    ) {
-      console.log(newType, oldType)
-      if (
-        (newStatus && newStatus !== null && newStatus !== oldStatus)
-        || (newType && newType !== null && newType !== oldType)
-      ) {
-        this.toggleTable = false
-        this.getLocumsCount()
-      }
+    practiceLocumType () {
+      this.toggleTable = false
+      this.getLocumsCount()
+    },
+
+    surgeriesBank () {
+      this.toggleTable = false
+      this.getLocumsCount()
+    },
+
+    professionCategoryName () {
+      this.toggleTable = false
+      this.getLocumsCount()
     },
   },
   
@@ -229,99 +314,86 @@ export default {
     },
     
     getLocumsCount () {
-      let queryStatus = this.$route.query.status
-      let queryType = this.$route.query.type
       this.loading = true
-      this.$axios
-        .$get(`/api/v1/practice/locums/count`, {
-          params: {
-            practice_locum_type: queryStatus,
-            profession_category_id: !queryType || queryType === "gp" ? 1 : 2,
-          },
-        })
-        .then(res => {
-          this.total = res.data.count
-          this.getLocums(this.current_page)
-        })
-        .catch(err => {
-          console.log("err", err)
-        })
+      this.$axios.get(`/api/v1/practice/locums/count`, {
+        params: {
+          practice_locum_type: this.practiceLocumType,
+          practice_locum_type_surgeries : this.surgeriesBank,
+          profession_category_name: this.professionCategoryName,
+        },
+      }).then((response) => {
+        this.total = response.data.data.count
+        this.getLocums(this.current_page)
+      }).catch(err => {
+        console.log('err', err.response || err)
+      })
     },
     
     getLocums (page) {
-      let queryStatus = this.$route.query.status
-      let queryType = this.$route.query.type
       this.current_page = page
-      this.$axios
-        .$get(`/api/v1/practice/locums`, {
-          params: {
-            practice_locum_type: queryStatus,
-            profession_category_id: !queryType || queryType === "gp" ? 1 : 2,
-            offset: this.offset,
-            limit: this.perPage,
-            detailed: true,
-          },
-        })
-        .then(res => {
-          this.locums = res.data.users
-        })
-        .catch(err => {
-          console.log("err", err)
-        })
-        .finally(() => {
-          this.toggleTable = true
-          this.loading = false
-        })
+
+      this.$axios.get(`/api/v1/practice/locums`, {
+        params: {
+          practice_locum_type: this.practiceLocumType,
+          practice_locum_type_surgeries : this.surgeriesBank,
+          profession_category_name: this.professionCategoryName,
+          limit: this.perPage,
+          offset: this.offset,
+        },
+      }).then((response) => {
+        this.locums = response.data.data.users
+      }).catch(err => {
+        console.log('err', err.response || err)
+      }).finally(() => {
+        this.toggleTable = true
+        this.loading = false
+      })
     },
     
     favorite (id) {
-      let queryStatus = this.$route.query.status
       let locum = this.locums.find(locum => locum.id === id)
       if (!locum.is_favorite) {
-        this.$axios
-          .$post(`/api/v1/practice/locums/${id}/favorite`)
-          .then(() => {
-            this.$store.commit("SET_NOTIFICATION", {
+        this.$axios.post(`/api/v1/practice/locums/${id}/favorite`).then(() => {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'success',
+            text: ['Added to favourites',],
+          })
+
+          locum.is_favorite = true
+        }).catch(err => {
+          if (err.response.data) {
+            this.$store.commit('SET_NOTIFICATION', {
               enabled: true,
-              status: "success",
-              text: ["Added to favourites",],
+              status: 'danger',
+              text: [`${err.response.message}`,],
             })
-            locum.is_favorite = !locum.is_favorite
-          })
-          .catch(err => {
-            if (err.response.data) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.message}`,],
-              })
-            }
-          })
+          }
+        })
       } else {
-        this.$axios
-          .$delete(`/api/v1/practice/locums/${id}/favorite`)
-          .then(() => {
-            this.$store.commit("SET_NOTIFICATION", {
+        this.$axios.delete(`/api/v1/practice/locums/${id}/favorite`).then(() => {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'success',
+            text: ['Remove to favourites',],
+          })
+
+          locum.is_favorite = false
+        }).catch(err => {
+          if (err.response.data) {
+            this.$store.commit('SET_NOTIFICATION', {
               enabled: true,
-              status: "success",
-              text: ["Remove to favourites",],
+              status: 'danger',
+              text: [`${err.response.message}`,],
             })
-            locum.is_favorite = !locum.is_favorite
-          })
-          .catch(err => {
-            if (err.response.data) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.message}`,],
-              })
-            }
-          })
-        if (queryStatus.toLowerCase() === "favorite") {
-          this.locums.splice(
-            this.locums.findIndex(locum => locum.id === id),
-            1
-          )
+          }
+        })
+
+        if (this.practiceLocumType.toLowerCase() === 'favorite') {
+          const index = this.locums.findIndex(locum => locum.id === id)
+          if (index > -1) {
+            this.locums.splice(index, 1)
+          }
         }
       }
     },
@@ -334,7 +406,7 @@ export default {
 }
 </script>
 
-  <style>
+<style>
   .chat-svg:hover {
     color: #535c6d #3c4453 #fff;
   }
