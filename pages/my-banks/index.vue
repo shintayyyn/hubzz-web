@@ -1,5 +1,5 @@
 <template>
-  <section class="relative">
+  <section>
     <div
       v-if="
         [
@@ -77,10 +77,10 @@
       </div>
     </div>
 
+    <AppLoading :loading="loading" spinner />
+
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
-        <AppLoading :loading="loading" spinner />
-
         <div class="flex flex-row flex-wrap justify-start">
           <div v-for="locum in locums" :key="locum.id" class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
             <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
