@@ -42,15 +42,18 @@
 
       <div v-if="false">
         <div>
-          <label class="">Limit: </label>
+          <label>Limit: </label>
+
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
-          <label class="">Page: </label>
+          <label>Page: </label>
+
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -62,26 +65,30 @@
       <ReportTable
         :limit="limit"
         :items="pensionContributions"
-        :getItemKey="(item) => item.locum_invoice_id"
+        :getItemKey="item => item.locum_invoice_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       />
+
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
           <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
+
             <div class="whitespace-no-wrap">
               Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
+
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -89,9 +96,8 @@
           @page="setPage" 
         />
       </div>
-      <div
-        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
-      >
+
+      <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
             :disabled="downloading || pensionContributions.length === 0"
@@ -194,7 +200,7 @@ export default {
           title: 'Practice',
           key: 'practice_name',
           sort_key: 'practice_name',
-          column: (item) => item.practice_name,
+          column: item => item.practice_name,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -203,7 +209,7 @@ export default {
           title: 'Job Number',
           key: 'job_part_number',
           sort_key: 'job_part_number',
-          column: (item) => item.job_part_number,
+          column: item => item.job_part_number,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -212,34 +218,34 @@ export default {
           title: 'Invoice Number',
           key: 'invoice_number',
           sort_key: 'invoice_number',
-          column: (item) => item.invoice_number,
+          column: item => item.invoice_number,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: 'Date Paid',
-          key: 'paid_at',
+          key: 'paid_at_formatted',
           sort_key: 'paid_at',
-          column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          column: item => item.paid_at_formatted,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: '£ NHSPS Pension Contribution Amount',
-          key: 'nhsps_pension_contributions',
+          key: 'nhsps_pension_contributions_formatted',
           sort_key: 'nhsps_pension_contributions',
-          column: (item) => `£ ${item.nhsps_pension_contributions}`,
-          justify: 'start',
-          flexGrow: 1,
+          column: item => item.nhsps_pension_contributions_formatted,
+          justify: 'end',
+          flexGrow: 0,
           flexShrink: 0,
         },
         {
           title: 'Status',
           key: 'status',
           sort_key: 'status',
-          column: (item) => item.status,
+          column: item => item.status,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -255,7 +261,7 @@ export default {
   watch: {
     orderBy (value) {
       let replaced = ''
-      if(value.length > 0) {
+      if (value.length > 0) {
         replaced = value[0].replace(/_/g, ' ')
         replaced = replaced.replace(/:/g, ' - ')
         replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
@@ -356,12 +362,13 @@ export default {
       this.loading = true
       this.pensionContributions = []
       let params = {
-        locum_user_id: this.$auth.user.id,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
       }
       Promise.all([
         this.$axios.get('/api/v1/locum/pension-contributions/count',{
-          params,
+          params: {
+            ...params,
+          },
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -397,7 +404,7 @@ export default {
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         order_by: this.orderBy,
       }
-
+      this.downloading = true
       this.$axios.post('/api/v1/locum/pension-contributions/generate-key', {
         filename: `pension-contributions.pdf`,
       }, {
