@@ -200,6 +200,15 @@ export default {
           flexShrink: 0,
         },
         {
+          title: 'job part id',
+          key: 'job_part_id',
+          sort_key: 'job_part_id',
+          column: (item) => item.job_part_id,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
@@ -368,6 +377,7 @@ export default {
         practice_id: this.$auth.user.practice_detail.practice.id,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        limit: 999,
         order_by: this.orderBy,
       }
 

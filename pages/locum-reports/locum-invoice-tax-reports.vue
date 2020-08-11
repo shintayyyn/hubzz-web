@@ -42,15 +42,18 @@
 
       <div v-if="false">
         <div>
-          <label class="">Limit: </label>
+          <label>Limit: </label>
+
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
-          <label class="">Page: </label>
+          <label>Page: </label>
+
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -61,27 +64,27 @@
 
       <ReportTable
         :limit="limit"
-        :items="locumInvoices"
+        :items="locumInvoiceTaxReports"
         :getItemKey="(item) => item.locum_invoice_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       />
+
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
           <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
-            <div class="whitespace-no-wrap">
-              Order By: {{ orderByProcessed }}
-            </div>
           </div>
         </div>
+
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -89,17 +92,17 @@
           @page="setPage" 
         />
       </div>
-      <div
-        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
-      >
+
+      <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || locumInvoices.length === 0"
+            :disabled="downloading || locumInvoiceTaxReports.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="locumInvoices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="locumInvoiceTaxReports.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
+
             <span>Download PDF</span>
           </button>
         </div>
@@ -125,7 +128,7 @@ export default {
     return {
       loading: false,
       count: 0,
-      locumInvoices: [],
+      locumInvoiceTaxReports: [],
       orderBy: [],
       orderByProcessed: '',
       orderBys: [
@@ -155,13 +158,15 @@ export default {
       activePage: 1,
 
       practiceNameIncludes: '',
+
+      downloading: false,
     }
   },
 
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumInvoices.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumInvoiceTaxReports.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
@@ -200,37 +205,37 @@ export default {
         },
         {
           title: 'Gross',
-          key: 'gross_amount',
-          sort_key: 'gross_amount',
-          column: (item) => item.gross_amount.toFixed(2),
-          justify: 'start',
+          key: 'total_amount_formatted',
+          sort_key: 'total_amount',
+          column: (item) => item.total_amount_formatted,
+          justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: 'Tax',
-          key: 'paye_amount',
+          key: 'paye_amount_formatted',
           sort_key: 'paye_amount',
-          column: (item) => item.paye_amount.toFixed(2),
-          justify: 'start',
+          column: (item) => item.paye_amount_formatted,
+          justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: 'NI',
-          key: 'ni_amount',
+          key: 'ni_amount_formatted',
           sort_key: 'ni_amount',
-          column: (item) => item.ni_amount.toFixed(2),
-          justify: 'start',
+          column: (item) => item.ni_amount_formatted,
+          justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: 'Nett',
-          key: 'total_amount',
-          sort_key: 'total_amount',
-          column: (item) => item.total_amount.toFixed(2),
-          justify: 'start',
+          key: 'nett_amount_formatted',
+          sort_key: 'nett_amount',
+          column: (item) => item.nett_amount_formatted,
+          justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -346,19 +351,17 @@ export default {
 
     getLocumInvoices () {
       this.loading = true
-      this.locumInvoices = []
+      this.locumInvoiceTaxReports = []
       let params = {
-        locum_user_id: this.$auth.user.id,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        inside_of_scope_ir35: true,
       }
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/locum-invoices/count', {
+        this.$axios.get('/api/v1/locum/locum-invoice-tax-reports/count', {
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/locum-invoices', {
+        this.$axios.get('/api/v1/locum/locum-invoice-tax-reports', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -366,17 +369,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.locum_invoices
+          return responses.data.data.locum_invoice_tax_reports
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          locumInvoices,
+          locumInvoiceTaxReports,
         ] = results
 
         this.count = count
-        this.locumInvoices = locumInvoices
+        this.locumInvoiceTaxReports = locumInvoiceTaxReports
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err)
@@ -387,14 +390,12 @@ export default {
 
     downloadPDF () {
       let params = {
-        locum_user_id: this.$auth.user.id,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        inside_of_scope_ir35: true,
         order_by: this.orderBy,
       }
-
-      this.$axios.post('/api/v1/locum-reports/locum-tax-reporting-report/generate-key', {
-        filename: `locumTaxReportingReport.pdf`,
+      this.downloading = true
+      this.$axios.post('/api/v1/locum/locum-invoice-tax-reports/generate-key', {
+        filename: `tax-reports.pdf`,
       }, {
         params: {
           ...params,
@@ -402,7 +403,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-tax-reporting-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/locum-invoice-tax-reports/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)

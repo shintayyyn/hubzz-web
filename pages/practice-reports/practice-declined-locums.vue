@@ -380,6 +380,7 @@ export default {
       let params = await {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         practice_id:  this.$auth.user.practice_detail.practice.id,
+        limit: 999,
         order_by: this.orderBy,
       }
 

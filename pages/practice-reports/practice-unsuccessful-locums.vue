@@ -360,6 +360,7 @@ export default {
       let params = await {
         practice_id: this.$auth.user.practice_detail.practice.id,
         order_by: this.orderBy,
+        limit: 999,
       }
 
       await this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {

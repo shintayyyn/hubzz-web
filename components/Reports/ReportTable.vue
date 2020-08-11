@@ -36,7 +36,7 @@
           <span v-else class="whitespace-no-wrap p-2">&nbsp;{{ columnDetail.column(item, index) }}</span>
         </div>
         <div v-if="loading && items.length === 0">
-          <div v-for="(item, index) in limit"  :key="`limit_${index}`" class="flex bg-white-smoke">
+          <div v-for="(item, index) in limit" :key="`limit_${index}`" class="flex bg-white-smoke">
             <span class="whitespace-no-wrap p-2">&nbsp;</span>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default {
     getColumnOrderByDirection () {
       return column => {
         const index = this.orderBy.findIndex((orderBy) => {
-          const [_col] = orderBy.split(":")
+          const [_col,] = orderBy.split(":")
           const col = _col ? _col.toLowerCase() : null
           return col === column
         })
@@ -103,6 +103,9 @@ export default {
         return {
           flexGrow: columnDetail.flexGrow,
           flexShrink: columnDetail.flexShrink,
+          flexBasis: columnDetail.flexBasis,
+          minWidth: columnDetail.minWidth,
+          maxWidth: columnDetail.maxWidth,
         }
       }
     },
@@ -110,10 +113,10 @@ export default {
 
   methods: {
     setOrderBy (column) {
-      let orderBy = [...this.orderBy]
+      let orderBy = [...this.orderBy,]
 
       const index = orderBy.findIndex((orderBy) => {
-        const [_col] = orderBy.split(":")
+        const [_col,] = orderBy.split(":")
         const col = _col ? _col.toLowerCase() : null
         return col === column
       })
@@ -125,11 +128,11 @@ export default {
 
         if (direction === "asc") {
           // orderBy.push(`${column}:desc`)
-          orderBy = [`${column}:desc`]
+          orderBy = [`${column}:desc`,]
         }
       } else {
         // orderBy.push(column)
-        orderBy = [column]
+        orderBy = [column,]
       }
 
       this.$emit('setOrderBy', orderBy)

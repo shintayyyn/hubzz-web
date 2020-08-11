@@ -395,6 +395,7 @@ export default {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         expired_at: this.expiredAt ? this.expiredAt : null,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,
+        limit: 999,
         order_by: this.orderBy,
       }
 
