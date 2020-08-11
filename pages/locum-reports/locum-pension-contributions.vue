@@ -65,7 +65,7 @@
       <ReportTable
         :limit="limit"
         :items="pensionContributions"
-        :getItemKey="(item) => item.locum_invoice_id"
+        :getItemKey="item => item.locum_invoice_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -200,7 +200,7 @@ export default {
           title: 'Practice',
           key: 'practice_name',
           sort_key: 'practice_name',
-          column: (item) => item.practice_name,
+          column: item => item.practice_name,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -209,7 +209,7 @@ export default {
           title: 'Job Number',
           key: 'job_part_number',
           sort_key: 'job_part_number',
-          column: (item) => item.job_part_number,
+          column: item => item.job_part_number,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -218,34 +218,34 @@ export default {
           title: 'Invoice Number',
           key: 'invoice_number',
           sort_key: 'invoice_number',
-          column: (item) => item.invoice_number,
+          column: item => item.invoice_number,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: 'Date Paid',
-          key: 'paid_at',
+          key: 'paid_at_formatted',
           sort_key: 'paid_at',
-          column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          column: item => item.paid_at_formatted,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
           title: '£ NHSPS Pension Contribution Amount',
-          key: 'nhsps_pension_contributions',
+          key: 'nhsps_pension_contributions_formatted',
           sort_key: 'nhsps_pension_contributions',
-          column: (item) => `£ ${item.nhsps_pension_contributions}`,
-          justify: 'start',
-          flexGrow: 1,
+          column: item => item.nhsps_pension_contributions_formatted,
+          justify: 'end',
+          flexGrow: 0,
           flexShrink: 0,
         },
         {
           title: 'Status',
           key: 'status',
           sort_key: 'status',
-          column: (item) => item.status,
+          column: item => item.status,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
