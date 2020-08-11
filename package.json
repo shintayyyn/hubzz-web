@@ -98,12 +98,26 @@
       "func-names": "off",
       "global-require": "off",
       "import/no-dynamic-require": "off",
-
-      "semi": ["warn", "never"],
-      "comma-dangle": ["warn", "always"],
-      "indent": ["warn", 2],
-      "operator-linebreak": ["warn", "before"],
-      "eol-last": ["warn", "always"]
+      "semi": [
+        "warn",
+        "never"
+      ],
+      "comma-dangle": [
+        "warn",
+        "always"
+      ],
+      "indent": [
+        "warn",
+        2
+      ],
+      "operator-linebreak": [
+        "warn",
+        "before"
+      ],
+      "eol-last": [
+        "warn",
+        "always"
+      ]
     }
   },
   "husky": {
