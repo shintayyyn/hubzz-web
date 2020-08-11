@@ -42,15 +42,18 @@
 
       <div v-if="false">
         <div>
-          <label class="">Limit: </label>
+          <label>Limit: </label>
+
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
-          <label class="">Page: </label>
+          <label>Page: </label>
+
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -68,20 +71,24 @@
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       />
+
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
           <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
+
             <div class="whitespace-no-wrap">
               Order By: {{ orderByProcessed }}
             </div>
           </div>
         </div>
+
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -89,9 +96,8 @@
           @page="setPage" 
         />
       </div>
-      <div
-        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
-      >
+
+      <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
             :disabled="downloading || pensionContributions.length === 0"
@@ -255,7 +261,7 @@ export default {
   watch: {
     orderBy (value) {
       let replaced = ''
-      if(value.length > 0) {
+      if (value.length > 0) {
         replaced = value[0].replace(/_/g, ' ')
         replaced = replaced.replace(/:/g, ' - ')
         replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
@@ -356,12 +362,13 @@ export default {
       this.loading = true
       this.pensionContributions = []
       let params = {
-        locum_user_id: this.$auth.user.id,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
       }
       Promise.all([
         this.$axios.get('/api/v1/locum/pension-contributions/count',{
-          params,
+          params: {
+            ...params,
+          },
         }).then((responses) => {
           return responses.data.data.count
         }),
@@ -397,7 +404,7 @@ export default {
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         order_by: this.orderBy,
       }
-
+      this.downloading = true
       this.$axios.post('/api/v1/locum/pension-contributions/generate-key', {
         filename: `pension-contributions.pdf`,
       }, {

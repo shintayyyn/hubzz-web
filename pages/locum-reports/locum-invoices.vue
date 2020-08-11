@@ -64,7 +64,7 @@
 
       <ReportTable
         :limit="limit"
-        :items="locumInvoices"
+        :items="locumInvoiceTaxReports"
         :getItemKey="(item) => item.locum_invoice_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
@@ -96,9 +96,9 @@
       <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || locumInvoices.length === 0"
+            :disabled="downloading || locumInvoiceTaxReports.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="locumInvoices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="locumInvoiceTaxReports.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -128,7 +128,7 @@ export default {
     return {
       loading: false,
       count: 0,
-      locumInvoices: [],
+      locumInvoiceTaxReports: [],
       orderBy: [],
       orderByProcessed: '',
       orderBys: [
@@ -166,7 +166,7 @@ export default {
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumInvoices.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumInvoiceTaxReports.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
@@ -351,19 +351,17 @@ export default {
 
     getLocumInvoices () {
       this.loading = true
-      this.locumInvoices = []
+      this.locumInvoiceTaxReports = []
       let params = {
-        locum_user_id: this.$auth.user.id,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        inside_of_scope_ir35: true,
       }
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/locum-invoices/count', {
+        this.$axios.get('/api/v1/locum/locum-invoice-tax-reports/count', {
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/locum-invoices', {
+        this.$axios.get('/api/v1/locum/locum-invoice-tax-reports', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -371,17 +369,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.locum_invoices
+          return responses.data.data.locum_invoice_tax_reports
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          locumInvoices,
+          locumInvoiceTaxReports,
         ] = results
 
         this.count = count
-        this.locumInvoices = locumInvoices
+        this.locumInvoiceTaxReports = locumInvoiceTaxReports
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err)
@@ -392,15 +390,12 @@ export default {
 
     downloadPDF () {
       let params = {
-        locum_user_id: this.$auth.user.id,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        inside_of_scope_ir35: true,
         order_by: this.orderBy,
       }
-
       this.downloading = true
-      this.$axios.post('/api/v1/locum-reports/locum-tax-reporting-report/generate-key', {
-        filename: `locumTaxReportingReport.pdf`,
+      this.$axios.post('/api/v1/locum/locum-invoice-tax-reports/generate-key', {
+        filename: `tax-reports.pdf`,
       }, {
         params: {
           ...params,
@@ -408,7 +403,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/locum-reports/locum-tax-reporting-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/locum-invoice-tax-reports/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
