@@ -1067,8 +1067,8 @@ export default {
     },
 
     practice_rate () {
-      const profession = this.professions
-        .find(item => item.value.toString() === this.form.role.toString())
+      const profession = this.professions_categories
+        .find(profession => profession.id.toString() === this.form.role.toString())
 
       const practiceRates = this.$auth.user
         && this.$auth.user.practice_detail
@@ -1077,7 +1077,7 @@ export default {
         : []
         
       const practiceRate = practiceRates
-        .find(item => item.type === profession.label)
+        .find(item => item.type === profession.profession_category_name)
 
       return practiceRate ? practiceRate.rate : 0
     },
