@@ -72,7 +72,7 @@
         :loading="loading"
         @setOrderBy="(value) => orderBy = value"
       >
-        <template v-slot:rates_of_pay_slot="slotProps">
+        <!-- <template v-slot:rates_of_pay_slot="slotProps">
           <div class="items-center justify-center">
             <div v-if="slotProps.item.job_parts.length > 0">
               <div 
@@ -88,7 +88,7 @@
               N/A
             </div>
           </div>
-        </template>
+        </template> -->
       </ReportTable>
 
       <div class="w-full flex flex-wrap justfify-between items-center">
@@ -238,8 +238,7 @@ export default {
           title: 'Rates of Pay',
           key: 'user_postcode',
           sort_key: 'user_postcode',
-          slot: true,
-          slotName: "rates_of_pay_slot",
+          column: (item) => `£ ${item.rate.toFixed(2)} ${item.locum_detail_rate_type_name}`,
           // column: (item) => item.job_parts.length > 0 ? item.job_parts.map(item => `£ ${item.rate} ${item.locum_detail_rate_type_name}`) : "N/A",
           justify: 'start',
           flexGrow: 1,
