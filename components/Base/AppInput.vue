@@ -444,7 +444,7 @@ export default {
     },
 
     error: {
-      type: String,
+      type: Object,
       default: () => null,
     },
 
