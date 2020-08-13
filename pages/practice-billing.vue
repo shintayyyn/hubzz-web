@@ -17,7 +17,7 @@
 
       <nuxt-link
         v-if="authPermissions.includes('View Billings')"
-        :to="{ name: 'practice-billing-invoices-from-hubzz' }"
+        :to="{ name: 'practice-billing-invoices-from-hubzz'}"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-hubzz') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >

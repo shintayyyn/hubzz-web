@@ -6,7 +6,7 @@
           to="/my-banks"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
-            !$route.query.practice_locum_type || $route.query.practice_locum_type.toLowerCase() === 'favorite'
+            !$route.name.includes('reports') && (!$route.query.practice_locum_type || $route.query.practice_locum_type.toLowerCase() === 'favorite')
               ? 'border rounded-lg border-yellow-500 bg-yellow-500' 
               : 'text-gray-600'
           "

@@ -48,9 +48,15 @@
       >
         NHS Pension Form A
       </nuxt-link>
+      <!-- <nuxt-link
+        :to="{ path: '/practice-billing/invoices-from-locums/locum-billing-reports'}"
+        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums-locum-billing-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >
+        Reports
+      </nuxt-link> -->
     </div>
-
-    <transition name="fade" mode="out-in">
+    <transition name="fade" mode="out-in" >
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
@@ -548,6 +554,8 @@ export default {
 
   watch: {
     async "$route.query" (newValue, oldValue) {
+      console.log('oldvaue', oldValue)
+      console.log('newvalue', newValue)
       let newStatus = newValue.status
       let oldStatus = oldValue.status
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {

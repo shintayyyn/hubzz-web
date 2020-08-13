@@ -1,18 +1,18 @@
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+      <div class="flex justify-between text-sm ">
+        <nuxt-link :to="{ name: 'my-banks-reports'}" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Hubzz Invoices
+        Compliance - Expiring
       </div>
   
       <div class="text-sm md:text-lg ">
-        Rep-010
+        Rep-008
       </div>
 
       <!-- FILTER -->
@@ -24,20 +24,19 @@
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate
-            v-model="dateStart"
-            placeholder="Date From"
+          <AppInput
+            v-model="locumNameIncludes"
+            placeholder="Search locum"
             type="text"
-            label="Date From"
+            label="Locum"
           />
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
-            v-model="dateEnd"
-            placeholder="Date To"
-            type="text"
-            label="Date To"
+            v-model="expiredAt"
+            label="Expiry Date"
+            format="YYYY-MM-DD"
           />
         </div>
 
@@ -79,8 +78,8 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceInvoices"
-        :getItemKey="(item) => item.invoice_number"
+        :items="locumComplianceDocuments"
+        :getItemKey="(item) => item.locum_compliance_document_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -100,7 +99,8 @@
             </div>
           </div>
         </div>
-        <ReportPagination
+  
+        <ReportPagination 
           :count="count" 
           :pages="pages" 
           :page="activePage"
@@ -112,13 +112,13 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceInvoices.length === 0"
+            :disabled="downloading || locumComplianceDocuments.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceInvoices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
-            @click="downloadCsv"
+            :class="locumComplianceDocuments.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
-            <span>Download CSV</span>
+            <span>Download PDF</span>
           </button>
         </div>
       </div>
@@ -130,12 +130,14 @@
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppButton from '@/components/Base/AppButton'
+import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppButton,
+    AppInput,
     AppDate,
   },
 
@@ -144,7 +146,7 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      practiceInvoices: [],
+      locumComplianceDocuments: [],
       orderBy: [],
       orderByProcessed: '',
       orderBys: [
@@ -172,19 +174,19 @@ export default {
         25,
       ],
       activePage: 1,
-      dateStart: '',
-      dateEnd: '',
+      locumNameIncludes:'',
+      expiredAt: '',
+      professionNameIncludes:'',
     }
   },
 
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceInvoices.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumComplianceDocuments.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
-    
     offset () {
       return this.activePage * this.limit - this.limit
     },
@@ -201,56 +203,29 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Date Start',
-          key: 'date_start',
-          sort_key: 'date_start',
-          column: (item) => this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY'),
-          justify: 'center',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Date End',
-          key: 'date_end',
-          sort_key: 'date_end',
-          column: (item) => this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY'),
-          justify: 'center',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Invoice Number',
-          key: 'invoice_number',
-          sort_key: 'invoice_number',
-          column: (item) => item.invoice_number,
+          title: 'Locum',
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
-          title: '£ Amount',
-          key: 'total_amount',
-          sort_key: 'total_amount',
-          column: (item) => item.total_amount ? item.total_amount.toFixed(2) : null,
-          justify: 'end',
+          title: 'Compliance',
+          key: 'compliance_document_name',
+          sort_key: 'compliance_document_name',
+          column: (item) => item.compliance_document_name,
+          justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
-          title: 'Hours',
-          key: 'hours',
-          sort_key: 'hours',
-          column: (item) => item.hours_with_minutes,
-          justify: 'end',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Discount',
-          key: 'total_credit',
-          sort_key: 'total_credit',
-          column: (item) => item.total_credit ? item.total_credit.toFixed(2) : null,
-          justify: 'end',
+          title: 'Expiry Date',
+          key: 'expired_at',
+          sort_key: 'expired_at',
+          column: (item) => item.expired_at ? this.$moment(item.expired_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
+          justify: 'center',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -273,39 +248,46 @@ export default {
         replaced = replaced.replace('Asc', 'Ascending')
       } 
       this.orderByProcessed = replaced
-      this.getPracticeInvoices()
+      this.getLocumComplianceDocuments()
     },
 
     limit () {
       this.page = 1
-      this.getPracticeInvoices()
+      this.getLocumComplianceDocuments()
     },
 
     activePage () {
-      this.getPracticeInvoices()
+      this.getLocumComplianceDocuments()
     },
   },
 
-  mounted () {
+  mounted () {      
+    // const {
+    //   order_by: orderBy = [],
+    //   page,
+    // } = this.$route.query
+
+    // this.orderBy = orderBy
+    // this.activePage = page ? Number.parseInt(page) : 1
+
     const {
-      order_by: orderBy = [],
-      page,
-      date_start: dateStart,
-      date_end: dateEnd,
+      locum_name_includes: locumNameIncludes,
+      profession_name_includes: professionNameIncludes,
+      expired_at: expiredAt,
     } = this.$route.query
 
-    this.orderBy = orderBy
-    this.activePage = page ? Number.parseInt(page) : 1
-    this.dateStart = dateStart ? dateStart : ''
-    this.dateEnd = dateEnd ? dateEnd : ''
+    this.expiredAt = expiredAt ? expiredAt : ''
+    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
 
-    this.getPracticeInvoices()
+    this.getLocumComplianceDocuments()
   },
 
   methods: {
     filterReset () {
-      this.dateStart = ''
-      this.dateEnd = ''
+      this.locumNameIncludes = ''
+      this.professionNameIncludes = ''
+      this.expiredAt = ''
 
       this.filterSearch()
     },
@@ -315,8 +297,9 @@ export default {
 
       const query = {
         ...this.$route.query,
-        date_start: this.dateStart ? this.dateStart : undefined,
-        dateEnd: this.dateEnd ? this.dateEnd : undefined,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
+        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
 
@@ -324,7 +307,7 @@ export default {
         this.$router.replace({ query, })
       }
       
-      this.getPracticeInvoices()
+      this.getLocumComplianceDocuments()
     },
 
     setPage (page) {
@@ -346,7 +329,7 @@ export default {
         })
       }
 
-      this.getPracticeInvoices()
+      this.getLocumComplianceDocuments()
     },
 
     setOrderBy (orderBy) {
@@ -361,24 +344,25 @@ export default {
         },
       })
 
-      this.getPracticeInvoices()
+      this.getLocumComplianceDocuments()
     },
 
-    getPracticeInvoices () {
+    getLocumComplianceDocuments () {
       this.loading = true
-      this.practiceInvoices = []
-      let params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
-        date_start: this.dateStart ? this.dateStart : undefined,
-        date_end: this.dateEnd ? this.dateEnd : undefined,
+      this.locumComplianceDocuments = []
+      const params = {
+        practice_id: this.$auth.user.practice_id,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-invoices/count', {
+        this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents/count', {
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-invoices', {
+        this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -386,17 +370,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_invoices
+          return responses.data.data.locum_expiring_compliance_documents
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceInvoices,
+          locumComplianceDocuments,
         ] = results
 
         this.count = count
-        this.practiceInvoices = practiceInvoices
+        this.locumComplianceDocuments = locumComplianceDocuments
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -404,29 +388,27 @@ export default {
         this.loading = false
       })
     },
-
-    downloadCsv () {
+    async downloadPDF () {
       this.downloading = true
-      const params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
-        date_start: this.dateStart ? this.dateStart : undefined,
-        date_end: this.dateEnd ? this.dateEnd : undefined,
-        order_by: this.orderBy,
+      const params = await {
+        practice_id: this.$auth.user.practice_id,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        expired_at: this.expiredAt ? this.expiredAt : null,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,
         limit: 999,
-        offset: 0,
+        order_by: this.orderBy,
       }
 
-      this.$axios.post('/api/v1/admin/reports/practice-invoices/generate-key', {
-        filename: `practiceInvoices.csv`,
+      await this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
+        filename: `practiceExpiringLocumCompliance.pdf`,
       }, {
         params: {
           ...params,
-          practice_id: this.$auth.user.practice_detail.practice.id,
         },
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-invoices/csv?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-expiring-locum-compliance-report/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
