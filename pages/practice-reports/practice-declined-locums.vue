@@ -154,6 +154,8 @@ export default {
         25,
       ],
       activePage: 1,
+
+      practiceIds: [],
     }
   },
 
@@ -176,6 +178,15 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Practice Name',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
           flexShrink: 0,
         },
         {
@@ -253,6 +264,29 @@ export default {
     activePage () {
       this.getPracticeDeclinedLocums()
     },
+  },
+
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    await this.getPracticeDeclinedLocums()
   },
 
   mounted () {      
@@ -343,7 +377,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/practice-declined-locums/count', {
           params: {
             ...params,
-            practice_id: this.$auth.user.practice_detail.practice.id,
+            practice_id: this.practiceIds,
           },
         }).then((responses) => {
           return responses.data.data.count
@@ -351,7 +385,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/practice-declined-locums', {
           params: {
             ...params,
-            practice_id: this.$auth.user.practice_detail.practice.id,
+            practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -379,7 +413,7 @@ export default {
     async downloadPDF () {
       let params = await {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        practice_id:  this.$auth.user.practice_detail.practice.id,
+        practice_id:  this.practiceIds,
         limit: 999,
         order_by: this.orderBy,
       }

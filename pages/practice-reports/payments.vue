@@ -251,6 +251,8 @@ export default {
       calendarDateEnd: '',
       paidDateStart: '',
       paidDateEnd: '',
+
+      practiceIds: [],
     }
   },
 
@@ -277,15 +279,15 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Practice',
-        //   key: 'practice_name',
-        //   sort_key: 'practice_name',
-        //   column: (item) => item.practice_name,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
+        {
+          title: 'Practice',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
         {
           title: 'Locum',
           key: 'locum_user_name',
@@ -366,6 +368,29 @@ export default {
     },
   },
 
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_bill_locum === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    await this.getLocumInvoiceReportPayments()
+  },
+
   mounted () {      
     const {
       invoice_number_includes: invoiceNumberIncludes,
@@ -398,8 +423,6 @@ export default {
     this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
 
     this.activePage = page ? Number.parseInt(page) : 1
-
-    this.getLocumInvoiceReportPayments()
   },
 
   methods: {
@@ -505,7 +528,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/payments/count', {
           params: {
             ...params,
-            practice_id: this.$auth.user.practice_detail.practice.id,
+            practice_id: this.practiceIds,
           },
         }).then((responses) => {
           return responses.data.data.count
@@ -513,7 +536,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/payments', {
           params: {
             ...params,
-            practice_id: this.$auth.user.practice_detail.practice.id,
+            practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -562,7 +585,7 @@ export default {
       }, {
         params: {
           ...params,
-          practice_id: this.$auth.user.practice_detail.practice.id,
+          practice_id: this.practiceIds,
         },
       }).then((responses) => {
         const token = responses.data.data.token
