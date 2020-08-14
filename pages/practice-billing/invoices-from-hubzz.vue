@@ -18,7 +18,7 @@
       </nuxt-link>
       <transition name="fade" mode="out-in">
         <div
-          v-if="['practice-billing-invoices-from-hubzz-index-id'].includes($route.name)"
+          v-if="['practice-billing-invoices-from-hubzz-id'].includes($route.name)"
           class="shield"
         />
       </transition>
@@ -29,7 +29,9 @@
 
 <script>
 export default {
-
+  created () {
+    console.log('route name', this.$route.name)
+  }
 }
 </script>
 
