@@ -6,7 +6,7 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </div>-->
         <nuxt-link 
-          :to="{ name: 'practice-billing-invoices-from-hubzz' }"
+          :to="{ name: 'practice-billing-invoices-from-hubzz-index' }"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>

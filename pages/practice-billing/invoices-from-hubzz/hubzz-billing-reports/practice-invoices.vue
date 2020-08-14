@@ -2,18 +2,61 @@
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
       <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+        <nuxt-link to="/practice-billing/invoices-from-hubzz/hubzz-billing-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Locums Not Successful
+        Hubzz Invoices
       </div>
   
       <div class="text-sm md:text-lg ">
-        Rep-006
+        Rep-010
       </div>
+
+      <!-- FILTER -->
+      <div
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+      >
+        <div class="md:px-1 w-full">
+          <label class="text-md md:text-lg text-bold">Filters</label>
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="dateStart"
+            placeholder="Date From"
+            type="text"
+            label="Date From"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="dateEnd"
+            placeholder="Date To"
+            type="text"
+            label="Date To"
+          />
+        </div>
+
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <AppButton
+            label="Reset"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterReset"
+          />
+
+          <AppButton
+            class="mx-2"
+            label="Submit"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterSearch"
+          />
+        </div>
+      </div>
+      <!-- FILTER ENDS HERE -->
 
       <div v-if="false">
         <div>
@@ -36,8 +79,8 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceUnsuccessfulLocums"
-        :getItemKey="(item) => `${item.practice_id}_${item.locum_user_id}`"
+        :items="practiceInvoices"
+        :getItemKey="(item) => item.invoice_number"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -60,23 +103,22 @@
         <ReportPagination
           :count="count" 
           :pages="pages" 
-          :page="activePage" 
-          @page="setPage"
+          :page="activePage"
+          @page="setPage" 
         />
       </div>
-
       <div
         class="flex-wrap justify-start items-center w-full p-3 flex my-2"
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceUnsuccessfulLocums.length === 0"
+            :disabled="downloading || practiceInvoices.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceUnsuccessfulLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
-            @click="downloadPDF"
+            :class="practiceInvoices.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            @click="downloadCsv"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
-            <span>Download PDF</span>
+            <span>Download CSV</span>
           </button>
         </div>
       </div>
@@ -87,10 +129,14 @@
 <script>
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
+import AppButton from '@/components/Base/AppButton'
+import AppDate from '@/components/Base/AppDate'
 export default {
   components: {
     ReportTable,
     ReportPagination,
+    AppButton,
+    AppDate,
   },
 
   data () {
@@ -98,7 +144,7 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      practiceUnsuccessfulLocums: [],
+      practiceInvoices: [],
       orderBy: [],
       orderByProcessed: '',
       orderBys: [
@@ -125,19 +171,20 @@ export default {
         20,
         25,
       ],
-      
       activePage: 1,
+      dateStart: '',
+      dateEnd: '',
     }
   },
 
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceUnsuccessfulLocums.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceInvoices.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
-
+    
     offset () {
       return this.activePage * this.limit - this.limit
     },
@@ -154,83 +201,56 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
+          title: 'Date Start',
+          key: 'date_start',
+          sort_key: 'date_start',
+          column: (item) => this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          justify: 'center',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Date End',
+          key: 'date_end',
+          sort_key: 'date_end',
+          column: (item) => this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          justify: 'center',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Invoice Number',
+          key: 'invoice_number',
+          sort_key: 'invoice_number',
+          column: (item) => item.invoice_number,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
-          title: 'Compliance',
-          key: 'compliance_status',
-          sort_key: 'compliance_status',
-          column: (item) => item.compliance_status,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Min Rate per Hour',
-          key: 'min_rate_per_hour',
-          sort_key: 'min_rate_per_hour',
-          column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
+          title: '£ Amount',
+          key: 'total_amount',
+          sort_key: 'total_amount',
+          column: (item) => item.total_amount ? item.total_amount.toFixed(2) : null,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Hour',
-        //   key: 'max_rate_per_hour',
-        //   sort_key: 'max_rate_per_hour',
-        //   column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
-          title: 'Min Rate per Half Day Session',
-          key: 'min_rate_per_half_day_session',
-          sort_key: 'min_rate_per_half_day_session',
-          column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
+          title: 'Hours',
+          key: 'hours',
+          sort_key: 'hours',
+          column: (item) => item.hours_with_minutes,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Half Day Session',
-        //   key: 'max_rate_per_half_day_session',
-        //   sort_key: 'max_rate_per_half_day_session',
-        //   column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
-          title: 'Min Rate per Whole Day Session',
-          key: 'min_rate_per_whole_day_session',
-          sort_key: 'min_rate_per_whole_day_session',
-          column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
+          title: 'Discount',
+          key: 'total_credit',
+          sort_key: 'total_credit',
+          column: (item) => item.total_credit ? item.total_credit.toFixed(2) : null,
           justify: 'end',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        // {
-        //   title: 'Max Rate per Whole Day Session',
-        //   key: 'max_rate_per_whole_day_session',
-        //   sort_key: 'max_rate_per_whole_day_session',
-        //   column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
-        {
-          title: 'Area',
-          key: 'user_postcode',
-          sort_key: 'user_postcode',
-          column: (item) => item.user_postcode,
-          justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -253,45 +273,60 @@ export default {
         replaced = replaced.replace('Asc', 'Ascending')
       } 
       this.orderByProcessed = replaced
-      this.getPracticeUnsuccessfulLocums()
+      this.getPracticeInvoices()
     },
+
     limit () {
       this.page = 1
-      this.getPracticeUnsuccessfulLocums()
+      this.getPracticeInvoices()
     },
 
     activePage () {
-      this.getPracticeUnsuccessfulLocums()
+      this.getPracticeInvoices()
     },
   },
 
-  mounted () {      
+  mounted () {
     const {
       order_by: orderBy = [],
       page,
+      date_start: dateStart,
+      date_end: dateEnd,
     } = this.$route.query
 
     this.orderBy = orderBy
     this.activePage = page ? Number.parseInt(page) : 1
+    this.dateStart = dateStart ? dateStart : ''
+    this.dateEnd = dateEnd ? dateEnd : ''
 
-    this.getPracticeUnsuccessfulLocums()
+    this.getPracticeInvoices()
   },
 
   methods: {
-    setOrderBy (orderBy) {
-      this.orderBy = orderBy
+    filterReset () {
+      this.dateStart = ''
+      this.dateEnd = ''
+
+      this.filterSearch()
+    },
+
+    filterSearch () {
       this.activePage = 1
 
-      this.$router.replace({
-        query: {
-          ...this.$route.query,
-          order_by: this.orderBy,
-          page: undefined,
-        },
-      })
+      const query = {
+        ...this.$route.query,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        dateEnd: this.dateEnd ? this.dateEnd : undefined,
+        page: undefined,
+      }
 
-      this.getPracticeUnsuccessfulLocums()
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
+      }
+      
+      this.getPracticeInvoices()
     },
+
     setPage (page) {
       this.activePage = page
 
@@ -311,24 +346,39 @@ export default {
         })
       }
 
-      this.getPracticeUnsuccessfulLocums()
+      this.getPracticeInvoices()
     },
 
-    getPracticeUnsuccessfulLocums () {
+    setOrderBy (orderBy) {
+      this.orderBy = orderBy
+      this.activePage = 1
+
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          order_by: this.orderBy,
+          page: undefined,
+        },
+      })
+
+      this.getPracticeInvoices()
+    },
+
+    getPracticeInvoices () {
       this.loading = true
-      this.practiceUnsuccessfulLocums = []
+      this.practiceInvoices = []
       let params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        date_end: this.dateEnd ? this.dateEnd : undefined,
       }
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{
-          params: {
-            ...params,
-          },
+        this.$axios.get('/api/v1/admin/reports/practice-invoices/count', {
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums', {
+        this.$axios.get('/api/v1/admin/reports/practice-invoices', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -336,17 +386,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_unsuccessful_locums
+          return responses.data.data.practice_invoices
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceUnsuccessfulLocums,
+          practiceInvoices,
         ] = results
 
         this.count = count
-        this.practiceUnsuccessfulLocums = practiceUnsuccessfulLocums
+        this.practiceInvoices = practiceInvoices
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -355,24 +405,28 @@ export default {
       })
     },
 
-    async downloadPDF () {
+    downloadCsv () {
       this.downloading = true
-      let params = await {
+      const params = {
         practice_id: this.$auth.user.practice_detail.practice.id,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,
         limit: 999,
+        offset: 0,
       }
 
-      await this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
-        filename: `practiceUnsuccessfulReport.pdf`,
+      this.$axios.post('/api/v1/admin/reports/practice-invoices/generate-key', {
+        filename: `practiceInvoices.csv`,
       }, {
         params: {
           ...params,
+          practice_id: this.$auth.user.practice_detail.practice.id,
         },
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-unsuccessful-locums-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-invoices/csv?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -381,6 +435,5 @@ export default {
       })
     },
   },
-
 }
 </script>

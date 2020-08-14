@@ -303,7 +303,9 @@ export default {
   },
   
   created () {
-    this.getLocumsCount()
+    if(!this.$route.name.includes('reports')){
+      this.getLocumsCount()
+    }
   },
   
   methods: {
