@@ -125,10 +125,10 @@
         <!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
         <!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ jobClosingTag(permanent_job.hired_through) }} -->
       </div>
-      <div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
+      <div v-if="permanent_job_application && permanent_job_application.invitation_schedule_formatted">
         <span class="font-bold">Congratulations!</span>
-        <!-- You have been invited for interview. Please attend on {{ $moment(permanent_job_application.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT -->
-        You have been invited for interview. Please attend on {{ $moment(permanent_job_application.invitation_schedule).format('DD/MM/YYYY, h:mm:ss a') }} GMT
+        <!-- You have been invited for interview. Please attend on {{ $moment(permanent_job_application.invitation_schedule_formatted_formatted, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT -->
+        You have been invited for interview. Please attend on {{ permanent_job_application.invitation_schedule_formatted }} GMT
       </div>
 
       <div class="flex flex-col md:flex-row">
