@@ -79,10 +79,10 @@
       <div
         v-if="permanentJobApp && 
           permanentJobApp.application_status &&
-          permanentJobApp.invitation_schedule"
+          permanentJobApp.invitation_schedule_formatted"
       >
         You have invited this candidate
-        {{ $moment(permanent_job_application.invitation_schedule).format('DD/MM/YYYY, h:mm:ss a') }}
+        {{ permanent_job_application.invitation_schedule_formatted }}
         GMT for an Interview.
       </div>
       <div class="flex flex-row flex-wrap justify-between mt-4">
