@@ -198,9 +198,9 @@ export default {
         },
         {
           title: 'Practice',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: item => item.practice_name,
+          key: 'job_practice_name',
+          sort_key: 'job_practice_name',
+          column: item => item.job_practice_name,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
