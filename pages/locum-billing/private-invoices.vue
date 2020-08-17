@@ -100,7 +100,12 @@
                 </div>
 
                 <div
-                  v-if="$route.query.status && $route.query.status === 'issued' && slotProps.item.locum_invoice_id && slotProps.item.locum_status === 'Approved'"
+                  v-if="
+                    $route.query.status
+                      && $route.query.status === 'issued'
+                      && slotProps.item.locum_invoice_id
+                      && slotProps.item.locum_status === 'Approved'
+                  "
                   class="flex justify-between my-1"
                 >
                   <div
@@ -119,27 +124,42 @@
                 </div>
 
                 <button
-                  v-if="$route.query.status && $route.query.status === 'issued' && slotProps.item.locum_invoice_id && slotProps.item.locum_status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  v-if="
+                    $route.query.status
+                      && $route.query.status === 'issued'
+                      && slotProps.item.locum_invoice_id
+                      && slotProps.item.locum_status === 'Approved'
+                      && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
+                  "
                   class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
                 >
                   Mark as Paid
                 </button>
 
-                <template v-if="
-                  $auth.user.locum_detail.profession.profession_category.name === 'GP'
-                    && $route.query.status && $route.query.status === 'issued'
-                "
+                <template
+                  v-if="
+                    $auth.user.locum_detail.profession.profession_category.name === 'GP'
+                      && $route.query.status
+                      && $route.query.status === 'issued'
+                  "
                 >
                   <div
-                    v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                    v-if="
+                      !slotProps.item.locum_form_a_id
+                        && !slotProps.item.locum_solo_form_id
+                    "
                     class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                     @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
                   >
                     Generate Form A
                   </div>
+
                   <div
-                    v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                    v-if="
+                      !slotProps.item.locum_form_a_id
+                        && !slotProps.item.locum_solo_form_id
+                    "
                     class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
                     @click="select_invoice(slotProps.item.locum_invoice_id, 'generateSoloForm')"
                   >
@@ -148,7 +168,11 @@
                 </template>
 
                 <div
-                  v-if="$route.query.status && $route.query.status === 'solo-form' && slotProps.item.locum_solo_form_id"
+                  v-if="
+                    $route.query.status
+                      && $route.query.status === 'solo-form'
+                      && slotProps.item.locum_solo_form_id
+                  "
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
                 >
@@ -156,19 +180,51 @@
                 </div>
 
                 <div
-                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.locum_form_a_id"
+                  v-if="
+                    $route.query.status
+                      && $route.query.status === 'solo-form'
+                      && slotProps.item.locum_solo_form_id
+                      && !slotProps.item.locum_solo_form_paid
+                  "
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="locumSoloFormIdToPay = slotProps.item.locum_solo_form_id"
+                >
+                  Mark as Paid
+                </div>
+
+                <div
+                  v-if="
+                    $route.query.status
+                      && $route.query.status === 'pension-form-a'
+                      && slotProps.item.locum_form_a_id
+                  "
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                 >
                   View Form A
                 </div>
+
+                <div
+                  v-if="
+                    $route.query.status
+                      && $route.query.status === 'pension-form-a'
+                      && slotProps.item.locum_form_a_id
+                      && !slotProps.item.locum_form_a_paid
+                  "
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  @click="locumFormAIdToPay = slotProps.item.locum_form_a_id"
+                >
+                  Mark as Paid
+                </div>
               </div>
             </template>
           </AppTable>
+
           <div v-else class="flex justify-center">
             {{ noJobPartsToDisplay }}
           </div>
         </template>
+
         <template v-if="($route.query.status && $route.query.status === 'pension-form-b')">
           <AppTable
             v-if="locum_form_bs.length > 0"
@@ -231,6 +287,57 @@
       @cancel="generate_solo_form_modal = false"
     />
 
+    <div v-if="locumSoloFormIdToPay" class="p-2">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Payment made on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+          is-before
+        />
+
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton class="mx-1" :label="'Save'" :in-style="'padding:5px 10px'" @click="payLocumSoloForm" />
+          
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="locumSoloFormIdToPay = null"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div v-if="locumFormAIdToPay" class="p-2">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Payment made on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+          is-before
+        />
+
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            :in-style="'padding:5px 10px'"
+            @click="payLocumFormA"
+          />
+
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="locumFormAIdToPay = null"
+          />
+        </div>
+      </div>
+    </div>
+
     <div v-if="payment_modal" class="p-2">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
         <AppDate
@@ -291,12 +398,25 @@
 
     <transition name="fade" mode="out-in">
       <nuxt-link
-        v-if="['locum-billing-private-invoices-id', 'locum-billing-private-invoices-id-create', 'locum-billing-private-invoices-id-edit', 'locum-billing-private-invoices-form-b-create'].includes($route.name) || generate_solo_form_modal || delete_invoice_modal || payment_modal || generate_form_a_modal"
+        v-if="[
+          'locum-billing-private-invoices-id',
+          'locum-billing-private-invoices-id-create',
+          'locum-billing-private-invoices-id-edit',
+          'locum-billing-private-invoices-form-b-create'
+        ].includes($route.name)
+          || generate_solo_form_modal
+          || delete_invoice_modal
+          || payment_modal
+          || generate_form_a_modal
+          || locumSoloFormIdToPay
+          || locumFormAIdToPay
+        "
         :to="{ name: 'locum-billing-private-invoices', query: {...$route.query }}"
         :event="payment_modal || generate_form_a_modal || generate_solo_form_modal || delete_invoice_modal ? '' : 'click'"
         class="shield"
       />
     </transition>
+
     <nuxt-child
       @createInvoice="createInvoice"
       @updateInvoice="updateInvoice"
@@ -312,11 +432,13 @@ import AppButton from "@/components/Base/AppButton"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppTable from "@/components/Base/AppTable"
 import AppLoading from "@/components/Base/AppLoading"
+
 export default {
   transition: {
     name: "fade",
     mode: "out-in",
   },
+
   components: {
     AppDate,
     AppInput,
@@ -325,6 +447,7 @@ export default {
     AppLoading,
     AppTable,
   },
+
   data () {
     return {
       initialLoading: false,
@@ -354,8 +477,12 @@ export default {
       generate_solo_form_modal: false,
       payment_modal: false,
       invoice_id: null,
+
+      locumSoloFormIdToPay: null,
+      locumFormAIdToPay: null,
     }
   },
+
   computed: {
     form_bs_columns () {
       let columns = []
@@ -378,6 +505,7 @@ export default {
       )
       return columns
     },
+
     columns () {
       let columns = []
       let queryStatus = this.$route.query.status
@@ -424,9 +552,11 @@ export default {
       })
       return columns
     },
+
     authPermissions () {
       return this.$store.getters["permissions"]
     },
+
     noJobPartsToDisplay () {
       let str = ""
       switch (
@@ -454,6 +584,7 @@ export default {
       return str
     },
   },
+
   watch: {
     async "$route.query" (newValue, oldValue) {
       let newStatus = newValue.status
@@ -468,17 +599,20 @@ export default {
         this.initialLoading = false
       }
     },
+
     "form.ni" (value) {
       if ([false, "false",].includes(value)) {
         this.form.ni_amount = 0
       }
     },
+
     "form.paye" (value) {
       if ([false, "false",].includes(value)) {
         this.form.paye_amount = 0
       }
     },
   },
+
   async asyncData ({ app, query, error, }) {
     try {
       let url = `/api/v1/locum/job-parts`
@@ -611,6 +745,7 @@ export default {
       })
     }
   },
+
   mounted () {
     this.$socket.on(
       "Locum Notification Locum Invoice Created",
@@ -625,10 +760,107 @@ export default {
       this.getLocumInvoiceRealTime
     )
   },
+
   destroyed () {
     this.removeListener()
   },
+
   methods: {
+
+    payLocumSoloForm () {
+      if (!this.locumSoloFormIdToPay) {
+        return
+      }
+
+      this.$axios.put(`/api/v1/locum/locum-solo-forms/${this.locumSoloFormIdToPay}/paid`, {
+        paid_at: this.form.paid_at,
+      }).then((response) => {
+        const jobPart = this.job_parts
+          .find(jobPart => jobPart.locum_invoice_id === response.data.data.locum_solo_form.locum_invoice_id)
+
+        jobPart.locum_solo_form_paid = 1
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`${response.data.message}`,],
+        })
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formError = err.response.data.error_messages
+          } else {
+            message = err.response.data.message
+          }
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
+        }
+
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
+      }).finally(() => {
+        this.locumSoloFormIdToPay = null
+      })
+    },
+
+    payLocumFormA () {
+      if (!this.locumFormAIdToPay) {
+        return
+      }
+
+      this.$axios.put(`/api/v1/locum/locum-form-as/${this.locumFormAIdToPay}/paid`, {
+        paid_at: this.form.paid_at,
+      }).then((response) => {
+        const jobPart = this.job_parts
+          .find(jobPart => jobPart.locum_invoice_id === response.data.data.locum_form_a.locum_invoice_id)
+
+        jobPart.locum_form_a_paid = 1
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`${response.data.message}`,],
+        })
+      }).catch((err) => {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formError = err.response.data.error_messages
+          } else {
+            message = err.response.data.message
+          }
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
+        }
+
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
+      }).finally(() => {
+        this.locumFormAIdToPay = null
+      })
+    },
+
     viewAsPdf (formId, type) {
       let url
       switch (type) {
@@ -644,9 +876,11 @@ export default {
       }
       window.open(`${process.env.API_URL}${url}/${formId}/pdf`)
     },
+
     createFormB () {
       this.getJobParts()
     },
+
     getJobPartsPromiseAll () {
       let url = `/api/v1/locum/job-parts`
       let locum_status = []
@@ -759,6 +993,7 @@ export default {
           )
         })
     },
+
     getJobParts () {
       let url = `/api/v1/locum/job-parts`
       let locum_status = []
@@ -860,6 +1095,7 @@ export default {
           console.log("err", err.response || err)
         })
     },
+
     async refreshInvoices () {
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
       this.loading = true
@@ -867,12 +1103,14 @@ export default {
       this.loading = false
       this.showRefresh = false
     },
+
     getLocumInvoiceRealTime ({ id, }) {
       if (!id) {
         return
       }
       this.showRefresh = true
     },
+
     removeListener () {
       this.$socket.removeListener(
         "Locum Notification Locum Invoice Create",
@@ -887,6 +1125,7 @@ export default {
         this.getLocumInvoiceRealTime
       )
     },
+
     select_invoice (id, type) {
       this.invoice_id = id
       if (type === "deleteInvoice") {
@@ -899,6 +1138,7 @@ export default {
         this.payment_modal = true
       }
     },
+
     deleteInvoice () {
       this.$axios
         .$delete(`/api/v1/locum/locum-invoices/${this.invoice_id}`)
@@ -946,12 +1186,15 @@ export default {
           }
         })
     },
+
     createInvoice () {
       this.getJobParts()
     },
+
     updateInvoice () {
       this.getJobParts()
     },
+
     generateFormA () {
       this.$axios
         .$post(`/api/v1/locum/locum-invoices-form-a`, {
@@ -989,6 +1232,7 @@ export default {
           this.generate_form_a_modal = false
         })
     },
+
     generateSoloForm () {
       this.$axios
         .$post(`/api/v1/locum/locum-solo-form`, {
@@ -1016,6 +1260,7 @@ export default {
           this.generate_solo_form_modal = false
         })
     },
+    
     confirmPayment () {
       let notRequired = ["ni", "paye",]
       if ([false, "false",].includes(this.form.ni)) {
@@ -1083,6 +1328,7 @@ export default {
       await this.getJobParts()
       this.loading = false
     },
+
     async pagechanged (page) {
       this.current_page = page
       this.offset = this.limit * (page - 1)
@@ -1090,6 +1336,7 @@ export default {
       await this.getJobParts()
       this.loading = false
     },
+
     async limitchanged (limit) {
       this.current_page = 1
       this.offset = 0
