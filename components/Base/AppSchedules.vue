@@ -2190,8 +2190,38 @@ export default {
         : shift.time_start.split(":")[1];
       let final_start_hour = shift.final_time_start.split(":")[0];
       let final_start_minute = shift.final_time_start.split(":")[1];
-      let hourDiff = final_start_hour - orig_start_hour;
-      let minDiff = final_start_minute - orig_start_minute;
+
+      let original_in_minutes =
+        parseInt(orig_start_hour) * 60 + parseInt(orig_start_minute);
+      let final_in_minutes =
+        parseInt(final_start_hour) * 60 + parseInt(final_start_minute);
+
+      let late_in_minute =
+        final_in_minutes - original_in_minutes
+          ? final_in_minutes - original_in_minutes
+          : 0;
+
+      let hour = late_in_minute / 60 > 0 ? parseInt(late_in_minute / 60) : 0;
+      let minute = late_in_minute % 60;
+
+      let total_late_hours = "NO";
+
+      if (hour > 0 || minute > 0) {
+        total_late_hours = `${
+          hour > 0 ? (hour > 9 ? `${hour}h` : `0${hour > -1 ? hour : 0}h`) : ""
+        } ${
+          minute > 0
+            ? minute > 9
+              ? `${minute}m`
+              : `0${minute > -1 ? minute : 0}m`
+            : ""
+        }`;
+      }
+
+      return total_late_hours;
+
+      // let hourDiff = final_start_hour - orig_start_hour;
+      // let minDiff = final_start_minute - orig_start_minute;
       // if (shift.late_hours > 0 && shift.dispute) {
       // 	let late_hours =
       // 		shift.late_hours > 60
@@ -2202,27 +2232,27 @@ export default {
       // 	console.log("late_hours", late_hours);
       // }
 
-      let diff = shift.final_time_start
-        ? `${
-            hourDiff > 0
-              ? hourDiff > 9
-                ? `${hourDiff}h`
-                : `0${hourDiff > -1 ? hourDiff : 0}h`
-              : ""
-          } ${
-            minDiff > 0
-              ? minDiff > 9
-                ? `${minDiff}m`
-                : `0${minDiff > -1 ? minDiff : 0}m`
-              : ""
-          }`
-        : "NO";
+      // let diff = shift.final_time_start
+      //   ? `${
+      //       hourDiff > 0
+      //         ? hourDiff > 9
+      //           ? `${hourDiff}h`
+      //           : `0${hourDiff > -1 ? hourDiff : 0}h`
+      //         : ""
+      //     } ${
+      //       minDiff > 0
+      //         ? minDiff > 9
+      //           ? `${minDiff}m`
+      //           : `0${minDiff > -1 ? minDiff : 0}m`
+      //         : ""
+      //     }`
+      //   : "NO";
 
-      if (hourDiff <= 0 && minDiff <= 0) {
-        diff = "NO";
-      }
+      // if (hourDiff <= 0 && minDiff <= 0) {
+      //   diff = "NO";
+      // }
 
-      return diff;
+      // return diff;
     },
 
     getTotalLates(schedule) {
