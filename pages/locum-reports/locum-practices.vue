@@ -64,8 +64,9 @@
           @page="setPage" 
         />
       </div>
+
       <div
-        class="flex-wrap justify-start items-center w-full p-3 flex my-2"
+        class="flex-wrap justify-end items-center w-full p-3 flex my-2"
       >
         <button
           :disabled="downloading || locumPractices.length === 0"
@@ -181,7 +182,7 @@ export default {
           key: 'date_start',
           sort_key: 'date_start',
           column: (item) => item.date_start ? this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
-          justify: 'center',
+          justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -190,7 +191,7 @@ export default {
           key: 'date_end',
           sort_key: 'date_end',
           column: (item) => item.date_end ? this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
-          justify: 'center',
+          justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -199,7 +200,7 @@ export default {
           key: 'rate',
           sort_key: 'rate',
           column: (item) => item.rate.toFixed(2),
-          justify: 'end',
+          justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },

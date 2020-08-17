@@ -1,18 +1,18 @@
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+      <div class="flex justify-between text-sm ">
+        <nuxt-link :to="{ name: 'my-banks-reports'}" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Locums that Arrive Late
+        Compliance - Expiring
       </div>
   
       <div class="text-sm md:text-lg ">
-        Rep-009
+        Rep-008
       </div>
 
       <!-- FILTER -->
@@ -32,14 +32,13 @@
           />
         </div>
 
-        <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="professionNameIncludes"
-            placeholder="Search profession"
-            type="text"
-            label="Profession"
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="expiredAt"
+            label="Expiry Date"
+            format="YYYY-MM-DD"
           />
-        </div> -->
+        </div>
 
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <AppButton
@@ -79,8 +78,8 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceLateLocums"
-        :getItemKey="(item) => item.job_part_id"
+        :items="locumComplianceDocuments"
+        :getItemKey="(item) => item.locum_compliance_document_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -100,7 +99,8 @@
             </div>
           </div>
         </div>
-        <ReportPagination
+  
+        <ReportPagination 
           :count="count" 
           :pages="pages" 
           :page="activePage"
@@ -112,9 +112,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceLateLocums.length === 0"
+            :disabled="downloading || locumComplianceDocuments.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceLateLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="locumComplianceDocuments.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -131,12 +131,14 @@ import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppButton from '@/components/Base/AppButton'
 import AppInput from '@/components/Base/AppInput'
+import AppDate from '@/components/Base/AppDate'
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppButton,
     AppInput,
+    AppDate,
   },
 
   data () {
@@ -144,7 +146,7 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      practiceLateLocums: [],
+      locumComplianceDocuments: [],
       orderBy: [],
       orderByProcessed: '',
       orderBys: [
@@ -173,7 +175,9 @@ export default {
       ],
       activePage: 1,
       locumNameIncludes:'',
+      expiredAt: '',
       professionNameIncludes:'',
+
       practiceIds: [],
     }
   },
@@ -181,7 +185,7 @@ export default {
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceLateLocums.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumComplianceDocuments.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
@@ -200,24 +204,15 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
-        {
-          title: 'Practice Name',
-          key: 'practice_name',
-          sort_key: 'practice_name',
-          column: (item) => item.practice_name,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Job Part #',
-          key: 'job_part_id',
-          sort_key: 'job_part_id',
-          column: (item) => item.job_part_id,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
+        // {
+        //   title: 'Practice Name',
+        //   key: 'practice_name',
+        //   sort_key: 'practice_name',
+        //   column: (item) => item.practice_name,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Locum',
           key: 'locum_user_name',
@@ -228,11 +223,20 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Note',
-          key: 'late_hours_reason',
-          sort_key: 'late_hours_reason',
-          column: (item) => item.late_hours_reason,
+          title: 'Compliance',
+          key: 'compliance_document_name',
+          sort_key: 'compliance_document_name',
+          column: (item) => item.compliance_document_name,
           justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Expiry Date',
+          key: 'expired_at',
+          sort_key: 'expired_at',
+          column: (item) => item.expired_at ? this.$moment(item.expired_at, 'YYYY-MM-DD').format('DD/MM/YYYY') : null,
+          justify: 'center',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -255,15 +259,16 @@ export default {
         replaced = replaced.replace('Asc', 'Ascending')
       } 
       this.orderByProcessed = replaced
-      this.getPracticeLateLocums()
+      this.getLocumComplianceDocuments()
     },
+
     limit () {
       this.page = 1
-      this.getPracticeLateLocums()
+      this.getLocumComplianceDocuments()
     },
 
     activePage () {
-      this.getPracticeLateLocums()
+      this.getLocumComplianceDocuments()
     },
   },
 
@@ -287,26 +292,37 @@ export default {
     } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
       this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
     }
-    
-    await this.getPracticeLateLocums()
+    await this.getLocumComplianceDocuments()
   },
 
+
   mounted () {      
+    // const {
+    //   order_by: orderBy = [],
+    //   page,
+    // } = this.$route.query
+
+    // this.orderBy = orderBy
+    // this.activePage = page ? Number.parseInt(page) : 1
+
     const {
       locum_name_includes: locumNameIncludes,
       profession_name_includes: professionNameIncludes,
+      expired_at: expiredAt,
     } = this.$route.query
 
+    this.expiredAt = expiredAt ? expiredAt : ''
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
 
-    
+    this.getLocumComplianceDocuments()
   },
 
   methods: {
     filterReset () {
       this.locumNameIncludes = ''
       this.professionNameIncludes = ''
+      this.expiredAt = ''
 
       this.filterSearch()
     },
@@ -316,7 +332,8 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
+        locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
@@ -325,7 +342,7 @@ export default {
         this.$router.replace({ query, })
       }
       
-      this.getPracticeLateLocums()
+      this.getLocumComplianceDocuments()
     },
 
     setPage (page) {
@@ -347,7 +364,7 @@ export default {
         })
       }
 
-      this.getPracticeLateLocums()
+      this.getLocumComplianceDocuments()
     },
 
     setOrderBy (orderBy) {
@@ -362,24 +379,25 @@ export default {
         },
       })
 
-      this.getPracticeLateLocums()
+      this.getLocumComplianceDocuments()
     },
 
-    getPracticeLateLocums () {
+    getLocumComplianceDocuments () {
       this.loading = true
-      this.practiceLateLocums = []
-      let params = {
+      this.locumComplianceDocuments = []
+      const params = {
         practice_id: this.practiceIds,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
+        expired_at: this.expiredAt ? this.expiredAt : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {
+        this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents/count', {
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-late-locums', {
+        this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -387,17 +405,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_late_locums
+          return responses.data.data.locum_expiring_compliance_documents
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceLateLocums,
+          locumComplianceDocuments,
         ] = results
 
         this.count = count
-        this.practiceLateLocums = practiceLateLocums
+        this.locumComplianceDocuments = locumComplianceDocuments
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -405,18 +423,19 @@ export default {
         this.loading = false
       })
     },
-
     async downloadPDF () {
-      let params = await {
+      this.downloading = true
+      const params = await {
         practice_id: this.practiceIds,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        expired_at: this.expiredAt ? this.expiredAt : null,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,
         limit: 999,
         order_by: this.orderBy,
       }
 
-      await this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
-        filename: `practiceLateLocumsReport.pdf`,
+      await this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
+        filename: `practiceExpiringLocumCompliance.pdf`,
       }, {
         params: {
           ...params,
@@ -424,7 +443,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-late-locums-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-expiring-locum-compliance-report/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -433,6 +452,5 @@ export default {
       })
     },
   },
-
 }
 </script>

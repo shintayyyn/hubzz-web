@@ -2,7 +2,7 @@
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
       <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+        <nuxt-link to="/practice-billing/invoices-from-hubzz/hubzz-billing-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
@@ -174,6 +174,8 @@ export default {
       activePage: 1,
       dateStart: '',
       dateEnd: '',
+
+      practiceIds: [],
     }
   },
 
@@ -201,11 +203,20 @@ export default {
           flexShrink: 0,
         },
         {
+          title: 'Practice Name',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'left',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
           title: 'Date Start',
           key: 'date_start',
           sort_key: 'date_start',
           column: (item) => this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY'),
-          justify: 'center',
+          justify: 'left',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -214,7 +225,7 @@ export default {
           key: 'date_end',
           sort_key: 'date_end',
           column: (item) => this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY'),
-          justify: 'center',
+          justify: 'left',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -284,6 +295,28 @@ export default {
     activePage () {
       this.getPracticeInvoices()
     },
+  },
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    await this.getPracticeInvoices()
   },
 
   mounted () {
@@ -368,7 +401,7 @@ export default {
       this.loading = true
       this.practiceInvoices = []
       let params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
       }
@@ -408,7 +441,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,
@@ -421,7 +454,7 @@ export default {
       }, {
         params: {
           ...params,
-          practice_id: this.$auth.user.practice_detail.practice.id,
+          practice_id: this.practiceIds,
         },
       }).then((responses) => {
         const token = responses.data.data.token
