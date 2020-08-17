@@ -177,6 +177,8 @@ export default {
       locumNameIncludes:'',
       expiredAt: '',
       professionNameIncludes:'',
+
+      practiceIds: [],
     }
   },
 
@@ -202,6 +204,15 @@ export default {
           flexGrow: 0,
           flexShrink: 0,
         },
+        // {
+        //   title: 'Practice Name',
+        //   key: 'practice_name',
+        //   sort_key: 'practice_name',
+        //   column: (item) => item.practice_name,
+        //   justify: 'start',
+        //   flexGrow: 1,
+        //   flexShrink: 0,
+        // },
         {
           title: 'Locum',
           key: 'locum_user_name',
@@ -260,6 +271,30 @@ export default {
       this.getLocumComplianceDocuments()
     },
   },
+
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    await this.getLocumComplianceDocuments()
+  },
+
 
   mounted () {      
     // const {
@@ -351,7 +386,7 @@ export default {
       this.loading = true
       this.locumComplianceDocuments = []
       const params = {
-        practice_id: this.$auth.user.practice_id,
+        practice_id: this.practiceIds,
         expired_at: this.expiredAt ? this.expiredAt : undefined,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
@@ -391,7 +426,7 @@ export default {
     async downloadPDF () {
       this.downloading = true
       const params = await {
-        practice_id: this.$auth.user.practice_id,
+        practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         expired_at: this.expiredAt ? this.expiredAt : null,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,

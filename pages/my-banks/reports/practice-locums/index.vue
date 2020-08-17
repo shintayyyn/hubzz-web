@@ -181,6 +181,8 @@ export default {
         25,
       ],
       activePage: 1,
+
+      practiceIds: [],
     }
   },
 
@@ -205,6 +207,15 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Practice Name',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
           flexShrink: 0,
         },
         {
@@ -285,6 +296,30 @@ export default {
     },
   },
 
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    await this.getPracticeLocums()
+  },
+
+
   mounted () {      
     // const {
     //   order_by: orderBy = [],
@@ -300,9 +335,9 @@ export default {
 
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
-    this.getPracticeLocums()
   },
 
+  
   methods: {
     filterReset () {
       this.locumNameIncludes = ''
@@ -324,8 +359,6 @@ export default {
       if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
         this.$router.replace({ query, })
       }
-      
-      this.getPracticeLocums()
     },
 
     setPage (page) {
@@ -370,7 +403,7 @@ export default {
       this.practiceLocums = []
 
       const params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
@@ -410,7 +443,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,

@@ -174,6 +174,7 @@ export default {
       activePage: 1,
       locumNameIncludes:'',
       professionNameIncludes:'',
+      practiceIds: [],
     }
   },
 
@@ -200,7 +201,16 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'job part id',
+          title: 'Practice Name',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Job Part #',
           key: 'job_part_id',
           sort_key: 'job_part_id',
           column: (item) => item.job_part_id,
@@ -257,6 +267,30 @@ export default {
     },
   },
 
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    
+    await this.getPracticeLateLocums()
+  },
+
   mounted () {      
     const {
       locum_name_includes: locumNameIncludes,
@@ -266,7 +300,7 @@ export default {
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
 
-    this.getPracticeLateLocums()
+    
   },
 
   methods: {
@@ -335,7 +369,7 @@ export default {
       this.loading = true
       this.practiceLateLocums = []
       let params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
       }
@@ -374,7 +408,7 @@ export default {
 
     async downloadPDF () {
       let params = await {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         limit: 999,

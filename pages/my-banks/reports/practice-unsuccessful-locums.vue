@@ -127,6 +127,8 @@ export default {
       ],
       
       activePage: 1,
+
+      practiceIds: [],
     }
   },
 
@@ -151,6 +153,15 @@ export default {
           column: (item, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
+          flexShrink: 0,
+        },
+        {
+          title: 'Practice Name',
+          key: 'practice_name',
+          sort_key: 'practice_name',
+          column: (item) => item.practice_name,
+          justify: 'start',
+          flexGrow: 1,
           flexShrink: 0,
         },
         {
@@ -265,6 +276,30 @@ export default {
     },
   },
 
+  async created () {
+    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
+      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
+        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
+        this.practiceIds = [
+          ...spokeIds,
+          this.$auth.user.practice_detail.practice.id,
+        ]
+      })
+    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
+      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
+          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        }
+      } else {
+        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      }
+    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
+      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+    }
+    await this.getPracticeUnsuccessfulLocums()
+  },
+
+
   mounted () {      
     const {
       order_by: orderBy = [],
@@ -273,8 +308,6 @@ export default {
 
     this.orderBy = orderBy
     this.activePage = page ? Number.parseInt(page) : 1
-
-    this.getPracticeUnsuccessfulLocums()
   },
 
   methods: {
@@ -318,7 +351,7 @@ export default {
       this.loading = true
       this.practiceUnsuccessfulLocums = []
       let params = {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{
@@ -358,7 +391,7 @@ export default {
     async downloadPDF () {
       this.downloading = true
       let params = await {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        practice_id: this.practiceIds,
         order_by: this.orderBy,
         limit: 999,
       }
