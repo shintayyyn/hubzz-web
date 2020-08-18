@@ -2,6 +2,7 @@ export default {
   async initializePermanentJobListener ({ commit, }) {
     // =====================================LOCUM=========================================
     this.$socket.on('Locum Notification Permanent Job Matched', async (permanentJob) => {
+      console.log('A Permanent Job Posting is Matched to you.', permanentJob)
       let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.notification.payload.id}`)
 
       if(response.data && response.data.permanent_job) {
@@ -10,6 +11,7 @@ export default {
     })
 
     this.$socket.on('Locum Notification Permanent Job Invited', async (permanentJob) => {
+      console.log('You have been invited for interview for a permanent job position.', permanentJob)
       let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.notification.payload.id}`)
 
       if(response.data && response.data.permanent_job) {
@@ -26,6 +28,7 @@ export default {
     // })
     //====================================PRACTICE===========================================
     this.$socket.on('Practice Notification Permanent Job Applied', async (permanentJob) => {
+      console.log('A locum has applied to permanent job.', permanentJob)
       let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanentJob.notification.payload.id}`)
 
       if(response.data && response.data.permanent_job) {
@@ -33,6 +36,7 @@ export default {
       }
     })
     this.$socket.on('Practice Notification Approve Permanent Job Spoke', async (permanentJob) => {
+      console.log('You have been invited for interview for a permanent job position.', permanentJob)
       let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanentJob.notification.payload.id}`)
       
       if(response.data && response.data.permanent_job) {
@@ -53,7 +57,6 @@ export default {
       if(response.data && response.data.permanent_job) {
         commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {...response.data.permanent_job, notificationType: 'Practice Notification Permanent Job Rejected'})
       }
-      
     })
     this.$socket.on('Practice Notification Spoke Created Pending Permanent Job', async (permanent_job) => {
       let response = await this.$axios.$get(`/api/v1/practice/permanent-jobs/${permanent_job.notification.payload.id}`)
@@ -68,7 +71,6 @@ export default {
           notificationType: 'Practice Notification Spoke Posted Pending Permanent Job',
         })
       }
-      
     })
   },
 }
