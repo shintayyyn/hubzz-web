@@ -31,7 +31,8 @@
                 v-if="
                   $auth.user.domain === 'Practice' &&
                     $auth.user.status === 'Active' &&
-                    $auth.user.practice_detail.practice.status === 'Active'
+                    ($auth.user.practice_detail.practice.status === 'Active' 
+                    || $auth.user.practice_detail.practice.status === 'Dormant')
                 "
                 class="mx-1"
               >
