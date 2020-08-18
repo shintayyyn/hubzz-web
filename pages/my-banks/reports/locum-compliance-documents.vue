@@ -32,10 +32,25 @@
           />
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="expiredAt"
             label="Expiry Date"
+            format="YYYY-MM-DD"
+          />
+        </div> -->
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="expiredAtDateStart"
+            label="Expiry Date Start"
+            format="YYYY-MM-DD"
+          />
+        </div>
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="expiredAtDateEnd"
+            label="Expiry Date End"
             format="YYYY-MM-DD"
           />
         </div>
@@ -176,6 +191,8 @@ export default {
       activePage: 1,
       locumNameIncludes:'',
       expiredAt: '',
+      expiredAtDateStart: '',
+      expiredAtDateEnd: '',
       professionNameIncludes:'',
 
       practiceIds: [],
@@ -309,9 +326,13 @@ export default {
       locum_name_includes: locumNameIncludes,
       profession_name_includes: professionNameIncludes,
       expired_at: expiredAt,
+      expired_at_date_start: expiredAtDateStart,
+      expired_at_date_end: expiredAtDateEnd,
     } = this.$route.query
 
     this.expiredAt = expiredAt ? expiredAt : ''
+    this.expiredAtDateStart = expiredAtDateStart ? expiredAtDateStart : '',
+    this.expiredAtDateEnd = expiredAtDateEnd ? expiredAtDateEnd : '',
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
 
@@ -323,7 +344,8 @@ export default {
       this.locumNameIncludes = ''
       this.professionNameIncludes = ''
       this.expiredAt = ''
-
+      this.expiredAtDateStart = ''
+      this.expiredAtDateEnd = ''
       this.filterSearch()
     },
 
@@ -333,6 +355,8 @@ export default {
       const query = {
         ...this.$route.query,
         expired_at: this.expiredAt ? this.expiredAt : undefined,
+        expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
+        expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
         locum_name_incudes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
@@ -388,6 +412,8 @@ export default {
       const params = {
         practice_id: this.practiceIds,
         expired_at: this.expiredAt ? this.expiredAt : undefined,
+        expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
+        expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
@@ -429,6 +455,8 @@ export default {
         practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         expired_at: this.expiredAt ? this.expiredAt : null,
+        expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
+        expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,
         limit: 999,
         order_by: this.orderBy,
