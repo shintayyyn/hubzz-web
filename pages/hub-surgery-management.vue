@@ -15,7 +15,7 @@
     <transition name="fade" mode="out-in">
       <div
         v-if="['hub-surgery-management-index-invitationId', 'hub-surgery-management-id', 'hub-surgery-management-index-create'].includes($route.name)
-        || $route.name.includes('hub-surgery-management-id')"
+          || $route.name.includes('hub-surgery-management-id')"
         class="shield"
         @click="$router.push('/hub-surgery-management')"
       />

@@ -213,6 +213,7 @@ export default {
           status: practiceStatus = null,
           type: practiceType = null,
           hub_type: hubType = null,
+          parent_practce_id: parentPracticeId = null,
         } = practice || {}
 
         const practiceTabList = []
@@ -286,6 +287,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
           && hubType !== "Type 2"
         ) {
           practiceTabList.push({
@@ -298,6 +301,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Sessions Job")
           && hubType !== "Type 2"
         ) {
@@ -317,6 +322,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Permanent Job")
         ) {
           practiceTabList.push({
@@ -329,6 +336,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Sessions Job")
           && this.authPermissions.includes("View Billings")
           && hubType !== "Type 2"
@@ -343,6 +352,8 @@ export default {
         if (
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null && practice.allow_surgery_create_permanent_jobs === true))
         ) {
           practiceTabList.push({
             navigationTabTitle: "Reports",

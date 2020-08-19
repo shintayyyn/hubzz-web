@@ -58,6 +58,12 @@
 
     <div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
       <div
+        v-if="$auth.user.practice_detail.practice.type === 'Spoke' 
+          && $auth.user.practice_detail.practice.parent_practice_id === null"
+        class="text-sm sm:text-base font-bold">
+        Your Practice is required to have a Hub in order to operate. Please go to Surgery Management Tab to invite a Hub.
+      </div>
+      <div
         v-if="$auth.user.practice_detail.practice.status === 'Suspended'"
         class="text-sm sm:text-base font-bold"
       >
@@ -65,7 +71,7 @@
       </div>
 
       <div
-        v-if="$auth.user.practice_detail.practice.status !== 'Suspended'"
+        v-if="$auth.user.practice_detail.practice.status === 'Inactive'"
         class="text-sm sm:text-base font-bold"
       >
         Hubzz is in the process of verifying your registration. You will
@@ -132,9 +138,13 @@ export default {
         }
 
         if (domain === 'Practice') {
+          const practice = this.$auth.user.practice_detail.practice
           let practiceStatus = this.$auth.user.practice_detail.practice.status
 
-          if (accountStatus === 'Active' && (practiceStatus === 'Active' || practiceStatus === 'Dormant')) {
+          if (accountStatus === 'Active' 
+              && (practiceStatus === 'Active' || practiceStatus === 'Dormant') 
+              && (['Hub', 'Stand Alone'].includes(practice.type) || (practice.type === 'Spoke' && practice.parent_practice_id !== null))
+          ) {
             return true
           }
 
