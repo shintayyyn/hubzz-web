@@ -643,7 +643,7 @@ export default {
       case "Applied":
         return "bg-yellow-600 text-white"
       case "For Interview":
-        return "bg-green-600 text-white"
+        return "bg-green-800 text-white"
       case "Accepted":
         return "bg-green-700 text-white"
       case "Rejected":

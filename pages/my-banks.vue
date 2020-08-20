@@ -115,5 +115,24 @@
 <script>
 export default {
   middleware: 'isVerified',
+  async asyncData ({ app, error, }) {
+    try {
+      if (app.$auth.user.domain === 'Practice' 
+        && app.$auth.user.practice_detail 
+        && app.$auth.user.practice_detail.practice
+        && app.$auth.user.practice_detail.practice.type === 'Spoke'
+        && app.$auth.user.practice_detail.practice.parent_practice_id === null) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+
+        return
+      }
+    } catch (err) {
+      console.log('err', err.response || err)
+      error(err)
+    }
+  },
 }
 </script>

@@ -32,12 +32,16 @@
                   $auth.user.domain === 'Practice' &&
                     $auth.user.status === 'Active' &&
                     ($auth.user.practice_detail.practice.status === 'Active' 
-                    || $auth.user.practice_detail.practice.status === 'Dormant')
+                    || $auth.user.practice_detail.practice.status === 'Dormant') &&
+                    ($auth.user.practice_detail.practice.type === 'Hub' 
+                    ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+                    ||($auth.user.practice_detail.practice.type === 'Spoke' &&
+                    $auth.user.practice_detail.practice.parent_practice_id)) 
                 "
                 class="mx-1"
               >
                 <AppButton
-                  v-if="authPermissions.includes('Create Sessions Job') && !notAllowed"
+                  :disabled="authPermissions.includes('Create Sessions Job') && !notAllowed ? false : true"
                   :label="'Create Job'"
                   class="hidden md:block whitespace-no-wrap"
                   :in-style="'padding-top: 0; padding-bottom: 0;'"

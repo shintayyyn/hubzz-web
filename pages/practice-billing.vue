@@ -79,6 +79,19 @@ export default {
         return
       }
 
+      if (app.$auth.user.domain === 'Practice' 
+        && app.$auth.user.practice_detail 
+        && app.$auth.user.practice_detail.practice
+        && app.$auth.user.practice_detail.practice.type === 'Spoke'
+        && app.$auth.user.practice_detail.practice.parent_practice_id === null) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+
+        return
+      }
+
       return {
         practice: app.$auth.user && app.$auth.user.domain === 'Practice' && app.$auth.user.practice_detail
           ? app.$auth.user.practice_detail.practice

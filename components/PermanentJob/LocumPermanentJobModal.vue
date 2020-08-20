@@ -502,7 +502,7 @@ export default {
       case "Applied":
         return "px-4 bg-yellow-600 text-white"
       case "For Interview":
-        return "px-4 bg-green-600 text-white"
+        return "px-4 bg-green-800 text-white"
       case "Accepted":
         return "px-4 bg-green-700 text-white"
       case "Rejected":
