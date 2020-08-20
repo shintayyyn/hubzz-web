@@ -31,6 +31,7 @@
     <template v-if="locum_modal_part">
       <JobPartDetailModal
         :job_part="locum_job_part"
+        @setJobPart="newJobPart => locum_job_part = newJobPart"
         @close="close"
       />
     </template>
