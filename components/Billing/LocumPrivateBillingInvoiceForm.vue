@@ -23,7 +23,9 @@
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
-        >Private</div>
+        >
+          Private
+        </div>
       </div>
     </div>
 
@@ -50,7 +52,9 @@
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="font-bold text-lg mt-2">{{ propInvoice.private_practice.name }}</div>
+                <div class="font-bold text-lg mt-2">
+                  {{ propInvoice.private_practice.name }}
+                </div>
               </div>
             </section>
             <div class="text-xs sm:text-sm">
@@ -70,7 +74,9 @@
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="font-bold text-lg mt-2">{{ propJobPart.practice_name }}</div>
+                <div class="font-bold text-lg mt-2">
+                  {{ propJobPart.practice_name }}
+                </div>
               </div>
             </section>
             <div class="text-xs sm:text-sm">
@@ -89,10 +95,14 @@
           <div :ref="'items-header'" class="flex justify-start">
             <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-            >Description</div>
+            >
+              Description
+            </div>
             <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
-            >Total</div>
+            >
+              Total
+            </div>
           </div>
           <!-- items / selected invoice -->
           <div
@@ -117,7 +127,7 @@
                   type="number"
                   class="border-b-2 focus:outline-none focus:border-yellow-400 w-full h-full text-right shadow-none"
                   @keypress="isNumber($event)"
-                />
+                >
               </div>
             </div>
           </div>
@@ -129,22 +139,34 @@
           <div :ref="'items-sub-total'" class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 font-bold">Subtotal</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right">£</div>
-              <div class="w-full text-right">{{ subTotal | currency }}</div>
+              <div class="w-full text-right">
+                £
+              </div>
+              <div class="w-full text-right">
+                {{ subTotal | currency }}
+              </div>
             </div>
           </div>
           <div :ref="'items-ni-total'" class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 pl-2 text-sm">NI amount</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right">£</div>
-              <div class="w-full text-right">{{ propInvoice.ni_amount | currency }}</div>
+              <div class="w-full text-right">
+                £
+              </div>
+              <div class="w-full text-right">
+                {{ propInvoice.ni_amount | currency }}
+              </div>
             </div>
           </div>
           <div :ref="'items-paye-total'" class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
             <div class="w-1/4 flex justify-between">
-              <div class="w-full text-right">£</div>
-              <div class="w-full text-right">{{ propInvoice.paye_amount | currency }}</div>
+              <div class="w-full text-right">
+                £
+              </div>
+              <div class="w-full text-right">
+                {{ propInvoice.paye_amount | currency }}
+              </div>
             </div>
           </div>
         </template>
@@ -152,8 +174,12 @@
         <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Total</span>
           <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">£</div>
-            <div class="w-full text-right">{{ totalAmount | currency }}</div>
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ totalAmount | currency }}
+            </div>
           </div>
         </div>
       </div>
@@ -187,11 +213,12 @@
           class="flex flex-col text-xs sm:text-sm"
         >
           <div>Payment by BACS: xxxxx</div>
-          <div>Account name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
+          <div>Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
           <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
           <div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
-          <div>Account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
+          <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
         </div>
+        
         <div
           v-if="!propInvoiceDetail.paid_under_payroll && propInvoiceDetail.bank_account"
           class="flex flex-col text-xs sm:text-sm"
@@ -208,33 +235,33 @@
 </template>
 
 <script>
-import AppLoading from "@/components/Base/AppLoading";
-import AppButton from "@/components/Base/AppButton";
-import AppDate from "@/components/Base/AppDate";
+import AppLoading from "@/components/Base/AppLoading"
+import AppButton from "@/components/Base/AppButton"
+import AppDate from "@/components/Base/AppDate"
 
 export default {
   components: {
     AppLoading,
     AppButton,
-    AppDate
+    AppDate,
   },
 
   props: {
     propInvoiceDetail: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     propInvoice: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     propJobPart: {
       type: Object,
-      default: () => null
-    }
+      default: () => null,
+    },
   },
 
-  data() {
+  data () {
     return {
       exportLoading: false,
       saveLoading: false,
@@ -244,10 +271,10 @@ export default {
         items: [],
         total_amount: 0,
         final: false,
-        ir35: false
+        ir35: false,
       },
-      formError: []
-    };
+      formError: [],
+    }
   },
 
   computed: {
@@ -266,51 +293,51 @@ export default {
     //   }
     // },
 
-    subTotal() {
+    subTotal () {
       return this.form.items && this.form.items.length > 0
         ? this.form.items[0].total
-        : 0;
+        : 0
     },
 
-    totalAmount() {
-      let total;
+    totalAmount () {
+      let total
       if (this.form.items && this.form.items.length > 0) {
-        total = this.form.items[0].total;
+        total = this.form.items[0].total
         if (this.propInvoice) {
-          total =
-            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+          total
+            = total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
         }
-        return total;
+        return total
       }
-      return 0;
-    }
+      return 0
+    },
   },
 
-  mounted() {
+  mounted () {
     if (this.propJobPart && !this.propInvoice) {
-      this.form.type = this.propJobPart.job.type;
-      this.form.private_practice_id = this.propJobPart.job.private_practice_id;
-      this.form.date_start = this.propJobPart.date_start;
-      this.form.date_end = this.propJobPart.date_end;
+      this.form.type = this.propJobPart.job.type
+      this.form.private_practice_id = this.propJobPart.job.private_practice_id
+      this.form.date_start = this.propJobPart.date_start
+      this.form.date_end = this.propJobPart.date_end
 
-      let total =
-        this.propJobPart.job.locum_detail_rate_type.name === "Hourly"
+      let total
+        = this.propJobPart.job.locum_detail_rate_type.name === "Hourly"
           ? this.propJobPart.job.rate * this.propJobPart.final_hours
-          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours) *
-            this.propJobPart.final_hours;
+          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours)
+            * this.propJobPart.final_hours
 
-      const jobPartNumber = this.propJobPart.job_part_number;
-      const jobType = this.propJobPart.job.type;
-      const jobRate = this.propJobPart.job.rate;
-      const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name;
+      const jobPartNumber = this.propJobPart.job_part_number
+      const jobType = this.propJobPart.job.type
+      const jobRate = this.propJobPart.job.rate
+      const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
       const formattedDateStart = this.$moment(
         this.propJobPart.date_start
-      ).format("DD/MM/YYYY");
+      ).format("DD/MM/YYYY")
       const formattedDateEnd = this.$moment(this.propJobPart.date_end).format(
         "DD/MM/YYYY"
-      );
+      )
 
-      const shiftName = this.propJobPart.job.shift.name;
+      const shiftName = this.propJobPart.job.shift.name
 
       // const finalHoursInMinutesHours = Math.floor(this.propJobPart.final_hours / 60)
       // const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
@@ -320,12 +347,12 @@ export default {
       //   ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
       //   : ''
       // const totalHoursOf = `${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
-      const totalHoursOf = this.propJobPart.final_hours.toFixed(2);
+      const totalHoursOf = this.propJobPart.final_hours.toFixed(2)
 
-      const description =
-        `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}` +
-        ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /` +
-        ` Total hours of ${totalHoursOf}`;
+      const description
+        = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
+        + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
+        + ` Total hours of ${totalHoursOf}`
 
       this.form.items = [
         {
@@ -337,19 +364,19 @@ export default {
           absent_days: this.propJobPart.absent_days,
           final_hours: this.propJobPart.final_hours.toFixed(2),
           late_hours: this.propJobPart.late_hours,
-          remarks: ""
-        }
-      ];
+          remarks: "",
+        },
+      ]
 
-      this.form.total_amount = total.toFixed(2);
-      this.form.final = false;
-      this.form.ir35 = false;
+      this.form.total_amount = total.toFixed(2)
+      this.form.final = false
+      this.form.ir35 = false
     }
 
     if (this.propInvoice && !this.propJobPart) {
-      this.form.locum_invoice_id = this.propInvoice.id;
-      this.form.date_start = this.propInvoice.date_start;
-      this.form.date_end = this.propInvoice.date_end;
+      this.form.locum_invoice_id = this.propInvoice.id
+      this.form.date_start = this.propInvoice.date_start
+      this.form.date_end = this.propInvoice.date_end
 
       this.form.items = [
         {
@@ -361,60 +388,60 @@ export default {
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
           late_hours: this.propInvoice.items[0].late_hours,
-          remarks: this.propInvoice.items[0].remarks
-        }
-      ];
-      this.form.total_amount =
-        this.propInvoice.total_amount -
-        this.propInvoice.ni_amount -
-        this.propInvoice.paye_amount;
+          remarks: this.propInvoice.items[0].remarks,
+        },
+      ]
+      this.form.total_amount
+        = this.propInvoice.total_amount
+        - this.propInvoice.ni_amount
+        - this.propInvoice.paye_amount
 
-      this.form.final = false;
-      this.form.ir35 = this.propInvoice.ir35;
+      this.form.final = false
+      this.form.ir35 = this.propInvoice.ir35
     }
   },
 
   methods: {
-    save(final) {
-      this.formError = [];
-      this.Validate(this.form, ["final", "ir35", "total_amount"]);
+    save (final) {
+      this.formError = []
+      this.Validate(this.form, ["final", "ir35", "total_amount",])
       if (!this.formError.length) {
-        this.saveLoading = true;
+        this.saveLoading = true
         if (this.propJobPart && !this.propInvoice) {
-          this.form.final = final;
-          this.form.total_amount = parseInt(this.form.items[0].total);
+          this.form.final = final
+          this.form.total_amount = parseInt(this.form.items[0].total)
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`${res.message}`]
-              });
-              this.$emit("createInvoice", res.data.locum_invoice);
+                text: [`${res.message}`,],
+              })
+              this.$emit("createInvoice", res.data.locum_invoice)
             })
             .catch(err => {
-              console.log("err", err.response || err);
+              console.log("err", err.response || err)
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "success",
-                  text: [`${err.response.data.message}`]
-                });
+                  text: [`${err.response.data.message}`,],
+                })
               } else if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error);
-                });
+                  this.formError.push(error)
+                })
               } else {
-                this.formError.push(err.response.data);
+                this.formError.push(err.response.data)
               }
-              throw err;
+              throw err
             })
             .finally(() => {
-              this.saveLoading = false;
-            });
+              this.saveLoading = false
+            })
         } else if (this.propInvoice && !this.propJobPart) {
-          this.form.final = final;
+          this.form.final = final
           this.$axios
             .$put(
               `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
@@ -424,58 +451,58 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`${res.message}`]
-              });
-              this.$emit("updateInvoice", res.data.locum_invoice);
+                text: [`${res.message}`,],
+              })
+              this.$emit("updateInvoice", res.data.locum_invoice)
             })
             .catch(err => {
-              console.log("err", err.response || err);
+              console.log("err", err.response || err)
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "success",
-                  text: [`${err.response.data.message}`]
-                });
+                  text: [`${err.response.data.message}`,],
+                })
               } else if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
-                  this.formError.push(error);
-                });
+                  this.formError.push(error)
+                })
               } else {
-                this.formError.push(err.response.data);
+                this.formError.push(err.response.data)
               }
-              throw err;
+              throw err
             })
             .finally(() => {
-              this.saveLoading = false;
-            });
+              this.saveLoading = false
+            })
         }
       }
     },
 
-    viewAsPdf(invoiceId) {
+    viewAsPdf (invoiceId) {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      );
+      )
     },
 
-    async exportToPdf() {
-      this.exportLoading = true;
+    async exportToPdf () {
+      this.exportLoading = true
       if (process.client) {
-        document.body.style.cursor = "wait";
+        document.body.style.cursor = "wait"
       }
 
-      let doc = this.$jspdf("p", "mm");
-      let pageHeight = 1020;
-      let yPosition = 0;
+      let doc = this.$jspdf("p", "mm")
+      let pageHeight = 1020
+      let yPosition = 0
 
       // PDF HEADER
-      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
-      const imgWidthPdfHeader = 210;
-      const imgHeightPdfHeader =
-        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
-      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"])
+      const imgWidthPdfHeader = 210
+      const imgHeightPdfHeader
+        = (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png")
 
-      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight
 
       doc.addImage(
         imgDataPdfHeader,
@@ -484,21 +511,21 @@ export default {
         yPosition,
         imgWidthPdfHeader,
         imgHeightPdfHeader
-      );
+      )
 
-      yPosition = yPosition + imgHeightPdfHeader;
+      yPosition = yPosition + imgHeightPdfHeader
 
       // ITEMS HEADER
       const canvasItemsHeader = await this.$html2canvas(
         this.$refs["items-header"]
-      );
-      const imgWidthItemsHeader = 210;
-      const imgHeightItemsHeader =
-        (canvasItemsHeader.height * imgWidthItemsHeader) /
-        canvasItemsHeader.width;
-      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
+      )
+      const imgWidthItemsHeader = 210
+      const imgHeightItemsHeader
+        = (canvasItemsHeader.height * imgWidthItemsHeader)
+        / canvasItemsHeader.width
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png")
 
-      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight
 
       doc.addImage(
         imgDataItemsHeader,
@@ -507,19 +534,19 @@ export default {
         yPosition,
         imgWidthItemsHeader,
         imgHeightItemsHeader
-      );
+      )
 
-      yPosition = yPosition + imgHeightItemsHeader;
+      yPosition = yPosition + imgHeightItemsHeader
 
       // ITEMS
-      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
+      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"])
 
-      const imgWidthItems = 210;
-      const imgHeightItems =
-        (canvasItems.height * imgWidthItems) / canvasItems.width;
-      const imgDataItems = canvasItems.toDataURL("image/png");
+      const imgWidthItems = 210
+      const imgHeightItems
+        = (canvasItems.height * imgWidthItems) / canvasItems.width
+      const imgDataItems = canvasItems.toDataURL("image/png")
 
-      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
+      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight
 
       doc.addImage(
         imgDataItems,
@@ -528,9 +555,9 @@ export default {
         yPosition,
         imgWidthItems,
         imgHeightItems
-      );
+      )
 
-      yPosition = yPosition + imgHeightItems;
+      yPosition = yPosition + imgHeightItems
 
       // let totalSelectedJobParts = this.selectedJobParts.length;
 
@@ -579,47 +606,47 @@ export default {
       // }
 
       // sum up their offsetHeight
-      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
-      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
-      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight
 
-      let totalOffsetHeight =
-        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
+      let totalOffsetHeight
+        = daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight
 
-      pageHeight = pageHeight - totalOffsetHeight;
+      pageHeight = pageHeight - totalOffsetHeight
 
       // DAYS WORKED
       const canvasDaysWorked = await this.$html2canvas(
         this.$refs["days-worked"]
-      );
-      const imgWidthDaysWorked = 210;
-      const imgHeightDaysWorked =
-        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
-      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
+      )
+      const imgWidthDaysWorked = 210
+      const imgHeightDaysWorked
+        = (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png")
 
       // ITEMS TOTAL
       const canvasItemsTotal = await this.$html2canvas(
         this.$refs["items-total"]
-      );
-      const imgWidthItemsTotal = 210;
-      const imgHeightItemsTotal =
-        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
-      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
+      )
+      const imgWidthItemsTotal = 210
+      const imgHeightItemsTotal
+        = (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png")
 
       // PDF FOOTER
-      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
-      const imgWidthPdfFooter = 210;
-      const imgHeightPdfFooter =
-        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
-      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"])
+      const imgWidthPdfFooter = 210
+      const imgHeightPdfFooter
+        = (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png")
 
       if (pageHeight < 0) {
-        pageHeight = 1020;
-        doc.addPage();
+        pageHeight = 1020
+        doc.addPage()
       }
 
-      yPosition =
-        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
+      yPosition
+        = 295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter)
 
       doc.addImage(
         imgDataDaysWorked,
@@ -628,9 +655,9 @@ export default {
         yPosition,
         imgWidthDaysWorked,
         imgHeightDaysWorked
-      );
+      )
 
-      yPosition = yPosition + imgHeightDaysWorked;
+      yPosition = yPosition + imgHeightDaysWorked
 
       doc.addImage(
         imgDataItemsTotal,
@@ -639,9 +666,9 @@ export default {
         yPosition,
         imgWidthItemsTotal,
         imgHeightItemsTotal
-      );
+      )
 
-      yPosition = yPosition + imgHeightItemsTotal;
+      yPosition = yPosition + imgHeightItemsTotal
 
       doc.addImage(
         imgDataPdfFooter,
@@ -650,18 +677,18 @@ export default {
         yPosition,
         imgWidthPdfFooter,
         imgHeightPdfFooter
-      );
+      )
 
-      yPosition = yPosition + imgHeightPdfFooter;
+      yPosition = yPosition + imgHeightPdfFooter
 
-      doc.save("test.pdf");
-      this.exportLoading = false;
+      doc.save("test.pdf")
+      this.exportLoading = false
       if (process.client) {
-        document.body.style.cursor = "auto";
+        document.body.style.cursor = "auto"
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 
 <style scoped>
