@@ -201,6 +201,15 @@
       @confirm="goToGenerateInvoice"
       @cancel="toggle_invoice_modal = false"
     />
+
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirm-label="'Yes'"
+      :cancel-label="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 
@@ -236,6 +245,8 @@ export default {
     return {
       toggle_invoice_modal: false,
       cancel_application_modal: false,
+      confirmation_text: "",
+      confirmation_modal: false,
     }
   },
 
@@ -248,6 +259,70 @@ export default {
   },
 
   methods: {
+    favorite () {
+      this.confirmation_text = "Add this Practice to Favorites?"
+      this.confirmation_modal = true
+    },
+
+    unfavorite () {
+      this.confirmation_text = "Remove this Practice to Favorites?"
+      this.confirmation_modal = true
+    },
+
+    confirm () {
+      if (!this.job.practice_is_favorite_of_locum) {
+        this.$axios
+          .$post(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites",],
+            })
+
+            const jobPart = {
+              ...this.job_part,
+            }
+
+            jobPart.job.practice_is_favorite_of_locum = true
+
+            this.$emit('setJobPart', jobPart)
+          })
+          .catch(err => {
+            console.log("err", err.response || err)
+            throw err
+          })
+          .finally(() => {
+            this.confirmation_modal = false
+          })
+      } else if (this.job.practice_is_favorite_of_locum) {
+        this.$axios
+          .$delete(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites",],
+            })
+
+            const jobPart = {
+              ...this.job_part,
+            }
+
+            jobPart.job.practice_is_favorite_of_locum = false
+
+            this.$emit('setJobPart', jobPart)
+          })
+          .catch(err => {
+            console.log("err", err.response || err)
+            throw err
+          })
+          .finally(() => {
+            this.confirmation_modal = false
+          })
+      }
+    },
+
     goToGenerateInvoice () {
       let hasInvoice = false
       if (this.job_part.locum_invoice_id) {

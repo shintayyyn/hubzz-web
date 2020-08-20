@@ -6,13 +6,14 @@
       v-if="jobPart && jobPart.job && jobPart.job.type === 'Private'"
       :job="jobPart.job"
       @close="close"
-      @appointmentUpdated="$emit('appointmentUpdated')"
+      @appointmentUpdated="appointmentUpdatedHandler"
     />
 
     <JobPartDetailModal
       v-if="jobPart && jobPart.job && jobPart.job.type === 'Platform'"
       :job_part="jobPart"
       :loadingJobPart="loadingJobPart"
+      @setJobPart="newJobPart => jobPart = newJobPart"
       @close="close"
     />
   </div>
@@ -39,23 +40,8 @@ export default {
     return {
       initialLoading: false,
       loadingJobPart: false,
+      jobPart: null,
     }
-  },
-
-  computed: {
-    jobPart: {
-      get () {
-        return this.$store.getters['locumJobParts/getLocumJobPart']
-      },
-
-      set (jobPart) {
-        this.$store.commit('locumJobParts/setLocumJobPart', jobPart)
-      },
-    },
-
-    jobPartId () {
-      return this.jobPart ? this.jobPart.id : null
-    },
   },
 
   watch: {
@@ -76,6 +62,10 @@ export default {
   },
 
   methods: {
+    appointmentUpdatedHandler () {
+      this.$emit('appointmentUpdated')
+    },
+
     getLocumJobPart () {
       return this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.jobPartId}`).then((response) => {
         this.jobPart = response.data.data.job_part

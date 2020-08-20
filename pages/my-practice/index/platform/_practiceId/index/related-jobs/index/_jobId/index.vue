@@ -24,6 +24,7 @@
       <JobPartDetailModal
         v-if="activeJobTypePlatform"
         :job_part="job_part"
+        @setJobPart="newJobPart => job_part = newJobPart"
         @close="close"
       />
     </template>
