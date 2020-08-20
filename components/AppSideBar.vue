@@ -213,7 +213,7 @@ export default {
           status: practiceStatus = null,
           type: practiceType = null,
           hub_type: hubType = null,
-          parent_practce_id: parentPracticeId = null,
+          parent_practice_id: parentPracticeId = null,
         } = practice || {}
 
         const practiceTabList = []
@@ -353,7 +353,7 @@ export default {
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
           && (["Hub", "Stand Alone",].includes(practiceType) 
-              || (practiceType === 'Spoke' && parentPracticeId !== null && practice.allow_surgery_create_permanent_jobs === true))
+            || (practiceType === 'Spoke' && parentPracticeId !== null))
         ) {
           practiceTabList.push({
             navigationTabTitle: "Reports",

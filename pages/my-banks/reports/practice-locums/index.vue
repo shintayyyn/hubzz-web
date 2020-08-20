@@ -308,13 +308,13 @@ export default {
     } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
       if (this.$auth.user.practice_detail.practice.parent_practice_id) {
         if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
         }
       } else {
-        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
       }
     } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
     }
     await this.getPracticeLocums()
   },
