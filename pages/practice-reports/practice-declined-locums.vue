@@ -199,11 +199,12 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Rate',
-          key: 'rate',
+          title: 'Rates',
+          key: 'rates',
           sort_key: 'rate',
-          column: (item) => item.rate.toFixed(2),
-          justify: 'end',
+          column: (item) => `${Math.min(...item.job_part_schedules.map(item => item.schedule_rate))}` === `${Math.max(...item.job_part_schedules.map(item => item.schedule_rate))}` 
+            ? `£${Math.min(...item.job_part_schedules.map(item => item.schedule_rate))}`: `£${Math.min(...item.job_part_schedules.map(item => item.schedule_rate))} - £${Math.max(...item.job_part_schedules.map(item => item.schedule_rate))}`,
+          justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -211,7 +212,7 @@ export default {
           title: 'Rate Type',
           key: 'rate_type_name',
           sort_key: 'rate_type_name',
-          column: (item) => item.rate_type_name,
+          column: (item) => [...new Set(item.job_part_schedules.map(item => item.schedule_rate_type_name))].join(","),
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -278,13 +279,13 @@ export default {
     } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
       if (this.$auth.user.practice_detail.practice.parent_practice_id) {
         if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
         }
       } else {
-        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
       }
     } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
+      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
     }
     await this.getPracticeDeclinedLocums()
   },

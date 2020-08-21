@@ -14,6 +14,8 @@
           v-for="item in referenceComplianceDocuments"
           :key="item.id"
           class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0"
+          :class="!item.file ? 'text-gray-600' : 'hover cursor-pointer'"
+          @click="item.file ? show(item, 'compliance') : null"
         >
           <div class="relative flex flex-col sm:flex-row justify-between sm:items-center text-xs sm:text-sm">
             <div
