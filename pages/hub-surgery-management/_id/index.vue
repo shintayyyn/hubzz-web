@@ -378,175 +378,176 @@
     </div>
   </div>
 </template>
+
 <script>
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
+
 export default {
-	transition: {
-		name: "fade",
-		mode: "out-in"
-	},
-	components: {
-		AppButton,
-		AppInput
-	},
-	data () {
-		return {
-			practice_id: "",
-			editPayForSurgery: false,
-			editSessionPolicies: false,
-			editBillingPolicies: false,
-			surgeryCreateSessions: false,
-			form: {
-				allow_surgery_create_sessions: false,
-				max_hourly_rate_limit: "",
-				max_halfday_rate_limit: "",
-				max_wholeday_rate_limit: "",
-				max_ooh_rate_limit: "",
-				max_excess_hours: "",
-				allow_surgery_bill_locum: "",
-				allow_surgery_bill_hubzz: "",
-				share_banks_to_other_surgeries: "",
-				share_my_banks: ""
-			},
-			formError: [],
-			practice_surgery: []
-		}
-	},
-	watch: {
-		"form.allow_surgery_create_sessions" (value) {
-			this.surgeryCreateSessions = value
-		}
-	},
-	created () {
-		this.practice_id = this.$route.params.id
-		this.getSurgery()
-		this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions
-		this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit
-		this.form.max_halfday_rate_limit = this.practice_surgery.max_halfday_rate_limit
-		this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit
-		this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit
-		this.form.max_excess_hours = this.practice_surgery.max_excess_hours
-		this.form.allow_surgery_create_permanent_jobs = this.practice_surgery.allow_surgery_create_permanent_jobs
-		this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum
-		this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz
-		this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries
-		this.form.share_my_banks = this.practice_surgery.share_my_banks
-		this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions
-	},
-	methods: {
-		togglePermissions () {
-			this.editPayForSurgery = !this.editPayForSurgery
-			if (this.editPayForSurgery) {
-				this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions
-				this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit
-				this.form.max_halfday_rate_limit = this.practice_surgery.max_halfday_rate_limit
-				this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit
-				this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit
-				this.form.max_excess_hours = this.practice_surgery.max_excess_hours
-				this.form.allow_surgery_create_permanent_jobs = this.practice_surgery.allow_surgery_create_permanent_jobs
-				this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum
-				this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz
-				this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries
-				this.form.share_my_banks = this.practice_surgery.share_my_banks
-				this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions
-			}
-		},
-		getSurgery () {
-			this.$axios
-				.get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
-				.then(res => {
-					this.practice_surgery = res.data.data.practice_surgery
-					console.log("practice_surgery", this.practice_surgery)
-				})
-		},
-		save () {
-			this.form.share_my_banks = [true, 'true'].includes(this.form.share_my_banks) ? true : false
-			this.$axios
-				.$put(
-					`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
-					this.form
-				)
-				.then(res => {
-					console.log(res)
-					this.$emit("updateSurgery", res.data.practice_surgery)
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: ["Surgery Update Success"]
-					})
-					//   this.$router.push(`/hub-surgery-management/${this.$route.params.id}`);
-					this.getSurgery()
-					this.editPayForSurgery = false
-				})
-		},
-		statusStyle (status) {
-			switch (status) {
-				case "Active":
-					return "bg-green-500 text-white"
-					break
-				case "Rejected":
-					return "bg-gray-500 text-gray-700"
-					break
-				case "Termination Requested":
-					return "bg-orange-500 text-white"
-					break
-				case "Terminated":
-					return "bg-red-800 text-red-400"
-					break
-				default:
-					return "bg-yellow-400 text-black"
-			}
-		},
-		typeStyle (type) {
-			switch (type) {
-				case "Spoke":
-					return "bg-blue-500 text-white"
-					break
-				case "Stand Alone":
-					return "bg-indigo-600 text-white"
-					break
-				case "Hub":
-					return "bg-red-500 text-white"
-					break
-				default:
-					return "text-black"
-			}
-		},
-		checkStatus (invitation) {
-			let result = "Invited"
-			if (invitation.invitation_accepted_at) {
-				result = "Active"
-			}
+  transition: {
+    name: "fade",
+    mode: "out-in",
+  },
 
-			if (invitation.invitation_rejected_at) {
-				result = "Rejected"
-			}
+  components: {
+    AppButton,
+    AppInput,
+  },
 
-			if (invitation.termination_requested_at) {
-				if (invitation.invitation_accepted_at) {
-					result = "Termination Requested"
-				} else {
-					result = "Cancellation Requested"
-				}
-			}
+  data () {
+    return {
+      practice_id: "",
+      editPayForSurgery: false,
+      editSessionPolicies: false,
+      editBillingPolicies: false,
+      surgeryCreateSessions: false,
+      form: {
+        allow_surgery_create_sessions: false,
+        max_hourly_rate_limit: "",
+        max_halfday_rate_limit: "",
+        max_wholeday_rate_limit: "",
+        max_ooh_rate_limit: "",
+        max_excess_hours: "",
+        allow_surgery_bill_locum: "",
+        allow_surgery_bill_hubzz: "",
+        share_banks_to_other_surgeries: "",
+        share_my_banks: "",
+      },
+      formError: [],
+      practice_surgery: [],
+    }
+  },
 
-			if (invitation.terminated_at) {
-				result = "Terminated"
-			}
-			return result
-		}
-	}
+  watch: {
+    "form.allow_surgery_create_sessions" (value) {
+      this.surgeryCreateSessions = value
+    },
+  },
+
+  created () {
+    this.practice_id = this.$route.params.id
+    this.getSurgery()
+    this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions
+    this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit
+    this.form.max_halfday_rate_limit = this.practice_surgery.max_halfday_rate_limit
+    this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit
+    this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit
+    this.form.max_excess_hours = this.practice_surgery.max_excess_hours
+    this.form.allow_surgery_create_permanent_jobs = this.practice_surgery.allow_surgery_create_permanent_jobs
+    this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum
+    this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz
+    this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries
+    this.form.share_my_banks = this.practice_surgery.share_my_banks
+    this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions
+  },
+
+  methods: {
+    togglePermissions () {
+      this.editPayForSurgery = !this.editPayForSurgery
+      if (this.editPayForSurgery) {
+        this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions
+        this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit
+        this.form.max_halfday_rate_limit = this.practice_surgery.max_halfday_rate_limit
+        this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit
+        this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit
+        this.form.max_excess_hours = this.practice_surgery.max_excess_hours
+        this.form.allow_surgery_create_permanent_jobs = this.practice_surgery.allow_surgery_create_permanent_jobs
+        this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum
+        this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz
+        this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries
+        this.form.share_my_banks = this.practice_surgery.share_my_banks
+        this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions
+      }
+    },
+    getSurgery () {
+      this.$axios
+        .get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
+        .then(res => {
+          this.practice_surgery = res.data.data.practice_surgery
+          console.log("practice_surgery", this.practice_surgery)
+        })
+    },
+    save () {
+      this.form.share_my_banks = [true, 'true',].includes(this.form.share_my_banks) ? true : false
+      this.$axios
+        .$put(
+          `/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
+          this.form
+        )
+        .then(res => {
+          console.log(res)
+          this.$emit("updateSurgery", res.data.practice_surgery)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Surgery Update Success",],
+          })
+          //   this.$router.push(`/hub-surgery-management/${this.$route.params.id}`);
+          this.getSurgery()
+          this.editPayForSurgery = false
+        })
+    },
+    statusStyle (status) {
+      switch (status) {
+      case "Active":
+        return "bg-green-500 text-white"
+      case "Rejected":
+        return "bg-gray-500 text-gray-700"
+      case "Termination Requested":
+        return "bg-orange-500 text-white"
+      case "Terminated":
+        return "bg-red-800 text-red-400"
+      default:
+        return "bg-yellow-400 text-black"
+      }
+    },
+    typeStyle (type) {
+      switch (type) {
+      case "Spoke":
+        return "bg-blue-500 text-white"
+      case "Stand Alone":
+        return "bg-indigo-600 text-white"
+      case "Hub":
+        return "bg-red-500 text-white"
+      default:
+        return "text-black"
+      }
+    },
+    checkStatus (invitation) {
+      let result = "Invited"
+      if (invitation.invitation_accepted_at) {
+        result = "Active"
+      }
+
+      if (invitation.invitation_rejected_at) {
+        result = "Rejected"
+      }
+
+      if (invitation.termination_requested_at) {
+        if (invitation.invitation_accepted_at) {
+          result = "Termination Requested"
+        } else {
+          result = "Cancellation Requested"
+        }
+      }
+
+      if (invitation.terminated_at) {
+        result = "Terminated"
+      }
+      return result
+    },
+  },
 }
 </script>
 
 <style scoped>
-.modal-container {
-	z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 70%;
-	}
-}
+  .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>
