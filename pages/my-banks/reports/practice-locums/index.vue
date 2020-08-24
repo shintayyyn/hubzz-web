@@ -66,7 +66,7 @@
       <ReportTable
         :limit="limit"
         :items="practiceLocums"
-        :getItemKey="(item) => `${item.practice_id}_${item.locum_user_id}`"
+        :getItemKey="(item) => `${item.locum_user_id}`"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -403,7 +403,7 @@ export default {
       this.practiceLocums = []
 
       const params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
@@ -443,7 +443,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,

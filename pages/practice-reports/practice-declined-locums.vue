@@ -386,7 +386,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/practice-declined-locums', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -414,7 +414,7 @@ export default {
     async downloadPDF () {
       let params = await {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        practice_id:  this.practiceIds,
+        // practice_id:  this.practiceIds,
         limit: 999,
         order_by: this.orderBy,
       }

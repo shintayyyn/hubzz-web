@@ -554,7 +554,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/deductions/count', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
           },
         }).then((responses) => {
           return responses.data.data.count
@@ -562,7 +562,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/deductions', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -612,7 +612,7 @@ export default {
       }, {
         params: {
           ...params,
-          practice_id: this.practiceIds,
+          // practice_id: this.practiceIds,
         },
       }).then((responses) => {
         const token = responses.data.data.token
