@@ -502,7 +502,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/pension-contributions/count', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
           },
         }).then((responses) => {
           return responses.data.data.count
@@ -510,7 +510,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/pension-contributions', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,

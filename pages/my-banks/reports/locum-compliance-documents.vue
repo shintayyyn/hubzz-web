@@ -410,7 +410,7 @@ export default {
       this.loading = true
       this.locumComplianceDocuments = []
       const params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         expired_at: this.expiredAt ? this.expiredAt : undefined,
         expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
         expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
@@ -452,7 +452,7 @@ export default {
     async downloadPDF () {
       this.downloading = true
       const params = await {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         expired_at: this.expiredAt ? this.expiredAt : null,
         expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,

@@ -388,8 +388,6 @@ export default {
     } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
       await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
     }
-
-    // console.log('practice ids', this.practiceIds)
     await this.getLocumInvoiceReportPayments()
   },
 
@@ -532,7 +530,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/payments/count', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
           },
         }).then((responses) => {
           return responses.data.data.count
@@ -540,7 +538,7 @@ export default {
         this.$axios.get('/api/v1/admin/reports/payments', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
+            // practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -584,12 +582,15 @@ export default {
         offset: 0,
       }
 
+      
+      console.log('poractice ids', this.practiceIds)
+
       this.$axios.post('/api/v1/admin/reports/payments/generate-key', {
         filename: `payments.csv`,
       }, {
         params: {
           ...params,
-          practice_id: this.practiceIds,
+          // practice_id: this.practiceIds,
         },
       }).then((responses) => {
         const token = responses.data.data.token

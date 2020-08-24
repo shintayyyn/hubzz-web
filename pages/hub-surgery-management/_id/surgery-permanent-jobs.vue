@@ -45,16 +45,15 @@
     <nuxt-child />
   </section>
 </template>
+
 <script>
 export default {
-	components: {
-  },
-	data () {
-		return {
+  data () {
+    return {
       spokeIsNotAllowed: false,
     }
   },
-	created () {
+  created () {
     console.log('route name', this.$route.name)
   },
 }

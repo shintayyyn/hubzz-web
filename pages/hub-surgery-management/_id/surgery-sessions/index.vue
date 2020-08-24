@@ -21,6 +21,7 @@
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+
       <div v-if="!initialLoading">
         <AppTable
           v-if="jobs.length > 0"
@@ -47,18 +48,21 @@
             </div>
           </template>
         </AppTable>
+
         <div
           v-if="!jobs.length && !loading && !isFiltered"
           class="flex justify-center py-4"
         >
           {{ noJobsToDisplay }}
         </div>
+
         <div
           v-if="!jobs.length && !loading && isFiltered"
           class="flex justify-center py-4"
         >
           No Jobs Found
         </div>
+        
         <transition name="fade" mode="out-in">
           <nuxt-link
             v-if="
@@ -69,6 +73,7 @@
             :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions`, query: {...$route.query}}"
           />
         </transition>
+
         <div>
           <nuxt-child />
         </div>
@@ -113,6 +118,7 @@ export default {
       return error({ status: 404, message: "This Session Status is Invalid", })
     }
   },
+
   data () {
     return {
       total: 0,
@@ -157,6 +163,7 @@ export default {
       showRefresh: false,
     }
   },
+
   computed: {
     isJobPart () {
       if (
@@ -368,6 +375,7 @@ export default {
       return columns
     },
   },
+
   watch: {
     async "$route.query" (newValue, oldValue) {
       let newStatus = newValue.jobStatus
@@ -566,6 +574,7 @@ export default {
       throw err
     }
   },
+
   methods: {
     routerLink (jobOrJobPart) {
       if (this.isJobPart) {
@@ -856,4 +865,3 @@ export default {
   },
 }
 </script>
-

@@ -410,7 +410,7 @@ export default {
       this.locums = []
       // console.log('this.$auth.user', this.$auth.user)
       const params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
         user_postcode: this.userPostcode ? this.userPostcode : undefined,
@@ -457,7 +457,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         user_postcode: this.userPostcode ? this.userPostcode : undefined,

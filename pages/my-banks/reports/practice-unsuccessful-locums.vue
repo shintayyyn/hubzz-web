@@ -351,7 +351,7 @@ export default {
       this.loading = true
       this.practiceUnsuccessfulLocums = []
       let params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
       }
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{

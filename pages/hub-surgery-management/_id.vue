@@ -10,6 +10,7 @@
           @click="$router.push('/hub-surgery-management')"
         />
       </div>
+
       <div class="flex overflow-x-auto">
         <nuxt-link
           :to="{ path: `/hub-surgery-management/${$route.params.id}`}"
@@ -18,6 +19,7 @@
         >
           Surgery Profile
         </nuxt-link>
+
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Sessions Job')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions` }"
@@ -26,6 +28,7 @@
         >
           Surgery Sessions
         </nuxt-link>
+
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Sessions Job') && authPermissions.includes('View Billings')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
@@ -34,6 +37,7 @@
         >
           Surgery Billing
         </nuxt-link>
+
         <nuxt-link
           v-if="relationshipIsActive == 'Active'"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-banks`, query: {...$route.query}}"
@@ -42,6 +46,7 @@
         >
           Surgery Banks
         </nuxt-link>
+
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Permanent Job')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`, query: {...$route.query}}"
@@ -50,6 +55,7 @@
         >
           Surgery Permanent Jobs
         </nuxt-link>
+
         <nuxt-link
           v-if="relationshipIsActive == 'Active'"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/request-for-termination`, query: {...$route.query}}"
@@ -59,88 +65,83 @@
           Request For Termination
         </nuxt-link>
       </div>
-      <nuxt-child :practiceSurgery="practice_surgery" @updateSurgery="$emit('updateSurgery', $event)" />
+
+      <nuxt-child
+        :practiceSurgery="practiceSurgery"
+        @updateSurgery="updateSurgeryHandler"
+      />
     </div>
   </div>
 </template>
 
 <script>
 export default {
-	data () {
-		return {
-			practice_surgery_id: "",
-			practice_surgery: ""
-		}
-	},
-	computed: {
-		authPermissions () {
-			return this.$store.getters["permissions"]
-		},
-		relationshipIsActive: function () {
-			let result = ""
-			if (
-				this.practice_surgery.invitation_accepted_at ||
-				this.practice_surgery.termination_requested_at
-			) {
-				result = "Active"
-			}
+  data () {
+    return {
+      practiceSurgery: "",
+    }
+  },
 
-			if (
-				this.practice_surgery.invitation_rejected_at ||
-				this.practice_surgery.terminated_at
-			) {
-				result = "Inactive"
-			}
-			return result
-		}
-	},
-	async asyncData ({ app, route, store, params, error }) {
-		try {
-			const practice_surgery_id = params.id
-			const response = await app.$axios.$get(
-				`/api/v1/practice/me/practice-surgeries/${params.id}`
-			)
-			const practice_surgery = response.data.practice_surgery
-			return {
-				practice_surgery_id,
-				practice_surgery
-			}
-		} catch (err) {
-			return error({ status: 404, message: "Page Not Found" })
-			throw err
-		}
-	},
-	created () {
-		console.log("permissions", this.authPermissions)
-	},
-	methods: {
-		activeRelationship () {
-			let result = ""
-			if (
-				this.practice_surgery.invitation_accepted_at ||
-				this.practice_surgery.termination_requested_at
-			) {
-				result = "Active"
-			}
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
 
-			if (
-				this.practice_surgery.invitation_rejected_at ||
-				this.practice_surgery.terminated_at
-			) {
-				result = "Inactive"
-			}
-			return result
-		}
-	}
+    relationshipIsActive () {
+      if (
+        this.practiceSurgery.invitation_accepted_at
+        || this.practiceSurgery.termination_requested_at
+      ) {
+        return 'Active'
+      }
+
+      if (
+        this.practiceSurgery.invitation_rejected_at
+        || this.practiceSurgery.terminated_at
+      ) {
+        return 'Inactive'
+      }
+
+      return ''
+    },
+  },
+
+  async asyncData ({ app, params, error, }) {
+    try {
+      const response = await app.$axios.get(`/api/v1/practice/me/practice-surgeries/${params.id}`)
+
+      const practiceSurgery = response.data.data.practice_surgery
+
+      return {
+        practiceSurgery,
+      }
+    } catch (err) {
+      return error(err)
+    }
+  },
+
+  methods: {
+    getPracticeSurgery () {
+      this.$axios.get(`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`).then((response) => {
+        this.practiceSurgery = response.data.data.practice_surgery
+      })
+    },
+
+    updateSurgeryHandler () {
+      this.getPracticeSurgery()
+    },
+  },
 }
 </script>
+
 <style scoped>
-.modal-container {
-	z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 80%;
-	}
-}
+  .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 80%;
+    }
+  }
 </style>
