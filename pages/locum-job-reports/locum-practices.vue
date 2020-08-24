@@ -207,9 +207,9 @@ export default {
         },
         {
           title: 'Rate Type',
-          key: 'job_part_rate_types_formatted',
-          sort_key: 'job_part_rate_types_formatted',
-          column: (item) => item.job_part_rate_types_formatted,
+          key: 'job_part_rate_type_names_formatted',
+          sort_key: 'job_part_rate_type_names_formatted',
+          column: (item) => item.job_part_rate_type_names_formatted,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
