@@ -198,9 +198,9 @@ export default {
         },
         {
           title: 'Rate',
-          key: 'job_part_rates_formatted',
-          sort_key: 'job_part_rates_formatted',
-          column: (item) => item.job_part_rates_formatted,
+          key: 'job_part_rate_ranged_formatted',
+          sort_key: 'job_part_rate_ranged_formatted',
+          column: (item) => item.job_part_rate_ranged_formatted,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
