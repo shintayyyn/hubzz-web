@@ -401,7 +401,7 @@ export default {
       this.loading = true
       this.practiceInvoices = []
       let params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
       }
@@ -441,7 +441,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,

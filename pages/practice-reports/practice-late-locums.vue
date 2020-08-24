@@ -369,7 +369,7 @@ export default {
       this.loading = true
       this.practiceLateLocums = []
       let params = {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
       }
@@ -408,7 +408,7 @@ export default {
 
     async downloadPDF () {
       let params = await {
-        practice_id: this.practiceIds,
+        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         limit: 999,
