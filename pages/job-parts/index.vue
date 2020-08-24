@@ -173,18 +173,6 @@
         @limitchanged="limitchanged"
         @sorted="sorted"
       >
-        <template v-slot:shifts="slotProps">
-          {{ slotProps.item.shifts.map(item => item.name).join(', ') }}
-        </template>
-
-        <template v-slot:rate_type="slotProps">
-          {{ slotProps.item.locum_detail_rate_types.map(item => item.name).join(', ') }}
-        </template>
-
-        <template v-slot:rates="slotProps">
-          {{ slotProps.item.min_rate === slotProps.item.max_rate ? `£${slotProps.item.max_rate}` : `£${slotProps.item.min_rate} - £${ slotProps.item.max_rate}` }}
-        </template>
-
         <template v-slot:ended="slotProps">
           <div class="flex items-center justify-center">
             <div class="rounded-full px-6 py-1">
@@ -374,24 +362,21 @@ export default {
         },
         {
           name: "Shifts",
-          dataIndex: "job.shift.name",
-          slotName: "shifts",
-          class: "text-center",
+          dataIndex: "job_part_shift_names_formatted",
           sortable: true,
+          class: "text-center",
         },
         {
           name: "Rates",
-          dataIndex: "job.rate",
-          slotName: "rates",
+          dataIndex: "job_part_rate_ranged_formatted",
           sortable: true,
-          class: "text-center currency",
+          class: "text-center",
         },
         {
           name: "Rate Type",
-          dataIndex: "job.locum_detail_rate_type.name",
-          class: "text-center",
-          slotName: "rate_type",
+          dataIndex: "job_part_rate_type_names_formatted",
           sortable: true,
+          class: "text-center",
         }
       )
 

@@ -167,13 +167,13 @@ export default {
           })
         }
 
-        if (["Active", "Dormant",].includes(accountStatus)) {
-          locumTabList.push({
-            navigationTabTitle: "Reports",
-            route: "/locum-reports",
-            active: `/${this.$route.path.split('/')[1]}` === '/locum-reports',
-          })
-        }
+        // if (["Active", "Dormant",].includes(accountStatus)) {
+        //   locumTabList.push({
+        //     navigationTabTitle: "Reports",
+        //     route: "/locum-reports",
+        //     active: `/${this.$route.path.split('/')[1]}` === '/locum-reports',
+        //   })
+        // }
 
         locumTabList.push({
           navigationTabTitle: "Invite",
