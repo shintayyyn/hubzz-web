@@ -14,7 +14,39 @@
     </div>
 
     <div class="mt-5">
-      <nuxt-child :invoiceStatusList="invoiceStatusList" :practiceTypeList="practiceTypeList" />
+      <div class="flex-1 flex flex-col py-2 px-4 md:px-6">
+        <!-- <div class="text-xl md:text-4xl">
+          Reports
+        </div>
+
+        <div class="text-sm md:text-xl">
+          Locum Reports
+        </div> -->
+
+        <div class="flex flex-col">
+          <nuxt-link
+            v-for="locumJobReport in locumJobReports"
+            :key="`locumJobReports-${locumJobReport.title}`"
+            :to="locumJobReport.url"
+            class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
+          >
+            <div class="flex flex-no-wrap items-center text-sm w-full">
+              <span class="px-2 whitespace-no-wrap font-semibold">{{ locumJobReport.title }}</span>
+              <span class="px-2 w-full leading-tight flex items-center">{{ locumJobReport.subtitle }}</span>
+              <div class="flex items-center px-1 md:px-0">
+                <svgicon name="arrow-right" width="21" height="21" color="black" />
+              </div>
+            </div>
+          </nuxt-link>
+        </div>
+
+        <nuxt-link
+          v-if="$route.name !== 'locum-job-reports'"
+          class="shield z-511 fixed inset-0 opacity-50"
+          to="/locum-job-reports"
+        /> 
+        <nuxt-child />
+      </div>
     </div>
   </section>
 </template>
@@ -23,16 +55,19 @@
 export default {
   transition: (to, from) => {
     if (
-      (to && to.name === 'locum-job-parts-index' && from && from.name === 'jobs-index')
-      || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index')
-      || (to && to.name === 'locum-job-parts-index-jobPartId' && from && from.name === 'jobs-index')
-      || (from && from.name === 'locum-job-parts-index-jobPartId' && to && to.name === 'jobs-index')
-      || (to && to.name === 'locum-job-parts-index' && from && from.name === 'jobs-index-id')
-      || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index-id')
-      || (to && to.name === 'locum-job-parts-index-jobPartId')
+      (from && from.name === 'jobs-index')
+      || (from && from.name === 'jobs-index-id')
+      || (from && from.name === 'jobs-index-id-job-parts-jobPartId')
 
-      || (from && from.name.includes('locum-job-reports'))
-      || (to && to.name.includes('locum-job-reports'))
+      || (to && to.name === 'jobs-index')
+      || (to && to.name === 'jobs-index-id')
+      || (to && to.name === 'jobs-index-id-job-parts-jobPartId')
+
+      || (from && from.name === 'locum-job-parts-index')
+      || (from && from.name === 'locum-job-parts-index-jobPartId')
+
+      || (to && to.name === 'locum-job-parts-index')
+      || (to && to.name === 'locum-job-parts-index-jobPartId')
     ) {
       return {
         name: '',
@@ -48,36 +83,11 @@ export default {
 
   data () {
     return {
-      invoiceStatusList: [
+      locumJobReports: [
         {
-          label: 'All',
-          value: '',
-        },
-        {
-          label: 'To Be Invoice',
-          value: 'To Be Invoice',
-        },
-        {
-          label: 'Disputed',
-          value: 'Disputed',
-        },
-        {
-          label: 'Invoiced',
-          value: 'Invoiced',
-        },
-      ],
-      practiceTypeList: [
-        {
-          label: 'All',
-          value: '',
-        },
-        {
-          label: 'Platform',
-          value: 'Platform',
-        },
-        {
-          label: 'Private',
-          value: 'Private',
+          title: 'REP-013',
+          subtitle: 'Practices Worked',
+          url: '/locum-job-reports/locum-practices',
         },
       ],
     }
@@ -225,6 +235,43 @@ export default {
       ]
     },
   },
-
 }
 </script>
+
+<style>
+  .report-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-right: 0%;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border-left: solid 2px #ffc72c;
+    transition: all 0.3s ease-in-out;
+    background-color:whitesmoke;
+    z-index: 512;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .report-modal {
+      width: 80%;
+    }
+  }
+
+  .page-overlap {
+    min-width: 100%;
+  }
+
+  @media screen and (min-width: 768px) {
+    .page-overlap {
+      min-width: calc(100% - 70px);
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    .page-overlap {
+      min-width: calc(100% - 200px);
+    }
+  }
+</style>

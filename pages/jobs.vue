@@ -2,10 +2,11 @@
   <section class="jobs-section">
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div v-for="tab in tabs" :key="tab.title" class="relative">
-        <nuxt-link :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-                   :to="tab.route"
-                   class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-                   :class="tab.active ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="tab.route"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="tab.active ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >
           {{ tab.title }}
         </nuxt-link>
@@ -30,6 +31,9 @@ export default {
       || (from && from.name === 'locum-job-parts-index' && to && to.name === 'jobs-index-id')
       || (to && to.name === 'jobs-index-id')
       || (to && to.name === 'jobs-index-id-job-parts-jobPartId')
+
+      || (from && from.name.includes('locum-job-reports'))
+      || (to && to.name.includes('locum-job-reports'))
     ) {
       return {
         name: '',
@@ -83,6 +87,7 @@ export default {
   computed: {
     tabs () {
       const {
+        name,
         query,
       } = this.$route
 
@@ -99,7 +104,9 @@ export default {
               status: 'Allocated',
             },
           },
-          active: status && status.toLowerCase() === ('Allocated').toLowerCase(),
+          active: name === 'locum-job-parts-index'
+            && status
+            && status.toLowerCase() === ('Allocated').toLowerCase(),
         },
         {
           title: 'Ongoing',
@@ -109,7 +116,9 @@ export default {
               status: 'Ongoing',
             },
           },
-          active: status && status.toLowerCase() === ('Ongoing').toLowerCase(),
+          active: name === 'locum-job-parts-index'
+            && status
+            && status.toLowerCase() === ('Ongoing').toLowerCase(),
         },
         {
           title: 'Available',
@@ -119,7 +128,9 @@ export default {
               status: 'Available',
             },
           },
-          active: status && status.toLowerCase() === ('Available').toLowerCase(),
+          active: name === 'jobs-index'
+            && status
+            && status.toLowerCase() === ('Available').toLowerCase(),
         },
         {
           title: 'Applied',
@@ -129,7 +140,9 @@ export default {
               status: 'Applied',
             },
           },
-          active: status && status.toLowerCase() === ('Applied').toLowerCase(),
+          active: name === 'jobs-index'
+            && status
+            && status.toLowerCase() === ('Applied').toLowerCase(),
         },
         {
           title: 'Unsuccessful',
@@ -139,7 +152,9 @@ export default {
               status: 'Unsuccessful',
             },
           },
-          active: status && status.toLowerCase() === ('Unsuccessful').toLowerCase(),
+          active: name === 'jobs-index'
+            && status
+            && status.toLowerCase() === ('Unsuccessful').toLowerCase(),
         },
         {
           title: 'Withdrawn',
@@ -149,7 +164,9 @@ export default {
               status: 'Withdrawn',
             },
           },
-          active: status && status.toLowerCase() === ('Withdrawn').toLowerCase(),
+          active: name === 'locum-job-parts-index'
+            && status
+            && status.toLowerCase() === ('Withdrawn').toLowerCase(),
         },
         {
           title: 'Cancelled',
@@ -159,7 +176,9 @@ export default {
               status: 'Cancelled',
             },
           },
-          active: status && status.toLowerCase() === ('Cancelled').toLowerCase(),
+          active: name === 'locum-job-parts-index'
+            && status
+            && status.toLowerCase() === ('Cancelled').toLowerCase(),
         },
         {
           title: 'Completed',
@@ -169,7 +188,9 @@ export default {
               status: 'Completed',
             },
           },
-          active: status && status.toLowerCase() === ('Completed').toLowerCase(),
+          active: name === 'locum-job-parts-index'
+            && status
+            && status.toLowerCase() === ('Completed').toLowerCase(),
         },
         {
           title: 'Approved',
@@ -179,7 +200,9 @@ export default {
               status: 'Approved',
             },
           },
-          active: status && status.toLowerCase() === ('Approved').toLowerCase(),
+          active: name === 'locum-job-parts-index'
+            && status
+            && status.toLowerCase() === ('Approved').toLowerCase(),
         },
         {
           title: 'Private',
@@ -189,7 +212,16 @@ export default {
               status: 'Private',
             },
           },
-          active: status && status.toLowerCase() === ('Private').toLowerCase(),
+          active: name === 'jobs-index'
+            && status
+            && status.toLowerCase() === ('Private').toLowerCase(),
+        },
+        {
+          title: 'Reports',
+          route: {
+            name: 'locum-job-reports',
+          },
+          active: name === 'locum-job-reports',
         },
       ]
     },
