@@ -1,7 +1,9 @@
 <template>
   <div class="py-2">
+    <AppLoading :loading="loading" />
+
     <AppButton
-      v-if="surgeries && surgeries.length > 0"
+      v-if="practiceSurgeries && practiceSurgeries.length > 0"
       :label="'Share my banks'"
       class="bg-yellow-500 text-sm"
       :inStyle="'padding:5px 14px;margin-left:5px;'"
@@ -9,14 +11,14 @@
     />
 
     <AppTable
-      v-if="surgeries.length > 0"
+      v-if="practiceSurgeries.length > 0"
       :total="totalSurgeries"
-      :items="surgeries"
+      :items="practiceSurgeries"
       :loading="loading"
-      :currentPage="current_page"
-      :perPage="params.limit"
+      :currentPage="currentPage"
+      :perPage="limit"
       :columns="columns"
-      :orderBy="params.order_by"
+      :orderBy="orderBy"
       :customWidth="700"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
@@ -55,7 +57,7 @@
         <div
           v-if="true"
           class="flex flex-row flex-wrap justify-center"
-          @click="slotProps.item.invitation_rejected ? null : checkItem(slotProps.item.id)"
+          @click="slotProps.item.invitation_rejected ? null : toggleItem(slotProps.item.id)"
         >
           <input
             type="checkbox"
@@ -83,6 +85,7 @@
 </template>
 
 <script>
+import AppLoading from "@/components/Base/AppLoading"
 import AppTable from "@/components/Base/AppTable"
 import AppButton from "@/components/Base/AppButton"
 
@@ -93,21 +96,19 @@ export default {
   },
 
   components: {
+    AppLoading,
     AppTable,
     AppButton,
   },
 
   data () {
     return {
-      surgeries: [],
+      practiceSurgeries: [],
+      selectedItems: [],
       loading: false,
-      current_page: 1,
-      params: {
-        offset: 0,
-        limit: 5,
-        order_by: [],
-        is_invitation_accepted: true,
-      },
+      currentPage: 1,
+      limit: 5,
+      orderBy: [],
       columns: [
         {
           name: "Shared my banks",
@@ -141,164 +142,107 @@ export default {
     }
   },
 
-  async asyncData ({ app, error, }) {
-    try {
-      const responsePracticeType = await app.$axios.$get(
-        `/api/v1/practice/me/practice-type`
-      )
-      let practice
-        = responsePracticeType.data && responsePracticeType.data.practice
-          ? responsePracticeType.data.practice
-          : null
+  computed: {
+    offset () {
+      return this.limit * (this.currentPage - 1)
+    },
 
-      let surgeries = []
-      let selectedItems = []
-      let totalSurgeries = 0
-
-      const responseCount = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/count`,
-        {
-          params: {
-            is_invitation_accepted: true,
-          },
-        }
-      )
-
-      totalSurgeries
-        = responseCount.data && responseCount.data.count
-          ? responseCount.data.count
-          : 0
-
-      const response = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries?limit=5`,
-        {
-          params: {
-            is_invitation_accepted: true,
-          },
-        }
-      )
-      if (response.data && response.data.practice_surgeries) {
-        response.data.practice_surgeries.forEach(surgery => {
-          surgeries.push(surgery)
-          if (surgery.share_my_banks === true) {
-            selectedItems.push(surgery.id)
-          }
-          // surgeries.push({ ...surgery, removable: true });
-        })
-      }
-
-      return {
-        practice,
-        surgeries,
-        selectedItems,
-        totalSurgeries,
-      }
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data)
-        return
-      }
-      throw err
-    }
+    practice () {
+      return this.$auth.loggedIn && this.$auth.user && this.$auth.user.practice_detail && this.$auth.user.practice_detail.practice
+        ? this.$auth.user.practice_detail.practice
+        : null
+    },
   },
+
   mounted () {
-    this.addSocketListeners()
+    this.$socket.on('Practice Notification Accept Surgery', this.getPracticeSurgeries)
+    this.getPracticeSurgeries()
   },
+
   destroyed () {
-    this.removeSocketListener()
+    this.$socket.removeListener('Practice Notification Accept Surgery', this.getPracticeSurgeries)
   },
+
   methods: {
-    addSocketListeners () {
-      this.$socket.on(
-        "Practice Notification Accept Surgery",
-        this.getSurgeriesCount
-      )
-    },
-    removeSocketListener () {
-      this.$socket.removeListener(
-        "Practice Notification Accept Surgery",
-        this.getSurgeriesCount
-      )
-    },
     shareMyBanks () {
-      this.$axios
-        .$put(
-          `/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`,
-          { surgeryIds: this.selectedItems, }
-        )
-        .then(() => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`Sharing MyBanks Update Success`,],
-          })
+      this.$axios.put(`/api/v1/practice/me/practice-surgeries/parent-practice/${this.practice.id}`, {
+        surgeryIds: this.selectedItems,
+      }).then(() => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`Sharing MyBanks Update Success`,],
         })
+      })
     },
-    checkItem (childPracticeId) {
-      let index = this.selectedItems.findIndex(
-        item => item === childPracticeId
-      )
-      if (index >= 0) {
-        this.selectedItems = this.selectedItems.filter(
-          item => item !== childPracticeId
-        )
-      } else if (index < 0) {
-        this.selectedItems.push(childPracticeId)
+
+    toggleItem (practiceSurgeryId) {
+      const index = this.selectedItems
+        .findIndex(id => id === practiceSurgeryId)
+
+      if (index > -1) {
+        this.selectedItems.splice(index, 1)
+      } else {
+        this.selectedItems.push(practiceSurgeryId)
       }
     },
-    getSurgeriesCount (params) {
-      this.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries/count`, { params, })
-        .then(res => {
-          this.totalSurgeries = res.data.count
-          this.getSurgeries(this.params)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    getSurgeries (params) {
+
+    getPracticeSurgeries () {
       this.loading = true
-      this.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries`, { params, })
-        .then(res => {
-          this.loading = false
-          this.surgeries = []
-          res.data.practice_surgeries.forEach(surgery => {
-            surgery.status = this.getStatus(surgery)
-            this.surgeries.push(surgery)
-            // this.surgeries.push({ ...surgery, removable: true });
+      Promise.all([
+        this.$axios.get('/api/v1/practice/me/practice-surgeries/count', {
+          params: {
+            is_invitation_accepted: true,
+          },
+        }).then(response => response.data.data.count),
+
+        this.$axios.get('/api/v1/practice/me/practice-surgeries', {
+          params: {
+            is_invitation_accepted: true,
+            order_by: this.orderBy,
+            limit: this.limit,
+            offset: this.offset,
+          },
+        }).then(response => response.data.data.practice_surgeries),
+      ]).then(([practiceSurgeriesCount, practiceSurgeries,]) => {
+        this.totalSurgeries = practiceSurgeriesCount
+
+        this.practiceSurgeries = practiceSurgeries
+          .map(practiceSurgery => {
+            practiceSurgery.status = this.getStatus(practiceSurgery)
+            return practiceSurgery
           })
-          this.selectedItems = []
-          this.surgeries.forEach(surgery => {
-            if (surgery.share_my_banks === true) {
-              this.selectedItems.push(surgery.id)
-            }
-          })
-        })
-        .catch(err => {
-          console.log(err)
-        })
+
+        this.selectedItems = this.practiceSurgeries
+          .filter(practiceSurgery => practiceSurgery.share_my_banks)
+          .map(practiceSurgery => practiceSurgery.id)
+      }).catch((err) => {
+        console.log('err', err.response || err)
+      }).finally(() => {
+        this.loading = false
+      })
     },
-    sorted (order_by) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.order_by = order_by
-      this.getSurgeries(this.params)
+
+    sorted (orderBy) {
+      this.currentPage = 1
+      this.orderBy = orderBy
+      this.getPracticeSurgeries()
     },
+
     pagechanged (page) {
-      this.current_page = page
-      this.params.offset = this.params.limit * (page - 1)
-      this.getSurgeries(this.params)
+      this.currentPage = page
+      this.getPracticeSurgeries()
     },
+
     limitchanged (limit) {
-      this.current_page = 1
-      this.params.offset = 0
-      this.params.limit = limit
-      this.getSurgeries(this.params)
+      this.currentPage = 1
+      this.limit = limit
+      this.getPracticeSurgeries()
     },
+
     getStatus (surgery) {
       let status = "Invited"
+
       if (surgery.terminated_at) {
         status = "Terminated"
       } else if (surgery.termination_requested_at) {
@@ -312,8 +256,10 @@ export default {
       } else if (surgery.invitation_accepted_at) {
         status = "Active"
       }
+
       return status
     },
+    
     statusStyle (surgery) {
       this.getStatus(surgery)
       switch (this.getStatus(surgery)) {
