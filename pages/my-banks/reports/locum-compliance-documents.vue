@@ -194,8 +194,6 @@ export default {
       expiredAtDateStart: '',
       expiredAtDateEnd: '',
       professionNameIncludes:'',
-
-      practiceIds: [],
     }
   },
 
@@ -288,30 +286,6 @@ export default {
       this.getLocumComplianceDocuments()
     },
   },
-
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getLocumComplianceDocuments()
-  },
-
 
   mounted () {      
     // const {
@@ -410,7 +384,6 @@ export default {
       this.loading = true
       this.locumComplianceDocuments = []
       const params = {
-        // practice_id: this.practiceIds,
         expired_at: this.expiredAt ? this.expiredAt : undefined,
         expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
         expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
@@ -452,7 +425,6 @@ export default {
     async downloadPDF () {
       this.downloading = true
       const params = await {
-        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         expired_at: this.expiredAt ? this.expiredAt : null,
         expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,

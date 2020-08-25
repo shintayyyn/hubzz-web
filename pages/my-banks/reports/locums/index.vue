@@ -168,8 +168,6 @@ export default {
         25,
       ],
       activePage: 1,
-
-      practiceIds: [],
     }
   },
 
@@ -299,30 +297,6 @@ export default {
     },
   },
 
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getLocums()
-  },
-
-
   mounted () {      
     // const {
     //   order_by: orderBy = [],
@@ -340,6 +314,8 @@ export default {
     this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
     this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
     this.userPostcode = userPostcode ? userPostcode : ''
+
+    this.getLocums()
   },
 
   methods: {
@@ -408,9 +384,7 @@ export default {
     getLocums () {
       this.loading = true
       this.locums = []
-      // console.log('this.$auth.user', this.$auth.user)
       const params = {
-        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
         user_postcode: this.userPostcode ? this.userPostcode : undefined,
@@ -457,7 +431,6 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        // practice_id: this.practiceIds,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         user_postcode: this.userPostcode ? this.userPostcode : undefined,
