@@ -343,7 +343,7 @@ export default {
       const status = this.$route.query.jobStatus || 'Allocated'
 
       const practiceSurgeryId = this.$route.params.id
-      
+
       return this.isJobPart
         ? {
           practice_surgery_id: practiceSurgeryId,
@@ -496,6 +496,7 @@ export default {
         throw err
       })
     },
+    
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
@@ -505,6 +506,7 @@ export default {
       this.initialLoading = false
       this.showRefresh = false
     },
+
     async sorted (order_by) {
       let orderBy = order_by.map(item => {
         let order = item.split(":")[1]
@@ -540,6 +542,7 @@ export default {
       await this.getJobs()
       this.loading = false
     },
+
     async pagechanged (page) {
       this.current_page = page
       this.offset = this.limit * (page - 1)
@@ -547,6 +550,7 @@ export default {
       await this.getJobs()
       this.loading = false
     },
+
     async limitchanged (limit) {
       this.current_page = 1
       this.offset = 0
