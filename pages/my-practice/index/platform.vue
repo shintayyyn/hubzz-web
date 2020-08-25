@@ -43,6 +43,7 @@
             :perPage="perPage"
             :currentPage="current_page"
             @pagechanged="pagechanged"
+            @limitchanged="limitchangedHandler"
           />
         </div>
 
@@ -101,6 +102,7 @@ export default {
       current_page: 1,
       practices: [],
       total: 0,
+      perPage: 5,
     }
   },
 
@@ -108,9 +110,7 @@ export default {
     offset () {
       return this.perPage * (this.current_page - 1)
     },
-    perPage () {
-      return 5
-    },
+
     totalPages () {
       return Math.ceil(this.total / this.perPage)
     },
@@ -252,8 +252,18 @@ export default {
     async pagechanged (page) {
       this.current_page = page
       this.loading = true
-      await this.getPractices()
-      this.loading = false
+      this.getPractices().finally(() => {
+        this.loading = false
+      })
+    },
+
+    limitchangedHandler (limit) {
+      this.perPage = limit
+      this.current_page = 1
+      this.loading = true
+      this.getPractices().finally(() => {
+        this.loading = false
+      })
     },
   },
 }
