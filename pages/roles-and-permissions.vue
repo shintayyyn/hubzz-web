@@ -11,6 +11,7 @@
         </nuxt-link>
       </div>
     </div>
+    
     <div class="mt-5">
       <nuxt-child />
     </div>

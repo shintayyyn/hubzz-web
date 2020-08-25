@@ -97,8 +97,8 @@ export default {
         },
         {
           name: "Created At",
-          dataIndex: "created_at",
-          class: "text-center localDate",
+          dataIndex: "created_at_in_gb_formatted",
+          class: "text-center",
           sortable: true,
         },
       ],
