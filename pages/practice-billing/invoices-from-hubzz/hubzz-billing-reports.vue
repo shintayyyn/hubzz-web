@@ -37,7 +37,15 @@ export default {
         },
       ]
     }
-  }
+  },
+  created () {
+    const userPractice = this.$auth.user.practice_detail.practice
+    if (userPractice.type === 'Spoke') {
+      if (userPractice.allow_surgery_bill_hubzz === false) {
+        this.reports = this.reports.filter(report => report.title !== 'REP-010')
+      }
+    }
+  },
 }
 </script>
 

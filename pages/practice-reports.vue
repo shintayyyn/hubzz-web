@@ -91,6 +91,15 @@ export default {
       ],
     }
   },
+
+  created () {
+    const userPractice = this.$auth.user.practice_detail.practice
+    if (userPractice.type === 'Spoke') {
+      if (userPractice.allow_surgery_bill_locum === false) {
+        this.practiceReports = this.practiceReports.filter(practiceReport => (practiceReport.title !== 'REP-001' && practiceReport.title !== 'REP-002' && practiceReport.title !== 'REP-003'))
+      }
+    }
+  },
 }
 </script>
 

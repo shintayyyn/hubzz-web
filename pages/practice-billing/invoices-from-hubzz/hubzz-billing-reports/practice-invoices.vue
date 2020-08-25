@@ -296,28 +296,6 @@ export default {
       this.getPracticeInvoices()
     },
   },
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getPracticeInvoices()
-  },
 
   mounted () {
     const {
@@ -401,7 +379,6 @@ export default {
       this.loading = true
       this.practiceInvoices = []
       let params = {
-        // practice_id: this.practiceIds,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
       }
@@ -441,7 +418,6 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        // practice_id: this.practiceIds,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,

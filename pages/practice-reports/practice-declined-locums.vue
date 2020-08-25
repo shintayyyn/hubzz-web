@@ -267,29 +267,6 @@ export default {
     },
   },
 
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getPracticeDeclinedLocums()
-  },
-
   mounted () {      
     // const {
     //   order_by: orderBy = [],
@@ -302,6 +279,7 @@ export default {
       locum_name_includes: locumNameIncludes,
     } = this.$route.query
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+
     this.getPracticeDeclinedLocums()
   },
 
@@ -386,7 +364,6 @@ export default {
         this.$axios.get('/api/v1/admin/reports/practice-declined-locums', {
           params: {
             ...params,
-            // practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -414,7 +391,6 @@ export default {
     async downloadPDF () {
       let params = await {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        // practice_id:  this.practiceIds,
         limit: 999,
         order_by: this.orderBy,
       }
