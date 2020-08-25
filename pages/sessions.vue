@@ -319,7 +319,12 @@ export default {
       return this.$axios
         .$get(`/api/v1/practice/jobs`, {
           params: {
-            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled",],
+            status: [
+              "Pending",
+              "Live",
+              "Applied",
+              "Unfilled",
+            ],
             job_number: this.search,
           },
         })
@@ -337,6 +342,7 @@ export default {
         .$get(`/api/v1/practice/job-parts`, {
           params: {
             status: [
+              "Allocated",
               "Ongoing",
               "Withdrawn",
               "Cancelled",

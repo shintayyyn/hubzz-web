@@ -42,12 +42,13 @@
             :totalPages="totalPages"
             :perPage="perPage"
             :currentPage="current_page"
-            @pagechanged="pagechanged"
+            @pagechanged="pagechangedHandler"
+            @limitchanged="limitchangedHandler"
           />
         </div>
 
         <div v-if="!practices.length && !loading" class="flex flex-row flex-wrap justify-center">
-          <div>You do not have any Associated Job for any Practices</div>
+          <div>{{ noResultMessage }}</div>
         </div>
 
         <transition name="fade" mode="out-in">
@@ -101,6 +102,7 @@ export default {
       current_page: 1,
       practices: [],
       total: 0,
+      perPage: 5,
     }
   },
 
@@ -108,11 +110,17 @@ export default {
     offset () {
       return this.perPage * (this.current_page - 1)
     },
-    perPage () {
-      return 5
-    },
+
     totalPages () {
       return Math.ceil(this.total / this.perPage)
+    },
+
+    noResultMessage () {
+      if (!this.$route.query.status || this.$route.query.status.toLowerCase() === 'favorite') {
+        return 'You do not have a favorite practice.'
+      }
+      
+      return 'You do not have any Associated Job for any Practices'
     },
   },
 
@@ -249,11 +257,21 @@ export default {
       }
     },
 
-    async pagechanged (page) {
+    pagechangedHandler (page) {
       this.current_page = page
       this.loading = true
-      await this.getPractices()
-      this.loading = false
+      this.getPractices().finally(() => {
+        this.loading = false
+      })
+    },
+
+    limitchangedHandler (limit) {
+      this.perPage = limit
+      this.current_page = 1
+      this.loading = true
+      this.getPractices().finally(() => {
+        this.loading = false
+      })
     },
   },
 }
