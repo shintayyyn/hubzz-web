@@ -22,6 +22,7 @@
           </p>
         </div>
       </div>
+
       <transition name="fade">
         <div
           v-if="toPublish"
@@ -274,6 +275,14 @@
                     Duration
                   </h4>
                   <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+                    <AppInput
+                      v-model="auto_assign_job"
+                      :type="'select'"
+                      :name="'auto_assign_job'"
+                      :label="'Use AUTO-MATCH on this Job?'"
+                      :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+                    />
+
                     <template v-if="['false', false].includes(auto_assign_job)">
                       <AppInput
                         v-model="selection_notification"
