@@ -11,7 +11,7 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="locumNameIncludes"
+            v-model="appointedToLocumUserNameIncludes"
             placeholder="Search locum"
             type="text"
             label="Locum"
@@ -66,19 +66,19 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceLocums"
-        :getItemKey="(item) => `${item.locum_user_id}`"
+        :items="locumUsedReports"
+        :getItemKey="(item) => `${item.id}`"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
-        @setOrderBy="(value) => orderBy = value"
+        @setOrderBy="setOrderBy"
       >
         <!-- <template v-slot:rates_of_pay_slot="slotProps">
           <div class="items-center justify-center">
             <div v-if="slotProps.item.job_parts.length > 0">
               <div 
                 v-for="(jobPart, index) in slotProps.item.job_parts"
-                :key="`jobParts-${index}`"
+                :key="`locumUsedReports-${index}`"
               >
                 <div>
                   £ {{ jobPart.rate }} {{ jobPart.locum_detail_rate_type_name }}
@@ -98,12 +98,14 @@
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+            
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
-            <div class="whitespace-no-wrap">
+
+            <!-- <div class="whitespace-no-wrap">
               Order By: {{ orderByProcessed }}
-            </div>
+            </div> -->
           </div>
         </div>
   
@@ -118,9 +120,9 @@
       <div class="flex-wrap justify-start items-center w-full flex">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceLocums.length === 0"
+            :disabled="downloading || locumUsedReports.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="locumUsedReports.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadCsv"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -137,6 +139,7 @@ import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppButton from '@/components/Base/AppButton'
 import AppInput from '@/components/Base/AppInput'
+
 export default {
   components: {
     ReportTable,
@@ -150,11 +153,10 @@ export default {
       loading: false,
       count: 0,
       downloading: false,
-      locumNameIncludes: '',
+      appointedToLocumUserNameIncludes: '',
       professionNameIncludes:'',
-      practiceLocums: [],
+      locumUsedReports: [],
       orderBy: [],
-      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -186,7 +188,7 @@ export default {
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceLocums.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locumUsedReports.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
@@ -217,9 +219,9 @@ export default {
         },
         {
           title: 'Locum',
-          key: 'locum_user_name',
-          sort_key: 'locum_user_name',
-          column: (item) => item.locum_user_name,
+          key: 'appointed_to_locum_user_name',
+          sort_key: 'appointed_to_locum_user_name',
+          column: (item) => item.appointed_to_locum_user_name,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -235,9 +237,9 @@ export default {
         },
         {
           title: 'Area',
-          key: 'user_postcode',
-          sort_key: 'user_postcode',
-          column: (item) => item.user_postcode,
+          key: 'appointed_to_locum_user_postcode',
+          sort_key: 'appointed_to_locum_user_postcode',
+          column: (item) => item.appointed_to_locum_user_postcode,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -252,10 +254,19 @@ export default {
           flexShrink: 0,
         },
         {
+          title: 'Rate Types',
+          key: 'job_part_rate_type_names_formatted',
+          sort_key: 'job_part_rate_type_names_formatted',
+          column: (item) => item.job_part_rate_type_names_formatted,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
           title: 'Marked as Bank',
-          key: 'locum_is_favorite_of_practice',
-          sort_key: 'locum_is_favorite_of_practice',
-          column: (item) => item.locum_is_favorite_of_practice ? 'Yes' : 'No',
+          key: 'appointed_locum_is_favorite_of_job_practice',
+          sort_key: 'appointed_locum_is_favorite_of_job_practice',
+          column: (item) => item.appointed_locum_is_favorite_of_job_practice ? 'Yes' : 'No',
           justify: 'center',
           flexGrow: 1,
           flexShrink: 0,
@@ -266,55 +277,36 @@ export default {
     pages () {
       return Math.max(Math.ceil(this.count / this.limit), 1)
     },
-  },
 
-  watch: {
-    orderBy (value) {
+    orderByProcessed () {
       let replaced = ''
-      if(value.length > 0) {
-        replaced = value[0].replace(/_/g, ' ')
+
+      if(this.orderBy.length > 0) {
+        replaced = this.orderBy[0].replace(/_/g, ' ')
         replaced = replaced.replace(/:/g, ' - ')
         replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
         replaced = replaced.replace('Desc', 'Descending')
         replaced = replaced.replace('Asc', 'Ascending')
       } 
-      this.orderByProcessed = replaced
-      this.getPracticeLocums()
-    },
 
+      return replaced
+    },
+  },
+
+  watch: {
     limit () {
-      this.page = 1
-      this.getPracticeLocums()
-    },
-
-    activePage () {
-      this.getPracticeLocums()
+      this.activePage = 1
+      this.getLocumUsedReports()
     },
   },
 
-  mounted () {      
-    // const {
-    //   order_by: orderBy = [],
-    //   page,
-    // } = this.$route.query
-
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
-    const {
-      locum_name_includes: locumNameIncludes,
-      profession_name_includes: professionNameIncludes,
-    } = this.$route.query
-
-    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
-    
-    this.getPracticeLocums()
+  mounted () {
+    this.getLocumUsedReports()
   },
 
-  
   methods: {
     filterReset () {
-      this.locumNameIncludes = ''
+      this.appointedToLocumUserNameIncludes = ''
       this.professionNameIncludes = ''
 
       this.filterSearch()
@@ -325,7 +317,7 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
@@ -333,6 +325,8 @@ export default {
       if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
         this.$router.replace({ query, })
       }
+
+      this.getLocumUsedReports()
     },
 
     setPage (page) {
@@ -354,7 +348,7 @@ export default {
         })
       }
 
-      this.getPracticeLocums()
+      this.getLocumUsedReports()
     },
 
     setOrderBy (orderBy) {
@@ -369,24 +363,25 @@ export default {
         },
       })
 
-      this.getPracticeLocums()
+      this.getLocumUsedReports()
     },
 
-    getPracticeLocums () {
+    getLocumUsedReports () {
       this.loading = true
-      this.practiceLocums = []
+      this.locumUsedReports = []
 
       const params = {
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
+
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-locums/count',{
+        this.$axios.get('/api/v1/practice/locum-used-reports/count',{
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-locums', {
+        this.$axios.get('/api/v1/practice/locum-used-reports', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -394,17 +389,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_locums
+          return responses.data.data.locum_used_reports
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceLocums,
+          locumUsedReports,
         ] = results
 
         this.count = count
-        this.practiceLocums = practiceLocums
+        this.locumUsedReports = locumUsedReports
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -416,15 +411,15 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
         limit: 999,
         offset: 0,
       }
 
-      this.$axios.post('/api/v1/admin/reports/practice-locums/generate-key', {
-        filename: `practice-locums.csv`,
+      this.$axios.post('/api/v1/practice/locum-used-reports/generate-key', {
+        filename: `locum-used.csv`,
       }, {
         params: {
           ...params,
@@ -432,7 +427,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-locums/csv?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/locum-used-reports/csv?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
