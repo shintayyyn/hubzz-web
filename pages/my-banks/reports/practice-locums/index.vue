@@ -334,6 +334,8 @@ export default {
       if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
         this.$router.replace({ query, })
       }
+      
+      this.getPracticeLocums()
     },
 
     setPage (page) {
