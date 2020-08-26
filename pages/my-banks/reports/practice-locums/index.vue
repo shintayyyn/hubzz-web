@@ -11,6 +11,15 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search practice"
+            type="text"
+            label="Practice"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
             v-model="appointedToLocumUserNameIncludes"
             placeholder="Search locum"
             type="text"
@@ -153,6 +162,7 @@ export default {
       loading: false,
       count: 0,
       downloading: false,
+      practiceNameIncludes: '',
       appointedToLocumUserNameIncludes: '',
       professionNameIncludes:'',
       locumUsedReports: [],
@@ -306,6 +316,7 @@ export default {
 
   methods: {
     filterReset () {
+      this.practiceNameIncludes = ''
       this.appointedToLocumUserNameIncludes = ''
       this.professionNameIncludes = ''
 
@@ -317,6 +328,7 @@ export default {
 
       const query = {
         ...this.$route.query,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
@@ -371,6 +383,7 @@ export default {
       this.locumUsedReports = []
 
       const params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
@@ -411,11 +424,10 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
-        limit: 999,
-        offset: 0,
       }
 
       this.$axios.post('/api/v1/practice/locum-used-reports/generate-key', {
