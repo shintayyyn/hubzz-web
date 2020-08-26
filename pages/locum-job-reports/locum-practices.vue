@@ -58,6 +58,7 @@
             </div>
           </div>
         </div>
+        
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -237,11 +238,7 @@ export default {
     },
 
     limit () {
-      this.page = 1
-      this.getLocumPractices()
-    },
-
-    activePage () {
+      this.activePage = 1
       this.getLocumPractices()
     },
   },
