@@ -15,7 +15,7 @@
         Rep-005
       </div>
 
-      <div class="flex text-sm ">
+      <div v-if="false" class="flex text-sm">
         <nuxt-link
           to="/my-banks/reports/practice-locums"
           class=" hover:text-sunglow p-1"
@@ -25,6 +25,7 @@
         >
           <span class="text-2xl">Table</span>
         </nuxt-link>
+
         <nuxt-link
           to="/my-banks/reports/practice-locums/map"
           class=" hover:text-sunglow p-1"

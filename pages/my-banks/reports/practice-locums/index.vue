@@ -48,11 +48,12 @@
         <div>
           <label class="text-white">Limit: </label>
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
           <label class="text-white">Page: </label>
           <select v-model="activePage">
@@ -114,9 +115,7 @@
         />
       </div>
 
-      <div
-        class="flex-wrap justify-start items-center w-full flex"
-      >
+      <div class="flex-wrap justify-start items-center w-full flex">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
             :disabled="downloading || practiceLocums.length === 0"
