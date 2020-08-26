@@ -251,7 +251,7 @@ export default {
           title: 'Hours',
           key: 'hours',
           sort_key: 'hours',
-          column: (item) => item.hours_with_minutes,
+          column: (item) => item.hours ? (item.hours/60).toFixed(2) : null,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,

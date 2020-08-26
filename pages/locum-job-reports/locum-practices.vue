@@ -15,6 +15,38 @@
         Rep-013
       </div>
 
+      <div
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+      >
+        <div class="md:px-1 w-full">
+          <label class="text-md md:text-lg text-bold">Filters</label>
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search Practice Name"
+            type="text"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <AppButton
+            label="Reset"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterReset"
+          />
+
+          <AppButton
+            class="mx-2"
+            label="Submit"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterSearch"
+          />
+        </div>
+      </div>
+
       <div v-if="false">
         <div>
           <label class="">Limit: </label>
@@ -85,10 +117,14 @@
 </template>
 
 <script>
+import AppButton from '@/components/Base/AppButton'
+import AppInput from '@/components/Base/AppInput'
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 export default {
   components: {
+    AppButton,
+    AppInput,
     ReportTable,
     ReportPagination,
   },
@@ -126,6 +162,8 @@ export default {
         25,
       ],
       activePage: 1,
+
+      practiceNameIncludes: '',
     }
   },
 
@@ -244,18 +282,45 @@ export default {
   },
 
   mounted () {      
-    // const {
-    //   order_by: orderBy = [],
-    //   page,
-    // } = this.$route.query
+    const {
+      practice_name_includes: practiceNameIncludes,
+      order_by: orderBy = [],
+      page,
+    } = this.$route.query
+    
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
 
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
+    this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
+
+    this.activePage = page ? Number.parseInt(page) : 1
 
     this.getLocumPractices()
   },
 
   methods: {
+    filterReset () {
+      this.practiceNameIncludes = ''
+
+      this.filterSearch()
+    },
+
+    filterSearch () {
+      this.activePage = 1
+
+      const query = {
+        ...this.$route.query,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        order_by: this.orderBy ? this.orderBy : undefined,
+        page: undefined,
+      }
+
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
+      }
+      
+      this.getLocumInvoiceReportPayments()
+    },
+    
     setPage (page) {
       this.activePage = page
 
@@ -296,7 +361,9 @@ export default {
     getLocumPractices () {
       this.loading = true
       this.locumPracticesWorkedReports = []
-      let params = {}
+      let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+      }
       Promise.all([
         this.$axios.get('/api/v1/locum/locum-practices-worked-reports/count', {
           params: {
@@ -334,6 +401,7 @@ export default {
 
     downloadPDF () {
       let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         order_by: this.orderBy,
       }
       this.downloading = true
