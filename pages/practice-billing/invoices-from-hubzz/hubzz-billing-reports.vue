@@ -35,7 +35,7 @@ export default {
           subtitle: 'Hubzz Invoices',
           url: '/practice-billing/invoices-from-hubzz/hubzz-billing-reports/practice-invoices',
         },
-      ]
+      ],
     }
   },
   created () {

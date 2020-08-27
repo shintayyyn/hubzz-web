@@ -194,6 +194,15 @@ export default {
           flexShrink: 0,
         },
         {
+          title: 'Locum Name',
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
           title: 'Profession',
           key: 'profession_name',
           sort_key: 'profession_name',
@@ -322,6 +331,7 @@ export default {
     filterReset () {
       this.locumNameIncudes = ''
       this.professionNameIncludes = ''
+      this.userPostcode = ''
 
       this.filterSearch()
     },
