@@ -318,7 +318,7 @@ export default {
         this.$router.replace({ query, })
       }
       
-      this.getLocumInvoiceReportPayments()
+      this.getLocumPractices()
     },
     
     setPage (page) {
