@@ -20,7 +20,7 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="appointedToLocumUserNameIncludes"
+            v-model="locumUserNameIncludes"
             placeholder="Search locum"
             type="text"
             label="Locum"
@@ -76,7 +76,7 @@
       <ReportTable
         :limit="limit"
         :items="locumUsedReports"
-        :getItemKey="(item) => `${item.id}`"
+        :getItemKey="(item) => `${item.practice_id}_${item.locum_user_id}`"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
@@ -163,7 +163,7 @@ export default {
       count: 0,
       downloading: false,
       practiceNameIncludes: '',
-      appointedToLocumUserNameIncludes: '',
+      locumUserNameIncludes: '',
       professionNameIncludes:'',
       locumUsedReports: [],
       orderBy: [],
@@ -229,9 +229,9 @@ export default {
         },
         {
           title: 'Locum',
-          key: 'appointed_to_locum_user_name',
-          sort_key: 'appointed_to_locum_user_name',
-          column: (item) => item.appointed_to_locum_user_name,
+          key: 'locum_user_name',
+          sort_key: 'locum_user_name',
+          column: (item) => item.locum_user_name,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -247,9 +247,9 @@ export default {
         },
         {
           title: 'Area',
-          key: 'appointed_to_locum_user_postcode',
-          sort_key: 'appointed_to_locum_user_postcode',
-          column: (item) => item.appointed_to_locum_user_postcode,
+          key: 'locum_user_postcode',
+          sort_key: 'locum_user_postcode',
+          column: (item) => item.locum_user_postcode,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -264,19 +264,10 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Rate Types',
-          key: 'job_part_rate_type_names_formatted',
-          sort_key: 'job_part_rate_type_names_formatted',
-          column: (item) => item.job_part_rate_type_names_formatted,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
           title: 'Marked as Bank',
-          key: 'appointed_locum_is_favorite_of_job_practice',
-          sort_key: 'appointed_locum_is_favorite_of_job_practice',
-          column: (item) => item.appointed_locum_is_favorite_of_job_practice ? 'Yes' : 'No',
+          key: 'locum_is_favorite_of_practice',
+          sort_key: 'locum_is_favorite_of_practice',
+          column: (item) => item.locum_is_favorite_of_practice ? 'Yes' : 'No',
           justify: 'center',
           flexGrow: 1,
           flexShrink: 0,
@@ -317,7 +308,7 @@ export default {
   methods: {
     filterReset () {
       this.practiceNameIncludes = ''
-      this.appointedToLocumUserNameIncludes = ''
+      this.locumUserNameIncludes = ''
       this.professionNameIncludes = ''
 
       this.filterSearch()
@@ -329,7 +320,7 @@ export default {
       const query = {
         ...this.$route.query,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
+        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
@@ -384,7 +375,7 @@ export default {
 
       const params = {
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
+        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
 
@@ -425,7 +416,7 @@ export default {
       this.downloading = true
       const params = {
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        appointed_to_locum_user_name_includes: this.appointedToLocumUserNameIncludes ? this.appointedToLocumUserNameIncludes : undefined,
+        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         order_by: this.orderBy,
       }
