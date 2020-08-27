@@ -41,12 +41,13 @@
                 class="mx-1"
               >
                 <AppButton
-                  :disabled="authPermissions.includes('Create Sessions Job') && !notAllowed ? false : true"
+                  :disabled="!authPermissions.includes('Create Sessions Job')"
                   :label="'Create Job'"
                   class="hidden md:block whitespace-no-wrap"
                   :in-style="'padding-top: 0; padding-bottom: 0;'"
                   @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                 />
+                
                 <button
                   class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
                   :class="
@@ -172,11 +173,6 @@ export default {
   },
 
   async created () {
-    this.notAllowed = this.$auth.user.domain === "Practice"
-      && this.$auth.user.practice_detail.practice.type === "Spoke"
-      && this.$auth.user.practice_detail.practice.parent_practice_id
-      && !this.$auth.user.practice_detail.practice.allow_surgery_create_sessions
-
     this.$store.dispatch("chat/fetchTotalUnreadMessages")
   },
 

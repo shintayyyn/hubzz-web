@@ -26,6 +26,15 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search Practice Name"
+            type="text"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
             v-model="locumNameIncludes"
             placeholder="Search locum"
             type="text"
@@ -137,7 +146,6 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      locumNameIncludes: '',
       practiceDeclinedLocums: [],
       orderBy: [],
       orderByProcessed: '',
@@ -154,8 +162,8 @@ export default {
         25,
       ],
       activePage: 1,
-
-      practiceIds: [],
+      locumNameIncludes: '',
+      practiceNameIncludes: '',
     }
   },
 
@@ -267,29 +275,6 @@ export default {
     },
   },
 
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getPracticeDeclinedLocums()
-  },
-
   mounted () {      
     // const {
     //   order_by: orderBy = [],
@@ -300,15 +285,20 @@ export default {
     // this.activePage = page ? Number.parseInt(page) : 1
     const {
       locum_name_includes: locumNameIncludes,
+      practice_name_includes: practiceNameIncludes,
     } = this.$route.query
+
     this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
+
     this.getPracticeDeclinedLocums()
   },
 
   methods: {
     async filterReset () {
-      this.locumNameIncludes = await ''
-      this.orderBy = await []
+      this.locumNameIncludes = ''
+      this.practiceNameIncludes = ''
+      this.orderBy = []
 
       await this.filterSearch()
     },
@@ -319,6 +309,7 @@ export default {
       const query = {
         ...this.$route.query,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
         page: undefined,
       }
 
@@ -372,13 +363,13 @@ export default {
 
       const params = {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
       }
 
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/practice-declined-locums/count', {
           params: {
             ...params,
-            practice_id: this.practiceIds,
           },
         }).then((responses) => {
           return responses.data.data.count
@@ -386,7 +377,6 @@ export default {
         this.$axios.get('/api/v1/admin/reports/practice-declined-locums', {
           params: {
             ...params,
-            // practice_id: this.practiceIds,
             order_by: this.orderBy,
             limit: this.limit,
             offset: this.offset,
@@ -414,7 +404,7 @@ export default {
     async downloadPDF () {
       let params = await {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        // practice_id:  this.practiceIds,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
         limit: 999,
         order_by: this.orderBy,
       }

@@ -1,22 +1,5 @@
 <template>
   <section class="relative">
-    <!-- <div
-      class="flex flex-row justify-start overflow-x-auto pb-3"
-      v-if="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'"
-    >
-      <nuxt-link
-        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied&bank=false`"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied' && (!$route.query.bank || $route.query.bank && $route.query.bank === 'false') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Non-Bank</nuxt-link>
-      <nuxt-link
-        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied&bank=true`"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >Child Bank</nuxt-link>
-    </div>-->
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -41,7 +24,12 @@
             <div class="flex flex-wrap justify-center">
               <div
                 class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-                @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions/${slotProps.item.id}`, query: {...$route.query} })"
+                @click="
+                  $router.push({
+                    path: `/hub-surgery-management/${$route.params.id}/surgery-sessions/${slotProps.item.id}`,
+                    query: {...$route.query}
+                  })
+                "
               >
                 View
               </div>
@@ -90,13 +78,6 @@ export default {
   components: {
     AppTable,
     AppLoading,
-  },
-
-  props: {
-    spokePracticeId: {
-      type: [String, Number,],
-      default: () => null,
-    },
   },
 
   middleware ({ query, error, }) {
@@ -151,7 +132,6 @@ export default {
       time_start: "",
       time_end: "",
       invoice_status: "",
-      viewing_locum_user_id: [],
       title_includes: "",
       job_title_includes: "",
       job_number_includes: "",
@@ -166,29 +146,15 @@ export default {
 
   computed: {
     isJobPart () {
-      if (
-        !this.$route.query.jobStatus
-        || (this.$route.query.jobStatus
-          && ![
-            "ongoing",
-            "completed",
-            "approved",
-            "cancelled",
-            "withdrawn",
-          ].includes(this.$route.query.jobStatus.toLowerCase()))
-      ) {
-        return false
-      }
-      if (
-        this.$route.query.jobStatus
-        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
-          this.$route.query.jobStatus.toLowerCase()
-        )
-      ) {
-        return true
-      }
-
-      return false
+      return !this.$route.query.jobStatus
+        || [
+          'allocated',
+          'ongoing',
+          'completed',
+          'approved',
+          'cancelled',
+          'withdrawn',
+        ].includes(this.$route.query.jobStatus.toLowerCase())
     },
 
     noJobsToDisplay () {
@@ -214,16 +180,14 @@ export default {
         return "You do not have any allocated jobs"
       }
     },
+
     columns () {
       let columns = []
       let queryStatus = this.$route.query.jobStatus
         ? this.$route.query.jobStatus.toLowerCase()
         : "allocated"
-      if (
-        ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
-          queryStatus
-        )
-      ) {
+
+      if (this.isJobPart) {
         columns.push(
           {
             name: "Job Part Number",
@@ -243,33 +207,25 @@ export default {
             sortable: true,
           },
           {
-            name: "Shift",
-            dataIndex: "job.shift.name",
+            name: "Shifts",
+            dataIndex: "job_part_shift_names_formatted",
             class: "text-center",
             sortable: true,
           },
           {
-            name: "Rate",
-            dataIndex: "job.rate",
+            name: "Rates",
+            dataIndex: "job_part_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
           },
           {
-            name: "per",
-            dataIndex: "job.locum_detail_rate_type.name",
+            name: "Rate Types",
+            dataIndex: "job_part_rate_type_names_formatted",
             class: "text-center",
             sortable: true,
-          }
+          },
         )
-      } else if (
-        ![
-          "ongoing",
-          "completed",
-          "approved",
-          "cancelled",
-          "withdrawn",
-        ].includes(queryStatus)
-      ) {
+      } else {
         columns.push(
           {
             name: "Job Number",
@@ -289,25 +245,26 @@ export default {
             sortable: true,
           },
           {
-            name: "Shift",
-            dataIndex: "shift_name",
+            name: "Shifts",
+            dataIndex: "job_shift_names_formatted",
             class: "text-center",
             sortable: true,
           },
           {
-            name: "Rate",
-            dataIndex: "rate",
+            name: "Rates",
+            dataIndex: "job_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
           },
           {
-            name: "per",
-            dataIndex: "rate_type_name",
+            name: "Rate Types",
+            dataIndex: "job_rate_type_names_formatted",
             class: "text-center",
             sortable: true,
-          }
+          },
         )
       }
+
       columns.push(
         {
           name: "From",
@@ -322,6 +279,7 @@ export default {
           class: "text-center",
         }
       )
+
       if (queryStatus === "allocated") {
         columns.push({
           name: "Assigned",
@@ -330,6 +288,7 @@ export default {
           class: "text-center",
         })
       }
+
       if (queryStatus === "withdrawn") {
         columns.push({
           name: "Withdrawn At",
@@ -337,6 +296,7 @@ export default {
           class: "text-center",
         })
       }
+
       if (queryStatus === "cancelled") {
         columns.push({
           name: "Cancelled At",
@@ -344,6 +304,7 @@ export default {
           class: "text-center",
         })
       }
+
       if (["completed",].includes(queryStatus)) {
         columns.push({
           name: "Completed At",
@@ -351,6 +312,7 @@ export default {
           class: "text-center",
         })
       }
+
       if (["approved",].includes(queryStatus)) {
         columns.push({
           name: "Approved At",
@@ -358,6 +320,7 @@ export default {
           class: "text-center",
         })
       }
+
       if (["completed", "approved",].includes(queryStatus)) {
         columns.push(
           {
@@ -372,7 +335,55 @@ export default {
           }
         )
       }
+
       return columns
+    },
+
+    params () {
+      const status = this.$route.query.jobStatus || 'Allocated'
+
+      const practiceSurgeryId = this.$route.params.id
+
+      return this.isJobPart
+        ? {
+          practice_surgery_id: practiceSurgeryId,
+          status,
+          job_part_number: this.job_part_number,
+          job_title: this.job_title,
+          job_type: this.job_type,
+          job_shift_id: this.job_shift_id,
+          job_rate: this.job_rate,
+          job_rate_type_id: this.job_rate_type_id,
+          near_post_code: this.near_post_code,
+          miles: this.miles,
+          calendar_date_start: this.calendar_date_start,
+          calendar_date_end: this.calendar_date_end,
+          time_start: this.time_start,
+          time_end: this.time_end,
+          invoice_status: this.invoice_status,
+          job_title_includes: this.job_title_includes,
+          job_number_includes: this.job_number_includes,
+          job_part_number_includes: this.job_part_number_includes,
+        }
+        : {
+          practice_surgery_id: practiceSurgeryId,
+          status,
+          job_number: this.job_number,
+          title: this.title,
+          type: this.type,
+          shift_id: this.shift_id,
+          rate: this.rate,
+          rate_type_id: this.rate_type_id,
+          near_post_code: this.near_post_code,
+          miles: this.miles,
+          calendar_date_start: this.calendar_date_start,
+          calendar_date_end: this.calendar_date_end,
+          time_start: this.time_start,
+          time_end: this.time_end,
+          invoice_status: this.invoice_status,
+          title_includes: this.title_includes,
+          job_number_includes: this.job_number_includes,
+        }
     },
   },
 
@@ -401,178 +412,17 @@ export default {
     },
   },
 
-  async asyncData ({ app, route, query, error, }) {
-    try {
-      let status = []
-      let queryStatus = query.jobStatus
-      // let bankStatus = query.bank;
-
-      if (!queryStatus) {
-        status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        case "Completed":
-          status = ["Completed", "Terminated",]
-          break
-        default:
-          status = [`${queryStatus}`,]
-          break
-        }
-      }
-
-      let isJobPart = false
-      if (
-        queryStatus
-        && ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
-          queryStatus.toLowerCase()
-        )
-      ) {
-        isJobPart = true
-      }
-
-      let job_number = ""
-      let job_part_number = ""
-      let title = ""
-      let job_title = ""
-      let type = ""
-      let job_type = ""
-      let shift_id = ""
-      let job_shift_id = ""
-      let rate = ""
-      let job_rate = ""
-      let rate_type_id = ""
-      let job_rate_type_id = ""
-      let near_post_code = ""
-      let miles = ""
-      let calendar_date_start = ""
-      let calendar_date_end = ""
-      let time_start = ""
-      let time_end = ""
-      let invoice_status = ""
-      let spokePracticeId = null
-
-      await app.$axios
-        .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
-        .then(res => {
-          spokePracticeId
-            = res.data
-            && res.data.practice_surgery
-            && res.data.practice_surgery.child_practice_id
-              ? res.data.practice_surgery.child_practice_id
-              : null
-        })
-
-      const [total, jobs,] = await Promise.all([
-        app.$axios
-          .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
-            params: {
-              status,
-              order_by: [],
-              job_number: !isJobPart ? job_number : "",
-              job_part_number: isJobPart ? job_part_number : "",
-              title: !isJobPart ? title : "",
-              job_title: isJobPart ? job_title : "",
-              type: !isJobPart ? type : "",
-              job_type: isJobPart ? job_type : "",
-              practice_id: !isJobPart ? spokePracticeId : "",
-              job_practice_id: isJobPart ? spokePracticeId : "",
-              shift_id: !isJobPart ? shift_id : "",
-              job_shift_id: isJobPart ? job_shift_id : "",
-              rate: !isJobPart ? rate : "",
-              job_rate: isJobPart ? job_rate : "",
-              rate_type_id: !isJobPart ? rate_type_id : "",
-              job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
-              viewing_locum_user_id: [],
-              title_includes: "",
-              job_title_includes: "",
-              job_number_includes: "",
-              job_part_number_includes: "",
-              // has_favorite_applicants:
-              //   queryStatus === "Applied" && bankStatus === "true"
-              //     ? true
-              //     : queryStatus === "Applied" &&
-              //       (bankStatus === "false" || !bankStatus)
-              //     ? false
-              //     : null
-            },
-          })
-          .then(res => {
-            let total = 0
-            total = res.data.count
-            return total
-          }),
-        app.$axios
-          .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}`, {
-            params: {
-              offset: 0,
-              limit: 5,
-              status,
-              order_by: [],
-              job_number: !isJobPart ? job_number : "",
-              job_part_number: isJobPart ? job_part_number : "",
-              title: !isJobPart ? title : "",
-              job_title: isJobPart ? job_title : "",
-              type: !isJobPart ? type : "",
-              job_type: isJobPart ? job_type : "",
-              practice_id: !isJobPart ? spokePracticeId : "",
-              job_practice_id: isJobPart ? spokePracticeId : "",
-              shift_id: !isJobPart ? shift_id : "",
-              job_shift_id: isJobPart ? job_shift_id : "",
-              rate: !isJobPart ? rate : "",
-              job_rate: isJobPart ? job_rate : "",
-              rate_type_id: !isJobPart ? rate_type_id : "",
-              job_rate_type_id: isJobPart ? job_rate_type_id : "",
-              near_post_code: isJobPart ? near_post_code : "",
-              miles: isJobPart ? miles : "",
-              calendar_date_start: isJobPart ? calendar_date_start : "",
-              calendar_date_end: isJobPart ? calendar_date_end : "",
-              time_start: isJobPart ? time_start : "",
-              time_end: isJobPart ? time_end : "",
-              invoice_status: isJobPart ? invoice_status : "",
-              viewing_locum_user_id: [],
-              title_includes: "",
-              job_title_includes: "",
-              job_number_includes: "",
-              job_part_number_includes: "",
-              // has_favorite_applicants:
-              //   queryStatus === "Applied" && bankStatus === "true"
-              //     ? true
-              //     : queryStatus === "Applied" &&
-              //       (bankStatus === "false" || !bankStatus)
-              //     ? false
-              //     : null
-            },
-          })
-          .then(res => {
-            let jobs = 0
-            jobs
-              = res.data && res.data.jobs
-                ? res.data.jobs
-                : res.data.job_parts
-                  ? res.data.job_parts
-                  : []
-            return jobs
-          }),
-      ])
-
-      return {
-        total,
-        jobs,
-      }
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data)
-      }
-
-      throw err
-    }
+  mounted () {
+    this.current_page = 1
+    this.filterModal = false
+    this.showRefresh = false
+    this.total = 0
+    this.jobs = []
+    this.isFiltered = false
+    this.initialLoading = true
+    this.getJobsPromiseAll().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   methods: {
@@ -605,204 +455,48 @@ export default {
     },
 
     getJobsPromiseAll () {
-      let status = []
-      let queryStatus = this.$route.query.jobStatus
-      // let bankStatus = this.$route.query.bank;
-
-      if (!queryStatus) {
-        status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        case "Completed":
-          status = ["Completed", "Terminated",]
-          break
-        default:
-          status = [`${queryStatus}`,]
-          break
-        }
-      }
       return Promise.all([
-        this.$axios.$get(
-          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
-          {
-            params: {
-              status,
-              order_by: [],
-              job_number: !this.isJobPart ? this.job_number : "",
-              job_part_number: this.isJobPart ? this.job_part_number : "",
-              title: !this.isJobPart ? this.title : "",
-              job_title: this.isJobPart ? this.job_title : "",
-              type: !this.isJobPart ? this.type : "",
-              job_type: this.isJobPart ? this.job_type : "",
-              practice_id: !this.isJobPart ? this.spokePracticeId : "",
-              job_practice_id: this.isJobPart ? this.spokePracticeId : "",
-              shift_id: !this.isJobPart ? this.shift_id : "",
-              job_shift_id: this.isJobPart ? this.job_shift_id : "",
-              rate: !this.isJobPart ? this.rate : "",
-              job_rate: this.isJobPart ? this.job_rate : "",
-              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.isJobPart ? this.near_post_code : "",
-              miles: this.isJobPart ? this.miles : "",
-              calendar_date_start: this.isJobPart
-                ? this.calendar_date_start
-                : "",
-              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-              time_start: this.isJobPart ? this.time_start : "",
-              time_end: this.isJobPart ? this.time_end : "",
-              invoice_status: this.isJobPart ? this.invoice_status : "",
-              viewing_locum_user_id: this.viewing_locum_user_id,
-              title_includes: this.title_includes,
-              job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
-              // has_favorite_applicants:
-              //   queryStatus === "Applied" && bankStatus === "true"
-              //     ? true
-              //     : queryStatus === "Applied" &&
-              //       (bankStatus === "false" || !bankStatus)
-              //     ? false
-              //     : null
-            },
-          }
-        ),
-        this.$axios.$get(
-          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`,
-          {
-            params: {
-              offset: 0,
-              limit: 5,
-              status,
-              order_by: [],
-              job_number: !this.isJobPart ? this.job_number : "",
-              job_part_number: this.isJobPart ? this.job_part_number : "",
-              title: !this.isJobPart ? this.title : "",
-              job_title: this.isJobPart ? this.job_title : "",
-              type: !this.isJobPart ? this.type : "",
-              job_type: this.isJobPart ? this.job_type : "",
-              practice_id: !this.isJobPart ? this.spokePracticeId : "",
-              job_practice_id: this.isJobPart ? this.spokePracticeId : "",
-              shift_id: !this.isJobPart ? this.shift_id : "",
-              job_shift_id: this.isJobPart ? this.job_shift_id : "",
-              rate: !this.isJobPart ? this.rate : "",
-              job_rate: this.isJobPart ? this.job_rate : "",
-              rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-              job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-              near_post_code: this.isJobPart ? this.near_post_code : "",
-              miles: this.isJobPart ? this.miles : "",
-              calendar_date_start: this.isJobPart
-                ? this.calendar_date_start
-                : "",
-              calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-              time_start: this.isJobPart ? this.time_start : "",
-              time_end: this.isJobPart ? this.time_end : "",
-              invoice_status: this.isJobPart ? this.invoice_status : "",
-              viewing_locum_user_id: this.viewing_locum_user_id,
-              title_includes: this.title_includes,
-              job_title_includes: this.job_title_includes,
-              job_number_includes: this.job_number_includes,
-              job_part_number_includes: this.job_part_number_includes,
-
-              // has_favorite_applicants:
-              //   queryStatus === "Applied" && bankStatus === "true"
-              //     ? true
-              //     : queryStatus === "Applied" &&
-              //       (bankStatus === "false" || !bankStatus)
-              //     ? false
-              //     : null
-            },
-          }
-        ),
-      ])
-        .then(([responseCount, responseJobs,]) => {
-          this.jobs
-            = responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs
-              : responseJobs.data.job_parts
-                ? responseJobs.data.job_parts
-                : []
-          this.total = responseCount.data.count
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          throw err
-        })
-    },
-    getJobs () {
-      let status = []
-      let queryStatus = this.$route.query.jobStatus
-      // let bankStatus = this.$route.query.bank;
-
-      if (!queryStatus) {
-        status = ["Allocated",]
-      } else if (queryStatus) {
-        switch (queryStatus) {
-        case "Completed":
-          status = ["Completed", "Terminated",]
-          break
-        default:
-          status = [`${queryStatus}`,]
-          break
-        }
-      }
-
-      return this.$axios
-        .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+        this.$axios.get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`, {
           params: {
-            offset: this.offset,
-            limit: this.limit,
-            status,
-            order_by: this.order_by,
-            job_number: !this.isJobPart ? this.job_number : "",
-            job_part_number: this.isJobPart ? this.job_part_number : "",
-            title: !this.isJobPart ? this.title : "",
-            job_title: this.isJobPart ? this.job_title : "",
-            type: !this.isJobPart ? this.type : "",
-            job_type: this.isJobPart ? this.job_type : "",
-            practice_id: !this.isJobPart ? this.spokePracticeId : "",
-            job_practice_id: this.isJobPart ? this.spokePracticeId : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-            near_post_code: this.isJobPart ? this.near_post_code : "",
-            miles: this.isJobPart ? this.miles : "",
-            calendar_date_start: this.isJobPart ? this.calendar_date_start : "",
-            calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-            time_start: this.isJobPart ? this.time_start : "",
-            time_end: this.isJobPart ? this.time_end : "",
-            invoice_status: this.isJobPart ? this.invoice_status : "",
-            viewing_locum_user_id: this.viewing_lresponseocum_user_id,
-            title_includes: this.title_includes,
-            job_title_includes: this.job_title_includes,
-            job_number_includes: this.job_number_includes,
-            // has_favorite_applicants:
-            //   queryStatus === "Applied" && bankStatus === "true"
-            //     ? true
-            //     : queryStatus === "Applied" &&
-            //       (bankStatus === "false" || !bankStatus)
-            //     ? false
-            //     : null
+            ...this.params,
           },
-        })
-        .then(res => {
-          this.jobs
-            = res.data && res.data.jobs
-              ? res.data.jobs
-              : res.data.job_parts
-                ? res.data.job_parts
-                : []
-        })
-        .catch(err => {
-          if (err.response && err.response.status === 401) {
-            this.$nuxt.error(err.response.data)
-            return
-          }
+        }).then(response => response.data.data.count),
 
-          throw err
-        })
+        this.$axios.get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+          params: {
+            ...this.params,
+            order_by: [],
+            offset: 0,
+            limit: 5,
+          },
+        }).then(response => this.isJobPart ? response.data.data.job_parts : response.data.data.jobs),
+      ]).then(([jobOrJobPartCount, jobOrJobParts,]) => {
+        this.jobs = jobOrJobParts
+        this.total = jobOrJobPartCount
+      }).catch(err => {
+        console.log("err", err.response || err)
+        throw err
+      })
     },
+
+    getJobs () {
+      return this.$axios.get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+        params: {
+          ...this.params,
+          order_by: this.order_by,
+          offset: this.offset,
+          limit: this.limit,
+        },
+      }).then((response) => {
+        this.jobs = this.isJobPart
+          ? response.data.data.job_parts
+          : response.data.data.jobs
+      }).catch(err => {
+        console.log("err", err.response || err)
+        throw err
+      })
+    },
+    
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
@@ -812,6 +506,7 @@ export default {
       this.initialLoading = false
       this.showRefresh = false
     },
+
     async sorted (order_by) {
       let orderBy = order_by.map(item => {
         let order = item.split(":")[1]
@@ -847,6 +542,7 @@ export default {
       await this.getJobs()
       this.loading = false
     },
+
     async pagechanged (page) {
       this.current_page = page
       this.offset = this.limit * (page - 1)
@@ -854,6 +550,7 @@ export default {
       await this.getJobs()
       this.loading = false
     },
+
     async limitchanged (limit) {
       this.current_page = 1
       this.offset = 0

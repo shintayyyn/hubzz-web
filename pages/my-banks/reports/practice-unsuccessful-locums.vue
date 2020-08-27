@@ -18,14 +18,17 @@
       <div v-if="false">
         <div>
           <label class="">Limit: </label>
+
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
           <label class="">Page: </label>
+
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -36,27 +39,31 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceUnsuccessfulLocums"
+        :items="unsuccessfulLocumReports"
         :getItemKey="(item) => `${item.practice_id}_${item.locum_user_id}`"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
-        @setOrderBy="(value) => orderBy = value"
+        @setOrderBy="setOrderBy"
       />
+
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
           <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
-            <div class="whitespace-no-wrap">
+
+            <!-- <div class="whitespace-no-wrap">
               Order By: {{ orderByProcessed }}
-            </div>
+            </div> -->
           </div>
         </div>
+
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -70,9 +77,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceUnsuccessfulLocums.length === 0"
+            :disabled="downloading || unsuccessfulLocumReports.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceUnsuccessfulLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="unsuccessfulLocumReports.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -98,9 +105,8 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      practiceUnsuccessfulLocums: [],
+      unsuccessfulLocumReports: [],
       orderBy: [],
-      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -127,15 +133,13 @@ export default {
       ],
       
       activePage: 1,
-
-      practiceIds: [],
     }
   },
 
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceUnsuccessfulLocums.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.unsuccessfulLocumReports.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
@@ -184,63 +188,36 @@ export default {
         },
         {
           title: 'Min Rate per Hour',
-          key: 'min_rate_per_hour',
-          sort_key: 'min_rate_per_hour',
-          column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
+          key: 'min_rate_per_hour_formatted',
+          sort_key: 'min_rate_per_hour_formatted',
+          column: (item) => item.min_rate_per_hour_formatted,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Hour',
-        //   key: 'max_rate_per_hour',
-        //   sort_key: 'max_rate_per_hour',
-        //   column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Min Rate per Half Day Session',
-          key: 'min_rate_per_half_day_session',
-          sort_key: 'min_rate_per_half_day_session',
-          column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
+          key: 'min_rate_per_half_day_session_formatted',
+          sort_key: 'min_rate_per_half_day_session_formatted',
+          column: (item) => item.min_rate_per_half_day_session_formatted,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Half Day Session',
-        //   key: 'max_rate_per_half_day_session',
-        //   sort_key: 'max_rate_per_half_day_session',
-        //   column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Min Rate per Whole Day Session',
-          key: 'min_rate_per_whole_day_session',
-          sort_key: 'min_rate_per_whole_day_session',
-          column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
+          key: 'min_rate_per_whole_day_session_formatted',
+          sort_key: 'min_rate_per_whole_day_session_formatted',
+          column: (item) => item.min_rate_per_whole_day_session_formatted,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Whole Day Session',
-        //   key: 'max_rate_per_whole_day_session',
-        //   sort_key: 'max_rate_per_whole_day_session',
-        //   column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Area',
-          key: 'user_postcode',
-          sort_key: 'user_postcode',
-          column: (item) => item.user_postcode,
+          key: 'locum_user_postcode',
+          sort_key: 'locum_user_postcode',
+          column: (item) => item.locum_user_postcode,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -251,54 +228,28 @@ export default {
     pages () {
       return Math.max(Math.ceil(this.count / this.limit), 1)
     },
-  },
 
-  watch: {
-    orderBy (value) {
+    orderByProcessed () {
       let replaced = ''
-      if(value.length > 0) {
-        replaced = value[0].replace(/_/g, ' ')
+
+      if(this.orderBy.length > 0) {
+        replaced = this.orderBy[0].replace(/_/g, ' ')
         replaced = replaced.replace(/:/g, ' - ')
         replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
         replaced = replaced.replace('Desc', 'Descending')
         replaced = replaced.replace('Asc', 'Ascending')
       } 
-      this.orderByProcessed = replaced
-      this.getPracticeUnsuccessfulLocums()
+
+      return replaced
     },
+  },
+
+  watch: {
     limit () {
-      this.page = 1
-      this.getPracticeUnsuccessfulLocums()
-    },
-
-    activePage () {
+      this.activePage = 1
       this.getPracticeUnsuccessfulLocums()
     },
   },
-
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getPracticeUnsuccessfulLocums()
-  },
-
 
   mounted () {      
     const {
@@ -308,6 +259,8 @@ export default {
 
     this.orderBy = orderBy
     this.activePage = page ? Number.parseInt(page) : 1
+
+    this.getPracticeUnsuccessfulLocums()
   },
 
   methods: {
@@ -325,6 +278,7 @@ export default {
 
       this.getPracticeUnsuccessfulLocums()
     },
+
     setPage (page) {
       this.activePage = page
 
@@ -349,19 +303,17 @@ export default {
 
     getPracticeUnsuccessfulLocums () {
       this.loading = true
-      this.practiceUnsuccessfulLocums = []
-      let params = {
-        // practice_id: this.practiceIds,
-      }
+      this.unsuccessfulLocumReports = []
+      let params = {}
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{
+        this.$axios.get('/api/v1/practice/unsuccessful-locum-reports/count',{
           params: {
             ...params,
           },
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums', {
+        this.$axios.get('/api/v1/practice/unsuccessful-locum-reports', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -369,17 +321,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_unsuccessful_locums
+          return responses.data.data.unsuccessful_locum_reports
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceUnsuccessfulLocums,
+          unsuccessfulLocumReports,
         ] = results
 
         this.count = count
-        this.practiceUnsuccessfulLocums = practiceUnsuccessfulLocums
+        this.unsuccessfulLocumReports = unsuccessfulLocumReports
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -391,13 +343,12 @@ export default {
     async downloadPDF () {
       this.downloading = true
       let params = await {
-        practice_id: this.practiceIds,
         order_by: this.orderBy,
         limit: 999,
       }
 
-      await this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
-        filename: `practiceUnsuccessfulReport.pdf`,
+      await this.$axios.post('/api/v1/practice/unsuccessful-locum-reports/generate-key', {
+        filename: `unsuccessful-locum-reports.pdf`,
       }, {
         params: {
           ...params,
@@ -405,7 +356,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-unsuccessful-locums-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/unsuccessful-locum-reports/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)

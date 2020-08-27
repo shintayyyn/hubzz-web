@@ -91,43 +91,14 @@ export default {
       ],
     }
   },
+
+  created () {
+    const userPractice = this.$auth.user.practice_detail.practice
+    if (userPractice.type === 'Spoke') {
+      if (userPractice.allow_surgery_bill_locum === false) {
+        this.practiceReports = this.practiceReports.filter(practiceReport => (practiceReport.title !== 'REP-001' && practiceReport.title !== 'REP-002' && practiceReport.title !== 'REP-003'))
+      }
+    }
+  },
 }
 </script>
-
-<style>
-  .report-modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin-right: 0%;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    border-left: solid 2px #ffc72c;
-    transition: all 0.3s ease-in-out;
-    background-color:whitesmoke;
-    z-index: 512;
-  }
-
-  @media screen and (min-width: 1200px) {
-    .report-modal {
-      width: 80%;
-    }
-  }
-
-  .page-overlap {
-    min-width: 100%;
-  }
-
-  @media screen and (min-width: 768px) {
-    .page-overlap {
-      min-width: calc(100% - 70px);
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    .page-overlap {
-      min-width: calc(100% - 200px);
-    }
-  }
-</style>

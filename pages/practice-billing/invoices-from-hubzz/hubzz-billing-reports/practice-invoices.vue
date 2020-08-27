@@ -24,6 +24,15 @@
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search Practice Name"
+            type="text"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="dateStart"
             placeholder="Date From"
@@ -131,12 +140,14 @@ import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppButton from '@/components/Base/AppButton'
 import AppDate from '@/components/Base/AppDate'
+import AppInput from '@/components/Base/AppInput'
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppButton,
     AppDate,
+    AppInput,
   },
 
   data () {
@@ -172,6 +183,8 @@ export default {
         25,
       ],
       activePage: 1,
+      
+      practiceNameIncludes: '',
       dateStart: '',
       dateEnd: '',
 
@@ -251,7 +264,7 @@ export default {
           title: 'Hours',
           key: 'hours',
           sort_key: 'hours',
-          column: (item) => item.hours_with_minutes,
+          column: (item) => item.hours ? (item.hours/60).toFixed(2) : null,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
@@ -296,37 +309,17 @@ export default {
       this.getPracticeInvoices()
     },
   },
-  async created () {
-    if (this.$auth.user.practice_detail.practice.type === 'Hub') {
-      await this.$axios.$get(`/api/v1/practice/me/practice-surgeries`).then(res => {
-        let spokeIds = res.data.practice_surgeries.map(practice_surgery => practice_surgery.child_practice.id)
-        this.practiceIds = [
-          ...spokeIds,
-          this.$auth.user.practice_detail.practice.id,
-        ]
-      })
-    } else if (this.$auth.user.practice_detail.practice.type === 'Spoke') {
-      if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-        if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions === true) {
-          this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-        }
-      } else {
-        this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-      }
-    } else if (this.$auth.user.practice_detail.practice.type === 'Stand Alone'){
-      this.practiceIds = await this.practiceIds.push(this.$auth.user.practice_detail.practice.id)
-    }
-    await this.getPracticeInvoices()
-  },
 
   mounted () {
     const {
-      order_by: orderBy = [],
-      page,
+      practice_name_includes: practiceNameIncludes,
       date_start: dateStart,
       date_end: dateEnd,
+      order_by: orderBy = [],
+      page,
     } = this.$route.query
 
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
     this.orderBy = orderBy
     this.activePage = page ? Number.parseInt(page) : 1
     this.dateStart = dateStart ? dateStart : ''
@@ -339,6 +332,7 @@ export default {
     filterReset () {
       this.dateStart = ''
       this.dateEnd = ''
+      this.practiceNameIncludes = ''
 
       this.filterSearch()
     },
@@ -401,7 +395,7 @@ export default {
       this.loading = true
       this.practiceInvoices = []
       let params = {
-        // practice_id: this.practiceIds,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
       }
@@ -441,7 +435,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
-        // practice_id: this.practiceIds,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,
