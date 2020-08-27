@@ -39,7 +39,7 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceUnsuccessfulLocums"
+        :items="unsuccessfulLocumReports"
         :getItemKey="(item) => `${item.practice_id}_${item.locum_user_id}`"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
@@ -77,9 +77,9 @@
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceUnsuccessfulLocums.length === 0"
+            :disabled="downloading || unsuccessfulLocumReports.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceUnsuccessfulLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="unsuccessfulLocumReports.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -105,7 +105,7 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      practiceUnsuccessfulLocums: [],
+      unsuccessfulLocumReports: [],
       orderBy: [],
       orderBys: [
         {
@@ -139,7 +139,7 @@ export default {
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceUnsuccessfulLocums.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.unsuccessfulLocumReports.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
@@ -188,63 +188,36 @@ export default {
         },
         {
           title: 'Min Rate per Hour',
-          key: 'min_rate_per_hour',
-          sort_key: 'min_rate_per_hour',
-          column: (item) => item.min_rate_per_hour ? item.min_rate_per_hour.toFixed(2) : null,
+          key: 'min_rate_per_hour_formatted',
+          sort_key: 'min_rate_per_hour_formatted',
+          column: (item) => item.min_rate_per_hour_formatted,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Hour',
-        //   key: 'max_rate_per_hour',
-        //   sort_key: 'max_rate_per_hour',
-        //   column: (item) => item.max_rate_per_hour ? item.max_rate_per_hour.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Min Rate per Half Day Session',
-          key: 'min_rate_per_half_day_session',
-          sort_key: 'min_rate_per_half_day_session',
-          column: (item) => item.min_rate_per_half_day_session ? item.min_rate_per_half_day_session.toFixed(2) : null,
+          key: 'min_rate_per_half_day_session_formatted',
+          sort_key: 'min_rate_per_half_day_session_formatted',
+          column: (item) => item.min_rate_per_half_day_session_formatted,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Half Day Session',
-        //   key: 'max_rate_per_half_day_session',
-        //   sort_key: 'max_rate_per_half_day_session',
-        //   column: (item) => item.max_rate_per_half_day_session ? item.max_rate_per_half_day_session.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Min Rate per Whole Day Session',
-          key: 'min_rate_per_whole_day_session',
-          sort_key: 'min_rate_per_whole_day_session',
-          column: (item) => item.min_rate_per_whole_day_session ? item.min_rate_per_whole_day_session.toFixed(2) : null,
+          key: 'min_rate_per_whole_day_session_formatted',
+          sort_key: 'min_rate_per_whole_day_session_formatted',
+          column: (item) => item.min_rate_per_whole_day_session_formatted,
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
-        // {
-        //   title: 'Max Rate per Whole Day Session',
-        //   key: 'max_rate_per_whole_day_session',
-        //   sort_key: 'max_rate_per_whole_day_session',
-        //   column: (item) => item.max_rate_per_whole_day_session ? item.max_rate_per_whole_day_session.toFixed(2) : null,
-        //   justify: 'start',
-        //   flexGrow: 1,
-        //   flexShrink: 0,
-        // },
         {
           title: 'Area',
-          key: 'user_postcode',
-          sort_key: 'user_postcode',
-          column: (item) => item.user_postcode,
+          key: 'locum_user_postcode',
+          sort_key: 'locum_user_postcode',
+          column: (item) => item.locum_user_postcode,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -279,13 +252,14 @@ export default {
   },
 
   mounted () {      
-    // const {
-    //   order_by: orderBy = [],
-    //   page,
-    // } = this.$route.query
+    const {
+      order_by: orderBy = [],
+      page,
+    } = this.$route.query
 
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
+    this.orderBy = orderBy
+    this.activePage = page ? Number.parseInt(page) : 1
+
     this.getPracticeUnsuccessfulLocums()
   },
 
@@ -329,17 +303,17 @@ export default {
 
     getPracticeUnsuccessfulLocums () {
       this.loading = true
-      this.practiceUnsuccessfulLocums = []
+      this.unsuccessfulLocumReports = []
       let params = {}
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums/count',{
+        this.$axios.get('/api/v1/practice/unsuccessful-locum-reports/count',{
           params: {
             ...params,
           },
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-unsuccessful-locums', {
+        this.$axios.get('/api/v1/practice/unsuccessful-locum-reports', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -347,17 +321,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_unsuccessful_locums
+          return responses.data.data.unsuccessful_locum_reports
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceUnsuccessfulLocums,
+          unsuccessfulLocumReports,
         ] = results
 
         this.count = count
-        this.practiceUnsuccessfulLocums = practiceUnsuccessfulLocums
+        this.unsuccessfulLocumReports = unsuccessfulLocumReports
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -373,8 +347,8 @@ export default {
         limit: 999,
       }
 
-      await this.$axios.post('/api/v1/practice-reports/practice-unsuccessful-locums-report/generate-key', {
-        filename: `practiceUnsuccessfulReport.pdf`,
+      await this.$axios.post('/api/v1/practice/unsuccessful-locum-reports/generate-key', {
+        filename: `unsuccessful-locum-reports.pdf`,
       }, {
         params: {
           ...params,
@@ -382,7 +356,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-unsuccessful-locums-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/unsuccessful-locum-reports/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
