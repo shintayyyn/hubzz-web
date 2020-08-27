@@ -24,6 +24,15 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search Practice Name"
+            type="text"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
             v-model="invoiceNumberIncludes"
             placeholder="Search invoice number"
             type="text"
@@ -408,6 +417,7 @@ export default {
       order_by: orderBy = [],
       page,
     } = this.$route.query
+    
     this.invoiceNumberIncludes = invoiceNumberIncludes ? invoiceNumberIncludes : ''
     this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''

@@ -24,6 +24,15 @@
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search Practice Name"
+            type="text"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="dateStart"
             placeholder="Date From"
@@ -131,12 +140,14 @@ import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppButton from '@/components/Base/AppButton'
 import AppDate from '@/components/Base/AppDate'
+import AppInput from '@/components/Base/AppInput'
 export default {
   components: {
     ReportTable,
     ReportPagination,
     AppButton,
     AppDate,
+    AppInput,
   },
 
   data () {
@@ -172,6 +183,8 @@ export default {
         25,
       ],
       activePage: 1,
+      
+      practiceNameIncludes: '',
       dateStart: '',
       dateEnd: '',
 
@@ -299,12 +312,14 @@ export default {
 
   mounted () {
     const {
-      order_by: orderBy = [],
-      page,
+      practice_name_includes: practiceNameIncludes,
       date_start: dateStart,
       date_end: dateEnd,
+      order_by: orderBy = [],
+      page,
     } = this.$route.query
 
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
     this.orderBy = orderBy
     this.activePage = page ? Number.parseInt(page) : 1
     this.dateStart = dateStart ? dateStart : ''
@@ -317,6 +332,7 @@ export default {
     filterReset () {
       this.dateStart = ''
       this.dateEnd = ''
+      this.practiceNameIncludes = ''
 
       this.filterSearch()
     },
@@ -379,6 +395,7 @@ export default {
       this.loading = true
       this.practiceInvoices = []
       let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
       }
@@ -418,6 +435,7 @@ export default {
     downloadCsv () {
       this.downloading = true
       const params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         date_start: this.dateStart ? this.dateStart : undefined,
         date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,

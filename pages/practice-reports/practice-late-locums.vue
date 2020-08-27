@@ -25,6 +25,15 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search Practice Name"
+            type="text"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
             v-model="locumNameIncludes"
             placeholder="Search locum"
             type="text"
@@ -172,8 +181,9 @@ export default {
         25,
       ],
       activePage: 1,
-      locumNameIncludes:'',
-      professionNameIncludes:'',
+      practiceNameIncludes: '',
+      locumNameIncludes: '',
+      professionNameIncludes: '',
     }
   },
 
@@ -266,14 +276,16 @@ export default {
     },
   },
 
-  mounted () {      
+  mounted () {
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''   
+    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''   
+
     const {
+      practice_name_includes: practiceNameIncludes,
       locum_name_includes: locumNameIncludes,
       profession_name_includes: professionNameIncludes,
     } = this.$route.query
-
-    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
 
     this.getPracticeLateLocums()
   },
@@ -281,6 +293,7 @@ export default {
   methods: {
     filterReset () {
       this.locumNameIncludes = ''
+      this.practiceNameIncludes = ''
       this.professionNameIncludes = ''
 
       this.filterSearch()
@@ -291,6 +304,7 @@ export default {
 
       const query = {
         ...this.$route.query,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
@@ -344,6 +358,7 @@ export default {
       this.loading = true
       this.practiceLateLocums = []
       let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
       }
@@ -382,6 +397,7 @@ export default {
 
     async downloadPDF () {
       let params = await {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         limit: 999,
