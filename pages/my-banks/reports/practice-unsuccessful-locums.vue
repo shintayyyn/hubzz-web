@@ -18,14 +18,17 @@
       <div v-if="false">
         <div>
           <label class="">Limit: </label>
+
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
           <label class="">Page: </label>
+
           <select v-model="activePage">
             <option v-for="page in pages" :key="`page_${page}`" :value="page">
               {{ page }}
@@ -41,22 +44,26 @@
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
-        @setOrderBy="(value) => orderBy = value"
+        @setOrderBy="setOrderBy"
       />
+
       <div class="w-full flex flex-wrap justfify-between items-center">
         <div class="flex-1 flex flex-wrap justify-between pt-2 md:py-2 text-sm">
           <div class="text-gray-700 w-full md:w-auto text-center md:text-left">
             <div class="whitespace-no-wrap">
               {{ itemCountInfo }}
             </div>
+
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
-            <div class="whitespace-no-wrap">
+
+            <!-- <div class="whitespace-no-wrap">
               Order By: {{ orderByProcessed }}
-            </div>
+            </div> -->
           </div>
         </div>
+
         <ReportPagination
           :count="count" 
           :pages="pages" 
@@ -100,7 +107,6 @@ export default {
       count: 0,
       practiceUnsuccessfulLocums: [],
       orderBy: [],
-      orderByProcessed: '',
       orderBys: [
         {
           title: 'Practice Name (Ascending)',
@@ -249,27 +255,25 @@ export default {
     pages () {
       return Math.max(Math.ceil(this.count / this.limit), 1)
     },
-  },
 
-  watch: {
-    orderBy (value) {
+    orderByProcessed () {
       let replaced = ''
-      if(value.length > 0) {
-        replaced = value[0].replace(/_/g, ' ')
+
+      if(this.orderBy.length > 0) {
+        replaced = this.orderBy[0].replace(/_/g, ' ')
         replaced = replaced.replace(/:/g, ' - ')
         replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
         replaced = replaced.replace('Desc', 'Descending')
         replaced = replaced.replace('Asc', 'Ascending')
       } 
-      this.orderByProcessed = replaced
-      this.getPracticeUnsuccessfulLocums()
-    },
-    limit () {
-      this.page = 1
-      this.getPracticeUnsuccessfulLocums()
-    },
 
-    activePage () {
+      return replaced
+    },
+  },
+
+  watch: {
+    limit () {
+      this.activePage = 1
       this.getPracticeUnsuccessfulLocums()
     },
   },
@@ -300,6 +304,7 @@ export default {
 
       this.getPracticeUnsuccessfulLocums()
     },
+
     setPage (page) {
       this.activePage = page
 
