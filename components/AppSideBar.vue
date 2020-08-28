@@ -349,18 +349,18 @@ export default {
           })
         }
 
-        if (
-          accountStatus === "Active"
-          && ["Active", "Dormant",].includes(practiceStatus)
-          && (["Hub", "Stand Alone",].includes(practiceType) 
-            || (practiceType === 'Spoke' && parentPracticeId !== null))
-        ) {
-          practiceTabList.push({
-            navigationTabTitle: "Reports",
-            route: "/practice-reports",
-            active: `/${this.$route.path.split('/')[1]}` === '/practice-reports',
-          })
-        }
+        // if (
+        //   accountStatus === "Active"
+        //   && ["Active", "Dormant",].includes(practiceStatus)
+        //   && (["Hub", "Stand Alone",].includes(practiceType) 
+        //     || (practiceType === 'Spoke' && parentPracticeId !== null))
+        // ) {
+        //   practiceTabList.push({
+        //     navigationTabTitle: "Reports",
+        //     route: "/practice-reports",
+        //     active: `/${this.$route.path.split('/')[1]}` === '/practice-reports',
+        //   })
+        // }
 
         practiceTabList.push({
           navigationTabTitle: "Invite",

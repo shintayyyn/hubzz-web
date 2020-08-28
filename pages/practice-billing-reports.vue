@@ -55,7 +55,30 @@
     </div>
 
     <div>
-      <nuxt-child />
+      <div class="flex-1 flex flex-col py-2 px-4 md:px-6">
+        <div class="flex flex-col">
+          <nuxt-link
+            v-for="practiceBillingReport in practiceBillingReports"
+            :key="`practiceBillingReports-${practiceBillingReport.title}`"
+            :to="practiceBillingReport.url"
+            class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
+          >
+            <div class="flex flex-no-wrap items-center text-sm w-full">
+              <span class="px-2 whitespace-no-wrap font-semibold">{{ practiceBillingReport.title }}</span>
+              <span class="px-2 w-full leading-tight flex items-center">{{ practiceBillingReport.subtitle }}</span>
+              <div class="flex items-center px-1 md:px-0">
+                <svgicon name="arrow-right" width="21" height="21" color="black" />
+              </div>
+            </div>
+          </nuxt-link>
+        </div>
+        <nuxt-link
+          v-if="$route.name !== 'practice-billing-reports'"
+          class="shield z-511 fixed inset-0 opacity-50"
+          to="/practice-billing-reports"
+        />
+        <nuxt-child />
+      </div>
     </div>
   </section>
 </template>
@@ -66,8 +89,8 @@ export default {
 
   transition: (to, from) => {
     if (
-      (from && from.name.includes('practice-billing-reports'))
-      || (to && to.name.includes('practice-billing-reports'))
+      (from && from.name.includes('practice-billing'))
+      || (to && to.name.includes('practice-billing'))
     ) {
       return {
         name: '',
@@ -84,6 +107,23 @@ export default {
   data () {
     return {
       practice: null,
+      practiceBillingReports: [
+        {
+          title: 'REP-001',
+          subtitle: 'Tax and NI Deductions',
+          url: '/practice-billing-reports/deductions',
+        },
+        {
+          title: 'REP-002',
+          subtitle: 'Payments',
+          url: '/practice-billing-reports/payments',
+        },
+        {
+          title: 'REP-003',
+          subtitle: 'Pension Contributions',
+          url: '/practice-billing-reports/pension-contributions',
+        },
+      ],
     }
   },
 
@@ -125,6 +165,19 @@ export default {
     } catch (err) {
       console.log('err', err.response || err)
       error(err)
+    }
+  },
+
+  created () {
+    if (
+      this.$auth.user
+      && this.$auth.user.practice_detail
+      && this.$auth.user.practice_detail.practice
+      && this.$auth.user.practice_detail.practice.type === 'Spoke'
+      && !this.$auth.user.practice_detail.practice.allow_surgery_bill_locum
+    ) {
+      this.practiceReports = this.practiceReports
+        .filter(practiceReport => !['REP-001', 'REP-002', 'REP-003',].includes(practiceReport.title))
     }
   },
 

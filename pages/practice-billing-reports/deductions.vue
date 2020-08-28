@@ -1,18 +1,18 @@
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
-    <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
+    <div class="page-overlap flex-1 flex flex-col self-end ">
       <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+        <nuxt-link to="/practice-billing-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
       <div class="text-lg md:text-2xl">
-        Payments
+        Tax and NI Deductions
       </div>
   
       <div class="text-sm md:text-lg">
-        Rep-002
+        Rep-001
       </div>
 
       <div
@@ -25,9 +25,18 @@
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
             v-model="practiceNameIncludes"
-            placeholder="Search practice"
+            placeholder="Search Practice Name"
             type="text"
-            label="Practice"
+            label="Practice Name"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="invoiceNumberIncludes"
+            placeholder="Search invoice number"
+            type="text"
+            label="Invoice Number"
           />
         </div>
 
@@ -42,53 +51,69 @@
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="professionNameIncludes"
-            placeholder="Search profession"
+            v-model="taxNumberIncludes"
+            placeholder="Search utr or company reg number"
             type="text"
-            label="Profession"
-          />
-        </div>
-
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="invoiceNumberIncludes"
-            placeholder="Search invoice number"
-            type="text"
-            label="Invoice Number"
+            label="UTR or Company Reg number"
           />
         </div>
         
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="jobPartNumberIncludes"
-            placeholder="Search job part number"
-            type="text"
-            label="Job Part Number"
+            v-model="minNiAmount"
+            placeholder="0.00"
+            type="number"
+            label="Min NI Amount"
           />
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="minTotalAmount"
+            v-model="maxNiAmount"
             placeholder="0.00"
             type="number"
-            label="Min £ Paid"
+            label="Max NI Amount"
           />
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppInput
-            v-model="maxTotalAmount"
+            v-model="minPayeAmount"
             placeholder="0.00"
             type="number"
-            label="Max £ Paid"
+            label="Min PAYE Amount"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="maxPayeAmount"
+            placeholder="0.00"
+            type="number"
+            label="Max PAYE Amount"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="calendarDateStart"
+            label="Date Start"
+            format="YYYY-MM-DD"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="calendarDateEnd"
+            label="Date End"
+            format="YYYY-MM-DD"
           />
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="paidDateStart"
-            label="Date Paid Start"
+            label="Deduction Date Start"
             format="YYYY-MM-DD"
           />
         </div>
@@ -96,7 +121,7 @@
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="paidDateEnd"
-            label="Date Paid End"
+            label="Deduction Date End"
             format="YYYY-MM-DD"
           />
         </div>
@@ -165,7 +190,7 @@
           :count="count" 
           :pages="pages" 
           :page="activePage" 
-          @page="setPage" 
+          @page="setPage"
         />
       </div>
 
@@ -213,18 +238,6 @@ export default {
       locumInvoiceReports: [],
       orderBy: [],
       orderByProcessed: '',
-      orderBys: [
-        {
-          title: 'Practice Name (Ascending)',
-          column: 'practice_name',
-          direction: 'asc',
-        },
-        {
-          title: 'Practice Name (Descending)',
-          column: 'practice_name',
-          direction: 'desc',
-        },
-      ],
       limit: 10,
       limits: [
         1,
@@ -242,11 +255,11 @@ export default {
       invoiceNumberIncludes: '',
       locumNameIncudes: '',
       practiceNameIncludes: '',
-      professionNameIncludes: '',
-      jobPartNumberIncludes: '',
+      taxNumberIncludes: '',
+      minNiAmount: '',
       maxNiAmount: '',
-      minTotalAmount: '',
-      maxTotalAmount: '',
+      minPayeAmount: '',
+      maxPayeAmount: '',
       calendarDateStart: '',
       calendarDateEnd: '',
       paidDateStart: '',
@@ -278,7 +291,7 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Practice',
+          title: 'Practice Name',
           key: 'practice_name',
           sort_key: 'practice_name',
           column: (item) => item.practice_name,
@@ -296,11 +309,11 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Profession',
-          key: 'profession_name',
-          sort_key: 'profession_name',
-          column: (item) => item.profession_name,
-          justify: 'start',
+          title: 'UTR or Company Reg number',
+          key: 'tax_number',
+          sort_key: 'tax_number',
+          column: (item) => item.tax_number,
+          justify: 'center',
           flexGrow: 1,
           flexShrink: 0,
         },
@@ -313,26 +326,46 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
+        
+        
         {
-          title: 'Job Number',
-          key: 'job_part_number',
-          sort_key: 'job_part_number',
-          column: (item) => item.job_part_number,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: '£ Paid',
-          key: 'total_amount',
-          sort_key: 'total_amount',
-          column: (item) => item.total_amount ? '£ ' + item.total_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '£ 0.00',
+          title: 'NI Amount',
+          key: 'ni_amount',
+          sort_key: 'ni_amount',
+          column: (item) => item.ni ? '£ ' + item.ni_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A',
           justify: 'end',
           flexGrow: 1,
           flexShrink: 0,
         },
         {
-          title: 'Date Paid',
+          title: 'PAYE Amount',
+          key: 'paye_amount',
+          sort_key: 'paye_amount',
+          column: (item) => item.paye ? '£ ' + item.paye_amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A',
+          justify: 'end',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Date Start',
+          key: 'date_start',
+          sort_key: 'date_start',
+          column: (item) => this.$moment(item.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          justify: 'center',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Date End',
+          key: 'date_end',
+          sort_key: 'date_end',
+          column: (item) => this.$moment(item.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+          justify: 'center',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Date deductions made',
           key: 'paid_at',
           sort_key: 'paid_at',
           column: (item) => this.$moment(item.paid_at, 'YYYY-MM-DD').format('DD/MM/YYYY'),
@@ -351,7 +384,7 @@ export default {
   watch: {
     limit () {
       this.page = 1
-      this.getLocumInvoiceReportPayments()
+      this.getLocumInvoiceReportDeductions()
     },
     orderBy (value) {
       let replaced = ''
@@ -365,16 +398,18 @@ export default {
       this.orderByProcessed = replaced
     },
   },
+  
 
   mounted () {      
     const {
       invoice_number_includes: invoiceNumberIncludes,
       locum_name_includes: locumNameIncudes,
       practice_name_includes: practiceNameIncludes,
-      profession_name_includes: professionNameIncludes,
-      job_part_number_includes: jobPartNumberIncludes,
-      min_total_amount: minTotalAmount,
-      max_total_amount: maxTotalAmount,
+      tax_number_includes: taxNumberIncludes,
+      min_ni_amount: minNiAmount,
+      max_ni_amount: maxNiAmount,
+      min_paye_amount: minPayeAmount,
+      max_paye_amount: maxPayeAmount,
       calendar_date_start: calendarDateStart,
       calendar_date_end: calendarDateEnd,
       paid_date_start: paidDateStart,
@@ -386,10 +421,11 @@ export default {
     this.invoiceNumberIncludes = invoiceNumberIncludes ? invoiceNumberIncludes : ''
     this.locumNameIncudes = locumNameIncudes ? locumNameIncudes : ''
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''
-    this.jobPartNumberIncludes = jobPartNumberIncludes ? jobPartNumberIncludes : ''
-    this.minTotalAmount = minTotalAmount ? minTotalAmount : ''
-    this.maxTotalAmount = maxTotalAmount ? maxTotalAmount : ''
+    this.taxNumberIncludes = taxNumberIncludes ? taxNumberIncludes : ''
+    this.minNiAmount = minNiAmount ? minNiAmount : ''
+    this.maxNiAmount = maxNiAmount ? maxNiAmount : ''
+    this.minPayeAmount = minPayeAmount ? minPayeAmount : ''
+    this.maxPayeAmount = maxPayeAmount ? maxPayeAmount : ''
     this.calendarDateStart = calendarDateStart ? calendarDateStart : ''
     this.calendarDateEnd = calendarDateEnd ? calendarDateEnd : ''
     this.paidDateStart = paidDateStart ? paidDateStart : ''
@@ -399,7 +435,7 @@ export default {
 
     this.activePage = page ? Number.parseInt(page) : 1
 
-    this.getLocumInvoiceReportPayments()
+    this.getLocumInvoiceReportDeductions()
   },
 
   methods: {
@@ -407,10 +443,11 @@ export default {
       this.invoiceNumberIncludes = ''
       this.locumNameIncudes = ''
       this.practiceNameIncludes = ''
-      this.professionNameIncludes = ''
-      this.jobPartNumberIncludes = ''
-      this.minTotalAmount = ''
-      this.maxTotalAmount = ''
+      this.taxNumberIncludes = ''
+      this.minNiAmount = ''
+      this.maxNiAmount = ''
+      this.minPayeAmount = ''
+      this.maxPayeAmount = ''
       this.calendarDateStart = ''
       this.calendarDateEnd = ''
       this.paidDateStart = ''
@@ -427,10 +464,11 @@ export default {
         invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-        min_total_amount: this.minTotalAmount ? this.minTotalAmount : undefined,
-        max_total_amount: this.maxTotalAmount ? this.maxTotalAmount : undefined,
+        tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
+        min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
+        max_ni_amount: this.maxNiAmount ? this.maxNiAmount : undefined,
+        min_paye_amount: this.minPayeAmount ? this.minPayeAmount : undefined,
+        max_paye_amount: this.maxPayeAmount ? this.maxPayeAmount : undefined,
         calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
         calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
         paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -443,7 +481,7 @@ export default {
         this.$router.replace({ query, })
       }
       
-      this.getLocumInvoiceReportPayments()
+      this.getLocumInvoiceReportDeductions()
     },
 
     setPage (page) {
@@ -465,7 +503,7 @@ export default {
         })
       }
 
-      this.getLocumInvoiceReportPayments()
+      this.getLocumInvoiceReportDeductions()
     },
 
     setOrderBy (orderBy) {
@@ -480,10 +518,10 @@ export default {
         },
       })
 
-      this.getLocumInvoiceReportPayments()
+      this.getLocumInvoiceReportDeductions()
     },
 
-    getLocumInvoiceReportPayments () {
+    getLocumInvoiceReportDeductions () {
       this.loading = true
       this.locumInvoiceReports = []
 
@@ -491,10 +529,11 @@ export default {
         invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-        min_total_amount: this.minTotalAmount ? this.minTotalAmount : undefined,
-        max_total_amount: this.maxTotalAmount ? this.maxTotalAmount : undefined,
+        tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
+        min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
+        max_ni_amount: this.maxNiAmount ? this.maxNiAmount : undefined,
+        min_paye_amount: this.minPayeAmount ? this.minPayeAmount : undefined,
+        max_paye_amount: this.maxPayeAmount ? this.maxPayeAmount : undefined,
         calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
         calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
         paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -502,14 +541,14 @@ export default {
       }
 
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/payments/count', {
+        this.$axios.get('/api/v1/admin/reports/deductions/count', {
           params: {
             ...params,
           },
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/payments', {
+        this.$axios.get('/api/v1/admin/reports/deductions', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -517,7 +556,7 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.payments
+          return responses.data.data.deductions
         }),
         new Promise((resolve) => setTimeout(resolve, 200)),
       ]).then((results) => {
@@ -542,10 +581,11 @@ export default {
         invoice_number_includes: this.invoiceNumberIncludes ? this.invoiceNumberIncludes : undefined,
         locum_name_includes: this.locumNameIncudes ? this.locumNameIncudes : undefined,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        job_part_number_includes: this.jobPartNumberIncludes ? this.jobPartNumberIncludes : undefined,
-        min_total_amount: this.minTotalAmount ? this.minTotalAmount : undefined,
-        max_total_amount: this.maxTotalAmount ? this.maxTotalAmount : undefined,
+        tax_number_includes: this.taxNumberIncludes ? this.taxNumberIncludes : undefined,
+        min_ni_amount: this.minNiAmount ? this.minNiAmount : undefined,
+        max_ni_amount: this.maxNiAmount ? this.maxNiAmount : undefined,
+        min_paye_amount: this.minPayeAmount ? this.minPayeAmount : undefined,
+        max_paye_amount: this.maxPayeAmount ? this.maxPayeAmount : undefined,
         calendar_date_start: this.calendarDateStart ? this.calendarDateStart : undefined,
         calendar_date_end: this.calendarDateEnd ? this.calendarDateEnd : undefined,
         paid_date_start: this.paidDateStart ? this.paidDateStart : undefined,
@@ -555,11 +595,8 @@ export default {
         offset: 0,
       }
 
-      
-      console.log('poractice ids', this.practiceIds)
-
-      this.$axios.post('/api/v1/admin/reports/payments/generate-key', {
-        filename: `payments.csv`,
+      this.$axios.post('/api/v1/admin/reports/deductions/generate-key', {
+        filename: `deductions.csv`,
       }, {
         params: {
           ...params,
@@ -567,7 +604,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/admin/reports/payments/csv?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/admin/reports/deductions/csv?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)

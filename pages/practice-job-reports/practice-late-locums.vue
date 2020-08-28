@@ -1,19 +1,18 @@
-
 <template>
   <div class="report-modal p-4 md:p-8 shadow-lg">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
       <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-reports" class=" hover:text-sunglow p-1">
+        <nuxt-link to="/practice-job-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
       </div>
 
       <div class="text-lg md:text-2xl ">
-        Locums that have Declined
+        Locums that Arrive Late
       </div>
   
       <div class="text-sm md:text-lg ">
-        Rep-007
+        Rep-009
       </div>
 
       <!-- FILTER -->
@@ -42,6 +41,15 @@
           />
         </div>
 
+        <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="professionNameIncludes"
+            placeholder="Search profession"
+            type="text"
+            label="Profession"
+          />
+        </div> -->
+
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <AppButton
             label="Reset"
@@ -63,11 +71,12 @@
         <div>
           <label class="">Limit: </label>
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
+
         <div>
           <label class="">Page: </label>
           <select v-model="activePage">
@@ -80,12 +89,12 @@
 
       <ReportTable
         :limit="limit"
-        :items="practiceDeclinedLocums"
-        :getItemKey="(item) => item.job_id"
+        :items="practiceLateLocums"
+        :getItemKey="(item) => item.job_part_id"
         :columnDetails="columnDetails"
         :orderBy="orderBy"
         :loading="loading"
-        @setOrderBy="(value) => orderBy = value"
+        @setOrderBy="setOrderBy"
       />
 
       <div class="w-full flex flex-wrap justfify-between items-center">
@@ -97,9 +106,9 @@
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
-            <div class="whitespace-no-wrap">
+            <!-- <div class="whitespace-no-wrap">
               Order By: {{ orderByProcessed }}
-            </div>
+            </div> -->
           </div>
         </div>
         <ReportPagination
@@ -109,14 +118,15 @@
           @page="setPage" 
         />
       </div>
+
       <div
         class="flex-wrap justify-start items-center w-full p-3 flex my-2"
       >
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
-            :disabled="downloading || practiceDeclinedLocums.length === 0"
+            :disabled="downloading || practiceLateLocums.length === 0"
             class="px-4 py-2 rounded-lg flex items-center text-xs md:text-sm"
-            :class="practiceDeclinedLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
+            :class="practiceLateLocums.length === 0 ? 'bg-gray-500' : 'bg-gradient-yellow hover:bg-gradient-yellow-active'"
             @click="downloadPDF"
           >
             <svgicon name="cloud-download" width="21" height="21" color="fill" class="fill-current mr-2" />
@@ -146,9 +156,20 @@ export default {
       loading: false,
       downloading: false,
       count: 0,
-      practiceDeclinedLocums: [],
+      practiceLateLocums: [],
       orderBy: [],
-      orderByProcessed: '',
+      orderBys: [
+        {
+          title: 'Practice Name (Ascending)',
+          column: 'practice_name',
+          direction: 'asc',
+        },
+        {
+          title: 'Practice Name (Descending)',
+          column: 'practice_name',
+          direction: 'desc',
+        },
+      ],
       limit: 10,
       limits: [
         1,
@@ -162,21 +183,23 @@ export default {
         25,
       ],
       activePage: 1,
-      locumNameIncludes: '',
       practiceNameIncludes: '',
+      locumNameIncludes: '',
+      professionNameIncludes: '',
     }
   },
 
   computed: {
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
-      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceDeclinedLocums.length), this.count)
+      const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.practiceLateLocums.length), this.count)
       
       return `Showing ${firstItem} to ${lastItem} of ${this.count} items`
     },
     offset () {
       return this.activePage * this.limit - this.limit
     },
+
     columnDetails () {
       return [
         {
@@ -198,6 +221,15 @@ export default {
           flexShrink: 0,
         },
         {
+          title: 'Job Part Number',
+          key: 'job_part_number',
+          sort_key: 'job_part_number',
+          column: (item) => item.job_part_number,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
           title: 'Locum',
           key: 'locum_user_name',
           sort_key: 'locum_user_name',
@@ -207,38 +239,10 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Rates',
-          key: 'rates',
-          sort_key: 'rate',
-          column: (item) => `${Math.min(...item.job_part_schedules.map(item => item.schedule_rate))}` === `${Math.max(...item.job_part_schedules.map(item => item.schedule_rate))}` 
-            ? `£${Math.min(...item.job_part_schedules.map(item => item.schedule_rate))}`: `£${Math.min(...item.job_part_schedules.map(item => item.schedule_rate))} - £${Math.max(...item.job_part_schedules.map(item => item.schedule_rate))}`,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Rate Type',
-          key: 'rate_type_name',
-          sort_key: 'rate_type_name',
-          column: (item) => [...new Set(item.job_part_schedules.map(item => item.schedule_rate_type_name))].join(","),
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Job Number',
-          key: 'job_number',
-          sort_key: 'job_number',
-          column: (item) => item.job_number,
-          justify: 'start',
-          flexGrow: 1,
-          flexShrink: 0,
-        },
-        {
-          title: 'Reason',
-          key: 'reason',
-          sort_key: 'reason',
-          column: (item) => item.reason,
+          title: 'Note',
+          key: 'late_hours_reason',
+          sort_key: 'late_hours_reason',
+          column: (item) => item.late_hours_reason,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,
@@ -249,58 +253,50 @@ export default {
     pages () {
       return Math.max(Math.ceil(this.count / this.limit), 1)
     },
-  },
 
-  watch: {
-    orderBy (value) {
+    orderByProcessed () {
       let replaced = ''
-      if(value.length > 0) {
-        replaced = value[0].replace(/_/g, ' ')
+
+      if(this.orderBy.length > 0) {
+        replaced = this.orderBy[0].replace(/_/g, ' ')
         replaced = replaced.replace(/:/g, ' - ')
         replaced = replaced.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
         replaced = replaced.replace('Desc', 'Descending')
         replaced = replaced.replace('Asc', 'Ascending')
       } 
-      this.orderByProcessed = replaced
-      this.getPracticeDeclinedLocums()
-    },
 
-    limit () {
-      this.page = 1
-      this.getPracticeDeclinedLocums()
-    },
-
-    activePage () {
-      this.getPracticeDeclinedLocums()
+      return replaced
     },
   },
 
-  mounted () {      
-    // const {
-    //   order_by: orderBy = [],
-    //   page,
-    // } = this.$route.query
+  watch: {
+    limit () {
+      this.activePage = 1
+      this.getPracticeLateLocums()
+    },
+  },
 
-    // this.orderBy = orderBy
-    // this.activePage = page ? Number.parseInt(page) : 1
+  mounted () {
+    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''   
+    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
+    this.professionNameIncludes = professionNameIncludes ? professionNameIncludes : ''   
+
     const {
-      locum_name_includes: locumNameIncludes,
       practice_name_includes: practiceNameIncludes,
+      locum_name_includes: locumNameIncludes,
+      profession_name_includes: professionNameIncludes,
     } = this.$route.query
 
-    this.locumNameIncludes = locumNameIncludes ? locumNameIncludes : ''
-    this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
-
-    this.getPracticeDeclinedLocums()
+    this.getPracticeLateLocums()
   },
 
   methods: {
-    async filterReset () {
+    filterReset () {
       this.locumNameIncludes = ''
       this.practiceNameIncludes = ''
-      this.orderBy = []
+      this.professionNameIncludes = ''
 
-      await this.filterSearch()
+      this.filterSearch()
     },
 
     filterSearch () {
@@ -308,8 +304,9 @@ export default {
 
       const query = {
         ...this.$route.query,
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         page: undefined,
       }
 
@@ -317,7 +314,7 @@ export default {
         this.$router.replace({ query, })
       }
       
-      this.getPracticeDeclinedLocums()
+      this.getPracticeLateLocums()
     },
 
     setPage (page) {
@@ -339,7 +336,7 @@ export default {
         })
       }
 
-      this.getPracticeDeclinedLocums()
+      this.getPracticeLateLocums()
     },
 
     setOrderBy (orderBy) {
@@ -354,27 +351,24 @@ export default {
         },
       })
 
-      this.getPracticeDeclinedLocums()
+      this.getPracticeLateLocums()
     },
 
-    getPracticeDeclinedLocums () {
+    getPracticeLateLocums () {
       this.loading = true
-      this.practiceDeclinedLocums = []
-
-      const params = {
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+      this.practiceLateLocums = []
+      let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : null,
       }
-
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-declined-locums/count', {
-          params: {
-            ...params,
-          },
+        this.$axios.get('/api/v1/admin/reports/practice-late-locums/count', {
+          params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-declined-locums', {
+        this.$axios.get('/api/v1/admin/reports/practice-late-locums', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -382,17 +376,17 @@ export default {
             offset: this.offset,
           },
         }).then((responses) => {
-          return responses.data.data.practice_declined_locums
+          return responses.data.data.practice_late_locums
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]).then((results) => {
         const [
           count,
-          practiceDeclinedLocums,
+          practiceLateLocums,
         ] = results
 
         this.count = count
-        this.practiceDeclinedLocums = practiceDeclinedLocums
+        this.practiceLateLocums = practiceLateLocums
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -403,17 +397,15 @@ export default {
 
     async downloadPDF () {
       let params = await {
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
+        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
         limit: 999,
         order_by: this.orderBy,
       }
 
-      await this.$axios.post('/api/v1/practice-reports/practice-declined-locums-report/generate-key', {
-        filename: `practiceDeclinedLocumsReport.pdf`,
-        filter: {
-          ...params,
-        },
+      await this.$axios.post('/api/v1/practice-reports/practice-late-locums-report/generate-key', {
+        filename: `practiceLateLocumsReport.pdf`,
       }, {
         params: {
           ...params,
@@ -421,7 +413,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-declined-locums-report/pdf?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-late-locums-report/pdf?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)

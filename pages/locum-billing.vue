@@ -52,8 +52,8 @@ export default {
 
   transition: (to, from) => {
     if (
-      (from && from.name.includes('locum-billing'))
-      || (to && to.name.includes('locum-billing'))
+      (from && from.name.includes('locum-billing-reports'))
+      || (to && to.name.includes('locum-billing-reports'))
     ) {
       return {
         name: '',
