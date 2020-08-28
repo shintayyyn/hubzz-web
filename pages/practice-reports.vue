@@ -53,41 +53,6 @@ export default {
           subtitle: 'Pension Contributions',
           url: '/practice-reports/pension-contributions',
         },
-        // {
-        //   title: 'REP-004',
-        //   subtitle: 'Locums on System',
-        //   url: '/practice-reports/locums',
-        // },
-        // {
-        //   title: 'REP-005',
-        //   subtitle: 'Locums Used/Bank',
-        //   url: '/practice-reports/practice-locums',
-        // },
-        // {
-        //   title: 'REP-006',
-        //   subtitle: 'Locums Not Successful',
-        //   url: '/practice-reports/practice-unsuccessful-locums',
-        // },
-        {
-          title: 'REP-007',
-          subtitle: 'Locums that have Declined',
-          url: '/practice-reports/practice-declined-locums',
-        },
-        // {
-        //   title: 'REP-008',
-        //   subtitle: 'Compliance - Expiring',
-        //   url: '/practice-reports/locum-compliance-documents',
-        // },
-        {
-          title: 'REP-009',
-          subtitle: 'Locums that Arrive Late',
-          url: '/practice-reports/practice-late-locums',
-        },
-        // {
-        //   title: 'REP-010',
-        //   subtitle: 'Hubzz Invoices',
-        //   url: '/practice-reports/practice-invoices',
-        // },
       ],
     }
   },

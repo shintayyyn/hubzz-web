@@ -73,6 +73,9 @@ export default {
       || (to && to.name === 'job-parts-index' && from && from.name === 'sessions-index-id')
       || (from && from.name === 'job-parts-index' && to && to.name === 'sessions-index-id')
       || (to && to.name === 'job-parts-index-jobPartId')
+
+      || (from && from.name.includes('practice-job-reports'))
+      || (to && to.name.includes('practice-job-reports'))
     ) {
       return {
         name: '',
@@ -132,24 +135,29 @@ export default {
     },
 
     tabs () {
-      const { query, } = this.$route
+      const {
+        name,
+        query,
+      } = this.$route
 
-      const { status = "Allocated", } = query
+      const { status = 'Allocated', } = query
 
       const tabs = []
 
-      if (this.practice && this.practice.type === "Spoke") {
+      if (this.practice && this.practice.type === 'Spoke') {
         tabs.push(
           ...[
             {
-              title: "Pending",
+              title: 'Pending',
               route: {
-                name: "sessions-index",
+                name: 'sessions-index',
                 query: {
-                  status: "Pending",
+                  status: 'Pending',
                 },
               },
-              active: status && status.toLowerCase() === "Pending".toLowerCase(),
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Pending'.toLowerCase(),
             },
           ]
         )
@@ -158,94 +166,119 @@ export default {
       tabs.push(
         ...[
           {
-            title: "Allocated",
+            title: 'Allocated',
             route: {
-              name: "job-parts-index",
+              name: 'job-parts-index',
               query: {
-                status: "Allocated",
+                status: 'Allocated',
               },
             },
-            active: status && status.toLowerCase() === "Allocated".toLowerCase(),
+            active: name === 'job-parts-index'
+              && status
+              && status.toLowerCase() === 'Allocated'.toLowerCase(),
           },
           {
-            title: "Ongoing",
+            title: 'Ongoing',
             route: {
-              name: "job-parts-index",
+              name: 'job-parts-index',
               query: {
-                status: "Ongoing",
+                status: 'Ongoing',
               },
             },
-            active: status && status.toLowerCase() === "Ongoing".toLowerCase(),
+            active: name === 'job-parts-index'
+              && status
+              && status.toLowerCase() === 'Ongoing'.toLowerCase(),
           },
           {
-            title: "Live",
+            title: 'Live',
             route: {
-              name: "sessions-index",
+              name: 'sessions-index',
               query: {
-                status: "Live",
+                status: 'Live',
               },
             },
-            active: status && status.toLowerCase() === "Live".toLowerCase(),
+            active: name === 'sessions-index'
+              && status
+              && status.toLowerCase() === 'Live'.toLowerCase(),
           },
           {
-            title: "Applied",
+            title: 'Applied',
             route: {
-              name: "sessions-index",
+              name: 'sessions-index',
               query: {
-                status: "Applied",
+                status: 'Applied',
               },
             },
-            active: status && status.toLowerCase() === "Applied".toLowerCase(),
+            active: name === 'sessions-index'
+              && status
+              && status.toLowerCase() === 'Applied'.toLowerCase(),
           },
           {
-            title: "Unfilled",
+            title: 'Unfilled',
             route: {
-              name: "sessions-index",
+              name: 'sessions-index',
               query: {
-                status: "Unfilled",
+                status: 'Unfilled',
               },
             },
-            active: status && status.toLowerCase() === "Unfilled".toLowerCase(),
+            active: name === 'sessions-index'
+              && status
+              && status.toLowerCase() === 'Unfilled'.toLowerCase(),
           },
           {
-            title: "Withdrawn",
+            title: 'Withdrawn',
             route: {
-              name: "job-parts-index",
+              name: 'job-parts-index',
               query: {
-                status: "Withdrawn",
+                status: 'Withdrawn',
               },
             },
-            active: status && status.toLowerCase() === "Withdrawn".toLowerCase(),
+            active: name === 'job-parts-index'
+              && status
+              && status.toLowerCase() === 'Withdrawn'.toLowerCase(),
           },
           {
-            title: "Cancelled",
+            title: 'Cancelled',
             route: {
-              name: "job-parts-index",
+              name: 'job-parts-index',
               query: {
-                status: "Cancelled",
+                status: 'Cancelled',
               },
             },
-            active: status && status.toLowerCase() === "Cancelled".toLowerCase(),
+            active: name === 'job-parts-index'
+              && status
+              && status.toLowerCase() === 'Cancelled'.toLowerCase(),
           },
           {
-            title: "Completed",
+            title: 'Completed',
             route: {
-              name: "job-parts-index",
+              name: 'job-parts-index',
               query: {
-                status: "Completed",
+                status: 'Completed',
               },
             },
-            active: status && status.toLowerCase() === "Completed".toLowerCase(),
+            active: name === 'job-parts-index'
+              && status
+              && status.toLowerCase() === 'Completed'.toLowerCase(),
           },
           {
-            title: "Approved",
+            title: 'Approved',
             route: {
-              name: "job-parts-index",
+              name: 'job-parts-index',
               query: {
-                status: "Approved",
+                status: 'Approved',
               },
             },
-            active: status && status.toLowerCase() === "Approved".toLowerCase(),
+            active: name === 'job-parts-index'
+              && status
+              && status.toLowerCase() === 'Approved'.toLowerCase(),
+          },
+          {
+            title: 'Reports',
+            route: {
+              name: 'practice-job-reports',
+            },
+            active: name === 'practice-job-reports',
           },
         ]
       )

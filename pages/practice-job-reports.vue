@@ -1,38 +1,5 @@
 <template>
   <section class="sessions-section">
-    <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
-      <AppLoading :loading="loading" spinner />
-
-      <div class="flex flex-row justify-start overflow-x-auto">
-        <div class="flex flex-col mb-2">
-          <label for="search" class="text-xs sm:text-sm">Job number</label>
-
-          <div class="flex flex-row justify-start">
-            <input
-              v-model="search"
-              type="text"
-              class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-            >
-          </div>
-
-          <transition name="fade" mode="out-in">
-            <div v-if="noFoundJob" class="text-xs text-red-500">
-              No matching job number
-            </div>
-          </transition>
-        </div>
-      </div>
-
-      <div class="flex justify-start">
-        <div
-          class="bg-yellow-500 hover:text-white cursor-pointer shadow-lg rounded-lg px-2 py-1 font-bold mb-5 min-w-sm"
-          @click="findJobNumber"
-        >
-          Search
-        </div>
-      </div>
-    </div>
-
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div v-for="tab in tabs" :key="tab.title" class="relative">
         <nuxt-link
@@ -47,36 +14,51 @@
     </div>
 
     <div class="mt-5">
-      <nuxt-child :invoiceStatusList="invoiceStatusList" />
+      <div class="flex-1 flex flex-col py-2 px-4 md:px-6">
+        <div class="flex flex-col">
+          <nuxt-link
+            v-for="practiceJobReport in practiceJobReports"
+            :key="`practiceJobReports-${practiceJobReport.title}`"
+            :to="practiceJobReport.url"
+            class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
+          >
+            <div class="flex flex-no-wrap items-center text-sm w-full">
+              <span class="px-2 whitespace-no-wrap font-semibold">{{ practiceJobReport.title }}</span>
+              <span class="px-2 w-full leading-tight flex items-center">{{ practiceJobReport.subtitle }}</span>
+              <div class="flex items-center px-1 md:px-0">
+                <svgicon name="arrow-right" width="21" height="21" color="black" />
+              </div>
+            </div>
+          </nuxt-link>
+        </div>
+        <nuxt-link
+          v-if="$route.name !== 'practice-job-reports'"
+          class="shield z-511 fixed inset-0 opacity-50"
+          to="/practice-job-reports"
+        />
+        <nuxt-child />
+      </div>
     </div>
-
-    <AppConfirmationModal
-      :label="'You\'ve been revoked to view this Page'"
-      :confirmLabel="'OK'"
-      :modal="confirmation_modal"
-      @confirm="goTo"
-    />
   </section>
 </template>
 
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppLoading from "@/components/Base/AppLoading"
-
 export default {
   transition: (to, from) => {
     if (
-      (to && to.name === 'job-parts-index' && from && from.name === 'sessions-index')
-      || (from && from.name === 'job-parts-index' && to && to.name === 'sessions-index')
-      || (to && to.name === 'job-parts-index-jobPartId' && from && from.name === 'sessions-index')
-      || (from && from.name === 'job-parts-index-jobPartId' && to && to.name === 'sessions-index')
-      || (to && to.name === 'job-parts-index' && from && from.name === 'sessions-index-id')
-      || (from && from.name === 'job-parts-index' && to && to.name === 'sessions-index-id')
+      (from && from.name === 'sessions-index')
+      || (from && from.name === 'sessions-index-id')
+      || (from && from.name === 'sessions-index-id-job-parts-jobPartId')
+
+      || (to && to.name === 'sessions-index')
       || (to && to.name === 'sessions-index-id')
       || (to && to.name === 'sessions-index-id-job-parts-jobPartId')
 
-      || (from && from.name.includes('practice-job-reports'))
-      || (to && to.name.includes('practice-job-reports'))
+      || (from && from.name === 'job-parts-index')
+      || (from && from.name === 'job-parts-index-jobPartId')
+
+      || (to && to.name === 'job-parts-index')
+      || (to && to.name === 'job-parts-index-jobPartId')
     ) {
       return {
         name: '',
@@ -90,35 +72,18 @@ export default {
     }
   },
 
-  middleware: "isVerified",
-
-  components: {
-    AppConfirmationModal,
-    AppLoading,
-  },
-
   data () {
     return {
-      search: null,
-      noFoundJob: false,
-      loading: false,
-      confirmation_modal: false,
-      invoiceStatusList: [
+      practiceJobReports: [
         {
-          label: "All",
-          value: "",
+          title: 'REP-007',
+          subtitle: 'Locums that have Declined',
+          url: '/practice-job-reports/practice-declined-locums',
         },
         {
-          label: "To Be Invoice",
-          value: "To Be Invoice",
-        },
-        {
-          label: "Disputed",
-          value: "Disputed",
-        },
-        {
-          label: "Invoiced",
-          value: "Invoiced",
+          title: 'REP-009',
+          subtitle: 'Locums that Arrive Late',
+          url: '/practice-job-reports/practice-late-locums',
         },
       ],
     }
@@ -129,10 +94,6 @@ export default {
       return this.$auth.loggedIn && this.$auth.user.practice_detail
         ? this.$auth.user.practice_detail.practice
         : null
-    },
-
-    authPermissions () {
-      return this.$store.getters["permissions"]
     },
 
     tabs () {
@@ -286,115 +247,6 @@ export default {
 
       return tabs
     },
-  },
-
-  watch: {
-    authPermissions (value) {
-      if (!this.CheckPermissions(value).hasPermission) {
-        this.confirmation_modal = true
-      }
-    },
-  },
-
-  methods: {
-    goTo () {
-      this.confirmation_modal = false
-      setTimeout(() => {
-        this.$router.push("/")
-      }, 500)
-    },
-
-    async findJobNumber () {
-      if (!this.search) {
-        return
-      }
-
-      this.loading = true
-
-      let resJob = await this.findJob()
-      let resJobPart = await this.findJobParts()
-      let job = null
-      let urlPath = null
-      this.noFoundJob = false
-
-      this.loading = false
-
-      if (resJob.length > 0) {
-        job = resJob[0]
-        urlPath = `/sessions/${job.id}`
-      }
-
-      if (resJobPart.length > 0) {
-        job = resJobPart[0]
-        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
-      }
-
-      if (resJob.length > 0 || resJobPart.length > 0) {
-        this.$router.push({
-          path: `/sessions`,
-          query: { status: job.status, },
-        })
-
-        setTimeout(() => {
-          this.$router.push({
-            path: urlPath,
-            query: { status: job.status, },
-          })
-        }, 500)
-      }
-
-      if (resJob.length === 0 && resJobPart.length === 0) {
-        this.noFoundJob = true
-      }
-    },
-
-    findJob () {
-      return this.$axios
-        .$get(`/api/v1/practice/jobs`, {
-          params: {
-            status: [
-              "Pending",
-              "Live",
-              "Applied",
-              "Unfilled",
-            ],
-            job_number: this.search,
-          },
-        })
-        .then(res => {
-          return res.data.jobs
-        })
-        .catch(err => {
-          console.log("job err", err.response)
-          return []
-        })
-    },
-
-    findJobParts () {
-      return this.$axios
-        .$get(`/api/v1/practice/job-parts`, {
-          params: {
-            status: [
-              "Allocated",
-              "Ongoing",
-              "Withdrawn",
-              "Cancelled",
-              "Completed",
-              "Approved",
-              "Terminated",
-            ],
-            job_part_number: this.search,
-          },
-        })
-        .then(res => {
-          return res.data.job_parts
-        })
-        .catch(err => {
-          console.log("job part err", err.response)
-          return []
-        })
-    },
-    
   },
 }
 </script>
