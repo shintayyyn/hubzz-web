@@ -4,6 +4,31 @@
       <div>
         <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="close" />
       </div>
+      <div
+        v-if="$auth.user.domain === 'Practice' &&
+          $auth.user.status === 'Active' &&
+          ($auth.user.practice_detail.practice.status === 'Active' 
+          || $auth.user.practice_detail.practice.status === 'Dormant') &&
+          ($auth.user.practice_detail.practice.type === 'Spoke' &&
+          $auth.user.practice_detail.practice.parent_practice_id) &&
+          $auth.user.practice_detail.practice.allow_surgery_create_sessions === false" 
+        class="hidden md:block text-red-500 text-xs"
+      >
+        Jobs created are automatically pending.
+        <!-- <span
+          class="tool-left"
+          data-tip="Jobs created will automatically be Pending and needs to be approved by your Hub first."
+          tabindex="1"
+        >
+          <svgicon
+            name="info"
+            width="21"
+            height="21"
+            color="black"
+            class="ml-2"
+          />
+        </span> -->
+      </div>
 
       <div class="flex justify-between items-center font-bold text-sm sm:text-xl mt-8">
         Create a new job
