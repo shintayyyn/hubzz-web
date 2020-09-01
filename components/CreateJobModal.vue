@@ -732,6 +732,7 @@
             </div>
           </template>
         </div>
+        
         <div v-if="tabActive === 'schedule'">
           <AppSchedules
             :shifts="shifts"

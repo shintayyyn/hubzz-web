@@ -2026,6 +2026,8 @@ export default {
           this.schedules,
           this.getJobGrossRate(this.schedules),
           this.getTotalHours(this.schedules),
+          this.getDeductions(this.schedules),
+          this.getTotalLates(this.schedules),
           this.hasShiftError,
           this.job_parts
         )

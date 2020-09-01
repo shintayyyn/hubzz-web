@@ -91,6 +91,7 @@
           </p>
         </div>
       </div>
+      
       <div class="w-full border-b">
         <AppSchedules
           :practice_rate="practice_rate"
