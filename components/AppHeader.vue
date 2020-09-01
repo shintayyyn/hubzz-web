@@ -40,13 +40,40 @@
                 "
                 class="mx-1"
               >
-                <AppButton
-                  :disabled="!authPermissions.includes('Create Sessions Job')"
-                  :label="'Create Job'"
-                  class="hidden md:block whitespace-no-wrap"
-                  :in-style="'padding-top: 0; padding-bottom: 0;'"
-                  @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                />
+                <div class="flex flex-col">
+                  <AppButton
+                    :disabled="!authPermissions.includes('Create Sessions Job')"
+                    :label="'Create Job'"
+                    class="hidden md:block whitespace-no-wrap"
+                    :in-style="'padding-top: 0; padding-bottom: 0;'"
+                    @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+                  />
+                  <div
+                    v-if="$auth.user.domain === 'Practice' &&
+                      $auth.user.status === 'Active' &&
+                      ($auth.user.practice_detail.practice.status === 'Active' 
+                      || $auth.user.practice_detail.practice.status === 'Dormant') &&
+                      ($auth.user.practice_detail.practice.type === 'Spoke' &&
+                      $auth.user.practice_detail.practice.parent_practice_id) &&
+                      $auth.user.practice_detail.practice.allow_surgery_create_sessions === false" 
+                    class="hidden md:block text-red-500 text-xs"
+                  >
+                    Jobs created are automatically pending.
+                    <!-- <span
+                      class="tool-left"
+                      data-tip="Jobs created will automatically be Pending and needs to be approved by your Hub first."
+                      tabindex="1"
+                    >
+                      <svgicon
+                        name="info"
+                        width="21"
+                        height="21"
+                        color="black"
+                        class="ml-2"
+                      />
+                    </span> -->
+                  </div>
+                </div>
                 
                 <button
                   class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
@@ -90,9 +117,12 @@
                   class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
                 >{{ unreadMessages }}</span>
               </button>
+              <div class="ml-2">
+                <AppNotifDropdown />
+              </div>
             </div>
 
-            <AppNotifDropdown />
+            
 
             <!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
               <AppButton
