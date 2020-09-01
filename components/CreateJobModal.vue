@@ -1613,6 +1613,8 @@ export default {
       schedule,
       total_gross_locum_wages,
       total_working_hours,
+      deductions,
+      total_lates,
       hasError,
       job_parts
     ) {

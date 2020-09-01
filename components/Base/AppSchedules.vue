@@ -378,7 +378,10 @@
                             @blur="CheckIfEmpty(shift.final_time_start, `final_time_start-s${index}-${i}`)"
                           />
                           <p
-                            v-if="(shift.final_time_start && shift.final_time_end) && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0 "
+                            v-if="
+                              (shift.final_time_start && shift.final_time_end)
+                                && totalHours(shift.final_time_start, shift.final_time_end, item.date) <= 0
+                            "
                             class="text-xs text-red-500 px-2 pt-1"
                           >
                             Invalid End Time
@@ -849,8 +852,10 @@
                             <template
                               v-else-if="
                                 (shift.time_start && shift.time_end && shift.time_start === shift.time_end)
-                                  || ((shift.time_start && shift.time_end)
-                                  && (totalHours(shift.time_start, shift.time_end, item.date) !== 0))
+                                  || (
+                                    (shift.time_start && shift.time_end)
+                                  && (totalHours(shift.time_start, shift.time_end, item.date) <= 0)
+                                  )
                               "
                             >
                               <span class="text-red-500 leading-none text-sm">
@@ -2306,27 +2311,15 @@ export default {
     },
 
     getLate (shift) {
-      let orig_start_hour = shift.orig_time_start
-        ? shift.orig_time_start.split(":")[0]
-        : shift.time_start.split(":")[0]
-      let orig_start_minute = shift.orig_time_start
-        ? shift.orig_time_start.split(":")[1]
-        : shift.time_start.split(":")[1]
-      let final_start_hour = shift.final_time_start.split(":")[0]
-      let final_start_minute = shift.final_time_start.split(":")[1]
+      const originalTimeStart = shift.orig_time_start || shift.time_start
+      const finalTimeStart = shift.final_time_start || shift.time_start
 
-      let original_in_minutes
-        = parseInt(orig_start_hour) * 60 + parseInt(orig_start_minute)
-      let final_in_minutes
-        = parseInt(final_start_hour) * 60 + parseInt(final_start_minute)
+      const timeDiff = this.$moment(finalTimeStart, "HH:mm").diff(this.$moment(originalTimeStart, "HH:mm"))
 
-      let late_in_minute
-        = final_in_minutes - original_in_minutes
-          ? final_in_minutes - original_in_minutes
-          : 0
+      const lateInMinutes = this.$moment.duration(timeDiff).asMinutes()
 
-      let hour = late_in_minute / 60 > 0 ? parseInt(late_in_minute / 60) : 0
-      let minute = late_in_minute % 60
+      let hour = lateInMinutes / 60 > 0 ? parseInt(lateInMinutes / 60) : 0
+      let minute = lateInMinutes % 60
 
       let total_late_hours = "NO"
 
@@ -2343,40 +2336,6 @@ export default {
       }
 
       return total_late_hours
-
-      // let hourDiff = final_start_hour - orig_start_hour;
-      // let minDiff = final_start_minute - orig_start_minute;
-      // if (shift.late_hours > 0 && shift.dispute) {
-      // 	let late_hours =
-      // 		shift.late_hours > 60
-      // 			? parseFloat(shift.late_hours / 60).toFixed(2)
-      // 			: (shift.late_hours / 100).toFixed(2);
-      // 	hourDiff = parseInt(late_hours.toString().split(".")[0]);
-      // 	minDiff = parseInt(late_hours.toString().split(".")[1]);
-      // 	console.log("late_hours", late_hours);
-      // }
-
-      // let diff = shift.final_time_start
-      //   ? `${
-      //       hourDiff > 0
-      //         ? hourDiff > 9
-      //           ? `${hourDiff}h`
-      //           : `0${hourDiff > -1 ? hourDiff : 0}h`
-      //         : ""
-      //     } ${
-      //       minDiff > 0
-      //         ? minDiff > 9
-      //           ? `${minDiff}m`
-      //           : `0${minDiff > -1 ? minDiff : 0}m`
-      //         : ""
-      //     }`
-      //   : "NO";
-
-      // if (hourDiff <= 0 && minDiff <= 0) {
-      //   diff = "NO";
-      // }
-
-      // return diff;
     },
 
     getTotalLates (schedule) {
@@ -2388,72 +2347,28 @@ export default {
       // console.log(schedule);
       schedule.forEach(sched => {
         sched.shifts.forEach(shift => {
-          let orig_start_hour = shift.orig_time_start
-            ? shift.orig_time_start.split(":")[0]
-            : shift.time_start.split(":")[0]
-          let orig_start_minute = shift.orig_time_start
-            ? shift.orig_time_start.split(":")[1]
-            : shift.time_start.split(":")[1]
-          let final_start_hour = shift.final_time_start.split(":")[0]
-          let final_start_minute = shift.final_time_start.split(":")[1]
-          // let hourDiff = final_start_hour - orig_start_hour;
-          // let minDiff = final_start_minute - orig_start_minute;
-          // lateHours.push(hourDiff > -1 ? hourDiff : 0);
-          // lateMinutes.push(minDiff > -1 ? minDiff : 0);
+          const originalTimeStart = shift.orig_time_start || shift.time_start
+          const finalTimeStart = shift.final_time_start || shift.time_start
 
-          //
-          let original_in_minutes
-            = parseInt(orig_start_hour) * 60 + parseInt(orig_start_minute)
-          let final_in_minutes
-            = parseInt(final_start_hour) * 60 + parseInt(final_start_minute)
+          const timeDiff = this.$moment(finalTimeStart, "HH:mm").diff(this.$moment(originalTimeStart, "HH:mm"))
 
-          // console.log("original_in_minutes", original_in_minutes);
-          // console.log("final_in_minutes", final_in_minutes);
+          const lateInMinutes = this.$moment.duration(timeDiff).asMinutes()
 
-          let late_in_minute
-            = final_in_minutes - original_in_minutes
-              ? final_in_minutes - original_in_minutes
-              : 0
-
-          late_in_minutes.push(late_in_minute)
-
-          // console.log("test", testOriginal);
-          // console.log("test", testFinal);
+          late_in_minutes.push(lateInMinutes)
         })
       })
       console.log("late_in_minutes", late_in_minutes)
 
       let hour
-        = late_in_minutes.reduce((a, b) => a + b) / 60 > 0
-          ? parseInt(late_in_minutes.reduce((a, b) => a + b) / 60)
+        = late_in_minutes.reduce((a, b) => a + b, 0) / 60 > 0
+          ? parseInt(late_in_minutes.reduce((a, b) => a + b, 0) / 60)
           : 0
-      let minute = late_in_minutes.reduce((a, b) => a + b) % 60
+          
+      let minute = late_in_minutes.reduce((a, b) => a + b, 0) % 60
 
       console.log("hour", hour)
       console.log("minute", minute)
-      // console.log("lateHours", lateHours);
-      // console.log("lateMinutes", lateMinutes);
-      // for (let i = 0; i <= lateHours.length; i++) {
-      //   let num = parseFloat(lateHours[i]);
-      //   if (isNaN(num)) {
-      //     continue;
-      //   }
-      //   late_hour += Number(num);
-      // }
-      // for (let i = 0; i <= lateMinutes.length; i++) {
-      //   let num = parseFloat(lateMinutes[i]);
-      //   if (isNaN(num)) {
-      //     continue;
-      //   }
-      //   late_minute += Number(num);
-      // }
-      // if (late_minute > 59) {
-      //   late_hour = Math.abs(late_hour + Math.floor(late_minute / 60));
-      //   late_minute -= 60;
-      // }
 
-      // console.log("late_hour", late_hour);
-      // console.log("late_minute", late_minute);
       let total_late_hours = `${
         hour > 0 ? (hour > 9 ? `${hour}h` : `0${hour > -1 ? hour : 0}h`) : ""
       } ${
@@ -2463,19 +2378,6 @@ export default {
             : `0${minute > -1 ? minute : 0}m`
           : ""
       }`
-      // let total_late_hours = `${
-      //   late_hour > 0
-      //     ? late_hour > 9
-      //       ? `${late_hour}h`
-      //       : `0${late_hour > -1 ? late_hour : 0}h`
-      //     : ""
-      // } ${
-      //   late_minute > 0
-      //     ? late_minute > 9
-      //       ? `${late_minute}m`
-      //       : `0${late_minute > -1 ? late_minute : 0}m`
-      //     : ""
-      // }`;
 
       if (hour <= 0 && minute <= 0) {
         total_late_hours = "None"
@@ -2706,13 +2608,27 @@ export default {
     },
 
     totalHours (timeStart, timeEnd, date) {
-      const datetimeStart = this.$moment(
-        `${date} ${timeStart}`,
-        "DD/MM/YYYY HH:mm"
-      )
+      if (!timeStart) {
+        return 0
+      }
+
+      if (!timeEnd) {
+        return 0
+      }
+
+      if (timeStart === timeEnd) {
+        return 0
+      }
+
+      if (timeStart >= timeEnd) {
+        return 0
+      }
+
+      const datetimeStart = this.$moment(`${date} ${timeStart}`, "DD/MM/YYYY HH:mm")
+
       const dateTimeEnd
         = timeStart >= timeEnd
-          ? this.$moment(`${date} ${timeEnd}`, "DD/MM/YYYY").add(1, "days")
+          ? this.$moment(`${date} ${timeEnd}`, "DD/MM/YYYY HH:mm").add(1, "days")
           : this.$moment(`${date} ${timeEnd}`, "DD/MM/YYYY HH:mm")
 
       return this.$moment.duration(dateTimeEnd.diff(datetimeStart)).asMinutes()
