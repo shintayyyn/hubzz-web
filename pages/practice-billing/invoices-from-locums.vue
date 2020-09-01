@@ -56,7 +56,7 @@
         Reports
       </nuxt-link> -->
     </div>
-    <transition name="fade" mode="out-in" >
+    <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
@@ -145,7 +145,7 @@
         </div>
         <AppTable
           v-if="job_parts.length > 0"
-          :total="total"
+          :total="jobPartCount"
           :items="job_parts"
           :loading="loading"
           :current-page="current_page"
@@ -357,7 +357,7 @@ export default {
       loading: false,
       filterModal: false,
       isFiltered: false,
-      total: 0,
+      jobPartCount: 0,
       job_parts: [],
 
       showRefresh: false,
@@ -418,8 +418,8 @@ export default {
         },
         {
           name: "£ Amount",
-          dataIndex: "total_amount",
-          class: "text-center currency",
+          dataIndex: "job_part_gross_rate_formatted",
+          class: "text-center",
           sortable: true,
         },
         {
@@ -562,7 +562,7 @@ export default {
         this.current_page = 1
         this.filterModal = false
         this.showRefresh = false
-        this.total = 0
+        this.jobPartCount = 0
         this.job_parts = []
         this.clearFilters()
         this.isFiltered = false
@@ -741,60 +741,17 @@ export default {
         }),
       ])
         .then(([responseTotal, responseJobParts,]) => {
-          this.total = responseTotal.data.count
+          this.jobPartCount = responseTotal.data.count
           let job_parts = responseJobParts.data.job_parts
           this.job_parts = job_parts.map(jobPart => {
-            // let type
-            // let finalHours
-            // let totalHours
-            let total = 0
-
-            if (jobPart.locum_invoice_item) {
-              total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
-              // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-              // 	total =
-              // 		total -
-              // 		jobPart.locum_invoice_item.locum_invoice.ni_amount -
-              // 		jobPart.locum_invoice_item.locum_invoice.paye_amount;
-              // }
-            } else if (!jobPart.locum_invoice_item) {
-              // rate * final_hours_in_minutes
-              // rate / original_hours_in_minutes * final_hours_in_minutes
-
-              jobPart.schedules.forEach(schedule => {
-                if (!schedule.absent_reason) {
-                  let finalHours = schedule.final_hours_in_minutes / 60
-                  let totalHours = schedule.original_hours_in_minutes / 60
-                  switch (schedule.locum_detail_rate_type.name) {
-                  case "Hourly":
-                    total = total + schedule.rate * finalHours
-                    break
-                  case "Whole Day":
-                  case "Half Day":
-                    total = total + (schedule.rate / totalHours) * finalHours
-                    break
-                  default:
-                    total = total + schedule.rate * finalHours
-                    break
-                  }
-                }
-              })
-            }
-
             return {
               ...jobPart,
-              practice_name:
-                jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
               issued_at: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.issued_at
                 : null,
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
               invoice_paid:
                 jobPart.status === "Approved"
@@ -897,57 +854,14 @@ export default {
           let job_parts = res.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            // let type
-            // let finalHours
-            // let totalHours
-            let total = 0
-
-            if (jobPart.locum_invoice_item) {
-              total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
-              // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-              // 	total =
-              // 		total -
-              // 		jobPart.locum_invoice_item.locum_invoice.ni_amount -
-              // 		jobPart.locum_invoice_item.locum_invoice.paye_amount;
-              // }
-            } else if (!jobPart.locum_invoice_item) {
-              // rate * final_hours_in_minutes
-              // rate / original_hours_in_minutes * final_hours_in_minutes
-
-              jobPart.schedules.forEach(schedule => {
-                if (!schedule.absent_reason) {
-                  let finalHours = schedule.final_hours_in_minutes / 60
-                  let totalHours = schedule.original_hours_in_minutes / 60
-                  switch (schedule.locum_detail_rate_type.name) {
-                  case "Hourly":
-                    total = total + schedule.rate * finalHours
-                    break
-                  case "Whole Day":
-                  case "Half Day":
-                    total = total + (schedule.rate / totalHours) * finalHours
-                    break
-                  default:
-                    total = total + schedule.rate * finalHours
-                    break
-                  }
-                }
-              })
-            }
-
             return {
               ...jobPart,
-              practice_name:
-                jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
               issued_at: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.issued_at
                 : null,
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
               invoice_paid:
                 jobPart.status === "Approved"
@@ -1011,8 +925,6 @@ export default {
 
       if (job_part) {
         job_part.locum_invoice_id = invoice.id
-        job_part.total_amount = invoice.total_amount
-
         let index = this.job_parts.findIndex(item => item.id === job_part.id)
         if (index >= 0) {
           if (
