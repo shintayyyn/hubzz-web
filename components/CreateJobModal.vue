@@ -4,9 +4,26 @@
       <div>
         <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" @click="close" />
       </div>
-
+      
       <div class="flex justify-between items-center font-bold text-sm sm:text-xl mt-8">
-        Create a new job
+        <div class="flex flex-col">
+          <div>
+            Create a new job
+          </div>
+          <div
+            v-if="$auth.user.domain === 'Practice' &&
+              $auth.user.status === 'Active' &&
+              ($auth.user.practice_detail.practice.status === 'Active' 
+              || $auth.user.practice_detail.practice.status === 'Dormant') &&
+              ($auth.user.practice_detail.practice.type === 'Spoke' &&
+              $auth.user.practice_detail.practice.parent_practice_id) &&
+              $auth.user.practice_detail.practice.allow_surgery_create_sessions === false" 
+            class="hidden md:block text-gray-600 italic text-sm"
+          >
+            *Session status is Pending once created. No permission to create a job, thus required approval from your Hub.
+          </div>
+        </div>
+        
         <div class="flex text-sm">
           <p
             class="px-3 py-2 bg-green-500"

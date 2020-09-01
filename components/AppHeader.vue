@@ -40,13 +40,15 @@
                 "
                 class="mx-1"
               >
-                <AppButton
-                  :disabled="!authPermissions.includes('Create Sessions Job')"
-                  :label="'Create Job'"
-                  class="hidden md:block whitespace-no-wrap"
-                  :in-style="'padding-top: 0; padding-bottom: 0;'"
-                  @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                />
+                <div class="flex flex-col">
+                  <AppButton
+                    :disabled="!authPermissions.includes('Create Sessions Job')"
+                    :label="'Create Job'"
+                    class="hidden md:block whitespace-no-wrap"
+                    :in-style="'padding-top: 0; padding-bottom: 0;'"
+                    @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+                  />
+                </div>
                 
                 <button
                   class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
@@ -91,9 +93,7 @@
                 >{{ unreadMessages }}</span>
               </button>
             </div>
-
             <AppNotifDropdown />
-
             <!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
               <AppButton
                 :label="'Expenses'"
