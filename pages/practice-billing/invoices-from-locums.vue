@@ -411,10 +411,12 @@ export default {
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
+          sortable: true,
         },
         {
           name: "Job Title",
           dataIndex: "job_title",
+          sortable: true,
         },
         {
           name: "£ Amount",
@@ -437,8 +439,16 @@ export default {
       if (["approved",].includes(queryStatus)) {
         columns.push({
           name: "Paid Invoice",
-          dataIndex: "invoice_paid",
+          dataIndex: "paid_formatted",
           class: "text-center",
+          sortable: true,
+        })
+
+        columns.push({
+          name: "Paid At",
+          dataIndex: "paid_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
         })
       }
 
@@ -455,6 +465,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
+          sortable: true,
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -746,18 +757,7 @@ export default {
           this.job_parts = job_parts.map(jobPart => {
             return {
               ...jobPart,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-              invoice_paid:
-                jobPart.status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
               form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
@@ -856,18 +856,7 @@ export default {
           this.job_parts = job_parts.map(jobPart => {
             return {
               ...jobPart,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-              invoice_paid:
-                jobPart.status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
               form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
