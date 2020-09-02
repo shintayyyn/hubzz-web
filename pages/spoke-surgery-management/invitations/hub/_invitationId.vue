@@ -146,18 +146,34 @@
     <!-- Buttons -->
     <div
       v-if="!specificInvitation.invitation_accepted_at && !specificInvitation.invitation_rejected_at"
-      class="flex my-6"
+      class="flex flex-col my-6"
     >
-      <AppButton
-        :label="'Accept'"
-        @click="confirmAccept = true"
-        :customTheme="'bg-green-500 hover:bg-green-600 text-white font-bold mx-1'"
-      />
-      <AppButton
-        :label="'Reject'"
-        @click="confirmReject = true"
-        :customTheme="'bg-red-500 hover:bg-red-600 text-white font-bold mx-1'"
-      />
+      <div 
+        v-if="specificPracticeHub.manual_status === 'Inactive' 
+          || specificPracticeHub.manual_status === 'Suspended' 
+          || specificPracticeHub.manual_status === 'Bogus'"
+        class="text-sm text-red-500"
+      >
+        *The Practice Hub that sent this invitation is currently {{ specificPracticeHub.manual_status }}.
+      </div>
+      <div>
+        <AppButton
+          :label="'Accept'"
+          :disabled="specificPracticeHub.manual_status === 'Inactive' 
+            || specificPracticeHub.manual_status === 'Suspended' 
+            || specificPracticeHub.manual_status === 'Bogus' 
+            ? true 
+            : false "
+          @click="confirmAccept = true"
+          :customTheme="'bg-green-500 hover:bg-green-600 text-white font-bold mx-1'"
+        />
+        <AppButton
+          :label="'Reject'"
+          @click="confirmReject = true"
+          :customTheme="'bg-red-500 hover:bg-red-600 text-white font-bold mx-1'"
+        />
+      </div>
+      
       <!-- <div
         @click="acceptInvitation()"
         class="flex mr-2 p-4 px-8 cursor-pointer rounded-lg bg-green-500 hover:bg-green-600"
