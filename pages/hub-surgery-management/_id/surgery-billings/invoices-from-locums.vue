@@ -50,7 +50,7 @@
         />
         <AppTable
           v-if="job_parts.length > 0"
-          :total="total"
+          :total="jobPartCount"
           :items="job_parts"
           :loading="loading"
           :current-page="current_page"
@@ -200,7 +200,7 @@ export default {
     return {
       initialLoading: false,
       showTable: false,
-      total: 0,
+      jobPartCount: 0,
       job_parts: [],
 
       showRefresh: false,
@@ -255,8 +255,8 @@ export default {
         },
         {
           name: "£ Amount",
-          dataIndex: "total_amount",
-          class: "text-center currency",
+          dataIndex: "job_part_gross_rate_formatted",
+          class: "text-center",
           sortable: true,
         },
         {
@@ -274,10 +274,21 @@ export default {
       if (["approved", "pension-form-a",].includes(queryStatus)) {
         columns.push({
           name: "Paid",
-          dataIndex: "paid",
+          dataIndex: "paid_formatted",
           class: "text-center",
+          sortable: true,
         })
       }
+
+      if (["approved",].includes(queryStatus)) {
+        columns.push({
+          name: "Paid At",
+          dataIndex: "paid_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
+        })
+      }
+
       if (queryStatus === "approved" || queryStatus === "pension-form-a" || queryStatus === "solo-form") {
         columns.push({
           name: "Approved At",
@@ -355,7 +366,7 @@ export default {
         this.current_page = 1
         this.filterModal = false
         this.showRefresh = false
-        this.total = 0
+        this.jobPartCount = 0
         this.job_parts = []
         this.initialLoading = true
         await this.getJobPartsPromiseAll()
@@ -423,9 +434,9 @@ export default {
         locum_invoiceable = true
       }
 
-      let [total, job_parts,] = await Promise.all([
+      let [jobPartCount, job_parts,] = await Promise.all([
         app.$axios
-          .$get(`/api/v1/practice/job-parts/count`, {
+          .get(`/api/v1/practice/job-parts/count`, {
             params: {
               invoice_status,
               status,
@@ -436,10 +447,7 @@ export default {
               job_practice_id: [childPracticeId,],
             },
           })
-          .then(res => {
-            const total = res.data.count
-            return total
-          }),
+          .then(response => response.data.data.count),
         app.$axios
           .$get(`/api/v1/practice/job-parts`, {
             params: {
@@ -461,57 +469,8 @@ export default {
       ])
 
       job_parts = job_parts.map(jobPart => {
-        // rate * final_hours_in_minutes
-        // rate / original_hours_in_minutes * final_hours_in_minutes
-
-        let type
-        let finalHours
-        let totalHours
-        let total
-
-        if (jobPart.locum_invoice_item) {
-          total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
-          // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-          //   total =
-          //     total -
-          //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
-          //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
-          // }
-        } else if (!jobPart.locum_invoice_item) {
-          type = jobPart.job.locum_detail_rate_type.name
-          finalHours = jobPart.final_hours / 60
-          totalHours = jobPart.job.total_hours / 60
-          total = 0
-
-          switch (type) {
-          case "Hourly":
-            total = finalHours * jobPart.job.rate
-            break
-          default:
-            total = finalHours * (jobPart.job.rate / totalHours)
-            break
-          }
-        }
-
         return {
           ...jobPart,
-          practice_name:
-            jobPart.job.type === "Platform"
-              ? jobPart.job.platform_job.practice.name
-              : jobPart.job.private_job.private_practice.name,
-          issued_at: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.issued_at
-            : null,
-          invoice_number: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-            : null,
-          total_amount: total,
-          paid:
-            jobPart.status === "Approved"
-            && jobPart.locum_invoice_item.locum_invoice.paid_at
-              ? "Yes"
-              : "No",
           under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
         }
       })
@@ -519,7 +478,7 @@ export default {
       const showTable = true
 
       return {
-        total,
+        jobPartCount,
         job_parts,
         showTable,
       }
@@ -601,7 +560,7 @@ export default {
       }
 
       return Promise.all([
-        this.$axios.$get(`/api/v1/practice/job-parts/count`, {
+        this.$axios.get(`/api/v1/practice/job-parts/count`, {
           params: {
             invoice_status,
             status,
@@ -627,58 +586,12 @@ export default {
         }),
       ])
         .then(([responseTotal, responseJobParts,]) => {
-          this.total = responseTotal.data.count
+          this.jobPartCount = responseTotal.data.data.count
           let job_parts = responseJobParts.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let type
-            let finalHours
-            let totalHours
-            let total
-
-            if (jobPart.locum_invoice_item) {
-              total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
-              // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-              //   total =
-              //     total -
-              //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
-              //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
-              // }
-            } else if (!jobPart.locum_invoice_item) {
-              type = jobPart.job.locum_detail_rate_type.name
-              finalHours = jobPart.final_hours / 60
-              totalHours = jobPart.job.total_hours / 60
-              total = 0
-
-              switch (type) {
-              case "Hourly":
-                total = finalHours * jobPart.job.rate
-                break
-              default:
-                total = finalHours * (jobPart.job.rate / totalHours)
-                break
-              }
-            }
-
             return {
               ...jobPart,
-              practice_name:
-                jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
-              total_amount: total,
-              paid:
-                jobPart.status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
             }
           })
@@ -751,54 +664,8 @@ export default {
           let job_parts = res.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let type
-            let finalHours
-            let totalHours
-            let total
-
-            if (jobPart.locum_invoice_item) {
-              total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
-              // if (jobPart.locum_invoice_item.locum_invoice.paid_at) {
-              //   total =
-              //     total -
-              //     jobPart.locum_invoice_item.locum_invoice.ni_amount -
-              //     jobPart.locum_invoice_item.locum_invoice.paye_amount;
-              // }
-            } else if (!jobPart.locum_invoice_item) {
-              type = jobPart.job.locum_detail_rate_type.name
-              finalHours = jobPart.final_hours / 60
-              totalHours = jobPart.job.total_hours / 60
-              total = 0
-
-              switch (type) {
-              case "Hourly":
-                total = finalHours * jobPart.job.rate
-                break
-              default:
-                total = finalHours * (jobPart.job.rate / totalHours)
-                break
-              }
-            }
-
             return {
               ...jobPart,
-              practice_name:
-                jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
-              total_amount: total,
-              paid:
-                jobPart.status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
             }
           })
@@ -857,7 +724,7 @@ export default {
         item => item.id === invoice.items[0].job_part.id
       )
       job_part.locum_invoice_id = invoice.id
-      job_part.total_amount = invoice.total_amount
+      job_part.job_part_gross_rate_formatted = invoice.job_part_gross_rate_formatted
 
       let index = this.job_parts.findIndex(item => item.id === job_part.id)
       if (index >= 0) {
