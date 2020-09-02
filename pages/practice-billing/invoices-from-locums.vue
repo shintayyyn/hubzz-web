@@ -450,7 +450,7 @@ export default {
         })
       }
 
-      if (queryStatus === "approved" || queryStatus === "pension-form-a") {
+      if (queryStatus === "approved" || queryStatus === "pension-form-a" || queryStatus === "solo-form") {
         columns.push({
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
