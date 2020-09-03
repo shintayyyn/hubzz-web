@@ -411,10 +411,12 @@ export default {
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
+          sortable: true,
         },
         {
           name: "Job Title",
           dataIndex: "job_title",
+          sortable: true,
         },
         {
           name: "£ Amount",
@@ -437,8 +439,16 @@ export default {
       if (["approved",].includes(queryStatus)) {
         columns.push({
           name: "Paid Invoice",
-          dataIndex: "invoice_paid",
+          dataIndex: "paid_formatted",
           class: "text-center",
+          sortable: true,
+        })
+
+        columns.push({
+          name: "Paid At",
+          dataIndex: "paid_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
         })
       }
 
@@ -450,11 +460,12 @@ export default {
         })
       }
 
-      if (queryStatus === "approved" || queryStatus === "pension-form-a") {
+      if (queryStatus === "approved" || queryStatus === "pension-form-a" || queryStatus === "solo-form") {
         columns.push({
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
+          sortable: true,
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -591,18 +602,9 @@ export default {
   },
 
   mounted () {
-    this.$socket.on(
-      "Practice Notification Locum Invoice Created",
-      this.getLocumInvoiceRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Locum Invoice Paid",
-      this.getLocumInvoiceRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Locum Invoice Updated",
-      this.getLocumInvoiceRealTime
-    )
+    this.$socket.on("Practice Notification Locum Invoice Created", this.getLocumInvoiceRealTime)
+    this.$socket.on("Practice Notification Locum Invoice Paid", this.getLocumInvoiceRealTime)
+    this.$socket.on("Practice Notification Locum Invoice Updated", this.getLocumInvoiceRealTime)
 
     this.initialLoading = true
     this.getJobPartsPromiseAll().catch((err) => {
@@ -613,7 +615,9 @@ export default {
   },
 
   destroyed () {
-    this.removeListener()
+    this.$socket.removeListener("Practice Notification Locum Invoice Created", this.getLocumInvoiceRealTime)
+    this.$socket.removeListener("Practice Notification Locum Invoice Paid", this.getLocumInvoiceRealTime)
+    this.$socket.removeListener("Practice Notification Locum Invoice Updated", this.getLocumInvoiceRealTime)
   },
 
   methods: {
@@ -746,18 +750,7 @@ export default {
           this.job_parts = job_parts.map(jobPart => {
             return {
               ...jobPart,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-              invoice_paid:
-                jobPart.status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
               form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
@@ -856,18 +849,7 @@ export default {
           this.job_parts = job_parts.map(jobPart => {
             return {
               ...jobPart,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-              invoice_paid:
-                jobPart.status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
               form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
@@ -891,20 +873,7 @@ export default {
       }
       this.showRefresh = true
     },
-    removeListener () {
-      this.$socket.removeListener(
-        "Practice Notification Locum Invoice Created",
-        this.getLocumInvoiceRealTime
-      )
-      this.$socket.removeListener(
-        "Practice Notification Locum Invoice Paid",
-        this.getLocumInvoiceRealTime
-      )
-      this.$socket.removeListener(
-        "Practice Notification Locum Invoice Updated",
-        this.getLocumInvoiceRealTime
-      )
-    },
+
     select_invoice (id) {
       this.payment_modal = true
       this.form.paid_at = null
@@ -914,6 +883,7 @@ export default {
       this.form.paye_amount = null
       this.invoice_id = id
     },
+
     updateInvoice (invoice) {
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
@@ -925,6 +895,8 @@ export default {
 
       if (job_part) {
         job_part.locum_invoice_id = invoice.id
+        job_part.job_part_gross_rate_formatted = invoice.job_part_gross_rate_formatted
+        
         let index = this.job_parts.findIndex(item => item.id === job_part.id)
         if (index >= 0) {
           if (
