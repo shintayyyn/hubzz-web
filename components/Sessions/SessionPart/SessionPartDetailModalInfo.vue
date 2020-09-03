@@ -135,34 +135,34 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+          {{ job_part ? job_part.job_part_total_original_hours_in_minutes_formatted : null }}
         </div>
 
         <template v-if="job_part && job_part.locum_invoiceable">
           <div class="font-bold text-sm sm:text-md">
-            Job Part Total Final hours
+            Job Part Total Final Hours
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+            {{ job_part ? job_part.job_part_total_final_hours_in_minutes_formatted : null }}
           </div>
         </template>
 
         <div class="font-bold text-sm sm:text-md">
-          Job Total Original hours
+          Job Total Original Hours
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+          {{ job ? job.job_total_original_hours_in_minutes_formatted : null }}
         </div>
 
         <template v-if="job_part && job_part.locum_invoiceable">
           <div class="font-bold text-sm sm:text-md">
-            Job Total Final hours
+            Job Total Final Hours
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.job.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+            {{ job ? job.job_total_final_hours_in_minutes_formatted : null }}
           </div>
         </template>
 
@@ -469,40 +469,6 @@
             {{ item.name }}
           </div>
         </div>
-
-        <!-- <template
-          v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)"
-        >
-          <div class="font-bold text-sm sm:text-md">Was the Locum absent for session?</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{ job_part.absent_days > 0 || job_part.absent_days_reason !== null ? 'Yes' : 'No' }}</div>
-          <template v-if="job_part.absent_days > 0 || job_part.absent_days_reason !== null">
-            <div class="font-bold text-sm sm:text-md">Days of Absent:</div>
-            <div class="text-xs sm:text-sm mb-8">{{ job_part.absent_days }}</div>
-            <div class="font-bold text-sm sm:text-md">Reason of Absence:</div>
-            <div
-              class="text-xs sm:text-sm mb-8"
-            >{{ job_part.absent_days_reason ? job_part.absent_days_reason : 'None' }}</div>
-          </template>
-          <div class="font-bold text-sm sm:text-md">Was the Locum late for this session?</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{ job_part.late_hours > 0 || job_part.late_hours_reason !== null ? 'Yes' : 'No' }}</div>
-          <template v-if="job_part.late_hours > 0 || job_part.late_hours_reason !== null">
-            <div class="font-bold text-sm sm:text-md">Hours of Late:</div>
-            <div class="text-xs sm:text-sm mb-8">{{ late_hours | hoursMinutes }}</div>
-            <div class="font-bold text-sm sm:text-md">Reason of Late:</div>
-            <div
-              class="text-xs sm:text-sm mb-8"
-            >{{ job_part.late_hours_reason ? job_part.late_hours_reason : 'None' }}</div>
-          </template>
-          <div class="font-bold text-sm sm:text-md">Final Hours:</div>
-          <div class="text-xs sm:text-sm mb-8">
-            <template v-if="job_part.final_hours>0">{{ job_part.final_hours | hoursMinutes }}</template>
-            <template v-else>{{ job_part.final_hours }}</template>
-          </div>
-				</template>-->
 
         <template v-if="job_part.use_variation_terms">
           <template v-if="job_part.variation_terms_file_id">
