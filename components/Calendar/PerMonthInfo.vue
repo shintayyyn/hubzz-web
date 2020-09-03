@@ -200,13 +200,22 @@ export default {
 .bg-job-active {
 	background-color: #66cc88;
 }
+.bg-job-active:hover {
+	background-color: #58b477;
+}
 
 .bg-job-pending {
 	background-color: #f2df0c;
 }
+.bg-job-pending:hover {
+	background-color: #dfce15;
+}
 
 .bg-job-unfilled {
 	background-color: #e65c67;
+}
+.bg-job-unfilled:hover {
+	background-color: #d1525c;
 }
 
 .bg-shift-whole-day {
