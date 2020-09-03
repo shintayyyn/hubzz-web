@@ -267,7 +267,7 @@ export default {
         this.loading = false
       }, 600)
     },
-    
+
     findPerWeekPractice ({ date, shift, }) {
       this.loading = true
       this.viewPracticeJobs = false
@@ -287,29 +287,33 @@ export default {
       if (this.getPracticeAllocatedPartJobs.length > 0) {
         foundPracticeAllocatedJobs = this.getPracticeAllocatedPartJobs.filter(
           job_part =>
-            job_part.dates.includes(date) && job_part.job.shift.name === shift
+            job_part.dates.includes(date)
+						&& job_part.job.shifts.find(s => s.name === shift)
         )
       }
       if (this.getPracticeWithdrawnJobs.length > 0) {
         foundPracticeWithdrawnJobs = this.getPracticeWithdrawnJobs.filter(
           job_part =>
-            job_part.dates.includes(date) && job_part.job.shift.name === shift
+            job_part.dates.includes(date)
+						&& job_part.job.shifts.find(s => s.name === shift)
         )
       }
       // WHOLE
       if (this.getPracticeAvailableJobs.length > 0) {
         foundPracticeLiveJobs = this.getPracticeAvailableJobs.filter(
-          job => job.dates[0] === date && job.shift.name === shift
+          job => job.dates[0] === date && job.shifts.find(s => s.name === shift)
         )
       }
       if (this.getPracticeAppliedJobs.length > 0) {
         foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(
-          job => job.dates.includes(date) && job.shift.name === shift
+          job =>
+            job.dates.includes(date) && job.shifts.find(s => s.name === shift)
         )
       }
       if (this.getPracticeUnfilledJobs.length > 0) {
         foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(
-          job => job.dates.includes(date) && job.shift.name === shift
+          job =>
+            job.dates.includes(date) && job.shifts.find(s => s.name === shift)
         )
       }
       this.foundPracticeJobs = [
@@ -401,18 +405,22 @@ export default {
       if (this.getLocumAllocatedPartJobs.length > 0) {
         foundLocumAllocatedJobs = this.getLocumAllocatedPartJobs.filter(
           job_part =>
-            job_part.dates.includes(date) && job_part.job.shift.name === shift
+            job_part.dates.includes(date)
+						&& job_part.job.shifts.find(s => s.name === shift)
         )
       }
       if (this.getLocumAppliedJobs.length > 0) {
         foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(
-          job => job.dates.includes(date) && shift === "Available"
+          job =>
+            job.dates.includes(date)
+						&& job.shifts.includes(s => s.name === "Available")
         )
       }
       if (this.getLocumPrivateJobParts.length > 0) {
         foundLocumPrivateJobs = this.getLocumPrivateJobParts.filter(
           job_part =>
-            job_part.dates.includes(date) && job_part.job.shift.name === shift
+            job_part.dates.includes(date)
+						&& job_part.job.shifts.find(s => s.name === shift)
         )
       }
       if (this.getLocumPermanentJobs.length > 0) {

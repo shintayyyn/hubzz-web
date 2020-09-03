@@ -11,7 +11,9 @@
             />
           </div>
 
-          <div class="text-xs sm:text-sm">
+          <div
+            class="text-xs sm:text-sm"
+          >
             {{ $moment(daysInWeek[0].date).format('MMM') }} {{ $moment(daysInWeek[0].date).format('YYYY') }} - {{ $moment(daysInWeek[6].date).format('MMM') }} {{ $moment(daysInWeek[6].date).format('YYYY') }}
           </div>
         </div>
@@ -99,14 +101,7 @@
           <div
             v-if="hasPracticeAllocatedJobs(date, 'AM', day)"
             :key="`${date}-${index}-${id}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
-            @click="selectDateShift(date, 'AM')"
-          />
-
-          <div
-            v-else-if="hasPracticeAppliedJobs(date, 'AM', day)"
-            :key="`${date}-${index}-${id}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             @click="selectDateShift(date, 'AM')"
           />
 
@@ -125,9 +120,16 @@
           />
 
           <div
+            v-else-if="hasPracticeAppliedJobs(date, 'AM', day)"
+            :key="`${date}-${index}-${id}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'AM')"
+          />
+
+          <div
             v-else-if="hasPracticeAvailableJobs(date, 'AM', day)"
             :key="`${date}-${index}-${id}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-300 hover:bg-gray-400"
             @click="selectDateShift(date, 'AM')"
           />
 
@@ -141,7 +143,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'AM')"
           />
         </template>
@@ -156,14 +158,7 @@
           <div
             v-if="hasPracticeAllocatedJobs(date, 'PM', day)"
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
-            @click="selectDateShift(date, 'PM')"
-          /> 
-
-          <div
-            v-else-if="hasPracticeAppliedJobs(date, 'PM', day)"
-            :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'PM')"
           />
 
@@ -182,9 +177,16 @@
           />
 
           <div
+            v-else-if="hasPracticeAppliedJobs(date, 'PM', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'PM')"
+          />
+
+          <div
             v-else-if="hasPracticeAvailableJobs(date, 'PM', day)"
             :key="`${date}-${index}-${id}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300 hover:bg-gray-400"
             @click="selectDateShift(date, 'PM')"
           />
 
@@ -198,7 +200,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'PM')"
           />
         </template>
@@ -213,14 +215,7 @@
           <div
             v-if="hasPracticeAllocatedJobs(date, 'OOH', day)"
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
-            @click="selectDateShift(date, 'OOH')"
-          />
-
-          <div
-            v-else-if="hasPracticeAppliedJobs(date, 'OOH', day)"
-            :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'OOH')"
           />
 
@@ -239,9 +234,16 @@
           />
 
           <div
+            v-else-if="hasPracticeAppliedJobs(date, 'OOH', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'OOH')"
+          />
+
+          <div
             v-else-if="hasPracticeAvailableJobs(date, 'OOH', day)"
             :key="`${date}-${index}-${id}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300 hover:bg-gray-400"
             @click="selectDateShift(date, 'OOH')"
           />
 
@@ -255,7 +257,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'OOH')"
           />
         </template>
@@ -270,14 +272,7 @@
           <div
             v-if="hasPracticeAllocatedJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
-            @click="selectDateShift(date, 'Whole Day')"
-          />
-
-          <div
-            v-else-if="hasPracticeAppliedJobs(date, 'Whole Day', day)"
-            :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
             @click="selectDateShift(date, 'Whole Day')"
           />
 
@@ -296,9 +291,16 @@
           />
 
           <div
+            v-else-if="hasPracticeAppliedJobs(date, 'Whole Day', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            @click="selectDateShift(date, 'Whole Day')"
+          />
+
+          <div
             v-else-if="hasPracticeAvailableJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}-${id}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300 hover:bg-gray-400"
             @click="selectDateShift(date, 'Whole Day')"
           />
 
@@ -312,7 +314,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'Whole Day')"
           />
         </template>
@@ -328,15 +330,7 @@
 
         <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumPrivateAllocatedJobs(date, 'AM', day)"
-            :key="`${date}-${index}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
-            :class="currentDate(date) ? 'currentDate' : ''"
-            @click="selectDateShift(date, 'AM')"
-          />
-
-          <div
-            v-else-if="hasLocumPrivateOngoingJobs(date, 'AM', day)"
+            v-if="hasLocumAllocatedJobs(date, 'AM', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :class="currentDate(date) ? 'currentDate' : ''"
@@ -344,9 +338,17 @@
           />
 
           <div
-            v-else-if="hasLocumAllocatedJobs(date, 'AM', day)"
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'AM', day)"
             :key="`${date}-${index}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
+            @click="selectDateShift(date, 'AM')"
+          />
+
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'AM', day)"
+            :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-blue-500 hover:bg-blue-600"
+            :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'AM')"
           />
 
@@ -360,7 +362,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'AM')"
           />
         </template>
@@ -373,15 +375,7 @@
 
         <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumPrivateAllocatedJobs(date, 'PM', day)"
-            :key="`${date}-${index}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
-            :class="currentDate(date) ? 'currentDate' : ''"
-            @click="selectDateShift(date, 'PM')"
-          />
-
-          <div
-            v-else-if="hasLocumPrivateOngoingJobs(date, 'PM', day)"
+            v-if="hasLocumAllocatedJobs(date, 'PM', day)"
             :key="`${date}-${index}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :class="currentDate(date) ? 'currentDate' : ''"
@@ -389,9 +383,17 @@
           />
 
           <div
-            v-else-if="hasLocumAllocatedJobs(date, 'PM', day)"
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'PM', day)"
             :key="`${date}-${index}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
+            @click="selectDateShift(date, 'PM')"
+          />
+
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'PM', day)"
+            :key="`${date}-${index}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-blue-500 hover:bg-blue-600"
+            :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'PM')"
           />
 
@@ -404,7 +406,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'PM')"
           />
         </template>
@@ -417,15 +419,7 @@
 
         <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumPrivateAllocatedJobs(date, 'OOH', day)"
-            :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
-            :class="currentDate(date) ? 'currentDate' : ''"
-            @click="selectDateShift(date, 'OOH')"
-          />
-
-          <div
-            v-else-if="hasLocumPrivateOngoingJobs(date, 'OOH', day)"
+            v-if="hasLocumAllocatedJobs(date, 'OOH', day)"
             :key="`${date}-${index}-${id}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :class="currentDate(date) ? 'currentDate' : ''"
@@ -433,9 +427,17 @@
           />
 
           <div
-            v-else-if="hasLocumAllocatedJobs(date, 'OOH', day)"
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'OOH', day)"
             :key="`${date}-${index}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
+            @click="selectDateShift(date, 'OOH')"
+          />
+
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'OOH', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-blue-500 hover:bg-blue-600"
+            :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'OOH')"
           />
 
@@ -449,7 +451,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'OOH')"
           />
         </template>
@@ -462,15 +464,7 @@
 
         <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumPrivateAllocatedJobs(date, 'Whole Day', day)"
-            :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
-            :class="currentDate(date) ? 'currentDate' : ''"
-            @click="selectDateShift(date, 'Whole Day')"
-          />
-
-          <div
-            v-else-if="hasLocumPrivateOngoingJobs(date, 'Whole Day', day)"
+            v-if="hasLocumAllocatedJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}-${id}`"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-active"
             :class="currentDate(date) ? 'currentDate' : ''"
@@ -478,9 +472,17 @@
           />
 
           <div
-            v-else-if="hasLocumAllocatedJobs(date, 'Whole Day', day)"
+            v-else-if="hasLocumPrivateAllocatedJobs(date, 'Whole Day', day)"
             :key="`${date}-${index}`"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-job-active"
+            @click="selectDateShift(date, 'Whole Day')"
+          />
+
+          <div
+            v-else-if="hasLocumPrivateOngoingJobs(date, 'Whole Day', day)"
+            :key="`${date}-${index}-${id}`"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-blue-500 hover:bg-blue-600"
+            :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'Whole Day')"
           />
 
@@ -494,7 +496,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'Whole Day')"
           />
         </template>
@@ -524,7 +526,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'Available')"
           />
         </template>
@@ -539,7 +541,7 @@
           <div
             v-if="hasLocumPermanentJobs(date, day)"
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-job-pending"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-blue-400 hover:bg-blue-500"
             :class="currentDate(date) ? 'currentDate' : ''"
             @click="selectDateShift(date, 'Available')"
           />
@@ -554,7 +556,7 @@
           <div
             v-else
             :key="`${date}-${index}-${id}`"
-            class="w-full cursor-pointer border-t-2 border-gray-400  hover:bg-gray-500"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-500"
             @click="selectDateShift(date, 'Available')"
           />
         </template>
@@ -623,7 +625,7 @@ export default {
     getPracticeAvailableJobsReminder () {
       return this.$store.getters["jobs/getPracticeAvailableJobsReminder"]
     },
-    
+
     getPracticeAppliedJobsReminder () {
       return this.$store.getters["jobs/getPracticeAppliedJobsReminder"]
     },
@@ -702,31 +704,94 @@ export default {
   },
 
   mounted () {
-    if (this.$auth.loggedIn && this.$auth.user.domain === 'Locum') {
-      this.$socket.on('Locum Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Unqualified', this.jobsRealTimeHandler)
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+      this.$socket.on(
+        "Locum Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Unqualified",
+        this.jobsRealTimeHandler
+      )
     }
 
-    if (this.$auth.loggedIn && this.$auth.user.domain === 'Practice') {
-      this.$socket.on('Practice Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Application', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Application Cancelled', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Update Accept', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Unfilled', this.jobsRealTimeHandler)
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+      this.$socket.on(
+        "Practice Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Application",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Application Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Update Accept",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Unfilled",
+        this.jobsRealTimeHandler
+      )
     }
 
     const selectedDate = this.$store.state.calendar.selected_date
@@ -745,30 +810,93 @@ export default {
 
   destroyed () {
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-      this.$socket.removeListener('Locum Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Unqualified', this.jobsRealTimeHandler)
+      this.$socket.removeListener(
+        "Locum Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Unqualified",
+        this.jobsRealTimeHandler
+      )
     }
-    
+
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-      this.$socket.removeListener('Practice Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Application', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Application Cancelled', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Update Accept', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Unfilled', this.jobsRealTimeHandler)
+      this.$socket.removeListener(
+        "Practice Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Application",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Application Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Update Accept",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Unfilled",
+        this.jobsRealTimeHandler
+      )
     }
   },
 
@@ -830,7 +958,11 @@ export default {
     },
 
     getJobs () {
-      this.$emit('getCalendarJobAndJobParts', this.firstDayOfTheWeek, this.lastDayOfTheWeek)
+      this.$emit(
+        "getCalendarJobAndJobParts",
+        this.firstDayOfTheWeek,
+        this.lastDayOfTheWeek
+      )
     },
 
     async jobsRealTimeHandler (job) {
@@ -852,12 +984,12 @@ export default {
     hasPracticeOngoingJobs (date, type) {
       if (
         this.getPracticeOngoingJobs
-        && this.getPracticeOngoingJobs.length > 0
+				&& this.getPracticeOngoingJobs.length > 0
       ) {
         return this.getPracticeOngoingJobs.find(
           job_part =>
             job_part.dates.includes(date)
-            && job_part.job.shift.name === type 
+						&& job_part.job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -865,12 +997,12 @@ export default {
     hasPracticeCompletedJobs (date, type) {
       if (
         this.getPracticeCompletedJobs
-        && this.getPracticeCompletedJobs.length > 0
+				&& this.getPracticeCompletedJobs.length > 0
       ) {
         return this.getPracticeCompletedJobs.find(
           job_part =>
             job_part.dates.includes(date)
-            && job_part.job.shift.name === type 
+						&& job_part.job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -878,12 +1010,12 @@ export default {
     hasPracticeAllocatedJobs (date, type) {
       if (
         this.getPracticeAllocatedPartJobs
-        && this.getPracticeAllocatedPartJobs.length > 0
+				&& this.getPracticeAllocatedPartJobs.length > 0
       ) {
         return this.getPracticeAllocatedPartJobs.find(
           job_part =>
             job_part.dates.includes(date)
-            && job_part.job.shift.name === type
+						&& job_part.job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -908,12 +1040,11 @@ export default {
     hasPracticeAppliedJobs (date, type) {
       if (
         this.getPracticeAppliedJobs
-        && this.getPracticeAppliedJobs.length > 0
+				&& this.getPracticeAppliedJobs.length > 0
       ) {
         return this.getPracticeAppliedJobs.find(
           job =>
-            job.dates.includes(date)
-            && job.shift.name === type
+            job.dates.includes(date) && job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -921,12 +1052,11 @@ export default {
     hasPracticeUnfilledJobs (date, type) {
       if (
         this.getPracticeUnfilledJobs
-        && this.getPracticeUnfilledJobs.length > 0
+				&& this.getPracticeUnfilledJobs.length > 0
       ) {
         return this.getPracticeUnfilledJobs.find(
           job =>
-            job.dates.includes(date)
-            && job.shift.name === type
+            job.dates.includes(date) && job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -934,12 +1064,11 @@ export default {
     hasPracticeDeclinedJobs (date, type) {
       if (
         this.getPracticeDeclinedJobs
-        && this.getPracticeDeclinedJobs.length > 0
+				&& this.getPracticeDeclinedJobs.length > 0
       ) {
         return this.getPracticeDeclinedJobs.find(
           job =>
-            job.dates.includes(date)
-            && job.shift.name === type
+            job.dates.includes(date) && job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -947,12 +1076,10 @@ export default {
     hasPracticeAvailableJobs (date, type) {
       if (
         this.getPracticeAvailableJobs
-        && this.getPracticeAvailableJobs.length > 0
+				&& this.getPracticeAvailableJobs.length > 0
       ) {
         return this.getPracticeAvailableJobs.find(
-          job =>
-            job.dates[0] === date
-            && job.shift.name === type
+          job => job.dates[0] === date && job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -961,7 +1088,7 @@ export default {
     hasPracticeAppliedJobsReminder (date, type) {
       if (
         this.getPracticeAppliedJobsReminder
-        && this.getPracticeAppliedJobsReminder.length > 0
+				&& this.getPracticeAppliedJobsReminder.length > 0
       ) {
         return this.getPracticeAppliedJobsReminder.find(
           job => job.platform_job.selection_date === date && type === "Reminder"
@@ -972,7 +1099,7 @@ export default {
     hasPracticeAvailableJobsReminder (date, type) {
       if (
         this.getPracticeAvailableJobsReminder
-        && this.getPracticeAvailableJobsReminder.length > 0
+				&& this.getPracticeAvailableJobsReminder.length > 0
       ) {
         return this.getPracticeAvailableJobsReminder.find(
           job => job.platform_job.selection_date === date && type === "Reminder"
@@ -1008,11 +1135,14 @@ export default {
     // },
     // WHOLE
     hasLocumAllocatedJobs (date, type) {
-      if (this.getLocumAllocatedPartJobs && this.getLocumAllocatedPartJobs.length > 0) {
+      if (
+        this.getLocumAllocatedPartJobs
+				&& this.getLocumAllocatedPartJobs.length > 0
+      ) {
         return this.getLocumAllocatedPartJobs.find(
           job_part =>
             job_part.dates.includes(date)
-            && job_part.job.shift.name === type
+						&& job_part.job.shifts.find(s => s.name === type)
         )
       }
     },
@@ -1056,34 +1186,32 @@ export default {
     //   }
     // },
     hasLocumAppliedJobs (date) {
-      return this.getLocumAppliedJobs.find(
-        job => job.dates.includes(date))
+      return this.getLocumAppliedJobs.find(job => job.dates.includes(date))
     },
 
     hasLocumPrivateOngoingJobs (date, type) {
       return this.getLocumPrivateJobParts.find(
         job_part =>
-          job_part.locum_status === 'Ongoing' 
-          && job_part.dates.includes(
-            date
-          )
-            && job_part.job.shift.name === type
+          job_part.locum_status === "Ongoing"
+					&& job_part.dates.includes(date)
+					&& job_part.job.shift.name === type
       )
     },
 
     hasLocumPrivateAllocatedJobs (date, type) {
       return this.getLocumPrivateJobParts.find(
         job_part =>
-          job_part.locum_status === 'Allocated' 
-          && job_part.dates.includes(
-            date
-          )
-            && job_part.job.shift.name === type 
+          job_part.locum_status === "Allocated"
+					&& job_part.dates.includes(date)
+					&& job_part.job.shift.name === type
       )
     },
 
     hasLocumPermanentJobs (date) {
-      return this.getLocumPermanentJobs.find(job => this.$moment(job.invitation_schedule).format('YYYY-MM-DD') === date)
+      return this.getLocumPermanentJobs.find(
+        job =>
+          this.$moment(job.invitation_schedule).format("YYYY-MM-DD") === date
+      )
     },
     // UNAVAILABILITIES
     // hasLocumUnavailabilities (date, type) {
@@ -1100,41 +1228,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-  /* .bg-job-active {
-    background-color: #d5e0eb;
-  }
-
-  .bg-job-active:hover {
-    background-color: #c2cfdd;
-  }
-
-  .bg-job-active.currentYear {
-    background-color: #a4b4c5;
-  }
-
-  .bg-job-pending {
-    background-color: #d5e0eb;
-  }
-
-  .bg-job-pending:hover {
-    background-color: #c2cfdd;
-  }
-
-  .bg-job-pending.currentYear {
-    background-color: #a4b4c5;
-  }
-
-  .bg-job-unfilled {
-    background-color: #d5e0eb;
-  }
-
-  .bg-job-unfilled:hover {
-    background-color: #c2cfdd;
-  }
-
-  .bg-job-unfilled.currentYear {
-    background-color: #a4b4c5;
-  } */
-</style>
