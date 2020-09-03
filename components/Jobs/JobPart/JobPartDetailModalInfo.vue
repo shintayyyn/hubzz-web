@@ -33,7 +33,7 @@
             <div style="position:sticky;top:0" class="flex">
               <p
                 class="bg-gray-400 p-1 font-bold text-xs"
-                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
+                :style="job_part && job_part.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
               >
                 DATE
               </p>
@@ -48,19 +48,19 @@
 
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
-                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                :style="job_part && job_part.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >
                 SHIFT
               </p>
 
               <p
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
-                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                :style="job_part && job_part.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >
                 RATE
               </p>
 
-              <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+              <template v-if="job_part && job_part.locum_invoiceable">
                 <p
                   class="text-center bg-gray-400 p-1 font-bold text-xs"
                   style="min-width:100px;max-width:100px"
@@ -79,7 +79,7 @@
 
             <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex pb-2">
               <p
-                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
+                :style="job_part && job_part.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
               >
                 {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
               </p>
@@ -94,19 +94,19 @@
 
               <p
                 class="text-center"
-                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                :style="job_part && job_part.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >
                 {{ sched.shift.name }}
               </p>
 
               <p
                 class="text-center"
-                :style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                :style="job_part && job_part.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
               >
                 £{{ sched.rate | currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}
               </p>
 
-              <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+              <template v-if="job_part && job_part.locum_invoiceable">
                 <p
                   class="text-center"
                   style="min-width:100px;max-width:100px"
@@ -213,7 +213,7 @@
           {{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
         </div>
 
-        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+        <template v-if="job_part && job_part.locum_invoiceable">
           <div class="font-bold text-sm sm:text-md">
             Job Part Total Final Hours
           </div>
@@ -231,7 +231,7 @@
           {{ job_part.job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
         </div>
 
-        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+        <template v-if="job_part && job_part.locum_invoiceable">
           <div class="font-bold text-sm sm:text-md">
             Job Total Final Hours
           </div>
