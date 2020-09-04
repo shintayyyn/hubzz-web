@@ -596,11 +596,6 @@ export default {
             dataIndex: "approved_at_in_gb_formatted",
             class: "text-center",
           },
-          {
-            name: "Invoice status",
-            dataIndex: "invoice_status",
-            class: "text-center",
-          }
         )
       }
       return columns

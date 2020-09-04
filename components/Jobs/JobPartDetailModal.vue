@@ -24,11 +24,19 @@
       </div>
       
       <div
-        v-if="['Completed','Cancelled'].includes(job_part.locum_status) && tagStatus(job_part)"
+        v-if="job_part && job_part.terminated"
         class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
-        {{ tagStatus(job_part) }}
+        TERMINATED
+      </div>
+      
+      <div
+        v-if="job_part && job_part.locum_invoiceable && job_part.invoice_status && job_part.status !== 'Approved'"
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        @click="toggle_invoice_modal = true"
+      >
+        {{ job_part.invoice_status.toUpperCase() }}
       </div>
 
       <template v-if="job && job.practice_is_favorite_of_locum">
@@ -324,66 +332,23 @@ export default {
     },
 
     goToGenerateInvoice () {
-      let hasInvoice = false
-      if (this.job_part.locum_invoice_id) {
-        hasInvoice = true
-      }
-
-      let invoiceStatus = null
-      switch (this.tagStatus(this.job_part)) {
-      case "TO BE INVOICED":
-        invoiceStatus = "to-be-invoiced"
-        break
-      case "DISPUTED":
-        invoiceStatus = "disputed"
-        break
-      case "INVOICED":
-        invoiceStatus = "issued"
-        break
-      default:
-        invoiceStatus = null
-      }
-
       this.$router.push(`/locum-billing/invoices`)
 
       setTimeout(() => {
-        if (hasInvoice === false) {
-          this.$router.push(
-            `/locum-billing/invoices/${this.job_part.id}/create`
-          )
-        } else if (
-          hasInvoice === true
-          && this.job_part.locum_status !== "Approved"
-        ) {
-          this.$router.push({
-            path: `/locum-billing/invoices/${this.job_part.locum_invoice_id}/edit`,
-            query: { ...this.$route.query, status: invoiceStatus, },
-          })
-        } else if (
-          hasInvoice === true
-          && this.job_part.locum_status === "Approved"
-        ) {
-          this.$router.push({
-            path: `/locum-billing/invoices/${this.job_part.locum_invoice_id}`,
-            query: { ...this.$route.query, status: "Approved", },
-          })
+        if (this.job_part.locum_invoice_id) {
+          if (this.job_part.status === 'Approved') {
+            this.$router.push({
+              path: `/locum-billing/invoices/${this.job_part.locum_invoice_id}`,
+            })
+          } else {
+            this.$router.push({
+              path: `/locum-billing/invoices/${this.job_part.locum_invoice_id}/edit`,
+            })
+          }
+        } else {
+          this.$router.push(`/locum-billing/invoices/${this.job_part.id}/create`)
         }
       }, 500)
-    },
-
-    tagStatus (job_part) {
-      let status = ""
-      if (job_part.locum_status === "Completed") {
-        status = "TO BE INVOICED"
-        if (job_part.disputed && job_part.issued) {
-          status = "DISPUTED"
-        } else if (job_part.invoiced && job_part.issued) {
-          status = "INVOICED"
-        }
-        return status
-      } else if (job_part.locum_status === "Cancelled") {
-        return job_part.terminated ? "TERMINATED" : null
-      }
     },
 
     status (status) {
