@@ -475,11 +475,6 @@ export default {
             class: "text-center",
             sortable: true,
           },
-          {
-            name: "Invoice status",
-            dataIndex: "invoice_status",
-            class: "text-center",
-          }
         )
       }
 

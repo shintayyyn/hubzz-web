@@ -54,13 +54,21 @@
           Cancel Editing
         </button>
       </template>
-
+      
       <div
-        v-if="['Completed', 'Cancelled'].includes(jobPart.status) && tagStatus(jobPart)"
+        v-if="jobPart && jobPart.terminated"
         class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
-        {{ tagStatus(jobPart) }}
+        TERMINATED
+      </div>
+
+      <div
+        v-if="jobPart && jobPart.locum_invoiceable && jobPart.invoice_status && jobPart.status !== 'Approved'"
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        @click="toggle_invoice_modal = true"
+      >
+        {{ jobPart.invoice_status.toUpperCase() }}
       </div>
 
       <template
@@ -359,61 +367,28 @@ export default {
     },
 
     goToGenerateInvoice () {
-      let hasInvoice = false
-      if (this.jobPart.locum_invoice_id) {
-        hasInvoice = true
-      }
-
-      let invoiceStatus = null
-      switch (this.tagStatus(this.jobPart)) {
-      case "TO BE INVOICED":
-        invoiceStatus = "to-be-invoiced"
-        break
-      case "DISPUTED":
-        invoiceStatus = "disputed"
-        break
-      case "INVOICED":
-        invoiceStatus = "issued"
-        break
-      default:
-        invoiceStatus = null
-      }
-
       this.$router.push(`/practice-billing/invoices-from-locums`)
+
       setTimeout(() => {
-        if (hasInvoice === false) {
-          this.$router.push(`/practice-billing/invoices-from-locums`)
-        } else if (hasInvoice === true && this.jobPart.status !== "Approved") {
-          this.$router.push({
-            path: `/practice-billing/invoices-from-locums/${this.jobPart.locum_invoice_id}/edit`,
-            query: { ...this.$route.query, status: invoiceStatus, },
-          })
-        } else if (hasInvoice === true && this.jobPart.status === "Approved") {
-          this.$router.push({
-            path: `/practice-billing/invoices-from-locums/${this.jobPart.locum_invoice_id}`,
-            query: { ...this.$route.query, status: "Approved", },
-          })
+        if (this.jobPart.locum_invoice_id) {
+          if (this.jobPart.status === 'Approved') {
+            this.$router.push({
+              path: `/practice-billing/invoices-from-locums/${this.jobPart.locum_invoice_id}`,
+            })
+          } else {
+            this.$router.push({
+              path: `/practice-billing/invoices-from-locums/${this.jobPart.locum_invoice_id}/edit`,
+            })
+          }
         }
       }, 500)
     },
-    tagStatus (job_part) {
-      let status = ""
-      if (job_part.status === "Completed") {
-        status = "TO BE INVOICED"
-        if (job_part.disputed && job_part.issued) {
-          status = "DISPUTED"
-        } else if (job_part.invoiced && job_part.issued) {
-          status = "INVOICED"
-        }
-        return status
-      } else if (job_part.status === "Cancelled") {
-        return job_part.terminated ? "TERMINATED" : null
-      }
-    },
+    
     status (status) {
       let jobStatus = status === "Available" ? "Live" : status
       return jobStatus.toUpperCase()
     },
+
     bgStatus (status) {
       let str
       switch (status) {

@@ -566,13 +566,19 @@ export default {
           class: "text-center",
         })
       }
-      if (["completed", "approved",].includes(queryStatus)) {
+
+      if (["completed",].includes(queryStatus)) {
         columns.push(
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
             class: "text-center",
           },
+        )
+      }
+
+      if (["completed", "approved",].includes(queryStatus)) {
+        columns.push(
           {
             name: "Tag",
             dataIndex: "status",
