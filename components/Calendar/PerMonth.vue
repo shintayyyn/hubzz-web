@@ -11,7 +11,9 @@
 
       <div class="flex flex-row flex-wrap justify-between mx-1">
         <div class="w-2/3 py-1 sm:w-1/3">
-          <div class="font-bold text-gray-800">
+          <div
+            class="font-bold text-gray-800"
+          >
             {{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}
           </div>
         </div>
@@ -75,17 +77,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
 
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 1"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -122,17 +121,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
 
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 2"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -169,16 +165,13 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 3"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -203,7 +196,7 @@
               <div class="text-xs md:text-sm z-10 md:pb-2">
                 {{ (item.date) }}
               </div>
-              
+
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -215,17 +208,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
 
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 4"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -262,17 +252,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
 
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 5"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -309,17 +296,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
 
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 6"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -344,7 +328,7 @@
               <div class="text-xs md:text-sm z-10 md:pb-2">
                 {{ item.date }}
               </div>
-              
+
               <PerMonthInfo
                 :item="item"
                 :info="jobsInMonth.find(jobDate => jobDate.date === item.fullDate)"
@@ -356,17 +340,14 @@
         <div class="flex flex-col w-full items-center">
           <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
             <div class="m-1 h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date">
-              &nbsp;
+&nbsp;
             </div>
           </div>
 
           <div v-for="(item, index) in daysInMonth" :key="index" class="w-full flex justify-center">
             <div
               v-if="item.day === 0"
-              class="
-                relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center
-                h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date
-              "
+              class="relative rounded-lg m-1 cursor-pointer flex flex-col justify-center items-center h-12 sm:h-16 md:h-20 w-auto sm:w-16 xl:w-20 p-1 date"
               :class="[
                 jobsInMonth.find(jobDate => jobDate.date === item.fullDate)
                   ? 'date-color'
@@ -416,7 +397,7 @@
       <div v-if="legendsModal" class="message-modal">
         <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
           <p class="flex items-center justify-between flex-no-wrap font-bold">
-            <span>Legends</span>
+            <span>Legend</span>
 
             <span class="cursor-pointer hover:text-gray-600" @click="legendsModal=false">
               <svgicon name="cancel" width="12" height="12" class="fill-current" />
@@ -504,7 +485,7 @@
                   PM
                 </p>
               </div>
-              
+
               <div class="flex items-center">
                 <span class="bg-shift-ooh w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
 
@@ -1002,20 +983,20 @@ export default {
 
     selectedDate (newValue, oldValue) {
       if (newValue && oldValue) {
-        let newMonth = this.$moment(newValue, 'YYYY-MM-DD').format('M')
-        let oldMonth = this.$moment(oldValue, 'YYYY-MM-DD').format('M')
+        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M")
+        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M")
 
-        let newYear = this.$moment(newValue, 'YYYY-MM-DD').format('YYYY')
-        let oldYear = this.$moment(oldValue, 'YYYY-MM-DD').format('YYYY')
+        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY")
+        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY")
 
         if (newMonth !== oldMonth || newYear !== oldYear) {
-          this.startOfMonth = this.$moment(newValue, 'YYYY-MM-DD')
-            .startOf('month')
-            .format('YYYY-MM-DD')
+          this.startOfMonth = this.$moment(newValue, "YYYY-MM-DD")
+            .startOf("month")
+            .format("YYYY-MM-DD")
 
-          this.endOfMonth = this.$moment(newValue, 'YYYY-MM-DD')
-            .endOf('month')
-            .format('YYYY-MM-DD')
+          this.endOfMonth = this.$moment(newValue, "YYYY-MM-DD")
+            .endOf("month")
+            .format("YYYY-MM-DD")
 
           let d = new Date(newValue)
 
@@ -1038,31 +1019,94 @@ export default {
   },
 
   mounted () {
-    if (this.$auth.loggedIn && this.$auth.user.domain === 'Locum') {
-      this.$socket.on('Locum Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Locum Notification Job Unqualified', this.jobsRealTimeHandler)
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+      this.$socket.on(
+        "Locum Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Locum Notification Job Unqualified",
+        this.jobsRealTimeHandler
+      )
     }
 
-    if (this.$auth.loggedIn && this.$auth.user.domain === 'Practice') {
-      this.$socket.on('Practice Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Application', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Application Cancelled', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Update Accept', this.jobsRealTimeHandler)
-      this.$socket.on('Practice Notification Job Unfilled', this.jobsRealTimeHandler)
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+      this.$socket.on(
+        "Practice Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Application",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Application Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Update Accept",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.on(
+        "Practice Notification Job Unfilled",
+        this.jobsRealTimeHandler
+      )
     }
 
     this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
@@ -1086,30 +1130,93 @@ export default {
 
   destroyed () {
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
-      this.$socket.removeListener('Locum Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Locum Notification Job Unqualified', this.jobsRealTimeHandler)
+      this.$socket.removeListener(
+        "Locum Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Locum Notification Job Unqualified",
+        this.jobsRealTimeHandler
+      )
     }
-    
+
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-      this.$socket.removeListener('Practice Notification Job Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Application', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Application Cancelled', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Allocated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Ongoing', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Locum Invoice Updated', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Cancelled', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Amended', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Auto Declined', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Update Accept', this.jobsRealTimeHandler)
-      this.$socket.removeListener('Practice Notification Job Unfilled', this.jobsRealTimeHandler)
+      this.$socket.removeListener(
+        "Practice Notification Job Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Application",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Application Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Allocated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Ongoing",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Updated",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Cancelled",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Amended",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Auto Declined",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Update Accept",
+        this.jobsRealTimeHandler
+      )
+      this.$socket.removeListener(
+        "Practice Notification Job Unfilled",
+        this.jobsRealTimeHandler
+      )
     }
   },
 
@@ -1129,7 +1236,11 @@ export default {
     },
 
     getJobs () {
-      this.$emit('getCalendarJobAndJobParts', this.startOfMonth, this.endOfMonth)
+      this.$emit(
+        "getCalendarJobAndJobParts",
+        this.startOfMonth,
+        this.endOfMonth
+      )
     },
 
     getDaysInMonth (month, selectedYear) {
@@ -1169,20 +1280,29 @@ export default {
         }
       }
 
-      this.startOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`, 'YYYY-MM')
-        .startOf('month')
-        .format('YYYY-MM-DD')
+      this.startOfMonth = this.$moment(
+        `${this.selectedYear}-${this.selectedMonth + 1}`,
+        "YYYY-MM"
+      )
+        .startOf("month")
+        .format("YYYY-MM-DD")
 
-      this.endOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`, 'YYYY-MM')
-        .endOf('month')
-        .format('YYYY-MM-DD')
+      this.endOfMonth = this.$moment(
+        `${this.selectedYear}-${this.selectedMonth + 1}`,
+        "YYYY-MM"
+      )
+        .endOf("month")
+        .format("YYYY-MM-DD")
 
-      const selectedDate = this.$moment(this.$store.state.calendar.selected_date, 'YYYY-MM-DD')
-        .set('month', this.selectedMonth)
-        .set('year', this.selectedYear)
-        .format('YYYY-MM-DD')
+      const selectedDate = this.$moment(
+        this.$store.state.calendar.selected_date,
+        "YYYY-MM-DD"
+      )
+        .set("month", this.selectedMonth)
+        .set("year", this.selectedYear)
+        .format("YYYY-MM-DD")
 
-      this.$store.commit('calendar/SELECT_DATE', selectedDate)
+      this.$store.commit("calendar/SELECT_DATE", selectedDate)
     },
 
     getActivities (date) {
@@ -1195,48 +1315,48 @@ export default {
 </script>
 
 <style scoped>
-  .date {
-    min-height: 2em;
-    min-width: 90%;
-  }
+.date {
+	min-height: 2em;
+	min-width: 90%;
+}
 
-  .date-color {
-    color: #45494d;
-  }
+.date-color {
+	color: #45494d;
+}
 
-  .message-modal {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 60;
-  }
+.message-modal {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 60;
+}
 
-  @media (min-width: 375px) {
-    .date {
-      min-width: 2.4em;
-    }
-  }
+@media (min-width: 375px) {
+	.date {
+		min-width: 2.4em;
+	}
+}
 
-  @media (min-width: 480px) {
-    .date {
-      min-width: 3em;
-    }
-  }
+@media (min-width: 480px) {
+	.date {
+		min-width: 3em;
+	}
+}
 
-  @media (min-width: 640px) {
-    .date {
-      min-width: 4em;
-    }
-  }
+@media (min-width: 640px) {
+	.date {
+		min-width: 4em;
+	}
+}
 
-  @media (min-width: 768px) {
-    .message-modal {
-      min-width: 550px;
-    }
-    .date {
-      min-height: 4em;
-      min-width: 5em;
-    }
-  }
+@media (min-width: 768px) {
+	.message-modal {
+		min-width: 550px;
+	}
+	.date {
+		min-height: 4em;
+		min-width: 5em;
+	}
+}
 </style>

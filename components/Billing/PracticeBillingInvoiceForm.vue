@@ -3,14 +3,13 @@
     <div class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4">
       <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
         <div class="flex flex-wrap justify-between w-1/2">
-          <div
-            class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-          >
+          <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
             <section>
               <div class="relative flex flex-col py-2">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
+
                 <div class="font-bold text-lg mt-2">
                   {{ propInvoice.practice.name }}
                 </div>
@@ -35,57 +34,62 @@
           <div>Tel {{ propInvoice.mobile_number }}</div>
           <div>{{ propInvoice.locum_user.email }}</div>
           <div>{{ `UTR ${propInvoice.utr_number}` }}</div>
+          <div>{{ propInvoice.invoice_number }}</div>
         </div>
       </div>
-      <!--  -->
+
       <div
         v-if="waitingForLocumReply(propInvoice.items[0])"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
       >
         DISPUTED - Awaiting Locum Reply
       </div>
+
       <div
         v-if="propInvoice.disputed_items_count > 0 && propInvoice.status === 'Disputed'"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
       >
         Disputed by Locum
       </div>
-      <p
-        class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
-      >
+
+      <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
         INVOICE DETAILS
       </p>
+
       <div class="w-full flex justify-between px-4 text-gray-600">
         <div class="flex items-center">
           <p>Job No.</p>
-          <p
-            class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
+
+          <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ job_part.job_part_number }}
           </p>
         </div>
+
         <div class="flex items-center">
           <p>Job Type</p>
+
           <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ job_part.type }}
           </p>
         </div>
+
         <div class="flex items-center">
           <p>Duration</p>
+
           <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ job_part.date_start }}
             <span class="text-gray-600">to</span>
             {{ job_part.date_end }}
           </p>
         </div>
+
         <div class="flex items-center">
           <p>Total Work Hours</p>
-          <p
-            v-if="total_working_hours>0"
-            class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
+
+          <p v-if="total_working_hours > 0" class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ total_working_hours | hoursMinutes }}
           </p>
+
           <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             0
           </p>
@@ -113,111 +117,116 @@
             <p class="text-sm w-1/2">
               TOTAL LATES:
             </p>
-            <p
-              class="font-bold w-1/2 text-right"
-            >
+
+            <p class="font-bold w-1/2 text-right">
               {{ total_late_hours === '00:00' ? 'None' : total_late_hours }}
             </p>
           </div>
+
           <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               TOTAL ABSENCES:
             </p>
+
             <p class="font-bold w-1/2 text-right">
               {{ total_absences > 0 ? total_absences : 'None' }}
             </p>
           </div>
+
           <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               TOTAL WORK HOURS:
             </p>
-            <p
-              v-if="total_working_hours>0"
-              class="font-bold w-1/2 text-right"
-            >
+
+            <p v-if="total_working_hours > 0" class="font-bold w-1/2 text-right">
               {{ total_working_hours | hoursMinutes }}
             </p>
+
             <p v-else class="font-bold w-1/2 text-right">
               0
             </p>
           </div>
+
           <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               TOTAL DEDUCTIONS:
             </p>
+
             <p class="font-bold w-1/2 text-right">
               £ {{ total_deductions | currency }}
             </p>
           </div>
-          <!-- v-if="propInvoice && propInvoice.generate_form" -->
-          <div
-            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
-            class="flex flex-wrap justify-between"
-          >
+          
+          <div v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))" class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               Form Type:
             </p>
+
             <p class="font-bold w-1/2 text-right">
               {{ isOOH ? 'Solo Form' : 'Form A' }}
             </p>
           </div>
+
           <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               STATUS:
             </p>
+
             <p class="font-bold w-1/2 text-right">
               {{ propInvoice && propInvoice.status }}
             </p>
           </div>
-          <div
-            v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
-            class="flex flex-wrap justify-between"
-          >
+
+          <div v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)" class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               GENERATE FORM:
             </p>
-            <p
-              class="font-bold w-1/2 text-right"
-            >
+
+            <p class="font-bold w-1/2 text-right">
               {{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
             </p>
           </div>
         </div>
+
         <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
           <div class="flex flex-wrap justify-between">
             <p class="text-sm w-1/2">
               TOTAL WORK PAYMENT:
             </p>
+
             <p class="font-bold w-1/2 text-right">
               £ {{ total_gross_locum_wages | currency }}
             </p>
           </div>
+
           <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 NI / PAYE:
               </p>
+
               <p class="font-bold w-1/2 text-right">
                 <span class="mr-5">-</span>
                 £ {{ ni_paye_amount | currency }}
               </p>
             </div>
+
             <div class="flex flex-wrap justify-between border-t-4 pt-2">
               <p class="text-sm w-1/2">
                 GRAND TOTAL:
               </p>
+
               <p class="font-bold w-1/2 text-right">
                 £ {{ grand_total | currency }}
               </p>
             </div>
           </template>
-          <div
-            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
-            class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
-          >
+
+          <div v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))" class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300">
             <p class="text-sm w-1/2">
               PENSION AMOUNT:
             </p>
+
             <p class="font-bold w-1/2 text-right">
               £ {{ pension_amount | currency }}
             </p>
@@ -228,10 +237,7 @@
       <div :ref="'pdf-footer'" class="flex w-full">
         <div class="w-1/2 mt-4">
           <div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-1/2 w-2/3">
-            <div
-              v-if="propInvoice && propInvoice.paid_under_payroll"
-              class="flex flex-col text-xs sm:text-sm"
-            >
+            <div v-if="propInvoice && propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
               <div>Payment by BACS: xxxxx</div>
               <div>Payroll company name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx' }}</div>
               <div>Bank: {{ propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx' }}</div>
@@ -239,10 +245,7 @@
               <div>Payroll reference number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
             </div>
             
-            <div
-              v-if="propInvoice && !propInvoice.paid_under_payroll"
-              class="flex flex-col text-xs sm:text-sm"
-            >
+            <div v-if="propInvoice && !propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
               <div>Payment by BACS: xxxxx</div>
               <div>Account name: {{ propInvoice.account_name ? propInvoice.account_name : 'xxxxx' }}</div>
               <div>Bank: {{ propInvoice.bank_name ? propInvoice.bank_name : 'xxxxx' }}</div>
@@ -255,10 +258,7 @@
     </div>
 
     <transition name="fade">
-      <div
-        v-if="toggle_modal"
-        class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3"
-      >
+      <div v-if="toggle_modal" class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3">
         <p class="font-bold uppercase">
           Solo Form Details
         </p>
@@ -273,6 +273,7 @@
             required
             @blur="CheckEmptyField(form.ea_code, 'ea_code')"
           />
+
           <AppInput
             v-model="form.national_insurance_number"
             :type="'text'"
@@ -283,6 +284,7 @@
             @blur="CheckEmptyField(form.national_insurance_number, 'national_insurance_number')"
             @keypress="inputNumberOnly($event)"
           />
+
           <AppInput
             v-model="form.sd_number"
             :type="'text'"
@@ -293,6 +295,7 @@
             @blur="CheckEmptyField(form.sd_number, 'sd_number')"
             @keypress="inputNumberOnly($event)"
           />
+
           <AppInput
             v-model="form.paying_reference"
             :type="'text'"
@@ -303,6 +306,7 @@
             @blur="CheckEmptyField(form.paying_reference, 'paying_reference')"
             @keypress="inputNumberOnly($event)"
           />
+
           <AppInput
             v-model="form.percentage_rate"
             :type="'select'"
@@ -319,6 +323,7 @@
             ]"
             required
           />
+
           <AppInput
             v-model="form.professional_nhs_expenses"
             :type="'text'"
@@ -328,6 +333,7 @@
             required
             @blur="CheckEmptyField(form.professional_nhs_expenses, 'professional_nhs_expenses')"
           />
+
           <AppInput
             v-model="form.added_year_contributions"
             :type="'text'"
@@ -337,6 +343,7 @@
             required
             @blur="CheckEmptyField(form.added_year_contributions, 'added_year_contributions')"
           />
+
           <AppInput
             v-model="form.added_early_retirement_contributions"
             :type="'text'"
@@ -346,6 +353,7 @@
             required
             @blur="CheckEmptyField(form.added_early_retirement_contributions, 'added_early_retirement_contributions')"
           />
+
           <AppInput
             v-model="form.nhsps_employer_contributions"
             :type="'text'"
@@ -355,6 +363,7 @@
             required
             @blur="CheckEmptyField(form.nhsps_employer_contributions, 'nhsps_employer_contributions')"
           />
+
           <AppInput
             v-model="form.nhs_pension_scheme_employing_authority_name"
             :type="'text'"
@@ -372,6 +381,7 @@
         </div>
       </div>
     </transition>
+
     <div v-if="toggle_modal" class="shield" />
 
     <template v-if="old">
@@ -383,6 +393,7 @@
           Platform
         </div>
       </div>
+
       <div
         id="htmlpdf"
         class="relative max-w-3xl mb-2 md:mb-4 bg-white px-4 py-4 border shadow-md mb-32"
@@ -732,6 +743,7 @@
         </div>
       </div>
     </template>
+
     <div class="flex justify-start items-center mb-6">
       <AppButton
         v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
@@ -741,6 +753,7 @@
         :disabled="saveLoading || sched_has_changes"
         @click="toggleModal(true)"
       />
+
       <AppButton
         v-if="propInvoice && !['Approved', 'Paid', 'Issued'].includes(propInvoice.status) && allowToBill && sched_has_changes"
         class="m-1"
@@ -749,6 +762,7 @@
         :disabled="saveLoading"
         @click="save(false)"
       />
+      
       <AppButton
         v-if="propInvoice && propInvoice.status !== 'Draft'"
         class="m-1"

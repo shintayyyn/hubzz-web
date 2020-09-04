@@ -15,148 +15,84 @@
         <div class="font-bold text-sm sm:text-md">
           Duration
         </div>
-        <p
-          v-if="job_part.dates.length>1"
-          class="px-1"
-        >
+
+        <p v-if="job_part.dates.length > 1" class="px-1">
           {{ $moment(job_part.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
         </p>
+
         <p class="px-1 text-xs sm:text-sm">
           Days: {{ job_part.dates.length }}
         </p>
+
         <p class="px-1 font-bold text-sm sm:text-md mb-2">
           Schedule
         </p>
-        <div
-          class="flex text-xs bg-gray-400 py-1 font-bold pl-1"
-          :class="job_part.schedules.length > 7 ? 'pr-2' : ''"
-        >
-          <div :class="['Completed', 'Approved'].includes(job_part.status) ? 'w-1/6' : 'w-1/3'">
-            Date
+
+        <div class="flex text-xs bg-gray-400 py-1 font-bold pl-1" :class="job_part.schedules.length > 7 ? 'pr-2' : ''">
+          <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+            DATE
           </div>
-          <div v-if="['Completed', 'Approved'].includes(job_part.status)" class="w-1/6">
-            Final Time
+
+          <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
+            COMPLETED TIME
           </div>
-          <div
-            class="text-center"
-            :class="['Completed', 'Approved'].includes(job_part.status) ? 'w-1/6' : 'w-1/3'"
-          >
-            Shift
+
+          <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
+            FINAL TIME
           </div>
-          <div :class="['Completed', 'Approved'].includes(job_part.status) ? 'w-1/6' : 'w-1/3'">
-            Rate
+
+          <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+            SHIFT
           </div>
-          <div
-            v-if="['Completed', 'Approved'].includes(job_part.status)"
-            class="w-1/6 text-center"
-          >
-            Remarks
+
+          <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+            RATE
           </div>
-          <div v-if="['Completed', 'Approved'].includes(job_part.status)" class="w-1/6">
-            Reason
+
+          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6 text-center">
+            REMARKS
+          </div>
+
+          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
+            REASON
           </div>
         </div>
+
         <div
           class="pl-1 text-xs md:text-sm"
           :style="job_part.schedules.length > 7 ? 'max-height:205px' : ''"
           :class="job_part.schedules.length > 7 ? 'overflow-x-hidden overflow-y-auto' : ''"
         >
           <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex py-1 border-b">
-            <div
-              :class="['Completed', 'Approved'].includes(job_part.status) ? 'w-1/6' : 'w-1/3'"
-            >
+            <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
               {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
             </div>
-            <div
-              v-if="['Completed', 'Approved'].includes(job_part.status)"
-              class="w-1/6"
-            >
+
+            <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
               {{ sched.final_time_start }} - {{ sched.final_time_end }}
             </div>
-            <div
-              class="text-center"
-              :class="['Completed', 'Approved'].includes(job_part.status) ? 'w-1/6' : 'w-1/3'"
-            >
+
+            <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
+              {{ sched.approved_time_start }} - {{ sched.approved_time_end }}
+            </div>
+
+            <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
               {{ sched.shift.name }}
             </div>
-            <div
-              :class="['Completed', 'Approved'].includes(job_part.status) ? 'w-1/6' : 'w-1/3'"
-            >
+
+            <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
               £{{ sched.rate |currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}
             </div>
-            <div
-              v-if="['Completed', 'Approved'].includes(job_part.status)"
-              class="w-1/6 text-center"
-            >
+
+            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6 text-center">
               {{ `${isAbsent(sched) ? 'Absent' : isLate(sched) ? 'Late' : 'N/A'}` }}
             </div>
-            <div
-              v-if="['Completed', 'Approved'].includes(job_part.status)"
-              class="w-1/6"
-            >
+            
+            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
               {{ `${isAbsent(sched) && sched.absent_reason ? sched.absent_reason : isLate(sched) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}
             </div>
           </div>
         </div>
-        <!-- <div class="text-xs sm:text-sm overflow-y-auto" style="max-height:205px;">
-					<div style="position:sticky;top:0" class="flex">
-						<p
-							class="bg-gray-400 p-1 font-bold text-xs"
-							:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
-						>DATE</p>
-						<p
-							v-if="['Completed', 'Approved'].includes(job_part.status)"
-							class="text-center bg-gray-400 p-1 font-bold text-xs"
-							style="min-width:100px;max-width:100px"
-						>FINAL TIME</p>
-						<p
-							class="text-center bg-gray-400 p-1 font-bold text-xs"
-							:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
-						>SHIFT</p>
-						<p
-							class="text-center bg-gray-400 p-1 font-bold text-xs"
-							:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
-						>RATE</p>
-						<template v-if="['Completed', 'Approved'].includes(job_part.status)">
-							<p
-								class="text-center bg-gray-400 p-1 font-bold text-xs"
-								style="min-width:100px;max-width:100px"
-							>REMARKS</p>
-							<p
-								class="text-center bg-gray-400 p-1 font-bold text-xs"
-								style="min-width:100px;max-width:100px"
-							>REASON</p>
-						</template>
-					</div>
-					<div v-for="(sched, index) in job_part.schedules" :key="index" class="flex pb-2">
-						<p
-							:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
-						>{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
-						<p
-							v-if="['Completed', 'Approved'].includes(job_part.status)"
-							class="text-center"
-							style="min-width:100px;max-width:100px"
-						>{{ sched.final_time_start }} - {{ sched.final_time_end }}</p>
-						<p
-							class="text-center"
-							:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
-						>{{ sched.shift.name }}</p>
-						<p
-							class="text-center"
-							:style="['Completed', 'Approved'].includes(job_part.status) ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
-						>£{{ sched.rate |currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}</p>
-						<template v-if="['Completed', 'Approved'].includes(job_part.status)">
-							<p
-								class="text-center"
-								style="min-width:100px;max-width:100px"
-							>{{ `${isAbsent(sched) ? 'Absent' : isLate(sched) ? 'Late' : 'N/A'}` }}</p>
-							<p
-								class="text-center"
-								style="min-width:100px;max-width:100px"
-							>{{ `${isAbsent(sched) && sched.absent_reason ? sched.absent_reason : isLate(sched) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}</p>
-						</template>
-					</div>
-				</div>-->
       </div>
     </div>
 
@@ -207,34 +143,34 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+          {{ job_part ? job_part.job_part_total_original_hours_in_minutes_formatted : null }}
         </div>
 
-        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+        <template v-if="job_part && job_part.locum_invoiceable">
           <div class="font-bold text-sm sm:text-md">
-            Job Part Total Final hours
+            Job Part Total Final Hours
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+            {{ job_part ? job_part.job_part_total_final_hours_in_minutes_formatted : null }}
           </div>
         </template>
 
         <div class="font-bold text-sm sm:text-md">
-          Job Total Original hours
+          Job Total Original Hours
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+          {{ job ? job.job_total_original_hours_in_minutes_formatted : null }}
         </div>
 
-        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+        <template v-if="job_part && job_part.locum_invoiceable">
           <div class="font-bold text-sm sm:text-md">
-            Job Total Final hours
+            Job Total Final Hours
           </div>
 
           <div class="text-xs sm:text-sm mb-8">
-            {{ job_part.job.schedules.map(schedule => schedule.final_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+            {{ job ? job.job_total_final_hours_in_minutes_formatted : null }}
           </div>
         </template>
 
@@ -541,40 +477,6 @@
             {{ item.name }}
           </div>
         </div>
-
-        <!-- <template
-          v-if="['Completed', 'Approved', 'Terminated','Cancelled'].includes(job_part.status)"
-        >
-          <div class="font-bold text-sm sm:text-md">Was the Locum absent for session?</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{ job_part.absent_days > 0 || job_part.absent_days_reason !== null ? 'Yes' : 'No' }}</div>
-          <template v-if="job_part.absent_days > 0 || job_part.absent_days_reason !== null">
-            <div class="font-bold text-sm sm:text-md">Days of Absent:</div>
-            <div class="text-xs sm:text-sm mb-8">{{ job_part.absent_days }}</div>
-            <div class="font-bold text-sm sm:text-md">Reason of Absence:</div>
-            <div
-              class="text-xs sm:text-sm mb-8"
-            >{{ job_part.absent_days_reason ? job_part.absent_days_reason : 'None' }}</div>
-          </template>
-          <div class="font-bold text-sm sm:text-md">Was the Locum late for this session?</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{ job_part.late_hours > 0 || job_part.late_hours_reason !== null ? 'Yes' : 'No' }}</div>
-          <template v-if="job_part.late_hours > 0 || job_part.late_hours_reason !== null">
-            <div class="font-bold text-sm sm:text-md">Hours of Late:</div>
-            <div class="text-xs sm:text-sm mb-8">{{ late_hours | hoursMinutes }}</div>
-            <div class="font-bold text-sm sm:text-md">Reason of Late:</div>
-            <div
-              class="text-xs sm:text-sm mb-8"
-            >{{ job_part.late_hours_reason ? job_part.late_hours_reason : 'None' }}</div>
-          </template>
-          <div class="font-bold text-sm sm:text-md">Final Hours:</div>
-          <div class="text-xs sm:text-sm mb-8">
-            <template v-if="job_part.final_hours>0">{{ job_part.final_hours | hoursMinutes }}</template>
-            <template v-else>{{ job_part.final_hours }}</template>
-          </div>
-				</template>-->
 
         <template v-if="job_part.use_variation_terms">
           <template v-if="job_part.variation_terms_file_id">
