@@ -3,14 +3,13 @@
     <div class="flex flex-col justify-start items-start border rounded-lg py-8 px-6 mb-4">
       <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
         <div class="flex flex-wrap justify-between w-1/2">
-          <div
-            class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-          >
+          <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
             <section>
               <div class="relative flex flex-col py-2">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-base py-1">To: Accounts Department</label>
                 </div>
+
                 <div class="font-bold text-lg mt-2">
                   {{ propInvoice.practice.name }}
                 </div>
@@ -35,57 +34,62 @@
           <div>Tel {{ propInvoice.mobile_number }}</div>
           <div>{{ propInvoice.locum_user.email }}</div>
           <div>{{ `UTR ${propInvoice.utr_number}` }}</div>
+          <div>{{ propInvoice.invoice_number }}</div>
         </div>
       </div>
-      <!--  -->
+
       <div
         v-if="waitingForLocumReply(propInvoice.items[0])"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
       >
         DISPUTED - Awaiting Locum Reply
       </div>
+
       <div
         v-if="propInvoice.disputed_items_count > 0 && propInvoice.status === 'Disputed'"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
       >
         Disputed by Locum
       </div>
-      <p
-        class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
-      >
+
+      <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
         INVOICE DETAILS
       </p>
+
       <div class="w-full flex justify-between px-4 text-gray-600">
         <div class="flex items-center">
           <p>Job No.</p>
-          <p
-            class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
+
+          <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ job_part.job_part_number }}
           </p>
         </div>
+
         <div class="flex items-center">
           <p>Job Type</p>
+
           <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ job_part.type }}
           </p>
         </div>
+
         <div class="flex items-center">
           <p>Duration</p>
+
           <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ job_part.date_start }}
             <span class="text-gray-600">to</span>
             {{ job_part.date_end }}
           </p>
         </div>
+
         <div class="flex items-center">
           <p>Total Work Hours</p>
-          <p
-            v-if="total_working_hours>0"
-            class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-          >
+
+          <p v-if="total_working_hours > 0" class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             {{ total_working_hours | hoursMinutes }}
           </p>
+          
           <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
             0
           </p>

@@ -10,19 +10,19 @@
 
         <div :ref="'pdf-header'" class="flex justify-between w-full px-2">
           <div v-if="propInvoice" class="flex flex-wrap justify-between w-1/2">
-            <div
-              class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-            >
+            <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
               <section>
                 <div class="relative flex flex-col py-2">
                   <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-base py-1">To: Accounts Department</label>
                   </div>
+
                   <div class="font-bold text-lg mt-2">
                     {{ propInvoice.practice.name }}
                   </div>
                 </div>
               </section>
+
               <div class="text-xs sm:text-sm">
                 <div>{{ propInvoice.practice.address_line_1 }}</div>
                 <div>{{ propInvoice.practice.address_line_2 }}</div>
@@ -31,20 +31,21 @@
               </div>
             </div>
           </div>
+
           <div v-if="propJobPart" class="flex flex-wrap justify-between w-1/2">
-            <div
-              class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-            >
+            <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
               <section>
                 <div class="relative flex flex-col py-2">
                   <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-base py-1">To: Accounts Department</label>
                   </div>
+
                   <div class="font-bold text-lg mt-2">
                     {{ propJobPart.practice_name }}
                   </div>
                 </div>
               </section>
+
               <div class="text-xs sm:text-sm">
                 <div>{{ propJobPart.practice_address_line_1 }}</div>
                 <div>{{ propJobPart.practice_address_line_2 }}</div>
@@ -55,9 +56,6 @@
           </div>
 
           <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
-            <div v-if="propInvoice">
-              {{ propInvoice.invoice_number }}
-            </div>
             <div>{{ $auth.user.personal_detail.name }}</div>
             <div>{{ $auth.user.address_detail.address.line_1 }}</div>
             <div>{{ $auth.user.address_detail.address.line_2 }}</div>
@@ -66,11 +64,14 @@
             <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
             <div>{{ $auth.user.email }}</div>
             <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
+          
+            <div v-if="propInvoice">
+              {{ propInvoice.invoice_number }}
+            </div>
           </div>
         </div>
-        <template
-          v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
-        >
+
+        <template v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))">
           <div
             v-if="(propInvoice && propInvoice.disputed_items_count > 0 && waitingForPracticeReply(propInvoice.items[0])) && propInvoice.status !== 'Draft'"
             class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
@@ -78,42 +79,43 @@
             DISPUTED - Awaiting Practice Reply
           </div>
         </template>
-        <p
-          class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2"
-        >
+
+        <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
           INVOICE DETAILS
         </p>
+
         <div class="w-full flex justify-between px-4 text-gray-600">
           <div class="flex items-center">
             <p>Job No.</p>
-            <p
-              class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-            >
+
+            <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ job_part.job_part_number }}
             </p>
           </div>
+
           <div class="flex items-center">
             <p>Job Type</p>
             <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ job_part.type }}
             </p>
           </div>
+
           <div class="flex items-center">
             <p>Duration</p>
+            
             <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ job_part.date_start }}
               <span class="text-gray-600">to</span>
               {{ job_part.date_end }}
             </p>
           </div>
+
           <div class="flex items-center">
             <p>Total Work Hours</p>
-            <p
-              v-if="total_working_hours>0"
-              class="mx-2 border border-gray-600 rounded px-4 text-gray-700"
-            >
+            <p v-if="total_working_hours > 0" class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ total_working_hours | hoursMinutes }}
             </p>
+
             <p v-else class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               0
             </p>
@@ -141,45 +143,46 @@
               <p class="text-sm w-1/2">
                 TOTAL LATES:
               </p>
-              <p
-                class="font-bold w-1/2 text-right"
-              >
+
+              <p class="font-bold w-1/2 text-right">
                 {{ total_late_hours === '00:00' ? 'None' : total_late_hours }}
               </p>
             </div>
+
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 TOTAL ABSENCES:
               </p>
-              <p
-                class="font-bold w-1/2 text-right"
-              >
+
+              <p class="font-bold w-1/2 text-right">
                 {{ total_absences > 0 ? total_absences : 'None' }}
               </p>
             </div>
+
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 TOTAL WORK HOURS:
               </p>
-              <p
-                v-if="total_working_hours>0"
-                class="font-bold w-1/2 text-right"
-              >
+
+              <p v-if="total_working_hours > 0" class="font-bold w-1/2 text-right">
                 {{ total_working_hours | hoursMinutes }}
               </p>
+
               <p v-else class="font-bold w-1/2 text-right">
                 0
               </p>
             </div>
+
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 TOTAL DEDUCTIONS:
               </p>
+
               <p class="font-bold w-1/2 text-right">
                 £ {{ total_deductions | currency }}
               </p>
             </div>
-            <!-- v-if="form.generate_form || (propInvoice && propInvoice.generate_form)" -->
+
             <div
               v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
               class="flex flex-wrap justify-between"
@@ -187,20 +190,22 @@
               <p class="text-sm w-1/2">
                 Form Type:
               </p>
+
               <p class="font-bold w-1/2 text-right">
                 {{ isOOH ? 'Solo Form' : 'Form A' }}
               </p>
             </div>
+
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 STATUS:
               </p>
-              <p
-                class="font-bold w-1/2 text-right"
-              >
+
+              <p class="font-bold w-1/2 text-right">
                 {{ propInvoice && propInvoice.status || propJobPart && 'To be invoiced' }}
               </p>
             </div>
+
             <div
               v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
               class="flex flex-wrap justify-between"
@@ -208,41 +213,47 @@
               <p class="text-sm w-1/2">
                 GENERATE FORM:
               </p>
-              <p
-                class="font-bold w-1/2 text-right"
-              >
+
+              <p class="font-bold w-1/2 text-right">
                 {{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
               </p>
             </div>
           </div>
+
           <div class="flex flex-col w-full sm:w-1/2 px-2 pt-5 sm:pt-0">
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 TOTAL WORK PAYMENT:
               </p>
+
               <p class="font-bold w-1/2 text-right">
                 £ {{ total_gross_locum_wages | currency }}
               </p>
             </div>
+
             <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
               <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   NI / PAYE:
                 </p>
+
                 <p class="font-bold w-1/2 text-right">
                   <span class="mr-5">-</span>
                   £ {{ ni_paye_amount | currency }}
                 </p>
               </div>
+
               <div class="flex flex-wrap justify-between border-t-4 pt-2">
                 <p class="text-sm w-1/2">
                   GRAND TOTAL:
                 </p>
+
                 <p class="font-bold w-1/2 text-right">
                   £ {{ grand_total | currency }}
                 </p>
               </div>
             </template>
+
             <div
               v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
@@ -250,6 +261,7 @@
               <p class="text-sm w-1/2">
                 PENSION AMOUNT:
               </p>
+
               <p class="font-bold w-1/2 text-right">
                 £ {{ pension_amount | currency }}
               </p>
@@ -260,10 +272,7 @@
         <div :ref="'pdf-footer'" class="flex w-full">
           <div class="w-1/2 mt-4">
             <div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-1/2 w-2/3">
-              <div
-                v-if="propInvoice && propInvoice.paid_under_payroll"
-                class="flex flex-col text-xs sm:text-sm"
-              >
+              <div v-if="propInvoice && propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
                 <div>Payment by BACS: xxxxx</div>
                 <div>Payroll company name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx' }}</div>
                 <div>Bank: {{ propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx' }}</div>
@@ -271,10 +280,7 @@
                 <div>Payroll reference number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
               </div>
 
-              <div
-                v-if="propInvoice && !propInvoice.paid_under_payroll"
-                class="flex flex-col text-xs sm:text-sm"
-              >
+              <div v-if="propInvoice && !propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
                 <div>Payment by BACS: xxxxx</div>
                 <div>Account name: {{ propInvoice.account_name ? propInvoice.account_name : 'xxxxx' }}</div>
                 <div>Bank: {{ propInvoice.bank_name ? propInvoice.bank_name : 'xxxxx' }}</div>
@@ -282,10 +288,7 @@
                 <div>Account number: {{ propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR' }}</div>
               </div>
 
-              <div
-                v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll"
-                class="flex flex-col text-xs sm:text-sm"
-              >
+              <div v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
                 <div>Payment by BACS: xxxxx</div>
                 <div>Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
                 <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
@@ -293,10 +296,7 @@
                 <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
               </div>
 
-              <div
-                v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll"
-                class="flex flex-col text-xs sm:text-sm"
-              >
+              <div v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
                 <div>Payment by BACS: xxxxx</div>
                 <div>Account name: {{ propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx' }}</div>
                 <div>Bank: {{ propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx' }}</div>
@@ -310,20 +310,15 @@
     </template>
 
     <div>
-      <div
-        v-if="propJobPart && !propInvoice && claimNhs && !isOOH"
-        class="flex flex-wrap items-center mx-2"
-      >
+      <div v-if="propJobPart && !propInvoice && claimNhs && !isOOH" class="flex flex-wrap items-center mx-2">
         <AppInput
           v-model="form.generate_form"
           :type="'single-checkbox'"
           :name="'generate_form'"
           :label="'Generate form A?'"
         />
-        <!-- :label="`Generate ${isOOH ? 'solo form' : 'form A'}?`" -->
-        <!-- :disabled="!Boolean(propJobPart) && Boolean(propInvoice)" -->
       </div>
-      <!-- save buttons -->
+
       <div class="flex flex-wrap items-center mb-6">
         <AppButton
           v-if="propJobPart || (propInvoice && !['Approved','Paid', 'Issued'].includes(propInvoice.status))"
