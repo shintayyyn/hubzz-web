@@ -30,27 +30,31 @@
 
         <div class="flex text-xs bg-gray-400 py-1 font-bold pl-1" :class="job_part.schedules.length > 7 ? 'pr-2' : ''">
           <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
-            Date
+            DATE
           </div>
 
-          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-            Final Time
+          <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
+            FINAL TIME
+          </div>
+
+          <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
+            FINAL TIME
           </div>
 
           <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
-            Shift
+            SHIFT
           </div>
 
           <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
-            Rate
+            RATE
           </div>
 
           <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6 text-center">
-            Remarks
+            REMARKS
           </div>
 
           <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-            Reason
+            REASON
           </div>
         </div>
 
@@ -64,8 +68,12 @@
               {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
             </div>
 
-            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
+            <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
               {{ sched.final_time_start }} - {{ sched.final_time_end }}
+            </div>
+
+            <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
+              {{ sched.approved_time_start }} - {{ sched.approved_time_end }}
             </div>
 
             <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">

@@ -39,7 +39,15 @@
               </p>
 
               <p
-                v-if="job_part.status === 'Completed'"
+                v-if="job_part.locum_invoiceable && job_part.status !== 'Approved'"
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:100px;max-width:100px"
+              >
+                FINAL TIME
+              </p>
+
+              <p
+                v-if="job_part.locum_invoiceable && job_part.status === 'Approved'"
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:100px;max-width:100px"
               >
@@ -85,11 +93,19 @@
               </p>
 
               <p
-                v-if="job_part.status === 'Completed'"
+                v-if="job_part.locum_invoiceable && job_part.status !== 'Approved'"
                 class="text-center"
                 style="min-width:100px;max-width:100px"
               >
                 {{ sched.final_time_start }} - {{ sched.final_time_end }}
+              </p>
+
+              <p
+                v-if="job_part.locum_invoiceable && job_part.status === 'Approved'"
+                class="text-center"
+                style="min-width:100px;max-width:100px"
+              >
+                {{ sched.approved_time_start }} - {{ sched.approved_time_end }}
               </p>
 
               <p
