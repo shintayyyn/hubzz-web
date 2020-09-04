@@ -43,7 +43,7 @@
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:100px;max-width:100px"
               >
-                FINAL TIME
+                COMPLETED TIME
               </p>
 
               <p

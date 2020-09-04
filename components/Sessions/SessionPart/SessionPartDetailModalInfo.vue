@@ -34,7 +34,7 @@
           </div>
 
           <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
-            FINAL TIME
+            COMPLETED TIME
           </div>
 
           <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
