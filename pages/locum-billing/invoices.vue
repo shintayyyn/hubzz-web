@@ -45,6 +45,7 @@
       >
         NHS Pensions Form A
       </nuxt-link>
+
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormB"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
@@ -79,12 +80,14 @@
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="filterModal = !filterModal"
         />
+
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="refreshInvoices"
         />
+
         <div
           class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
@@ -99,6 +102,7 @@
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
           </div>
+
           <div
             v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
@@ -111,6 +115,7 @@
               :label="'Invoice number'"
             />
           </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               v-model="job_part_number_includes"
@@ -120,6 +125,7 @@
               :label="'Job Part number'"
             />
           </div>
+
           <div
             v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
@@ -133,6 +139,7 @@
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
           </div>
+          
           <div class="md:px-1 flex w-full">
             <AppButton
               :disabled="disabledClearFilter"
@@ -722,9 +729,11 @@ export default {
 
       return columns
     },
+
     authPermissions () {
       return this.$store.getters["permissions"]
     },
+
     noJobPartsToDisplay () {
       let str = ""
       let queryStatus = this.$route.query.status
@@ -755,6 +764,7 @@ export default {
       }
       return str
     },
+
     disabledClearFilter () {
       let jobIr35 = this.job_ir35 === "" ? null : this.job_ir35
       let isPaid = this.is_paid === "" ? null : this.is_paid
