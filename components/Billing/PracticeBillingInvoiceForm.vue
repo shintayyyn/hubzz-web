@@ -1281,7 +1281,7 @@ export default {
         "late_minutes",
       ]
 
-      if (!this.propInvoice.ooh) {
+      if (!this.propInvoice.ooh || !approved) {
         notRequired.push(
           "ea_code",
           "national_insurance_number",
