@@ -534,10 +534,18 @@ export default {
       const reducer = (accumulator, currentValue) => accumulator + currentValue
       if (this.invoiceItems && this.invoiceItems.length > 0) {
         let invoiceItemHours = this.invoiceItems.map(invoiceItem => 
-          parseFloat(invoiceItem.total_hours ? invoiceItem.total_hours : 0)
+          parseFloat(invoiceItem.total_hours ? invoiceItem.total_hours.toFixed(2) : 0)
         )
         totalHours = invoiceItemHours.reduce(reducer)
       }
+
+      if (this.disputedItems && this.disputedItems.length > 0) {
+        let disputedItemHours = this.disputedItems.map(disputedItem => 
+          parseFloat(disputedItem.total_hours ? disputedItem.total_hours.toFixed(2) : 0)
+        )
+        totalHours = totalHours + disputedItemHours.reduce(reducer)
+      }
+
       return totalHours.toFixed(2)
     },
   },
