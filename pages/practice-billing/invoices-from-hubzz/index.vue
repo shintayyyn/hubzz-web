@@ -55,6 +55,28 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
+      <template v-slot:payment_status="slotProps">
+        <div class="flex flex-col text-black">
+          <div
+            v-if="slotProps.item.unpaid_at" 
+            class="px-2"
+          >
+            {{ slotProps.item.unpaid_at ? `Marked Invalid at  ${slotProps.item.unpaid_at_in_gb_formatted }`: null }}
+          </div>
+          <div 
+            v-else-if="slotProps.item.paid_at"
+            class="flex items-center justify-center"
+          >
+            {{ slotProps.item.paid_at ? `Paid at ${slotProps.item.paid_at_in_gb_formatted}` : null }}
+          </div>
+          <div 
+            v-else
+            class="text-gray-600"
+          >
+            Payment not settled
+          </div>
+        </div>
+      </template>
       <template v-slot:actions="slotProps">
         <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
           <button
@@ -150,10 +172,12 @@ export default {
           sortable: true,
         },
         {
-          name: "Paid At",
-          dataIndex: "paid_at_in_gb_formatted",
+          name: "Payment Status",
+          dataIndex: "",
           class: "text-center",
           sortable: true,
+          slot: true,
+          slotName:"payment_status",
         },
       ],
     }
