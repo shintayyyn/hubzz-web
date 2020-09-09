@@ -602,6 +602,12 @@ export default {
       return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false
     },
 
+    locumProfessionCategoryName () {
+      return this.$auth.loggedIn && this.$auth.user
+        ? this.$auth.user.profession_category_name
+        : null
+    },
+
     columns () {
       let columns = []
       let queryStatus = this.$route.query.status
@@ -640,19 +646,24 @@ export default {
           class: "text-center",
           sortable: true,
         },
-        {
-          name: "OOH",
-          dataIndex: "ooh",
-          class: "text-center",
-          sortable: true,
-        },
-        {
-          name: "NHS Claimable",
-          dataIndex: "nhs_claimable_formatted",
-          class: "text-center",
-          sortable: true,
-        }
       )
+
+      if (this.locumProfessionCategoryName === 'GP') {
+        columns.push(
+          {
+            name: "OOH",
+            dataIndex: "ooh",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "NHS Claimable",
+            dataIndex: "nhs_claimable_formatted",
+            class: "text-center",
+            sortable: true,
+          }
+        )
+      }
 
       if (["approved", "solo-form",].includes(queryStatus)) {
         columns.push({

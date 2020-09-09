@@ -133,9 +133,10 @@
           </div>
         </div>
       </div>
+
       <!-- SUB TOTAL -->
       <div class="flex flex-col">
-        <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
+        <template v-if="propInvoice && propInvoice.paid">
           <div :ref="'items-sub-total'" class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 font-bold">Subtotal</span>
             <div class="w-1/4 flex justify-between">
@@ -170,6 +171,7 @@
             </div>
           </div>
         </template>
+
         <!-- ITEMS TOTAL -->
         <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Total</span>
@@ -183,6 +185,7 @@
           </div>
         </div>
       </div>
+
       <!-- ITEMS DAYS WORKED -->
       <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
         <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
