@@ -60,8 +60,14 @@
               :error="formError.find(item => item.field === 'bank_name')" required
     />
 
-    <AppInput v-model="form.sort_code" :type="'text'" :name="'sort_code'" :label="'Sort code'"
-              :error="formError.find(item => item.field === 'sort_code')" required
+    <AppInput
+      v-model="form.sort_code"
+      :type="'number'"
+      :name="'sort_code'"
+      :label="'Sort code'"
+      :error="formError.find(item => item.field === 'sort_code')"
+      required
+      :limit="6"
     />
 
     <AppInput v-model="form.account_number" :type="'text'" :name="'account_number'" :label="'Account number'"
@@ -73,95 +79,103 @@
 </template>
 
 <script>
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
-  import AppDate from "@/components/Base/AppDate"
-  export default {
-    components: {
-      AppInput,
-      AppButton,
-      AppDate
-    },
-    data () {
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppDate from "@/components/Base/AppDate"
+export default {
+  components: {
+    AppInput,
+    AppButton,
+    AppDate,
+  },
+  data () {
+    return {
+      form: {
+        vat_registered: false,
+        vat_number: "",
+        tax_year_end_date: "",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+      },
+      practice: null,
+      formError: [],
+    }
+  },
+  async asyncData ({ app, store, }) {
+    try {
+      let response = await app.$axios.$get(
+        `/api/v1/practice/me/practice-profile`
+      )
+      const practice
+          = response.data && response.data.practice ? response.data.practice : null
+
       return {
-        form: {
-          vat_registered: false,
-          vat_number: "",
-          tax_year_end_date: "",
-          account_name: "",
-          bank_name: "",
-          sort_code: "",
-          account_number: ""
-        },
-        practice: null,
-        formError: []
+        practice,
       }
-    },
-    async asyncData ({ app, store }) {
-      try {
-        let response = await app.$axios.$get(
-          `/api/v1/practice/me/practice-profile`
-        )
-        const practice =
-          response.data && response.data.practice ? response.data.practice : null
+    } catch (err) {
+      console.log("err", err.response || err)
+      if (err.response.message) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.message}`,],
+        })
+      }
+      throw err
+    }
+  },
+  mounted () {
+    this.form.vat_registered = this.practice.vat_registered
+    this.form.vat_number = this.practice.vat_number
+    this.form.tax_year_end_date = this.practice.tax_year_end_date
+    this.form.account_name = this.practice.account_name
+    this.form.bank_name = this.practice.bank_name
+    this.form.sort_code = this.practice.sort_code
+    this.form.account_number = this.practice.account_number
+  },
 
-        return {
-          practice
-        }
-      } catch (err) {
-        console.log("err", err.response || err)
-        if (err.response.message) {
-          store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.message}`]
+  methods: {
+    save () {
+      this.formError = []
+      let notRequired = ["vat_registered",]
+      if (["false", false,].includes(this.form.vat_registered)) {
+        notRequired.push("vat_number", "tax_year_end_date")
+      }
+
+      if (this.form.sort_code && this.form.sort_code.length !== 6) {
+        this.formError.push({
+          field: "sort_code",
+          message: "Sort Code should be 6 digits",
+        })
+      }
+
+      this.Validate(this.form, notRequired)
+      if (!this.formError.length) {
+        this.$axios
+          .$put(`/api/v1/practice/me/practice-invoice-detail`, this.form)
+          .then(res => {
+            console.log(res)
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`,],
+            })
           })
-        }
-        throw err
-      }
-    },
-    mounted () {
-      this.form.vat_registered = this.practice.vat_registered
-      this.form.vat_number = this.practice.vat_number
-      this.form.tax_year_end_date = this.practice.tax_year_end_date
-      this.form.account_name = this.practice.account_name
-      this.form.bank_name = this.practice.bank_name
-      this.form.sort_code = this.practice.sort_code
-      this.form.account_number = this.practice.account_number
-    },
-
-    methods: {
-      save () {
-        this.formError = []
-        let notRequired = ["vat_registered"]
-        if (["false", false].includes(this.form.vat_registered)) {
-          notRequired.push("vat_number", "tax_year_end_date")
-        }
-        this.Validate(this.form, notRequired)
-        if (!this.formError.length) {
-          this.$axios
-            .$put(`/api/v1/practice/me/practice-invoice-detail`, this.form)
-            .then(res => {
-              console.log(res)
+          .catch(err => {
+            console.log("err", err.response || err)
+            if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
-                status: "success",
-                text: [`${res.message}`]
+                status: "danger",
+                text: [`${err.response.data.message}`,],
               })
-            })
-            .catch(err => {
-              console.log("err", err.response || err)
-              if (err.response.data.message) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                })
-              }
-              throw err
-            })
-        }
+            }
+            throw err
+          })
       }
-    }
-  }
+    },
+  },
+}
 </script>
