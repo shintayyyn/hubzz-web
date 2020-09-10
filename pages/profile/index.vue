@@ -492,14 +492,17 @@
                 :error="formError.find(item => item.field === 'bank_name')"
                 required
               />
+
               <AppInput
                 v-model="form.sort_code"
-                :type="'text'"
+                :type="'number'"
                 :name="'sort_code'"
                 :label="'Sort code'"
                 :error="formError.find(item => item.field === 'sort_code')"
                 required
+                :limit="6"
               />
+
               <AppInput
                 v-model="form.account_number"
                 :type="'text'"
@@ -1068,9 +1071,18 @@ export default {
       ) {
         notRequired.push("use_variation_terms")
       }
+
       if (["false", false,].includes(this.form.vat_registered)) {
         notRequired.push("vat_number", "tax_year_end_date")
       }
+
+      if (this.form.sort_code && this.form.sort_code.length !== 6) {
+        this.formError.push({
+          field: "sort_code",
+          message: "Sort Code should be 6 digits",
+        })
+      }
+
       this.Validate(this.form, notRequired)
       if (!this.formError.length) {
         this.loading = true
