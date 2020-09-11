@@ -343,7 +343,7 @@
 
             <AppInput
               v-model="form.payroll_sort_code"
-              :type="'text'"
+              :type="'number'"
               :name="'payroll_sort_code'"
               :label="'Sort Code'"
               :error="formError.find(item => item.field === 'payroll_sort_code')"
@@ -353,7 +353,7 @@
 
             <AppInput
               v-model="form.payroll_account_number"
-              :type="'text'"
+              :type="'number'"
               :name="'payroll_account_number'"
               :label="'Payroll Reference Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
@@ -1586,14 +1586,14 @@ export default {
       }
 
       if (["true", true,].includes(this.form.paid_under_payroll)) {
-        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length < 6) {
+        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length !== 6) {
           this.formError.push({
             field: "payroll_sort_code",
             message: "Sort Code should be 6 digits",
           })
         }
       } else if (["false", false,].includes(this.form.paid_under_payroll)) {
-        if (this.form.sort_code && this.form.sort_code.length < 6) {
+        if (this.form.sort_code && this.form.sort_code.length !== 6) {
           this.formError.push({
             field: "sort_code",
             message: "Sort Code should be 6 digits",

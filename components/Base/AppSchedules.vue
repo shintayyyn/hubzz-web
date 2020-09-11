@@ -611,7 +611,11 @@
                         <!-- FINAL END -->
                         <div class="flex items-center justify-center text-center w-2/12">
                           <AppTime
-                            v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))"
+                            v-if="
+                              $auth.user.domain === 'Locum'
+                                ? !toDisplay
+                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))
+                            "
                             v-model="shift.final_time_end"
                             :name="`final_time_end-s${index}-${i}`"
                             :wrapperClass="'px-1 mt-2 mb-2'"
@@ -1073,8 +1077,8 @@
                 :inStyle="'background-color: transparent'"
                 :resize="false"
                 :error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
-                :disabled="$auth.user.domain === 'Practice'"
-                :limit="300"
+                :disabled="$auth.user.domain === 'Practice' || toDisplay"
+                :limit="!toDisplay ? 300 : null"
               />
 
               <div class="flex justify-end">
@@ -1101,7 +1105,7 @@
                 <AppButton
                   v-if="
                     type === 'invoice'
-                      ? $auth.user.domain === 'Locum'
+                      ? $auth.user.domain === 'Locum' && !toDisplay
                       : !toDisplay
                   "
                   :label="'Save'"
