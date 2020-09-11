@@ -1077,8 +1077,8 @@
                 :inStyle="'background-color: transparent'"
                 :resize="false"
                 :error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
-                :disabled="$auth.user.domain === 'Practice'"
-                :limit="300"
+                :disabled="$auth.user.domain === 'Practice' || toDisplay"
+                :limit="!toDisplay ? 300 : null"
               />
 
               <div class="flex justify-end">
@@ -1105,7 +1105,7 @@
                 <AppButton
                   v-if="
                     type === 'invoice'
-                      ? $auth.user.domain === 'Locum'
+                      ? $auth.user.domain === 'Locum' && !toDisplay
                       : !toDisplay
                   "
                   :label="'Save'"
