@@ -1,71 +1,5 @@
 <template>
   <section class="relative">
-    <!-- OLD -->
-    <!-- <div class="flex flex-row flex-wrap justify-start items-center p-2">
-      <AppDate v-model="date_start" :name="'date_start'" :label="'Start Date'" />
-      <div class="mx-1" />
-
-      <AppDate v-model="date_end" :name="'date_end'" :label="'End Date'" />
-
-      <div class="mx-1" />
-
-      <AppInput
-        v-model="filter_by"
-        class="w-1/4"
-        :type="'select'"
-        :name="'filter_by'"
-        :label="'Filter by'"
-        :items="[
-          {
-            label: 'All',
-            value: null
-          },
-          {
-            label: 'Lates',
-            value: 'lates'
-          },
-          {
-            label: 'No shows',
-            value: 'No shows'
-          },
-          {
-            label: 'Withdrawns',
-            value: 'Withdrawns'
-          },
-        ]"
-      />
-    </div>
-
-    <div class="flex">
-      <AppButton label="Search" :inStyle="'padding:2px 10px;'" @click="search" />
-    </div>
-
-    <transition name="fade" mode="out-in">
-      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
-        <AppLoading :loading="initialLoading" spinner />
-      </div>
-
-      <div v-if="!initialLoading">
-        <AppTable
-          v-if="reports.length > 0"
-          :total="total"
-          :items="reports"
-          :currentPage="current_page"
-          :perPage="limit"
-          :columns="columns"
-          :orderBy="order_by"
-          :loading="loading"
-          :customWidth="480"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
-        />
-      </div>
-    </transition> -->
-    <!-- <div class="text-sm md:text-xl">
-      My Banks - Reports
-    </div> -->
-
     <div class="flex flex-col">
       <nuxt-link
         v-for="myBanksReport in myBanksReports"
@@ -92,22 +26,11 @@
 </template>
 
 <script>
-// import AppTable from "@/components/Base/AppTable"
-// import AppButton from "@/components/Base/AppButton"
-// import AppDate from "@/components/Base/AppDate"
-// import AppInput from "@/components/Base/AppInput"
 
 export default {
   transition: {
     name: "fade",
     mode: "out-in",
-  },
-
-  components: {
-    // AppTable,
-    // AppButton,
-    // AppDate,
-    // AppInput,
   },
 
   data () {
@@ -124,12 +47,11 @@ export default {
       reports: [],
       total: 0,
       myBanksReports: [
-     
-        {
-          title: 'REP-004',
-          subtitle: 'Locums on System',
-          url: '/my-banks/reports/locums',
-        },
+        // {
+        //   title: 'REP-004',
+        //   subtitle: 'Locums on System',
+        //   url: '/my-banks/reports/locums',
+        // },
         {
           title: 'REP-005',
           subtitle: 'Locums Used/Bank',
