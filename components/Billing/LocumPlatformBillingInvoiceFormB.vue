@@ -150,18 +150,18 @@ export default {
         },
         {
           name: "£ Amount",
-          dataIndex: "total_amount",
-          class: "text-center currency",
+          dataIndex: "job_part_gross_rate_formatted",
+          class: "text-center",
           sortable: true,
         },
         {
           name: "NHS Claimable",
-          dataIndex: "nhs_claimable",
+          dataIndex: "nhs_claimable_formatted",
           class: "text-center",
         },
         {
           name: "Paid",
-          dataIndex: "paid",
+          dataIndex: "form_paid",
           class: "text-center",
         },
         {
@@ -223,29 +223,9 @@ export default {
           let job_parts = response.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
             return {
               ...jobPart,
-              practice_name:
-                jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
-              total_amount: total,
-              paid:
-                jobPart.locum_status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
-              nhs_claimable: jobPart.locum_invoices_nhs_claimable
-                ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable,
+              form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
         })
@@ -277,29 +257,9 @@ export default {
           let job_parts = res.data.job_parts
 
           this.job_parts = job_parts.map(jobPart => {
-            let total = jobPart.locum_invoice_item.locum_invoice.total_amount
-
             return {
               ...jobPart,
-              practice_name:
-                jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
-              total_amount: total,
-              paid:
-                jobPart.locum_status === "Approved"
-                && jobPart.locum_invoice_item.locum_invoice.paid_at
-                  ? "Yes"
-                  : "No",
-              nhs_claimable: jobPart.locum_invoices_nhs_claimable
-                ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable,
+              form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
         })
