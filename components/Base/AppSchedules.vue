@@ -611,7 +611,11 @@
                         <!-- FINAL END -->
                         <div class="flex items-center justify-center text-center w-2/12">
                           <AppTime
-                            v-if="$auth.user.domain === 'Locum' ? !toDisplay : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))"
+                            v-if="
+                              $auth.user.domain === 'Locum'
+                                ? !toDisplay
+                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))
+                            "
                             v-model="shift.final_time_end"
                             :name="`final_time_end-s${index}-${i}`"
                             :wrapperClass="'px-1 mt-2 mb-2'"
