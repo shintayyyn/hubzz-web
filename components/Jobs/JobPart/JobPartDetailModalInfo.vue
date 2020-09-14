@@ -111,13 +111,13 @@
                   class="text-center"
                   style="min-width:100px;max-width:100px"
                 >
-                  {{ job_part.status === 'Approved' ? sched.completed_remarks : sched.approved_remarks }}
+                  {{ job_part.status === 'Approved' ? sched.approved_remarks : sched.completed_remarks }}
                 </p>
                 <p
                   class="text-center"
                   style="min-width:100px;max-width:100px"
                 >
-                  {{ job_part.status === 'Approved' ? sched.completed_reason : sched.approved_reason }}
+                  {{ job_part.status === 'Approved' ? sched.approved_reason : sched.completed_reason }}
                 </p>
               </template>
             </div>
