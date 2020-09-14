@@ -167,16 +167,29 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
+
               <AppInput
-                v-model="form.ea_code"
+                v-model="form.pcse_ea_code"
                 :type="'text'"
-                :name="'ea_code'"
-                :label="'PCSE Code'"
-                :error="formError.find(item => item.field === 'ea_code')"
-                required
+                :name="'pcse_ea_code'"
+                :label="'PCSE EA Code'"
+                :error="formError.find(item => item.field === 'pcse_ea_code')"
                 @submit="save"
-                @blur="CheckEmptyField(form.ea_code, 'ea_code')"
+                @input="checkPcseEaCode"
+                @blur="checkPcseEaCode"
               />
+
+              <AppInput
+                v-model="form.nhsps_ea_code"
+                :type="'text'"
+                :name="'nhsps_ea_code'"
+                :label="'NHSPS EA Code'"
+                :error="formError.find(item => item.field === 'nhsps_ea_code')"
+                @submit="save"
+                @input="checkNhspsEaCode"
+                @blur="checkNhspsEaCode"
+              />
+              
               <!-- <template v-if="isOOH">
                 <AppInput
                   v-model="form.national_insurance_number"
@@ -567,11 +580,13 @@ import AppButton from "@/components/Base/AppButton"
 import AppFormError from "@/components/Base/AppFormError"
 import AppLoading from "@/components/Base/AppLoading"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+
 export default {
   transition: {
     name: "fade",
     mode: "out-in",
   },
+
   components: {
     AppInput,
     AppDate,
@@ -580,6 +595,7 @@ export default {
     AppLoading,
     AppConfirmationModal,
   },
+
   data () {
     return {
       // surgery: null,
@@ -610,7 +626,6 @@ export default {
         national_insurance_number: null,
         sd_number: null,
         paying_reference: null,
-        ea_code: null,
         professional_nhs_expenses: 0,
         percentage_rate: 0,
         section_scheme_year: null,
@@ -618,15 +633,26 @@ export default {
         added_early_retirement_contributions: 0,
         nhsps_employer_contributions: 0,
         nhs_pension_scheme_employing_authority_name: null,
+
+        pcse_ea_code: '',
+        nhsps_ea_code: '',
       },
       name: "",
       formError: [],
+
+      practice: null,
+      practice_types: [],
+      mandatory_trainings: [],
+      profession_compliance_categories: [],
+      practice_other_mandatory_trainings: [],
     }
   },
+
   computed: {
     authPermissions () {
       return this.$store.getters["permissions"]
     },
+
     empty_profession_compliance_category_ids: {
       get () {
         return this.profession_compliance_categories
@@ -644,6 +670,7 @@ export default {
             return profession_compliance_category.id
           })
       },
+
       set (empty_profession_compliance_category_ids) {
         this.form.practice_profession_compliance_category_compliance_documents = this.form.practice_profession_compliance_category_compliance_documents.filter(
           value => {
@@ -659,6 +686,7 @@ export default {
         )
       },
     },
+
     schemeYearLists () {
       let defaultDate = 2020
       let currentDate = this.$moment().year()
@@ -677,21 +705,25 @@ export default {
       return lists
     },
   },
+
   watch: {
     modal (value) {
       value
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "auto")
     },
+
     "form.practice_type_id" (newValue) {
       this.isOOH = newValue.includes(8) ? true : false
     },
   },
+
   async asyncData ({ app, store, redirect, error, }) {
     if (app.$auth.user.domain === "Practice") {
       let permissions = app.$auth.user.practice_detail.role.permissions.map(
         permission => permission.name
       )
+
       if (permissions.includes("View Profile Practice")) {
         try {
           const [
@@ -788,6 +820,7 @@ export default {
           }
         } catch (err) {
           console.log("err", err.response || err)
+
           if (err.response.data.message) {
             store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -795,7 +828,9 @@ export default {
               text: [`${err.response.data.message}`,],
             })
           }
+
           error({ statusCode: 401, message: err.response.data.message, })
+
           throw err
         }
       } else if (permissions.includes("View Profile Users")) {
@@ -807,51 +842,96 @@ export default {
       }
     }
   },
+
   mounted () {
-    this.form.phone_number = this.practice.phone_number
-    this.form.report_to = this.practice.report_to
-    this.form.email = this.practice.email
-    this.form.extra_information = this.practice.extra_information
-    this.practice.practice_types.forEach(item => {
-      this.form.practice_type_id.push(item.id)
-    })
-    this.isOOH = this.form.practice_type_id.includes(8) ? true : false
-    this.practice.mandatory_trainings.forEach(item => {
-      this.form.mandatory_training_id.push(item.id)
-    })
-    this.practice.other_mandatory_trainings.forEach(item => {
-      this.form.other_mandatory_training_id.push(item.id)
-    })
-    this.form.use_variation_terms = this.practice.use_variation_terms
-    this.form.vat_registered = this.practice.vat_registered
-    this.form.vat_number = this.practice.vat_number
-    this.form.tax_year_end_date = this.practice.tax_year_end_date
-    this.form.account_name = this.practice.account_name
-    this.form.bank_name = this.practice.bank_name
-    this.form.sort_code = this.practice.sort_code
-    this.form.account_number = this.practice.account_number
-    this.form.practice_profession_compliance_category_compliance_documents = this.practice.practice_profession_compliance_category_compliance_documents.map(
-      item => {
-        return {
-          profession_compliance_category_id:
-            item.profession_compliance_category_id,
-          compliance_document_id: item.compliance_document_id,
+    if (this.practice) {
+      this.form.phone_number = this.practice.phone_number
+      this.form.report_to = this.practice.report_to
+      this.form.email = this.practice.email
+      this.form.extra_information = this.practice.extra_information
+      this.practice.practice_types.forEach(item => {
+        this.form.practice_type_id.push(item.id)
+      })
+      this.isOOH = this.form.practice_type_id.includes(8) ? true : false
+      this.practice.mandatory_trainings.forEach(item => {
+        this.form.mandatory_training_id.push(item.id)
+      })
+      this.practice.other_mandatory_trainings.forEach(item => {
+        this.form.other_mandatory_training_id.push(item.id)
+      })
+      this.form.use_variation_terms = this.practice.use_variation_terms
+      this.form.vat_registered = this.practice.vat_registered
+      this.form.vat_number = this.practice.vat_number
+      this.form.tax_year_end_date = this.practice.tax_year_end_date
+      this.form.account_name = this.practice.account_name
+      this.form.bank_name = this.practice.bank_name
+      this.form.sort_code = this.practice.sort_code
+      this.form.account_number = this.practice.account_number
+      this.form.practice_profession_compliance_category_compliance_documents = this.practice.practice_profession_compliance_category_compliance_documents.map(
+        item => {
+          return {
+            profession_compliance_category_id:
+              item.profession_compliance_category_id,
+            compliance_document_id: item.compliance_document_id,
+          }
         }
-      }
-    )
-    this.form.national_insurance_number = this.practice.national_insurance_number
-    this.form.sd_number = this.practice.sd_number
-    this.form.paying_reference = this.practice.paying_reference
-    this.form.ea_code = this.practice.ea_code
-    this.form.professional_nhs_expenses = this.practice.professional_nhs_expenses
-    this.form.percentage_rate = this.practice.percentage_rate
-    this.form.section_scheme_year = this.practice.section_scheme_year
-    this.form.added_year_contributions = this.practice.added_year_contributions
-    this.form.added_early_retirement_contributions = this.practice.added_early_retirement_contributions
-    this.form.nhsps_employer_contributions = this.practice.nhsps_employer_contributions
-    this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name
+      )
+      this.form.national_insurance_number = this.practice.national_insurance_number
+      this.form.sd_number = this.practice.sd_number
+      this.form.paying_reference = this.practice.paying_reference
+      this.form.professional_nhs_expenses = this.practice.professional_nhs_expenses
+      this.form.percentage_rate = this.practice.percentage_rate
+      this.form.section_scheme_year = this.practice.section_scheme_year
+      this.form.added_year_contributions = this.practice.added_year_contributions
+      this.form.added_early_retirement_contributions = this.practice.added_early_retirement_contributions
+      this.form.nhsps_employer_contributions = this.practice.nhsps_employer_contributions
+      this.form.nhs_pension_scheme_employing_authority_name = this.practice.nhs_pension_scheme_employing_authority_name
+
+      this.form.pcse_ea_code = this.practice.pcse_ea_code || ''
+      this.form.nhsps_ea_code = this.practice.nhsps_ea_code || ''
+    }
   },
+
   methods: {
+    sortFormError () {
+      const fields = [
+        'pcse_ea_code',
+        'nhsps_ea_code',
+      ]
+
+      this.formError = this.formError.sort((a, b) => fields.indexOf(a.field) - fields.indexOf(b.field))
+    },
+
+    checkPcseEaCode () {
+      this.formError = this.formError.filter(formError => formError.field !== 'pcse_ea_code')
+
+      if (!this.form.pcse_ea_code || !this.form.pcse_ea_code.trim()) {
+        this.formError.push({
+          field: 'pcse_ea_code',
+          message: 'PCSE EA Code is required.',
+          validation: 'required',
+        })
+        
+        this.sortFormError()
+        return
+      }
+    },
+
+    checkNhspsEaCode () {
+      this.formError = this.formError.filter(formError => formError.field !== 'nhsps_ea_code')
+
+      if (!this.form.nhsps_ea_code || !this.form.nhsps_ea_code.trim()) {
+        this.formError.push({
+          field: 'nhsps_ea_code',
+          message: 'NHSPS EA Code is required.',
+          validation: 'required',
+        })
+        
+        this.sortFormError()
+        return
+      }
+    },
+
     addList (payload) {
       this.$axios
         .$post(`/api/v1/practice/other-mandatory-training`, { name: payload, })
@@ -1020,6 +1100,7 @@ export default {
           this.input_file_loading = false
         })
     },
+
     save () {
       this.formError = []
       let notRequired = [
@@ -1028,7 +1109,6 @@ export default {
         "vat_registered",
         "practice_profession_compliance_category_compliance_documents",
         "other_mandatory_training_id",
-        "ea_code",
         "national_insurance_number",
         "sd_number",
         "paying_reference",

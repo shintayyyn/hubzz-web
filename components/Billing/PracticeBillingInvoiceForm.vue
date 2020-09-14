@@ -39,7 +39,7 @@
       </div>
 
       <div
-        v-if="propInvoice && propInvoice.last_disputed_by === 'Practice'"
+        v-if="propInvoice && propInvoice.last_disputed_by === 'Practice' && !propInvoice.approved"
         class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
       >
         DISPUTED - Awaiting Locum Reply
@@ -157,7 +157,10 @@
             </p>
           </div>
           
-          <div v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))" class="flex flex-wrap justify-between">
+          <div
+            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+            class="flex flex-wrap justify-between"
+          >
             <p class="text-sm w-1/2">
               Form Type:
             </p>
@@ -177,7 +180,10 @@
             </p>
           </div>
 
-          <div v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)" class="flex flex-wrap justify-between">
+          <div
+            v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+            class="flex flex-wrap justify-between"
+          >
             <p class="text-sm w-1/2">
               GENERATE FORM:
             </p>
@@ -222,7 +228,10 @@
             </div>
           </template>
 
-          <div v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))" class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300">
+          <div
+            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+            class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
+          >
             <p class="text-sm w-1/2">
               PENSION AMOUNT:
             </p>
@@ -434,6 +443,7 @@ export default {
       type: Object,
       default: () => null,
     },
+
     propId: {
       type: [String, Number,],
       default: () => null,
@@ -769,16 +779,15 @@ export default {
     this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
     this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
 
-    // this.getPracticeProfile();
+    this.getPracticeProfile()
   },
 
   methods: {
-    // getPracticeProfile() {
-    //   this.$axios.$get(`/api/v1/practice/me/practice-profile`).then(res => {
-    //     this.practice =
-    //       res.data && res.data.practice ? res.data.practice : null;
-    //   });
-    // },
+    getPracticeProfile () {
+      this.$axios.get(`/api/v1/practice/me/practice-profile`)
+        .then(response => this.practice = response.data.data.practice)
+    },
+
     getSchedule (
       schedule,
       total_gross_locum_wages,
@@ -868,7 +877,7 @@ export default {
     async toggleModal (approved) {
       if (this.propInvoice.ooh) {
         this.toggle_modal = true
-        this.form.ea_code = null
+        this.form.ea_code = this.practice ? this.practice.pcse_ea_code : ''
         this.form.national_insurance_number = null
         this.form.sd_number = null
         this.form.paying_reference = null
@@ -995,19 +1004,22 @@ export default {
   },
 }
 </script>
+
 <style scoped>
-.accept-modal {
-  position: fixed;
-  background-color: white;
-  z-index: 512;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.items-table {
-  width: 733px;
-}
-.bg-gray {
-  background-color: #707070;
-}
+  .accept-modal {
+    position: fixed;
+    background-color: white;
+    z-index: 512;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .items-table {
+    width: 733px;
+  }
+
+  .bg-gray {
+    background-color: #707070;
+  }
 </style>
