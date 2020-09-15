@@ -121,11 +121,12 @@
 
           <AppInput
             v-model="practiceForm.memorable_number"
-            type="text"
+            type="number"
             label="Memorable 6 digit number"
             placeholder="Your memorable number"
             :error="formError.find(error => error.field === 'memorable_number')"
             required
+            :limit="6"
           />
 
           <div class="text-left mt-5">
@@ -342,11 +343,12 @@
 
       <AppInput
         v-model="locumForm.memorable_number"
-        type="text"
+        type="number"
         label="Memorable 6 digit number"
         placeholder="Your memorable number"
         :error="formError.find(error => error.field === 'memorable_number')"
         required
+        :limit="6"
       />
 
       <div class="text-left mt-5">
@@ -571,6 +573,13 @@ export default {
           [{ field: "address_line_3", display: "City / Town / District", },]
         )
 
+        if (this.practiceForm.memorable_number && this.practiceForm.memorable_number.length !== 6) {
+          this.formError.push({
+            field: "memorable_number",
+            message: "Memorable number should be 6 digits",
+          })
+        }
+
         if (this.formError.length > 0) {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -608,6 +617,13 @@ export default {
           "work_number",
           "address_line_2",
         ])
+
+        if (this.locumForm.memorable_number && this.locumForm.memorable_number.length !== 6) {
+          this.formError.push({
+            field: "memorable_number",
+            message: "Memorable number should be 6 digits",
+          })
+        }
 
         if (this.formError.length > 0) {
           this.$store.commit("SET_NOTIFICATION", {

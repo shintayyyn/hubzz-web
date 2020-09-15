@@ -31,6 +31,20 @@
           />
         </div>
 
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="dateStart"
+            label="Date Start"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppDate
+            v-model="dateEnd"
+            label="Date End"
+          />
+        </div>
+
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <AppButton
             label="Reset"
@@ -121,12 +135,14 @@ import AppButton from '@/components/Base/AppButton'
 import AppInput from '@/components/Base/AppInput'
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
+import AppDate from '@/components/Base/AppDate'
 export default {
   components: {
     AppButton,
     AppInput,
     ReportTable,
     ReportPagination,
+    AppDate,
   },
 
   data () {
@@ -164,6 +180,8 @@ export default {
       activePage: 1,
 
       practiceNameIncludes: '',
+      dateStart: '',
+      dateEnd: '',
     }
   },
 
@@ -253,6 +271,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
+        {
+          title: 'Total Hours Worked',
+          key: 'hours_in_minutes',
+          sort_key: 'hours_in_minutes',
+          column: (item) => item.hours_in_minutes ? `${(parseFloat(item.hours_in_minutes)/60).toFixed(2)} Hours` : 'N/A',
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
       ]
     },
 
@@ -284,11 +311,15 @@ export default {
   mounted () {      
     const {
       practice_name_includes: practiceNameIncludes,
+      date_start: dateStart,
+      date_end: dateEnd,
       order_by: orderBy = [],
       page,
     } = this.$route.query
     
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
+    this.dateStart = dateStart ? dateStart : ''
+    this.dateEnd = dateEnd ? dateEnd : ''
 
     this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
 
@@ -300,7 +331,8 @@ export default {
   methods: {
     filterReset () {
       this.practiceNameIncludes = ''
-
+      this.dateStart = ''
+      this.dateEnd = ''
       this.filterSearch()
     },
 
@@ -310,6 +342,8 @@ export default {
       const query = {
         ...this.$route.query,
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy ? this.orderBy : undefined,
         page: undefined,
       }
@@ -363,6 +397,8 @@ export default {
       this.locumPracticesWorkedReports = []
       let params = {
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        date_end: this.dateEnd ? this.dateEnd : undefined,
       }
       Promise.all([
         this.$axios.get('/api/v1/locum/locum-practices-worked-reports/count', {
@@ -402,6 +438,8 @@ export default {
     downloadPDF () {
       let params = {
         practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        date_start: this.dateStart ? this.dateStart : undefined,
+        date_end: this.dateEnd ? this.dateEnd : undefined,
         order_by: this.orderBy,
       }
       this.downloading = true

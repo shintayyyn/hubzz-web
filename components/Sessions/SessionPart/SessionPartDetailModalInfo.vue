@@ -33,12 +33,8 @@
             DATE
           </div>
 
-          <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
-            COMPLETED TIME
-          </div>
-
-          <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
-            FINAL TIME
+          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
+            {{ job_part.status === 'Approved' ? 'FINAL TIME' : 'COMPLETED TIME' }}
           </div>
 
           <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
@@ -68,12 +64,8 @@
               {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
             </div>
 
-            <div v-if="job_part && job_part.locum_invoiceable && job_part.status !== 'Approved'" class="w-1/6">
-              {{ sched.final_time_start }} - {{ sched.final_time_end }}
-            </div>
-
-            <div v-if="job_part && job_part.locum_invoiceable && job_part.status === 'Approved'" class="w-1/6">
-              {{ sched.approved_time_start }} - {{ sched.approved_time_end }}
+            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
+              {{ job_part.status === 'Approved' ? `${sched.approved_time_start} - ${sched.approved_time_end}` : `${sched.final_time_start} - ${sched.final_time_end}` }}
             </div>
 
             <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
@@ -85,11 +77,11 @@
             </div>
 
             <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6 text-center">
-              {{ `${isAbsent(sched) ? 'Absent' : isLate(sched) ? 'Late' : 'N/A'}` }}
+              {{ job_part.status === 'Approved' ? sched.approved_remarks : sched.completed_remarks }}
             </div>
             
             <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-              {{ `${isAbsent(sched) && sched.absent_reason ? sched.absent_reason : isLate(sched) && sched.late_hours_reason ? sched.late_hours_reason : 'N/A'}` }}
+              {{ job_part.status === 'Approved' ? sched.approved_reason : sched.completed_reason }}
             </div>
           </div>
         </div>
@@ -723,24 +715,6 @@ export default {
   methods: {
     convertDoc (document) {
       return `https://docs.google.com/gview?url=${document}&embedded=true`
-    },
-
-    convertTimeToMinutes (payload) {
-      let hour = parseInt(payload.split(":")[0]) * 60
-      let minute = parseInt(payload.split(":")[1])
-
-      return hour + minute
-    },
-
-    isAbsent (payload) {
-      return payload.absent > 0
-    },
-
-    isLate (payload) {
-      return (
-        this.convertTimeToMinutes(payload.final_time_start)
-				> this.convertTimeToMinutes(payload.time_start)
-      )
     },
   },
 }

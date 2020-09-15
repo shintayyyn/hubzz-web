@@ -71,14 +71,12 @@
           </div>
         </div>
 
-        <template v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))">
-          <div
-            v-if="(propInvoice && propInvoice.disputed_items_count > 0 && waitingForPracticeReply(propInvoice.items[0])) && propInvoice.status !== 'Draft'"
-            class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
-          >
-            DISPUTED - Awaiting Practice Reply
-          </div>
-        </template>
+        <div
+          v-if="propInvoice && propInvoice.last_disputed_by === 'Locum' && propInvoice.issued && !propInvoice.approved"
+          class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
+        >
+          DISPUTED - Awaiting Practice Reply
+        </div>
 
         <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
           INVOICE DETAILS
@@ -130,7 +128,7 @@
             :shiftErrors="shiftErrors"
             toInvoice
             :invoiceDetails="propInvoice"
-            :toDisplay="propInvoice && ['Approved', 'Issued', 'Paid'].includes(propInvoice.status)"
+            :toDisplay="propInvoice && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum')"
             :type="'invoice'"
             :invoiceStatus="$route.query.status"
             @getSchedule="getSchedule"
@@ -231,7 +229,7 @@
               </p>
             </div>
 
-            <template v-if="propInvoice && ['Approved', 'Paid'].includes(propInvoice.status)">
+            <template v-if="propInvoice && propInvoice.approved">
               <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   NI / PAYE:
@@ -321,7 +319,7 @@
 
       <div class="flex flex-wrap items-center mb-6">
         <AppButton
-          v-if="propJobPart || (propInvoice && !['Approved','Paid', 'Issued'].includes(propInvoice.status))"
+          v-if="propJobPart || (propInvoice && !propInvoice.approved && propInvoice.last_disputed_by === 'Practice')"
           class="m-1"
           :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
           :inStyle="'padding:5px 14px;font-size:1em'"
@@ -339,7 +337,7 @@
         />
 
         <AppButton
-          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
+          v-if="propInvoice && !propJobPart && propInvoice.issued"
           class="m-1"
           :label="'View as PDF'"
           :inStyle="'padding:5px 14px;font-size:1em'"
@@ -454,7 +452,7 @@ export default {
         && ((!this.propInvoice.ooh && this.propInvoice.generate_form)
           || this.propInvoice.ooh)
       ) {
-        if (["Approved", "Paid",].includes(this.propInvoice.status)) {
+        if (this.propInvoice.approved) {
           if (this.propInvoice.locum_form_a_id) {
             return this.propInvoice.locum_form_a_pension_amount
           }
@@ -464,7 +462,7 @@ export default {
         }
 
         // disputed and invoiced and draft
-        if (!["Approved", "Paid",].includes(this.propInvoice.status)) {
+        if (!this.propInvoice.approved) {
           if (!this.propInvoice.ooh) {
             return this.total_work_payment * 0.9 * 0.1438
           }
