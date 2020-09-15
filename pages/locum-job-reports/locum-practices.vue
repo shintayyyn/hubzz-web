@@ -34,14 +34,14 @@
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="dateStart"
-            label="Paid At Date Start"
+            label="Date Start"
           />
         </div>
 
         <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
           <AppDate
             v-model="dateEnd"
-            label="Paid At Date End"
+            label="Date End"
           />
         </div>
 
@@ -135,12 +135,14 @@ import AppButton from '@/components/Base/AppButton'
 import AppInput from '@/components/Base/AppInput'
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
+import AppDate from '@/components/Base/AppDate'
 export default {
   components: {
     AppButton,
     AppInput,
     ReportTable,
     ReportPagination,
+    AppDate,
   },
 
   data () {
@@ -316,6 +318,8 @@ export default {
     } = this.$route.query
     
     this.practiceNameIncludes = practiceNameIncludes ? practiceNameIncludes : ''
+    this.dateStart = dateStart ? dateStart : ''
+    this.dateEnd = dateEnd ? dateEnd : ''
 
     this.orderBy = Array.isArray(orderBy) ? orderBy : [orderBy,]
 
