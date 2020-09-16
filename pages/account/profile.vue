@@ -780,8 +780,8 @@ export default {
         },
         {
           name: "GpHc reference check",
-          limit: 8,
-          integer: false,
+          limit: 7,
+          integer: true,
         },
         {
           name: "Medical Performers List Number",
@@ -800,8 +800,8 @@ export default {
         },
         {
           name: "GpHc Number",
-          limit: 8,
-          integer: false,
+          limit: 7,
+          integer: true,
         },
       ]
     },
@@ -1393,10 +1393,10 @@ export default {
         complianceDocumentName === 'GpHc reference check'
         || complianceDocumentName === 'GpHc Number'
       ) {
-        if (referenceLocumComplianceDocument.reference.length < 8) {
+        if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
             field: fieldName,
-            message: `${complianceDocumentName} must be 8 characters.`,
+            message: `${complianceDocumentName} must be 7 characters.`,
             validation: 'limit',
           })
 
