@@ -186,7 +186,7 @@ export default {
           key: 'index',
           sort_key: null,
           column: (item, index) => this.offset + index + 1,
-          justify: 'end',
+          justify: 'start',
           flexGrow: 0,
           flexShrink: 0,
         },
