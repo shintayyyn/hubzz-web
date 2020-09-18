@@ -12,7 +12,7 @@
       <template v-slot:actions="slotProps">
         <div
           v-if="slotProps.item.info"
-        >{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
+        >{{slotProps.item.info.last_uploaded_at_in_gb_formatted}}</div>
       </template>
       <template v-slot:actions-button="slotProps">
         <AppButton
@@ -37,7 +37,7 @@
         <template v-slot:actions="slotProps">
           <div
             v-if="slotProps.item.info"
-          >{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
+          >{{slotProps.item.info.last_uploaded_at_in_gb_formatted}}</div>
         </template>
         <template v-slot:actions-button>
           <AppButton
@@ -59,7 +59,6 @@
   </section>
 </template>
 <script>
-import PracticeDocumentDetailModal from "@/components/Profile/PracticeDocumentDetailModal";
 import AppTable from "@/components/Base/AppTable";
 import AppButton from "@/components/Base/AppButton";
 export default {
@@ -68,7 +67,6 @@ export default {
     mode: "out-in"
   },
   components: {
-    PracticeDocumentDetailModal,
     AppTable,
     AppButton
   },

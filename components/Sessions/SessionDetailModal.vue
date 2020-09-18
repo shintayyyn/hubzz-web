@@ -117,6 +117,35 @@
       <div class="flex flex-wrap justify-start">
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
+            <div class="flex flex-col">
+              <div
+                v-if="job.status === 'Rejected'"
+                class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
+              >
+                <template v-if="job.status === 'Rejected'">
+                  <div class="leading-tight pb-4">
+                    <p class="font-bold text-sm sm:text-md">
+                      Reason for Rejection
+                    </p>
+                    <p
+                      class="text-xs sm:text-sm break-words"
+                    >
+                      {{ job.rejected_reason ? job.rejected_reason : '(none)' }}
+                    </p>
+                  </div>
+                  <div class="leading-tight pb-4">
+                    <p class="font-bold text-sm sm:text-md">
+                      Date of Rejection
+                    </p>
+                    <p
+                      class="text-xs sm:text-sm"
+                    >
+                      {{ job.rejected_at_in_gb_formatted }}
+                    </p>
+                  </div>
+                </template>
+              </div>
+            </div>
             <SessionDetailModalInfo v-if="toEdit === false" :job="job" />
             <div
               v-if="job.status === 'Pending' && practice.type == 'Hub' && toEdit === false"

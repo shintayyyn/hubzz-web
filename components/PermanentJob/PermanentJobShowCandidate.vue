@@ -109,10 +109,10 @@
             <div
               class="text-xs sm:text-sm mb-4 md:mb-8"
             >{{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}</div>
-            <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
+            <!-- <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
             <div
               class="text-xs sm:text-sm mb-4 md:mb-8"
-            >{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>
+            >{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div> -->
             <div class="font-bold text-sm sm:text-md">Specialty</div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
               <div
@@ -149,7 +149,7 @@
                   class="border-none"
                   :options="options"
                   :content="permanentJobApp && permanentJobApp.job_application_pitch ? 
-                  permanentJobApp.job_application_pitch : 'N/A'"
+                    permanentJobApp.job_application_pitch : 'N/A'"
                   disabled
                 />
               </no-ssr>
@@ -219,8 +219,12 @@
 
             <div class="font-bold text-sm sm:text-md">Mandatory Trainings</div>
             <div class="flex flex-col mb-4 md:mb-8">
+              <template v-if="mandatoryTrainings.filter(item => item.locum_other_mandatory_trainings.file).length <= 0">
+                <span class="text-sm">(none)</span>
+              </template>
               <div
-                v-for="item in mandatoryTrainings.filter(item => item.file)"
+                v-for="item in mandatoryTrainings.filter(item => item.locum_other_mandatory_trainings.file)"
+                v-else
                 :key="item.id"
                 class="flex flex-row items-center mt-2 cursor-pointer hover:underline"
               >
@@ -228,15 +232,12 @@
                   <svgicon name="cloud-download" height="24" width="24" />
                 </span>
                 <a
-                  :href="item.file.url"
-                  :download="item.file.filename"
+                  :href="item.locum_other_mandatory_trainings.file.url"
+                  :download="item.locum_other_mandatory_trainings.file.filename"
                   class="px-2 text-sm leading-tight"
-                  @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-                >{{ item.mandatory_training.name }}</a>
+                  @click.stop.prevent="downloadItem(item.locum_other_mandatory_trainings.file.url, item.locum_other_mandatory_trainings.file.filename)"
+                >{{ item.locum_other_mandatory_trainings.name }}</a>
               </div>
-              <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
-                <span class="text-sm">(none)</span>
-              </template>
             </div>
 
             <div class="font-bold text-sm sm:text-md">Preferred rates</div>
@@ -361,7 +362,7 @@ export default {
     this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(
       this.user.locum_detail.profession.profession_compliance_category_id
     );
-    this.mandatoryTrainings = this.user.locum_detail.mandatory_trainings;
+    this.mandatoryTrainings = this.user.locum_detail.other_mandatory_trainings;
     this.permanentJobApp = this.permanent_job_application;
   },
 

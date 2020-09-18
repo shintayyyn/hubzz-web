@@ -159,8 +159,11 @@
             <p class="font-bold">
               Salary
             </p>
-            <p class="pl-2 pb-3">
-              {{ permanent_job ? '£ ' + permanent_job.salary_amount : 'N/A' }}
+            <p
+              v-if="permanent_job && permanent_job.salary_amount !== 0"
+              class="pl-2 pb-3" 
+            >
+              £ {{ permanent_job.salary_amount | currency }}
             </p>
             <p class="font-bold">
               Salary Description
