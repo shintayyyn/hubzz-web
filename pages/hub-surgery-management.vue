@@ -38,3 +38,42 @@
     <nuxt-child />
   </section>
 </template>
+<script>
+export default {
+  async asyncData ({ app, error, store, }) {
+    try{
+      let response = await app.$axios.$get(`/api/v1/practice/me/practice`)
+      const practice = response.data.practice
+      console.log('banana practice', practice)
+      if (practice.status !== 'Active' && practice.status !== 'Dormant') {
+        error({
+          statusCode: 403,
+          message: 'This function is unavailable on inactive practice.',
+        })
+
+        return
+      }
+      if (practice.type !== 'Hub') {
+        error({
+          statusCode: 403,
+          message: 'This function is unavailable on this practice.',
+        })
+
+        return
+      }
+    } catch (err){
+      error({ statusCode: 404 })
+      store.commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "danger",
+        text: "Something went wrong!"
+      })
+      console.log("get parent practice error!!", err)
+    }
+    // return
+  }
+}
+</script>
+
+
+

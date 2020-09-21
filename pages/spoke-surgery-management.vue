@@ -52,17 +52,35 @@ export default {
       );
     }
   },
-  async asyncData({ app, route, store }) {
+  async asyncData({ app, route, store, error }) {
     try {
       let response = await app.$axios.$get(`/api/v1/practice/me/practice`);
       const practice = response.data.practice;
 
+      if (practice.status !== 'Active' && practice.status !== 'Dormant') {
+        error({
+          statusCode: 403,
+          message: 'This function is unavailable on inactive practice.',
+        })
+
+        return
+      }
+      if (practice.type !== 'Spoke' && practice.type !== 'Stand Alone') {
+        error({
+          statusCode: 403,
+          message: 'This function is unavailable on this practice.',
+        })
+
+        return
+      }
+
       response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery`);
-      const parent_surgery = response.data.practice;
+      const parent_surgery = response.data.practice
+      
 
       return {
         practice,
-        parent_surgery
+        parent_surgery,
       };
     } catch (err) {
       console.log("something went wrong", err);
