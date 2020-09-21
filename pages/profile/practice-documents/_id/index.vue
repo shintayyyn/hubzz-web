@@ -31,7 +31,7 @@
 						<p class="mt-5 mr-20 font-semibold">File last uploaded</p>
 						<p
 							class="mt-2 text-base"
-						>{{practice_document.file ? $moment(practice_document.file.created_at).utc().format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+						>{{practice_document.last_uploaded_at_in_gb_formatted ? practice_document.last_uploaded_at_in_gb_formatted : null}}</p>
 						<!-- <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
             <p
               class="mt-2 text-base"
@@ -71,6 +71,7 @@ export default {
 				response.data && response.data.practice_document
 					? response.data.practice_document
 					: null;
+			console.log('asdasd', practice_document)
 			return {
 				practice_document
 			};
