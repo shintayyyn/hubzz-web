@@ -105,6 +105,22 @@
         />
       </div>
 
+      <div class="w-full flex flex-col flex-wrap items-left text-lg font-semibold">
+        <div>
+          <!-- {{`Total Nett Amount: £${sumNettAmount | currency}`}} -->
+          Total Nett Amount: £{{ sumNettAmount | currency }}
+        </div>
+        <div>
+          Total NI Amount: £{{ sumNiAmount | currency }}
+        </div>
+        <div>
+          Total PAYE Amount: £{{ sumPayeAmount | currency }}
+        </div>
+        <div>
+          Total Amount: £{{ sumTotalAmount | currency }}
+        </div>
+      </div>
+
       <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
         <div class="md:px-1 flex flex-wrap w-full justify-end">
           <button
@@ -142,6 +158,10 @@ export default {
       loading: false,
       count: 0,
       locumInvoiceTaxReports: [],
+      sumNettAmount: 0,
+      sumNiAmount: 0,
+      sumPayeAmount: 0,
+      sumTotalAmount: 0,
       orderBy: [],
       orderByProcessed: '',
       orderBys: [
@@ -403,7 +423,11 @@ export default {
         ] = results
 
         this.count = count
-        this.locumInvoiceTaxReports = locumInvoiceTaxReports
+        this.locumInvoiceTaxReports = locumInvoiceTaxReports.deductions
+        this.sumNettAmount = locumInvoiceTaxReports.sum_nett_amount ? locumInvoiceTaxReports.sum_nett_amount.toFixed(2) : 0
+        this.sumNiAmount = locumInvoiceTaxReports.sum_ni_amount ? locumInvoiceTaxReports.sum_ni_amount.toFixed(2) : 0
+        this.sumPayeAmount = locumInvoiceTaxReports.sum_paye_amount ? locumInvoiceTaxReports.sum_paye_amount.toFixed(2) : 0
+        this.sumTotalAmount = locumInvoiceTaxReports.sum_total_amount ? locumInvoiceTaxReports.sum_total_amount.toFixed(2) : 0
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err)
