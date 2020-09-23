@@ -115,8 +115,18 @@
 <script>
 export default {
   middleware: 'isVerified',
-  async asyncData ({ app, error, }) {
+  async asyncData ({ app, error, store, }) {
     try {
+      // const authPermissions = store.getters["permissions"]
+
+      // if (authPermissions.includes('View Permanent Job') === false) {
+      //   error({
+      //     statusCode: 403,
+      //     message: 'You are not authorized to view this page.',
+      //   })
+      //   return
+      // }
+
       if (app.$auth.user.domain === 'Practice' 
         && app.$auth.user.practice_detail 
         && app.$auth.user.practice_detail.practice

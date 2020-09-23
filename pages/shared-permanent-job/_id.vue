@@ -32,8 +32,11 @@
 					</div>
 					<p class="font-bold">Salary</p>
 					<p
+						 v-if="sharedPermanentJob && sharedPermanentJob.salary_amount !== 0"
 						class="pl-2 pb-3"
-					>{{ sharedPermanentJob && sharedPermanentJob.salary_amount > 0 ? '$' + sharedPermanentJob.salary_amount : 'N/A' }}</p>
+					>
+					£ {{ sharedPermanentJob.salary_amount | currency }}
+					</p>
 
 					<p class="font-bold">Salary Description</p>
 					<p
