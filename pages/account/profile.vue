@@ -1600,7 +1600,7 @@ export default {
           })
         }
 
-        if (this.form.account_number && this.form.account_number.length < 8) {
+        if (this.form.account_number && this.form.account_number.length !== 8) {
           this.formError.push({
             field: "account_number",
             message: "Account number should be 8 digits",
