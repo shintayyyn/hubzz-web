@@ -70,8 +70,15 @@
       :limit="6"
     />
 
-    <AppInput v-model="form.account_number" :type="'text'" :name="'account_number'" :label="'Account number'"
-              :error="formError.find(item => item.field === 'account_number')" required
+    <AppInput
+      v-model="form.account_number"
+      :type="'text'"
+      :name="'account_number'"
+      :label="'Account number'"
+      :error="formError.find(item => item.field === 'account_number')"
+      :limit="8"
+      required
+      @keydown="inputNumberOnly($event)"
     />
 
     <AppButton :label="'Save'" :inStyle="'padding:5px 14px;'" @click="save" />
@@ -148,6 +155,13 @@ export default {
         this.formError.push({
           field: "sort_code",
           message: "Sort Code should be 6 digits",
+        })
+      }
+
+      if (this.form.account_number && this.form.account_number.length < 8) {
+        this.formError.push({
+          field: "account_number",
+          message: "Account number should be 8 digits",
         })
       }
 
