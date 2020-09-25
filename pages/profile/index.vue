@@ -522,7 +522,9 @@
                 :name="'account_number'"
                 :label="'Account number'"
                 :error="formError.find(item => item.field === 'account_number')"
+                :limit="8"
                 required
+                @keydown="inputNumberOnly($event)"
               />
             </div>
           </div>
@@ -1160,6 +1162,13 @@ export default {
         this.formError.push({
           field: "sort_code",
           message: "Sort Code should be 6 digits",
+        })
+      }
+
+      if (this.form.account_number && this.form.account_number.length < 8) {
+        this.formError.push({
+          field: "account_number",
+          message: "Account number should be 8 digits",
         })
       }
 
