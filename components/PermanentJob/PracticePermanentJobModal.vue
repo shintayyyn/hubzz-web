@@ -164,12 +164,12 @@
                 <div v-if="showCancel === true" class="mt-2 w-full">
                   <AppInput
                     v-if="showCancel === true"
-                    v-model="approve_or_reject.rejection_reason"
+                    v-model="approve_or_reject.cancelled_reason"
                     :type="'textarea'"
                     :label="'Reason for Rejection'"
-                    :name="'rejection_reason'"
+                    :name="'cancelled_reason'"
                     :rows="3"
-                    :error="formError.find(item => item.field === 'rejection_reason')"
+                    :error="formError.find(item => item.field === 'cancelled_reason')"
                     :resize="false"
                   />
                   <AppButton
@@ -441,7 +441,7 @@ export default {
 
       approve_or_reject: {
         approved_or_rejected: "",
-        rejection_reason: ""
+        cancelled_reason: ""
       },
       showCancel: false,
 
@@ -863,7 +863,7 @@ export default {
 
       this.approve_or_reject.approved_or_rejected = approveReject
       if(approveReject === "Approved"){
-        notRequired.push("rejection_reason")
+        notRequired.push("cancelled_reason")
       }
       this.Validate(this.approve_or_reject, notRequired)
 
