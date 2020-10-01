@@ -551,6 +551,7 @@
                   :placeholder="''"
                   :error="formError.find(item => item.field === 'number_of_patients')"
                   required
+                  :limit="4"
                   @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
                 />
 
@@ -563,6 +564,7 @@
                   :in-style="'text-align:right;'"
                   :error="formError.find(item => item.field === 'duration_for_each_appointment')"
                   required
+                  :limit="4"
                   @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
                 />
 

@@ -174,6 +174,7 @@
                 :name="'pcse_ea_code'"
                 :label="'PCSE EA Code'"
                 :error="formError.find(item => item.field === 'pcse_ea_code')"
+                required
                 @submit="save"
                 @input="checkPcseEaCode"
                 @blur="checkPcseEaCode"
@@ -185,6 +186,7 @@
                 :name="'nhsps_ea_code'"
                 :label="'NHSPS EA Code'"
                 :error="formError.find(item => item.field === 'nhsps_ea_code')"
+                required
                 @submit="save"
                 @input="checkNhspsEaCode"
                 @blur="checkNhspsEaCode"

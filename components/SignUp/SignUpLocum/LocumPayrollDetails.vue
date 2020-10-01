@@ -86,10 +86,19 @@
               v-model="form.payroll_account_number"
               :type="'text'"
               :name="'payroll_account_number'"
-              :label="'Payroll Reference Number'"
+              :label="'Payroll Account Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
               required
               @blur="CheckEmptyField(form.payroll_account_number, 'payroll_account_number')"
+            />
+            <AppInput
+              v-model="form.payroll_reference_number"
+              :type="'text'"
+              :name="'payroll_reference_number'"
+              :label="'Payroll Reference Number'"
+              :error="formError.find(item => item.field === 'payroll_reference_number')"
+              required
+              @blur="CheckEmptyField(form.payroll_reference_number, 'payroll_reference_number')"
             />
           </template>
           <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
@@ -179,133 +188,137 @@
 import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
 let employmentTypes = [
-	{ label: "Self-Employed", value: "Self-Employed" },
-	{ label: "Limited Company", value: "Limited Company" }
+  { label: "Self-Employed", value: "Self-Employed", },
+  { label: "Limited Company", value: "Limited Company", },
 ]
 export default {
-	components: {
-		AppInput,
-		AppButton
-	},
-	data () {
-		return {
-			employmentTypes,
-			form: {
-				employment_type: "Self-Employed",
-				company_registration_number: "",
-				utr_number: "",
-				paid_under_payroll: false,
-				payroll_account_name: "",
-				payroll_bank_name: "",
-				payroll_sort_code: "",
-				payroll_account_number: "",
-				account_name: "",
-				bank_name: "",
-				sort_code: "",
-				account_number: "",
-				ir35: false,
-				claim_nhs: false,
-				nhs_number: ""
-			},
-			formError: []
-		}
-	},
-	computed: {
-		professionalDetails () {
-			return this.$store.getters["sign-up/professionalDetails"]
-		},
-		payrollDetails () {
-			return this.$store.getters["sign-up/payrollDetails"]
-		},
-		payrollFormError () {
-			return this.$store.getters["sign-up/payrollFormError"]
-		},
-		professionCategoryId () {
-			return this.$store.getters["sign-up/professionCategoryId"]
-		}
-	},
-	mounted () {
-		this.form.employment_type = this.payrollDetails.employment_type
-		this.form.company_registration_number = this.payrollDetails.company_registration_number
-		this.form.utr_number = this.payrollDetails.utr_number
-		this.form.paid_under_payroll = this.payrollDetails.paid_under_payroll
-		this.form.payroll_account_name = this.payrollDetails.payroll_account_name
-		this.form.payroll_bank_name = this.payrollDetails.payroll_bank_name
-		this.form.payroll_sort_code = this.payrollDetails.payroll_sort_code
-		this.form.payroll_account_number = this.payrollDetails.payroll_account_number
-		this.form.account_name = this.payrollDetails.account_name
-		this.form.bank_name = this.payrollDetails.bank_name
-		this.form.sort_code = this.payrollDetails.sort_code
-		this.form.account_number = this.payrollDetails.account_number
-		this.form.ir35 = this.payrollDetails.ir35
-		this.form.claim_nhs = this.payrollDetails.claim_nhs
-		this.form.nhs_number = this.payrollDetails.nhs_number
-		if (this.payrollFormError.length > 0) {
-			this.payrollFormError.forEach(item => {
-				this.formError.push(item)
-			})
-		}
-	},
-	methods: {
-		next () {
-			this.formError = []
-			let notRequired = [
-				"employment_type",
-				"paid_under_payroll",
-				"ir35",
-				"claim_nhs"
-			]
-			if (this.professionCategoryId === 2) {
-				this.form.ir35 = false
-				this.form.claim_nhs = false
-			}
-			if (this.form.employment_type === "Self-Employed") {
-				this.form.company_registration_number = ""
-				notRequired.push("company_registration_number")
-			}
-			if (this.form.employment_type === "Limited Company") {
-				this.form.utr_number = ""
-				notRequired.push("utr_number")
-			}
-			if (["false", false].includes(this.form.claim_nhs)) {
-				notRequired.push("nhs_number")
-				this.form.nhs_number = null
-			}
-			if (["false", false].includes(this.form.paid_under_payroll)) {
-				this.form.payroll_account_name = ""
-				this.form.payroll_bank_name = ""
-				this.form.payroll_sort_code = ""
-				this.form.payroll_account_number = ""
-				notRequired.push(
-					"payroll_account_name",
-					"payroll_bank_name",
-					"payroll_sort_code",
-					"payroll_account_number"
-				)
-			}
-			if (["true", true].includes(this.form.paid_under_payroll)) {
-				this.form.account_name = ""
-				this.form.bank_name = ""
-				this.form.sort_code = ""
-				this.form.account_number = ""
-				notRequired.push(
-					"account_name",
-					"bank_name",
-					"sort_code",
-					"account_number"
-				)
-			}
-			this.Validate(this.form, notRequired)
-			if (!this.formError.length) {
-				this.$store.commit("sign-up/SET_PAYROLL_DETAILS", this.form)
-				this.$store.commit("sign-up/SET_PAYROLL_DETAIL_FORM_ERROR", [])
+  components: {
+    AppInput,
+    AppButton,
+  },
+  data () {
+    return {
+      employmentTypes,
+      form: {
+        employment_type: "Self-Employed",
+        company_registration_number: "",
+        utr_number: "",
+        paid_under_payroll: false,
+        payroll_account_name: "",
+        payroll_bank_name: "",
+        payroll_sort_code: "",
+        payroll_account_number: "",
+        payroll_reference_number: "",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+        ir35: false,
+        claim_nhs: false,
+        nhs_number: "",
+      },
+      formError: [],
+    }
+  },
+  computed: {
+    professionalDetails () {
+      return this.$store.getters["sign-up/professionalDetails"]
+    },
+    payrollDetails () {
+      return this.$store.getters["sign-up/payrollDetails"]
+    },
+    payrollFormError () {
+      return this.$store.getters["sign-up/payrollFormError"]
+    },
+    professionCategoryId () {
+      return this.$store.getters["sign-up/professionCategoryId"]
+    },
+  },
+  mounted () {
+    this.form.employment_type = this.payrollDetails.employment_type
+    this.form.company_registration_number = this.payrollDetails.company_registration_number
+    this.form.utr_number = this.payrollDetails.utr_number
+    this.form.paid_under_payroll = this.payrollDetails.paid_under_payroll
+    this.form.payroll_account_name = this.payrollDetails.payroll_account_name
+    this.form.payroll_bank_name = this.payrollDetails.payroll_bank_name
+    this.form.payroll_sort_code = this.payrollDetails.payroll_sort_code
+    this.form.payroll_account_number = this.payrollDetails.payroll_account_number
+    this.form.payroll_reference_number = this.payrollDetails.payroll_reference_number
+    this.form.account_name = this.payrollDetails.account_name
+    this.form.bank_name = this.payrollDetails.bank_name
+    this.form.sort_code = this.payrollDetails.sort_code
+    this.form.account_number = this.payrollDetails.account_number
+    this.form.ir35 = this.payrollDetails.ir35
+    this.form.claim_nhs = this.payrollDetails.claim_nhs
+    this.form.nhs_number = this.payrollDetails.nhs_number
+    if (this.payrollFormError.length > 0) {
+      this.payrollFormError.forEach(item => {
+        this.formError.push(item)
+      })
+    }
+  },
+  methods: {
+    next () {
+      this.formError = []
+      let notRequired = [
+        "employment_type",
+        "paid_under_payroll",
+        "ir35",
+        "claim_nhs",
+      ]
+      if (this.professionCategoryId === 2) {
+        this.form.ir35 = false
+        this.form.claim_nhs = false
+      }
+      if (this.form.employment_type === "Self-Employed") {
+        this.form.company_registration_number = ""
+        notRequired.push("company_registration_number")
+      }
+      if (this.form.employment_type === "Limited Company") {
+        this.form.utr_number = ""
+        notRequired.push("utr_number")
+      }
+      if (["false", false,].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number")
+        this.form.nhs_number = null
+      }
+      if (["false", false,].includes(this.form.paid_under_payroll)) {
+        this.form.payroll_account_name = ""
+        this.form.payroll_bank_name = ""
+        this.form.payroll_sort_code = ""
+        this.form.payroll_account_number = ""
+        this.form.payroll_reference_number = ""
+        notRequired.push(
+          "payroll_account_name",
+          "payroll_bank_name",
+          "payroll_sort_code",
+          "payroll_account_number",
+          "payroll_reference_number",
+        )
+      }
+      if (["true", true,].includes(this.form.paid_under_payroll)) {
+        this.form.account_name = ""
+        this.form.bank_name = ""
+        this.form.sort_code = ""
+        this.form.account_number = ""
+        notRequired.push(
+          "account_name",
+          "bank_name",
+          "sort_code",
+          "account_number"
+        )
+      }
+      this.Validate(this.form, notRequired)
+      if (!this.formError.length) {
+        this.$store.commit("sign-up/SET_PAYROLL_DETAILS", this.form)
+        this.$store.commit("sign-up/SET_PAYROLL_DETAIL_FORM_ERROR", [])
 
-				this.$store.commit(
-					"sign-up/SET_ACTIVE_COMPONENT",
-					"LocumCredentialDetails"
-				)
-			}
-		}
-	}
+        this.$store.commit(
+          "sign-up/SET_ACTIVE_COMPONENT",
+          "LocumCredentialDetails"
+        )
+      }
+    },
+  },
 }
 </script>

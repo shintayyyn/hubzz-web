@@ -1,356 +1,372 @@
 <template>
-	<div class="flex flex-row flex-wrap justify-start">
-		<AppFormError class="w-full" :formError="formError" v-if="formError.length > 0" />
+  <div class="flex flex-row flex-wrap justify-start">
+    <AppFormError v-if="formError.length > 0" class="w-full" :formError="formError" />
 
-		<div class="w-full md:w-1/2 py-2 md:px-2">
-			<p class="text-sm font-bold">Bank account</p>
-			<div class="relative border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
-				<AppLoading :loading="loading" spinner />
-				<AppInput
-					v-model="form.account_name"
-					:type="'text'"
-					:name="'account_name'"
-					:label="'Account name'"
-					@blur="CheckEmptyField(form.account_name, 'account_name')"
-					:error="formError.find(item => item.field === 'account_name')"
-				/>
-				<AppInput
-					v-model="form.bank_name"
-					:type="'text'"
-					:name="'bank_name'"
-					:label="'Bank name'"
-					@blur="CheckEmptyField(form.bank_name, 'bank_name')"
-					:error="formError.find(item => item.field === 'bank_name')"
-				/>
-				<AppInput
-					v-model="form.sort_code"
-					:type="'text'"
-					:name="'sort_code'"
-					:label="'Sort code'"
-					@blur="CheckEmptyField(form.sort_code, 'sort_code')"
-					:error="formError.find(item => item.field === 'sort_code')"
-				/>
-				<AppInput
-					v-model="form.account_number"
-					:type="'text'"
-					:name="'account_number'"
-					:label="'Account number'"
-					@blur="CheckEmptyField(form.account_number, 'account_number')"
-					:error="formError.find(item => item.field === 'account_number')"
-				/>
-			</div>
-		</div>
+    <div class="w-full md:w-1/2 py-2 md:px-2">
+      <p class="text-sm font-bold">
+        Bank account
+      </p>
+      <div class="relative border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
+        <AppLoading :loading="loading" spinner />
+        <AppInput
+          v-model="form.account_name"
+          :type="'text'"
+          :name="'account_name'"
+          :label="'Account name'"
+          :error="formError.find(item => item.field === 'account_name')"
+          @blur="CheckEmptyField(form.account_name, 'account_name')"
+        />
+        <AppInput
+          v-model="form.bank_name"
+          :type="'text'"
+          :name="'bank_name'"
+          :label="'Bank name'"
+          :error="formError.find(item => item.field === 'bank_name')"
+          @blur="CheckEmptyField(form.bank_name, 'bank_name')"
+        />
+        <AppInput
+          v-model="form.sort_code"
+          :type="'text'"
+          :name="'sort_code'"
+          :label="'Sort code'"
+          :error="formError.find(item => item.field === 'sort_code')"
+          @blur="CheckEmptyField(form.sort_code, 'sort_code')"
+        />
+        <AppInput
+          v-model="form.account_number"
+          :type="'text'"
+          :name="'account_number'"
+          :label="'Account number'"
+          :error="formError.find(item => item.field === 'account_number')"
+          @blur="CheckEmptyField(form.account_number, 'account_number')"
+        />
+      </div>
+    </div>
 
-		<div class="w-full md:w-1/2 py-2 md:px-2">
-			<p class="text-sm font-bold">Payroll Details</p>
-			<div class="relative border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
-				<AppLoading :loading="loading" spinner />
-				<div class="flex flex-col">
-					<div class="w-full text-xs sm:text-base flex items-center">Your tax year end date</div>
-					<div class="w-full flex flex-row flex-no-wrap">
-						<div class="mr-1 w-1/2">
-							<AppInput
-								v-model="form.tax_year_end_month"
-								:type="'select'"
-								:name="'tax_year_end_month'"
-								:placeholder="'Month'"
-								:items="months"
-								@blur="CheckEmptyField(form.tax_year_end_month, 'tax_year_end_month')"
-								:error="formError.find(item => item.field === 'tax_year_end_month')"
-							/>
-						</div>
-						<div class="ml-1 w-1/2">
-							<AppInput
-								v-model="form.tax_year_end_date"
-								:type="'select'"
-								:name="'tax_year_end_date'"
-								:placeholder="'Day'"
-								:items="days"
-								@blur="CheckEmptyField(form.tax_year_end_date, 'tax_year_end_date')"
-								:error="formError.find(item => item.field === 'tax_year_end_date')"
-							/>
-						</div>
-					</div>
-				</div>
-				<AppInput
-					v-model="form.employment_type"
-					:type="'select'"
-					:name="'employment_type'"
-					:label="'Are you...?'"
-					:items="employmentTypes"
-					@blur="CheckEmptyField(form.employment_type, 'employment_type')"
-					:error="formError.find(item => item.field === 'employment_type')"
-				/>
-				<template v-if="form.employment_type === 'Limited company'">
-					<AppInput
-						v-model="form.company_registration_number"
-						:type="'text'"
-						:name="'Company registration number'"
-						:label="'Company_registration_number'"
-						:placeholder="'The number of your company from Companies House'"
-						@blur="CheckEmptyField(form.company_registration_number, 'company_registration_number')"
-						:error="formError.find(item => item.field === 'company_registration_number')"
-					/>
-				</template>
-				<template v-if="form.employment_type === 'Self-Employed'">
-					<AppInput
-						v-model="form.utr_number"
-						:type="'text'"
-						:name="'utr_number'"
-						:label="'UTR number'"
-						:error="formError.find(item => item.field === 'utr_number')"
-						:placeholder="'AZ000000D'"
-						:limit="9"
-						required
-						@keydown="alphaNumeric($event)"
-						@blur="CheckEmptyField(form.utr_number, 'utr_number')"
-					/>
-				</template>
+    <div class="w-full md:w-1/2 py-2 md:px-2">
+      <p class="text-sm font-bold">
+        Payroll Details
+      </p>
+      <div class="relative border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
+        <AppLoading :loading="loading" spinner />
+        <div class="flex flex-col">
+          <div class="w-full text-xs sm:text-base flex items-center">
+            Your tax year end date
+          </div>
+          <div class="w-full flex flex-row flex-no-wrap">
+            <div class="mr-1 w-1/2">
+              <AppInput
+                v-model="form.tax_year_end_month"
+                :type="'select'"
+                :name="'tax_year_end_month'"
+                :placeholder="'Month'"
+                :items="months"
+                :error="formError.find(item => item.field === 'tax_year_end_month')"
+                @blur="CheckEmptyField(form.tax_year_end_month, 'tax_year_end_month')"
+              />
+            </div>
+            <div class="ml-1 w-1/2">
+              <AppInput
+                v-model="form.tax_year_end_date"
+                :type="'select'"
+                :name="'tax_year_end_date'"
+                :placeholder="'Day'"
+                :items="days"
+                :error="formError.find(item => item.field === 'tax_year_end_date')"
+                @blur="CheckEmptyField(form.tax_year_end_date, 'tax_year_end_date')"
+              />
+            </div>
+          </div>
+        </div>
+        <AppInput
+          v-model="form.employment_type"
+          :type="'select'"
+          :name="'employment_type'"
+          :label="'Are you...?'"
+          :items="employmentTypes"
+          :error="formError.find(item => item.field === 'employment_type')"
+          @blur="CheckEmptyField(form.employment_type, 'employment_type')"
+        />
+        <template v-if="form.employment_type === 'Limited company'">
+          <AppInput
+            v-model="form.company_registration_number"
+            :type="'text'"
+            :name="'Company registration number'"
+            :label="'Company_registration_number'"
+            :placeholder="'The number of your company from Companies House'"
+            :error="formError.find(item => item.field === 'company_registration_number')"
+            @blur="CheckEmptyField(form.company_registration_number, 'company_registration_number')"
+          />
+        </template>
+        <template v-if="form.employment_type === 'Self-Employed'">
+          <AppInput
+            v-model="form.utr_number"
+            :type="'text'"
+            :name="'utr_number'"
+            :label="'UTR number'"
+            :error="formError.find(item => item.field === 'utr_number')"
+            :placeholder="'AZ000000D'"
+            :limit="9"
+            required
+            @keydown="alphaNumeric($event)"
+            @blur="CheckEmptyField(form.utr_number, 'utr_number')"
+          />
+        </template>
 
-				<AppInput
-					v-model="form.paid_under_payroll"
-					:type="'select'"
-					:name="'paid_under_payroll'"
-					:label="'Are you paid under payroll?'"
-					:items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-				/>
+        <AppInput
+          v-model="form.paid_under_payroll"
+          :type="'select'"
+          :name="'paid_under_payroll'"
+          :label="'Are you paid under payroll?'"
+          :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+        />
 
-				<template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
-					<AppInput
-						v-model="form.payroll_detail_account_name"
-						:type="'text'"
-						:name="'payroll_detail_account_name'"
-						:label="'Account name'"
-						:error="formError.find(item => item.field === 'payroll_detail_account_name')"
-					/>
-					<AppInput
-						v-model="form.payroll_detail_bank_name"
-						:type="'text'"
-						:name="'payroll_detail_bank_name'"
-						:label="'Bank name'"
-						:error="formError.find(item => item.field === 'payroll_detail_bank_name')"
-					/>
-					<AppInput
-						v-model="form.payroll_detail_sort_code"
-						:type="'text'"
-						:name="'payroll_detail_sort_code'"
-						:label="'Sort code'"
-						:error="formError.find(item => item.field === 'payroll_detail_sort_code')"
-					/>
-					<AppInput
-						v-model="form.payroll_detail_account_number"
-						:type="'text'"
-						:name="'payroll_detail_account_number'"
-						:label="'Account number'"
-						:error="formError.find(item => item.field === 'payroll_detail_account_number')"
-					/>
-				</template>
+        <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
+          <AppInput
+            v-model="form.payroll_detail_account_name"
+            :type="'text'"
+            :name="'payroll_detail_account_name'"
+            :label="'Account name'"
+            :error="formError.find(item => item.field === 'payroll_detail_account_name')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_bank_name"
+            :type="'text'"
+            :name="'payroll_detail_bank_name'"
+            :label="'Bank name'"
+            :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_sort_code"
+            :type="'text'"
+            :name="'payroll_detail_sort_code'"
+            :label="'Sort code'"
+            :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_account_number"
+            :type="'text'"
+            :name="'payroll_detail_account_number'"
+            :label="'Account number'"
+            :error="formError.find(item => item.field === 'payroll_detail_account_number')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_reference_number"
+            :type="'text'"
+            :name="'payroll_detail_reference_number'"
+            :label="'Payroll Reference number'"
+            :error="formError.find(item => item.field === 'payroll_detail_reference_number')"
+          />
+        </template>
 
-				<AppInput
-					v-model="form.ir35"
-					:type="'select'"
-					:name="'ir35'"
-					:label="'IR35 - role inside or outside of scope'"
-					:items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
-				/>
-			</div>
+        <AppInput
+          v-model="form.ir35"
+          :type="'select'"
+          :name="'ir35'"
+          :label="'IR35 - role inside or outside of scope'"
+          :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+        />
+      </div>
 
-			<div class="mt-4">
-				<AppButton :label="'Save changes'" @click="save" :disabled="loading" />
-			</div>
-		</div>
-	</div>
+      <div class="mt-4">
+        <AppButton :label="'Save changes'" :disabled="loading" @click="save" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppFormError from "@/components/Base/AppFormError";
-import AppLoading from "@/components/Base/AppLoading";
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppFormError from "@/components/Base/AppFormError"
+import AppLoading from "@/components/Base/AppLoading"
 let months = [
-	{ label: "Jan", value: "1" },
-	{ label: "Feb", value: "2" },
-	{ label: "Mar", value: "3" },
-	{ label: "Apr", value: "4" },
-	{ label: "May", value: "5" },
-	{ label: "Jun", value: "6" },
-	{ label: "Jul", value: "7" },
-	{ label: "Aug", value: "8" },
-	{ label: "Sep", value: "9" },
-	{ label: "Oct", value: "10" },
-	{ label: "Nov", value: "11" },
-	{ label: "Dec", value: "12" }
-];
+  { label: "Jan", value: "1", },
+  { label: "Feb", value: "2", },
+  { label: "Mar", value: "3", },
+  { label: "Apr", value: "4", },
+  { label: "May", value: "5", },
+  { label: "Jun", value: "6", },
+  { label: "Jul", value: "7", },
+  { label: "Aug", value: "8", },
+  { label: "Sep", value: "9", },
+  { label: "Oct", value: "10", },
+  { label: "Nov", value: "11", },
+  { label: "Dec", value: "12", },
+]
 let employmentTypes = [
-	{ label: "Self-Employed", value: "Self-Employed" },
-	{ label: "Limited Company", value: "Limited Company" }
-];
+  { label: "Self-Employed", value: "Self-Employed", },
+  { label: "Limited Company", value: "Limited Company", },
+]
 export default {
-	transition: {
-		name: "fade",
-		mode: "out-in"
-	},
-	components: {
-		AppInput,
-		AppButton,
-		AppLoading,
-		AppFormError
-	},
-	data() {
-		return {
-			loading: false,
-			months,
-			employmentTypes,
-			form: {
-				account_name: "",
-				bank_name: "",
-				sort_code: "",
-				account_number: "",
-				tax_year_end_month: "",
-				tax_year_end_date: "",
-				employment_type: "Self-Employed",
-				utr_number: "",
-				company_registration_number: "",
-				ir35: false,
-				paid_under_payroll: false,
-				payroll_detail_account_name: "",
-				payroll_detail_bank_name: "",
-				payroll_detail_sort_code: "",
-				payroll_detail_account_number: ""
-			},
-			formError: []
-		};
-	},
-	computed: {
-		days() {
-			let days = [];
-			let maxDays = 30;
-			if (
-				["01", "03", "05", "07", "08", "10", "12"].includes(
-					this.form.tax_year_end_month
-				)
-			) {
-				maxDays = 31;
-			}
-			for (let i = 1; i <= maxDays; i++) {
-				days.push({ value: i, label: i });
-			}
-			return days;
-		}
-	},
-	async asyncData({ app, error }) {
-		try {
-			const response = await app.$axios.get("/api/v1/me");
+  transition: {
+    name: "fade",
+    mode: "out-in",
+  },
+  components: {
+    AppInput,
+    AppButton,
+    AppLoading,
+    AppFormError,
+  },
+  data () {
+    return {
+      loading: false,
+      months,
+      employmentTypes,
+      form: {
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+        tax_year_end_month: "",
+        tax_year_end_date: "",
+        employment_type: "Self-Employed",
+        utr_number: "",
+        company_registration_number: "",
+        ir35: false,
+        paid_under_payroll: false,
+        payroll_detail_account_name: "",
+        payroll_detail_bank_name: "",
+        payroll_detail_sort_code: "",
+        payroll_detail_account_number: "",
+        payroll_detail_reference_number: "",
+      },
+      formError: [],
+    }
+  },
+  computed: {
+    days () {
+      let days = []
+      let maxDays = 30
+      if (
+        ["01", "03", "05", "07", "08", "10", "12",].includes(
+          this.form.tax_year_end_month
+        )
+      ) {
+        maxDays = 31
+      }
+      for (let i = 1; i <= maxDays; i++) {
+        days.push({ value: i, label: i, })
+      }
+      return days
+    },
+  },
+  async asyncData ({ app, error, }) {
+    try {
+      const response = await app.$axios.get("/api/v1/me")
 
-			const user =
-				response.data && response.data.data && response.data.data.user
-					? response.data.data.user
-					: null;
+      const user = response.data && response.data.data && response.data.data.user
+        ? response.data.data.user
+        : null
 
-			console.log("invoicing details");
+      console.log("invoicing details")
 
-			return {
-				user
-			};
-		} catch (err) {
-			console.log("err", err.response || err);
-			error({
-				statusCode: err.status || 500,
-				message: err.message || "Something went wrong!"
-			});
-		}
-	},
-	mounted() {
-		if (this.user.locum_detail.invoice_detail) {
-			if (this.user.locum_detail.invoice_detail.bank_account) {
-				this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name;
-				this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name;
-				this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
-				this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
-			}
-			this.form.tax_year_end_month = null;
-			this.form.tax_year_end_date = null;
-			this.form.employment_type = this.user.locum_detail.invoice_detail
-				.employment_type
-				? this.user.locum_detail.invoice_detail.employment_type
-				: this.form.employment_type;
-			this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
-			this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
-			this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
-			this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
-			if (this.user.locum_detail.invoice_detail.payroll_detail) {
-				this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
-				this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
-				this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
-				this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
-			}
-		}
-	},
-	methods: {
-		save() {
-			this.formError = [];
-			let notRequired = ["ir35"];
+      return {
+        user,
+      }
+    } catch (err) {
+      console.log("err", err.response || err)
+      error({
+        statusCode: err.status || 500,
+        message: err.message || "Something went wrong!",
+      })
+    }
+  },
+  mounted () {
+    if (this.user.locum_detail.invoice_detail) {
+      if (this.user.locum_detail.invoice_detail.bank_account) {
+        this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name
+        this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name
+        this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code
+        this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number
+      }
+      this.form.tax_year_end_month = null
+      this.form.tax_year_end_date = null
+      this.form.employment_type = this.user.locum_detail.invoice_detail
+        .employment_type
+        ? this.user.locum_detail.invoice_detail.employment_type
+        : this.form.employment_type
+      this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number
+      this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number
+      this.form.ir35 = this.user.locum_detail.invoice_detail.ir35
+      this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll
+      if (this.user.locum_detail.invoice_detail.payroll_detail) {
+        this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name
+        this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name
+        this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code
+        this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number
+        this.form.payroll_detail_reference_number = this.user.locum_detail.invoice_detail.payroll_detail.reference_number
+        
+      }
+    }
+  },
+  methods: {
+    save () {
+      this.formError = []
+      let notRequired = ["ir35",]
 
-			if (this.form.employment_type === "Self-Employed") {
-				notRequired.push("company_registration_number");
-				let pre = this.form.utr_number.substring(0, 2);
-				let num = this.form.utr_number.substring(2, 8);
-				let post = this.form.utr_number.substring(8, 9);
-				if (
-					!this.form.utr_number.substring(0, 2).match(/[A-Z]/g) ||
-					this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2 ||
-					!this.form.utr_number.substring(2, 8).match(/[0-9]/g) ||
-					this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6 ||
-					!this.form.utr_number.substring(8, 9).match(/[A-D]/g) ||
-					!this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
-				) {
-					this.formError.push({
-						field: "utr_number",
-						message: "UTR Number is invalid."
-					});
-				}
-			} else {
-				notRequired.push("utr_number");
-			}
+      if (this.form.employment_type === "Self-Employed") {
+        notRequired.push("company_registration_number")
+        // let pre = this.form.utr_number.substring(0, 2)
+        // let num = this.form.utr_number.substring(2, 8)
+        // let post = this.form.utr_number.substring(8, 9)
+        if (
+          !this.form.utr_number.substring(0, 2).match(/[A-Z]/g)
+					|| this.form.utr_number.substring(0, 2).match(/[A-Z]/g).length !== 2
+					|| !this.form.utr_number.substring(2, 8).match(/[0-9]/g)
+					|| this.form.utr_number.substring(2, 8).match(/[0-9]/g).length !== 6
+					|| !this.form.utr_number.substring(8, 9).match(/[A-D]/g)
+					|| !this.form.utr_number.substring(8, 9).match(/[A-D]/g).length
+        ) {
+          this.formError.push({
+            field: "utr_number",
+            message: "UTR Number is invalid.",
+          })
+        }
+      } else {
+        notRequired.push("utr_number")
+      }
 
-			if (
-				this.form.paid_under_payroll == false ||
-				this.form.paid_under_payroll == "false"
-			) {
-				notRequired.push(
-					"payroll_detail_account_name",
-					"payroll_detail_bank_name",
-					"payroll_detail_sort_code",
-					"payroll_detail_account_number"
-				);
-			}
+      if (
+        this.form.paid_under_payroll == false
+				|| this.form.paid_under_payroll == "false"
+      ) {
+        notRequired.push(
+          "payroll_detail_account_name",
+          "payroll_detail_bank_name",
+          "payroll_detail_sort_code",
+          "payroll_detail_account_number",
+          "payroll_detail_reference_number"
+        )
+      }
 
-			this.Validate(this.form, notRequired);
-			if (!this.formError.length) {
-				this.loading = true;
-				this.$axios
-					.$put(`/api/v1/locum/me/billing_details`, this.form)
-					.then(res => {
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: [res.message]
-						});
-					})
-					.catch(err => {
-						if (err.response.data.message) {
-							this.$store.commit("SET_NOTIFICATION", {
-								enabled: true,
-								status: "danger",
-								text: [err.response.data.message]
-							});
-						}
-					})
-					.finally(() => {
-						this.loading = false;
-					});
-			}
-		}
-	}
-};
+      this.Validate(this.form, notRequired)
+      if (!this.formError.length) {
+        this.loading = true
+        this.$axios
+          .$put(`/api/v1/locum/me/billing_details`, this.form)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [res.message,],
+            })
+          })
+          .catch(err => {
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [err.response.data.message,],
+              })
+            }
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }
+    },
+  },
+}
 </script>
