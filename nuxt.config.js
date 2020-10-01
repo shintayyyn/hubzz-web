@@ -18,13 +18,13 @@ export default {
   head: {
     title: 'Hubzz',
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Hubzz Web App' }
+      { charset: 'utf-8', },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1', },
+      { hid: 'description', name: 'description', content: 'Hubzz Web App', },
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nunito' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico', },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nunito', },
     ],
     script: [
       {
@@ -116,7 +116,7 @@ export default {
   },
 
   router: {
-    middleware: 'isAuthorized'
+    middleware: 'isAuthorized',
   },
 
   auth: {
@@ -148,11 +148,11 @@ export default {
     config: {
       productionTip: false,
       devtools: true,
-    }
+    },
   },
 
   build: {
-    transpile: [/^vue2-google-maps($|\/)/],
+    transpile: [/^vue2-google-maps($|\/)/,],
     extend () {
     },
     postcss: {

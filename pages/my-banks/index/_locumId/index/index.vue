@@ -155,11 +155,19 @@
                     </div>
 
                     <div class="font-bold text-sm sm:text-md">
-                      Payroll Reference Number
+                      Payroll Account Number
                     </div>
 
                     <div class="text-sm mb-4">
                       {{ user.payroll_account_number }}
+                    </div>
+
+                    <div class="font-bold text-sm sm:text-md">
+                      Payroll Reference Number
+                    </div>
+
+                    <div class="text-sm mb-4">
+                      {{ user.payroll_reference_number }}
                     </div>
                   </div>
                 </div>
