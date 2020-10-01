@@ -87,7 +87,7 @@
               <nuxt-link :to="{ path: `/my-banks/${locum.id}`, query: {...$route.query}}">
                 <div class="flex justify-end items-center">
                   <div
-                    v-if="authPermissions.includes('Favorite MyBanks Locum')"
+                    v-if="authPermissions.includes('Mark Locum as Favorite')"
                     class="flex justify-end items-center z-40"
                   >
                     <template v-if="locum.is_favorite">

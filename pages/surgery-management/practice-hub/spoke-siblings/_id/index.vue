@@ -29,7 +29,7 @@
               >
                 <div
                   class="flex justify-end z-50"
-                  v-if="authPermissions.includes('Favorite MyBanks Locum')"
+                  v-if="authPermissions.includes('Mark Locum as Favorite')"
                 >
                   <template v-if="locum.is_favorite">
                     <svgicon

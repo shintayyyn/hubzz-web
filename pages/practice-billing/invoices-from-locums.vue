@@ -164,11 +164,15 @@
               class="flex flex-wrap justify-center"
             >
               <div
-                v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved' && $route.query.status !== 'issued'"
+                v-if="
+                  slotProps.item.locum_invoice_id 
+                    && slotProps.item.invoice_status !== 'To Be Invoice' 
+                    && slotProps.item.status !== 'Approved' 
+                    && $route.query.status !== 'issued'"
                 class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
               >
-                Edit
+                {{authPermissions.includes('Process Billings') ? 'Edit' : 'View' }}
               </div>
 
               <div
@@ -205,7 +209,10 @@
               <!-- v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
               && $route.query.status === 'approved'"-->
               <button
-                v-if="$route.query.status === 'approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="
+                  $route.query.status === 'approved' 
+                    && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
+                    && authPermissions.includes('Process Billings')"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
@@ -218,6 +225,7 @@
                     && slotProps.item.ooh
                     && slotProps.item.locum_solo_form_id
                     && slotProps.item.locum_solo_form_sent_to_locum === 0
+                    && authPermissions.includes('Process Billings')
                 "
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
                 :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"

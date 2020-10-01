@@ -93,14 +93,25 @@ export default {
     },
   },
 
-  async asyncData ({ app, error, }) {
+  async asyncData ({ app, store, error, }) {
     try {
+      const authPermissions = store.getters["permissions"]
+
       if (!app.$auth.user || app.$auth.user.domain === 'Locum') {
         error({
           statusCode: 403,
           message: 'You are not authorized to view this page.',
         })
 
+        return
+      }
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Billings') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
         return
       }
 

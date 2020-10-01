@@ -393,7 +393,9 @@
 
     <div v-if="toggle_modal" class="shield" />
 
-    <div class="flex justify-start items-center mb-6">
+    <div 
+      v-if="authPermissions.includes('Process Billings')"
+      class="flex justify-start items-center mb-6">
       <AppButton
         v-if="propInvoice && !propInvoice.approved && allowToBill"
         class="m-1"
@@ -501,6 +503,10 @@ export default {
   },
 
   computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+
     isOOH () {
       return this.propInvoice && this.propInvoice.ooh ? true : false
     },

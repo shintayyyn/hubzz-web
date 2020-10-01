@@ -180,6 +180,7 @@ Vue.mixin({
         }
       }
     },
+    // Realtime Checking of user permissions. 
     CheckPermissions (permissions) {
       let hasPermission = true
       switch (this.$route.name) {
@@ -235,6 +236,11 @@ Vue.mixin({
         break
       case "sessions-index-id":
         if (!permissions.includes("Show Sessions Job")) {
+          hasPermission = false
+        }
+        break
+      case "permanent-jobs":
+        if (!permissions.includes("View Permanent Jobs")) {
           hasPermission = false
         }
         break

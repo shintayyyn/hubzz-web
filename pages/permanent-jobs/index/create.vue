@@ -8,6 +8,34 @@ export default {
   components: {
     CreatePermanentJobModal,
   },
+  async asyncData ({ app, store, error, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Locum') {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('Create Permanent Job') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+    } catch (err) {
+      error({
+        statusCode: 403,
+        message: 'You are not authorized to view this page.',
+      })
+    }
+  },
 }
 </script>
 <style>

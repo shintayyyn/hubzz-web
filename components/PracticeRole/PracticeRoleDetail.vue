@@ -264,7 +264,13 @@ export default {
 			}
 		},
 		isChecked(permissions) {
-			return !permissions.map(item => item.done).includes(false);
+			let checkedPermissions = []
+			checkedPermissions = permissions.filter( item => item.done === true)
+			if(checkedPermissions.length > 0) {
+				return true
+			} else {
+				return false
+			}
 		},
 		checkAll(index, checked) {
 			this.permissions[index].permissions.forEach(item => {

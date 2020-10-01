@@ -290,6 +290,7 @@ export default {
           && (["Hub", "Stand Alone",].includes(practiceType) 
               || (practiceType === 'Spoke' && parentPracticeId !== null))
           && hubType !== "Type 2"
+          && this.authPermissions.includes("View My Banks")
         ) {
           practiceTabList.push({
             navigationTabTitle: "My Banks",
@@ -338,7 +339,6 @@ export default {
           && ["Active", "Dormant",].includes(practiceStatus)
           && (["Hub", "Stand Alone",].includes(practiceType) 
               || (practiceType === 'Spoke' && parentPracticeId !== null))
-          && this.authPermissions.includes("View Sessions Job")
           && this.authPermissions.includes("View Billings")
           && hubType !== "Type 2"
         ) {

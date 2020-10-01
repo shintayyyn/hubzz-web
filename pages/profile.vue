@@ -39,7 +39,8 @@ export default {
   },
   data() {
     return {
-      modal: false
+      modal: false,
+      practicePermissions: [],
       // type: null
     };
   },
@@ -48,25 +49,57 @@ export default {
       return this.$store.getters["permissions"];
     }
   },
-  // async asyncData({ app, store, error }) {
-  //   try {
-  //     const responsePracticeType = await app.$axios.$get(
-  //       `/api/v1/practice/me/practice-type`
-  //     );
-  //     let type =
-  //       responsePracticeType.data &&
-  //       responsePracticeType.data.practice &&
-  //       responsePracticeType.data.practice.type
-  //         ? responsePracticeType.data.practice.type
-  //         : null;
+  async asyncData ({ app, store, error, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
 
-  //     return {
-  //       type
-  //     };
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // },
+      const practicePermissions = authPermissions.filter(item => item.includes('View Profile'))
+
+      if (authPermissions.includes('View Profile Practice') === false
+        && authPermissions.includes('View Profile Practice Document') === false
+        && authPermissions.includes('View Profile Users') === false ) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+      
+    
+      // const responsePracticeType = await app.$axios.$get(
+      //   `/api/v1/practice/me/practice-type`
+      // );
+      // let type =
+      //   responsePracticeType.data &&
+      //   responsePracticeType.data.practice &&
+      //   responsePracticeType.data.practice.type
+      //     ? responsePracticeType.data.practice.type
+      //     : null;
+
+      return {
+        practicePermissions,
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+  created () {
+    let toRedirect = ''
+    if (this.practicePermissions.find(item => item === 'View Profile Practice') === undefined) {
+      console.log('redirecting')
+      switch (this.practicePermissions[0]) {
+      case "View Profile Practice Document":
+        toRedirect = "users"
+        break
+      case "View Profile Users":
+        toRedirect = "practice-documents"
+        break
+      default:
+        toRedirect = ''
+      }
+      this.$router.push(`/profile/${toRedirect}`)
+    }
+  },
   watch: {
     authPermissions(value) {
       if (!this.CheckPermissions(value).hasPermission) {

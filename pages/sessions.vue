@@ -296,6 +296,28 @@ export default {
     },
   },
 
+  async asyncData ({ app, error, store, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Sessions Job') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+    } catch (err) {
+      console.log('err', err.response || err)
+      error({
+        statusCode: 403,
+        message: 'You are not authorized to view this page.',
+      })
+    }
+  },
+
   methods: {
     goTo () {
       this.confirmation_modal = false

@@ -37,14 +37,14 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       practice: null,
       parent_surgery: null
     };
   },
   computed: {
-    isStandAloneWithoutHubOrSpoke() {
+    isStandAloneWithoutHubOrSpoke () {
       return (
         this.practice.type === "Stand Alone" &&
         this.parent_surgery.hub_practice_id === null &&
@@ -52,10 +52,21 @@ export default {
       );
     }
   },
-  async asyncData({ app, route, store, error }) {
+  async asyncData ({ app, route, store, error }) {
     try {
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Surgery Management') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
       let response = await app.$axios.$get(`/api/v1/practice/me/practice`);
-      const practice = response.data.practice;
+      const practice = response.data.practice
 
       if (practice.status !== 'Active' && practice.status !== 'Dormant') {
         error({
@@ -86,7 +97,7 @@ export default {
       console.log("something went wrong", err);
     }
   },
-  mounted() {
+  mounted () {
     if (
       this.isStandAloneWithoutHubOrSpoke &&
       this.$route.name === "spoke-surgery-management-index"
