@@ -219,6 +219,7 @@ export default {
         "Locum Notification Locum Invoice Paid",
 
         "Locum Notification Locum Form A Paid",
+        "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
 
         "Locum Notification Locum Solo Form",
@@ -592,6 +593,7 @@ export default {
 
       const validNotificationUrl = [
         "Locum Notification Locum Form A Paid",
+        "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
         "Locum Notification Locum Payment Details Updated",
         "Locum Notification Locum Solo Form",
