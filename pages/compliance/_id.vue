@@ -92,7 +92,8 @@
                   {{ compliance_document && compliance_document.note ? compliance_document.note : null }}
                 </p>
               </div>
-              <div v-if="compliance_document.note">
+
+              <div v-if="false">
                 <p class="mt-5 font-bold text-lg">
                   Note
                 </p>
