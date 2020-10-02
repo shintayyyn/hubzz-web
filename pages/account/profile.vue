@@ -355,8 +355,19 @@
               v-model="form.payroll_account_number"
               :type="'number'"
               :name="'payroll_account_number'"
-              :label="'Payroll Reference Number'"
+              :label="'Payroll Account Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
+              :limit="8"
+              required
+              @keydown="inputNumberOnly($event)"
+            />
+
+            <AppInput
+              v-model="form.payroll_reference_number"
+              :type="'number'"
+              :name="'payroll_reference_number'"
+              :label="'Payroll Reference Number'"
+              :error="formError.find(item => item.field === 'payroll_reference_number')"
               required
             />
           </template>
@@ -729,6 +740,7 @@ export default {
         payroll_bank_name: "",
         payroll_sort_code: "",
         payroll_account_number: "",
+        payroll_reference_number: "",
         account_name: "",
         bank_name: "",
         sort_code: "",
@@ -1194,6 +1206,7 @@ export default {
 
       this.form.payroll_account_name = this.user.payroll_account_name
       this.form.payroll_account_number = this.user.payroll_account_number
+      this.form.payroll_reference_number = this.user.payroll_reference_number
       this.form.payroll_sort_code = this.user.payroll_sort_code
       this.form.payroll_bank_name = this.user.payroll_bank_name
 
@@ -1528,13 +1541,15 @@ export default {
       if (["false", false,].includes(this.form.paid_under_payroll)) {
         // this.form.payroll_account_name = ""
         // this.form.payroll_account_number = ""
+        // this.form.payroll_reference_number = ""
         // this.form.payroll_sort_code = ""
         // this.form.payroll_bank_name = ""
         notRequired.push(
           "payroll_account_name",
           "payroll_bank_name",
           "payroll_sort_code",
-          "payroll_account_number"
+          "payroll_account_number",
+          "payroll_reference_number",
         )
       }
 
@@ -1590,6 +1605,13 @@ export default {
           this.formError.push({
             field: "payroll_sort_code",
             message: "Sort Code should be 6 digits",
+          })
+        }
+
+        if (this.form.payroll_account_number && this.form.payroll_account_number.length !== 8) {
+          this.formError.push({
+            field: "payroll_account_number",
+            message: "Payorll account number should be 8 digits",
           })
         }
       } else if (["false", false,].includes(this.form.paid_under_payroll)) {

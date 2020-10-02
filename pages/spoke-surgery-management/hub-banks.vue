@@ -19,7 +19,7 @@
           <div class="h-full w-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
             <nuxt-link :to="{ path: `/spoke-surgery-management/hub-banks/${locum.id}` }">
               <div
-                v-if="authPermissions.includes('Favorite MyBanks Locum')"
+                v-if="authPermissions.includes('Mark Locum as Favorite')"
                 class="flex justify-end z-50"
               >
                 <template v-if="locum.is_favorite">

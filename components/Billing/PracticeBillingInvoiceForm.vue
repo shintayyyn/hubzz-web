@@ -252,6 +252,7 @@
               <div>Bank: {{ propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx' }}</div>
               <div>Sort code: {{ propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx' }}</div>
               <div>Payroll reference number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
+              <div>Payroll reference number: {{ propInvoice.payroll_reference_number ? propInvoice.payroll_reference_number : 'xxxxx*OR' }}</div>
             </div>
             
             <div v-if="propInvoice && !propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
@@ -393,7 +394,9 @@
 
     <div v-if="toggle_modal" class="shield" />
 
-    <div class="flex justify-start items-center mb-6">
+    <div 
+      v-if="authPermissions.includes('Process Billings')"
+      class="flex justify-start items-center mb-6">
       <AppButton
         v-if="propInvoice && !propInvoice.approved && allowToBill"
         class="m-1"
@@ -501,6 +504,10 @@ export default {
   },
 
   computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+
     isOOH () {
       return this.propInvoice && this.propInvoice.ooh ? true : false
     },

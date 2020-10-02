@@ -38,16 +38,6 @@
         >
           Closed
         </nuxt-link>
-        <!-- <nuxt-link
-          v-if="$auth.user.domain === 'Practice'"
-					to="/permanent-jobs?status=Unfilled"
-					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-					:class="
-					($route.query.status && $route.query.status.toLowerCase() === 'unfilled')
-						? 'border rounded-lg border-yellow-500 bg-yellow-500'
-						: 'text-gray-600'
-					"
-				>Unfilled</nuxt-link> -->
       </div>
       <AppButton
         v-if="$auth.user.domain === 'Practice'"
@@ -63,22 +53,39 @@
       @click="$router.go(-1)"
     />
     <nuxt-child />
+
+    <AppConfirmationModal
+      :label="'You\'ve been revoked to view this Page'"
+      :confirmLabel="'OK'"
+      :modal="confirmation_modal"
+      @confirm="goTo"
+    />
   </section>
 </template>
 <script>
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppButton from "@/components/Base/AppButton"
 export default {
   components: {
     AppButton,
+    AppConfirmationModal,
   },
 
   data () {
     return {
       spokeIsNotAllowed: false,
+      confirmation_modal: false,
     }
   },
+  watch: {
+    authPermissions (value) {
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true
+      }
+    },
+  },
 
-  async asyncData ({ app, error, store, }) {
+  async asyncData ({ app, store, error, }) {
     try {
       const authPermissions = store.getters["permissions"]
 
@@ -106,12 +113,10 @@ export default {
 
     } catch (err) {
       console.log('err', err.response || err)
-      error({
-        statusCode: 403,
-        message: 'You are not authorized to view this page.',
-      })
+      error(err)
     }
   },
+
   created () {
     if(this.$auth.user.domain === 'Practice') {
       if(this.$auth.user.practice_detail.practice.type == 'Spoke' &&
@@ -119,6 +124,15 @@ export default {
         this.spokeIsNotAllowed = true
       }
     }
+  },
+
+  methods: {
+    goTo () {
+      this.confirmation_modal = false
+      setTimeout(() => {
+        this.$router.push("/")
+      }, 500)
+    },
   },
 }
 </script>

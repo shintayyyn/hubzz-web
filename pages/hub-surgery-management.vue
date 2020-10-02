@@ -45,6 +45,18 @@ export default {
       let response = await app.$axios.$get(`/api/v1/practice/me/practice`)
       const practice = response.data.practice
       console.log('banana practice', practice)
+
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Surgery Management') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
       if (practice.status !== 'Active' && practice.status !== 'Dormant') {
         error({
           statusCode: 403,

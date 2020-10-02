@@ -123,6 +123,11 @@ export default {
           subtitle: 'Pension Contributions',
           url: '/practice-billing-reports/pension-contributions',
         },
+        {
+          title: 'REP-010',
+          subtitle: 'Pension Contributions',
+          url: '/practice-billing-reports/pension-contributions',
+        },
       ],
     }
   },
@@ -133,14 +138,25 @@ export default {
     },
   },
 
-  async asyncData ({ app, error, }) {
+  async asyncData ({ app, store, error, }) {
     try {
+      const authPermissions = store.getters["permissions"]
+
       if (!app.$auth.user || app.$auth.user.domain === 'Locum') {
         error({
           statusCode: 403,
           message: 'You are not authorized to view this page.',
         })
 
+        return
+      }
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Practice Reports') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
         return
       }
 
@@ -177,7 +193,7 @@ export default {
       && !this.$auth.user.practice_detail.practice.allow_surgery_bill_locum
     ) {
       this.practiceReports = this.practiceReports
-        .filter(practiceReport => !['REP-001', 'REP-002', 'REP-003',].includes(practiceReport.title))
+        .filter(practiceReport => !['REP-001', 'REP-002', 'REP-003', 'REP-010',].includes(practiceReport.title))
     }
   },
 

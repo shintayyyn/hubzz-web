@@ -5,7 +5,7 @@
       v-for="user in users"
       :key="user.id"
     >
-      <div class="flex justify-end z-50" v-if="authPermissions.includes('Favorite MyBanks Locum')">
+      <div class="flex justify-end z-50" v-if="authPermissions.includes('Mark Locum as Favorite')">
         <template v-if="user.is_favorite">
           <svgicon
             name="on-star"
