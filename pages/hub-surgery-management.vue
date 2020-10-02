@@ -44,7 +44,6 @@ export default {
     try{
       let response = await app.$axios.$get(`/api/v1/practice/me/practice`)
       const practice = response.data.practice
-      console.log('banana practice', practice)
 
       const authPermissions = store.getters["permissions"]
 

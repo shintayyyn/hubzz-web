@@ -3,6 +3,7 @@
     <div class="relative flex flex-col md:flex-row justify-between items-end md:items-center">
       <div class="flex w-full md:w-4/5 overflow-x-auto">
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -15,6 +16,7 @@
         </nuxt-link>
 
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks?practice_locum_type=Completed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -27,6 +29,7 @@
         </nuxt-link>
 
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks?practice_locum_type=Applied"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -39,6 +42,7 @@
         </nuxt-link>
 
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks?practice_locum_type=Appointed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -51,6 +55,7 @@
         </nuxt-link>
 
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks?practice_locum_type=Rejected"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -63,6 +68,7 @@
         </nuxt-link>
 
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks?practice_locum_type=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -75,6 +81,7 @@
         </nuxt-link>
 
         <nuxt-link
+          v-if="authPermissions.includes('View My Banks')"
           to="/my-banks?practice_locum_type=Lates"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
@@ -87,6 +94,7 @@
         </nuxt-link>
         
         <nuxt-link
+          v-if="authPermissions.includes('View Practice Reports')"
           to="/my-banks-reports"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.name === 'my-banks-reports' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -174,6 +182,11 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
   },
 
   async asyncData ({ app, error, store, }) {

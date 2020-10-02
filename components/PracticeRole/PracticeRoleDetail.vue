@@ -67,12 +67,13 @@
 						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
 							<div class="flex flex-col">
 								<div class="w-full flex flex-row items-center pb-1">
-									<input
+									<!-- <input
 										type="checkbox"
 										:id="role.permissions"
 										:checked="isChecked(role.permissions)"
-										@change="checkAll(index, $event.target.checked)"
+										@change="checkAll(index, $event.target.checked, role)"
 									/>
+									{{index}} -->
 									<label
 										class="font-bold md:text-xl pl-1 leading-none flex items-center"
 										:for="role.permissions"
@@ -235,7 +236,8 @@ export default {
 			});
 			this.setHierarchy(subCategories);
 		},
-		setHierarchy(subCategories) {
+		setHierarchy (subCategories) {
+			console.log('subCategories', subCategories)
 			this.permissions.forEach(item => {
 				item.permissions.forEach(permission => {
 					let findSub = subCategories.find(
@@ -272,7 +274,10 @@ export default {
 				return false
 			}
 		},
-		checkAll(index, checked) {
+		checkAll(index, checked, role) {
+			// console.log('tdsa', this.)
+			console.log('index banana', index)
+			console.log('role', role)
 			this.permissions[index].permissions.forEach(item => {
 				item.done = checked;
 			});
