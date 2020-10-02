@@ -172,7 +172,7 @@
                 class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
               >
-                {{authPermissions.includes('Process Billings') ? 'Edit' : 'View' }}
+                {{ authPermissions.includes('Process Billings') ? 'Edit' : 'View' }}
               </div>
 
               <div
@@ -192,6 +192,18 @@
                 @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
               >
                 View Form A
+              </div>
+
+              <div
+                v-if="
+                  $route.query.status && $route.query.status === 'pension-form-a'
+                    && slotProps.item.locum_form_a_id
+                    && !slotProps.item.locum_form_a_paid_by_practice
+                "
+                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                @click.stop.prevent="locumFormAIdToBePaid = slotProps.item.locum_form_a_id, locumFormAPaidAt = null"
+              >
+                Mark as Paid
               </div>
 
               <div
@@ -311,6 +323,34 @@
           </div>
         </div>
 
+        <div v-if="locumFormAIdToBePaid" class="p-2">
+          <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+            <AppDate
+              v-model="locumFormAPaidAt"
+              :name="'paid_at'"
+              :label="'Payment made on'"
+              :error="formError.find(item => item.field === 'paid_at')"
+              is-before
+            />
+
+            <div class="flex flex-row flex-no-wrap justify-center">
+              <AppButton
+                class="mx-1"
+                :label="'Save'"
+                :in-style="'padding:5px 10px'"
+                @click="formAPaidByPractice"
+              />
+
+              <AppButton
+                class="mx-1"
+                :label="'Cancel'"
+                :in-style="'padding:5px 10px'"
+                @click="locumFormAIdToBePaid = null"
+              />
+            </div>
+          </div>
+        </div>
+
         <AppConfirmationModal
           :label="'Send this Solo Form to Locum?'"
           :confirm-label="'Yes'"
@@ -322,7 +362,14 @@
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            v-if="['practice-billing-invoices-from-locums-id', 'practice-billing-invoices-from-locums-id-edit'].includes($route.name) || payment_modal"
+            v-if="
+              [
+                'practice-billing-invoices-from-locums-id',
+                'practice-billing-invoices-from-locums-id-edit'
+              ].includes($route.name)
+                || payment_modal
+                || locumFormAIdToBePaid
+            "
             :to="{ name: 'practice-billing-invoices-from-locums', query: {...$route.query}}"
             class="shield"
           />
@@ -390,6 +437,9 @@ export default {
         paye_amount: null,
       },
       formError: [],
+
+      locumFormAPaidAt: null,
+      locumFormAIdToBePaid: null,
     }
   },
 
@@ -462,8 +512,14 @@ export default {
 
       if (["pension-form-a",].includes(queryStatus)) {
         columns.push({
+          name: "Paid By Practice At",
+          dataIndex: "locum_form_a_paid_by_practice_at_formatted",
+          class: "text-center",
+        })
+
+        columns.push({
           name: "Paid Form A",
-          dataIndex: "form_paid",
+          dataIndex: "locum_form_a_paid_formatted",
           class: "text-center",
         })
       }
@@ -759,7 +815,6 @@ export default {
             return {
               ...jobPart,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-              form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
         })
@@ -858,7 +913,6 @@ export default {
             return {
               ...jobPart,
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
-              form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
             }
           })
         })
@@ -928,6 +982,7 @@ export default {
         }
       }
     },
+    
     confirmPayment () {
       let notRequired = ["ni", "paye",]
       if (this.ir35 === false) {
@@ -997,7 +1052,7 @@ export default {
             if (err.response) {
               if (
                 err.response.status === 400
-                || err.response.data.error_messages
+                && err.response.data.error_messages
               ) {
                 this.formError = err.response.data.error_messages
               } else {
@@ -1019,6 +1074,73 @@ export default {
           })
       }
     },
+
+    formAPaidByPractice () {
+      if (!this.locumFormAIdToBePaid) {
+        return
+      }
+      
+      this.formError = []
+
+      this.Validate({
+        paid_at: this.locumFormAPaidAt,
+      })
+
+      if (!this.formError.length) {
+        this.$axios.put(`/api/v1/practice/locum-form-as/${this.locumFormAIdToBePaid}/paid`, {
+          paid_at: this.locumFormAPaidAt,
+        }).then((response) => {
+          const locumFormA = response.data.data.locum_form_a
+
+          const jobPart = this.job_parts.find(jobPart => jobPart.locum_form_a_id === locumFormA.id)
+
+          const index = this.job_parts.findIndex(jobPart => jobPart.locum_form_a_id === locumFormA.id)
+
+          if (jobPart && index > -1) {
+            jobPart.locum_form_a_paid_by_practice = locumFormA.paid_by_practice
+            jobPart.locum_form_a_paid_by_practice_formatted = locumFormA.paid_by_practice_formatted
+            jobPart.locum_form_a_paid_by_practice_at = locumFormA.paid_by_practice_at
+            jobPart.locum_form_a_paid_by_practice_at_formatted = locumFormA.paid_by_practice_at_formatted
+
+            this.job_parts.splice(index, 1, jobPart)
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${response.data.message}`,],
+          })
+
+          this.locumFormAIdToBePaid = null
+          this.locumFormAPaidAt = null
+        }).catch((err) => {
+          console.log("err", err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+              this.formError = err.response.data.error_messages
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = "Something weng wrong!"
+          } else {
+            message = err.message
+          }
+
+          if (message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${message}`,],
+            })
+          }
+        })
+      }
+    },
+
     async sorted (order_by) {
       let orderBy = order_by.map(item => {
         let order = item.split(":")[1]
