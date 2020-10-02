@@ -248,5 +248,22 @@ export default {
       return tabs
     },
   },
+
+  async asyncData ({ app, store, error }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Practice Reports') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+    } catch (err) {
+      error(err)
+    }
+  },
 }
 </script>
