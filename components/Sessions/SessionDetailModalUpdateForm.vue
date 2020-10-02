@@ -1721,10 +1721,7 @@ export default {
             let message = null
 
             if (err.response) {
-              if (
-                err.response.status === 400
-								|| err.response.data.error_messages
-              ) {
+              if (err.response.data.error_messages && err.response.data.error_messages.length > 0) {
                 this.formError = err.response.data.error_messages
               } else {
                 message = err.response.data.message

@@ -238,7 +238,7 @@
                       && !slotProps.item.locum_form_a_sent_to_practice
                   "
                   class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
-                  :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
+                  :class="slotProps.item.locum_form_a_sent_to_practice ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
                   @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_form_a_sent_to_practice)"
                 >
                   Send Form to Practice
@@ -271,8 +271,8 @@
                     $route.query.status && $route.query.status === 'pension-form-a'
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
-                      && slotProps.item.locum_form_a_sent_to_practice === 1
-                      && slotProps.item.locum_form_a_paid === 0
+                      && slotProps.item.locum_form_a_sent_to_practice
+                      && !slotProps.item.locum_form_a_paid
                   "
                   class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_form_a_id, 'payFormA')"
@@ -692,8 +692,14 @@ export default {
 
       if (["pension-form-a",].includes(queryStatus)) {
         columns.push({
+          name: "Paid By Practice At",
+          dataIndex: "locum_form_a_paid_by_practice_at_formatted",
+          class: "text-center",
+        })
+
+        columns.push({
           name: "Paid Form A",
-          dataIndex: "form_paid",
+          dataIndex: "locum_form_a_paid_formatted",
           class: "text-center",
         })
       }
@@ -911,7 +917,6 @@ export default {
         job_parts = job_parts.map(jobPart => {
           return {
             ...jobPart,
-            form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
           }
         })
       }
@@ -968,12 +973,16 @@ export default {
             text: [`${res.message}`,],
           })
           this.send_form_a_modal = false
-          let updatedFormA = this.job_parts.find(
+
+          const updatedFormA = this.job_parts.find(
             jobPart =>
               jobPart.locum_invoice_id
               === res.data.locum_form_a.locum_invoice_id
           )
-          updatedFormA.locum_form_a_sent_to_practice = 1
+
+          if (updatedFormA) {
+            updatedFormA.locum_form_a_sent_to_practice = true
+          }
         })
     },
     // showTest(id) {
@@ -1132,7 +1141,6 @@ export default {
             this.job_parts = job_parts.map(jobPart => {
               return {
                 ...jobPart,
-                form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
               }
             })
           } else if (response.data && response.data.locum_form_bs) {
@@ -1248,7 +1256,6 @@ export default {
             this.job_parts = job_parts.map(jobPart => {
               return {
                 ...jobPart,
-                form_paid: jobPart.locum_form_a_paid === 1 ? "Yes" : "No",
               }
             })
           } else if (res.data && res.data.locum_form_bs) {
@@ -1414,20 +1421,23 @@ export default {
     },
     payFormA () {
       this.$axios
-        .$put(`/api/v1/locum/locum-form-as/${this.invoice_id}/paid`, this.form)
-        .then(res => {
-          let updatedFormA = this.job_parts.find(
-            jobPart =>
-              jobPart.locum_invoice_id
-              === res.data.locum_form_a.locum_invoice_id
-          )
+        .put(`/api/v1/locum/locum-form-as/${this.invoice_id}/paid`, this.form)
+        .then((response) => {
+          const locumFormA = response.data.data.locum_form_a
 
-          updatedFormA.locum_form_a_paid = 1
+          let jobPart = this.job_parts.find(jobPart => jobPart.locum_form_a_id === locumFormA.id)
+
+          if (jobPart) {
+            jobPart.locum_form_a_paid = locumFormA.paid
+            jobPart.locum_form_a_paid_formatted = locumFormA.paid_formatted
+            jobPart.locum_form_a_paid_at = locumFormA.paid_at
+            jobPart.locum_form_a_paid_at = locumFormA.paid_at_formatted
+          }
 
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.message}`,],
+            text: [`${response.data.message}`,],
           })
         })
         .catch(err => {
