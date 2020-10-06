@@ -86,7 +86,7 @@
               v-model="form.payroll_account_number"
               :type="'text'"
               :name="'payroll_account_number'"
-              :label="'Payroll Account Number'"
+              :label="'Payroll Bank Account Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
               required
               @blur="CheckEmptyField(form.payroll_account_number, 'payroll_account_number')"
