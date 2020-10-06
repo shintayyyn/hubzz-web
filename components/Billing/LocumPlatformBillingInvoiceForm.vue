@@ -764,6 +764,10 @@ export default {
     },
   },
 
+  created () {
+    console.log('propinvoice', this.propInvoice)
+  },
+
   mounted () {
     this.setInitialState()
     let practice_id
@@ -1026,7 +1030,7 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`${res.message}`,],
+                text: final === true ? [`${res.message}`,] : [`Draft Invoice Created Successfully`,],
               })
 
               this.$emit("createInvoice", res.data.locum_invoice)
@@ -1067,7 +1071,7 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: [`${res.message}`,],
+                text: final === true ? [`${res.message}`,] : [`Draft Invoice Created Successfully`,],
               })
 
               this.$emit("updateInvoice", res.data.locum_invoice)

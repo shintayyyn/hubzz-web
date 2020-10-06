@@ -427,7 +427,7 @@ export default {
           mobile_number: this.mobileNumber,
           email: this.email,
           password: this.password,
-          password_confirmation: this.password,
+          password_confirmation: this.passwordConfirmation,
         }
 
         this.formErrors = await this.$validator(data, {
@@ -477,12 +477,12 @@ export default {
 
           'password.required': 'Password is required.',
           'password.string': 'Invalid password.',
-          'password.min': 'Password must be at least {{ argument.0 }} characters.',
+          'password.min': 'Password must be at least 6 characters.',
 
-          'password_confirmation.required': 'Password confirmation is required.',
+          'password_confirmation.required': 'Password confirmation is requiredx.',
           'password_confirmation.string': 'Invalid password confirmation.',
-          'password_confirmation.min': 'Password confirmation must be at least {{ argument.0 }} characters.',
-          'password_confirmation.same': 'Password do not match.',
+          'password_confirmation.min': 'Password confirmation must be at least 6 characters.',
+          'password_confirmation.same': 'Passwords do not match.',
         }).then(() => []).catch((errors) => errors)
 
         if (this.formErrors.length || this.showPrivacyPolicyError) {
