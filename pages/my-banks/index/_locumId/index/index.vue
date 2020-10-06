@@ -155,7 +155,7 @@
                     </div>
 
                     <div class="font-bold text-sm sm:text-md">
-                      Payroll Account Number
+                      Payroll Bank Account Number
                     </div>
 
                     <div class="text-sm mb-4">

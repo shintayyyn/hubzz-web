@@ -355,7 +355,7 @@
               v-model="form.payroll_account_number"
               :type="'number'"
               :name="'payroll_account_number'"
-              :label="'Payroll Account Number'"
+              :label="'Payroll Bank Account Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
               :limit="8"
               required
