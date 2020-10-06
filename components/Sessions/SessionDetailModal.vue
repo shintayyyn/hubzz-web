@@ -342,7 +342,7 @@ export default {
             console.log(res)
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "danger",
+              status: "success",
               text: [`Job Successfully rejected`,],
             })
             this.$emit("close")

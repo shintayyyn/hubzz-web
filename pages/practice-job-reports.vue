@@ -90,6 +90,10 @@ export default {
   },
 
   computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+
     practice () {
       return this.$auth.loggedIn && this.$auth.user.practice_detail
         ? this.$auth.user.practice_detail.practice
@@ -106,7 +110,7 @@ export default {
 
       const tabs = []
 
-      if (this.practice && this.practice.type === 'Spoke') {
+      if (this.practice && this.practice.type === 'Spoke' && this.authPermissions.includes('View Sessions Job')) {
         tabs.push(
           ...[
             {
@@ -124,130 +128,139 @@ export default {
           ]
         )
       }
-
-      tabs.push(
-        ...[
-          {
-            title: 'Allocated',
-            route: {
-              name: 'job-parts-index',
-              query: {
-                status: 'Allocated',
+      if (this.authPermissions.includes('View Sessions Job')) {
+        tabs.push(
+          ...[
+            {
+              title: 'Allocated',
+              route: {
+                name: 'job-parts-index',
+                query: {
+                  status: 'Allocated',
+                },
               },
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Allocated'.toLowerCase(),
             },
-            active: name === 'job-parts-index'
-              && status
-              && status.toLowerCase() === 'Allocated'.toLowerCase(),
-          },
-          {
-            title: 'Ongoing',
-            route: {
-              name: 'job-parts-index',
-              query: {
-                status: 'Ongoing',
+            {
+              title: 'Ongoing',
+              route: {
+                name: 'job-parts-index',
+                query: {
+                  status: 'Ongoing',
+                },
               },
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Ongoing'.toLowerCase(),
             },
-            active: name === 'job-parts-index'
-              && status
-              && status.toLowerCase() === 'Ongoing'.toLowerCase(),
-          },
-          {
-            title: 'Live',
-            route: {
-              name: 'sessions-index',
-              query: {
-                status: 'Live',
+            {
+              title: 'Live',
+              route: {
+                name: 'sessions-index',
+                query: {
+                  status: 'Live',
+                },
               },
+              active: name === 'sessions-index'
+                && status
+                && status.toLowerCase() === 'Live'.toLowerCase(),
             },
-            active: name === 'sessions-index'
-              && status
-              && status.toLowerCase() === 'Live'.toLowerCase(),
-          },
-          {
-            title: 'Applied',
-            route: {
-              name: 'sessions-index',
-              query: {
-                status: 'Applied',
+            {
+              title: 'Applied',
+              route: {
+                name: 'sessions-index',
+                query: {
+                  status: 'Applied',
+                },
               },
+              active: name === 'sessions-index'
+                && status
+                && status.toLowerCase() === 'Applied'.toLowerCase(),
             },
-            active: name === 'sessions-index'
-              && status
-              && status.toLowerCase() === 'Applied'.toLowerCase(),
-          },
-          {
-            title: 'Unfilled',
-            route: {
-              name: 'sessions-index',
-              query: {
-                status: 'Unfilled',
+            {
+              title: 'Unfilled',
+              route: {
+                name: 'sessions-index',
+                query: {
+                  status: 'Unfilled',
+                },
               },
+              active: name === 'sessions-index'
+                && status
+                && status.toLowerCase() === 'Unfilled'.toLowerCase(),
             },
-            active: name === 'sessions-index'
-              && status
-              && status.toLowerCase() === 'Unfilled'.toLowerCase(),
-          },
-          {
-            title: 'Withdrawn',
-            route: {
-              name: 'job-parts-index',
-              query: {
-                status: 'Withdrawn',
+            {
+              title: 'Withdrawn',
+              route: {
+                name: 'job-parts-index',
+                query: {
+                  status: 'Withdrawn',
+                },
               },
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Withdrawn'.toLowerCase(),
             },
-            active: name === 'job-parts-index'
-              && status
-              && status.toLowerCase() === 'Withdrawn'.toLowerCase(),
-          },
-          {
-            title: 'Cancelled',
-            route: {
-              name: 'job-parts-index',
-              query: {
-                status: 'Cancelled',
+            {
+              title: 'Cancelled',
+              route: {
+                name: 'job-parts-index',
+                query: {
+                  status: 'Cancelled',
+                },
               },
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Cancelled'.toLowerCase(),
             },
-            active: name === 'job-parts-index'
-              && status
-              && status.toLowerCase() === 'Cancelled'.toLowerCase(),
-          },
-          {
-            title: 'Completed',
-            route: {
-              name: 'job-parts-index',
-              query: {
-                status: 'Completed',
+            {
+              title: 'Completed',
+              route: {
+                name: 'job-parts-index',
+                query: {
+                  status: 'Completed',
+                },
               },
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Completed'.toLowerCase(),
             },
-            active: name === 'job-parts-index'
-              && status
-              && status.toLowerCase() === 'Completed'.toLowerCase(),
-          },
-          {
-            title: 'Approved',
-            route: {
-              name: 'job-parts-index',
-              query: {
-                status: 'Approved',
+            {
+              title: 'Approved',
+              route: {
+                name: 'job-parts-index',
+                query: {
+                  status: 'Approved',
+                },
               },
+              active: name === 'job-parts-index'
+                && status
+                && status.toLowerCase() === 'Approved'.toLowerCase(),
             },
-            active: name === 'job-parts-index'
-              && status
-              && status.toLowerCase() === 'Approved'.toLowerCase(),
-          },
-          {
-            title: 'Reports',
-            route: {
-              name: 'practice-job-reports',
+          ]
+        )
+      }
+      if (this.authPermissions.includes('View Practice Reports')) {
+        tabs.push(
+          ...[
+            {
+              title: 'Reports',
+              route: {
+                name: 'practice-job-reports',
+              },
+              active: name === 'practice-job-reports',
             },
-            active: name === 'practice-job-reports',
-          },
-        ]
-      )
+          ]
+        )
+      }
+      
 
       return tabs
     },
   },
+
 
   async asyncData ({ app, store, error }) {
     try {

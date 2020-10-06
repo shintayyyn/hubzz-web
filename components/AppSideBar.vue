@@ -304,6 +304,21 @@ export default {
           && ["Active", "Dormant",].includes(practiceStatus)
           && (["Hub", "Stand Alone",].includes(practiceType) 
               || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && hubType !== "Type 2"
+          && (this.authPermissions.includes("View My Banks") === false && this.authPermissions.includes("View Practice Reports"))
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "My Banks (Reports Only)",
+            route: "/my-banks-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/my-banks-reports',
+          })
+        }
+
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
           && this.authPermissions.includes("View Sessions Job")
           && hubType !== "Type 2"
         ) {
@@ -317,6 +332,21 @@ export default {
             navigationTabTitle: "Sessions",
             route: "/job-parts",
             active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
+          })
+        }
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (this.authPermissions.includes("View Sessions Job") === false && this.authPermissions.includes("View Practice Reports"))
+          && hubType !== "Type 2"
+        ) {
+
+          practiceTabList.push({
+            navigationTabTitle: "Sessions (Reports Only)",
+            route: "/practice-job-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-job-reports',
           })
         }
 
@@ -346,6 +376,21 @@ export default {
             navigationTabTitle: "Billing",
             route: "/practice-billing",
             active: `/${this.$route.path.split('/')[1]}` === '/practice-billing',
+          })
+        }
+        
+        if (
+          accountStatus === "Active"
+          && ["Active", "Dormant",].includes(practiceStatus)
+          && (["Hub", "Stand Alone",].includes(practiceType) 
+              || (practiceType === 'Spoke' && parentPracticeId !== null))
+          && (this.authPermissions.includes("View Billings") === false && this.authPermissions.includes("View Practice Reports"))
+          && hubType !== "Type 2"
+        ) {
+          practiceTabList.push({
+            navigationTabTitle: "Billing (Reports Only)",
+            route: "/practice-billing-reports",
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-billing-reports',
           })
         }
 

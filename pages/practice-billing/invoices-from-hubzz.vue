@@ -9,7 +9,7 @@
         HUBZZ Invoices
       </nuxt-link>
 
-      <nuxt-link
+      <!-- <nuxt-link
         v-if="practice
           && (practice.type !== 'Spoke' 
             || (practice.type === 'Spoke' 
@@ -20,7 +20,7 @@
         :class="$route.name.includes('practice-billing-invoices-from-hubzz-hubzz-billing-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
         HUBZZ Billing Reports
-      </nuxt-link>
+      </nuxt-link> -->
       <transition name="fade" mode="out-in">
         <div
           v-if="['practice-billing-invoices-from-hubzz-id'].includes($route.name)"
