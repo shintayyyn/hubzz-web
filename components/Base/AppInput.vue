@@ -1,6 +1,6 @@
 <template>
   <section>
-    <template v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)">
+    <template v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number', 'numberDash'].includes(type)">
       <div class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-6 py-2'">
         <div v-if="label || info" class="relative flex flex-wrap leading-none" :class="info ? 'flex-wrap justify-between' : 'items-center'">
           <label :for="name" class="text-xs sm:text-sm py-1">
@@ -124,7 +124,7 @@
 
         <template v-else>
           <div class="flex flex-row justify-start mt-1">
-            <template v-if="['text','time','email', 'number'].includes(type)">
+            <template v-if="['text','time','email', 'number', 'numberDash'].includes(type)">
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">
                   <p v-if="format && format === 'mobile'" class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent">
@@ -148,7 +148,7 @@
                     @input="$emit('input', $event.target.value)"
                     @keypress.enter="$emit('submit')"
                     @blur="$emit('blur')"
-                    @keypress="type === 'number' ? isNumber($event) : $emit('keypress')"
+                    @keypress="type === 'number' ? isNumber($event) : type === 'numberDash' ? isNumberDash($event) : $emit('keypress')"
                     @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
                   >
                 </div>

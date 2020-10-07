@@ -414,10 +414,11 @@
           />
           <AppInput
             v-model="form.sort_code"
-            :type="'text'"
+            :type="'numberDash'"
             :name="'sort_code'"
             :label="'Sort code'"
             :error="formError.find(item => item.field === 'sort_code')"
+            :limit="8"
             required
           />
           <AppInput
@@ -699,6 +700,17 @@ export default {
             validation: item.validation
           });
         });
+      }
+    },
+    "form.sort_code" (value) {
+      let final = ''
+      if (value && value.length > 0) {
+        let digit = value.split('-').join('')
+
+        final = digit.match(/.{1,2}/g).join('-')
+        this.form.sort_code = final
+      } else {
+        return ''
       }
     },
     "form.practice_type_id"(newValue, oldValue) {

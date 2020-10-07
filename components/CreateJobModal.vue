@@ -561,7 +561,6 @@
                   :name="'duration_for_each_appointment'"
                   :label="'Duration of each appointment?'"
                   :placeholder="''"
-                  :in-style="'text-align:right;'"
                   :error="formError.find(item => item.field === 'duration_for_each_appointment')"
                   required
                   :limit="4"

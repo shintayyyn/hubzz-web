@@ -343,11 +343,11 @@
 
             <AppInput
               v-model="form.payroll_sort_code"
-              :type="'number'"
+              :type="'numberDash'"
               :name="'payroll_sort_code'"
               :label="'Sort Code'"
               :error="formError.find(item => item.field === 'payroll_sort_code')"
-              :limit="6"
+              :limit="8"
               required
             />
 
@@ -397,11 +397,11 @@
 
             <AppInput
               v-model="form.sort_code"
-              :type="'text'"
+              :type="'numberDash'"
               :name="'sort_code'"
               :label="'Sort Code'"
               :error="formError.find(item => item.field === 'sort_code')"
-              :limit="6"
+              :limit="8"
               required
               @keydown="inputNumberOnly($event)"
             />
@@ -1000,6 +1000,30 @@ export default {
           }
         }
       )
+    },
+
+    "form.payroll_sort_code" (value) {
+      let final = ''
+      if (value && value.length > 0) {
+        let digit = value.split('-').join('')
+
+        final = digit.match(/.{1,2}/g).join('-')
+        this.form.payroll_sort_code = final
+      } else {
+        return ''
+      }
+    },
+
+    "form.sort_code" (value) {
+      let final = ''
+      if (value && value.length > 0) {
+        let digit = value.split('-').join('')
+
+        final = digit.match(/.{1,2}/g).join('-')
+        this.form.sort_code = final
+      } else {
+        return ''
+      }
     },
 
     "form.view_permanent_jobs" (value) {
@@ -1601,10 +1625,10 @@ export default {
       }
 
       if (["true", true,].includes(this.form.paid_under_payroll)) {
-        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length !== 6) {
+        if (this.form.payroll_sort_code && this.form.payroll_sort_code.length !== 8) {
           this.formError.push({
             field: "payroll_sort_code",
-            message: "Sort Code should be 6 digits",
+            message: "Sort Code should be 8 digits (dashes included)",
           })
         }
 
@@ -1615,10 +1639,10 @@ export default {
           })
         }
       } else if (["false", false,].includes(this.form.paid_under_payroll)) {
-        if (this.form.sort_code && this.form.sort_code.length !== 6) {
+        if (this.form.sort_code && this.form.sort_code.length !== 8) {
           this.formError.push({
             field: "sort_code",
-            message: "Sort Code should be 6 digits",
+            message: "Sort Code should be 8 digits (dashes included)",
           })
         }
 

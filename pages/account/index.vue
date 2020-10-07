@@ -242,7 +242,7 @@
         :label="'Mobile Number'"
         :error="formError.find(item => item.field === 'mobile_number')"
         :limit="10"
-        :format="'mobile'"
+        :format="!locumForm.mobile_number ? 'mobile':''"
         required
         @submit="save"
         @keydown="inputNumberOnly($event)"
@@ -505,6 +505,7 @@ export default {
         locumForm.suffix = user.personal_detail.suffix
         locumForm.gender = user.personal_detail.gender
         locumForm.date_of_birth = user.personal_detail.date_of_birth
+        // locumForm.mobile_number = user.contact_detail.mobile_number
         locumForm.mobile_number = user.contact_detail.mobile_number ? user.contact_detail.mobile_number.replace("+44", '') : ''
         locumForm.home_number = user.contact_detail.home_number
         locumForm.work_number = user.contact_detail.work_number
