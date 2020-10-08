@@ -519,6 +519,8 @@ export default {
         locumForm.memorable_number = user.memorable_number
 
         this.locumForm = locumForm
+
+        console.log('locum form', locumForm)
       }
     },
 
@@ -574,7 +576,7 @@ export default {
           [{ field: "address_line_3", display: "City / Town / District", },]
         )
 
-        if (this.practiceForm.memorable_number && this.practiceForm.memorable_number.length !== 6) {
+        if (this.practiceForm.memorable_number && this.practiceForm.memorable_number.toString().length !== 6) {
           this.formError.push({
             field: "memorable_number",
             message: "Memorable number should be 6 digits",
@@ -619,7 +621,7 @@ export default {
           "address_line_2",
         ])
 
-        if (this.locumForm.memorable_number && this.locumForm.memorable_number.length !== 6) {
+        if (this.locumForm.memorable_number && this.locumForm.memorable_number.toString().length !== 6) {
           this.formError.push({
             field: "memorable_number",
             message: "Memorable number should be 6 digits",
