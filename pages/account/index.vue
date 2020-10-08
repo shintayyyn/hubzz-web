@@ -242,7 +242,7 @@
         :label="'Mobile Number'"
         :error="formError.find(item => item.field === 'mobile_number')"
         :limit="10"
-        :format="!locumForm.mobile_number ? 'mobile':''"
+        :format="!locumForm.mobile_number || locumForm.mobile_number !== user.contact_detail.mobile_number ? 'mobile':''"
         required
         @submit="save"
         @keydown="inputNumberOnly($event)"
@@ -648,7 +648,7 @@ export default {
             status: "success",
             text: ["Saved",],
           })
-
+          this.getUser()
           this.CheckUserVerification()
         }).catch(this.errorHandler).finally(() => {
           this.scrollToTop()
