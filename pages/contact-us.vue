@@ -15,7 +15,7 @@
           <div class="text-sm font-bold">{{fullname}}</div>
         </div>
       </div>
-      <AppInput
+      <!-- <AppInput
         v-model="form.message"
         :type="'textarea'"
         :name="'message'"
@@ -23,7 +23,21 @@
         :placeholder="'Enter your message here'"
         :resize="false"
         :error="formError.find(item => item.field === 'message')"
-      />
+        @keydown.enter.exact.prevent
+        @keyup.enter.exact="newline"
+      /> -->
+      <div>
+        <textarea
+          ref="textArea"
+          v-model="form.message"
+          rows="6" 
+          cols="140"
+          placeholder="Enter your message here"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
+          @keydown.enter.exact="newline"
+        />
+      </div>
+      
       <AppButton :label="'Send'" @click="send" :disabled="loading" />
       <AppLoading :loading="loading" spinner />
     </div>
@@ -74,6 +88,9 @@ export default {
     };
   },
   methods: {
+    newline () {
+      this.form.message = `${this.form.message}`
+    },
     send() {
       this.formError = [];
       this.Validate(this.form);
