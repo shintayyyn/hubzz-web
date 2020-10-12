@@ -122,7 +122,7 @@ export default {
         Promise.all([
           this.$axios.get('/api/v1/locum/job-parts', {
             params: {
-              locum_status: ['Allocated',],
+              locum_status: ['Allocated', 'Ongoing'],
               calendar_date_start: `${calendarDateStart}:gte`,
               calendar_date_end: `${calendarDateEnd}:lte`,
               limit: 100000000,
@@ -132,7 +132,7 @@ export default {
           this.$axios.get('/api/v1/locum/jobs', {
             params: {
               locum_status: ['Applied',],
-              job_type: ['Platform',],
+              job_type: ['Platform', 'Private',],
               calendar_date_start: `${calendarDateStart}:gte`,
               calendar_date_end: `${calendarDateEnd}:lte`,
               limit: 100000000,
