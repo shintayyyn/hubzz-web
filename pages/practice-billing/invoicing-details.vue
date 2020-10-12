@@ -35,16 +35,26 @@
       </div>
     </div>
 
-    <AppInput v-model="form.vat_registered" :type="'single-checkbox'" :name="'vat_registered'"
-              :label="'Are you VAT registered?'"
+    <AppInput 
+      v-model="form.vat_registered" 
+      :type="'single-checkbox'" 
+      :name="'vat_registered'"
+      :label="'Are you VAT registered?'"
     />
 
     <template v-if="form.vat_registered">
-      <AppInput v-model="form.vat_number" :type="'text'" :name="'vat_number'" :label="'VAT Number'"
-                :error="formError.find(item => item.field === 'vat_number')"
+      <AppInput 
+        v-model="form.vat_number" 
+        :type="'text'" 
+        :name="'vat_number'" 
+        :label="'VAT Number'"
+        :error="formError.find(item => item.field === 'vat_number')"
       />
-      <AppDate v-model="form.tax_year_end_date" :name="'tax_year_end_date'" :label="'Tax Year End Date'"
-               :error="formError.find(item => item.field === 'tax_year_end_date')"
+      <AppDate 
+        v-model="form.tax_year_end_date" 
+        :name="'tax_year_end_date'" 
+        :label="'Tax Year End Date'"
+        :error="formError.find(item => item.field === 'tax_year_end_date')"
       />
     </template>
 
@@ -52,22 +62,30 @@
       Bank Details
     </div>
 
-    <AppInput v-model="form.account_name" :type="'text'" :name="'account_name'" :label="'Account name'"
-              :error="formError.find(item => item.field === 'account_name')" required
+    <AppInput 
+      v-model="form.account_name" 
+      :type="'text'" 
+      :name="'account_name'" 
+      :label="'Account name'"
+      :error="formError.find(item => item.field === 'account_name')" required
     />
 
-    <AppInput v-model="form.bank_name" :type="'text'" :name="'bank_name'" :label="'Bank name'"
-              :error="formError.find(item => item.field === 'bank_name')" required
+    <AppInput 
+      v-model="form.bank_name" 
+      :type="'text'" 
+      :name="'bank_name'" 
+      :label="'Bank name'"
+      :error="formError.find(item => item.field === 'bank_name')" required
     />
 
     <AppInput
       v-model="form.sort_code"
-      :type="'number'"
+      :type="'numberDash'"
       :name="'sort_code'"
       :label="'Sort code'"
       :error="formError.find(item => item.field === 'sort_code')"
       required
-      :limit="6"
+      :limit="8"
     />
 
     <AppInput
@@ -110,6 +128,20 @@ export default {
       formError: [],
     }
   },
+
+  watch:{
+    "form.sort_code" (value) {
+      let final = ''
+      if (value && value.length > 0) {
+        let digit = value.split('-').join('')
+
+        final = digit.match(/.{1,2}/g).join('-')
+        this.form.sort_code = final
+      } else {
+        return ''
+      }
+    },
+  },
   async asyncData ({ app, store, }) {
     try {
       let response = await app.$axios.$get(
@@ -151,10 +183,10 @@ export default {
         notRequired.push("vat_number", "tax_year_end_date")
       }
 
-      if (this.form.sort_code && this.form.sort_code.length !== 6) {
+      if (this.form.sort_code && this.form.sort_code.length !== 8) {
         this.formError.push({
           field: "sort_code",
-          message: "Sort Code should be 6 digits",
+          message: "Sort Code should be 8 digits (dashes included)",
         })
       }
 

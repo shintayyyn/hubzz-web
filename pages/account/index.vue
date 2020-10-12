@@ -242,7 +242,7 @@
         :label="'Mobile Number'"
         :error="formError.find(item => item.field === 'mobile_number')"
         :limit="10"
-        :format="!locumForm.mobile_number ? 'mobile':''"
+        :format="!locumForm.mobile_number || locumForm.mobile_number !== user.contact_detail.mobile_number ? 'mobile':''"
         required
         @submit="save"
         @keydown="inputNumberOnly($event)"
@@ -519,6 +519,8 @@ export default {
         locumForm.memorable_number = user.memorable_number
 
         this.locumForm = locumForm
+
+        console.log('locum form', locumForm)
       }
     },
 
@@ -574,7 +576,7 @@ export default {
           [{ field: "address_line_3", display: "City / Town / District", },]
         )
 
-        if (this.practiceForm.memorable_number && this.practiceForm.memorable_number.length !== 6) {
+        if (this.practiceForm.memorable_number && this.practiceForm.memorable_number.toString().length !== 6) {
           this.formError.push({
             field: "memorable_number",
             message: "Memorable number should be 6 digits",
@@ -619,7 +621,7 @@ export default {
           "address_line_2",
         ])
 
-        if (this.locumForm.memorable_number && this.locumForm.memorable_number.length !== 6) {
+        if (this.locumForm.memorable_number && this.locumForm.memorable_number.toString().length !== 6) {
           this.formError.push({
             field: "memorable_number",
             message: "Memorable number should be 6 digits",
@@ -648,7 +650,7 @@ export default {
             status: "success",
             text: ["Saved",],
           })
-
+          this.getUser()
           this.CheckUserVerification()
         }).catch(this.errorHandler).finally(() => {
           this.scrollToTop()
