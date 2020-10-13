@@ -101,6 +101,12 @@ export default {
           class: "text-center",
           sortable: true,
         },
+        {
+          name: "Updated At",
+          dataIndex: "updated_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
+        },
       ],
     }
   },

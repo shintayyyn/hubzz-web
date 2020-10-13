@@ -48,7 +48,11 @@ export default {
       const authPermissions = store.getters["permissions"]
 
       if (app.$auth.user.domain === 'Practice'
-          && authPermissions.includes('View Surgery Management') === false) {
+          && authPermissions.includes('View Surgery Management') === false
+          && authPermissions.includes('View Surgery Sessions') === false
+          && authPermissions.includes('View Surgery Billings') === false
+          && authPermissions.includes('View Surgery Banks') === false
+          && authPermissions.includes('View Surgery Permanent Jobs') === false) {
         error({
           statusCode: 403,
           message: 'You are not authorized to view this page.',

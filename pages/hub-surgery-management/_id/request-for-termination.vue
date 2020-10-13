@@ -49,6 +49,27 @@ export default {
 			this.CheckEmptyField(this.form.note, "note");
 		}
 	},
+	async asyncData ({ app, error, store, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('Request For Termination Surgery Management') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+    } catch (err) {
+      console.log('err', err.response || err)
+      error({
+        statusCode: 403,
+        message: 'You are not authorized to view this page.',
+      })
+    }
+  },
 	methods: {
 		checkField() {
 			this.formError = [];
@@ -77,6 +98,6 @@ export default {
 			}
 		}
 	}
-};
+}
 </script>
 <style></style>

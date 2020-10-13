@@ -21,7 +21,7 @@
         </nuxt-link>
 
         <nuxt-link
-          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Sessions Job')"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Sessions')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions` }"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-sessions' || $route.name.includes('hub-surgery-management-id-surgery-sessions-index') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -30,7 +30,7 @@
         </nuxt-link>
 
         <nuxt-link
-          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Sessions Job') && authPermissions.includes('View Billings')"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Billings')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-billings' || $route.name.includes('hub-surgery-management-id-surgery-billings') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -39,7 +39,7 @@
         </nuxt-link>
 
         <nuxt-link
-          v-if="relationshipIsActive == 'Active'"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Banks')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-banks`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-banks' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
@@ -48,7 +48,7 @@
         </nuxt-link>
 
         <nuxt-link
-          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Permanent Job')"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Permanent Jobs')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
@@ -57,7 +57,7 @@
         </nuxt-link>
 
         <nuxt-link
-          v-if="relationshipIsActive == 'Active'"
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('Request for Termination Surgery Management')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/request-for-termination`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-request-for-termination' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
@@ -79,6 +79,7 @@ export default {
   data () {
     return {
       practiceSurgery: "",
+      surgeryManagementPermissions: [],
     }
   },
 
@@ -117,6 +118,31 @@ export default {
       }
     } catch (err) {
       return error(err)
+    }
+  },
+
+  created () {
+    this.surgeryManagementPermissions = this.authPermissions.filter(item => item.includes('View Surgery'))
+    let toRedirect = ''
+    if (this.surgeryManagementPermissions.find(item => item === 'View Surgery Management') === undefined) {
+      console.log('redirecting')
+      switch (this.surgeryManagementPermissions[0]) {
+      case "View Surgery Sessions":
+        toRedirect = "surgery-sessions"
+        break
+      case "View Surgery Billings":
+        toRedirect = "surgery-billings/invoices-from-locums"
+        break
+      case "View Surgery Banks":
+        toRedirect = "surgery-banks"
+        break
+      case "View Surgery Permanent Jobs":
+        toRedirect = "surgery-permanent-jobs"
+        break
+      default:
+        toRedirect = ''
+      }
+      this.$router.push(`/hub-surgery-management/${this.$route.params.id}/${toRedirect}`)
     }
   },
 
