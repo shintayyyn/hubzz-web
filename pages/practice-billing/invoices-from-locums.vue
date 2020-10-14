@@ -2,6 +2,7 @@
   <section class="relative">
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
       <nuxt-link
+        :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -10,6 +11,7 @@
       </nuxt-link>
 
       <nuxt-link
+        :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -18,6 +20,7 @@
       </nuxt-link>
 
       <nuxt-link
+        :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -26,6 +29,7 @@
       </nuxt-link>
 
       <nuxt-link
+        :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -34,6 +38,7 @@
       </nuxt-link>
 
       <nuxt-link
+        :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'solo-form' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -42,6 +47,7 @@
       </nuxt-link>
 
       <nuxt-link
+        :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -641,9 +647,9 @@ export default {
         this.job_parts = []
         this.clearFilters()
         this.isFiltered = false
-        this.initialLoading = true
+        // this.initialLoading = true
         await this.getJobPartsPromiseAll()
-        this.initialLoading = false
+        // this.initialLoading = false
       }
     },
     "form.ni" (value) {
@@ -722,6 +728,9 @@ export default {
     },
     
     getJobPartsPromiseAll () {
+      //===========INITIALIZE LOADING============
+      this.initialLoading = true 
+
       let status = []
       let invoice_status = []
       let locum_invoiceable
@@ -817,10 +826,14 @@ export default {
               under_parent_practice: jobPart.parent_practice_id ? "Yes" : "No",
             }
           })
+          // ================TERMINATE LOADING===============
+          this.initialLoading = false
         })
         .catch((err) => {
           console.log('err', err.response || err)
           this.$nuxt.error(err)
+          // ================TERMINATE LOADING===============
+          this.initialLoading = true
         })
     },
 
