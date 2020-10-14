@@ -10,6 +10,7 @@
 					<AppLoading :loading="loading" spinner />
 					<AppFormError :formError="formError" v-if="formError.length > 0" />
 					<div class="font-bold text-sm sm:text-md mt-4">I won't be available</div>
+					<div class="text-gray-600 font-bold italic text-sm sm:text-md mt-4">*Please take note that being unavailable on AM / PM Shifts would also mean that you will not be available for Whole Day Sessions.</div>
 					<div class="flex flex-col w-full my-6">
 						<div class="text-sm sm:text-md">On this date</div>
 						<div
@@ -17,10 +18,10 @@
 						>{{$moment($store.state.availability.selected_date, 'YYYY-MM-DD').format('DD/MM/YYYY')}}</div>
 					</div>
 					<div class="flex flex-row flex-wrap items-center justify-between mt-4 relative">
-						<div class="text-sm sm:text-md leading-loose mr-4">On theses shifts</div>
+						<div class="text-sm sm:text-md leading-loose mr-4">On these shifts</div>
 						<div
 							class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
-						>Select all that apply. Shifts that are already booked are greyed-out.</div>
+						>Select all that apply. Shifts that are already booked are greyed-out. Please take note that being unavailable on AM / PM Shifts would also mean that you will not be available for Whole Day Sessions. </div>
 						<div
 							class="text-red-500 text-xs text-white"
 							v-if="formError.find(item => item.field === 'shift_id') && formError.find(item => item.field === 'shift_id').message"
@@ -238,15 +239,28 @@ export default {
 			: [];
 		this.form.date_start = this.$store.state.availability.selected_date;
 		this.form.date_end = this.$store.state.availability.selected_date;
+		console.log('date id', this.$route.params.id)
 	},
 	methods: {
-		select(id) {
+		select (id) {
 			let index = this.form.shift_id.findIndex(item => item === id);
 			if (index >= 0) {
 				this.form.shift_id.splice(index, 1);
+				const amOrPmIndex = this.form.shift_id.findIndex(item => item === 1 || item === 2)
+				console.log('am or pm', amOrPmIndex)
+				if (amOrPmIndex < 0) {
+					const wholeDayIndex = this.form.shift_id.findIndex(item => item === 3)
+					this.form.shift_id.splice(wholeDayIndex, 1)
+					console.log('shifts', this.form.shift_id)
+				}
 			} else {
 				if (!this.isDisabled(id)) {
 					this.form.shift_id.push(id);
+					const amOrPmIndex = this.form.shift_id.findIndex(item => item === 1 || item === 2)
+					const wholeDayIndex = this.form.shift_id.findIndex(item => item === 3)
+					if (amOrPmIndex >= 0 && wholeDayIndex < 0) {
+						this.form.shift_id.push(3)
+					}
 				}
 			}
 		},
