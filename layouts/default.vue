@@ -29,6 +29,15 @@
         @confirm="logout"
       />
 
+      <AppConfirmationModal
+        :label="`Your Session is expiring in 5 minutes. Would you like to continue?`"
+        :confirmLabel="'Yes'"
+        :cancelLabel="'Log Out'"
+        :modal="session_expiring"
+        @confirm="getMe"
+        @cancel="logout"
+      />
+
       <nuxt
         class="mb-4"
         :class="
@@ -47,7 +56,6 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppNotification from "@/components/AppNotification"
 // import JobNotification from "@/components/JobNotification"
 import AppHeader from "@/components/AppHeader"
-
 export default {
   transitions: "page",
   components: {
@@ -68,6 +76,9 @@ export default {
     },
     user_deactivated_modal () {
       return this.$store.state.user_deactivated_modal
+    },
+    session_expiring () {
+      return this.$store.getters["sessionExpiring"]
     },
   },
   middleware: "isNotAuthenticated",
@@ -131,6 +142,11 @@ export default {
       await this.$auth.logout()
       this.$auth.$storage.setUniversal("_token.local", "")
       this.$router.push("/")
+    },
+
+    async getMe () {
+      await this.$axios.$get(`/api/v1/me`)
+      this.$store.commit("SESSION_EXPIRING", false)
     },
 
     userDeactivated () {

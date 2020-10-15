@@ -16,7 +16,8 @@ export const state = () => ({
 	},
 	user_deactivated_modal: false,
 	view_locum_jobs: false,
-	view_permanent_jobs: false
+	view_permanent_jobs: false,
+	session_expiring: false,
 });
 
 export const mutations = {
@@ -56,10 +57,24 @@ export const mutations = {
 	},
 	SET_VIEW_PERMANENT_JOBS(state, payload) {
 		state.view_permanent_jobs = payload
-	}
+	},
+	SESSION_EXPIRING (state, payload) {
+    state.session_expiring = payload
+  }
 };
 
 export const actions = {
+	async initializeSessionListener ({ commit, }) {
+		this.$socket.on('Session Expiring', async () => {
+      console.log('session expiring')
+			commit('SESSION_EXPIRING', true)
+    })
+		this.$socket.on('Session Expired', async () => {
+			console.log('session expired')
+			this.$router.push(`/session-expired`)
+		})
+	},
+	
 	async joinRoom({ dispatch }, payload) {
 		try {
 			// await this.$axios.$post('api/v1/socket/join-room', {
@@ -88,6 +103,10 @@ export const actions = {
 };
 
 export const getters = {
+	sessionExpiring (state) {
+    return state.session_expiring
+	},
+	
 	getLocumPrivatePractices(state) {
 		return state.locum_private_practices.map(item => {
 			return {
