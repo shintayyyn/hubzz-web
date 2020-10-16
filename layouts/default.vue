@@ -30,9 +30,9 @@
       />
 
       <AppConfirmationModal
-        :label="`Your Session is expiring in 5 minutes. Would you like to continue?`"
+        :label="`Your Session is expiring in 5 minutes. Would you like to continue your session?`"
         :confirmLabel="'Yes'"
-        :cancelLabel="'Log Out'"
+        :cancelLabel="'No'"
         :modal="session_expiring"
         @confirm="getMe"
         @cancel="logout"

@@ -65,6 +65,11 @@ export const mutations = {
 
 export const actions = {
 	async initializeSessionListener ({ commit, }) {
+		this.$socket.on('Session Refresh', async () => {
+      console.log('session refresh')
+			commit('SESSION_EXPIRING', false)
+		})
+		
 		this.$socket.on('Session Expiring', async () => {
       console.log('session expiring')
 			commit('SESSION_EXPIRING', true)

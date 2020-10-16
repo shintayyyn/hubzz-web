@@ -245,13 +245,15 @@ export default {
 		select (id) {
 			let index = this.form.shift_id.findIndex(item => item === id);
 			if (index >= 0) {
-				this.form.shift_id.splice(index, 1);
 				const amOrPmIndex = this.form.shift_id.findIndex(item => item === 1 || item === 2)
-				console.log('am or pm', amOrPmIndex)
-				if (amOrPmIndex < 0) {
-					const wholeDayIndex = this.form.shift_id.findIndex(item => item === 3)
-					this.form.shift_id.splice(wholeDayIndex, 1)
-					console.log('shifts', this.form.shift_id)
+				if (id === 3) {
+					// pag walang am or pm, saka iremove ang 3 
+					if (amOrPmIndex < 0) {
+						const wholeDayIndex = this.form.shift_id.findIndex(item => item === 3)
+						this.form.shift_id.splice(wholeDayIndex, 1)
+					}
+				} else {
+					this.form.shift_id.splice(index, 1);
 				}
 			} else {
 				if (!this.isDisabled(id)) {
@@ -263,6 +265,7 @@ export default {
 					}
 				}
 			}
+			console.log('id', id,'this.form.shift_id',this.form.shift_id)
 		},
 		isSelected(id) {
 			return this.form.shift_id.includes(id);
@@ -280,6 +283,10 @@ export default {
 		save() {
 			this.formError = [];
 			this.Validate(this.form, ["shift_id"]);
+			console.log('form', this.form)
+			if ((this.form.shift_id.includes(1)||this.form.shift_id.includes(2)) && !this.form.shift_id.includes(3)) {
+				this.form.shift_id.push(3)
+			}
 			if (!this.formError.length) {
 				this.loading = true;
 				this.$axios
