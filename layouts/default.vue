@@ -31,11 +31,11 @@
 
       <AppConfirmationModal
         :label="`Your Session is expiring in 5 minutes. Would you like to continue your session?`"
-        :confirmLabel="'Yes'"
-        :cancelLabel="'No'"
+        :confirmLabel="'Log Out'"
+        :cancelLabel="'Continue Session'"
         :modal="session_expiring"
-        @confirm="getMe"
-        @cancel="logout"
+        @confirm="logout"
+        @cancel="getMe"
       />
 
       <nuxt
@@ -145,8 +145,10 @@ export default {
     },
 
     async getMe () {
-      await this.$axios.$get(`/api/v1/me`)
-      this.$store.commit("SESSION_EXPIRING", false)
+      await this.$axios.$get(`/api/v1/me`).then(() => {
+        this.$store.commit("SESSION_EXPIRING", false)
+      })
+      
     },
 
     userDeactivated () {
