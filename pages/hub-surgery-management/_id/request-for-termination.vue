@@ -51,10 +51,10 @@ export default {
 	},
 	async asyncData ({ app, error, store, }) {
     try {
-      const authPermissions = store.getters["permissions"]
+			const authPermissions = store.getters["permissions"]
 
       if (app.$auth.user.domain === 'Practice'
-          && authPermissions.includes('Request For Termination Surgery Management') === false) {
+          && authPermissions.includes('Request for Termination Surgery Management') === false) {
         error({
           statusCode: 403,
           message: 'You are not authorized to view this page.',

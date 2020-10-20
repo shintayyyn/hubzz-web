@@ -145,7 +145,7 @@ export default {
     },
 
     async getMe () {
-      await this.$axios.$get(`/api/v1/me`).then(() => {
+      await this.$axios.$patch(`/api/v1/me/update-token`).then(() => {
         this.$store.commit("SESSION_EXPIRING", false)
       })
       
