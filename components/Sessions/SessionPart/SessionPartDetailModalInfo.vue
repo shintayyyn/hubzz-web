@@ -81,7 +81,7 @@
             </div>
             
             <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-              {{ job_part.status === 'Approved' ? sched.approved_reason : sched.completed_reason }}
+              {{ job_part.status === 'Approved' ? sched.approved_reason ? sched.approved_reason : sched.completed_reason : sched.completed_reason }}
             </div>
           </div>
         </div>
