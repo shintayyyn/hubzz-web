@@ -251,7 +251,7 @@
             v-model="form.other_mandatory_training_id"
             :type="'multi-checkbox'"
             :name="'other_mandatory_training_id'"
-            :label="'Other mandatory training courses you completed.'"
+            :label="'Other mandatory training courses you completed'"
             :lists="otherMandatoryTrainings"
             updatable
             @checked="form.other_mandatory_training_id.push(parseInt($event))"
@@ -1260,6 +1260,12 @@ export default {
               value: res.data.locum_other_mandatory_training.id,
             })
           }
+        })
+        .finally(() => {
+          this.initialize()
+        })
+        .catch(err => {
+          console.log('err', err)
         })
     },
 
