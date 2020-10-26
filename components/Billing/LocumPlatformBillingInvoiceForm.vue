@@ -269,7 +269,7 @@
 
         <div :ref="'pdf-footer'" class="flex w-full">
           <div class="w-1/2 mt-4">
-            <div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-1/2 w-2/3">
+            <div class="rounded-lg border-2 border-gray-300 mt-4 p-4 w-full sm:w-2/3 w-3/4">
               <div v-if="propInvoice && propInvoice.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
                 <div>Payment by BACS: xxxxx</div>
                 <div>Payroll company name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx' }}</div>

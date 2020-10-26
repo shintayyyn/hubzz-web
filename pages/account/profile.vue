@@ -1323,6 +1323,7 @@ export default {
         .finally(() => {
           this.toggle_remove_mandatory_modal = false
           this.selectedMandatory = null
+          this.initialize()
         })
     },
 
@@ -1449,8 +1450,6 @@ export default {
         return
       }
     },
-
-
 
     updateLocumProfile () {
       this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
