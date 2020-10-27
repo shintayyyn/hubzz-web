@@ -22,61 +22,71 @@
     />
 
     <div class="my-2">
-      <div class="text-lg font-semibold">{{ specificPracticeHub.name }}</div>
+      <div class="text-lg font-semibold">
+        {{ specificPracticeHub.name }}
+      </div>
     </div>
 
     <div class="flex flex-col md:flex-row">
       <!-- Practice Hub -->
       <div class="w-full md:w-1/2 shadow-lg rounded-lg md:mr-4">
         <div class="p-4">
-          <div class="font-semibold mt-2">Contact Number</div>
+          <div class="font-semibold mt-2">
+            Contact Number
+          </div>
           <div>
             {{
-            specificPracticeHub.phone_number
-            ? specificPracticeHub.phone_number
-            : "N/A"
+              specificPracticeHub.phone_number
+                ? specificPracticeHub.phone_number
+                : "N/A"
             }}
           </div>
 
-          <div class="font-semibold mt-2">E-Mail Address</div>
+          <div class="font-semibold mt-2">
+            E-Mail Address
+          </div>
           <div>{{ specificPracticeHub.email ? specificPracticeHub.email : "N/A" }}</div>
 
-          <div class="font-semibold mt-2">Report To</div>
+          <div class="font-semibold mt-2">
+            Report To
+          </div>
           <div>
             {{
-            specificPracticeHub.report_to
-            ? specificPracticeHub.report_to
-            : "N/A"
+              specificPracticeHub.report_to
+                ? specificPracticeHub.report_to
+                : "N/A"
             }}
           </div>
 
-          <div class="font-semibold mt-2">Address</div>
+          <div class="font-semibold mt-2">
+            Address
+          </div>
           <div>
             {{
-            specificPracticeHub.address_line_1
-            ? specificPracticeHub.address_line_1
-            : "N/A"
+              specificPracticeHub.address_line_1
+                ? specificPracticeHub.address_line_1
+                : "N/A"
             }}
           </div>
           <div>
             {{
-            specificPracticeHub.address_line_2
-            ? specificPracticeHub.address_line_2
-            : "N/A"
+              specificPracticeHub.address_line_2
+                ? specificPracticeHub.address_line_2
+                : "N/A"
             }}
           </div>
           <div>
             {{
-            specificPracticeHub.address_line_3
-            ? specificPracticeHub.address_line_3
-            : "N/A"
+              specificPracticeHub.address_line_3
+                ? specificPracticeHub.address_line_3
+                : "N/A"
             }}
           </div>
           <div>
             {{
-            specificPracticeHub.postcode
-            ? specificPracticeHub.postcode
-            : "N/A"
+              specificPracticeHub.postcode
+                ? specificPracticeHub.postcode
+                : "N/A"
             }}
           </div>
         </div>
@@ -85,59 +95,107 @@
       <!-- Permissions -->
       <div class="w-full md:w-1/2 shadow-lg rounded-lg">
         <div class="p-4">
-          <div class="m-2 text-lg font-semibold">Permissions</div>
+          <div class="m-2 text-lg font-semibold">
+            Permissions
+          </div>
           <div class="m-2 my-4">
-            <div class="font-semibold mt-2">Does Hub allow you to create jobs?</div>
+            <div class="font-semibold mt-2">
+              Does Hub allow you to create jobs?
+            </div>
             <div
               class="text-sm mx-6"
-            >{{specificInvitation.allow_surgery_create_sessions === true ? 'Yes' : 'No'}}</div>
+            >
+              {{ specificInvitation.allow_surgery_create_sessions === true ? 'Yes' : 'No' }}
+            </div>
 
             <div
-              class="bg-gray-300 p-2 rounded-lg mt-1 mb-2"
               v-if="specificInvitation.allow_surgery_create_sessions === true"
+              class="bg-gray-300 p-2 rounded-lg mt-1 mb-2"
             >
-              <p class="font-semibold">Rate Limits(Only effective when allowed to create jobs)</p>
+              <p class="font-semibold">
+                Rate Limits(Only effective when allowed to create jobs)
+              </p>
               <div class="m-4">
-                <p class="font-semibold">Maximum Hourly Rate Limit</p>
+                <p class="font-semibold">
+                  Maximum Hourly Rate Limit
+                </p>
                 <p
                   class="text-sm mx-6"
-                >{{specificInvitation.max_hourly_rate_limit ?'£ '+ specificInvitation.max_hourly_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Half Day Rate Limit</p>
+                >
+                  {{ specificInvitation.max_hourly_rate_limit ?'£ '+ specificInvitation.max_hourly_rate_limit : 'N/A' }}
+                </p>
+                <p class="font-semibold">
+                  Maximum Half Day Rate Limit
+                </p>
                 <p
                   class="text-sm mx-6"
-                >{{specificInvitation.max_halfday_rate_limit ?'£ '+ specificInvitation.max_halfday_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Whole Day Rate Limit</p>
+                >
+                  {{ specificInvitation.max_halfday_rate_limit ?'£ '+ specificInvitation.max_halfday_rate_limit : 'N/A' }}
+                </p>
+                <p class="font-semibold">
+                  Maximum Whole Day Rate Limit
+                </p>
                 <p
                   class="text-sm mx-6"
-                >{{specificInvitation.max_wholeday_rate_limit ?'£ '+ specificInvitation.max_wholeday_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Out-of-Hours Rate Limit</p>
+                >
+                  {{ specificInvitation.max_wholeday_rate_limit ?'£ '+ specificInvitation.max_wholeday_rate_limit : 'N/A' }}
+                </p>
+                <p class="font-semibold">
+                  Maximum Out-of-Hours Rate Limit
+                </p>
                 <p
                   class="text-sm mx-6"
-                >{{specificInvitation.max_ooh_rate_limit ?'£ '+ specificInvitation.max_ooh_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Excess Hours</p>
+                >
+                  {{ specificInvitation.max_ooh_rate_limit ?'£ '+ specificInvitation.max_ooh_rate_limit : 'N/A' }}
+                </p>
+                <p class="font-semibold">
+                  Maximum Excess Hours
+                </p>
                 <p
                   class="text-sm mx-6"
-                >{{specificInvitation.max_excess_hours ? specificInvitation.max_excess_hours + ' hours' : 'N/A'}}</p>
+                >
+                  {{ specificInvitation.max_excess_hours ? specificInvitation.max_excess_hours + ' hours' : 'N/A' }}
+                </p>
               </div>
             </div>
-            <div class="font-semibold">Does Hub allow you to create permanent jobs?</div>
+            <div class="font-semibold">
+              Does Hub allow you to create permanent jobs?
+            </div>
             <div
               class="text-sm mx-6"
-            >{{specificInvitation.allow_surgery_create_permanent_jobs === true ? 'Yes' : 'No'}}</div>
-            <p class="font-semibold">Does Hub permit billing of Locums?</p>
+            >
+              {{ specificInvitation.allow_surgery_create_permanent_jobs === true ? 'Yes' : 'No' }}
+            </div>
+            <p class="font-semibold">
+              Does Hub permit billing of Locums?
+            </p>
             <p
               class="text-sm mx-6"
-            >{{specificInvitation.allow_surgery_bill_locum === true ? 'Yes':'No'}}</p>
-            <p class="font-semibold">Does Hub permit billing for Hubzz?</p>
+            >
+              {{ specificInvitation.allow_surgery_bill_locum === true ? 'Yes':'No' }}
+            </p>
+            <p class="font-semibold">
+              Does Hub permit billing for Hubzz?
+            </p>
             <p
               class="text-sm mx-6"
-            >{{specificInvitation.allow_surgery_bill_hubzz === true ? 'Yes':'No'}}</p>
-            <p class="font-semibold">Can other Spokes see your Banks?</p>
+            >
+              {{ specificInvitation.allow_surgery_bill_hubzz === true ? 'Yes':'No' }}
+            </p>
+            <p class="font-semibold">
+              Can other Spokes see your Banks?
+            </p>
             <p
               class="text-sm mx-6"
-            >{{specificInvitation.share_banks_to_other_surgeries === true ? 'Yes':'No'}}</p>
-            <p class="font-semibold">Does Hub share its banks?</p>
-            <p class="text-sm mx-6">{{specificInvitation.share_my_banks === true ? 'Yes':'No'}}</p>
+            >
+              {{ specificInvitation.share_banks_to_other_surgeries === true ? 'Yes':'No' }}
+            </p>
+            <p class="font-semibold">
+              Does Hub share its banks?
+            </p>
+            <p class="text-sm mx-6">
+              {{ specificInvitation.share_my_banks === true ? 'Yes':'No' }}
+            </p>
           </div>
         </div>
       </div>
@@ -164,13 +222,13 @@
             || specificPracticeHub.manual_status === 'Bogus' 
             ? true 
             : false "
-          @click="confirmAccept = true"
           :customTheme="'bg-green-500 hover:bg-green-600 text-white font-bold mx-1'"
+          @click="confirmAccept = true"
         />
         <AppButton
           :label="'Reject'"
-          @click="confirmReject = true"
           :customTheme="'bg-red-500 hover:bg-red-600 text-white font-bold mx-1'"
+          @click="confirmReject = true"
         />
       </div>
       
@@ -188,102 +246,104 @@
       </div>-->
     </div>
     <div
-      class="ml-2"
       v-if="isStandAlone"
-    >NOTE: Accepting this hub will change your practice type to Spoke</div>
+      class="ml-2"
+    >
+      NOTE: Accepting this hub will change your practice type to Spoke
+    </div>
   </div>
 </template>
 
 <script>
-import AppButton from "@/components/Base/AppButton";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppButton from "@/components/Base/AppButton"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
   components: {
     AppButton,
-    AppConfirmationModal
+    AppConfirmationModal,
   },
-  validate({ params }) {
-    return params.invitationId !== `spoke-siblings`;
+  validate ({ params, }) {
+    return params.invitationId !== `spoke-siblings`
   },
-  data() {
+  data () {
     return {
       confirmAccept: false,
       confirmReject: false,
       specificInvitation: "",
-      specificPracticeHub: ""
-    };
-  },
-  computed: {
-    isStandAlone() {
-      return this.specificInvitation.child_practice.type === "Stand Alone";
+      specificPracticeHub: "",
     }
   },
-  async asyncData({ app, route, store, error }) {
+  computed: {
+    isStandAlone () {
+      return this.specificInvitation.child_practice.type === "Stand Alone"
+    },
+  },
+  async asyncData ({ app, route, store, error, }) {
     try {
       let response = await app.$axios.$get(
         `/api/v1/practice/me/parent-surgery/invitations/${route.params.invitationId}`
-      );
-      const specificInvitation = response.data.practice_surgery;
-      const specificPracticeHub = response.data.practice_surgery.practice;
+      )
+      const specificInvitation = response.data.practice_surgery
+      const specificPracticeHub = response.data.practice_surgery.practice
       return {
         specificInvitation,
-        specificPracticeHub
-      };
+        specificPracticeHub,
+      }
     } catch (err) {
-      return error({ status: 404, message: "Page Not Found" });
+      return error({ status: 404, message: "Page Not Found", })
     }
   },
   methods: {
-    async acceptInvitation() {
+    async acceptInvitation () {
       await this.$axios
         .post(`/api/v1/practice/me/parent-surgery/accept`, {
-          practice_surgery_id: this.specificInvitation.id
+          practice_surgery_id: this.specificInvitation.id,
         })
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Successfully Accepted Practice Spoke Invitation"]
-          });
-          this.$router.push(`/spoke-surgery-management/invitations/hub`);
+            text: ["Successfully Accepted Practice Spoke Invitation",],
+          })
+          this.$router.push(`/spoke-surgery-management/invitations/hub`)
 
           setTimeout(() => {
-            this.$router.push(`/spoke-surgery-management`);
-          }, 500);
+            this.$router.push(`/spoke-surgery-management`)
+          }, 500)
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "warning",
-            text: "Something went wrong!"
-          });
-          console.log("error", err);
-        });
+            text: "Something went wrong!",
+          })
+          console.log("error", err)
+        })
     },
-    async rejectInvitation() {
+    async rejectInvitation () {
       await this.$axios
         .put(`/api/v1/practice/me/parent-surgery/reject`, {
-          practice_surgery_id: this.specificInvitation.id
+          practice_surgery_id: this.specificInvitation.id,
         })
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Successfully Rejected Practice Spoke Invitation"]
-          });
-          this.$router.push(`/spoke-surgery-management/invitations/hub`);
+            text: ["Successfully Rejected Practice Spoke Invitation",],
+          })
+          this.$router.push(`/spoke-surgery-management/invitations/hub`)
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "warning",
-            text: "Something went wrong!"
-          });
-          console.log("error", err);
-        });
-    }
-  }
-};
+            text: "Something went wrong!",
+          })
+          console.log("error", err)
+        })
+    },
+  },
+}
 </script>
 
 <style>
