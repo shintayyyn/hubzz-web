@@ -1,132 +1,132 @@
 export const state = () => ({
-	socket_id: "",
-	notification: {
-		enabled: false,
-		status: "",
-		text: [],
-		closable: false,
-		duration: ""
-	},
-	toggled_sidebar: false,
-	mobile: false,
-	locum_private_practices: [],
-	user_verification: {
-		modal: false,
-		status: ''
-	},
-	user_deactivated_modal: false,
-	view_locum_jobs: false,
-	view_permanent_jobs: false,
-	session_expiring: false,
-});
+  socket_id: "",
+  notification: {
+    enabled: false,
+    status: "",
+    text: [],
+    closable: false,
+    duration: "",
+  },
+  toggled_sidebar: false,
+  mobile: false,
+  locum_private_practices: [],
+  user_verification: {
+    modal: false,
+    status: '',
+  },
+  user_deactivated_modal: false,
+  view_locum_jobs: false,
+  view_permanent_jobs: false,
+  session_expiring: false,
+})
 
 export const mutations = {
-	SET_SOCKET(state, payload) {
-		state.socket_id = payload;
-	},
-	SET_PERMISSIONS(state, payload) {
-		state.auth.user.practice_detail.role.permissions = payload
-	},
-	SET_NOTIFICATION(state, payload) {
-		state.notification.enabled = payload.enabled;
-		state.notification.status = payload.status;
-		state.notification.text = payload.text;
-		state.notification.closable = payload.closable;
-		state.notification.duration = payload.duration;
-	},
-	TOGGLE_SIDEBAR(state, payload) {
-		state.toggled_sidebar = payload;
-	},
-	SET_LOCUM_PRIVATE_PRACTICES(state, payload) {
-		state.locum_private_practices = payload;
-	},
-	ADD_LOCUM_PRIVATE_PRACTICE(state, payload) {
-		state.locum_private_practices.push(payload);
-	},
-	IS_MOBILE(state, payload) {
-		state.mobile = payload;
-	},
-	SET_USER_VERIFICATION_MODAL(state, payload) {
-		state.user_verification = payload
-	},
-	SET_USER_DEACTIVATED(state, payload) {
-		state.user_deactivated_modal = payload
-	},
-	SET_VIEW_LOCUM_JOBS(state, payload) {
-		state.view_locum_jobs = payload
-	},
-	SET_VIEW_PERMANENT_JOBS(state, payload) {
-		state.view_permanent_jobs = payload
-	},
-	SESSION_EXPIRING (state, payload) {
+  SET_SOCKET (state, payload) {
+    state.socket_id = payload
+  },
+  SET_PERMISSIONS (state, payload) {
+    state.auth.user.practice_detail.role.permissions = payload
+  },
+  SET_NOTIFICATION (state, payload) {
+    state.notification.enabled = payload.enabled
+    state.notification.status = payload.status
+    state.notification.text = payload.text
+    state.notification.closable = payload.closable
+    state.notification.duration = payload.duration
+  },
+  TOGGLE_SIDEBAR (state, payload) {
+    state.toggled_sidebar = payload
+  },
+  SET_LOCUM_PRIVATE_PRACTICES (state, payload) {
+    state.locum_private_practices = payload
+  },
+  ADD_LOCUM_PRIVATE_PRACTICE (state, payload) {
+    state.locum_private_practices.push(payload)
+  },
+  IS_MOBILE (state, payload) {
+    state.mobile = payload
+  },
+  SET_USER_VERIFICATION_MODAL (state, payload) {
+    state.user_verification = payload
+  },
+  SET_USER_DEACTIVATED (state, payload) {
+    state.user_deactivated_modal = payload
+  },
+  SET_VIEW_LOCUM_JOBS (state, payload) {
+    state.view_locum_jobs = payload
+  },
+  SET_VIEW_PERMANENT_JOBS (state, payload) {
+    state.view_permanent_jobs = payload
+  },
+  SESSION_EXPIRING (state, payload) {
     state.session_expiring = payload
-  }
-};
+  },
+}
 
 export const actions = {
-	async initializeSessionListener ({ commit, }) {
-		this.$socket.on('Session Refresh', async () => {
+  async initializeSessionListener ({ commit, }) {
+    this.$socket.on('Session Refresh', async () => {
       console.log('session refresh')
-			commit('SESSION_EXPIRING', false)
-		})
-		
-		this.$socket.on('Session Expiring', async () => {
-      console.log('session expiring')
-			commit('SESSION_EXPIRING', true)
+      commit('SESSION_EXPIRING', false)
     })
-		this.$socket.on('Session Expired', async () => {
-			console.log('session expired')
-			this.$router.push(`/session-expired`)
-		})
-	},
+		
+    this.$socket.on('Session Expiring', async () => {
+      console.log('session expiring')
+      commit('SESSION_EXPIRING', true)
+    })
+    this.$socket.on('Session Expired', async () => {
+      console.log('session expired')
+      this.$router.push(`/session-expired`)
+    })
+  },
 	
-	async joinRoom({ dispatch }, payload) {
-		try {
-			// await this.$axios.$post('api/v1/socket/join-room', {
-			//   socket_id: payload.socket_id,
-			//   room_name: payload.room_name
-			// })
-		} catch (err) {
-			console.log(err.response);
-		}
-	},
-	async leaveRoom({ }, payload) {
-		// await this.$axios.$post('api/v1/socket/leave-room', {
-		//   socket_id: payload.socket_id,
-		//   room_name: payload.room_name
-		// })
-	},
-	async getViewJobsPermissions({ state, commit }, payload) {
-		await this.$axios.$get(`/api/v1/me`).then(
-			res => {
-				commit("SET_VIEW_LOCUM_JOBS", res.data.user.view_locum_jobs)
-				commit("SET_VIEW_PERMANENT_JOBS", res.data.user.view_permanent_jobs)
-			}
-		)
+  async joinRoom ({ dispatch, }, payload) {
+    try {
+      // await this.$axios.$post('api/v1/socket/join-room', {
+      //   socket_id: payload.socket_id,
+      //   room_name: payload.room_name
+      // })
+    } catch (err) {
+      console.log(err.response)
+    }
+  },
+  async leaveRoom ({ }, payload) {
+    // await this.$axios.$post('api/v1/socket/leave-room', {
+    //   socket_id: payload.socket_id,
+    //   room_name: payload.room_name
+    // })
+  },
+  async getViewJobsPermissions ({ state, commit, }, payload) {
+    await this.$axios.$get(`/api/v1/me`).then(
+      res => {
+        commit("SET_VIEW_LOCUM_JOBS", res.data.user.view_locum_jobs)
+        commit("SET_VIEW_PERMANENT_JOBS", res.data.user.view_permanent_jobs)
+      }
+    )
 
-	},
-};
+  },
+}
 
 export const getters = {
-	sessionExpiring (state) {
+  sessionExpiring (state) {
     return state.session_expiring
-	},
+  },
 	
-	getLocumPrivatePractices(state) {
-		return state.locum_private_practices.map(item => {
-			return {
-				value: item.id,
-				label: item.surgery.name
-			};
-		});
-	},
-	getViewLocumJobs(state) {
-		return state.view_locum_jobs
-	},
-	getViewPermanentJobs(state) {
-		return state.view_permanent_jobs
-	},
-	permissions(state) {
-		return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []
-	},
-};
+  getLocumPrivatePractices (state) {
+    return state.locum_private_practices.map(item => {
+      return {
+        value: item.id,
+        label: item.surgery.name,
+      }
+    })
+  },
+  getViewLocumJobs (state) {
+    return state.view_locum_jobs
+  },
+  getViewPermanentJobs (state) {
+    return state.view_permanent_jobs
+  },
+  permissions (state) {
+    return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []
+  },
+}

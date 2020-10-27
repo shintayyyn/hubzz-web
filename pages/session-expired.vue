@@ -1,8 +1,12 @@
 <template>
   <div>
     <div class="m-32 px-8">
-      <h1 class="font-bold text-black">Session Expired. Please Log In again.</h1>
-      <div class="text-black cursor-pointer underline text-sm" @click="logOut()">Log In</div>
+      <h1 class="font-bold text-black">
+        Session Expired. Please Log In again.
+      </h1>
+      <div class="text-black cursor-pointer underline text-sm" @click="logOut()">
+        Log In
+      </div>
     </div>
   </div>
 </template>
@@ -22,12 +26,12 @@ export default {
     },
     loggedOutHandler () {
       return this.$auth.logout()
-      .then(() => {
-        this.$auth.$storage.setUniversal('_token.local', '')
-      })
-      .finally(()=>{
-        this.$router.push('/')
-      })
+        .then(() => {
+          this.$auth.$storage.setUniversal('_token.local', '')
+        })
+        .finally(()=>{
+          this.$router.push('/')
+        })
     },
   },
 }

@@ -13,57 +13,57 @@
         :propInvoiceDetail="invoice_detail"
         :propInvoice="null"
         :propJobPart="job_part"
-        @createInvoice="$emit('createInvoice', $event), $router.push({ name: 'locum-billing-invoices', query: {...$route.query} })"
         :claimNhs="claimNhs"
+        @createInvoice="$emit('createInvoice', $event), $router.push({ name: 'locum-billing-invoices', query: {...$route.query} })"
       />
     </div>
   </div>
 </template>
 <script>
-import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm";
+import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm"
 export default {
   components: {
-    LocumPlatformBillingInvoiceForm
+    LocumPlatformBillingInvoiceForm,
   },
-  async asyncData({ app, params, error }) {
+  async asyncData ({ app, params, error, }) {
     try {
-      const responseMe = await app.$axios.$get(`/api/v1/me`);
+      const responseMe = await app.$axios.$get(`/api/v1/me`)
 
-      const invoice_detail =
-        responseMe.data &&
-        responseMe.data.user &&
-        responseMe.data.user.locum_detail &&
-        responseMe.data.user.locum_detail.invoice_detail
+      const invoice_detail
+        = responseMe.data
+        && responseMe.data.user
+        && responseMe.data.user.locum_detail
+        && responseMe.data.user.locum_detail.invoice_detail
           ? responseMe.data.user.locum_detail.invoice_detail
-          : null;
+          : null
 
       console.log('invoice_detail', invoice_detail)
 
-      const claimNhs =
-        responseMe.data &&
-        responseMe.data.user &&
-        responseMe.data.user.locum_detail &&
-        responseMe.data.user.locum_detail.claim_nhs
+      const claimNhs
+        = responseMe.data
+        && responseMe.data.user
+        && responseMe.data.user.locum_detail
+        && responseMe.data.user.locum_detail.claim_nhs
           ? responseMe.data.user.locum_detail.claim_nhs
-          : false;
+          : false
 
       const response = await app.$axios.$get(
         `/api/v1/locum/job-parts/${params.id}`
-      );
+      )
 
-      const job_part =
-        response.data && response.data.job_part ? response.data.job_part : null;
+      const job_part
+        = response.data && response.data.job_part ? response.data.job_part : null
       return {
         invoice_detail,
         job_part,
-        claimNhs
-      };
+        claimNhs,
+      }
     } catch (err) {
-      console.log("err", err.response || err);
-      throw err;
+      console.log("err", err.response || err)
+      throw err
     }
-  }
-};
+  },
+}
 </script>
 <style scoped>
 .modal-container {
