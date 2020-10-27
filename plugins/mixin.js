@@ -24,7 +24,7 @@ Vue.mixin({
         let oldPracticeUserStatus = this.$auth.user.status
         let oldPracticeUserVerified = oldPracticeUserStatus === 'Disabled' ? 'false' : 'true'
         let oldPracticeStatus = this.$auth.user.practice_detail.practice.status
-        let oldPracticeVerified = ['Inactive', 'Suspended', 'Deactivated',].includes(oldPracticeStatus) ? 'false' : 'true'
+        let oldPracticeVerified = ['Inactive', 'Account Suspension', 'Deactivated',].includes(oldPracticeStatus) ? 'false' : 'true'
         let oldVerified = [oldPracticeUserStatus, oldPracticeUserVerified, oldPracticeStatus, oldPracticeVerified,].includes('false') ? 'false' : 'true'
 
         const response = await this.$axios.$get(`/api/v1/me`)
@@ -32,7 +32,7 @@ Vue.mixin({
         let newPracticeUserStatus = response.data.user.status
         let newPracticeUserVerified = newPracticeUserStatus === 'Disabled' ? 'false' : 'true'
         let newPracticeStatus = response.data.user.practice_detail.practice.status
-        let newPracticeVerified = ['Inactive', 'Suspended', 'Deactivated',].includes(newPracticeStatus) ? 'false' : 'true'
+        let newPracticeVerified = ['Inactive', 'Account Suspension', 'Deactivated',].includes(newPracticeStatus) ? 'false' : 'true'
         let newVerified = [newPracticeUserStatus, newPracticeUserVerified, newPracticeStatus, newPracticeVerified,].includes('false') ? 'false' : 'true'
 
         if (oldVerified !== newVerified) {

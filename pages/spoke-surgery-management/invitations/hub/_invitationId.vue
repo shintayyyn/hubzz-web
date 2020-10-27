@@ -150,7 +150,7 @@
     >
       <div 
         v-if="specificPracticeHub.manual_status === 'Inactive' 
-          || specificPracticeHub.manual_status === 'Suspended' 
+          || specificPracticeHub.manual_status === 'Account Suspension' 
           || specificPracticeHub.manual_status === 'Bogus'"
         class="text-sm text-red-500"
       >
@@ -160,7 +160,7 @@
         <AppButton
           :label="'Accept'"
           :disabled="specificPracticeHub.manual_status === 'Inactive' 
-            || specificPracticeHub.manual_status === 'Suspended' 
+            || specificPracticeHub.manual_status === 'Account Suspension' 
             || specificPracticeHub.manual_status === 'Bogus' 
             ? true 
             : false "

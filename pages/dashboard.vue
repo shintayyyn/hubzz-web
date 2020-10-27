@@ -64,7 +64,7 @@
         Your Practice is required to have a Hub in order to operate. Please go to Surgery Management Tab to invite a Hub.
       </div>
       <div
-        v-if="$auth.user.practice_detail.practice.status === 'Suspended'"
+        v-if="$auth.user.practice_detail.practice.status === 'Account Suspension'"
         class="text-sm sm:text-base font-bold"
       >
         Your account has been suspended by Hubzz. Please contact the administrator to activate it.
