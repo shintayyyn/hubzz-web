@@ -112,7 +112,17 @@
 					</div>
 				</div>
 				<div class="flex flex-wrap justify-start my-4">
-					<AppButton :label="'Save'" @click="save" />
+					<AppButton
+						v-if="authPermissions.includes('Update Role')" 
+						:label="'Save'" 
+						@click="save" 
+					/>
+					<AppButton
+						v-if="authPermissions.includes('Delete Role')" 
+						:label="'Delete'" 
+						:customTheme="'bg-red-500 hover:bg-red-600 mx-2 font-semibold'" 
+						@click="deleteRole" 
+					/>
 				</div>
 			</div>
 		</div>
@@ -140,8 +150,14 @@ export default {
 				description: "",
 				permission_id: []
 			},
-			formError: []
+			formError: [],
+
 		};
+	},
+	computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+		},
 	},
 	created() {
 		this.form.name = this.role.name;
@@ -149,7 +165,7 @@ export default {
 		this.getPermissions();
 	},
 	methods: {
-		hasRelatedRole(permission) {
+		hasRelatedRole (permission) {
 			let hasRelatedRolesList = ["View Profile Practice"];
 			let roles = this.permissions.find(
 				item => item.category === permission.category
@@ -163,8 +179,14 @@ export default {
 				}
 			});
 		},
-		getPermissions() {
-			this.$axios.$get(`/api/v1/practice/practice-permissions`).then(res => {
+		async getPermissions () {
+			let params = {}
+			params = {
+				practice_type: await this.$auth.user.practice_detail.practice.type,
+			}
+			await this.$axios.$get(`/api/v1/practice/practice-permissions`, {
+				params,
+			}).then(res => {
 				res.data.permissions.forEach(permission => {
 					let hasPermission = this.role.permissions.find(
 						item => item.id === permission.id
@@ -317,7 +339,27 @@ export default {
 			} else {
 				this.$emit("scrollToTop");
 			}
+		},
+		deleteRole () {
+			this.$axios.$delete(`/api/v1/practice/practice-roles/${this.$route.params.id}`)
+				.then(res => {
+					console.log(res)
+					this.$router.push(`/roles-and-permissions/roles`)
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "success",
+						text: [`${res.message}`]
+					});
+				})
+				.catch(err => {
+					console.log('err', err.response)
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "danger",
+						text: [`${err.response.data.message}`]
+					});
+				})
 		}
 	}
-};
+}
 </script>

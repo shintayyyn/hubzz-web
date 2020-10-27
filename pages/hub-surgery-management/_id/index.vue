@@ -424,6 +424,7 @@ export default {
     },
   },
 
+
   created () {
     this.practice_id = this.$route.params.id
     this.getSurgery()

@@ -53,6 +53,7 @@ export default (ctx, inject) => {
   inject('socket', socket)
   ctx.store.dispatch('socket/init')
   // ctx.store.dispatch('jobs/initializeJobListener')
+  ctx.store.dispatch('initializeSessionListener')
   ctx.store.dispatch('billing/initializeBillingListener')
   ctx.store.dispatch('permanentjobs/initializePermanentJobListener')
   ctx.store.dispatch('chat/initializeChatListener')

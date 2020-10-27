@@ -561,7 +561,6 @@
                   :name="'duration_for_each_appointment'"
                   :label="'Duration of each appointment?'"
                   :placeholder="''"
-                  :in-style="'text-align:right;'"
                   :error="formError.find(item => item.field === 'duration_for_each_appointment')"
                   required
                   :limit="4"
@@ -898,8 +897,8 @@ export default {
         report_to: "",
         is_another_doctor: false,
         is_nurse_available: false,
-        number_of_patients: "",
-        duration_for_each_appointment: "",
+        number_of_patients: 1,
+        duration_for_each_appointment: 1,
         opportunity_for_catch_up_slots: false,
         session_requirements: [],
         session_structure_information: "",

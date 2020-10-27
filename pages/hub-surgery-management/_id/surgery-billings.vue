@@ -30,6 +30,27 @@ export default {
       default: () => null,
     },
   },
+  async asyncData ({ app, error, store, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Surgery Billings') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+    } catch (err) {
+      console.log('err', err.response || err)
+      error({
+        statusCode: 403,
+        message: 'You are not authorized to view this page.',
+      })
+    }
+  },
 
   transition: {
     name: "fade",

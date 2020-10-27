@@ -698,8 +698,8 @@ export default {
         })
 
         columns.push({
-          name: "Paid Form A",
-          dataIndex: "locum_form_a_paid_formatted",
+          name: "Paid By Locum At",
+          dataIndex: "locum_form_a_paid_at_formatted",
           class: "text-center",
         })
       }

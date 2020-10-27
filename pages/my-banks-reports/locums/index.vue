@@ -101,7 +101,10 @@
       />
     </div>
     
-    <div class="flex-wrap justify-start items-center w-full p-3 flex my-2">
+    <div
+      v-if="authPermissions.includes('Export Practice Reports')" 
+      class="flex-wrap justify-start items-center w-full p-3 flex my-2"
+    >
       <div class="md:px-1 flex flex-wrap w-full justify-end">
         <button
           :disabled="downloading || locums.length === 0"
@@ -172,6 +175,9 @@ export default {
   },
 
   computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
     itemCountInfo () {
       const firstItem = Math.min((this.limit * this.activePage) - this.limit + 1, this.count)
       const lastItem = Math.min((this.limit * this.activePage) - this.limit + (this.loading ? this.limit : this.locums.length), this.count)

@@ -2361,7 +2361,6 @@ export default {
           late_in_minutes.push(lateInMinutes)
         })
       })
-      console.log("late_in_minutes", late_in_minutes)
 
       let hour
         = late_in_minutes.reduce((a, b) => a + b, 0) / 60 > 0
@@ -2369,9 +2368,6 @@ export default {
           : 0
           
       let minute = late_in_minutes.reduce((a, b) => a + b, 0) % 60
-
-      console.log("hour", hour)
-      console.log("minute", minute)
 
       let total_late_hours = `${
         hour > 0 ? (hour > 9 ? `${hour}h` : `0${hour > -1 ? hour : 0}h`) : ""
@@ -2567,10 +2563,7 @@ export default {
       }
 
       const qwe = rate.toFixed(2)
-
-      // console.log("schedules", JSON.stringify(schedules, null, 2));
-      // console.log("qwe", qwe);
-
+      
       return qwe
     },
 

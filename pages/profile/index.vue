@@ -510,12 +510,12 @@
 
               <AppInput
                 v-model="form.sort_code"
-                :type="'number'"
+                :type="'numberDash'"
                 :name="'sort_code'"
                 :label="'Sort code'"
                 :error="formError.find(item => item.field === 'sort_code')"
                 required
-                :limit="6"
+                :limit="8"
               />
 
               <AppInput
@@ -715,6 +715,18 @@ export default {
       value
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "auto")
+    },
+
+    "form.sort_code" (value) {
+      let final = ''
+      if (value && value.length > 0) {
+        let digit = value.split('-').join('')
+
+        final = digit.match(/.{1,2}/g).join('-')
+        this.form.sort_code = final
+      } else {
+        return ''
+      }
     },
 
     "form.practice_type_id" (newValue) {
@@ -1160,10 +1172,10 @@ export default {
         notRequired.push("vat_number", "tax_year_end_date")
       }
 
-      if (this.form.sort_code && this.form.sort_code.length !== 6) {
+      if (this.form.sort_code && this.form.sort_code.length !== 8) {
         this.formError.push({
           field: "sort_code",
-          message: "Sort Code should be 6 digits",
+          message: "Sort Code should be 8 digits",
         })
       }
 

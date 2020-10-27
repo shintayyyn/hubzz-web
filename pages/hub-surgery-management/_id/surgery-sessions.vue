@@ -236,6 +236,28 @@ export default {
     },
   },
 
+  async asyncData ({ app, error, store, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+
+      if (app.$auth.user.domain === 'Practice'
+          && authPermissions.includes('View Surgery Sessions') === false) {
+        error({
+          statusCode: 403,
+          message: 'You are not authorized to view this page.',
+        })
+        return
+      }
+
+    } catch (err) {
+      console.log('err', err.response || err)
+      error({
+        statusCode: 403,
+        message: 'You are not authorized to view this page.',
+      })
+    }
+  },
+
   created () {
     this.$axios
       .$get(`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`)

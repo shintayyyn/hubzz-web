@@ -115,17 +115,35 @@ export default {
 		}
 	},
 	methods: {
-		select(id) {
+		select (id) {
 			let index = this.form.shift_id.findIndex(item => item === id);
 			if (index >= 0) {
-				this.form.shift_id.splice(index, 1);
+				const amOrPmIndex = this.form.shift_id.findIndex(item => item === 1 || item === 2)
+				if (id === 3) {
+					// pag walang am or pm, saka iremove ang 3 
+					if (amOrPmIndex < 0) {
+						const wholeDayIndex = this.form.shift_id.findIndex(item => item === 3)
+						this.form.shift_id.splice(wholeDayIndex, 1)
+					}
+				} else {
+					this.form.shift_id.splice(index, 1);
+				}
 			} else {
 				this.form.shift_id.push(id);
+				const amOrPmIndex = this.form.shift_id.findIndex(item => item === 1 || item === 2)
+				const wholeDayIndex = this.form.shift_id.findIndex(item => item === 3)
+				if (amOrPmIndex >= 0 && wholeDayIndex < 0) {
+					this.form.shift_id.push(3)
+				}
 			}
+			console.log('id', id,'this.form.shift_id',this.form.shift_id)
 		},
 		add() {
 			this.formError = [];
 			this.Validate(this.form, ["id"]);
+			if ((this.form.shift_id.includes(1)||this.form.shift_id.includes(2)) && !this.form.shift_id.includes(3)) {
+				this.form.shift_id.push(3)
+			}
 			if (!this.formError.length) {
 				this.loading = true;
 				this.$axios

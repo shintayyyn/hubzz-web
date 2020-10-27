@@ -962,7 +962,7 @@ export default {
       return Promise.all([
         this.getAllCompliances(),
         this.getLocumMandatoryTranings(),
-        this.getLocumOtherMandatoryTranings(),
+        this.getLocumOtherMandatoryTrainings(),
       ])
     },
 
@@ -1018,7 +1018,7 @@ export default {
       })
     },
 
-    getLocumOtherMandatoryTranings () {
+    getLocumOtherMandatoryTrainings () {
       this.$axios.get("/api/v1/locum/other-mandatory-training", {
         params: {
           user_id: this.$auth.user.id,

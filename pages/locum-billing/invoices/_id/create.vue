@@ -37,6 +37,8 @@ export default {
           ? responseMe.data.user.locum_detail.invoice_detail
           : null;
 
+      console.log('invoice_detail', invoice_detail)
+
       const claimNhs =
         responseMe.data &&
         responseMe.data.user &&

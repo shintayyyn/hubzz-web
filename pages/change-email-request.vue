@@ -182,7 +182,7 @@ export default {
         memorable_word_category_id: 'required',
         memorable_word: 'required|string',
         memorable_date: 'required|string',
-        memorable_number: 'required|integer|min:6|max:6',
+        memorable_number: 'required|min:6|max:6',
         date_of_birth: 'string',
         practice_name: 'string',
         new_email: 'required|email',
@@ -197,7 +197,7 @@ export default {
         'memorable_date.required': 'Memorable date is required.',
         'memorable_date.string': 'Invalid memorable date.',
         'memorable_number.required': 'Memorable 6 digit number is required.',
-        'memorable_number.integer': 'Invalid memorable 6 digit number.',
+        // 'memorable_number.integer': 'Invalid memorable 6 digit number.',
         'memorable_number.min': 'Memorable 6 digit number must be 6 digit.',
         'memorable_number.max': 'Memorable 6 digit number must be 6 digit.',
         'date_of_birth.string': 'Invalid date of birth.',
@@ -287,11 +287,12 @@ export default {
         return
       }
 
-      if (this.memorableNumber.length !== 6) {
+      if (this.memorableNumber.toString().length !== 6) {
+        console.log('mali eh', this.memorableNumber)
         this.formErrors.push({
           field: 'memorable_number',
           message: 'Memorable 6 digit number must be 6 digit.',
-          validation: this.memorableNumber.length > 6 ? 'max' : 'min',
+          validation: this.memorableNumber.toString().length > 6 ? 'max' : 'min',
         })
         return
       }
@@ -365,9 +366,11 @@ export default {
           return
         }
 
-        await this.$axios.post(`/api/v1/change-email-requests`, this.form)
+        await this.$axios.post(`/api/v1/change-email-requests`, this.form).then((res) => {
+          console.log('res', res)
+          this.success = true
+        })
 
-        this.success = true
       } catch (err) {
         console.log('err', err.response || err)
 
