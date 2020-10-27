@@ -296,7 +296,7 @@ export default {
         this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name
         this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code
         this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number
-        this.form.payroll_detail_reference_number = this.user.locum_detail.invoice_detail.payroll_detail.reference_number
+        this.form.payroll_detail_reference_number = this.user.locum_detail.invoice_detail.payroll_detail.payroll_reference_number
         
       }
     }

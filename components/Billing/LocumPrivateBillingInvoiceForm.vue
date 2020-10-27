@@ -219,7 +219,8 @@
           <div>Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
           <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
           <div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
-          <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
+          <div>Payroll acount number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
+          <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.payroll_reference_number ? propInvoiceDetail.payroll_detail.payroll_reference_number : 'xxxxx*OR' }}</div>
         </div>
         
         <div

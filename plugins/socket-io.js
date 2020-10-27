@@ -6,7 +6,7 @@ export default (ctx, inject) => {
   console.log('API_URL', API_URL)
 
   const socket = io(API_URL, {
-    transports: ['websocket']
+    transports: ['websocket',],
   })
 
   socket.on('connect', () => {
@@ -26,8 +26,8 @@ export default (ctx, inject) => {
     ctx.store.commit("SET_NOTIFICATION", {
       enabled: true,
       status: "danger",
-      text: ['Server offline'],
-      closable: true
+      text: ['Server offline',],
+      closable: true,
     })
   })
 
@@ -43,8 +43,8 @@ export default (ctx, inject) => {
       ctx.store.commit("SET_NOTIFICATION", {
         enabled: true,
         status: "danger",
-        text: ['Server shut down'],
-        closable: true
+        text: ['Server shut down',],
+        closable: true,
       })
     }
   })

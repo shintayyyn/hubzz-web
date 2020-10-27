@@ -287,6 +287,14 @@ export default {
     },
   },
 
+  watch: {
+    authPermissions (value) {
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true
+      }
+    },
+  },
+
   async asyncData ({ app, error, store, }) {
     try {
       const authPermissions = store.getters["permissions"]
@@ -307,14 +315,6 @@ export default {
         message: 'You are not authorized to view this page.',
       })
     }
-  },
-
-  watch: {
-    authPermissions (value) {
-      if (!this.CheckPermissions(value).hasPermission) {
-        this.confirmation_modal = true
-      }
-    },
   },
 
   methods: {

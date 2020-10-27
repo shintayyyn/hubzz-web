@@ -77,16 +77,16 @@ export default {
         return
       }
     } catch (err){
-      error({ statusCode: 404 })
+      error({ statusCode: 404, })
       store.commit("SET_NOTIFICATION", {
         enabled: true,
         status: "danger",
-        text: "Something went wrong!"
+        text: "Something went wrong!",
       })
       console.log("get parent practice error!!", err)
     }
     // return
-  }
+  },
 }
 </script>
 

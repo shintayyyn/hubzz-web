@@ -28,11 +28,15 @@
           />
           <div v-if="form.type === 'Hub'" class="m-2 bg-gray-300 rounded-lg">
             <div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
-              <p class="font-semibold text-lg">Hub</p>
+              <p class="font-semibold text-lg">
+                Hub
+              </p>
               <p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
             </div>
             <div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
-              <p class="font-semibold text-lg">Hub - Healthboard</p>
+              <p class="font-semibold text-lg">
+                Hub - Healthboard
+              </p>
               <p>Healthboard Hubs can only create jobs for its spokes but not for itself.</p>
             </div>
           </div>
@@ -210,36 +214,46 @@
           </template>
 
           <template v-if="form.type === 'Spoke'">
-            <div class="font-bold text-sm mt-4">Invite Hub</div>
+            <div class="font-bold text-sm mt-4">
+              Invite Hub
+            </div>
             <template v-if="displayPracticeHub">
               <div class="flex flex-col">
                 <div class="flex justify-start">
                   <div>Name:</div>
-                  <div class="ml-2">{{displayPracticeHub.name}}</div>
+                  <div class="ml-2">
+                    {{ displayPracticeHub.name }}
+                  </div>
                 </div>
                 <div class="flex justify-start">
                   <div>CCG:</div>
-                  <div class="ml-2">{{displayPracticeHub.clinical_commissioning_group_name}}</div>
+                  <div class="ml-2">
+                    {{ displayPracticeHub.clinical_commissioning_group_name }}
+                  </div>
                 </div>
                 <div class="flex justify-start">
                   <div>Code:</div>
-                  <div class="ml-2">{{displayPracticeHub.code}}</div>
+                  <div class="ml-2">
+                    {{ displayPracticeHub.code }}
+                  </div>
                 </div>
                 <div class="flex justify-start">
                   <div>Type:</div>
-                  <div class="ml-2">{{displayPracticeHub.type}}</div>
+                  <div class="ml-2">
+                    {{ displayPracticeHub.type }}
+                  </div>
                 </div>
               </div>
               <div
                 class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
                 @click="removePracticeHub"
                 v-text="`Change ${form.type === 'Hub' ? 'Spoke' : 'Hub'}`"
-              ></div>
+              />
               <div
                 class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
                 @click="cancelInvitation"
                 v-text="`Cancel Invitation`"
-              ></div>
+              />
             </template>
             <template v-if="!displayPracticeHub">
               <AppInput
@@ -247,38 +261,42 @@
                 :type="'text'"
                 :name="'search'"
                 :placeholder="'Surgery Name, Surgery Code, or keywords'"
-                @submit="search"
                 :error="formError.find(item => item.field === 'hub_practice_id')"
+                @submit="search"
               />
-              <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
+              <AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" @click="search" />
 
               <div v-if="showResult && practiceLists.length === 0" class="mt-5">
                 <div
                   class="text-xs xl:text-base font-bold"
-                >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+                >
+                  No practice matched that name. Try again with whole words, practice code or CCG.
+                </div>
               </div>
               <div
-                class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
                 v-if="showResult && practiceLists.length > 0"
+                class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
               >
                 <div
                   class="text-xs lg:text-base font-bold p-4"
-                >Select by clicking on the practice that you wish to add</div>
+                >
+                  Select by clicking on the practice that you wish to add
+                </div>
 
                 <div
-                  class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
                   v-for="(item) in practiceLists"
                   :key="item.id"
+                  class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
                   @click="select(item)"
                 >
                   <div class="flex flex-col justify-start text-xs xl:text-base">
                     <div class="flex flex-col font-bold">
                       <div>
-                        <span>{{item.surgery.name}}</span>
+                        <span>{{ item.surgery.name }}</span>
                         <span
                           class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
                           :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
-                        >{{item.type}}</span>
+                        >{{ item.type }}</span>
                         <span
                           v-if="item.invited === true"
                           class="justify-right p-1 px-4 text-sm text-white font-semibold rounded-lg bg-green-400"
@@ -286,48 +304,68 @@
                       </div>
                     </div>
                     <div class="flex flex-row flex-no-wrap mt-1">
-                      <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
+                      <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                        CCG
+                      </div>
                       <div
                         class="flex items-center"
-                      >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+                      >
+                        {{ item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A' }}
+                      </div>
                     </div>
                     <div class="flex flex-row flex-no-wrap mt-1">
-                      <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
-                      <div class="flex items-center">{{item.surgery.code}}</div>
+                      <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                        Practice Code
+                      </div>
+                      <div class="flex items-center">
+                        {{ item.surgery.code }}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div class="border-t-2 p-4 text-xs xl:text-base">
-                  <p class="font-bold">These are just top 10 matches from your search term.</p>
+                  <p class="font-bold">
+                    These are just top 10 matches from your search term.
+                  </p>
                   <p
                     class="font-bold"
-                  >Try again with practice code or its full name if the practice isn't in the result.</p>
+                  >
+                    Try again with practice code or its full name if the practice isn't in the result.
+                  </p>
                 </div>
               </div>
             </template>
           </template>
 
           <template v-if="form.type === 'Hub'">
-            <div class="font-bold text-sm mt-4">Invite Spokes</div>
+            <div class="font-bold text-sm mt-4">
+              Invite Spokes
+            </div>
             <template v-if="displaySpokes.length > 0">
               <div
-                class="flex justify-between mb-2"
                 v-for="spoke in displaySpokes"
                 :key="spoke.child_practice_id"
+                class="flex justify-between mb-2"
               >
                 <div class="flex justify-start">
                   <div>Surgery:</div>
-                  <div class="ml-2">{{spoke.name}}</div>
+                  <div class="ml-2">
+                    {{ spoke.name }}
+                  </div>
                 </div>
                 <div class="flex justify-end">
                   <div
                     class="px-2 py-1 rounded-lg shadow-lg font-bold bg-yellow-500 cursor-pointer"
                     @click="editSpoke(spoke)"
-                  >Edit</div>
+                  >
+                    Edit
+                  </div>
                   <div
                     class="ml-2 px-2 py-1 rounded-lg shadow-lg font-bold bg-red-400 text-white cursor-pointer"
                     @click="removeSpoke(spoke)"
-                  >Remove</div>
+                  >
+                    Remove
+                  </div>
                 </div>
               </div>
             </template>
@@ -336,38 +374,42 @@
               :type="'text'"
               :name="'search'"
               :placeholder="'Surgery Name, Surgery Code, or keywords'"
-              @submit="search"
               :error="formError.find(item => item.field === 'hub_practice_id')"
+              @submit="search"
             />
-            <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
+            <AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" @click="search" />
 
             <div v-if="showResult && practiceLists.length === 0" class="mt-5">
               <div
                 class="text-xs xl:text-base font-bold"
-              >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+              >
+                No practice matched that name. Try again with whole words, practice code or CCG.
+              </div>
             </div>
             <div
-              class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
               v-if="showResult && practiceLists.length > 0"
+              class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
             >
               <div
                 class="text-xs lg:text-base font-bold p-4"
-              >Select by clicking on the practice that you wish to add</div>
+              >
+                Select by clicking on the practice that you wish to add
+              </div>
 
               <div
-                class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
                 v-for="(item) in spokeLists"
                 :key="item.id"
+                class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
                 @click="select(item)"
               >
                 <div class="flex flex-col justify-start text-xs xl:text-base">
                   <div class="flex flex-col font-bold">
                     <div>
-                      <span>{{item.surgery.name}}</span>
+                      <span>{{ item.surgery.name }}</span>
                       <span
                         class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
                         :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
-                      >{{item.type}}</span>
+                      >{{ item.type }}</span>
                       <span
                         v-if="item.invited === true"
                         class="justify-right p-1 px-4 text-sm text-white font-semibold rounded-lg bg-green-400"
@@ -375,27 +417,41 @@
                     </div>
                   </div>
                   <div class="flex flex-row flex-no-wrap mt-1">
-                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
+                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                      CCG
+                    </div>
                     <div
                       class="flex items-center"
-                    >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+                    >
+                      {{ item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A' }}
+                    </div>
                   </div>
                   <div class="flex flex-row flex-no-wrap mt-1">
-                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
-                    <div class="flex items-center">{{item.surgery.code}}</div>
+                    <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                      Practice Code
+                    </div>
+                    <div class="flex items-center">
+                      {{ item.surgery.code }}
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="border-t-2 p-4 text-xs xl:text-base">
-                <p class="font-bold">These are just top 10 matches from your search term.</p>
+                <p class="font-bold">
+                  These are just top 10 matches from your search term.
+                </p>
                 <p
                   class="font-bold"
-                >Try again with practice code or its full name if the practice isn't in the result.</p>
+                >
+                  Try again with practice code or its full name if the practice isn't in the result.
+                </p>
               </div>
             </div>
           </template>
 
-          <div class="font-bold text-sm my-4">Bank Details</div>
+          <div class="font-bold text-sm my-4">
+            Bank Details
+          </div>
           <AppInput
             v-model="form.account_name"
             :type="'text'"
@@ -498,7 +554,7 @@
                 v-model="form.privacy_policy"
                 type="checkbox"
                 class="checkbox mt-1 mr-1"
-              />
+              >
               <label for="privacy_policy" class="text-xs sm:text-sm py-1">
                 I agree with the
                 <span
@@ -512,7 +568,9 @@
               <div
                 v-if="formError.find(item => item.field === 'privacy_policy')"
                 class="py-1 text-xs text-red-500"
-              >{{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}</div>
+              >
+                {{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}
+              </div>
             </transition>
           </div>
         </form>
@@ -550,7 +608,7 @@
       @cancel="toggle_invite_modal = false"
     />
 
-    <div class="shield" v-if="toggle_permission_modal"></div>
+    <div v-if="toggle_permission_modal" class="shield" />
     <transition name="slide" mode="out-in">
       <PracticeInviteSpokePermissions
         v-if="toggle_permission_modal"
@@ -563,30 +621,30 @@
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
-import AppButton from "@/components/Base/AppButton";
-import AppFormError from "@/components/Base/AppFormError";
-import TermsAndConditions from "@/components/TermsAndConditions";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import PracticeInviteSpokePermissions from "@/components/SignUp/SignUpPractice/PracticeInviteSpokePermissions";
+import AppInput from "@/components/Base/AppInput"
+import AppDate from "@/components/Base/AppDate"
+import AppButton from "@/components/Base/AppButton"
+import AppFormError from "@/components/Base/AppFormError"
+import TermsAndConditions from "@/components/TermsAndConditions"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import PracticeInviteSpokePermissions from "@/components/SignUp/SignUpPractice/PracticeInviteSpokePermissions"
 
 const types = [
-  { value: "Hub", label: "Hub" },
-  { value: "Spoke", label: "Spoke" },
-  { value: "Stand Alone", label: "Stand Alone" }
-];
+  { value: "Hub", label: "Hub", },
+  { value: "Spoke", label: "Spoke", },
+  { value: "Stand Alone", label: "Stand Alone", },
+]
 
 const hub_types = [
-  { value: "Type 1", label: "Type 1" },
-  { value: "Type 2", label: "Type 2" }
-];
+  { value: "Type 1", label: "Type 1", },
+  { value: "Type 2", label: "Type 2", },
+]
 
 const practice_roles = [
-  { value: "Partner", label: "Partner" },
-  { value: "Practice Manager", label: "Practice Manager" },
-  { value: "Practice Staff", label: "Practice Staff" }
-];
+  { value: "Partner", label: "Partner", },
+  { value: "Practice Manager", label: "Practice Manager", },
+  { value: "Practice Staff", label: "Practice Staff", },
+]
 
 export default {
   components: {
@@ -596,10 +654,10 @@ export default {
     AppFormError,
     TermsAndConditions,
     AppConfirmationModal,
-    PracticeInviteSpokePermissions
+    PracticeInviteSpokePermissions,
   },
 
-  data() {
+  data () {
     return {
       search_text: "",
       practiceLists: [],
@@ -650,45 +708,45 @@ export default {
         added_year_contributions: null,
         added_early_retirement_contributions: null,
         nhsps_employer_contributions: null,
-        nhs_pension_scheme_employing_authority_name: null
+        nhs_pension_scheme_employing_authority_name: null,
       },
       has_referral: false,
       formError: [],
-      modal: false
-    };
-  },
-
-  computed: {
-    practiceTypes() {
-      return this.$store.getters["sign-up/getPracticeTypes"];
-    },
-
-    practiceAccountDetails() {
-      return this.$store.getters["sign-up/practiceAccountDetails"];
-    },
-
-    practiceAccountFormError() {
-      return this.$store.getters["sign-up/practiceAccountFormError"];
-    },
-
-    spokeLists() {
-      let lists = [];
-      this.practiceLists.forEach(practice => {
-        if (this.displaySpokes.length > 0) {
-          let array1 = this.displaySpokes.map(item => item.child_practice_id);
-          if (!array1.includes(practice.id)) {
-            lists.push(practice);
-          }
-        } else {
-          lists.push(practice);
-        }
-      });
-      return lists;
+      modal: false,
     }
   },
 
+  computed: {
+    practiceTypes () {
+      return this.$store.getters["sign-up/getPracticeTypes"]
+    },
+
+    practiceAccountDetails () {
+      return this.$store.getters["sign-up/practiceAccountDetails"]
+    },
+
+    practiceAccountFormError () {
+      return this.$store.getters["sign-up/practiceAccountFormError"]
+    },
+
+    spokeLists () {
+      let lists = []
+      this.practiceLists.forEach(practice => {
+        if (this.displaySpokes.length > 0) {
+          let array1 = this.displaySpokes.map(item => item.child_practice_id)
+          if (!array1.includes(practice.id)) {
+            lists.push(practice)
+          }
+        } else {
+          lists.push(practice)
+        }
+      })
+      return lists
+    },
+  },
+
   watch: {
-    practiceAccountFormError(value) {
+    practiceAccountFormError (value) {
       if (value.length > 0) {
         value.forEach(item => {
           this.formError.push({
@@ -697,9 +755,9 @@ export default {
                 ? "password_confirmation"
                 : item.field,
             message: item.message,
-            validation: item.validation
-          });
-        });
+            validation: item.validation,
+          })
+        })
       }
     },
     "form.sort_code" (value) {
@@ -713,27 +771,27 @@ export default {
         return ''
       }
     },
-    "form.practice_type_id"(newValue, oldValue) {
-      this.isOOH = newValue.includes("8") ? true : false;
+    "form.practice_type_id" (newValue, oldValue) {
+      this.isOOH = newValue.includes("8") ? true : false
     },
-    "form.type"(newValue, oldValue) {
-      this.search_text = "";
-      this.displayPracticeHub = null;
-      this.selectedPracticeHubId = null;
-      this.toggle_invite_modal = false;
-      this.showResult = false;
-    }
+    "form.type" (newValue, oldValue) {
+      this.search_text = ""
+      this.displayPracticeHub = null
+      this.selectedPracticeHubId = null
+      this.toggle_invite_modal = false
+      this.showResult = false
+    },
   },
 
-  created() {
+  created () {
     this.practiceAccountDetails.practice_type_id.forEach(id => {
       this.form.practice_type_id.push(
         this.practiceTypes.find(item => item.value === id)
-      );
-    });
+      )
+    })
   },
 
-  mounted() {
+  mounted () {
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
         this.formError.push({
@@ -742,50 +800,50 @@ export default {
               ? "password_confirmation"
               : item.field,
           message: item.message,
-          validation: item.validation
-        });
-      });
+          validation: item.validation,
+        })
+      })
     }
   },
 
   methods: {
-    cancelInvitation() {
-      this.displayPracticeHub = null;
-      this.selectedPracticeHubId = null;
-      this.showResult = false;
-      this.search_text = "";
-      this.displaySpokes = [];
+    cancelInvitation () {
+      this.displayPracticeHub = null
+      this.selectedPracticeHubId = null
+      this.showResult = false
+      this.search_text = ""
+      this.displaySpokes = []
     },
-    select(item) {
+    select (item) {
       if (this.form.type === "Spoke") {
-        this.selectedPracticeHubId = item.id;
-        this.toggle_invite_modal = true;
+        this.selectedPracticeHubId = item.id
+        this.toggle_invite_modal = true
       }
       if (this.form.type === "Hub") {
-        this.selectedPracticeSpoke = item;
-        this.toggle_permission_modal = true;
+        this.selectedPracticeSpoke = item
+        this.toggle_permission_modal = true
       }
     },
-    invite() {
+    invite () {
       if (this.form.type === "Spoke") {
         this.displayPracticeHub = this.practiceLists.find(
           practiceHub => practiceHub.id === this.selectedPracticeHubId
-        );
-        this.toggle_invite_modal = false;
-        this.showResult = false;
+        )
+        this.toggle_invite_modal = false
+        this.showResult = false
       }
     },
-    removePracticeHub() {
-      this.displayPracticeHub = null;
-      this.selectedPracticeHubId = null;
-      this.showResult = true;
+    removePracticeHub () {
+      this.displayPracticeHub = null
+      this.selectedPracticeHubId = null
+      this.showResult = true
     },
-    addSpoke(spoke) {
+    addSpoke (spoke) {
       let index = this.displaySpokes.findIndex(
         item => item.child_practice_id === spoke.child_practice_id
-      );
+      )
       if (index >= 0) {
-        this.displaySpokes.splice(index, 1, spoke);
+        this.displaySpokes.splice(index, 1, spoke)
       } else {
         this.displaySpokes.push({
           ...spoke,
@@ -808,57 +866,57 @@ export default {
           max_wholeday_rate_limit:
             spoke.max_wholeday_rate_limit.trim().length === 0
               ? 0
-              : parseInt(spoke.max_wholeday_rate_limit)
-        });
+              : parseInt(spoke.max_wholeday_rate_limit),
+        })
       }
-      this.toggle_permission_modal = false;
+      this.toggle_permission_modal = false
     },
-    editSpoke(spoke) {
-      this.selectedPracticeSpoke = spoke;
-      this.toggle_permission_modal = true;
+    editSpoke (spoke) {
+      this.selectedPracticeSpoke = spoke
+      this.toggle_permission_modal = true
     },
-    removeSpoke(spoke) {
+    removeSpoke (spoke) {
       let index = this.displaySpokes.findIndex(
         item => item.child_practice_id === spoke.child_practice_id
-      );
+      )
       if (index >= 0) {
-        this.displaySpokes.splice(index, 1);
+        this.displaySpokes.splice(index, 1)
       }
     },
-    search() {
+    search () {
       if (this.search_text) {
         let params = {
           search: this.search_text,
           limit: 10,
           practice_type:
             this.form.type === "Spoke"
-              ? ["Hub", "Stand Alone"]
-              : ["Spoke", "Stand Alone"]
-        };
+              ? ["Hub", "Stand Alone",]
+              : ["Spoke", "Stand Alone",],
+        }
         this.$axios
-          .$get(`/api/v1/practice/practice-spokes`, { params })
+          .$get(`/api/v1/practice/practice-spokes`, { params, })
           .then(res => {
-            this.practiceLists =
-              res.data && res.data.practices ? res.data.practices : [];
-            this.showResult = true;
+            this.practiceLists
+              = res.data && res.data.practices ? res.data.practices : []
+            this.showResult = true
           })
           .catch(err => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: ["Something went wrong!"]
-            });
-          });
+              text: ["Something went wrong!",],
+            })
+          })
       }
     },
-    signUp() {
-      this.formError = [];
+    signUp () {
+      this.formError = []
 
       if (this.form.type === "Spoke") {
-        this.form.hub_practice_id = this.selectedPracticeHubId;
+        this.form.hub_practice_id = this.selectedPracticeHubId
       }
       if (this.form.type === "Hub") {
-        this.form.surgeries = this.displaySpokes;
+        this.form.surgeries = this.displaySpokes
       }
 
       let notRequired = [
@@ -866,18 +924,18 @@ export default {
         "suffix",
         "vat_registered",
         "hub_practice_id",
-        "surgeries"
-      ];
+        "surgeries",
+      ]
 
-      if (["Spoke", "Stand Alone"].includes(this.form.type)) {
-        notRequired.push("hub_type");
+      if (["Spoke", "Stand Alone",].includes(this.form.type)) {
+        notRequired.push("hub_type")
       }
-      if (["false", false].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number", "tax_year_end_date");
+      if (["false", false,].includes(this.form.vat_registered)) {
+        notRequired.push("vat_number", "tax_year_end_date")
       }
-      if ([false, "false"].includes(this.has_referral)) {
-        notRequired.push("referral_code");
-        this.form.referral_code = null;
+      if ([false, "false",].includes(this.has_referral)) {
+        notRequired.push("referral_code")
+        this.form.referral_code = null
       }
       if (!this.form.practice_type_id.includes("8")) {
         notRequired.push(
@@ -891,44 +949,44 @@ export default {
           "added_early_retirement_contributions",
           "nhsps_employer_contributions",
           "nhs_pension_scheme_employing_authority_name"
-        );
-        this.form.national_insurance_number = null;
-        this.form.sd_number = null;
-        this.form.paying_reference = null;
-        this.form.ea_code = null;
-        this.form.professional_nhs_expenses = 0;
-        this.form.section_scheme_year = null;
-        this.form.added_year_contributions = 0;
-        this.form.added_early_retirement_contributions = 0;
-        this.form.nhsps_employer_contributions = 0;
-        this.form.nhs_pension_scheme_employing_authority_name = null;
+        )
+        this.form.national_insurance_number = null
+        this.form.sd_number = null
+        this.form.paying_reference = null
+        this.form.ea_code = null
+        this.form.professional_nhs_expenses = 0
+        this.form.section_scheme_year = null
+        this.form.added_year_contributions = 0
+        this.form.added_early_retirement_contributions = 0
+        this.form.nhsps_employer_contributions = 0
+        this.form.nhs_pension_scheme_employing_authority_name = null
       }
 
-      this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", this.form)
         setTimeout(() => {
-          this.$store.dispatch("sign-up/registeredPractice");
-        }, 1000);
+          this.$store.dispatch("sign-up/registeredPractice")
+        }, 1000)
       }
     },
 
-    checkPracticeType(value) {
-      let selectedArr = [];
-      selectedArr.push(value);
+    checkPracticeType (value) {
+      let selectedArr = []
+      selectedArr.push(value)
       this.form.practice_type_id = [
         ...this.form.practice_type_id,
-        ...selectedArr
-      ];
+        ...selectedArr,
+      ]
     },
 
-    uncheckPracticeType(value) {
+    uncheckPracticeType (value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
         id => id != value
-      );
-    }
-  }
-};
+      )
+    },
+  },
+}
 </script>
 
 <style scoped>

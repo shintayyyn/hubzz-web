@@ -60,11 +60,12 @@
       <div
         v-if="$auth.user.practice_detail.practice.type === 'Spoke' 
           && $auth.user.practice_detail.practice.parent_practice_id === null"
-        class="text-sm sm:text-base font-bold">
+        class="text-sm sm:text-base font-bold"
+      >
         Your Practice is required to have a Hub in order to operate. Please go to Surgery Management Tab to invite a Hub.
       </div>
       <div
-        v-if="$auth.user.practice_detail.practice.status === 'Suspended'"
+        v-if="$auth.user.practice_detail.practice.status === 'Account Suspension'"
         class="text-sm sm:text-base font-bold"
       >
         Your account has been suspended by Hubzz. Please contact the administrator to activate it.
@@ -143,7 +144,7 @@ export default {
 
           if (accountStatus === 'Active' 
               && (practiceStatus === 'Active' || practiceStatus === 'Dormant') 
-              && (['Hub', 'Stand Alone'].includes(practice.type) || (practice.type === 'Spoke' && practice.parent_practice_id !== null))
+              && (['Hub', 'Stand Alone',].includes(practice.type) || (practice.type === 'Spoke' && practice.parent_practice_id !== null))
           ) {
             return true
           }

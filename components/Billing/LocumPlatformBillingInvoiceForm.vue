@@ -275,7 +275,7 @@
                 <div>Payroll company name: {{ propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx' }}</div>
                 <div>Bank: {{ propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx' }}</div>
                 <div>Sort code: {{ propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx' }}</div>
-                <div>Payroll account number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
+                <div>Payroll bank account number: {{ propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR' }}</div>
                 <div>Payroll reference number: {{ propInvoice.payroll_reference_number ? propInvoice.payroll_reference_number : 'xxxxx*OR' }}</div>
               </div>
 
@@ -292,8 +292,8 @@
                 <div>Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
                 <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
                 <div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
-                <div>Payroll account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
-                <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.reference_number ? propInvoiceDetail.payroll_detail.reference_number : 'xxxxx*OR' }}</div>
+                <div>Payroll bank account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
+                <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.payroll_reference_number ? propInvoiceDetail.payroll_detail.payroll_reference_number : 'xxxxx*OR' }}</div>
               </div>
 
               <div v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
