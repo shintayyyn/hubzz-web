@@ -766,8 +766,7 @@ export default {
 
   created () {
     console.log('propinvoice', this.propInvoice)
-    console.log('propinvoice', this.propInvoiceDetail)
-    console.log('propinvoice', this.propInvoice)
+    console.log('propinvoiceDetail', this.propInvoiceDetail)
   },
 
   mounted () {

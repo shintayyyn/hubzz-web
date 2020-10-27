@@ -1,16 +1,6 @@
 <template>
   <section class="relative">
     <div class="flex flex-col md:flex-row justify-between">
-      <div class="flex flex-wrap items-center">
-        <AppButton
-          v-if="selectedItems.length > 0"
-          class="m-1"
-          :label="'Generate Form B'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
-          @click="generate_form_b_modal = true"
-        />
-      </div>
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
@@ -60,6 +50,22 @@
         </div>
       </div>
     </transition>
+    <div>
+      <AppInput
+        v-model="pcseOrLhbEaCode"
+        :name="'pcseOrLhbEaCode'"
+        :label="'PCSE/LHB EA Code'"
+        :type="'text'"
+        required
+      />
+      <AppButton
+        class="m-1"
+        :label="'Generate Form B'"
+        :inStyle="'padding:5px 14px;font-size:1em'"
+        :disabled="saveLoading || selectedItems.length <= 0"
+        @click="generate_form_b_modal = true"
+      />
+    </div>
     <AppConfirmationModal
       :label="'Generate Form B?'"
       :confirmLabel="'Yes'"
@@ -73,6 +79,7 @@
 
 <script>
 import AppButton from "@/components/Base/AppButton"
+import AppInput from "@/components/Base/AppInput"
 import AppTable from "@/components/Base/AppTable"
 import AppLoading from "@/components/Base/AppLoading"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
@@ -80,6 +87,7 @@ import { mixin as clickaway, } from "vue-clickaway"
 export default {
   components: {
     AppButton,
+    AppInput,
     AppTable,
     AppConfirmationModal,
     AppLoading,
@@ -102,6 +110,7 @@ export default {
       total: 0,
       job_parts: [],
 
+      pcseOrLhbEaCode: null,
       selectedItems: [],
 
       showRefresh: false,
@@ -125,6 +134,11 @@ export default {
       //   ? this.$route.query.status.toLowerCase()
       //   : "to-be-invoiced"
       columns.push(
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center",
+        },
         {
           name: "Practice / Surgery",
           dataIndex: "practice_name",
@@ -164,11 +178,6 @@ export default {
           dataIndex: "form_paid",
           class: "text-center",
         },
-        {
-          name: "Actions",
-          dataIndex: "actions",
-          class: "text-center",
-        }
       )
       return columns
     },
@@ -292,34 +301,45 @@ export default {
     },
     save () {
       this.saveLoading = true
-      this.$axios
-        .$post(`/api/v1/locum/locum-invoices-form-b`, {
-          locum_user_id: this.$auth.user.id,
-          type: this.type,
-          items: this.selectedItems,
-        })
-        .then(res => {
-          console.log(res)
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`,],
+      if (this.pcseOrLhbEaCode !== null ) {
+        this.$axios
+          .$post(`/api/v1/locum/locum-invoices-form-b`, {
+            locum_user_id: this.$auth.user.id,
+            pcse_or_lhb_ea_code: this.pcseOrLhbEaCode,
+            type: this.type,
+            items: this.selectedItems,
           })
-          this.$emit("createFormB", res.data.locum_invoice_form_b)
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${err.response.data.message}`,],
+          .then(res => {
+            console.log(res)
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`,],
+            })
+            this.$emit("createFormB", res.data.locum_invoice_form_b)
           })
-          throw err
+          .catch(err => {
+            console.log("err", err.response || err)
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+            throw err
+          })
+          .finally(() => {
+            this.generate_form_b_modal = false
+            this.saveLoading = false
+          })
+      } else {
+        this.saveLoading = false
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`PCSE/LHB EA Code is Required`,],
         })
-        .finally(() => {
-          this.generate_form_b_modal = false
-          this.saveLoading = false
-        })
+      }
+      
     },
   },
 }

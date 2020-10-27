@@ -62,9 +62,21 @@
     >
       <nuxt-link
         :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-sm border-2 rounded-lg text-black bg-yellow-400 hover:bg-yellow-500"
       >
-        Generate NHS Form B
+        <div class="flex">
+          <div class="mx-1">
+            <svgicon
+              name="create-job"
+              width="21"
+              height="21"
+              class="fill-current text-black"
+            />
+          </div>
+          <div>
+            Generate NHS Form B
+          </div>
+        </div>
       </nuxt-link>
     </div>
 
@@ -564,8 +576,13 @@ export default {
         },
         {
           name: "Practice",
-          dataIndex: "practice",
+          dataIndex: "locum_form_a_practice_names",
         },
+        // {
+        //   name: "Practice",
+        //   slot: true,
+        //   slotName: "practice_slot",
+        // },
         {
           name: "Date Created",
           dataIndex: "date_created_in_gb_formatted",
