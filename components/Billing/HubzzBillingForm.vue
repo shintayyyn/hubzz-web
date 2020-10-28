@@ -411,10 +411,17 @@
             </div>
           </div>
         </div>
-
+        <div v-if="practice.vat_registered === true" class="flex justify-between px-4 pt-2">
+          <div class="my-1 px-1 w-3/4 font-bold">
+            VAT Amount
+          </div>
+          <div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">
+            £ {{ practiceInvoice.tax_amount | currency }}
+          </div>
+        </div>
         <div ref="items-total" class="flex justify-between px-4 pt-2">
           <div class="my-1 px-1 w-3/4 font-bold">
-            Total
+            {{ practice.vat_registered === true ? 'Total (with added VAT)':'Total' }}
           </div>
           <div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">
             £ {{ practiceInvoice.total_amount | currency }}
@@ -449,85 +456,85 @@
 import AppLoading from "@/components/Base/AppLoading"
 import AppButton from "@/components/Base/AppButton"
 export default {
-	components: {
-		AppLoading,
-		AppButton
-	},
-	props: [
-		"forViewing",
-		"practice",
-		"practiceInvoice",
-		"locumInvoice",
-		"invoiceItems",
-		"disputedItems",
-		"debitItems",
-		"creditItems",
-		"dateStart",
-		"dateEnd",
-		"byLocum"
-	],
-	data () {
-		return {
-			toPostPracticeInvoice: {
-				practice_id: "",
-				date_start: "",
-				date_end: "",
-				items: [],
-				total_amount: ""
-			},
-			// createdInvoiceItems: [],
-			// createdDisputedItems: [],
-			createdDebitItems: [],
-			createdCreditItems: [],
-			invoice: {},
-			doNotShow: true,
-			practices: [],
-			chosenPractice: [],
-			loading: false,
+  components: {
+    AppLoading,
+    AppButton,
+  },
+  props: [
+    "forViewing",
+    "practice",
+    "practiceInvoice",
+    "locumInvoice",
+    "invoiceItems",
+    "disputedItems",
+    "debitItems",
+    "creditItems",
+    "dateStart",
+    "dateEnd",
+    "byLocum",
+  ],
+  data () {
+    return {
+      toPostPracticeInvoice: {
+        practice_id: "",
+        date_start: "",
+        date_end: "",
+        items: [],
+        total_amount: "",
+      },
+      // createdInvoiceItems: [],
+      // createdDisputedItems: [],
+      createdDebitItems: [],
+      createdCreditItems: [],
+      invoice: {},
+      doNotShow: true,
+      practices: [],
+      chosenPractice: [],
+      loading: false,
 
-			maxChars: 100
-		}
-	},
-	computed: {
-		amountTotal: function () {
-			let grossSum = 0
-			let invoiceItemTotal = 0
-			let disputedItemTotal = 0
-			let debitTotal = 0
-			let creditTotal = 0
-			const reducer = (accumulator, currentValue) => accumulator + currentValue
+      maxChars: 100,
+    }
+  },
+  computed: {
+    amountTotal: function () {
+      let grossSum = 0
+      let invoiceItemTotal = 0
+      let disputedItemTotal = 0
+      let debitTotal = 0
+      let creditTotal = 0
+      const reducer = (accumulator, currentValue) => accumulator + currentValue
 
-			if (this.invoiceItems && this.invoiceItems.length > 0) {
-				let invoiceItems = this.invoiceItems.map(invoiceItem =>
-					parseFloat(invoiceItem.total)
-				)
-				invoiceItemTotal = invoiceItems.reduce(reducer)
-			}
+      if (this.invoiceItems && this.invoiceItems.length > 0) {
+        let invoiceItems = this.invoiceItems.map(invoiceItem =>
+          parseFloat(invoiceItem.total)
+        )
+        invoiceItemTotal = invoiceItems.reduce(reducer)
+      }
 
-			if (this.disputedItems && this.disputedItems.length > 0) {
-				let disputedItems = this.disputedItems.map(disputedItem =>
-					parseFloat(disputedItem.total)
-				)
-				disputedItemTotal = disputedItems.reduce(reducer)
-			}
+      if (this.disputedItems && this.disputedItems.length > 0) {
+        let disputedItems = this.disputedItems.map(disputedItem =>
+          parseFloat(disputedItem.total)
+        )
+        disputedItemTotal = disputedItems.reduce(reducer)
+      }
 
-			grossSum = parseFloat(invoiceItemTotal + disputedItemTotal)
+      grossSum = parseFloat(invoiceItemTotal + disputedItemTotal)
 
-			if (this.createdDebitItems && this.createdDebitItems.length > 0) {
-				let createdDebitItems = this.createdDebitItems.map(debitItem =>
-					parseFloat(debitItem.total)
-				)
-				debitTotal = createdDebitItems.reduce(reducer)
-			}
+      if (this.createdDebitItems && this.createdDebitItems.length > 0) {
+        let createdDebitItems = this.createdDebitItems.map(debitItem =>
+          parseFloat(debitItem.total)
+        )
+        debitTotal = createdDebitItems.reduce(reducer)
+      }
 
-			if (this.createdCreditItems && this.createdCreditItems.length > 0) {
-				let createdCreditItems = this.createdCreditItems.map(creditItem =>
-					parseFloat(creditItem.total)
-				)
-				creditTotal = createdCreditItems.reduce(reducer)
-			}
-			const netSum = parseFloat(grossSum + debitTotal - creditTotal).toFixed(2)
-			return netSum
+      if (this.createdCreditItems && this.createdCreditItems.length > 0) {
+        let createdCreditItems = this.createdCreditItems.map(creditItem =>
+          parseFloat(creditItem.total)
+        )
+        creditTotal = createdCreditItems.reduce(reducer)
+      }
+      const netSum = parseFloat(grossSum + debitTotal - creditTotal).toFixed(2)
+      return netSum
     },
     totalHoursSum: function () {
       let totalHours = 0
@@ -550,167 +557,167 @@ export default {
     },
   },
   
-	created () {
+  created () {
     console.log('invoiceItems', this.invoiceItems)
-		// if (this.invoiceItems) {
-		//   this.createdInvoiceItems = this.invoiceItems
-		// }
-		// if (this.disputeditems) {
-		//   this.createdDisputedItems = this.createdDisputedItems
-		// }
-		if (this.debitItems) {
-			this.createdDebitItems = this.debitItems
-		}
-		if (this.creditItems) {
-			this.createdCreditItems = this.creditItems
-		}
-	},
-	methods: {
-		async testHtml () {
-			window.open(
-				`${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/html`
-			)
-		},
+    // if (this.invoiceItems) {
+    //   this.createdInvoiceItems = this.invoiceItems
+    // }
+    // if (this.disputeditems) {
+    //   this.createdDisputedItems = this.createdDisputedItems
+    // }
+    if (this.debitItems) {
+      this.createdDebitItems = this.debitItems
+    }
+    if (this.creditItems) {
+      this.createdCreditItems = this.creditItems
+    }
+  },
+  methods: {
+    async testHtml () {
+      window.open(
+        `${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/html`
+      )
+    },
 
-		async testMultiplePage () {
-			window.open(`${process.env.API_URL}/practice-invoices/test/pdf`)
-		},
+    async testMultiplePage () {
+      window.open(`${process.env.API_URL}/practice-invoices/test/pdf`)
+    },
 
-		// async testHubzzInvoice() {
-		//   window.open(
-		//     `${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/pdf`
-		//   );
-		// },
+    // async testHubzzInvoice() {
+    //   window.open(
+    //     `${process.env.API_URL}/practice-invoices/${this.practiceInvoice.id}/pdf`
+    //   );
+    // },
 
-		// async testLocumInvoice() {
-		//   window.open(
-		//     `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
-		//   )
-		// },
+    // async testLocumInvoice() {
+    //   window.open(
+    //     `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
+    //   )
+    // },
 
-		toPDF () {
-			if (this.locumInvoice) {
-				window.open(
-					`${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
-				)
-			} else if (this.practiceInvoice) {
-				window.open(
-					`${process.env.API_URL}/api/v1/practice-invoices/${
-						this.practiceInvoice.id
-					}/pdf?filename=${"hubzz_" +
-						this.$moment(this.practiceInvoice.issued_at, 'YYYY-MM-DD[T]').utc().format("DD/MM/YYYY") +
-						"_" +
-						this.practiceInvoice.invoice_number +
-						"_" +
-						this.practiceInvoice.practice.code}`
-				)
-			}
-		},
-		async addInvoiceItem () {
-			// deduct 1 when dealing with ID for array
-			const newItem = {
-				job_part: "",
-				description: "",
-				hours: "",
-				amount: 0
-			}
-			newItem.id = this.invoiceItems.length + 1
-			await this.invoiceItems.push(newItem)
-		},
+    toPDF () {
+      if (this.locumInvoice) {
+        window.open(
+          `${process.env.API_URL}/api/v1/locum-invoices/${this.locumInvoice.id}/pdf`
+        )
+      } else if (this.practiceInvoice) {
+        window.open(
+          `${process.env.API_URL}/api/v1/practice-invoices/${
+            this.practiceInvoice.id
+          }/pdf?filename=${"hubzz_"
+						+ this.$moment(this.practiceInvoice.issued_at, 'YYYY-MM-DD[T]').utc().format("DD/MM/YYYY")
+						+ "_"
+						+ this.practiceInvoice.invoice_number
+						+ "_"
+						+ this.practiceInvoice.practice.code}`
+        )
+      }
+    },
+    async addInvoiceItem () {
+      // deduct 1 when dealing with ID for array
+      const newItem = {
+        job_part: "",
+        description: "",
+        hours: "",
+        amount: 0,
+      }
+      newItem.id = this.invoiceItems.length + 1
+      await this.invoiceItems.push(newItem)
+    },
 
-		async deductInvoiceItem (itemId) {
-			const mapInvoiceItems = this.invoiceItems.map(
-				invoiceItem => invoiceItem.id
-			)
-			await this.invoiceItems.splice(mapInvoiceItems.indexOf(itemId), 1)
-		},
+    async deductInvoiceItem (itemId) {
+      const mapInvoiceItems = this.invoiceItems.map(
+        invoiceItem => invoiceItem.id
+      )
+      await this.invoiceItems.splice(mapInvoiceItems.indexOf(itemId), 1)
+    },
 
-		async deductDisputedItem (itemId) {
-			const mapDisputedItems = this.disputedItems.map(
-				disputedItem => disputedItem.id
-			)
-			await this.disputedItems.splice(mapDisputedItems.indexOf(itemId), 1)
-		},
+    async deductDisputedItem (itemId) {
+      const mapDisputedItems = this.disputedItems.map(
+        disputedItem => disputedItem.id
+      )
+      await this.disputedItems.splice(mapDisputedItems.indexOf(itemId), 1)
+    },
 
-		async addDebitItem () {
-			const newItem = {
-				type: "Debit",
-				description: "",
-				amount: 0
-			}
-			newItem.id = this.createdDebitItems.length + 1
-			await this.createdDebitItems.push(newItem)
-		},
+    async addDebitItem () {
+      const newItem = {
+        type: "Debit",
+        description: "",
+        amount: 0,
+      }
+      newItem.id = this.createdDebitItems.length + 1
+      await this.createdDebitItems.push(newItem)
+    },
 
-		async deductDebitItem (itemId) {
-			const mapDebitItems = this.createdDebitItems.map(
-				debitItem => debitItem.id
-			)
-			await this.createdDebitItems.splice(mapDebitItems.indexOf(itemId), 1)
-		},
+    async deductDebitItem (itemId) {
+      const mapDebitItems = this.createdDebitItems.map(
+        debitItem => debitItem.id
+      )
+      await this.createdDebitItems.splice(mapDebitItems.indexOf(itemId), 1)
+    },
 
-		async addCreditItem () {
-			const newItem = {
-				type: "Credit",
-				description: "",
-				amount: 0
-			}
-			newItem.id = this.createdCreditItems.length + 1
-			await this.createdCreditItems.push(newItem)
-		},
+    async addCreditItem () {
+      const newItem = {
+        type: "Credit",
+        description: "",
+        amount: 0,
+      }
+      newItem.id = this.createdCreditItems.length + 1
+      await this.createdCreditItems.push(newItem)
+    },
 
-		async deductCreditItem (itemId) {
-			const mapCreditItems = this.createdCreditItems.map(
-				creditItem => creditItem.id
-			)
-			await this.createdCreditItems.splice(mapCreditItems.indexOf(itemId), 1)
-		},
+    async deductCreditItem (itemId) {
+      const mapCreditItems = this.createdCreditItems.map(
+        creditItem => creditItem.id
+      )
+      await this.createdCreditItems.splice(mapCreditItems.indexOf(itemId), 1)
+    },
 
-		async createInvoice () {
-			this.toPostPracticeInvoice.practice_id = (await this.practice.id)
-				? this.practice.id
-				: null
-			this.toPostPracticeInvoice.date_start = (await this.dateStart)
-				? this.dateStart
-				: null
-			this.toPostPracticeInvoice.date_end = (await this.dateEnd)
-				? this.dateEnd
-				: null
-			this.toPostPracticeInvoice.items = await this.invoiceItems.concat(
-				this.disputedItems,
-				this.createdDebitItems,
-				this.createdCreditItems
-			)
-			this.toPostPracticeInvoice.total_amount = await this.amountTotal
+    async createInvoice () {
+      this.toPostPracticeInvoice.practice_id = (await this.practice.id)
+        ? this.practice.id
+        : null
+      this.toPostPracticeInvoice.date_start = (await this.dateStart)
+        ? this.dateStart
+        : null
+      this.toPostPracticeInvoice.date_end = (await this.dateEnd)
+        ? this.dateEnd
+        : null
+      this.toPostPracticeInvoice.items = await this.invoiceItems.concat(
+        this.disputedItems,
+        this.createdDebitItems,
+        this.createdCreditItems
+      )
+      this.toPostPracticeInvoice.total_amount = await this.amountTotal
 
-			if (this.toPostPracticeInvoice.items.length > 0) {
-				await this.$axios
-					.post(`/api/v1/admin/practice-invoices`, this.toPostPracticeInvoice)
-					.then(() => {
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: "Invoice Posted"
-						})
-					})
-					.catch(err => {
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "danger",
-							text: err.response.data.message
-						})
-					})
-			} else {
-				this.$store.commit("SET_NOTIFICATION", {
-					enabled: true,
-					status: "danger",
-					text: "Items to be invoiced is required"
-				})
-			}
-		},
+      if (this.toPostPracticeInvoice.items.length > 0) {
+        await this.$axios
+          .post(`/api/v1/admin/practice-invoices`, this.toPostPracticeInvoice)
+          .then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: "Invoice Posted",
+            })
+          })
+          .catch(err => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: err.response.data.message,
+            })
+          })
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: "Items to be invoiced is required",
+        })
+      }
+    },
 
-		async clearEntries () {}
-	}
+    async clearEntries () {},
+  },
 }
 </script>
 <style>
