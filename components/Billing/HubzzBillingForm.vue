@@ -411,22 +411,31 @@
             </div>
           </div>
         </div>
-        <div v-if="practice.vat_registered === true" class="flex justify-between px-4 pt-2">
-          <div class="my-1 px-1 w-3/4 font-bold">
+        <div class="flex px-4 flex-row justify-between w-full">
+          <div class="my-1 px-1 font-bold">
+            Total
+          </div>
+          <div class="my-1 px-1 text-right text-lg font-semibold">
+            £ {{ practice.vat_registered === true ? practiceInvoice.untaxed_total_amount : practiceInvoice.total_amount | currency }}
+          </div>
+        </div>
+        <div v-if="practice.vat_registered === true" class="flex flex-row px-4 justify-between w-full">
+          <div class="my-1 px-1 font-bold">
             VAT Amount
           </div>
-          <div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">
+          <div class="my-1 px-1 text-right text-lg font-semibold">
             £ {{ practiceInvoice.tax_amount | currency }}
           </div>
         </div>
-        <div ref="items-total" class="flex justify-between px-4 pt-2">
-          <div class="my-1 px-1 w-3/4 font-bold">
-            {{ practice.vat_registered === true ? 'Total (with added VAT)':'Total' }}
+        <div v-if="practice.vat_registered === true" class="flex flex-row px-4 justify-between w-full">
+          <div class="my-1 px-1 font-bold">
+            Total (with added VAT)
           </div>
-          <div class="my-1 px-1 w-1/4 text-right text-lg font-semibold">
+          <div class="my-1 px-1 text-right text-lg font-semibold">
             £ {{ practiceInvoice.total_amount | currency }}
           </div>
         </div>
+
         <div class="flex flex-row justify-between px-4 w-full">
           <span class="my-1 px-1 font-bold">
             Total Hours
