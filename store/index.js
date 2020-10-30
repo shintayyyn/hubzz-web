@@ -76,7 +76,16 @@ export const actions = {
     })
     this.$socket.on('Session Expired', async () => {
       console.log('session expired')
-      this.$router.push(`/session-expired`)
+      this.$auth.logout().finally(() => {
+        this.$auth.$storage.setUniversal('_token.local', '')
+        this.$router.push('/')
+      })
+      commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "danger",
+        text: ["Session Expired"],
+        duration: 5000,
+      })
     })
   },
 	
@@ -90,7 +99,7 @@ export const actions = {
       console.log(err.response)
     }
   },
-  async leaveRoom ({ }, payload) {
+  async leaveRoom ({}, payload) {
     // await this.$axios.$post('api/v1/socket/leave-room', {
     //   socket_id: payload.socket_id,
     //   room_name: payload.room_name

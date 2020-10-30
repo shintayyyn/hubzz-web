@@ -138,10 +138,55 @@ export default {
   },
 
   methods: {
-    async logout () {
-      await this.$auth.logout()
-      this.$auth.$storage.setUniversal("_token.local", "")
-      this.$router.push("/")
+    logout () {
+      this.$axios
+        .post("/api/v1/logout")
+        .then(() => {
+          this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION")
+          this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION")
+          this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION")
+          this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION")
+          console.log("Socket Logged Out")
+          console.log("One Signal Logged Out")
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
+        .finally(() => {
+          this.$emit("modal", false)
+          this.$store.commit("TOGGLE_SIDEBAR", false)
+          return this.loggedOutHandler()
+        })
+        .then(() => {
+          this.$loggedOutBroadcastChannel.postMessage()
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
+    },
+
+    async loggedOutHandler () {
+      try {
+        await this.$auth.logout()
+        this.$auth.$storage.setUniversal("_token.local", "")
+        this.$router.push("/")
+      } catch (err) {
+        console.log("err", err)
+      }
     },
 
     async getMe () {
