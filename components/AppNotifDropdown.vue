@@ -225,6 +225,7 @@ export default {
         "Locum Notification Locum Solo Form",
 
         "Locum Notification Locum Payment Details Updated",
+        "Locum Notification Locum Status Updated",
 
         "Practice Notification Practice Actived",
         "Practice Notification Practice Reactivated",
@@ -595,7 +596,6 @@ export default {
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
-        "Locum Notification Locum Payment Details Updated",
         "Locum Notification Locum Solo Form",
         
         "Practice Notification Locum Form A Paid",

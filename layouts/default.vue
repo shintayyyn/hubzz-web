@@ -95,6 +95,7 @@ export default {
     this.$socket.on("Locum Notification Account Deactivated", this.userDeactivated)
     this.$socket.on("Practice Notification Account Deactivated", this.userDeactivated)
     // LOCUM
+    this.$socket.on("Locum Notification Locum Status Updated", this.getLocumVerification)
     this.$socket.on("User Notification Email Verified", this.getLocumVerification)
     this.$socket.on("User Notification Email Pending", this.getLocumVerification)
     this.$socket.on("Locum Notification Number Pending", this.getLocumVerification)
