@@ -82,19 +82,21 @@ export default {
     practice_rate () {
       if (this.job_part.practice_rate) {
         return this.job_part.practice_rate
-      }
-      let practice_rates = this.$auth.user.practice_detail.practice
-        .practice_rates
-      let practice_rate = practice_rates.find(
-        item => item.id.toString() === this.job_part.profession_id.toString()
-      )
-      let rate = 0
-      if (practice_rate) {
-        rate = practice_rate.rate
       } else {
-        rate = practice_rates[practice_rates.length - 1].rate
+        return 0
       }
-      return rate
+      // let practice_rates = this.$auth.user.practice_detail.practice
+      //   .practice_rates
+      // let practice_rate = practice_rates.find(
+      //   item => item.id.toString() === this.job_part.profession_id.toString()
+      // )
+      // let rate = 0
+      // if (practice_rate) {
+      //   rate = practice_rate.rate
+      // } else {
+      //   rate = practice_rates[practice_rates.length - 1].rate
+      // }
+      // return rate
     },
   },
   created () {
