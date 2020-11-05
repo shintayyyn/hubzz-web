@@ -275,6 +275,26 @@
           />
 
           <AppInput
+            v-model="form.vat_registered"
+            :type="'single-checkbox'"
+            :name="'vat_registered'"
+            :label="'Are you VAT Registered?'"
+            :error="formError.find(item => item.field === 'vat_registered')"
+          />
+
+          <AppInput
+            v-if="form.vat_registered === true"
+            v-model="form.vat_number"
+            :type="'text'"
+            :name="'vat_number'"
+            :label="'VAT Number'"
+            :error="formError.find(item => item.field === 'vat_number')"
+            :limit="11"
+            @keydown="inputNumberOnly($event)"
+            @submit="updateLocumProfile"
+          />
+
+          <AppInput
             v-model="form.employment_type"
             :type="'select'"
             :name="'employment_type'"
@@ -732,6 +752,8 @@ export default {
         referee_2_contact_name: "",
         referee_2_phone_number: "",
         referee_2_email: "",
+        vat_registered: false,
+        vat_number: "",
         employment_type: "Self-Employed",
         company_registration_number: "",
         utr_number: "",
@@ -757,6 +779,27 @@ export default {
         errbo_percentage_rate: 0,
         pcse_or_lhb_ea_code: "",
         nhs_registration_number: "",
+      },
+      activeLoading: [],
+      file: "",
+      files: [],
+      vat_cartificate: {
+        file_created_at: null,
+        file_filename: null,
+        file_id: null,
+        file_size: null,
+        file_subtype: null,
+        file_type: null,
+        file_url: null,
+      },
+      certificate_of_incorporation: {
+        file_created_at: null,
+        file_filename: null,
+        file_id: null,
+        file_size: null,
+        file_subtype: null,
+        file_type: null,
+        file_url: null,
       },
       profile: {
         avatar: null,
@@ -1208,6 +1251,9 @@ export default {
       this.form.referee_2_phone_number = this.user.referee_2_phone_number
       this.form.referee_2_email = this.user.referee_2_email
 
+      this.form.vat_registered = this.user.vat_registered
+      this.form.vat_number = this.user.vat_number
+
       this.form.employment_type = this.user.employment_type
       this.form.utr_number = this.user.utr_number
       this.form.company_registration_number = this.user.company_registration_number
@@ -1238,6 +1284,22 @@ export default {
       this.form.account_number = this.user.account_number
       this.form.sort_code = this.user.sort_code
       this.form.bank_name = this.user.bank_name
+
+      this.vat_cartificate.file_created_at = this.user.vat_cert_file_created_at
+      this.vat_cartificate.file_filename = this.user.vat_cert_file_filename
+      this.vat_cartificate.file_id = this.user.vat_cert_file_id
+      this.vat_cartificate.file_size = this.user.vat_cert_file_size
+      this.vat_cartificate.file_subtype = this.user.vat_cert_file_subtype
+      this.vat_cartificate.file_type = this.user.vat_cert_file_type
+      this.vat_cartificate.file_url = this.user.vat_cert_file_url
+
+      this.certificate_of_incorporation.file_created_at = this.user.cert_of_incorp_file_created_at
+      this.certificate_of_incorporation.file_filename = this.user.cert_of_incorp_file_filename
+      this.certificate_of_incorporation.file_id = this.user.cert_of_incorp_file_id
+      this.certificate_of_incorporation.file_size = this.user.cert_of_incorp_file_size
+      this.certificate_of_incorporation.file_subtype = this.user.cert_of_incorp_file_subtype
+      this.certificate_of_incorporation.file_type = this.user.cert_of_incorp_file_type
+      this.certificate_of_incorporation.file_url = this.user.cert_of_incorp_file_url
     },
 
     addList (payload) {
@@ -1491,6 +1553,8 @@ export default {
         "errbo_percentage_rate",
         "pcse_or_lhb_ea_code",
         "nhs_registration_number",
+        "vat_registered",
+        "vat_number",
       ]
 
       this.form.max_rate_per_hour = 999999999
