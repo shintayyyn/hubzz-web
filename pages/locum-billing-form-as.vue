@@ -6,7 +6,7 @@
           to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-            $route.name.includes('locum-billing-invoices')
+            $route.name.includes('locum-billing-invoices') || $route.name === 'locum-billing-form-as'
               ? 'border rounded-lg border-yellow-500 bg-yellow-500'
               : 'text-gray-600'
           "
@@ -54,8 +54,8 @@ export default {
     if (
       (from && from.name.includes('locum-billing-reports'))
       || (to && to.name.includes('locum-billing-reports'))
-      || (from && from.name === 'locum-billing-form-as')
-      || (to && to.name === 'locum-billing-form-as')
+      || (from && from.name.includes('locum-billing'))
+      || (to && to.name.includes('locum-billing'))
     ) {
       return {
         name: '',
@@ -66,12 +66,6 @@ export default {
     return {
       name: 'page',
       mode: 'out-in',
-    }
-  },
-
-  mounted () {
-    if (this.$route.name === "locum-billing") {
-      this.$router.push("/locum-billing/invoices?status=to-be-invoiced")
     }
   },
 }

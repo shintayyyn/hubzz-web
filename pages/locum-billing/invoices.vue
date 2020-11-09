@@ -8,6 +8,7 @@
       >
         To be invoiced
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -15,6 +16,7 @@
       >
         Disputed Invoices
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -22,6 +24,7 @@
       >
         Invoiced
       </nuxt-link>
+
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -29,6 +32,7 @@
       >
         Approved Invoices
       </nuxt-link>
+      
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'solo-form' } }"
@@ -37,6 +41,7 @@
       >
         Solo Forms
       </nuxt-link>
+
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormA"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
@@ -44,6 +49,15 @@
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
         NHS Pensions Form A
+      </nuxt-link>
+      
+      <nuxt-link
+        v-if="false && $auth.user.locum_detail.profession.profession_category.name === 'GP'"
+        :to="{ name: 'locum-billing-form-as' }"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'locum-billing-form-as' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >
+        NHS Pensions Form A (NEW)
       </nuxt-link>
 
       <nuxt-link
@@ -550,7 +564,7 @@ export default {
       hasFormA: false,
       hasFormB: false,
 
-      initialLoading: false,
+      initialLoading: true,
       loading: false,
       filterModal: false,
       isFiltered: false,
@@ -829,140 +843,22 @@ export default {
     },
   },
 
-  async asyncData ({ app, query, }) {
-    try {
-      let url = `/api/v1/locum/job-parts`
-      let invoice_status = []
-      let locum_status = []
-      let locum_invoiceable
-      let nhs_claimable
-      let ooh
-      let generate_form
-      let sent_to_locum
-      let queryStatus = query.status
-
-      switch (queryStatus && queryStatus.toLowerCase()) {
-      case "to-be-invoiced":
-        invoice_status.push("To Be Invoiced")
-        locum_status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-        break
-      case "disputed":
-        invoice_status.push("Disputed")
-        locum_invoiceable = true
-        break
-      case "issued":
-        invoice_status.push("Invoiced")
-        locum_status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-        break
-      case "approved":
-        invoice_status.push("Invoiced")
-        locum_status.push("Approved")
-        locum_invoiceable = true
-        break
-      case "solo-form":
-        invoice_status.push("Invoiced")
-        locum_status.push("Approved")
-        locum_invoiceable = true
-        generate_form = true
-        ooh = true
-        sent_to_locum = true
-        break
-      case "pension-form-a":
-        invoice_status.push("Invoiced")
-        locum_status.push("Approved")
-        locum_invoiceable = true
-        nhs_claimable = true
-        ooh = false
-        generate_form = true
-        break
-      case "pension-form-b":
-        url = `/api/v1/locum/locum-invoices-form-b`
-        break
-      default:
-        invoice_status.push("To Be Invoiced")
-        locum_status = ["Completed", "Declined", "Cancelled",]
-        locum_invoiceable = true
-      }
-
-      let locum_form_bs = []
-      let [jobPartCount, job_parts,] = await Promise.all([
-        app.$axios
-          .get(`${url}/count`, {
-            params: {
-              invoice_status,
-              locum_status,
-              locum_invoiceable,
-              nhs_claimable,
-              ooh,
-              sent_to_locum,
-              generate_form,
-              viewing_locum_user_id: app.$auth.user.id,
-              job_type: "Platform",
-              type: "Platform",
-            },
-          }).then(response => response.data.data.count),
-
-        app.$axios
-          .$get(`${url}`, {
-            params: {
-              invoice_status,
-              locum_status,
-              locum_invoiceable,
-              nhs_claimable,
-              ooh,
-              sent_to_locum,
-              generate_form,
-              viewing_locum_user_id: app.$auth.user.id,
-              job_type: "Platform",
-              type: "Platform",
-              offset: 0,
-              limit: 5,
-            },
-          })
-          .then(res => {
-            if (res.data && res.data.job_parts) {
-              return res.data.job_parts
-            } else if (res.data && res.data.locum_form_bs) {
-              return res.data.locum_form_bs
-            }
-          }),
-      ])
-
-      if (url === `/api/v1/locum/job-parts`) {
-        job_parts = job_parts.map(jobPart => {
-          return {
-            ...jobPart,
-          }
-        })
-      }
-
-      if (url === `/api/v1/locum/locum-invoices-form-b`) {
-        job_parts.forEach(item => {
-          locum_form_bs.push({
-            ...item,
-            practice: item.forms[0].practice_name,
-          })
-        })
-      }
-
-      return {
-        hasFormA: false,
-        hasFormB: false,
-        jobPartCount,
-        job_parts,
-        locum_form_bs,
-      }
-    } catch (err) {
-      console.log("err", err.response || err)
-    }
-  },
-
   mounted () {
     this.$socket.on("Locum Notification Locum Invoice Created", this.getLocumInvoiceRealTime)
     this.$socket.on("Locum Notification Locum Invoice Paid", this.getLocumInvoiceRealTime)
     this.$socket.on("Locum Notification Locum Invoice Updated", this.getLocumInvoiceRealTime)
+
+    this.current_page = 1
+    this.filterModal = false
+    this.showRefresh = false
+    this.jobPartCount = 0
+    this.job_parts = []
+    this.clearFilters()
+    this.isFiltered = false
+    this.initialLoading = true
+    this.getJobPartsPromiseAll().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   destroyed () {
