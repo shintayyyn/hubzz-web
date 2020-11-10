@@ -43,7 +43,7 @@
       </nuxt-link>
 
       <nuxt-link
-        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP' || hasFormA"
+        v-if="false && $auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -52,12 +52,12 @@
       </nuxt-link>
       
       <nuxt-link
-        v-if="false && $auth.user.locum_detail.profession.profession_category.name === 'GP'"
+        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ name: 'locum-billing-form-as' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name === 'locum-billing-form-as' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
-        NHS Pensions Form A (NEW)
+        NHS Pensions Form A
       </nuxt-link>
 
       <nuxt-link

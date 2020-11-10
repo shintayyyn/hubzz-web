@@ -43,7 +43,7 @@
       </nuxt-link>
 
       <nuxt-link
-        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
+        v-if="false && $auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -97,10 +97,10 @@
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="job_ir35"
+              v-model="ir35"
               class="px-1"
               :type="'select'"
-              :name="'job_ir35'"
+              :name="'ir35'"
               :label="'Inside ir35'"
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
@@ -108,30 +108,30 @@
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="invoice_number"
+              v-model="locumInvoiceNumberIncludes"
               class="px-1"
               :type="'text'"
-              :name="'invoice_number'"
+              :name="'locumInvoiceNumberIncludes'"
               :label="'Invoice number'"
             />
           </div>
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="job_part_number_includes"
+              v-model="jobPartNumberIncludes"
               class="px-1"
               :type="'text'"
-              :name="'job_part_number_includes'"
+              :name="'jobPartNumberIncludes'"
               :label="'Job Part number'"
             />
           </div>
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="is_paid"
+              v-model="paid"
               class="px-1"
               :type="'select'"
-              :name="'is_paid'"
+              :name="'paid'"
               :label="'Paid'"
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
@@ -178,28 +178,31 @@
             <div class="flex flex-wrap justify-center">
               <div
                 class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-                @click="viewLocumFormA(slotProps.item.locum_form_a_id)"
+                @click="viewLocumFormA(slotProps.item.id)"
               >
                 View Form A
               </div>
 
               <div
-                v-if="!slotProps.item.locum_form_a_sent_to_practice"
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
-                :class="
-                  slotProps.item.locum_form_a_sent_to_practice
-                    ? 'bg-gray-600 text-white cursor-not-allowed'
-                    : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'
-                "
+                v-if="!slotProps.item.locum_electronic_signature"
+                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                @click="setLocumFormAIdToSign(slotProps.item.id)"
+              >
+                E-sign Form
+              </div>
+
+              <div
+                v-if="!slotProps.item.sent_to_practice"
+                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
                 @click="locumInvoiceIdToSend = slotProps.item.locum_invoice_id"
               >
                 Send Form to Practice
               </div>
 
               <div
-                v-if="slotProps.item.locum_form_a_sent_to_practice && !slotProps.item.locum_form_a_paid"
+                v-if="slotProps.item.sent_to_practice && !slotProps.item.paid"
                 class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-                @click.stop.prevent="form.paid_at = null, locumFormAIdToPay = slotProps.item.locum_form_a_id"
+                @click.stop.prevent="form.paid_at = null, locumFormAIdToPay = slotProps.item.id"
               >
                 Mark as Paid
               </div>
@@ -223,7 +226,7 @@
           v-model="form.paid_at"
           :name="'paid_at'"
           :label="'Payment made on'"
-          :error="formError.find(formError => formError.field === 'paid_at')"
+          :error="formErrors.find(formError => formError.field === 'paid_at')"
           is-before
         />
 
@@ -240,6 +243,53 @@
       </div>
     </div>
 
+    <div v-if="locumFormAIdToSign" class="p-2">
+      <div class="relative rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppLoading :loading="locumESigningLocumFormA" spinner />
+
+        <AppInput
+          v-model="locumESignText"
+          class="px-1"
+          :type="'text'"
+          :label="'Signiture'"
+          :error="formErrors.find(formError => formError.field === 'text')"
+        />
+
+        <div
+          class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer -mt-5"
+          @click="$refs.inputFile.click()"
+        >
+          <input
+            ref="inputFile"
+            type="file"
+            accept="image/*"
+            class="inputfile hidden"
+            @input="inputfileHandler"
+          >
+
+          <svgicon name="cloud-upload" height="24" width="24" />
+          <label class="leading-loose mx-2 cursor-pointer">Upload Signiture</label>
+        </div>
+
+        <div v-if="fileFile" class="w-full text-center break-words">
+          <small>Uploaded file: {{ fileFile.name }}</small>
+        </div>
+
+        <div class="flex flex-row flex-no-wrap justify-center mt-5">
+          <AppButton v-if="!locumESigningLocumFormA" class="mx-1" :label="'Sign'" :in-style="'padding:5px 10px'" @click="locumESignLocumFormA" />
+
+          <AppButton v-if="locumESigningLocumFormA" class="mx-1" :label="'Signing...'" :in-style="'padding:5px 10px'" />
+
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="locumFormAIdToSign = null"
+          />
+        </div>
+      </div>
+    </div>
+
     <AppConfirmationModal
       :label="'Send this Form A to Practice?'"
       :confirm-label="'Yes'"
@@ -251,10 +301,10 @@
 
     <transition name="fade" mode="out-in">
       <nuxt-link
-        v-if="locumFormAIdToPay"
+        v-if="locumFormAIdToPay || locumFormAIdToSign"
         :to="{ name: 'locum-billing-form-as' }"
         class="shield"
-        @click.native="locumFormAIdToPay = null"
+        @click.native="locumFormAIdToPay = null, locumFormAIdToSign = null"
       />
     </transition>
 
@@ -302,14 +352,12 @@ export default {
       limit: 5,
       order_by: [],
 
-      job_ir35: null,
-      invoice_number: null,
-      job_part_number_includes: null,
-      is_paid: null,
+      ir35: null,
+      locumInvoiceNumberIncludes: null,
+      jobPartNumberIncludes: null,
+      paid: null,
 
       locumFormAIdToPay: null,
-
-      generate_form_a_modal: false,
 
       locumInvoiceIdToSend: null,
 
@@ -317,7 +365,12 @@ export default {
         paid_at: null,
       },
 
-      formError: [],
+      locumFormAIdToSign: null,
+      locumESignText: '',
+      fileFile: null,
+      locumESigningLocumFormA: false,
+
+      formErrors: [],
     }
   },
 
@@ -346,26 +399,26 @@ export default {
           class: 'text-center',
           sortable: true,
         },
-        {
-          name: 'OOH',
-          dataIndex: 'ooh',
-          class: 'text-center',
-          sortable: true,
-        },
-        {
-          name: 'NHS Claimable',
-          dataIndex: 'nhs_claimable_formatted',
-          class: 'text-center',
-          sortable: true,
-        },
+        // {
+        //   name: 'OOH',
+        //   dataIndex: 'ooh',
+        //   class: 'text-center',
+        //   sortable: true,
+        // },
+        // {
+        //   name: 'NHS Claimable',
+        //   dataIndex: 'nhs_claimable_formatted',
+        //   class: 'text-center',
+        //   sortable: true,
+        // },
         {
           name: 'Paid By Practice At',
-          dataIndex: 'locum_form_a_paid_by_practice_at_formatted',
+          dataIndex: 'paid_by_practice_at_formatted',
           class: 'text-center',
         },
         {
           name: 'Paid By Locum At',
-          dataIndex: 'locum_form_a_paid_at_formatted',
+          dataIndex: 'paid_at_formatted',
           class: 'text-center',
         },
         {
@@ -383,19 +436,21 @@ export default {
     },
 
     disabledClearFilter () {
-      let jobIr35 = this.job_ir35 === "" ? null : this.job_ir35
-      let isPaid = this.is_paid === "" ? null : this.is_paid
-      let invoiceNumber
-        = this.invoice_number === "" ? null : this.invoice_number
+      let jobIr35 = this.ir35 === "" ? null : this.ir35
+      let isPaid = this.paid === "" ? null : this.paid
+      
+      let locumInvoiceNumberIncludes
+        = this.locumInvoiceNumberIncludes === "" ? null : this.locumInvoiceNumberIncludes
+
       let jobPartNumberIncludes
-        = this.job_part_number_includes === ""
+        = this.jobPartNumberIncludes === ""
           ? null
-          : this.job_part_number_includes
+          : this.jobPartNumberIncludes
 
       if (
         isPaid === null
         && jobIr35 === null
-        && invoiceNumber === null
+        && locumInvoiceNumberIncludes === null
         && jobPartNumberIncludes === null
       ) {
         return true
@@ -404,10 +459,24 @@ export default {
     },
   },
 
+  watch: {
+    locumESignText () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'text')
+
+      if (!this.locumESignText) {
+        this.formErrors.push({
+          field: 'text',
+          message: 'E-sign text is required.',
+          validation: 'required',
+        })
+      }
+    },
+  },
+
   mounted () {
     this.$socket.on('Locum Notification Locum Form A Paid', this.showRefreshLocumFormAs)
-    this.$socket.on('Locum Notification Locum A Paid By Practice', this.showRefreshLocumFormAs)
-    this.$socket.on('Locum Notification Locum A Sent To Practice', this.showRefreshLocumFormAs)
+    this.$socket.on('Locum Notification Locum Form A Paid By Practice', this.showRefreshLocumFormAs)
+    this.$socket.on('Locum Notification Locum Form A Sent To Practice', this.showRefreshLocumFormAs)
 
     this.filterModal = false
     this.showRefresh = false
@@ -420,8 +489,8 @@ export default {
 
   destroyed () {
     this.$socket.removeListener('Locum Notification Locum Form A Paid', this.showRefreshLocumFormAs)
-    this.$socket.removeListener('Locum Notification Locum A Paid By Practice', this.showRefreshLocumFormAs)
-    this.$socket.removeListener('Locum Notification Locum A Sent To Practice', this.showRefreshLocumFormAs)
+    this.$socket.removeListener('Locum Notification Locum Form A Paid By Practice', this.showRefreshLocumFormAs)
+    this.$socket.removeListener('Locum Notification Locum Form A Sent To Practice', this.showRefreshLocumFormAs)
   },
 
   methods: {
@@ -449,7 +518,7 @@ export default {
           )
 
           if (updatedFormA) {
-            updatedFormA.locum_form_a_sent_to_practice = true
+            updatedFormA.sent_to_practice = true
           }
         })
     },
@@ -460,36 +529,22 @@ export default {
 
     getJobPartsPromiseAll () {
       return Promise.all([
-        this.$axios.$get('/api/v1/locum/job-parts/count', {
+        this.$axios.$get('/api/v1/locum/locum-form-as/count', {
           params: {
-            invoice_status: 'Invoiced',
-            locum_status: 'Approved',
-            locum_invoiceable: true,
-            nhs_claimable: true,
-            ooh: false,
-            generate_form: true,
-            job_type: "Platform",
-            type: "Platform",
-            job_ir35: this.job_ir35,
-            is_paid: this.is_paid,
-            invoice_number: this.invoice_number,
-            job_part_number_includes: this.job_part_number_includes,
+            type: 'Platform',
+            ir35: this.ir35,
+            paid: this.paid,
+            locum_invoice_number_includes: this.locumInvoiceNumberIncludes,
+            job_part_number_includes: this.jobPartNumberIncludes,
           },
         }),
-        this.$axios.$get('/api/v1/locum/job-parts', {
+        this.$axios.$get('/api/v1/locum/locum-form-as', {
           params: {
-            invoice_status: 'Invoiced',
-            locum_status: 'Approved',
-            locum_invoiceable: true,
-            nhs_claimable: true,
-            ooh: false,
-            generate_form: true,
-            job_type: "Platform",
-            type: "Platform",
-            job_ir35: this.job_ir35,
-            is_paid: this.is_paid,
-            invoice_number: this.invoice_number,
-            job_part_number_includes: this.job_part_number_includes,
+            type: 'Platform',
+            ir35: this.ir35,
+            paid: this.paid,
+            locum_invoice_number_includes: this.locumInvoiceNumberIncludes,
+            job_part_number_includes: this.jobPartNumberIncludes,
             offset: 0,
             limit: 5,
           },
@@ -497,7 +552,7 @@ export default {
       ])
         .then(([responseTotal, response,]) => {
           this.locumFormAsCount = responseTotal.data.count
-          this.locumFormAs = response.data.job_parts
+          this.locumFormAs = response.data.locum_form_as
         })
     },
 
@@ -513,44 +568,23 @@ export default {
     },
 
     getJobParts () {
-      let invoice_status = []
-      let locum_status = []
-      let locum_invoiceable
-      let nhs_claimable
-      let ooh
-      let sent_to_locum
-      let generate_form
-
-      invoice_status.push("Invoiced")
-      locum_status.push("Approved")
-      locum_invoiceable = true
-      nhs_claimable = true
-      ooh = false
-      generate_form = true
-
       return this.$axios
-        .$get('/api/v1/locum/job-parts', {
+        .$get('/api/v1/locum/locum-form-as', {
           params: {
-            invoice_status,
-            locum_status,
-            locum_invoiceable,
-            nhs_claimable,
-            ooh,
-            sent_to_locum,
-            generate_form,
-            job_type: "Platform",
-            type: "Platform",
+            type: 'Platform',
             offset: this.offset,
             limit: this.limit,
-            job_ir35: this.job_ir35,
-            is_paid: this.is_paid,
-            invoice_number: this.invoice_number,
-            job_part_number_includes: this.job_part_number_includes,
+
+            ir35: this.ir35,
+            paid: this.paid,
+            locum_invoice_number_includes: this.locumInvoiceNumberIncludes,
+            job_part_number_includes: this.jobPartNumberIncludes,
+
             order_by: this.order_by,
           },
         })
         .then(res => {
-          this.locumFormAs = res.data.job_parts
+          this.locumFormAs = res.data.locum_form_as
         })
         .catch(err => {
           console.log("err", err.response || err)
@@ -573,13 +607,10 @@ export default {
         .then((response) => {
           const locumFormA = response.data.data.locum_form_a
 
-          let jobPart = this.locumFormAs.find(jobPart => jobPart.locum_form_a_id === locumFormA.id)
+          const index = this.locumFormAs.findIndex(({ id, }) => id === locumFormA.id)
 
-          if (jobPart) {
-            jobPart.locum_form_a_paid = locumFormA.paid
-            jobPart.locum_form_a_paid_formatted = locumFormA.paid_formatted
-            jobPart.locum_form_a_paid_at = locumFormA.paid_at
-            jobPart.locum_form_a_paid_at = locumFormA.paid_at_formatted
+          if (index > - 1) {
+            this.locumFormAs.splice(index, 1, locumFormA)
           }
 
           this.$store.commit("SET_NOTIFICATION", {
@@ -601,6 +632,96 @@ export default {
         })
         .finally(() => {
           this.locumFormAIdToPay = null
+        })
+    },
+
+    setLocumFormAIdToSign (locumFormAIdToSign) {
+      this.locumFormAIdToSign = locumFormAIdToSign
+      this.locumESignText = `${this.$auth.user.name} - ${this.$moment.utc().format('DD/MM/YYYY')}`
+      this.fileFile = null
+    },
+
+    inputfileHandler (event) {
+      this.fileFile = null
+
+      if (event.target.files.length === 0) {
+        return
+      }
+
+      let file = event.target.files[0]
+
+      let fileType = file.type.split("/")[0]
+
+      if (fileType !== 'image') {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'alert',
+          text: ['Invalid File Format',],
+        })
+
+        return
+      }
+
+      this.fileFile = file
+    },
+
+    locumESignLocumFormA () {
+      const formData = new FormData()
+
+      formData.append('text', this.locumESignText)
+
+      if (this.fileFile) {
+        formData.append('file', this.fileFile)
+      }
+
+      this.locumESigningLocumFormA = true
+
+      this.$axios
+        .put(`/api/v1/locum/locum-form-as/${this.locumFormAIdToSign}/e-sign`, formData)
+        .then((response) => {
+          const locumFormA = response.data.data.locum_form_a
+
+          const index = this.locumFormAs.findIndex(({ id, }) => id === locumFormA.id)
+
+          if (index > - 1) {
+            this.locumFormAs.splice(index, 1, locumFormA)
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${response.data.message}`,],
+          })
+
+          this.locumFormAIdToSign = null
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+              this.formErrors = err.response.data.error_messages
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = 'Something went wrong!'
+          } else {
+            message = err.message
+          }
+
+          if (message) {
+            this.$store.commit('SET_NOTIFICATION', {
+              enabled: true,
+              status: 'danger',
+              text: [`${message}`,],
+            })
+          }
+        })
+        .finally(() => {
+          this.locumESigningLocumFormA = false
         })
     },
     
@@ -634,10 +755,10 @@ export default {
       this.offset = 0
       this.limit = 5
       this.order_by = []
-      this.job_ir35 = null
-      this.is_paid = null
-      this.invoice_number = null
-      this.job_part_number_includes = null
+      this.ir35 = null
+      this.paid = null
+      this.locumInvoiceNumberIncludes = null
+      this.jobPartNumberIncludes = null
       this.filterJobParts()
     },
   },
