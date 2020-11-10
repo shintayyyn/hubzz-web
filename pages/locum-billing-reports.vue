@@ -86,6 +86,8 @@ export default {
     if (
       (from && from.name.includes('locum-billing'))
       || (to && to.name.includes('locum-billing'))
+      || (from && from.name === 'locum-billing-form-as')
+      || (to && to.name === 'locum-billing-form-as')
     ) {
       return {
         name: '',
