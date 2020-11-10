@@ -47,6 +47,7 @@
       </nuxt-link>
 
       <nuxt-link
+        v-if="false"
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -54,13 +55,14 @@
       >
         NHS Pension Form A
       </nuxt-link>
-      <!-- <nuxt-link
-        :to="{ path: '/practice-billing/invoices-from-locums/locum-billing-reports'}"
+
+      <nuxt-link
+        :to="{ name: 'practice-billing-form-as' }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums-locum-billing-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'practice-billing-form-as' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
-        Reports
-      </nuxt-link> -->
+        NHS Pension Form A
+      </nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
