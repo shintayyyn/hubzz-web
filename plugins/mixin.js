@@ -318,7 +318,7 @@ Vue.mixin({
     isNumberDash (e) {
       var charCode = (e.which) ? e.which : e.keyCode
       // && charCode != 45 
-      if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+      if (charCode != 46 && charCode > 33 && (charCode < 48 || charCode > 57)) {
         e.preventDefault()
       }
       return true

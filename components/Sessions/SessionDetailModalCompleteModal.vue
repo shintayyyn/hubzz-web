@@ -20,6 +20,7 @@
       </div>
 
       <AppSchedules
+        v-if="!dataLoading"
         :shifts="shifts"
         :rate_lists="rate_lists"
         :practice_rate="practice_rate"
@@ -28,9 +29,11 @@
         :shiftErrors="shiftErrors"
         toComplete
         :type="'complete'"
+        :locum_vat_registered="job_part.locum_details_vat_registered"
+        :tax_rates="tax_rates"
         @getSchedule="getSchedule"
       />
-      
+
       <div class="flex px-4">
         <AppButton :label="'Complete'" class="ml-auto" @click="canComplete" />
       </div>
@@ -67,6 +70,8 @@ export default {
       rate_lists: [],
       total_working_hours: 0,
       total_gross_locum_wages: 0,
+      locum_tax_rate: 0,
+      taxed_total_gross_locum_wages: 0,
       hasShiftError: false,
       dataLoading: false,
       form: {
@@ -101,6 +106,7 @@ export default {
   },
   created () {
     this.form.schedules = this.job_part.schedules
+    this.dataLoading = true
     Promise.all([
       this.$axios.get("/api/v1/locum-detail-rate-types").then(response =>
         response.data.data.locum_detail_rate_types.map(rateType => ({
@@ -114,11 +120,15 @@ export default {
           value: shift.id,
         }))
       ),
+      this.$axios.get("/api/v1/tax-rates").then(response => 
+        response.data.data.tax_rates
+      ),
     ])
       .then(responses => {
-        const [rateLists, shiftLists,] = responses
+        const [rateLists, shiftLists, taxRates,] = responses
         this.rate_lists = rateLists
         this.shifts = shiftLists
+        this.tax_rates = taxRates
       })
       .finally(() => {
         this.dataLoading = false
@@ -128,10 +138,12 @@ export default {
     getSchedule (
       schedule,
       total_gross_locum_wages,
+      locum_tax_rate,
+      taxed_total_gross_locum_wages,
       total_working_hours,
       deductions,
       total_lates,
-      hasError
+      hasError,
     ) {
       this.schedule = schedule
       this.form.schedules = []
@@ -185,6 +197,8 @@ export default {
       })
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
+      this.locum_tax_rate = locum_tax_rate
+      this.taxed_total_gross_locum_wages = taxed_total_gross_locum_wages
       this.hasShiftError = hasError
     },
     bgStatus (status) {

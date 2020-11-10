@@ -122,6 +122,7 @@
 
         <div class="w-full border-b">
           <AppSchedules
+            v-if="!taxRatesLoading"
             :practice_rate="practice_rate"
             :schedule="propJobPart? propJobPart.schedules : propInvoice.job_part_schedule_items"
             :error="formError.find(err => err.field === 'schedules')"
@@ -131,6 +132,8 @@
             :toDisplay="propInvoice && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum')"
             :type="'invoice'"
             :invoiceStatus="$route.query.status"
+            :tax_rates="tax_rates"
+            :locum_vat_registered="locum_vat_registered"
             @getSchedule="getSchedule"
           />
         </div>
@@ -154,6 +157,20 @@
 
               <p class="font-bold w-1/2 text-right">
                 {{ total_absences > 0 ? total_absences : 'None' }}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap justify-between">
+              <p class="text-sm w-1/2">
+                TOTAL WORK HOURS:
+              </p>
+
+              <p v-if="total_working_hours > 0" class="font-bold w-1/2 text-right">
+                {{ total_working_hours | hoursMinutes }}
+              </p>
+
+              <p v-else class="font-bold w-1/2 text-right">
+                0
               </p>
             </div>
 
@@ -226,6 +243,34 @@
 
               <p class="font-bold w-1/2 text-right">
                 £ {{ total_gross_locum_wages | currency }}
+              </p>
+            </div>
+
+            <div 
+              v-if="locum_vat_registered 
+                && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAX AMOUNT:
+              </p>
+
+              <p class="font-bold w-1/2 text-right">
+                £ {{ tax_amount | currency }}
+              </p>
+            </div>
+
+            <div 
+              v-if="locum_vat_registered 
+                && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAXED TOTAL WORK PAYMENT:
+              </p>
+
+              <p class="font-bold w-1/2 text-right">
+                £ {{ taxed_gross_rate | currency }}
               </p>
             </div>
 
@@ -392,6 +437,7 @@ export default {
         date_start: null,
         date_end: null,
         items: [],
+        tax_amount: 0,
         total_amount: 0,
         final: false,
         ir35: false,
@@ -408,12 +454,18 @@ export default {
       schedule: [],
       total_working_hours: 0,
       total_gross_locum_wages: 0,
+      tax_amount: 0,
+      taxed_gross_rate: 0,
       total_deductions: 0,
       total_late_hours: "",
       total_absences: 0,
       hasShiftError: false,
       sched_has_changes: false,
       practice: null,
+
+      taxRatesLoading: false,
+      locum_vat_registered: false,
+      tax_rates: {},
     }
   },
 
@@ -765,6 +817,20 @@ export default {
   },
 
   created () {
+    this.taxRatesLoading = true
+    Promise.all([
+      this.$axios.$get("/api/v1/tax-rates").then(response => 
+        response.data.tax_rates
+      ),
+    ])
+      .then(responses => {
+        const [taxRates,] = responses
+        this.tax_rates = taxRates
+        this.locum_vat_registered = this.$auth.user.vat_registered
+      })
+      .finally(() => {
+        this.taxRatesLoading = false
+      })
     console.log('propinvoice', this.propInvoice)
     console.log('propinvoiceDetail', this.propInvoiceDetail)
   },
@@ -791,7 +857,9 @@ export default {
 
     getSchedule (
       schedule,
-      total_gross_locum_wages,
+      total_gross_locum_wages, //getJobGrossRate
+      tax_amount, //getJobTaxRate
+      taxed_gross_rate, // getJobTaxedGrossRate
       total_working_hours,
       deductions,
       total_lates,
@@ -846,7 +914,9 @@ export default {
       this.total_deductions = deductions
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = total_gross_locum_wages
+      this.form.total_amount = this.locum_vat_registered ? taxed_gross_rate : total_gross_locum_wages
+      this.tax_amount = tax_amount
+      this.taxed_gross_rate = taxed_gross_rate
       this.hasShiftError = hasError
       this.sched_has_changes = hasChanges
     },
@@ -1010,6 +1080,7 @@ export default {
         "final",
         "ir35",
         "total_amount",
+        "tax_amount",
         "hours",
         "minutes",
         "late_hours",
@@ -1021,7 +1092,17 @@ export default {
         this.saveLoading = true
 
         if (this.propJobPart && !this.propInvoice) {
-          this.form.total_amount = this.total_gross_locum_wages
+          console.log('banana', this.locum_vat_registered)
+          console.log('taxed', this.taxed_gross_rate)
+          console.log('untaxed', this.total_gross_locum_wages)
+
+          if (this.locum_vat_registered === true) {
+            this.form.total_amount = this.taxed_gross_rate
+          } else {
+            this.form.total_amount = this.total_gross_locum_wages
+          }
+          
+          this.form.tax_amount = this.tax_amount
 
           this.form.final = final
 
@@ -1058,8 +1139,17 @@ export default {
             .finally(() => {
               this.saveLoading = false
             })
+
+          // for testing onli
+          // console.log('locum invoice form', this.form)
+          // this.saveLoading = false
         } else if (this.propInvoice && !this.propJobPart) {
-          this.form.total_amount = this.total_gross_locum_wages
+          if (this.locum_vat_registered === true) {
+            this.form.total_amount = this.taxed_gross_rate
+          } else {
+            this.form.total_amount = this.total_gross_locum_wages
+          }
+          this.form.tax_amount = this.tax_amount
 
           this.form.final = final
 
@@ -1099,9 +1189,13 @@ export default {
             .finally(() => {
               this.saveLoading = false
             })
+
+          // for testing onli
+          // console.log('locum invoice form', this.form)
+          // this.saveLoading = false
         }
       } else {
-        console.log(this.formError)
+        console.log('error', this.formError)
       }
     },
 

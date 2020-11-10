@@ -285,12 +285,11 @@
           <AppInput
             v-if="form.vat_registered === true"
             v-model="form.vat_number"
-            :type="'text'"
+            :type="'numberDash'"
             :name="'vat_number'"
             :label="'VAT Number'"
             :error="formError.find(item => item.field === 'vat_number')"
-            :limit="11"
-            @keydown="inputNumberOnly($event)"
+            :limit="9"
             @submit="updateLocumProfile"
           />
 
@@ -1519,6 +1518,11 @@ export default {
         = this.selectedProfession && this.selectedProfession.sub_professionable
           ? this.subProfessionIds
           : []
+      
+      const firstSlice = this.form.vat_number.slice(0,3)
+      const secondSlice = this.form.vat_number.slice(3,7)
+      const thirdSlice = this.form.vat_number.slice(7,9)
+      this.form.vat_number = firstSlice.concat(" ",secondSlice," ",thirdSlice)
 
       this.formError = []
 
