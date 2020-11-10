@@ -171,7 +171,30 @@
             </div>
           </div>
         </template>
-
+        <!-- UNTAXED TOTAL -->
+        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Untaxed Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ untaxedAmount | currency }}
+            </div>
+          </div>
+        </div>
+        <!-- VAT TOTAL -->
+        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">VAT Amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ vatAmount | currency }}
+            </div>
+          </div>
+        </div>
         <!-- ITEMS TOTAL -->
         <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Total</span>
@@ -263,6 +286,14 @@ export default {
       type: Object,
       default: () => null,
     },
+    taxRates: {
+      type: Object,
+      default: () => null,
+    },
+    vatRegistered: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data () {
@@ -274,6 +305,7 @@ export default {
         date_end: null,
         items: [],
         total_amount: 0,
+        tax_amount: 0,
         final: false,
         ir35: false,
       },
@@ -303,7 +335,7 @@ export default {
         : 0
     },
 
-    totalAmount () {
+    untaxedAmount () {
       let total
       if (this.form.items && this.form.items.length > 0) {
         total = this.form.items[0].total
@@ -314,6 +346,25 @@ export default {
         return total
       }
       return 0
+    },
+
+    vatAmount () {
+      if (this.vatRegistered === true) {
+        const untaxedAmount = this.untaxedAmount
+        const vatAmount = parseFloat(untaxedAmount) * parseFloat(this.taxRates.locum_tax_rate_formatted)
+        return vatAmount
+      }
+      return 0
+    },
+
+    totalAmount () {
+      if (this.vatRegistered === true) {
+        const totalAmount = parseFloat(this.untaxedAmount) + parseFloat(this.vatAmount)
+        return totalAmount
+      } else {
+        const untaxedAmount = this.untaxedAmount
+        return untaxedAmount
+      }
     },
   },
 
@@ -329,6 +380,7 @@ export default {
           ? this.propJobPart.job.rate * this.propJobPart.final_hours
           : (this.propJobPart.job.rate / this.propJobPart.job.total_hours)
             * this.propJobPart.final_hours
+        
 
       const jobPartNumber = this.propJobPart.job_part_number
       const jobType = this.propJobPart.job.type
@@ -343,14 +395,6 @@ export default {
 
       const shiftName = this.propJobPart.job.shift.name
 
-      // const finalHoursInMinutesHours = Math.floor(this.propJobPart.final_hours / 60)
-      // const hourOrHours = finalHoursInMinutesHours > 1 ? 's' : ''
-      // const finalHoursInMinutesMinutes = Math.floor(this.propJobPart.final_hours % 60)
-      // const minuteOrMinutes = finalHoursInMinutesMinutes > 1 ? 's' : ''
-      // const hasMinutes = finalHoursInMinutesMinutes > 0
-      //   ? ` and ${finalHoursInMinutesMinutes} minute${minuteOrMinutes}`
-      //   : ''
-      // const totalHoursOf = `${finalHoursInMinutesHours} hour${hourOrHours}${hasMinutes}`
       const totalHoursOf = this.propJobPart.final_hours.toFixed(2)
 
       const description
@@ -372,7 +416,10 @@ export default {
         },
       ]
 
-      this.form.total_amount = total.toFixed(2)
+      console.log('banana', this.totalAmount)
+
+      this.form.total_amount = this.totalAmount
+      this.form.tax_amount = this.vatAmount
       this.form.final = false
       this.form.ir35 = false
     }
@@ -408,12 +455,13 @@ export default {
   methods: {
     save (final) {
       this.formError = []
-      this.Validate(this.form, ["final", "ir35", "total_amount",])
+      this.Validate(this.form, ["final", "ir35", "total_amount", "tax_amount",])
       if (!this.formError.length) {
         this.saveLoading = true
+        console.log('pakshet', this.form)
         if (this.propJobPart && !this.propInvoice) {
           this.form.final = final
-          this.form.total_amount = parseInt(this.form.items[0].total)
+          console.log('form', this.form)
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {

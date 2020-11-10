@@ -13,6 +13,8 @@
         :propInvoiceDetail="invoice_detail"
         :propInvoice="invoice"
         :propJobPart="null"
+        :taxRates="tax_rates"
+        :vatRegistered="vat_registered"
         @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
       />
     </div>
@@ -36,7 +38,9 @@ export default {
           ? responseMe.data.user.locum_detail.invoice_detail
           : null;
 
-      const response = await app.$axios.$get(
+      const vat_registered = responseMe.data.user.vat_registered
+
+      let response = await app.$axios.$get(
         `/api/v1/locum/locum-invoices/${params.id}`
       );
 
@@ -44,10 +48,17 @@ export default {
         response.data && response.data.locum_invoice
           ? response.data.locum_invoice
           : null;
+      
+      response = await app.$axios.$get(`/api/v1/tax-rates`)
+
+      const tax_rates = 
+        response.data && response.data.tax_rates ? response.data.tax_rates : null
 
       return {
         invoice_detail,
-        invoice
+        vat_registered,
+        invoice,
+        tax_rates,
       };
     } catch (err) {
       console.log("err", err.response || err);
