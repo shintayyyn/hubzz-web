@@ -1014,7 +1014,31 @@
                 </p>
               </div>
 
-              <div v-if="type === 'create'" class="flex justify-between">
+              <div class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_id }}/{{ job_parts.length }} Tax Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobTaxRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_id }}/{{ job_parts.length }} Taxed Gross Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobTaxedGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div class="flex justify-between">
                 <p class="w-2/3">
                   Total Job Gross Rate:
                 </p>
@@ -1209,6 +1233,16 @@ export default {
     invoiceStatus: {
       type: String,
       default: null,
+    },
+
+    locum_vat_registered: {
+      type: Boolean,
+      default: false,
+    },
+
+    tax_rates: {
+      type: Object,
+      default: () => null,
     },
   },
 
@@ -2014,6 +2048,7 @@ export default {
         }
       })
     }
+    console.log('vat registered', this.locum_vat_registered)
   },
 
   methods: {
@@ -2023,6 +2058,8 @@ export default {
           "getSchedule",
           this.schedules,
           this.getJobGrossRate(this.schedules, true),
+          this.getJobTaxRate(this.schedules, true),
+          this.getJobTaxedGrossRate(this.schedules, true),
           this.getTotalHours(this.schedules, true),
           this.getDeductions(this.schedules),
           this.getTotalLates(this.schedules),
@@ -2521,50 +2558,74 @@ export default {
     getJobGrossRate (schedules, final) {
       let rate = 0
       let rates = []
-
-      schedules.map(item => {
-        if (item.shifts && item.shifts.length) {
-          if (this.type === "invoice" || final) {
-            rates.push(
-              ...item.shifts.map(shift =>
-                shift.has_absences
-                  ? 0
-                  : final
-                    ? this.getRate(
-                      shift,
-                      shift.final_time_start,
-                      shift.final_time_end,
-                      item.date
-                    )
-                    : this.getRate(
-                      shift,
-                      shift.time_start,
-                      shift.time_end,
-                      item.date
-                    )
+      if (schedules) {
+        schedules.map(item => {
+          if (item.shifts && item.shifts.length) {
+            if (this.type === "invoice" || final) {
+              rates.push(
+                ...item.shifts.map(shift =>
+                  shift.has_absences
+                    ? 0
+                    : final
+                      ? this.getRate(
+                        shift,
+                        shift.final_time_start,
+                        shift.final_time_end,
+                        item.date
+                      )
+                      : this.getRate(
+                        shift,
+                        shift.time_start,
+                        shift.time_end,
+                        item.date
+                      )
+                )
               )
-            )
-          } else {
-            rates.push(
-              ...item.shifts.map(shift =>
-                this.getRate(shift, shift.time_start, shift.time_end, item.date)
+            } else {
+              rates.push(
+                ...item.shifts.map(shift =>
+                  this.getRate(shift, shift.time_start, shift.time_end, item.date)
+                )
               )
-            )
+            }
           }
-        }
-      })
+        })
 
-      for (let i = 0; i <= rates.length; i++) {
-        let num = parseFloat(rates[i])
-        if (isNaN(num)) {
-          continue
+        for (let i = 0; i <= rates.length; i++) {
+          let num = parseFloat(rates[i])
+          if (isNaN(num)) {
+            continue
+          }
+          rate += Number(num)
         }
-        rate += Number(num)
+
+        const qwe = rate.toFixed(2)
+        
+        return qwe
+      } else {
+        return 0
       }
+    },
 
-      const qwe = rate.toFixed(2)
-      
-      return qwe
+    getJobTaxRate (schedules, final) {
+      const grossRate = this.getJobGrossRate(schedules,final)
+      const taxAmount = parseFloat(grossRate) * parseFloat(this.tax_rates.locum_tax_rate_formatted)
+      if (this.locum_vat_registered) {
+        return taxAmount.toFixed(2)
+      } else {
+        return 0
+      }
+    },
+
+    getJobTaxedGrossRate (schedules, final) {
+      const grossRate = this.getJobGrossRate(schedules,final)
+      const taxRate = this.getJobTaxRate(schedules, final)
+      const taxedGrossRate = parseFloat(grossRate) + parseFloat(taxRate)
+      if (this.locum_vat_registered) {
+        return taxedGrossRate.toFixed(2)
+      } else {
+        return 0
+      }
     },
 
     getTotalHours (schedule, final) {
