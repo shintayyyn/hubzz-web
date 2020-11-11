@@ -93,6 +93,8 @@ export default {
     if (
       (from && from.name.includes('practice-billing'))
       || (to && to.name.includes('practice-billing'))
+      || (from && from.name === 'practice-billing-form-as')
+      || (to && to.name === 'practice-billing-form-as')
     ) {
       return {
         name: '',
