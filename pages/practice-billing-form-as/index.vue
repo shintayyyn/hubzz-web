@@ -456,6 +456,26 @@ export default {
     },
   },
 
+  watch: {
+    locumESignText () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'text')
+
+      if (!this.locumESignText) {
+        this.formErrors.push({
+          field: 'text',
+          message: 'E-sign text is required.',
+          validation: 'required',
+        })
+      } else if (this.locumESignText.length > 100) {
+        this.formErrors.push({
+          field: 'text',
+          message: 'E-sign text maximum length is 100 characters.',
+          validation: 'max',
+        })
+      }
+    },
+  },
+
   created () {
     this.user = this.$auth.user
     this.practice = this.$auth.user && this.$auth.user.domain === 'Practice' && this.$auth.user.practice_detail

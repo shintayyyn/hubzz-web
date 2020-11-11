@@ -469,6 +469,12 @@ export default {
           message: 'E-sign text is required.',
           validation: 'required',
         })
+      } else if (this.locumESignText.length > 100) {
+        this.formErrors.push({
+          field: 'text',
+          message: 'E-sign text maximum length is 100 characters.',
+          validation: 'max',
+        })
       }
     },
   },
