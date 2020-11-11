@@ -2609,7 +2609,8 @@ export default {
 
     getJobTaxRate (schedules, final) {
       const grossRate = this.getJobGrossRate(schedules,final)
-      const taxAmount = parseFloat(grossRate) * parseFloat(this.tax_rates.locum_tax_rate_formatted)
+      const locum_tax_rate = this.tax_rates && this.tax_rates.locum_tax_rate_formatted ? this.tax_rates.locum_tax_rate_formatted : 0
+      const taxAmount = parseFloat(grossRate) * parseFloat(locum_tax_rate)
       if (this.locum_vat_registered) {
         return taxAmount.toFixed(2)
       } else {

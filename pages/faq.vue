@@ -1,65 +1,69 @@
 <template>
 	<section>
-		<div class="lg:px-10">
+		<div class="lg:px-6">
 			<div class="flex flex-no-wrap justify-start">
 				<div
 					class="p-3 text-sm font-bold border rounded-lg border-yellow-500 bg-yellow-500"
 				>Frequently asked questions</div>
 			</div>
 		</div>
-		<div class="lg:px-10 mt-2 md:mt-5">
+		<div class="lg:px-6 mt-2 md:mt-5">
 			<div class="bg-white rounded-lg shadow-lg md:pt-10 px-5 py-5 mb-10">
 				<div class="font-bold text-xl">FAQs</div>
-				<div class="font-bold mt-4 mb-2">Locum</div>
-
-				<div v-for="item in locum_faqs" :key="item.id">
-					<div
-						class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
-						@click="item.toggled = !item.toggled"
-					>
-						<div>{{item.question}}</div>
-						<div>
-							<svgicon
-								name="arrow-right"
-								height="15"
-								width="15"
-								:class="item.toggled ? 'rotate' : 'arrow'"
-							/>
+				<div v-if="$auth.user.domain === 'Locum'" >
+					<div class="font-bold mt-4 mb-2">Locum</div>
+					<div v-for="item in locum_faqs" :key="item.id">
+						<div
+							class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
+							@click="item.toggled = !item.toggled"
+						>
+							<div>{{item.question}}</div>
+							<div>
+								<svgicon
+									name="arrow-right"
+									height="15"
+									width="15"
+									:class="item.toggled ? 'rotate' : 'arrow'"
+								/>
+							</div>
 						</div>
+						<transition name="drop-down" mode="out-in">
+							<div v-if="item.toggled">
+								<no-ssr>
+									<quill-editor class="border-none" :options="options" :content="item.answer" disabled></quill-editor>
+								</no-ssr>
+							</div>
+						</transition>
 					</div>
-					<transition name="drop-down" mode="out-in">
-						<div v-if="item.toggled">
-							<no-ssr>
-								<quill-editor class="border-none" :options="options" :content="item.answer" disabled></quill-editor>
-							</no-ssr>
-						</div>
-					</transition>
 				</div>
-
-				<div class="font-bold mt-4 mb-2">Practice</div>
-				<div v-for="item in practice_faqs" :key="item.id">
-					<div
-						class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
-						@click="item.toggled = !item.toggled"
-					>
-						<div>{{item.question}}</div>
-						<div>
-							<svgicon
-								name="arrow-right"
-								height="15"
-								width="15"
-								:class="item.toggled ? 'rotate' : 'arrow'"
-							/>
+				
+				<div v-if="$auth.user.domain === 'Practice'">
+					<div class="font-bold mt-4 mb-2">Practice</div>
+					<div v-for="item in practice_faqs" :key="item.id">
+						<div
+							class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
+							@click="item.toggled = !item.toggled"
+						>
+							<div>{{item.question}}</div>
+							<div>
+								<svgicon
+									name="arrow-right"
+									height="15"
+									width="15"
+									:class="item.toggled ? 'rotate' : 'arrow'"
+								/>
+							</div>
 						</div>
+						<transition name="drop-down" mode="out-in">
+							<div v-if="item.toggled">
+								<no-ssr>
+									<quill-editor class="border-none" :options="options" :content="item.answer" disabled></quill-editor>
+								</no-ssr>
+							</div>
+						</transition>
 					</div>
-					<transition name="drop-down" mode="out-in">
-						<div v-if="item.toggled">
-							<no-ssr>
-								<quill-editor class="border-none" :options="options" :content="item.answer" disabled></quill-editor>
-							</no-ssr>
-						</div>
-					</transition>
 				</div>
+				
 			</div>
 		</div>
 	</section>

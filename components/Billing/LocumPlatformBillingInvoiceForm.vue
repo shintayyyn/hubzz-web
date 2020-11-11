@@ -831,8 +831,6 @@ export default {
       .finally(() => {
         this.taxRatesLoading = false
       })
-    console.log('propinvoice', this.propInvoice)
-    console.log('propinvoiceDetail', this.propInvoiceDetail)
   },
 
   mounted () {
@@ -1092,10 +1090,6 @@ export default {
         this.saveLoading = true
 
         if (this.propJobPart && !this.propInvoice) {
-          console.log('banana', this.locum_vat_registered)
-          console.log('taxed', this.taxed_gross_rate)
-          console.log('untaxed', this.total_gross_locum_wages)
-
           if (this.locum_vat_registered === true) {
             this.form.total_amount = this.taxed_gross_rate
           } else {

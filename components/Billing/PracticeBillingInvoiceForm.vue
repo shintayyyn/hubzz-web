@@ -106,6 +106,8 @@
           :type="'invoice'"
           :invoiceDetails="propInvoice"
           :invoiceStatus="$route.query.status"
+          :tax_rates="tax_rates"
+          :locum_vat_registered="propInvoice.locum_user_vat_registered "
           :toDisplay="propInvoice.approved"
           @getSchedule="getSchedule"
         />
@@ -202,6 +204,34 @@
 
             <p class="font-bold w-1/2 text-right">
               £ {{ total_gross_locum_wages | currency }}
+            </p>
+          </div>
+
+          <div 
+            v-if="propInvoice.locum_user_vat_registered 
+              && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+            class="flex flex-wrap justify-between"
+          >
+            <p class="text-sm w-1/2">
+              TAX AMOUNT:
+            </p>
+
+            <p class="font-bold w-1/2 text-right">
+              £ {{ tax_amount | currency }}
+            </p>
+          </div>
+
+          <div 
+            v-if="propInvoice.locum_user_vat_registered 
+              && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+            class="flex flex-wrap justify-between"
+          >
+            <p class="text-sm w-1/2">
+              TAXED TOTAL WORK PAYMENT:
+            </p>
+
+            <p class="font-bold w-1/2 text-right">
+              £ {{ taxed_gross_rate | currency }}
             </p>
           </div>
 
@@ -464,6 +494,7 @@ export default {
       form: {
         job_part_schedule_items: [],
         items: [],
+        tax_amount: 0,
         total_amount: 0,
         date_start: null,
         date_end: null,
@@ -494,6 +525,8 @@ export default {
       schedule: [],
       total_working_hours: 0,
       total_gross_locum_wages: 0,
+      tax_amount: 0,
+      taxed_gross_rate: 0,
       total_deductions: 0,
       total_late_hours: "",
       total_absences: 0,
@@ -501,6 +534,8 @@ export default {
       sched_has_changes: false,
       practice: null,
       // solo_form_pension_amount: 0
+
+      tax_rates: {},
     }
   },
 
@@ -742,6 +777,22 @@ export default {
     },
   },
 
+  created () {
+    this.taxRatesLoading = true
+    Promise.all([
+      this.$axios.$get("/api/v1/tax-rates").then(response => 
+        response.data.tax_rates
+      ),
+    ])
+      .then(responses => {
+        const [taxRates,] = responses
+        this.tax_rates = taxRates
+      })
+      .finally(() => {
+        this.taxRatesLoading = false
+      })
+  },
+
   mounted () {
     if (this.propInvoice) {
       this.form.date_start = this.propInvoice.date_start
@@ -798,7 +849,9 @@ export default {
 
     getSchedule (
       schedule,
-      total_gross_locum_wages,
+      total_gross_locum_wages, //getJobGrossRate
+      tax_amount, //getJobTaxRate
+      taxed_gross_rate, // getJobTaxedGrossRate
       total_working_hours,
       deductions,
       total_lates,
@@ -854,7 +907,9 @@ export default {
       this.total_deductions = deductions
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = total_gross_locum_wages
+      this.form.total_amount = this.propInvoice.locum_user_vat_registered ? taxed_gross_rate : total_gross_locum_wages
+      this.tax_amount = tax_amount
+      this.taxed_gross_rate = taxed_gross_rate
       this.hasShiftError = hasError
       this.sched_has_changes
         = this.$route.query.status === "issued" ? false : hasChanges
@@ -928,6 +983,7 @@ export default {
 
       let notRequired = [
         "total_amount",
+        "tax_amount",
         "hours",
         "minutes",
         "late_hours",
@@ -958,6 +1014,13 @@ export default {
         })
 
         this.saveLoading = true
+
+        if (this.propInvoice.locum_user_vat_registered  === true) {
+          this.form.total_amount = this.taxed_gross_rate
+        } else {
+          this.form.total_amount = this.total_gross_locum_wages
+        }
+        this.form.tax_amount = this.tax_amount
 
         this.$axios
           .$put(

@@ -4,8 +4,142 @@
       <div class="text-sm sm:text-base mb-4">
         This job is still open
       </div>
+      <template v-if="job.use_variation_terms">
+        <template v-if="job.variation_terms_file_id">
+          <div class="font-bold text-sm sm:text-md">
+            Terms &amp; Conditions
+          </div>
+          <div class="text-sm sm:text-md">
+            Variation Terms
+          </div>
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+            <transition name="slide" mode="out-in">
+              <div v-if="modal" class="modal-container shadow-lg">
+                <div class="h-full w-full">
+                  <embed
+                    class="object-contain object-top w-full"
+                    :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                  >
+                  <div class="my-4">
+                    <div class="flex flex-row justify-center">
+                      <div class="mx-4">
+                        <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
+                      </div>
+                      <div class="mx-4">
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+        </template>
+        <template v-else-if="job.standard_terms_file_id">
+          <div class="font-bold text-sm sm:text-md">
+            Terms &amp; Conditions
+          </div>
+          <div class="text-sm sm:text-md">
+            Standard Terms
+          </div>
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+            <transition name="slide" mode="out-in">
+              <div v-if="modal" class="modal-container shadow-lg">
+                <div class="h-full w-full">
+                  <embed
+                    class="object-contain object-top w-full"
+                    :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                  >
+                  <div class="my-4">
+                    <div class="flex flex-row justify-center">
+                      <div class="mx-4">
+                        <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
+                      </div>
+                      <div class="mx-4">
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+        </template>
+      </template>
 
-      <AppButton :label="'Apply now'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
+      <template v-if="!job.use_variation_terms">
+        <template v-if="job.standard_terms_file_id">
+          <div class="font-bold text-sm sm:text-md">
+            Terms &amp; Conditions
+          </div>
+          <div class="text-sm sm:text-md">
+            Standard Terms
+          </div>
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+            <transition name="slide" mode="out-in">
+              <div v-if="modal" class="modal-container shadow-lg">
+                <div class="h-full w-full mx-6">
+                  Standard Terms
+                  <embed
+                    class="object-contain object-top w-full"
+                    :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                  >
+                  <div class="my-4">
+                    <div class="flex flex-row justify-center">
+                      <div class="mx-4">
+                        <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
+                      </div>
+                      <div class="mx-4">
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+        </template>
+        <template v-else-if="job.variation_terms_file_id">
+          <div class="font-bold text-sm sm:text-md">
+            Terms &amp; Conditions
+          </div>
+          <div class="text-sm sm:text-md">
+            Variation Terms
+          </div>
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+            <transition name="slide" mode="out-in">
+              <div v-if="modal" class="modal-container shadow-lg">
+                <div class="h-full w-full">
+                  <embed
+                    class="object-contain object-top w-full"
+                    :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                  >
+                  <div class="my-4">
+                    <div class="flex flex-row justify-center">
+                      <div class="mx-4">
+                        <AppButton :label="'Agree & Apply'" :disabled="loading" @click="checkIfLocumAlreadyAppointed" />
+                      </div>
+                      <div class="mx-4">
+                        <AppButton :label="'Cancel'" :disabled="loading" @click="modal=false" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+        </template>
+      </template>
+
+      <AppButton 
+        :label="'Apply now'" 
+        :disabled="loading" 
+        @click="job.variation_terms_file_id || job.standard_terms_file_id ? modal = true : checkIfLocumAlreadyAppointed" 
+      />
     </template>
 
     <template v-if="false && !isReadyToApply">
@@ -37,6 +171,9 @@
       @confirm="apply"
       @cancel="warning_modal = false"
     />
+    <transition name="fade" mode="out-in">
+      <div v-if="modal" class="shield" @click="modal = false" />
+    </transition>
   </div>
 </template>
 
@@ -64,6 +201,9 @@ export default {
       userCompliance: [],
       gmc_or_nmc_number_status: null,
       mpl_or_npl_number_status: null,
+
+      // standard terms
+      modal: false,
     }
   },
   computed: {
@@ -143,9 +283,21 @@ export default {
           }
         })
         .finally(() => {
+          this.modal = false
           this.loading = false
         })
     },
   },
 }
 </script>
+<style scoped>
+  .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
+</style>
