@@ -163,7 +163,9 @@ export default {
           locumTabList.push({
             navigationTabTitle: "Billing",
             route: "/locum-billing",
-            active: `/${this.$route.path.split('/')[1]}` === '/locum-billing',
+            active: `/${this.$route.path.split('/')[1]}` === '/locum-billing'
+              || this.$route.name === 'locum-billing-form-as'
+              || `/${this.$route.path.split('/')[1]}` === '/locum-billing-reports',
           })
         }
 
@@ -375,7 +377,9 @@ export default {
           practiceTabList.push({
             navigationTabTitle: "Billing",
             route: "/practice-billing",
-            active: `/${this.$route.path.split('/')[1]}` === '/practice-billing',
+            active: `/${this.$route.path.split('/')[1]}` === '/practice-billing'
+              || this.$route.name === 'practice-billing-form-as'
+              || `/${this.$route.path.split('/')[1]}` === '/practice-billing-reports',
           })
         }
         
