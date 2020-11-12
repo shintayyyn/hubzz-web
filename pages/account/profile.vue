@@ -884,6 +884,9 @@ export default {
         email: "",
       },
       formError: [],
+
+      new_vat_certificate: false,
+      new_certificate_of_incorporation: false,
     }
   },
 
@@ -1402,6 +1405,9 @@ export default {
       this.certificate_of_incorporation.file_subtype = this.user.cert_of_incorp_file_subtype
       this.certificate_of_incorporation.file_type = this.user.cert_of_incorp_file_type
       this.certificate_of_incorporation.file_url = this.user.cert_of_incorp_file_url
+
+      this.new_vat_certificate = false
+      this.new_certificate_of_incorporation = false
     },
 
     addList (payload) {
@@ -1629,12 +1635,12 @@ export default {
       }
     },
 
-    updateLocumProfile () {
+    async updateLocumProfile () {
       this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
       this.form.sub_profession_ids
 				= this.selectedProfession && this.selectedProfession.sub_professionable
-				  ? this.subProfessionIds
-				  : []
+          ? this.subProfessionIds
+          : []
 
       this.formError = []
 
@@ -1901,14 +1907,13 @@ export default {
         this.form.profession_id = this.form.profession_id.toString()
 
         this.form.ir35
-					= this.professionCategoryId === 1 ? this.form.ir35 : false
+          = this.professionCategoryId === 1 ? this.form.ir35 : false
 
         this.$axios
           .put(`/api/v1/locum/me/profile`, this.form)
           .then(response => {
             if (
-              !this.form.vat_registered
-							|| this.form.employment_type !== "Limited Company"
+              !this.new_certificate_of_incorporation || !this.new_vat_certificate
             ) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
@@ -1935,31 +1940,34 @@ export default {
             this.form.qualification_id = this.selectedQualification
             this.form.spoken_language_id = this.selectedSpokenLanguage
             if (
-              !this.form.vat_registered
-							&& this.form.employment_type !== "Limited Company"
+              !this.new_certificate_of_incorporation || !this.new_vat_certificate
             ) {
               this.loading = false
               this.scrollToTop()
             }
           })
 
-        if (this.form.vat_registered) {
-          const formData1 = new FormData()
-          formData1.append("locum_user_id", this.user.id)
-          formData1.append("type", "VAT Certificate")
-          formData1.append("file", this.form.vat_certificate)
+        if (this.form.vat_registered && this.new_vat_certificate) {
+          const formData1 = await new FormData()
+
+          await formData1.append("file", this.form.vat_certificate)
+          await formData1.append("locum_user_id", this.user.id)
+          await formData1.append("type", "VAT Certificate")
+          
+          console.log('vat file', formData1)
 
           // post request to API / send file
-          this.$axios
+          await this.$axios
             .$post(`/api/v1/locum/me/profile/vat-document`, formData1)
             .then(res => {
-              if (this.form.employment_type !== "Limited Company") {
+              console.log('res', res)
+              if (!this.new_certificate_of_incorporation) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
                   status: "success",
                   text: [`Profile successfully updated.`,],
                 })
-                this.user = response.data.data.user
+                this.user = res.data.user
                 this.initialize()
               }
               this.vat_cartificate.file_created_at
@@ -1972,13 +1980,9 @@ export default {
 								= res.data.user.vat_cert_file_subtype
               this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
               this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
-              // this.$store.commit("SET_NOTIFICATION", {
-              //   enabled: true,
-              //   status: "success",
-              //   text: ["Document uploaded!"]
-              // });
             })
             .catch(err => {
+              console.log('err', err)
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
@@ -1986,22 +1990,24 @@ export default {
               })
             })
             .finally(() => {
-              if (this.form.employment_type !== "Limited Company") {
+              if (!this.new_certificate_of_incorporation) {
                 this.loading = false
                 this.scrollToTop()
               }
             })
         }
 
-        if (this.form.employment_type === "Limited Company") {
-          const formData2 = new FormData()
+        if (this.form.employment_type === "Limited Company" && this.new_certificate_of_incorporation) {
+          const formData2 = await new FormData()
 
-          formData2.append("locum_user_id", this.user.id)
-          formData2.append("type", "Certificate of Incorporation")
-          formData2.append("file", this.form.certificate_of_incorporation)
+          await formData2.append("file", this.form.certificate_of_incorporation)
+          await formData2.append("locum_user_id", this.user.id)
+          await formData2.append("type", "Certificate of Incorporation")
 
+          console.log('cert file', formData2)
+          
           // post request to API / send file
-          this.$axios
+          await this.$axios
             .$post(`/api/v1/locum/me/profile/vat-document`, formData2)
             .then(res => {
               this.$store.commit("SET_NOTIFICATION", {
@@ -2009,7 +2015,8 @@ export default {
                 status: "success",
                 text: [`Profile successfully updated.`,],
               })
-              this.user = response.data.data.user
+              console.log('res', res)
+              this.user = res.data.user
               this.initialize()
               this.certificate_of_incorporation.file_created_at
 								= res.data.user.cert_of_incorp_file_created_at
@@ -2025,13 +2032,9 @@ export default {
 								= res.data.user.cert_of_incorp_file_type
               this.certificate_of_incorporation.file_url
 								= res.data.user.cert_of_incorp_file_url
-              // this.$store.commit("SET_NOTIFICATION", {
-              //   enabled: true,
-              //   status: "success",
-              //   text: ["Document uploaded!"]
-              // });
             })
             .catch(err => {
+              console.log('err', err)
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
@@ -2079,51 +2082,12 @@ export default {
       }
 
       this.form.vat_certificate = file
-      // const formData = new FormData();
-
-      // formData.append("locum_user_id", this.user.id);
-      // formData.append("type", "VAT Certificate");
-      // formData.append("file", file);
-
-      // // post request to API / send file
-      // this.uploading.push("vat_certificate");
-
-      // this.$axios
-      // 	.$post(`/api/v1/locum/me/profile/vat-document`, formData)
-      // 	.then(res => {
-      // 		this.form.vat_certificate = file;
-      // 		this.vat_cartificate.file_created_at =
-      // 			res.data.user.vat_cert_file_created_at;
-      // 		this.vat_cartificate.file_filename =
-      // 			res.data.user.vat_cert_file_filename;
-      // 		this.vat_cartificate.file_id = res.data.user.vat_cert_file_id;
-      // 		this.vat_cartificate.file_size = res.data.user.vat_cert_file_size;
-      // 		this.vat_cartificate.file_subtype =
-      // 			res.data.user.vat_cert_file_subtype;
-      // 		this.vat_cartificate.file_type = res.data.user.vat_cert_file_type;
-      // 		this.vat_cartificate.file_url = res.data.user.vat_cert_file_url;
-      // 		this.$store.commit("SET_NOTIFICATION", {
-      // 			enabled: true,
-      // 			status: "success",
-      // 			text: ["Document uploaded!"]
-      // 		});
-      // 	})
-      // 	.catch(err => {
-      // 		this.$store.commit("SET_NOTIFICATION", {
-      // 			enabled: true,
-      // 			status: "danger",
-      // 			text: [`${err.response.data.message}`]
-      // 		});
-      // 	})
-      // 	.finally(() => {
-      // 		let findIndex = this.uploading.findIndex(
-      // 			data => data === "vat_certificate"
-      // 		);
-      // 		this.uploading.splice(findIndex, 1);
-      // 	});
+      this.new_vat_certificate = true
+      console.log('vat file',this.form.vat_certificate)
     },
 
     onIncFileInput (e) {
+      
       if (!e.target.files.length) {
         return
       }
@@ -2154,53 +2118,9 @@ export default {
       }
 
       this.form.certificate_of_incorporation = file
+      this.new_certificate_of_incorporation = true
 
-      // const formData = new FormData();
-
-      // formData.append("locum_user_id", this.user.id);
-      // formData.append("type", "Certificate of Incorporation");
-      // formData.append("file", file);
-
-      // // post request to API / send file
-      // this.uploading.push("certificate_of_incorporation");
-
-      // this.$axios
-      // 	.$post(`/api/v1/locum/me/profile/vat-document`, formData)
-      // 	.then(res => {
-      // 		this.form.certificate_of_incorporation = file;
-      // 		this.certificate_of_incorporation.file_created_at =
-      // 			res.data.user.cert_of_incorp_file_created_at;
-      // 		this.certificate_of_incorporation.file_filename =
-      // 			res.data.user.cert_of_incorp_file_filename;
-      // 		this.certificate_of_incorporation.file_id =
-      // 			res.data.user.cert_of_incorp_file_id;
-      // 		this.certificate_of_incorporation.file_size =
-      // 			res.data.user.cert_of_incorp_file_size;
-      // 		this.certificate_of_incorporation.file_subtype =
-      // 			res.data.user.cert_of_incorp_file_subtype;
-      // 		this.certificate_of_incorporation.file_type =
-      // 			res.data.user.cert_of_incorp_file_type;
-      // 		this.certificate_of_incorporation.file_url =
-      // 			res.data.user.cert_of_incorp_file_url;
-      // 		this.$store.commit("SET_NOTIFICATION", {
-      // 			enabled: true,
-      // 			status: "success",
-      // 			text: ["Document uploaded!"]
-      // 		});
-      // 	})
-      // 	.catch(err => {
-      // 		this.$store.commit("SET_NOTIFICATION", {
-      // 			enabled: true,
-      // 			status: "danger",
-      // 			text: [`${err.response.data.message}`]
-      // 		});
-      // 	})
-      // 	.finally(() => {
-      // 		let findIndex = this.uploading.findIndex(
-      // 			data => data === "certificate_of_incorporation"
-      // 		);
-      // 		this.uploading.splice(findIndex, 1);
-      // 	});
+      console.log('cert file', this.form.certificate_of_incorporation)
     },
   },
 }

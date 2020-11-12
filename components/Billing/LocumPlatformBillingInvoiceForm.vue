@@ -64,7 +64,8 @@
             <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
             <div>{{ $auth.user.email }}</div>
             <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
-          
+            <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.company_registration_number ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` : null }}</div>
+            <div>{{ $auth.user.vat_number ? `VAT number: ${$auth.user.vat_number}` : '' }}</div>
             <div v-if="propInvoice">
               {{ propInvoice.invoice_number }}
             </div>
@@ -157,20 +158,6 @@
 
               <p class="font-bold w-1/2 text-right">
                 {{ total_absences > 0 ? total_absences : 'None' }}
-              </p>
-            </div>
-
-            <div class="flex flex-wrap justify-between">
-              <p class="text-sm w-1/2">
-                TOTAL WORK HOURS:
-              </p>
-
-              <p v-if="total_working_hours > 0" class="font-bold w-1/2 text-right">
-                {{ total_working_hours | hoursMinutes }}
-              </p>
-
-              <p v-else class="font-bold w-1/2 text-right">
-                0
               </p>
             </div>
 
@@ -1100,6 +1087,8 @@ export default {
 
           this.form.final = final
 
+          console.log('invoice to push', this.form)
+
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -1147,6 +1136,8 @@ export default {
 
           this.form.final = final
 
+          console.log('invoice to push', this.form)
+
           this.$axios
             .$put(
               `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
@@ -1191,6 +1182,8 @@ export default {
       } else {
         console.log('error', this.formError)
       }
+
+      this.saveLoading = false
     },
 
     waitingForPracticeReply (item) {

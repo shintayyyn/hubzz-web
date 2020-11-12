@@ -42,6 +42,8 @@
           <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
           <div>{{ $auth.user.email }}</div>
           <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
+           <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.company_registration_number ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` : null }}</div>
+          <div>{{ $auth.user.vat_number ? `VAT number: ${$auth.user.vat_number}` : '' }}</div>
         </div>
         <div v-if="propInvoice" class="flex flex-wrap justify-between my-2">
           <div
