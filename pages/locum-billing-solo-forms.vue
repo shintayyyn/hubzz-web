@@ -6,7 +6,7 @@
           to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
-            $route.name.includes('locum-billing-invoices') || $route.name === 'locum-billing-form-as'
+            $route.name.includes('locum-billing-invoices') || $route.name === 'locum-billing-solo-forms'
               ? 'border rounded-lg border-yellow-500 bg-yellow-500'
               : 'text-gray-600'
           "

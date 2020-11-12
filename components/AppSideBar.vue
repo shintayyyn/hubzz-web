@@ -165,6 +165,7 @@ export default {
             route: "/locum-billing",
             active: `/${this.$route.path.split('/')[1]}` === '/locum-billing'
               || this.$route.name === 'locum-billing-form-as'
+              || this.$route.name === 'locum-billing-solo-forms'
               || `/${this.$route.path.split('/')[1]}` === '/locum-billing-reports',
           })
         }

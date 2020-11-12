@@ -244,6 +244,10 @@
           >
             <AppLoading :loading="practiceESigningLocumFormA" spinner />
 
+            <div class="px-1">
+              <small class="italic">Please type in or upload your signature.</small>
+            </div>
+
             <AppInput
               v-model="locumESignText"
               class="px-1"
