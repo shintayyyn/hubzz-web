@@ -34,6 +34,8 @@
           <div>Tel {{ propInvoice.mobile_number }}</div>
           <div>{{ propInvoice.locum_user.email }}</div>
           <div>{{ propInvoice.utr_number ? `UTR ${propInvoice.utr_number}` : '' }}</div>
+          <div>{{ propInvoice.company_registration_number ? `Company Registration Number ${propInvoice.company_registration_number}` : '' }}</div>
+          <div>{{ propInvoice.locum_user_vat_number ? `VAT number: ${propInvoice.locum_user_vat_number}` : '' }}</div>
           <div>{{ propInvoice.invoice_number }}</div>
         </div>
       </div>
