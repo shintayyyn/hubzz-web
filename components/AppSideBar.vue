@@ -184,7 +184,7 @@ export default {
         })
 
         locumTabList.push({
-          navigationTabTitle: "FAQ",
+          navigationTabTitle: "FAQs",
           route: "/faq",
           active: `/${this.$route.path.split('/')[1]}` === '/faq',
         })
@@ -430,7 +430,7 @@ export default {
         }
 
         practiceTabList.push({
-          navigationTabTitle: "FAQ",
+          navigationTabTitle: "FAQs",
           route: "/faq",
           active: `/${this.$route.path.split('/')[1]}` === '/faq',
         })
