@@ -38,22 +38,11 @@
       </nuxt-link>
 
       <nuxt-link
-        :event="initialLoading ? '' : 'click'"
-        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'solo-form' } }"
+        :to="{ name: 'practice-billing-solo-forms' }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'practice-billing-solo-forms' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
         Solo Forms
-      </nuxt-link>
-
-      <nuxt-link
-        v-if="false"
-        :event="initialLoading ? '' : 'click'"
-        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'pension-form-a' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        NHS Pension Form A
       </nuxt-link>
 
       <nuxt-link
@@ -64,11 +53,14 @@
         NHS Pension Form A
       </nuxt-link>
     </div>
+
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+    </transition>
 
+    <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
         <AppButton
           v-if="!['pension-form-b'].includes($route.query.status)"

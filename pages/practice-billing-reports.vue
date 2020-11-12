@@ -5,7 +5,13 @@
         v-if="authPermissions.includes('View Billings')"
         :to="{ path: '/practice-billing/invoices-from-locums' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="
+          $route.name.includes('practice-billing-invoices-from-locums')
+            || $route.name === 'practice-billing-form-as'
+            || $route.name === 'practice-billing-solo-forms'
+            ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+            : 'text-gray-600'
+        "
       >
         Invoices from Locums
       </nuxt-link>
@@ -93,8 +99,12 @@ export default {
     if (
       (from && from.name.includes('practice-billing'))
       || (to && to.name.includes('practice-billing'))
+      || (from && from.name.includes('practice-billing-reports'))
+      || (to && to.name.includes('practice-billing-reports'))
       || (from && from.name === 'practice-billing-form-as')
       || (to && to.name === 'practice-billing-form-as')
+      || (from && from.name === 'practice-billing-solo-forms')
+      || (to && to.name === 'practice-billing-solo-forms')
     ) {
       return {
         name: '',
