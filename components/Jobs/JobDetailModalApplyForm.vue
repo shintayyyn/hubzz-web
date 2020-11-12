@@ -15,7 +15,9 @@
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
               <div v-if="modal" class="modal-container shadow-lg">
-                <div class="h-full w-full">
+                <AppLoading :loading="loading" spinner />
+                <div class="h-full w-full px-6">
+                  Variation Terms
                   <embed
                     class="object-contain object-top w-full"
                     :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
@@ -46,7 +48,9 @@
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
               <div v-if="modal" class="modal-container shadow-lg">
-                <div class="h-full w-full">
+                <AppLoading :loading="loading" spinner />
+                <div class="h-full w-full px-6">
+                  Standard Terms
                   <embed
                     class="object-contain object-top w-full"
                     :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
@@ -80,7 +84,8 @@
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
               <div v-if="modal" class="modal-container shadow-lg">
-                <div class="h-full w-full mx-6">
+                <AppLoading :loading="loading" spinner />
+                <div class="h-full w-full px-6">
                   Standard Terms
                   <embed
                     class="object-contain object-top w-full"
@@ -112,7 +117,9 @@
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
               <div v-if="modal" class="modal-container shadow-lg">
-                <div class="h-full w-full">
+                <AppLoading :loading="loading" spinner />
+                <div class="h-full w-full px-6">
+                  Variation Terms
                   <embed
                     class="object-contain object-top w-full"
                     :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
@@ -250,17 +257,16 @@ export default {
 
         if (this.conflictJobNumbers.length > 0) {
           this.warning_modal = true
+          this.loading = false
         } else if (this.conflictJobNumbers.length === 0) {
           this.apply()
         }
-      }).finally(() => {
-        this.loading = false
       })
     },
 
-    apply () {
+    async apply () {
       this.loading = true
-      this.$axios
+      await this.$axios
         .$post(`/api/v1/locum/jobs/${this.job.id}/apply`)
         .then(res => {
           this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", this.job.id)
@@ -270,7 +276,8 @@ export default {
             status: "success",
             text: [`${res.message}`,],
           })
-          this.$emit("applied", this.job.id) // FILTERS THE JOBS DATATABLE
+          
+          this.$emit("applied", this.job.id)
         })
         .catch(err => {
           console.log("err", err.response || err)
@@ -281,8 +288,7 @@ export default {
               text: [`${err.response.data.message}`,],
             })
           }
-        })
-        .finally(() => {
+        }).finally(() => {
           this.modal = false
           this.loading = false
         })
