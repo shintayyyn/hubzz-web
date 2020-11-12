@@ -88,10 +88,10 @@
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="job_ir35"
+              v-model="ir35"
               class="px-1"
               :type="'select'"
-              :name="'job_ir35'"
+              :name="'ir35'"
               :label="'Inside ir35'"
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
@@ -99,30 +99,30 @@
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="invoice_number"
+              v-model="invoiceNumberIncludes"
               class="px-1"
               :type="'text'"
-              :name="'invoice_number'"
+              :name="'invoiceNumberIncludes'"
               :label="'Invoice number'"
             />
           </div>
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="job_part_number_includes"
+              v-model="jobPartNumberIncludes"
               class="px-1"
               :type="'text'"
-              :name="'job_part_number_includes'"
+              :name="'jobPartNumberIncludes'"
               :label="'Job Part number'"
             />
           </div>
 
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
-              v-model="is_paid"
+              v-model="paid"
               class="px-1"
               :type="'select'"
-              :name="'is_paid'"
+              :name="'paid'"
               :label="'Paid'"
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
@@ -356,10 +356,10 @@ export default {
       limit: 5,
       order_by: [],
 
-      job_ir35: null,
-      invoice_number: null,
-      job_part_number_includes: null,
-      is_paid: null,
+      ir35: null,
+      invoiceNumberIncludes: null,
+      jobPartNumberIncludes: null,
+      paid: null,
 
       locumSoloFormIdToPay: null,
       payingLocumSoloForm: false,
@@ -429,14 +429,14 @@ export default {
     },
 
     disabledClearFilter () {
-      let jobIr35 = this.job_ir35 === "" ? null : this.job_ir35
-      let isPaid = this.is_paid === "" ? null : this.is_paid
+      let jobIr35 = this.ir35 === "" ? null : this.ir35
+      let isPaid = this.paid === "" ? null : this.paid
       let invoiceNumber
-        = this.invoice_number === "" ? null : this.invoice_number
+        = this.invoiceNumberIncludes === "" ? null : this.invoiceNumberIncludes
       let jobPartNumberIncludes
-        = this.job_part_number_includes === ""
+        = this.jobPartNumberIncludes === ""
           ? null
-          : this.job_part_number_includes
+          : this.jobPartNumberIncludes
 
       if (
         isPaid === null
@@ -473,19 +473,19 @@ export default {
         this.$axios.get('/api/v1/locum/locum-solo-forms/count', {
           params: {
             type: "Platform",
-            job_ir35: this.job_ir35,
-            is_paid: this.is_paid,
-            invoice_number: this.invoice_number,
-            job_part_number_includes: this.job_part_number_includes,
+            ir35: this.ir35,
+            paid: this.paid,
+            invoice_number_includes: this.invoiceNumberIncludes,
+            job_part_number_includes: this.jobPartNumberIncludes,
           },
         }),
         this.$axios.get('/api/v1/locum/locum-solo-forms', {
           params: {
             type: "Platform",
-            job_ir35: this.job_ir35,
-            is_paid: this.is_paid,
-            invoice_number: this.invoice_number,
-            job_part_number_includes: this.job_part_number_includes,
+            ir35: this.ir35,
+            paid: this.paid,
+            invoice_number_includes: this.invoiceNumberIncludes,
+            job_part_number_includes: this.jobPartNumberIncludes,
             offset: 0,
             limit: 5,
           },
@@ -520,10 +520,10 @@ export default {
         .get('/api/v1/locum/locum-solo-forms', {
           params: {
             type: "Platform",
-            job_ir35: this.job_ir35,
-            is_paid: this.is_paid,
-            invoice_number: this.invoice_number,
-            job_part_number_includes: this.job_part_number_includes,
+            ir35: this.ir35,
+            paid: this.paid,
+            invoice_number_includes: this.invoiceNumberIncludes,
+            job_part_number_includes: this.jobPartNumberIncludes,
             order_by: this.order_by,
             offset: this.offset,
             limit: this.limit,
@@ -744,10 +744,10 @@ export default {
       this.offset = 0
       this.limit = 5
       this.order_by = []
-      this.job_ir35 = null
-      this.is_paid = null
-      this.invoice_number = null
-      this.job_part_number_includes = null
+      this.ir35 = null
+      this.paid = null
+      this.invoiceNumberIncludes = null
+      this.jobPartNumberIncludes = null
       this.filterJobParts()
     },
   },
