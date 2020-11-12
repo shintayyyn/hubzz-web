@@ -146,9 +146,9 @@
         </div>
 
         <AppTable
-          v-if="locumFormAs.length > 0"
-          :total="locumFormAsCount"
-          :items="locumFormAs"
+          v-if="locumSoloForms.length > 0"
+          :total="locumSoloFormsCount"
+          :items="locumSoloForms"
           :loading="loading"
           :current-page="current_page"
           :per-page="limit"
@@ -169,23 +169,23 @@
                 class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                 @click="viewAsPdf(slotProps.item.id)"
               >
-                View Form A
+                View Solo Form
               </div>
 
               <div
                 v-if="!slotProps.item.practice_electronic_signature"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
-                @click="setLocumFormAIdToSign(slotProps.item.id)"
+                @click="setLocumSoloFormIdToSign(slotProps.item.id)"
               >
                 E-sign Form
               </div>
 
               <div
-                v-if="!slotProps.item.paid_by_practice"
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-                @click.stop.prevent="locumFormAIdToBePaid = slotProps.item.id, locumFormAPaidAt = null"
+                v-if="!slotProps.item.sent_to_locum && authPermissions.includes('Process Billings')"
+                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                @click="locumSoloFormIdToBeSend = slotProps.item.id"
               >
-                Mark as Paid
+                Send Form to Locum
               </div>
             </div>
 
@@ -196,52 +196,24 @@
         </AppTable>
 
         <div
-          v-if="!locumFormAs.length && !isFiltered"
+          v-if="!locumSoloForms.length && !isFiltered"
           class="flex justify-center"
         >
           You do not have any nhs form a.
         </div>
 
         <div
-          v-if="!locumFormAs.length && isFiltered"
+          v-if="!locumSoloForms.length && isFiltered"
           class="flex justify-center py-4"
         >
           No nhs form a found.
         </div>
 
-        <div v-if="locumFormAIdToBePaid" class="p-2">
-          <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
-            <AppDate
-              v-model="locumFormAPaidAt"
-              :name="'paid_at'"
-              :label="'Payment made on'"
-              :error="formErrors.find(formError => formError.field === 'paid_at')"
-              is-before
-            />
-
-            <div class="flex flex-row flex-no-wrap justify-center">
-              <AppButton
-                class="mx-1"
-                :label="'Save'"
-                :in-style="'padding:5px 10px'"
-                @click="formAPaidByPractice"
-              />
-
-              <AppButton
-                class="mx-1"
-                :label="'Cancel'"
-                :in-style="'padding:5px 10px'"
-                @click="locumFormAIdToBePaid = null"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div v-if="locumFormAIdToSign" class="p-2">
+        <div v-if="locumSoloFormIdToSign" class="p-2">
           <div
             class="relative rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3"
           >
-            <AppLoading :loading="practiceESigningLocumFormA" spinner />
+            <AppLoading :loading="practiceESigningLocumSoloForm" spinner />
 
             <div class="px-1">
               <small class="italic">Please type in or upload your signature.</small>
@@ -280,15 +252,15 @@
 
             <div class="flex flex-row flex-no-wrap justify-center mt-5">
               <AppButton
-                v-if="!practiceESigningLocumFormA"
+                v-if="!practiceESigningLocumSoloForm"
                 class="mx-1"
                 :label="'Sign'"
                 :in-style="'padding:5px 10px'"
-                @click="practiceESignLocumFormA"
+                @click="practiceESignLocumSoloForm"
               />
 
               <AppButton
-                v-if="practiceESigningLocumFormA"
+                v-if="practiceESigningLocumSoloForm"
                 class="mx-1"
                 :label="'Signing...'"
                 :in-style="'padding:5px 10px'"
@@ -298,18 +270,27 @@
                 class="mx-1"
                 :label="'Cancel'"
                 :in-style="'padding:5px 10px'"
-                @click="locumFormAIdToSign = null"
+                @click="locumSoloFormIdToSign = null"
               />
             </div>
           </div>
         </div>
 
+        <AppConfirmationModal
+          :label="'Send this Solo Form to Locum?'"
+          :confirm-label="'Yes'"
+          :cancel-label="'Cancel'"
+          :modal="!!locumSoloFormIdToBeSend"
+          @confirm="sendLocumSoloFormToLocum"
+          @cancel="locumSoloFormIdToBeSend = null"
+        />
+
         <transition name="fade" mode="out-in">
           <nuxt-link
-            v-if="locumFormAIdToBePaid || locumFormAIdToSign"
-            :to="{ name: 'practice-billing-form-as' }"
+            v-if="locumSoloFormIdToBeSend || locumSoloFormIdToSign"
+            :to="{ name: 'practice-billing-solo-forms' }"
             class="shield"
-            @click.native="locumFormAIdToBePaid = null, locumFormAIdToSign = null"
+            @click.native="locumSoloFormIdToBeSend = null, locumSoloFormIdToSign = null"
           />
         </transition>
 
@@ -320,8 +301,8 @@
 </template>
 
 <script>
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppTable from "@/components/Base/AppTable"
-import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
@@ -333,8 +314,8 @@ export default {
   },
 
   components: {
+    AppConfirmationModal,
     AppTable,
-    AppDate,
     AppButton,
     AppLoading,
     AppInput,
@@ -349,8 +330,8 @@ export default {
       loading: false,
       filterModal: false,
       isFiltered: false,
-      locumFormAsCount: 0,
-      locumFormAs: [],
+      locumSoloFormsCount: 0,
+      locumSoloForms: [],
 
       showRefresh: false,
       current_page: 1,
@@ -374,20 +355,23 @@ export default {
         paye_amount: null,
       },
 
-      locumFormAPaidAt: null,
-      locumFormAIdToBePaid: null,
-
-      locumFormAIdToSign: null,
+      locumSoloFormIdToSign: null,
       locumESignText: "",
       fileFile: null,
       signSrc: null,
-      practiceESigningLocumFormA: false,
+      practiceESigningLocumSoloForm: false,
+
+      locumSoloFormIdToBeSend: null,
 
       formErrors: [],
     }
   },
 
   computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+
     columns () {
       return [
         {
@@ -425,16 +409,6 @@ export default {
         {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice_formatted",
-          class: "text-center",
-        },
-        {
-          name: "Paid By Practice At",
-          dataIndex: "paid_by_practice_at_formatted",
-          class: "text-center",
-        },
-        {
-          name: "Paid By Locum At",
-          dataIndex: "paid_at_formatted",
           class: "text-center",
         },
         {
@@ -514,16 +488,12 @@ export default {
 
   mounted () {
     this.$socket.on(
-      "Practice Notification Locum Form A Paid",
-      this.getLocumInvoiceRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Locum Form A Sent To Practice",
+      "Practice Notification Locum Solo Form",
       this.getLocumInvoiceRealTime
     )
 
     this.initialLoading = true
-    this.getLocumFormAsPromiseAll()
+    this.getLocumSoloFormsPromiseAll()
       .catch(err => {
         console.log("err", err.response || err)
       })
@@ -534,32 +504,22 @@ export default {
 
   destroyed () {
     this.$socket.removeListener(
-      "Practice Notification Locum Form A Paid",
-      this.getLocumInvoiceRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Locum Form A Sent To Practice",
+      "Practice Notification Locum Solo Form",
       this.getLocumInvoiceRealTime
     )
   },
 
   methods: {
-    toggleSendFormAModal (locumInvoiceId, alreadySent) {
-      if (alreadySent) return
-      this.send_solo_form_modal = true
-      this.invoice_id = locumInvoiceId
-    },
-
-    viewAsPdf (locumFormAId) {
+    viewAsPdf (locumSoloFormId) {
       window.open(
-        `${process.env.API_URL}/api/v1/locum-form-a/${locumFormAId}/pdf`
+        `${process.env.API_URL}/api/v1/locum-solo-form/${locumSoloFormId}/pdf`
       )
     },
 
-    getLocumFormAsPromiseAll () {
+    getLocumSoloFormsPromiseAll () {
       this.initialLoading = true
       return Promise.all([
-        this.$axios.get("/api/v1/practice/locum-form-as/count", {
+        this.$axios.get("/api/v1/practice/locum-solo-forms/count", {
           params: {
             type: "Platform",
             ir35: this.ir35,
@@ -569,7 +529,7 @@ export default {
             practice_id: this.$auth.user.practice_id,
           },
         }),
-        this.$axios.get("/api/v1/practice/locum-form-as", {
+        this.$axios.get("/api/v1/practice/locum-solo-forms", {
           params: {
             type: "Platform",
             ir35: this.ir35,
@@ -583,8 +543,8 @@ export default {
         }),
       ])
         .then(([responseTotal, responseJobParts,]) => {
-          this.locumFormAsCount = responseTotal.data.data.count
-          this.locumFormAs = responseJobParts.data.data.locum_form_as
+          this.locumSoloFormsCount = responseTotal.data.data.count
+          this.locumSoloForms = responseJobParts.data.data.locum_solo_forms
         })
         .catch(err => {
           console.log("err", err.response || err)
@@ -601,14 +561,14 @@ export default {
       this.limit = 5
       this.initialLoading = true
       this.isFiltered = true
-      await this.getLocumFormAsPromiseAll()
+      await this.getLocumSoloFormsPromiseAll()
       this.initialLoading = false
       this.filterModal = false
     },
 
-    getLocumFormAs () {
+    getLocumSoloForms () {
       return this.$axios
-        .get("/api/v1/practice/locum-form-as", {
+        .get("/api/v1/practice/locum-solo-forms", {
           params: {
             type: "Platform",
             ir35: this.ir35,
@@ -622,7 +582,7 @@ export default {
           },
         })
         .then(response => {
-          this.locumFormAs = response.data.data.locum_form_as
+          this.locumSoloForms = response.data.data.locum_solo_forms
         })
         .catch(err => {
           console.log("err", err.response || err)
@@ -634,7 +594,7 @@ export default {
       this.current_page = 1
       this.offset = 0
       this.limit = 5
-      await this.getLocumFormAsPromiseAll()
+      await this.getLocumSoloFormsPromiseAll()
       this.loading = false
       this.showRefresh = false
     },
@@ -643,85 +603,8 @@ export default {
       this.showRefresh = true
     },
 
-    formAPaidByPractice () {
-      this.formErrors = []
-
-      this.Validate({
-        paid_at: this.locumFormAPaidAt,
-      })
-
-      if (this.formErrors.length === 0) {
-        this.$axios
-          .put(
-            `/api/v1/practice/locum-form-as/${this.locumFormAIdToBePaid}/paid`,
-            {
-              paid_at: this.locumFormAPaidAt,
-            }
-          )
-          .then(response => {
-            const locumFormA = response.data.data.locum_form_a
-
-            const jobPart = this.locumFormAs.find(
-              jobPart => jobPart.id === locumFormA.id
-            )
-
-            const index = this.locumFormAs.findIndex(
-              jobPart => jobPart.id === locumFormA.id
-            )
-
-            if (jobPart && index > -1) {
-              jobPart.paid_by_practice = locumFormA.paid_by_practice
-              jobPart.paid_by_practice_formatted
-                = locumFormA.paid_by_practice_formatted
-              jobPart.paid_by_practice_at = locumFormA.paid_by_practice_at
-              jobPart.paid_by_practice_at_formatted
-                = locumFormA.paid_by_practice_at_formatted
-
-              this.locumFormAs.splice(index, 1, jobPart)
-            }
-
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${response.data.message}`,],
-            })
-
-            this.locumFormAIdToBePaid = null
-            this.locumFormAPaidAt = null
-          })
-          .catch(err => {
-            console.log("err", err.response || err)
-
-            let message = null
-
-            if (err.response) {
-              if (
-                err.response.data.error_messages
-                && err.response.data.error_messages.length > 0
-              ) {
-                this.formErrors = err.response.data.error_messages
-              } else {
-                message = err.response.data.message
-              }
-            } else if (err.request) {
-              message = "Something weng wrong!"
-            } else {
-              message = err.message
-            }
-
-            if (message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${message}`,],
-              })
-            }
-          })
-      }
-    },
-
-    setLocumFormAIdToSign (locumFormAIdToSign) {
-      this.locumFormAIdToSign = locumFormAIdToSign
+    setLocumSoloFormIdToSign (locumSoloFormIdToSign) {
+      this.locumSoloFormIdToSign = locumSoloFormIdToSign
       this.locumESignText = `${
         this.$auth.user.name
       } - ${this.$moment.utc().format("DD/MM/YYYY")}`
@@ -753,7 +636,7 @@ export default {
       this.fileFile = file
     },
 
-    practiceESignLocumFormA () {
+    practiceESignLocumSoloForm () {
       const formData = new FormData()
 
       formData.append("text", this.locumESignText)
@@ -762,22 +645,22 @@ export default {
         formData.append("file", this.fileFile)
       }
 
-      this.practiceESigningLocumFormA = true
+      this.practiceESigningLocumSoloForm = true
 
       this.$axios
         .put(
-          `/api/v1/practice/locum-form-as/${this.locumFormAIdToSign}/e-sign`,
+          `/api/v1/practice/locum-solo-forms/${this.locumSoloFormIdToSign}/e-sign`,
           formData
         )
         .then(response => {
-          const locumFormA = response.data.data.locum_form_a
+          const locumSoloForm = response.data.data.locum_solo_form
 
-          const index = this.locumFormAs.findIndex(
-            ({ id, }) => id === locumFormA.id
+          const index = this.locumSoloForms.findIndex(
+            ({ id, }) => id === locumSoloForm.id
           )
 
           if (index > -1) {
-            this.locumFormAs.splice(index, 1, locumFormA)
+            this.locumSoloForms.splice(index, 1, locumSoloForm)
           }
 
           this.$store.commit("SET_NOTIFICATION", {
@@ -786,7 +669,7 @@ export default {
             text: [`${response.data.message}`,],
           })
 
-          this.locumFormAIdToSign = null
+          this.locumSoloFormIdToSign = null
         })
         .catch(err => {
           console.log("err", err.response || err)
@@ -817,8 +700,54 @@ export default {
           }
         })
         .finally(() => {
-          this.practiceESigningLocumFormA = false
+          this.practiceESigningLocumSoloForm = false
         })
+    },
+
+    sendLocumSoloFormToLocum () {
+      this.$axios
+        .put(
+          `/api/v1/practice/locum-solo-forms/${this.locumSoloFormIdToBeSend}/send-to-locum`
+        )
+        .then(response => {
+          const locumSoloForm = response.data.data.locum_solo_form
+
+          const index = this.locumSoloForms.findIndex(({ id, }) => id === locumSoloForm.id)
+
+          if (index > -1) {
+            this.locumSoloForms.splice(index, 1, locumSoloForm)
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${response.data.message}`,],
+          })
+
+          this.locumSoloFormIdToBeSend = null
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+
+          let message = null
+
+          if (err.response) {
+            message = err.response.data.message
+          } else if (err.request) {
+            message = "Something went wrong!"
+          } else {
+            message = err.message
+          }
+
+          if (message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${message}`,],
+            })
+          }
+        })
+        
     },
 
     async sorted (order_by) {
@@ -826,7 +755,7 @@ export default {
       this.offset = 0
       this.order_by = order_by
       this.loading = true
-      await this.getLocumFormAs()
+      await this.getLocumSoloForms()
       this.loading = false
     },
 
@@ -834,7 +763,7 @@ export default {
       this.current_page = page
       this.offset = this.limit * (page - 1)
       this.loading = true
-      await this.getLocumFormAs()
+      await this.getLocumSoloForms()
       this.loading = false
     },
 
@@ -843,7 +772,7 @@ export default {
       this.offset = 0
       this.limit = limit
       this.loading = true
-      await this.getLocumFormAs()
+      await this.getLocumSoloForms()
       this.loading = false
     },
 
