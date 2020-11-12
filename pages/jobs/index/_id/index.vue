@@ -82,7 +82,6 @@ export default {
 
     close () {
       const { query, } = this.$route
-
       this.$router.push({
         name: "jobs-index",
         query,
