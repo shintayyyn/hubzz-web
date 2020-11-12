@@ -32,7 +32,7 @@
 				<template v-slot:status_slot="slotProps">
 					<div class="flex items-center justify-center">
 						<div
-							class="rounded-full px-6 py-1"
+							class="rounded-full text-sm px-2 w-full py-2"
 							:class="statusStyle(slotProps.item.status)"
 						>{{ slotProps.item.status }}</div>
 					</div>
@@ -41,7 +41,7 @@
 				<template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
 					<div class="flex items-center justify-center">
 						<div
-							class="rounded-full px-6 py-1 bg-yellow-400 text-black"
+							class="rounded-full text-sm px-2 w-full py-2 bg-yellow-400 text-black"
 						>{{ jobClosingTag(slotProps.item) }}</div>
 					</div>
 				</template>
