@@ -35,9 +35,9 @@
       
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
-        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'solo-form' } }"
+        :to="{ name: 'locum-billing-solo-forms' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'locum-billing-solo-forms' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
         Solo Forms
       </nuxt-link>
