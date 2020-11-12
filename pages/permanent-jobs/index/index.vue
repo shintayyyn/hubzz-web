@@ -107,7 +107,7 @@
 					<template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
 						<div class="flex items-center justify-center">
 							<div
-								class="rounded-full text-sm px-2 w-full py-2 text-black"
+								class="rounded-full text-sm px-2 w-full py-2 text-black leading-tight"
 								:class="jobClosingTag(slotProps.item) === 'Rejected' ? 'bg-red-500 text-white' : 'bg-yellow-400'"
 							>{{ jobClosingTag(slotProps.item) }}</div>
 						</div>
