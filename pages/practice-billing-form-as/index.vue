@@ -521,6 +521,14 @@ export default {
       "Practice Notification Locum Form A Sent To Practice",
       this.getLocumInvoiceRealTime
     )
+    this.$socket.on(
+      "Practice Notification Locum Form A Locum E-signed",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.on(
+      "Practice Notification Locum Form A Practice E-signed",
+      this.getLocumInvoiceRealTime
+    )
 
     this.initialLoading = true
     this.getLocumFormAsPromiseAll()
@@ -539,6 +547,14 @@ export default {
     )
     this.$socket.removeListener(
       "Practice Notification Locum Form A Sent To Practice",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.removeListener(
+      "Practice Notification Locum Form A Locum E-signed",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.removeListener(
+      "Practice Notification Locum Form A Practice E-signed",
       this.getLocumInvoiceRealTime
     )
   },
