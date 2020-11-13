@@ -452,6 +452,14 @@ export default {
 
   mounted () {
     this.$socket.on('Locum Notification Locum Solo Form', this.getLocumInvoiceRealTime)
+    this.$socket.on(
+      "Locum Notification Locum Solo Form Locum E-signed",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.on(
+      "Locum Notification Locum Solo Form Practice E-signed",
+      this.getLocumInvoiceRealTime
+    )
 
     this.initialLoading = true
     this.getJobPartsPromiseAll().finally(() => {
@@ -461,6 +469,14 @@ export default {
 
   destroyed () {
     this.$socket.removeListener('Locum Notification Locum Solo Form', this.getLocumInvoiceRealTime)
+    this.$socket.removeListener(
+      "Locum Notification Locum Solo Form Locum E-signed",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.removeListener(
+      "Locum Notification Locum Solo Form Practice E-signed",
+      this.getLocumInvoiceRealTime
+    )
   },
 
   methods: {
