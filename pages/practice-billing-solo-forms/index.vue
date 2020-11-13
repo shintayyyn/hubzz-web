@@ -110,7 +110,7 @@
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div v-if="false" class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               v-model="paid"
               class="px-1"
@@ -491,6 +491,14 @@ export default {
       "Practice Notification Locum Solo Form",
       this.getLocumInvoiceRealTime
     )
+    this.$socket.on(
+      "Practice Notification Locum Solo Form Locum E-signed",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.on(
+      "Practice Notification Locum Solo Form Practice E-signed",
+      this.getLocumInvoiceRealTime
+    )
 
     this.initialLoading = true
     this.getLocumSoloFormsPromiseAll()
@@ -505,6 +513,14 @@ export default {
   destroyed () {
     this.$socket.removeListener(
       "Practice Notification Locum Solo Form",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.removeListener(
+      "Practice Notification Locum Solo Form Locum E-signed",
+      this.getLocumInvoiceRealTime
+    )
+    this.$socket.removeListener(
+      "Practice Notification Locum Solo Form Practice E-signed",
       this.getLocumInvoiceRealTime
     )
   },
