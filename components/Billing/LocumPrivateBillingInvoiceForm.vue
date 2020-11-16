@@ -41,9 +41,27 @@
           <div>{{ $auth.user.address_detail.address.post_code }}</div>
           <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
           <div>{{ $auth.user.email }}</div>
-          <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
-           <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.company_registration_number ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` : null }}</div>
-          <div>{{ $auth.user.vat_number ? `VAT number: ${$auth.user.vat_number}` : '' }}</div>
+          <div>
+            {{ 
+              $auth.user.locum_detail.invoice_detail 
+                && $auth.user.locum_detail.invoice_detail.utr_number 
+                && $auth.user.locum_detail.invoice_detail.employment_type 
+                  === 'Self Employed' 
+                ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
+                : null 
+            }}
+          </div>
+          <div>
+            {{ 
+              $auth.user.locum_detail.invoice_detail 
+                && $auth.user.locum_detail.invoice_detail.company_registration_number 
+                && $auth.user.locum_detail.invoice_detail.employment_type 
+                  === 'Limited Company' 
+                ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
+                : null 
+            }}
+          </div>
+          <div>{{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}</div>
         </div>
         <div v-if="propInvoice" class="flex flex-wrap justify-between my-2">
           <div
@@ -449,6 +467,7 @@ export default {
         - this.propInvoice.ni_amount
         - this.propInvoice.paye_amount
 
+      this.form.tax_amount = this.vatAmount
       this.form.final = false
       this.form.ir35 = this.propInvoice.ir35
     }
@@ -479,7 +498,7 @@ export default {
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "success",
+                  status: "danger",
                   text: [`${err.response.data.message}`,],
                 })
               } else if (err.response.data.error_messages) {
@@ -514,7 +533,7 @@ export default {
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "success",
+                  status: "danger",
                   text: [`${err.response.data.message}`,],
                 })
               } else if (err.response.data.error_messages) {

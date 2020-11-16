@@ -48,7 +48,6 @@
                 :error="formError.find(item => item.field === 'dates')"
                 is-after
                 multipleSelection
-                @blur="CheckEmptyField(form.dates,'dates')"
               />
             </div>
             <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">

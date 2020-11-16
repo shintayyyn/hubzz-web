@@ -1014,7 +1014,7 @@
                 </p>
               </div>
 
-              <div class="flex justify-between">
+              <div v-if="type !== 'create'" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Tax Rate:
                 </p>
@@ -1026,7 +1026,7 @@
                 </p>
               </div>
 
-              <div class="flex justify-between">
+              <div v-if="type !== 'create'" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Taxed Gross Rate:
                 </p>
