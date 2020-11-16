@@ -467,6 +467,7 @@ export default {
         - this.propInvoice.ni_amount
         - this.propInvoice.paye_amount
 
+      this.form.tax_amount = this.vatAmount
       this.form.final = false
       this.form.ir35 = this.propInvoice.ir35
     }
@@ -497,7 +498,7 @@ export default {
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "success",
+                  status: "danger",
                   text: [`${err.response.data.message}`,],
                 })
               } else if (err.response.data.error_messages) {
@@ -532,7 +533,7 @@ export default {
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "success",
+                  status: "danger",
                   text: [`${err.response.data.message}`,],
                 })
               } else if (err.response.data.error_messages) {
