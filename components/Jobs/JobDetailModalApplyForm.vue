@@ -4,7 +4,7 @@
       <div class="text-sm sm:text-base mb-4">
         This job is still open
       </div>
-      <template v-if="job.use_variation_terms">
+      <template v-if="job.use_variation_terms && (job.variation_terms_file_id || job.standard_terms_file_id) ">
         <template v-if="job.variation_terms_file_id">
           <div class="font-bold text-sm sm:text-md">
             Terms &amp; Conditions
@@ -14,7 +14,7 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal" class="modal-container shadow-lg">
+              <div v-if="modal && job.variation_terms_file" class="modal-container shadow-lg">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Variation Terms
@@ -47,7 +47,7 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal" class="modal-container shadow-lg">
+              <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Standard Terms
@@ -73,7 +73,7 @@
         </template>
       </template>
 
-      <template v-if="!job.use_variation_terms">
+      <template v-if="!job.use_variation_terms && (job.variation_terms_file_id || job.standard_terms_file_id)">
         <template v-if="job.standard_terms_file_id">
           <div class="font-bold text-sm sm:text-md">
             Terms &amp; Conditions
@@ -83,7 +83,7 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal" class="modal-container shadow-lg">
+              <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Standard Terms
@@ -116,14 +116,14 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal" class="modal-container shadow-lg">
+              <div v-if="modal && job.variation_terms_file" class="modal-container shadow-lg">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Variation Terms
                   <embed
                     class="object-contain object-top w-full"
                     :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                    :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                   >
                   <div class="my-4">
                     <div class="flex flex-row justify-center">
@@ -145,7 +145,7 @@
       <AppButton 
         :label="'Apply now'" 
         :disabled="loading" 
-        @click="job.variation_terms_file_id || job.standard_terms_file_id ? modal = true : checkIfLocumAlreadyAppointed" 
+        @click="checkVariationTerms" 
       />
     </template>
 
@@ -249,6 +249,20 @@ export default {
   },
 
   methods: {
+    checkVariationTerms () {
+      if (this.job 
+        && this.job.standard_terms_file_id !== null 
+        && this.job.standard_terms_file !== null) {
+        this.modal = true
+      } else if (this.job 
+        && this.job.variation_terms_file_id !== null 
+        && this.job.variation_terms_file !== null)  {
+        this.modal = true
+      } else {
+        this.checkIfLocumAlreadyAppointed()
+      }
+    },
+
     checkIfLocumAlreadyAppointed () {
       this.loading = true
       this.conflictJobNumbers = []
@@ -292,6 +306,10 @@ export default {
           this.modal = false
           this.loading = false
         })
+    },
+
+    convertDoc (document) {
+      return `https://docs.google.com/gview?url=${document}&embedded=true`
     },
   },
 }

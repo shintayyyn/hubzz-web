@@ -431,7 +431,7 @@ export default {
       this.form.shift_id = this.job.shift.id
       this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
       this.form.rate = this.job.rate
-      this.form.total_hours = this.job.total_hours
+      this.form.total_hours = this.job && this.job.total_hours ? this.job.total_hours.toFixed(2) : 0
       this.form.description = this.job.description
       if (this.job.dates) {
         this.job.dates.forEach(date => this.form.dates.push(date))
