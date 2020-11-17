@@ -1598,10 +1598,6 @@ export default {
     schedules () {
       this.emitSchedule()
     },
-
-    shiftErrors (value) {
-      console.log("shiftErrors", value)
-    },
   },
 
   created () {

@@ -180,6 +180,13 @@
             </div>
           </div>
         </template>
+        <template v-slot:practiceInvoiced="slotProps">
+          <div class="flex items-center justify-center">
+            <div class="rounded-full px-6 py-1">
+              {{ slotProps.item.practice_invoiced ? "Invoiced by HUBZZ" : "To be Invoiced by HUBZZ" }}
+            </div>
+          </div>
+        </template>
       </AppTable>
 
       <div v-if="!jobs.length && !initialLoading && !loading && !isFiltered" class="flex justify-center py-4">
@@ -465,6 +472,13 @@ export default {
           {
             name: "Approved At",
             dataIndex: "approved_at_in_gb_formatted",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Invoiced by HUBZZ?",
+            dataIndex: "practice_invoiced",
+            slotName: "practiceInvoiced",
             class: "text-center",
             sortable: true,
           },

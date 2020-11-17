@@ -313,7 +313,7 @@
             :label="'PCSE Code'"
             :error="formError.find(item => item.field === 'ea_code')"
             required
-            @blur="CheckEmptyField(form.ea_code, 'ea_code')"
+            @blur="CheckEmptyField(form.ea_code,'PCSE Code','PCSE Code')"
           />
 
           <AppInput
@@ -330,6 +330,7 @@
           <AppInput
             v-model="form.sd_number"
             :type="'text'"
+            :limit="8"
             :name="'sd_number'"
             :label="'NHS Pension Scheme Membership number'"
             :error="formError.find(item => item.field === 'sd_number')"
@@ -341,6 +342,7 @@
           <AppInput
             v-model="form.paying_reference"
             :type="'text'"
+            :limit="4"
             :name="'paying_reference'"
             :label="'Paying reference number'"
             :error="formError.find(item => item.field === 'paying_reference')"
@@ -368,7 +370,7 @@
 
           <AppInput
             v-model="form.professional_nhs_expenses"
-            :type="'text'"
+            :type="'number'"
             :name="'professional_nhs_expenses'"
             :label="'Professional NHS Expense'"
             :error="formError.find(item => item.field === 'professional_nhs_expenses')"
@@ -378,7 +380,7 @@
 
           <AppInput
             v-model="form.added_year_contributions"
-            :type="'text'"
+            :type="'number'"
             :name="'added_year_contributions'"
             :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
             :error="formError.find(item => item.field === 'added_year_contributions')"
@@ -388,7 +390,7 @@
 
           <AppInput
             v-model="form.added_early_retirement_contributions"
-            :type="'text'"
+            :type="'number'"
             :name="'added_early_retirement_contributions'"
             :label="'Additional contributions for Early Retirement Reduction Buy Out'"
             :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
@@ -398,7 +400,7 @@
 
           <AppInput
             v-model="form.nhsps_employer_contributions"
-            :type="'text'"
+            :type="'number'"
             :name="'nhsps_employer_contributions'"
             :label="'NHSPS employer contributions'"
             :error="formError.find(item => item.field === 'nhsps_employer_contributions')"
@@ -916,6 +918,7 @@ export default {
       this.sched_has_changes
         = this.$route.query.status === "issued" ? false : hasChanges
     },
+
     handleKeyDownEvent (e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
@@ -959,6 +962,7 @@ export default {
 
     save (approved) {
       console.log("approved", approved)
+      console.log('form', this.form)
       this.formError = []
 
       this.shiftErrors = []
@@ -1007,7 +1011,18 @@ export default {
         )
       }
 
-      this.Validate(this.form, notRequired)
+      const preferredDisplayName = [
+        {
+          field: "ea_code",
+          display: "PCSE Code",
+        },
+        {
+          field: "sd_number",
+          display: "NHS Pension Scheme Membership Number",
+        },
+      ]
+
+      this.Validate(this.form, notRequired, preferredDisplayName)
 
       if (!this.formError.length && !this.shiftErrors.length) {
         this.form.total_amount = this.total_gross_locum_wages
