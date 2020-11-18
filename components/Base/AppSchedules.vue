@@ -1063,7 +1063,7 @@
           <transition name="fade">
             <div v-if="show_late_reason" class="message-modal mini-modal fixed bg-white p-4 center">
               <p class="font-bold uppercase">
-                {{ selectedShift.type }} Reason
+                {{ selectedShift.type }} Reason 
               </p>
 
               <AppInput
@@ -1101,7 +1101,7 @@
                 :inStyle="'background-color: transparent'"
                 :resize="false"
                 :error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
-                :disabled="$auth.user.domain === 'Practice' || toDisplay"
+                :disabled="toDisplay"
                 :limit="!toDisplay ? 300 : null"
               />
 
@@ -1129,7 +1129,7 @@
                 <AppButton
                   v-if="
                     type === 'invoice'
-                      ? $auth.user.domain === 'Locum' && !toDisplay
+                      ? !toDisplay
                       : !toDisplay
                   "
                   :label="'Save'"
