@@ -435,7 +435,7 @@
       <AppButton
         v-if="propInvoice && !propInvoice.approved && allowToBill"
         class="m-1"
-        :label="'Accept changes'"
+        :label="'Accept & Approve Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
         :disabled="saveLoading || sched_has_changes"
         @click="toggleModal(true)"
@@ -444,7 +444,7 @@
       <AppButton
         v-if="propInvoice && !propInvoice.approved && allowToBill && sched_has_changes"
         class="m-1"
-        :label="'Save changes'"
+        :label="'Save Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
         :disabled="saveLoading"
         @click="save(false)"
