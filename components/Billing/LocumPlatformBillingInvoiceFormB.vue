@@ -145,8 +145,8 @@ export default {
           class: "text-center",
         },
         {
-          name: "Issued",
-          dataIndex: "issued_at_in_gb_formatted",
+          name: "Created At",
+          dataIndex: "locum_form_a_date_created_formatted",
           class: "text-center",
           sortable: true,
         },
@@ -175,7 +175,7 @@ export default {
         },
         {
           name: "Paid",
-          dataIndex: "form_paid",
+          dataIndex: "locum_form_a_paid_formatted",
           class: "text-center",
         },
       )
@@ -208,8 +208,8 @@ export default {
             nhs_claimable: true,
             job_type: this.type,
             type: this.type,
-            generate_form: true,
             can_generate_form_b: true,
+            generate_form: true,
           },
         }),
         this.$axios.$get(`/api/v1/locum/job-parts`, {
