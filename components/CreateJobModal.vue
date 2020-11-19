@@ -1921,6 +1921,31 @@ export default {
                     duration: 3000,
                   })
                 }
+
+                this.formError = err.response.data.error_messages
+
+                console.log('formErropr', this.formError)
+                let detailsError = [
+                  "practice_id",
+                  "number_of_patients",
+                  "duration_for_each_appointment",
+                  "role",
+                  "specialty",
+                  "clinical_system",
+                ]
+
+                let hasDetailsError = this.formError
+                  .map(err => detailsError.includes(err.field))
+                  .includes(true)
+                if (hasDetailsError) {
+                  this.tabActive = "details"
+                } else if (
+                  this.formError
+                    .map(err => ["schedules", "dates",].includes(err.field))
+                    .includes(true)
+                ) {
+                  this.tabActive = "schedule"
+                }
               } else {
                 message = err.response.data.message
               }
@@ -2277,6 +2302,7 @@ export default {
                 "specialty",
                 "clinical_system",
               ]
+
               let hasDetailsError = this.formError
                 .map(err => detailsError.includes(err.field))
                 .includes(true)
