@@ -990,7 +990,7 @@
               class="flex flex-col text-lg text-gray-600 font-bold text-right"
               :class="type === 'create' ? ' w-2/4' : 'w-2/5'"
             >
-              <div class="flex justify-between">
+              <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Total Hours:
                 </p>
@@ -1002,7 +1002,7 @@
                 </p>
               </div>
 
-              <div class="flex justify-between">
+              <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:
                 </p>
@@ -1014,31 +1014,7 @@
                 </p>
               </div>
 
-              <div v-if="type !== 'create'" class="flex justify-between">
-                <p class="w-2/3">
-                  Job Part {{ job_part_id }}/{{ job_parts.length }} Tax Rate:
-                </p>
-
-                <p
-                  class="w-1/3"
-                >
-                  £ {{ getJobTaxRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
-                </p>
-              </div>
-
-              <div v-if="type !== 'create'" class="flex justify-between">
-                <p class="w-2/3">
-                  Job Part {{ job_part_id }}/{{ job_parts.length }} Taxed Gross Rate:
-                </p>
-
-                <p
-                  class="w-1/3"
-                >
-                  £ {{ getJobTaxedGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
-                </p>
-              </div>
-
-              <div class="flex justify-between">
+              <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
                   Total Job Gross Rate:
                 </p>
@@ -1048,7 +1024,67 @@
                 </p>
               </div>
 
+              <!-- ----------------------FOR COMPLETE / TERMINATE ONLY --------------------->
+
               <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Total Hours:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  {{ getTotalHours(filteredSchedule) > 0 ? '' : '-' }} {{ getTotalHours(filteredSchedule) | hoursMinutes }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Gross Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Tax Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobTaxRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Taxed Gross Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobTaxedGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between border-t-2 text-gray-500">
+                <p class="w-2/3">
+                  Total Job Gross Rate(Tentative):
+                </p>
+
+                <p class="w-1/3">
+                  £ {{ getEntireJobGrossRate(jobPartTerminationCompletion.job.schedules) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between text-gray-500">
                 <p class="w-2/3">
                   Hubzz Fee*:
                 </p>
@@ -1244,6 +1280,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    jobPartTerminationCompletion: {
+      type: Object,
+      default: () => null,
+    },
   },
 
   data () {
@@ -1260,6 +1301,8 @@ export default {
       selectedShift: null,
       cannotAddShift: [],
       original_schedule: [],
+
+      job_part_queue_number: '',
     }
   },
 
@@ -2044,7 +2087,11 @@ export default {
         }
       })
     }
-    console.log('vat registered', this.locum_vat_registered)
+    if (['complete', 'terminate',].includes(this.type) && this.jobPartTerminationCompletion) {
+      const job_part_in_job = this.jobPartTerminationCompletion.job.job_parts.find(job_part => job_part.id === this.jobPartTerminationCompletion.id)
+      this.job_part_queue_number =  job_part_in_job.part
+    } 
+    
   },
 
   methods: {
@@ -2520,7 +2567,6 @@ export default {
                 * 100
           ) / 100
       }
-
       switch (rate_type_name) {
       case "Hourly":
         return type !== "deduction"
@@ -2622,6 +2668,42 @@ export default {
         return taxedGrossRate.toFixed(2)
       } else {
         return 0
+      }
+    },
+
+    getEntireJobGrossRate (schedules) {
+      const entireSchedule = schedules.map(item => {
+        return {
+          date: this.$moment(item.date).format("DD/MM/YYYY"),
+          shifts: [
+            {
+              absent_reason: item.absent_reason,
+              final_time_end: item.final_time_end,
+              final_time_start: item.final_time_start,
+              has_absences: item.has_absences,
+              has_late: item.has_late,
+              id: item.id,
+              late_hours_reason: item.late_hours_reason,
+              locum_detail_rate_type_id: item.locum_detail_rate_type_id,
+              locum_detail_rate_type_name: item.locum_detail_rate_type.name,
+              rate: item.rate,
+              shift_id: item.shift_id,
+              time_end: item.time_end,
+              time_start: item.time_start,
+            },
+          ],
+        }
+      })
+
+      const rate = this.getJobGrossRate(entireSchedule)
+      const locum_tax_rate = this.tax_rates && this.tax_rates.locum_tax_rate_formatted ? this.tax_rates.locum_tax_rate_formatted : 0
+      const taxAmount = parseFloat(rate) * parseFloat(locum_tax_rate)
+
+      if (this.locum_vat_registered) {
+        const taxedRate = parseFloat(rate) + parseFloat(taxAmount)
+        return taxedRate
+      } else {
+        return rate
       }
     },
 
