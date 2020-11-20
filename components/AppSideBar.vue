@@ -251,7 +251,12 @@ export default {
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
           && practiceType === "Hub"
-          && this.authPermissions.includes("View Surgery Management")
+          && (this.authPermissions.includes("View Surgery Management") 
+              || this.authPermissions.includes("View Surgery Sessions")
+              || this.authPermissions.includes("View Surgery Billings")
+              || this.authPermissions.includes("View Surgery Banks")
+              || this.authPermissions.includes("View Surgery Permanent Jobs")
+          )
         ) {
           practiceTabList.push({
             navigationTabTitle: "Surgery Management",
@@ -264,7 +269,12 @@ export default {
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
           && practiceType === "Spoke"
-          && this.authPermissions.includes("View Surgery Management")
+          && (this.authPermissions.includes("View Surgery Management")
+              || this.authPermissions.includes("View Surgery Sessions")
+              || this.authPermissions.includes("View Surgery Billings")
+              || this.authPermissions.includes("View Surgery Banks")
+              || this.authPermissions.includes("View Surgery Permanent Jobs")
+          )
         ) {
           practiceTabList.push({
             navigationTabTitle: "Surgery Management",
@@ -277,7 +287,12 @@ export default {
           accountStatus === "Active"
           && ["Active", "Dormant",].includes(practiceStatus)
           && practiceType === "Stand Alone"
-          && this.authPermissions.includes("View Surgery Management")
+          && (this.authPermissions.includes("View Surgery Management")
+              || this.authPermissions.includes("View Surgery Sessions")
+              || this.authPermissions.includes("View Surgery Billings")
+              || this.authPermissions.includes("View Surgery Banks")
+              || this.authPermissions.includes("View Surgery Permanent Jobs")
+          )
           && this.eligibleToSpoke
         ) {
           practiceTabList.push({
