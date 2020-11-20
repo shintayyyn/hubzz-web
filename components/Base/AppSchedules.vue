@@ -558,7 +558,7 @@
                             v-if="
                               $auth.user.domain === 'Locum'
                                 ? !toDisplay
-                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))
+                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay)
                             "
                           >
                             <AppTime
@@ -614,7 +614,7 @@
                             v-if="
                               $auth.user.domain === 'Locum'
                                 ? !toDisplay
-                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))
+                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay)
                             "
                             v-model="shift.final_time_end"
                             :name="`final_time_end-s${index}-${i}`"
@@ -661,7 +661,7 @@
                         <!-- ANY ABSENCES -->
                         <div class="flex items-center justify-center text-center w-2/12">
                           <button
-                            v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus)"
+                            v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay"
                             :disabled="[false, 'false'].includes(shift.dispute)"
                             class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
                             :class="[
@@ -1689,6 +1689,10 @@ export default {
               dispute: isDisputed,
               remarks: sched.remarks ? sched.remarks : "",
               total: finalRate,
+
+              last_disputed_by: sched.last_disputed_by,
+              practice_last_edit_time_start: sched.practice_last_edit_time_start,
+              practice_last_edit_time_end: sched.practice_last_edit_time_end,
             })
           } else {
             isExisting.shifts.push({
@@ -1798,6 +1802,10 @@ export default {
                   dispute: isDisputed,
                   remarks: sched.remarks ? sched.remarks : "",
                   total: finalRate,
+
+                  last_disputed_by: sched.last_disputed_by,
+                  practice_last_edit_time_start: sched.practice_last_edit_time_start,
+                  practice_last_edit_time_end: sched.practice_last_edit_time_end,
                 },
               ],
             })
@@ -2134,13 +2142,24 @@ export default {
         )
 
         if (!shift.remarks) {
-          shift.dispute = false
-          if (shift.orig_has_absences) {
-            shift.final_time_start = ""
-            shift.final_time_end = ""
+          if (shift.last_disputed_by === 'Practice') {
+            shift.dispute = false
+            if (shift.practice_last_edit_time_start === shift.practice_last_edit_time_end) {
+              shift.final_time_start = ""
+              shift.final_time_end = ""
+            } else {
+              shift.final_time_start = shift.practice_last_edit_time_start
+              shift.final_time_end = shift.practice_last_edit_time_end
+            }
           } else {
-            shift.final_time_start = shift.orig_final_start
-            shift.final_time_end = shift.orig_final_end
+            shift.dispute = false
+            if (shift.orig_has_absences) {
+              shift.final_time_start = ""
+              shift.final_time_end = ""
+            } else {
+              shift.final_time_start = shift.orig_final_start
+              shift.final_time_end = shift.orig_final_end
+            }
           }
         }
         this.show_late_reason = false
@@ -2938,16 +2957,29 @@ export default {
     dispute (shift, index, i) {
       shift.dispute = !shift.dispute
       if (shift.dispute === false) {
-        if (shift.orig_final_start === shift.orig_final_end) {
-          shift.has_absences = true
-          shift.final_time_start = ""
-          shift.final_time_end = ""
+        if (shift.last_disputed_by === 'Practice') {
+          if (shift.practice_last_edit_time_start === shift.practice_last_edit_time_end) {
+            shift.has_absences = true
+            shift.final_time_start = ""
+            shift.final_time_end = ""
+          } else {
+            shift.has_absences = false
+            shift.final_time_start = shift.practice_last_edit_time_start
+            shift.final_time_end = shift.practice_last_edit_time_end
+          }
+          shift.remarks = ""
         } else {
-          shift.has_absences = false
-          shift.final_time_start = shift.orig_final_start
-          shift.final_time_end = shift.orig_final_end
+          if (shift.orig_final_start === shift.orig_final_end) {
+            shift.has_absences = true
+            shift.final_time_start = ""
+            shift.final_time_end = ""
+          } else {
+            shift.has_absences = false
+            shift.final_time_start = shift.orig_final_start
+            shift.final_time_end = shift.orig_final_end
+          }
+          shift.remarks = ""
         }
-        shift.remarks = ""
       } else {
         this.lateChange(shift, index, i, "dispute")
         shift.final_time_start = ""
