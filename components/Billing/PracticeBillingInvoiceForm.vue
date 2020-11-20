@@ -110,7 +110,7 @@
           :invoiceStatus="$route.query.status"
           :tax_rates="tax_rates"
           :locum_vat_registered="propInvoice.locum_user_vat_registered "
-          :toDisplay="propInvoice.approved"
+          :toDisplay="propInvoice.approved || propInvoice.last_disputed_by === 'Practice'"
           @getSchedule="getSchedule"
         />
       </div>
@@ -433,7 +433,7 @@
       class="flex justify-start items-center mb-6"
     >
       <AppButton
-        v-if="propInvoice && !propInvoice.approved && allowToBill"
+        v-if="propInvoice && !propInvoice.approved && allowToBill && propInvoice.last_disputed_by !== 'Practice'"
         class="m-1"
         :label="'Accept & Approve Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
@@ -442,7 +442,7 @@
       />
 
       <AppButton
-        v-if="propInvoice && !propInvoice.approved && allowToBill && sched_has_changes"
+        v-if="propInvoice && !propInvoice.approved && allowToBill && sched_has_changes && propInvoice.last_disputed_by !== 'Practice'"
         class="m-1"
         :label="'Save Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
