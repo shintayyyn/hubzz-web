@@ -13,6 +13,7 @@
 
       <div class="flex overflow-x-auto">
         <nuxt-link
+          v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Management')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}`}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"

@@ -299,6 +299,7 @@
       </div>
     </div>
 
+    <!-- SOLO FORM DETAILS MODAL -->
     <transition name="fade">
       <div v-if="toggle_modal" class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3">
         <p class="font-bold uppercase">
@@ -425,6 +426,7 @@
         </div>
       </div>
     </transition>
+    <!-- SOLO FORM DETAILS MODAL ENDS HERE -->
 
     <div v-if="toggle_modal" class="shield" />
 
@@ -565,7 +567,7 @@ export default {
     },
 
     grand_total () {
-      return this.total_gross_locum_wages - this.ni_paye_amount
+      return (this.propInvoice.locum_user_vat_registered ? this.taxed_gross_rate : this.total_gross_locum_wages) - this.ni_paye_amount
     },
 
     total_work_payment () {

@@ -496,7 +496,7 @@ export default {
     },
 
     grand_total () {
-      return this.total_gross_locum_wages - this.ni_paye_amount
+      return (this.propInvoice.locum_user_vat_registered ? this.taxed_gross_rate : this.total_gross_locum_wages) - this.ni_paye_amount
     },
 
     total_work_payment () {

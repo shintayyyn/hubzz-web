@@ -397,9 +397,9 @@ export default {
 
       let total
         = this.propJobPart.job.locum_detail_rate_type.name === "Hourly"
-          ? this.propJobPart.job.rate * this.propJobPart.final_hours
-          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours)
-            * this.propJobPart.final_hours
+          ? this.propJobPart.job.rate.toFixed(2) * this.propJobPart.final_hours.toFixed(2)
+          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours).toFixed(2)
+            * this.propJobPart.final_hours.toFixed(2)
         
 
       const jobPartNumber = this.propJobPart.job_part_number
@@ -477,12 +477,11 @@ export default {
     save (final) {
       this.formError = []
       this.Validate(this.form, ["final", "ir35", "total_amount", "tax_amount",])
+      console.log('form', this.form)
       if (!this.formError.length) {
         this.saveLoading = true
-        console.log('pakshet', this.form)
         if (this.propJobPart && !this.propInvoice) {
           this.form.final = final
-          console.log('form', this.form)
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {

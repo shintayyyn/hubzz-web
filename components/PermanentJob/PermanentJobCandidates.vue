@@ -50,7 +50,7 @@
       v-if="permanent_job_applications.length === 0"
       class="text-gray-600 text-sm"
     >
-      There's no applicants for this job at the moment.
+      There are no applicants for this job at the moment.
     </p>
     <div v-if="total > 0" class="bottom-0 w-full">
       <AppPagination
@@ -124,12 +124,12 @@ export default {
       user: null,
       modal: false,
       sendMessageModal: false,
-    };
+    }
   },
   computed: {
     totalPages () {
       return Math.ceil(this.total / this.params.limit)
-    }
+    },
   },
   created () {
     this.getApplicantsCount()
