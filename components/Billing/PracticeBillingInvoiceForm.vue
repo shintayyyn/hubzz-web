@@ -31,7 +31,9 @@
           <div>{{ propInvoice.address_line_2 }}</div>
           <div>{{ propInvoice.address_line_3 }}</div>
           <div>{{ propInvoice.postcode }}</div>
-          <div>Tel {{ propInvoice.mobile_number }}</div>
+          <div v-if="$auth.user.contact_detail.mobile_number">
+            Tel {{ propInvoice.mobile_number }}
+          </div>
           <div>{{ propInvoice.locum_user.email }}</div>
           <div>{{ propInvoice.utr_number && propInvoice.employment_type === 'Self Employed' ? `UTR ${propInvoice.utr_number}` : '' }}</div>
           <div>{{ propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company' ? `Company Registration Number ${propInvoice.company_registration_number}` : '' }}</div>
