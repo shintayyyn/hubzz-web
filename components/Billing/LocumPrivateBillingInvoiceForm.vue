@@ -39,7 +39,9 @@
           <div>{{ $auth.user.address_detail.address.line_1 }}</div>
           <div>{{ $auth.user.address_detail.address.line_3 }}</div>
           <div>{{ $auth.user.address_detail.address.post_code }}</div>
-          <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
+          <div v-if="$auth.user.contact_detail.mobile_number">
+            Tel {{ $auth.user.contact_detail.mobile_number }}
+          </div>
           <div>{{ $auth.user.email }}</div>
           <div>
             {{ 
