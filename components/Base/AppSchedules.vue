@@ -1956,6 +1956,10 @@ export default {
                 dispute: isDisputed,
                 remarks: sched.remarks ? sched.remarks : "",
                 total: finalRate_orig,
+
+                last_disputed_by: sched.last_disputed_by,
+                practice_last_edit_time_start: sched.practice_last_edit_time_start,
+                practice_last_edit_time_end: sched.practice_last_edit_time_end,
               })
             } else {
               isExisting_original.shifts.push({
@@ -2072,6 +2076,10 @@ export default {
                     dispute: isDisputed,
                     remarks: sched.remarks ? sched.remarks : "",
                     total: finalRate_orig,
+
+                    last_disputed_by: sched.last_disputed_by,
+                    practice_last_edit_time_start: sched.practice_last_edit_time_start,
+                    practice_last_edit_time_end: sched.practice_last_edit_time_end,
                   },
                 ],
               })
