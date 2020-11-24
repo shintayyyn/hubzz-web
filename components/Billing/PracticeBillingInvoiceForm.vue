@@ -31,7 +31,9 @@
           <div>{{ propInvoice.address_line_2 }}</div>
           <div>{{ propInvoice.address_line_3 }}</div>
           <div>{{ propInvoice.postcode }}</div>
-          <div>Tel {{ propInvoice.mobile_number }}</div>
+          <div v-if="$auth.user.contact_detail.mobile_number">
+            Tel {{ propInvoice.mobile_number }}
+          </div>
           <div>{{ propInvoice.locum_user.email }}</div>
           <div>{{ propInvoice.utr_number && propInvoice.employment_type === 'Self Employed' ? `UTR ${propInvoice.utr_number}` : '' }}</div>
           <div>{{ propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company' ? `Company Registration Number ${propInvoice.company_registration_number}` : '' }}</div>
@@ -567,6 +569,9 @@ export default {
     },
 
     grand_total () {
+      if (this.propInvoice && this.propInvoice.approved) {
+        return this.propInvoice.job_part_gross_rate
+      }
       return (this.propInvoice.locum_user_vat_registered ? this.taxed_gross_rate : this.total_gross_locum_wages) - this.ni_paye_amount
     },
 
@@ -913,8 +918,8 @@ export default {
       this.total_deductions = deductions
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = this.propInvoice.locum_user_vat_registered ? taxed_gross_rate : total_gross_locum_wages
-      this.tax_amount = tax_amount
+      this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered ? taxed_gross_rate : total_gross_locum_wages
+      this.tax_amount = this.propInvoice && this.propInvoice.approved ? this.propInvoice.tax_amount : tax_amount
       this.taxed_gross_rate = taxed_gross_rate
       this.hasShiftError = hasError
       this.sched_has_changes
