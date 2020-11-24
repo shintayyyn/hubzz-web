@@ -154,8 +154,33 @@
         </div>
       </div>
 
-      <!-- SUB TOTAL -->
+      <!-- TOTALS  -->
       <div class="flex flex-col">
+        <!-- UNTAXED TOTAL -->
+        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Untaxed Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ untaxedAmount | currency }}
+            </div>
+          </div>
+        </div>
+        <!-- VAT TOTAL -->
+        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">VAT Amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ vatAmount | currency }}
+            </div>
+          </div>
+        </div>
+        <!-- SUB TOTAL -->
         <template v-if="propInvoice && propInvoice.paid">
           <div :ref="'items-sub-total'" class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 font-bold">Subtotal</span>
@@ -191,30 +216,8 @@
             </div>
           </div>
         </template>
-        <!-- UNTAXED TOTAL -->
-        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
-          <span class="w-3/4 font-bold">Untaxed Total</span>
-          <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
-              £
-            </div>
-            <div class="w-full text-right">
-              {{ untaxedAmount | currency }}
-            </div>
-          </div>
-        </div>
-        <!-- VAT TOTAL -->
-        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
-          <span class="w-3/4 font-bold">VAT Amount</span>
-          <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
-              £
-            </div>
-            <div class="w-full text-right">
-              {{ vatAmount | currency }}
-            </div>
-          </div>
-        </div>
+        
+        
         <!-- ITEMS TOTAL -->
         <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Total</span>
@@ -349,20 +352,10 @@ export default {
     //   }
     // },
 
-    subTotal () {
-      return this.form.items && this.form.items.length > 0
-        ? this.form.items[0].total
-        : 0
-    },
-
     untaxedAmount () {
-      let total
+      let total = 0
       if (this.form.items && this.form.items.length > 0) {
         total = this.form.items[0].total
-        if (this.propInvoice) {
-          total
-            = total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
-        }
         return total
       }
       return 0
@@ -377,13 +370,15 @@ export default {
       return 0
     },
 
+    subTotal () {
+      return parseFloat(this.untaxedAmount) + parseFloat(this.vatAmount)
+    },
+
     totalAmount () {
-      if (this.vatRegistered === true) {
-        const totalAmount = parseFloat(this.untaxedAmount) + parseFloat(this.vatAmount)
-        return totalAmount
+      if (this.propInvoice && this.propInvoice.paid) {
+        return parseFloat(this.subTotal) - parseFloat(this.propInvoice.ni_amount) - parseFloat(this.propInvoice.paye_amount)
       } else {
-        const untaxedAmount = this.untaxedAmount
-        return untaxedAmount
+        return this.subTotal
       }
     },
   },
@@ -435,8 +430,6 @@ export default {
           remarks: "",
         },
       ]
-
-      console.log('banana', this.totalAmount)
 
       this.form.total_amount = this.totalAmount
       this.form.tax_amount = this.vatAmount
