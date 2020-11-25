@@ -1,6 +1,6 @@
 <template>
   <section class="dashboard-section">
-    <div v-if="$auth.user.domain === 'Locum'" class="reminders-section">
+    <div v-if="$auth.user.domain === 'Locum' || $auth.user.domain === 'Practice'" class="reminders-section">
       <Reminders />
     </div>
 

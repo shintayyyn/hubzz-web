@@ -1180,8 +1180,6 @@ export default {
           id: permanentJobId,
         } = permanentJob
 
-        console.log("permanentjob inside notif dropdown", permanentJob)
-
         if (
           notificationTypeName
             === "Practice Notification Permanent Job Applied"

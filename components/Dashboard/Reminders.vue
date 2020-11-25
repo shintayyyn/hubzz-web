@@ -119,14 +119,21 @@ export default {
       }
 
       if (res.data.user.domain === "Practice") {
-        if (
-          res.data.user.status !== "Active"
-            || res.data.user.practice_detail.practice.status !== "Active"
-        ) {
+        // if (
+        //   res.data.user.status !== "Active"
+        //     || res.data.user.practice_detail.practice.status !== "Active"
+        // ) {
+        //   this.reminders.push({
+        //     label:
+        //         "Please complete the Practice Verification Steps in order to have a complete access in the platform",
+        //     route: "/contact-us",
+        //   })
+        // }
+
+        if (!res.data.user.email_verified_at) {
           this.reminders.push({
-            label:
-                "Please complete the Practice Verification Steps in order to have a complete access in the platform",
-            route: "/contact-us",
+            label: "Please check your email for verification",
+            route: "/account",
           })
         }
       }

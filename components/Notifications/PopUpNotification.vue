@@ -180,6 +180,7 @@ export default {
     payloadLocumInvoiceStatusClass () {
       return {
         Issued: 'bg-green-500 text-white',
+        Invoiced: 'bg-green-500 text-white',
         Disputed: 'bg-red-500 text-white',
         Approved: 'bg-green-500 text-white',
         Paid: 'bg-green-500 text-white',

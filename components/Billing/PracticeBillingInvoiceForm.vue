@@ -31,7 +31,7 @@
           <div>{{ propInvoice.address_line_2 }}</div>
           <div>{{ propInvoice.address_line_3 }}</div>
           <div>{{ propInvoice.postcode }}</div>
-          <div v-if="$auth.user.contact_detail.mobile_number">
+          <div v-if="$auth.user && $auth.user.contact_detail && $auth.user.contact_detail.mobile_number">
             Tel {{ propInvoice.mobile_number }}
           </div>
           <div>{{ propInvoice.locum_user.email }}</div>
