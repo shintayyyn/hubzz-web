@@ -42,6 +42,9 @@
         :shiftErrors="shiftErrors"
         toTerminate
         :type="'terminate'"
+        :locum_vat_registered="job_part.locum_details_vat_registered"
+        :tax_rates="tax_rates"
+        :jobPartTerminationCompletion="job_part"
         @getSchedule="getSchedule"
       />
       
@@ -92,6 +95,8 @@ export default {
       rate_lists: [],
       total_working_hours: 0,
       total_gross_locum_wages: 0,
+      locum_tax_rate: 0,
+      taxed_total_gross_locum_wages: 0,
       hasShiftError: false,
       dataLoading: false,
       form: {
@@ -135,6 +140,8 @@ export default {
           value: "Locum did not show up",
         },
       ],
+
+      tax_rates: {},
     }
   },
   computed: {
@@ -183,11 +190,15 @@ export default {
           value: shift.id,
         }))
       ),
+      this.$axios.get("/api/v1/tax-rates").then(response => 
+        response.data.data.tax_rates
+      ),
     ])
       .then(responses => {
-        const [rateLists, shiftLists,] = responses
+        const [rateLists, shiftLists, taxRates,] = responses
         this.rate_lists = rateLists
         this.shifts = shiftLists
+        this.tax_rates = taxRates
       })
       .finally(() => {
         this.dataLoading = false
@@ -197,6 +208,8 @@ export default {
     getSchedule (
       schedule,
       total_gross_locum_wages,
+      locum_tax_rate,
+      taxed_total_gross_locum_wages,
       total_working_hours,
       deductions,
       total_lates,
@@ -253,6 +266,8 @@ export default {
       })
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
+      this.locum_tax_rate = locum_tax_rate
+      this.taxed_total_gross_locum_wages = taxed_total_gross_locum_wages
       this.hasShiftError = hasError
     },
     bgStatus (status) {

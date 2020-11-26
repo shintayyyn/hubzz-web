@@ -83,6 +83,8 @@ export default {
       formError: [],
       shiftErrors: [],
       confirmation_modal: false,
+
+      tax_rates: {},
     }
   },
   computed: {

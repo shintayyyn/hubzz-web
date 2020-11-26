@@ -199,14 +199,14 @@
           v-if="!locumSoloForms.length && !isFiltered"
           class="flex justify-center"
         >
-          You do not have any nhs form a.
+          You do not have any solo forms.
         </div>
 
         <div
           v-if="!locumSoloForms.length && isFiltered"
           class="flex justify-center py-4"
         >
-          No nhs form a found.
+          No solo forms found.
         </div>
 
         <div v-if="locumSoloFormIdToSign" class="p-2">
