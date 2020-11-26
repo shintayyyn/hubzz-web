@@ -417,12 +417,12 @@ export default {
         locum_invoiceable = true
         break
       case "approved":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         break
       case "pension-form-a":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         nhs_claimable = true
@@ -542,12 +542,12 @@ export default {
         locum_invoiceable = true
         break
       case "approved":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         break
       case "pension-form-a":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         nhs_claimable = true
@@ -628,12 +628,12 @@ export default {
         locum_invoiceable = true
         break
       case "approved":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         break
       case "pension-form-a":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         nhs_claimable = true
