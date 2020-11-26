@@ -14,6 +14,7 @@
       </nuxt-link>
 
       <nuxt-link
+        v-if="authPermissions.includes('Invitation Processes Surgery Management')"
         :to="{ name: 'hub-surgery-management-invitations-spoke'}"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
@@ -40,6 +41,11 @@
 </template>
 <script>
 export default {
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+  },
   async asyncData ({ app, error, store, }) {
     try{
       let response = await app.$axios.$get(`/api/v1/practice/me/practice`)

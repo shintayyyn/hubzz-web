@@ -98,6 +98,7 @@
             Permissions
           </div>
           <div
+            v-if="authPermissions.includes('Permission Processes Surgery Management')"
             class="text-sm font-semibold text-black px-4 py-2 rounded-lg cursor-pointer"
             :class="`${editPayForSurgery == false ? 'text-black bg-yellow-500 hover:bg-yellow-400' : 'text-white bg-red-500 hover:bg-red-600'}`"
             @click="togglePermissions()"
@@ -418,12 +419,17 @@ export default {
     }
   },
 
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+  },
+
   watch: {
     "form.allow_surgery_create_sessions" (value) {
       this.surgeryCreateSessions = value
     },
   },
-
 
   created () {
     this.practice_id = this.$route.params.id
