@@ -1410,29 +1410,35 @@ export default {
       this.new_certificate_of_incorporation = false
     },
 
-    addList (payload) {
-      this.$axios
+    async addList (payload) {
+      console.log('anakangputangina')
+      await this.$axios
         .$post(`/api/v1/locum/other-mandatory-training`, { name: payload, })
         .then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`,],
-          })
           let index = this.otherMandatoryTrainings.findIndex(
             item =>
               item.value === res.data.locum_other_mandatory_training.id
-							&& item.label === res.data.locum_other_mandatory_training.name
           )
+
           if (index < 0) {
             this.otherMandatoryTrainings.push({
               label: res.data.locum_other_mandatory_training.name,
               value: res.data.locum_other_mandatory_training.id,
             })
           }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`,],
+          })
+          
         })
         .finally(() => {
-          this.initialize()
+          this.form.other_mandatory_training_id = this.user.other_mandatory_trainings.map(
+            otherMandatoryTraining =>
+              otherMandatoryTraining.locum_other_mandatory_training.id
+          )
         })
         .catch(err => {
           console.log("err", err)
