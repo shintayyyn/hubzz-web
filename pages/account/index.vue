@@ -642,7 +642,7 @@ export default {
 
         this.loading = true
 
-        this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}`
+        // this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}`
 
         this.$axios.put(`/api/v1/locum/me/account`, this.locumForm).then(() => {
           this.$store.commit("SET_NOTIFICATION", {
