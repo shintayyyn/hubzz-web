@@ -110,7 +110,7 @@
                   label="Phone number"
                   :limit="11"
                   :placeholder="'Phone number'"
-                  :error="this.formError.find(item => item.field === 'phone_number')"
+                  :error="formError.find(item => item.field === 'phone_number')"
                   @blur="CheckEmptyField(form.phone_number,'phone_number')"
                 />
                 <AppPostCode
@@ -128,7 +128,7 @@
                   :type="'text'"
                   :name="'code'"
                   :label="'Code'"
-                  :error="this.formError.find(item => item.field === 'code')"
+                  :error="formError.find(item => item.field === 'code')"
                   @blur="CheckEmptyField(form.code,'code')"
                 />
                 <AppPostCode
@@ -145,7 +145,7 @@
                   :type="'text'"
                   :name="'address_line_1'"
                   :label="'address_line_1'"
-                  :error="this.formError.find(item => item.field === 'address_line_1')"
+                  :error="formError.find(item => item.field === 'address_line_1')"
                   @blur="CheckEmptyField(form.address_line_1,'address_line_1')"
                 />
                 <AppInput
@@ -153,28 +153,28 @@
                   :type="'text'"
                   :name="'address_line_2'"
                   :label="'address_line_2'"
-                  :error="this.formError.find(item => item.field === 'address_line_2')"
+                  :error="formError.find(item => item.field === 'address_line_2')"
                 />
                 <AppInput
                   v-model="form.address_line_3"
                   :type="'text'"
                   :name="'address_line_3'"
                   :label="'address_line_3'"
-                  :error="this.formError.find(item => item.field === 'address_line_3')"
+                  :error="formError.find(item => item.field === 'address_line_3')"
                 />
                 <AppInput
                   v-model="form.address_line_4"
                   :type="'text'"
                   :name="'address_line_4'"
                   :label="'address_line_4'"
-                  :error="this.formError.find(item => item.field === 'address_line_4')"
+                  :error="formError.find(item => item.field === 'address_line_4')"
                 />
                 <AppInput
                   v-model="form.address_line_5"
                   :type="'text'"
                   :name="'address_line_5'"
                   :label="'address_line_5'"
-                  :error="this.formError.find(item => item.field === 'address_line_5')"
+                  :error="formError.find(item => item.field === 'address_line_5')"
                 />
               </form>
             </div>
