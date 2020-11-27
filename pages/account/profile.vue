@@ -640,7 +640,6 @@
             :name="'miles'"
             :label="`I will travel up to ${form.miles ? form.miles : 0} miles from this postcode`"
             :error="formError.find(item => item.field === 'miles')"
-            :inStyle="'text-align:right;'"
             :limit="8"
             required
             @blur="CheckEmptyField(form.miles, 'miles')"

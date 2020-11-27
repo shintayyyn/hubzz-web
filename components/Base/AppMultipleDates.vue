@@ -493,8 +493,8 @@ export default {
     },
 
     name: {
-      type: Array,
-      default: () => null,
+      type: String,
+      default: null,
     },
 
     label: {
@@ -579,7 +579,7 @@ export default {
     },
 
     overlayData: {
-      type: Boolean,
+      type: Array,
       default: () => [],
     },
 
