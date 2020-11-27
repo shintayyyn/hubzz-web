@@ -660,6 +660,15 @@
             />
 
             <AppInput
+              v-model="form.referee_1_position"
+              :type="'text'"
+              :name="'referee_1_position'"
+              :label="'Position'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+              :error="formError.find(item => item.field === 'referee_1_position')"
+            />
+
+            <AppInput
               v-model="form.referee_1_phone_number"
               :type="'text'"
               :name="'referee_1_phone_number'"
@@ -688,6 +697,15 @@
               :label="'Contact name'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
               :error="formError.find(item => item.field === 'referee_2_contact_name')"
+            />
+
+            <AppInput
+              v-model="form.referee_2_position"
+              :type="'text'"
+              :name="'referee_2_position'"
+              :label="'Position'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+              :error="formError.find(item => item.field === 'referee_2_position')"
             />
 
             <AppInput
@@ -823,9 +841,11 @@ export default {
         post_code: "",
         miles: 0,
         referee_1_contact_name: "",
+        referee_1_position: "",
         referee_1_phone_number: "",
         referee_1_email: "",
         referee_2_contact_name: "",
+        referee_2_position: "",
         referee_2_phone_number: "",
         referee_2_email: "",
         vat_registered: false,
@@ -1351,9 +1371,11 @@ export default {
       this.form.miles = this.user.miles
 
       this.form.referee_1_contact_name = this.user.referee_1_contact_name
+      this.form.referee_1_position = this.user.referee_1_position
       this.form.referee_1_phone_number = this.user.referee_1_phone_number
       this.form.referee_1_email = this.user.referee_1_email
       this.form.referee_2_contact_name = this.user.referee_2_contact_name
+      this.form.referee_2_position = this.user.referee_2_position
       this.form.referee_2_phone_number = this.user.referee_2_phone_number
       this.form.referee_2_email = this.user.referee_2_email
 
@@ -1668,9 +1690,11 @@ export default {
         "special_requirements",
         "spoken_language_id",
         "referee_1_contact_name",
+        "referee_1_position",
         "referee_1_phone_number",
         "referee_1_email",
         "referee_2_contact_name",
+        "referee_2_position",
         "referee_2_phone_number",
         "referee_2_email",
         "paid_under_payroll",
@@ -1830,25 +1854,25 @@ export default {
         )
       })
 
-      if (
-        this.form.referee_1_phone_number
-        && this.form.referee_1_phone_number.length < 11
-      ) {
-        this.formError.push({
-          field: "referee_1_phone_number",
-          message: "Telephone number should be 11 digits",
-        })
-      }
+      // if (
+      //   this.form.referee_1_phone_number
+      //   && this.form.referee_1_phone_number.length < 11
+      // ) {
+      //   this.formError.push({
+      //     field: "referee_1_phone_number",
+      //     message: "Telephone number should be 11 digits",
+      //   })
+      // }
 
-      if (
-        this.form.referee_2_phone_number
-        && this.form.referee_2_phone_number.length < 11
-      ) {
-        this.formError.push({
-          field: "referee_2_phone_number",
-          message: "Telephone number should be 11 digits",
-        })
-      }
+      // if (
+      //   this.form.referee_2_phone_number
+      //   && this.form.referee_2_phone_number.length < 11
+      // ) {
+      //   this.formError.push({
+      //     field: "referee_2_phone_number",
+      //     message: "Telephone number should be 11 digits",
+      //   })
+      // }
 
       if (
         this.form.nhs_smart_card_id_number
