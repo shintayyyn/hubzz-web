@@ -1050,7 +1050,7 @@
                 </p>
               </div>
 
-              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+              <div v-if="['complete', 'terminate'].includes(type) && locum_vat_registered" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Tax Rate:
                 </p>
@@ -1062,7 +1062,7 @@
                 </p>
               </div>
 
-              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+              <div v-if="['complete', 'terminate'].includes(type) && locum_vat_registered" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Taxed Gross Rate:
                 </p>
@@ -2680,22 +2680,16 @@ export default {
       const grossRate = this.getJobGrossRate(schedules,final)
       const locum_tax_rate = this.tax_rates && this.tax_rates.locum_tax_rate_formatted ? this.tax_rates.locum_tax_rate_formatted : 0
       const taxAmount = parseFloat(grossRate) * parseFloat(locum_tax_rate)
-      if (this.locum_vat_registered) {
-        return taxAmount.toFixed(2)
-      } else {
-        return 0
-      }
+
+      return taxAmount.toFixed(2)
     },
 
     getJobTaxedGrossRate (schedules, final) {
       const grossRate = this.getJobGrossRate(schedules,final)
       const taxRate = this.getJobTaxRate(schedules, final)
       const taxedGrossRate = parseFloat(grossRate) + parseFloat(taxRate)
-      if (this.locum_vat_registered) {
-        return taxedGrossRate.toFixed(2)
-      } else {
-        return 0
-      }
+
+      return taxedGrossRate.toFixed(2)
     },
 
     getEntireJobGrossRate (schedules) {

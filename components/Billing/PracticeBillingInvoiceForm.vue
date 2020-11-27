@@ -1046,37 +1046,41 @@ export default {
         }
         this.form.tax_amount = this.tax_amount
 
-        this.$axios
-          .$put(
-            `/api/v1/practice/locum-invoices/${
-              this.propId ? this.propId : this.$route.params.id
-            }`,
-            {
-              ...this.form,
-            }
-          )
-          .then(res => {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`,],
-            })
-            this.toggle_modal = false
-            this.$emit("updateInvoice", res.data.locum_invoice)
-          })
-          .catch(err => {
-            console.log("err", err.response || err)
-            if (
-              err.response
-              && err.response.data
-              && err.response.data.error_messages
-            ) {
-              this.formError = err.response.data.error_messages
-            }
-          })
-          .finally(() => {
-            this.saveLoading = false
-          })
+        // this.$axios
+        //   .$put(
+        //     `/api/v1/practice/locum-invoices/${
+        //       this.propId ? this.propId : this.$route.params.id
+        //     }`,
+        //     {
+        //       ...this.form,
+        //     }
+        //   )
+        //   .then(res => {
+        //     this.$store.commit("SET_NOTIFICATION", {
+        //       enabled: true,
+        //       status: "success",
+        //       text: [`${res.message}`,],
+        //     })
+        //     this.toggle_modal = false
+        //     this.$emit("updateInvoice", res.data.locum_invoice)
+        //   })
+        //   .catch(err => {
+        //     console.log("err", err.response || err)
+        //     if (
+        //       err.response
+        //       && err.response.data
+        //       && err.response.data.error_messages
+        //     ) {
+        //       this.formError = err.response.data.error_messages
+        //     }
+        //   })
+        //   .finally(() => {
+        //     this.saveLoading = false
+        //   })
+
+        // for testing only
+        console.log('form', this.form)
+        this.saveLoading = false
       }
     },
 
