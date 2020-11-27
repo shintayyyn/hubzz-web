@@ -254,8 +254,15 @@
             </div>
 
             <div 
-              v-if="locum_vat_registered 
-                && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+              v-if="propInvoice 
+                ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
+                  ? true 
+                  : false 
+                : propJobPart 
+                  ? locum_vat_registered 
+                    ? true
+                    : false 
+                  : false" 
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -268,8 +275,15 @@
             </div>
 
             <div 
-              v-if="locum_vat_registered 
-                && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+              v-if="propInvoice 
+                ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
+                  ? true 
+                  : false 
+                : propJobPart 
+                  ? locum_vat_registered 
+                    ? true
+                    : false  
+                  : false" 
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -922,7 +936,12 @@ export default {
       this.total_deductions = deductions
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered ? taxed_gross_rate : total_gross_locum_wages
+      // this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered 
+      //   ? this.$auth.user.vat_registered === true
+      //     ? taxed_gross_rate 
+      //     : total_gross_locum_wages 
+      //   : total_gross_locum_wages
+
       this.tax_amount = this.propInvoice && this.propInvoice.approved ? this.propInvoice.tax_amount : tax_amount
       this.taxed_gross_rate = taxed_gross_rate
       this.hasShiftError = hasError
@@ -998,7 +1017,12 @@ export default {
           },
         ]
 
-        this.form.total_amount = total
+        // this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered 
+        //   ? this.$auth.user.vat_registered === true
+        //     ? this.taxed_gross_rate 
+        //     : this.total_gross_locum_wages 
+        //   : this.total_gross_locum_wages
+
         this.form.final = false
         this.form.ir35 = this.propJobPart.job_ir35
       }
@@ -1034,6 +1058,8 @@ export default {
       this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
       this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
       this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
+      
+      console.log('initalstate', this.form)
     },
 
     handleKeyDownEvent (e, formField, limit) {
@@ -1102,15 +1128,15 @@ export default {
         if (this.propJobPart && !this.propInvoice) {
           if (this.locum_vat_registered === true) {
             this.form.total_amount = this.taxed_gross_rate
+            this.form.tax_amount = this.tax_amount
           } else {
             this.form.total_amount = this.total_gross_locum_wages
+            this.form.tax_amount = 0
           }
-          
-          this.form.tax_amount = this.tax_amount
 
           this.form.final = final
 
-          console.log('invoice to push', this.form)
+          console.log('this.form', this.form)
 
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
@@ -1146,20 +1172,17 @@ export default {
               this.saveLoading = false
             })
 
-          // for testing onli
-          // console.log('locum invoice form', this.form)
           // this.saveLoading = false
         } else if (this.propInvoice && !this.propJobPart) {
           if (this.locum_vat_registered === true) {
             this.form.total_amount = this.taxed_gross_rate
+            this.form.tax_amount = this.tax_amount
           } else {
             this.form.total_amount = this.total_gross_locum_wages
+            this.form.tax_amount = 0
           }
-          this.form.tax_amount = this.tax_amount
 
           this.form.final = final
-
-          console.log('invoice to push', this.form)
 
           this.$axios
             .$put(
@@ -1197,9 +1220,6 @@ export default {
             .finally(() => {
               this.saveLoading = false
             })
-
-          // for testing onli
-          // console.log('locum invoice form', this.form)
           // this.saveLoading = false
         }
       } else {
