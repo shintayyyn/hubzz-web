@@ -103,7 +103,7 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')" />
+      <AppButton :label="'<<'" @click="this.$emit('nextTab', 'PracticeDetails')" />
       <div class="mx-2" />
       <AppButton :label="'Next'" @click="signUp" />
     </div>
@@ -119,7 +119,7 @@ export default {
     AppInput,
     AppButton,
     AppPostCode,
-    AppFormError
+    AppFormError,
   },
   data () {
     return {
@@ -135,9 +135,9 @@ export default {
         address_line_5: "",
         postcode: "",
         coordinate_x: "",
-        coordinate_y: ""
+        coordinate_y: "",
       },
-      formError: []
+      formError: [],
     }
   },
   computed: {
@@ -149,7 +149,7 @@ export default {
     },
     practiceSurgeryFormError () {
       return this.$store.getters["sign-up/practiceSurgeryFormError"]
-    }
+    },
   },
   watch: {
     practiceSurgeryFormError (value) {
@@ -158,7 +158,7 @@ export default {
           this.formError.push(item)
         })
       }
-    }
+    },
   },
   async mounted () {
     if (this.practiceDetails && this.practiceDetails.surgery_id) {
@@ -173,9 +173,9 @@ export default {
       this.form.address_line_5 = this.practiceDetails.address_line_5
       this.form.postcode = this.practiceDetails.postcode
     } else if (
-      !this.practiceDetails.surgery_id &&
-      this.practiceSurgeryDetails &&
-      this.practiceSurgeryDetails.name
+      !this.practiceDetails.surgery_id
+      && this.practiceSurgeryDetails
+      && this.practiceSurgeryDetails.name
     ) {
       this.form.name = this.practiceSurgeryDetails.name
       this.form.phone_number = this.practiceSurgeryDetails.phone_number
@@ -198,7 +198,7 @@ export default {
   methods: {
     checkCoordinates (postcode) {
       return this.$axios
-        .$post("/api/v1/postcode-to-coordinates", { postcode })
+        .$post("/api/v1/postcode-to-coordinates", { postcode, })
         .then(res => {
           if (res.data && res.data.postcode_coordinate) {
             this.form.coordinate_x = res.data.postcode_coordinate.coordinate_x
@@ -208,12 +208,12 @@ export default {
         .catch(err => {
           console.log("err", err.response || err)
           if (
-            err.response.data.status === 404 &&
-            err.response.data.message === "Postcode Coordinate Not Found"
+            err.response.data.status === 404
+            && err.response.data.message === "Postcode Coordinate Not Found"
           ) {
             this.formError.push({
               field: "postcode",
-              message: "Invalid post code"
+              message: "Invalid post code",
             })
           }
         })
@@ -226,13 +226,32 @@ export default {
         "coordinate_y",
         "address_line_2",
         "address_line_4",
-        "address_line_5"
+        "address_line_5",
       ])
       if (!this.formError.length) {
+        this.$store.commit("sign-up/SET_PRACTICE_DETAILS", this.form)
         this.$store.commit("sign-up/SET_PRACTICE_SURGERY_DETAILS", this.form)
         this.$emit("nextTab", "PracticeAccountDetails")
       }
-    }
-  }
+    },
+    goBack () {
+      this.$store.commit("sign-up/SET_PRACTICE_SURGERY_DETAILS", {
+        name: this.form.name,
+        phone_number: this.form.phone_number,
+        code: this.form.code,
+        clinical_commissioning_group_name: this.form.clinical_commissioning_group_name,
+        address_line_1: this.form.address_line_1,
+        address_line_2: this.form.address_line_2,
+        address_line_3: this.form.address_line_3,
+        address_line_4: this.form.address_line_4,
+        address_line_5: this.form.address_line_5,
+        postcode: this.form.postcode,
+        coordinates_x: this.form.coordinates_x,
+        coordinates_y: this.form.coordinates_y,
+      })
+      
+      this.$emit('nextTab', 'PracticeDetails')
+    },
+  },
 }
 </script>
