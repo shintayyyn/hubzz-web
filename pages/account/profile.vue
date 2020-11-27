@@ -267,10 +267,12 @@
             :name="'practice_type_id'"
             :label="'What type of Practice(s) would you like to work for?'"
             :error="formError.find(item => item.field === 'practice_type_id')"
-            :lists="practiceTypes"
+            :lists="practiceTypesSelectionList"
             required
+            :showSelectAll="true"
             @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+            @selectAll="form.practice_type_id = practiceTypesSelectionList.map(({ value }) => value), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
           />
 
           <AppInput
@@ -611,7 +613,7 @@
                 :name="'pcse_or_lhb_ea_code'"
                 :label="'PCSE or LHB EA Code'"
                 :error="formError.find(item => item.field === 'pcse_or_lhb_ea_code')"
-							/>-->
+              />-->
               <AppInput
                 v-model="form.nhs_registration_number"
                 :type="'text'"
@@ -638,7 +640,6 @@
             :name="'miles'"
             :label="`I will travel up to ${form.miles ? form.miles : 0} miles from this postcode`"
             :error="formError.find(item => item.field === 'miles')"
-            :inStyle="'text-align:right;'"
             :limit="8"
             required
             @blur="CheckEmptyField(form.miles, 'miles')"
@@ -659,13 +660,22 @@
             />
 
             <AppInput
+              v-model="form.referee_1_position"
+              :type="'text'"
+              :name="'referee_1_position'"
+              :label="'Position'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+              :error="formError.find(item => item.field === 'referee_1_position')"
+            />
+
+            <AppInput
               v-model="form.referee_1_phone_number"
               :type="'text'"
               :name="'referee_1_phone_number'"
               :error="formError.find(item => item.field === 'referee_1_phone_number')"
               :label="'Telephone number'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
-              :limit="10"
+              :limit="11"
               @keypress="inputTelephone($event)"
             />
 
@@ -690,13 +700,22 @@
             />
 
             <AppInput
+              v-model="form.referee_2_position"
+              :type="'text'"
+              :name="'referee_2_position'"
+              :label="'Position'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+              :error="formError.find(item => item.field === 'referee_2_position')"
+            />
+
+            <AppInput
               v-model="form.referee_2_phone_number"
               :type="'text'"
               :name="'referee_2_phone_number'"
               :error="formError.find(item => item.field === 'referee_2_phone_number')"
               :label="'Telephone number'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
-              :limit="10"
+              :limit="11"
               @keypress="inputTelephone($event)"
             />
 
@@ -822,9 +841,11 @@ export default {
         post_code: "",
         miles: 0,
         referee_1_contact_name: "",
+        referee_1_position: "",
         referee_1_phone_number: "",
         referee_1_email: "",
         referee_2_contact_name: "",
+        referee_2_position: "",
         referee_2_phone_number: "",
         referee_2_email: "",
         vat_registered: false,
@@ -887,6 +908,10 @@ export default {
 
       new_vat_certificate: false,
       new_certificate_of_incorporation: false,
+
+      practiceTypes: [],
+      mandatoryTrainings: [],
+      otherMandatoryTrainings: [],
     }
   },
 
@@ -966,8 +991,8 @@ export default {
         label: profession.name,
         value: profession.id,
         reference_compliance_documents:
-					profession.profession_compliance_category
-					  .reference_compliance_documents,
+          profession.profession_compliance_category
+            .reference_compliance_documents,
       }))
     },
 
@@ -976,8 +1001,8 @@ export default {
         .filter(
           profession =>
             profession.sub_professionable
-						&& (!this.selectedProfession
-							|| profession.id !== this.selectedProfession.id)
+            && (!this.selectedProfession
+              || profession.id !== this.selectedProfession.id)
         )
         .map(profession => ({
           label: profession.name,
@@ -1028,15 +1053,15 @@ export default {
         .filter(
           ({ id, }) =>
             id === this.professionId
-						|| (true && this.subProfessionIds.indexOf(id) !== -1)
+            || (true && this.subProfessionIds.indexOf(id) !== -1)
         )
         .reduce((referenceComplianceDocuments, profession) => {
           if (
             profession.profession_compliance_category
-						&& profession.profession_compliance_category
-						  .reference_compliance_documents
-						&& profession.profession_compliance_category
-						  .reference_compliance_documents.length > 0
+            && profession.profession_compliance_category
+              .reference_compliance_documents
+            && profession.profession_compliance_category
+              .reference_compliance_documents.length > 0
           ) {
             referenceComplianceDocuments.push(
               ...profession.profession_compliance_category
@@ -1068,6 +1093,13 @@ export default {
         currentDate = currentDate - 1
       }
       return lists
+    },
+
+    practiceTypesSelectionList () {
+      return this.practiceTypes.map(practiceType => ({
+        label: practiceType.name,
+        value: practiceType.id,
+      }))
     },
   },
 
@@ -1110,12 +1142,12 @@ export default {
           } = referenceComplianceDocument
 
           const referenceLocumComplianceDocument
-						= this.user
-						&& this.user.reference_locum_compliance_documents
-						&& this.user.reference_locum_compliance_documents.find(
-						  referenceLocumComplianceDocument =>
-						    referenceLocumComplianceDocument.compliance_document_id === id
-						)
+            = this.user
+            && this.user.reference_locum_compliance_documents
+            && this.user.reference_locum_compliance_documents.find(
+              referenceLocumComplianceDocument =>
+                referenceLocumComplianceDocument.compliance_document_id === id
+            )
 
           return {
             compliance_document_id: id,
@@ -1160,16 +1192,16 @@ export default {
       }
       if (
         value === true
-				&& this.user
-				&& this.user.view_permanent_jobs === false
+        && this.user
+        && this.user.view_permanent_jobs === false
       ) {
         this.form.view_permanent_jobs_full_time = true
         this.form.view_permanent_jobs_part_time = true
       }
       if (
         value === true
-				&& this.user
-				&& this.user.view_permanent_jobs === true
+        && this.user
+        && this.user.view_permanent_jobs === true
       ) {
         this.form.view_permanent_jobs_full_time = this.user.view_permanent_jobs_full_time
         this.form.view_permanent_jobs_part_time = this.user.view_permanent_jobs_part_time
@@ -1179,7 +1211,7 @@ export default {
     "form.view_permanent_jobs_full_time" (value) {
       if (
         value === false
-				&& this.form.view_permanent_jobs_part_time === false
+        && this.form.view_permanent_jobs_part_time === false
       ) {
         this.form.view_permanent_jobs = false
       }
@@ -1188,7 +1220,7 @@ export default {
     "form.view_permanent_jobs_part_time" (value) {
       if (
         value === false
-				&& this.form.view_permanent_jobs_full_time === false
+        && this.form.view_permanent_jobs_full_time === false
       ) {
         this.form.view_permanent_jobs = false
       }
@@ -1230,12 +1262,8 @@ export default {
           )
         ),
 
-      this.$axios.get("/api/v1/practice-types?limit=1000000").then(response =>
-        response.data.data.practice_types.map(practiceType => ({
-          label: practiceType.name,
-          value: practiceType.id,
-        }))
-      ),
+      this.$axios.get("/api/v1/practice-types?limit=1000000")
+        .then(response => response.data.data.practice_types),
     ])
       .then(responses => {
         const [
@@ -1343,9 +1371,11 @@ export default {
       this.form.miles = this.user.miles
 
       this.form.referee_1_contact_name = this.user.referee_1_contact_name
+      this.form.referee_1_position = this.user.referee_1_position
       this.form.referee_1_phone_number = this.user.referee_1_phone_number
       this.form.referee_1_email = this.user.referee_1_email
       this.form.referee_2_contact_name = this.user.referee_2_contact_name
+      this.form.referee_2_position = this.user.referee_2_position
       this.form.referee_2_phone_number = this.user.referee_2_phone_number
       this.form.referee_2_email = this.user.referee_2_email
 
@@ -1513,12 +1543,12 @@ export default {
       const referenceLocumComplianceDocument = this.referenceLocumComplianceDocuments.find(
         referenceLocumComplianceDocument =>
           referenceLocumComplianceDocument.compliance_document_name
-					=== complianceDocumentName
+          === complianceDocumentName
       )
 
       if (
         !referenceLocumComplianceDocument
-				|| !referenceLocumComplianceDocument.reference
+        || !referenceLocumComplianceDocument.reference
       ) {
         this.formError.push({
           field: fieldName,
@@ -1545,7 +1575,7 @@ export default {
 
       if (
         complianceDocumentName === "Medical Performers List reference check"
-				|| complianceDocumentName === "Medical Performers List Number"
+        || complianceDocumentName === "Medical Performers List Number"
       ) {
         if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
@@ -1562,7 +1592,7 @@ export default {
 
       if (
         complianceDocumentName === "NMC reference check"
-				|| complianceDocumentName === "NMC Number"
+        || complianceDocumentName === "NMC Number"
       ) {
         if (referenceLocumComplianceDocument.reference.length < 8) {
           this.formError.push({
@@ -1579,13 +1609,13 @@ export default {
 
       if (
         complianceDocumentName === "HCPC reference check"
-				|| complianceDocumentName === "HCPC Number"
+        || complianceDocumentName === "HCPC Number"
       ) {
         if (
           referenceLocumComplianceDocument.reference.length >= 2
-					&& !/^[a-zA-Z]+$/.test(
-					  referenceLocumComplianceDocument.reference.substring(0, 2)
-					)
+          && !/^[a-zA-Z]+$/.test(
+            referenceLocumComplianceDocument.reference.substring(0, 2)
+          )
         ) {
           this.formError.push({
             field: fieldName,
@@ -1625,7 +1655,7 @@ export default {
 
       if (
         complianceDocumentName === "GpHc reference check"
-				|| complianceDocumentName === "GpHc Number"
+        || complianceDocumentName === "GpHc Number"
       ) {
         if (referenceLocumComplianceDocument.reference.length < 7) {
           this.formError.push({
@@ -1644,7 +1674,7 @@ export default {
     async updateLocumProfile () {
       this.form.reference_locum_compliance_documents = this.referenceLocumComplianceDocuments
       this.form.sub_profession_ids
-				= this.selectedProfession && this.selectedProfession.sub_professionable
+        = this.selectedProfession && this.selectedProfession.sub_professionable
           ? this.subProfessionIds
           : []
 
@@ -1660,9 +1690,11 @@ export default {
         "special_requirements",
         "spoken_language_id",
         "referee_1_contact_name",
+        "referee_1_position",
         "referee_1_phone_number",
         "referee_1_email",
         "referee_2_contact_name",
+        "referee_2_position",
         "referee_2_phone_number",
         "referee_2_email",
         "paid_under_payroll",
@@ -1725,8 +1757,8 @@ export default {
         // }
         if (
           this.form.utr_number
-					&& (!this.form.utr_number.substring(0, 10).match(/[0-9]/g)
-						|| this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10)
+          && (!this.form.utr_number.substring(0, 10).match(/[0-9]/g)
+            || this.form.utr_number.substring(0, 10).match(/[0-9]/g).length !== 10)
         ) {
           this.formError.push({
             field: "utr_number",
@@ -1751,9 +1783,9 @@ export default {
       if (["true", true,].includes(this.form.claim_nhs)) {
         if (
           this.form.nhs_number
-					&& (!this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
-						|| this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
-						  .length !== 8)
+          && (!this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
+            || this.form.nhs_number.substring(0, 8).match(/[A-Za-z0-9]/g)
+              .length !== 8)
         ) {
           this.formError.push({
             field: "nhs_number",
@@ -1763,11 +1795,11 @@ export default {
 
         if (
           this.form.ni_number
-					&& (!this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
-						|| this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length
-							!== 2
-						|| !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
-						|| this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6)
+          && (!this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
+            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length
+              !== 2
+            || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
+            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6)
         ) {
           this.formError.push({
             field: "ni_number",
@@ -1806,7 +1838,7 @@ export default {
 
       if (
         ["true", true,].includes(this.form.view_locum_jobs)
-				|| ["true", true,].includes(this.form.view_permanent_jobs)
+        || ["true", true,].includes(this.form.view_permanent_jobs)
       ) {
         notRequired.push("view_locum_jobs", "view_permanent_jobs")
       }
@@ -1822,29 +1854,29 @@ export default {
         )
       })
 
-      if (
-        this.form.referee_1_phone_number
-				&& this.form.referee_1_phone_number.length < 10
-      ) {
-        this.formError.push({
-          field: "referee_1_phone_number",
-          message: "Telephone number should be 10 digits",
-        })
-      }
+      // if (
+      //   this.form.referee_1_phone_number
+      //   && this.form.referee_1_phone_number.length < 11
+      // ) {
+      //   this.formError.push({
+      //     field: "referee_1_phone_number",
+      //     message: "Telephone number should be 11 digits",
+      //   })
+      // }
 
-      if (
-        this.form.referee_2_phone_number
-				&& this.form.referee_2_phone_number.length < 10
-      ) {
-        this.formError.push({
-          field: "referee_2_phone_number",
-          message: "Telephone number should be 10 digits",
-        })
-      }
+      // if (
+      //   this.form.referee_2_phone_number
+      //   && this.form.referee_2_phone_number.length < 11
+      // ) {
+      //   this.formError.push({
+      //     field: "referee_2_phone_number",
+      //     message: "Telephone number should be 11 digits",
+      //   })
+      // }
 
       if (
         this.form.nhs_smart_card_id_number
-				&& this.form.nhs_smart_card_id_number.length < 12
+        && this.form.nhs_smart_card_id_number.length < 12
       ) {
         this.formError.push({
           field: "nhs_smart_card_id_number",
@@ -1855,7 +1887,7 @@ export default {
       if (["true", true,].includes(this.form.paid_under_payroll)) {
         if (
           this.form.payroll_sort_code
-					&& this.form.payroll_sort_code.length !== 8
+          && this.form.payroll_sort_code.length !== 8
         ) {
           this.formError.push({
             field: "payroll_sort_code",
@@ -1865,7 +1897,7 @@ export default {
 
         if (
           this.form.payroll_account_number
-					&& this.form.payroll_account_number.length !== 8
+          && this.form.payroll_account_number.length !== 8
         ) {
           this.formError.push({
             field: "payroll_account_number",
@@ -1977,13 +2009,13 @@ export default {
                 this.initialize()
               }
               this.vat_cartificate.file_created_at
-								= res.data.user.vat_cert_file_created_at
+                = res.data.user.vat_cert_file_created_at
               this.vat_cartificate.file_filename
-								= res.data.user.vat_cert_file_filename
+                = res.data.user.vat_cert_file_filename
               this.vat_cartificate.file_id = res.data.user.vat_cert_file_id
               this.vat_cartificate.file_size = res.data.user.vat_cert_file_size
               this.vat_cartificate.file_subtype
-								= res.data.user.vat_cert_file_subtype
+                = res.data.user.vat_cert_file_subtype
               this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
               this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
             })
@@ -2025,19 +2057,19 @@ export default {
               this.user = res.data.user
               this.initialize()
               this.certificate_of_incorporation.file_created_at
-								= res.data.user.cert_of_incorp_file_created_at
+                = res.data.user.cert_of_incorp_file_created_at
               this.certificate_of_incorporation.file_filename
-								= res.data.user.cert_of_incorp_file_filename
+                = res.data.user.cert_of_incorp_file_filename
               this.certificate_of_incorporation.file_id
-								= res.data.user.cert_of_incorp_file_id
+                = res.data.user.cert_of_incorp_file_id
               this.certificate_of_incorporation.file_size
-								= res.data.user.cert_of_incorp_file_size
+                = res.data.user.cert_of_incorp_file_size
               this.certificate_of_incorporation.file_subtype
-								= res.data.user.cert_of_incorp_file_subtype
+                = res.data.user.cert_of_incorp_file_subtype
               this.certificate_of_incorporation.file_type
-								= res.data.user.cert_of_incorp_file_type
+                = res.data.user.cert_of_incorp_file_type
               this.certificate_of_incorporation.file_url
-								= res.data.user.cert_of_incorp_file_url
+                = res.data.user.cert_of_incorp_file_url
             })
             .catch(err => {
               console.log('err', err)

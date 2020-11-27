@@ -9,7 +9,7 @@
             :type="'text'"
             :name="'practice_name'"
             :label="'Practice'"
-            :error="this.formError.find(item => item.field === 'practice_name')"
+            :error="formError.find(item => item.field === 'practice_name')"
             required
             @blur="CheckEmptyField(form.name,'practice_name')"
           />
@@ -17,10 +17,10 @@
             v-model="form.phone_number"
             :type="'text'"
             :name="'phone_number'"
-            :label="'Phone number'"
-            :placeholder="'Phone number'"
-            :error="this.formError.find(item => item.field === 'phone_number')"
+            label="Phone number"
             :limit="11"
+            :placeholder="'Phone number'"
+            :error="formError.find(item => item.field === 'phone_number')"
             required
             @blur="CheckEmptyField(form.phone_number,'phone_number')"
             @keypress="inputNumberOnly($event)"
@@ -41,7 +41,7 @@
             :type="'text'"
             :name="'code'"
             :label="'Code'"
-            :error="this.formError.find(item => item.field === 'code')"
+            :error="formError.find(item => item.field === 'code')"
             required
             @blur="CheckEmptyField(form.code,'code')"
           />
@@ -60,7 +60,7 @@
             :type="'text'"
             :name="'address_line_1'"
             :label="'address_line_1'"
-            :error="this.formError.find(item => item.field === 'address_line_1')"
+            :error="formError.find(item => item.field === 'address_line_1')"
             required
             @blur="CheckEmptyField(form.address_line_1,'address_line_1')"
           />
@@ -69,7 +69,7 @@
             :type="'text'"
             :name="'address_line_2'"
             :label="'address_line_2'"
-            :error="this.formError.find(item => item.field === 'address_line_2')"
+            :error="formError.find(item => item.field === 'address_line_2')"
             required
             @blur="CheckEmptyField(form.address_line_2,'address_line_2')"
           />
@@ -78,7 +78,7 @@
             :type="'text'"
             :name="'address_line_3'"
             :label="'address_line_3'"
-            :error="this.formError.find(item => item.field === 'address_line_3')"
+            :error="formError.find(item => item.field === 'address_line_3')"
             required
             @blur="CheckEmptyField(form.address_line_3,'address_line_3')"
           />
@@ -87,7 +87,7 @@
             :type="'text'"
             :name="'address_line_4'"
             :label="'address_line_4'"
-            :error="this.formError.find(item => item.field === 'address_line_4')"
+            :error="formError.find(item => item.field === 'address_line_4')"
             @blur="CheckEmptyField(form.address_line_4,'address_line_4')"
           />
           <AppInput
@@ -95,7 +95,7 @@
             :type="'text'"
             :name="'address_line_5'"
             :label="'address_line_5'"
-            :error="this.formError.find(item => item.field === 'address_line_5')"
+            :error="formError.find(item => item.field === 'address_line_5')"
             @blur="CheckEmptyField(form.address_line_5,'address_line_5')"
           />
         </form>

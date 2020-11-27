@@ -57,9 +57,10 @@
               <AppInput
                 v-model="mobileNumber"
                 type="text"
-                label="Mobile Number"
-                :limit="10"
-                format="mobile"
+                name="mobile_number"
+                label="Mobile number"
+                :limit="11"
+                :showMobilePrefix="true"
                 @keydown="inputNumberOnly($event)"
               />
 
@@ -88,179 +89,179 @@
 </template>
 
 <script>
-  import AppInput from "@/components/Base/AppInput"
+import AppInput from "@/components/Base/AppInput"
 
-  export default {
+export default {
 
-    components: {
-      AppInput,
-    },
+  components: {
+    AppInput,
+  },
 
-    layout: 'auth',
+  layout: 'auth',
 
-    data () {
-      return {
-        loading: false,
+  data () {
+    return {
+      loading: false,
 
-        title: '',
-        firstName: '',
-        lastName: '',
-        suffix: '',
-        mobileNumber: '',
-        email: '',
+      title: '',
+      firstName: '',
+      lastName: '',
+      suffix: '',
+      mobileNumber: '',
+      email: '',
         
-        formErrors: [],
-        setFocus: '',
-        // sample
-        success: false
+      formErrors: [],
+      setFocus: '',
+      // sample
+      success: false,
+    }
+  },
+
+  computed: {
+
+    form () {
+      return {
+        title: this.title,
+        first_name: this.firstName,
+        last_name: this.lastName,
+        suffix: this.suffix,
+        mobile_number: this.mobileNumber,
+        email: this.email,
       }
     },
 
-    computed: {
-
-      form () {
-        return {
-          title: this.title,
-          first_name: this.firstName,
-          last_name: this.lastName,
-          suffix: this.suffix,
-          mobile_number: this.mobileNumber,
-          email: this.email,
-        }
-      },
-
-      rules () {
-        return {
-          title: 'string',
-          first_name: 'required|string',
-          last_name: 'required|string',
-          suffix: 'string',
-          mobile_number: 'string',
-          email: 'required|email',
-        }
-      },
-
-      messages () {
-        return {
-          'title.string': 'Invalid title.',
-          'first_name.required': 'First name is required.',
-          'first_name.string': 'Invalid first name.',
-          'last_name.required': 'Last name is required.',
-          'last_name.string': 'Invalid last name.',
-          'suffix.string': 'Invalid suffix.',
-          'mobile_number.string': 'Invalid mobile number.',
-          'email.required': 'New email is required.',
-          'email.email': 'Invalid new email.',
-        }
-      },
-
+    rules () {
+      return {
+        title: 'string',
+        first_name: 'required|string',
+        last_name: 'required|string',
+        suffix: 'string',
+        mobile_number: 'string',
+        email: 'required|email',
+      }
     },
 
-    watch: {
-
-      firstName () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'first_name')
-
-        if (this.firstName) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'first_name',
-              message: 'First name is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      lastName () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'last_name')
-
-        if (this.lastName) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'last_name',
-              message: 'Last name is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
-      email () {
-        const index = this.formErrors.findIndex((formError) => formError.field === 'email')
-
-        if (this.email) {
-          if (index > -1) {
-            this.formErrors.splice(index, 1)
-          }
-        } else {
-          if (index === -1) {
-            this.formErrors.push({
-              field: 'email',
-              message: 'Email is required.',
-              validation: 'required',
-            })
-          }
-        }
-      },
-
+    messages () {
+      return {
+        'title.string': 'Invalid title.',
+        'first_name.required': 'First name is required.',
+        'first_name.string': 'Invalid first name.',
+        'last_name.required': 'Last name is required.',
+        'last_name.string': 'Invalid last name.',
+        'suffix.string': 'Invalid suffix.',
+        'mobile_number.string': 'Invalid mobile number.',
+        'email.required': 'New email is required.',
+        'email.email': 'Invalid new email.',
+      }
     },
 
-    mounted () {
-      this.success = false
+  },
+
+  watch: {
+
+    firstName () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'first_name')
+
+      if (this.firstName) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'first_name',
+            message: 'First name is required.',
+            validation: 'required',
+          })
+        }
+      }
     },
 
-    methods: {
+    lastName () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'last_name')
 
-      async submit () {
-        try {
-          this.formErrors = await this.$validator(this.form, this.rules, this.messages).then(() => []).catch((errors) => errors)
+      if (this.lastName) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'last_name',
+            message: 'Last name is required.',
+            validation: 'required',
+          })
+        }
+      }
+    },
 
-          if (this.formErrors.length) {
-            return
-          }
+    email () {
+      const index = this.formErrors.findIndex((formError) => formError.field === 'email')
 
-          await this.$axios.post(`/api/v1/forgot-password`, this.form)
+      if (this.email) {
+        if (index > -1) {
+          this.formErrors.splice(index, 1)
+        }
+      } else {
+        if (index === -1) {
+          this.formErrors.push({
+            field: 'email',
+            message: 'Email is required.',
+            validation: 'required',
+          })
+        }
+      }
+    },
 
-          this.success = true
-        } catch (err) {
-          console.log('err', err.response || err)
+  },
 
-          let message = null
+  mounted () {
+    this.success = false
+  },
 
-          if (err.response) {
-            if (err.response.status === 400 && err.response.data.error_messages) {
-              this.formErrors = err.response.data.error_messages
-            } else {
-              message = err.response.data.message
-            }
-          } else if (err.request) {
-            message = 'Something went wrong!'
+  methods: {
+
+    async submit () {
+      try {
+        this.formErrors = await this.$validator(this.form, this.rules, this.messages).then(() => []).catch((errors) => errors)
+
+        if (this.formErrors.length) {
+          return
+        }
+
+        await this.$axios.post(`/api/v1/forgot-password`, this.form)
+
+        this.success = true
+      } catch (err) {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formErrors = err.response.data.error_messages
           } else {
-            message = err.message
+            message = err.response.data.message
           }
-
-          if (message) {
-            this.$store.commit('SET_NOTIFICATION', {
-              enabled: true,
-              status: 'danger',
-              text: [`${message}`],
-            })
-          }
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
         }
-      },
-      
-    },
 
-  }
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
+      }
+    },
+      
+  },
+
+}
 </script>
 
 <style scoped>
