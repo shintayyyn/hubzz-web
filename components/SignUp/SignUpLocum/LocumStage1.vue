@@ -84,7 +84,7 @@
             :name="'mobile_number'"
             :label="'Mobile Number'"
             :limit="10"
-            :format="'mobile'"
+            format="mobile"
             @keydown="inputNumberOnly($event)"
           />
 
