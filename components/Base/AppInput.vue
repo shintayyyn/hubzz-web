@@ -58,6 +58,11 @@
             </div>
           </template>
 
+          <div v-if="showSelectAll" class="flex flex-row justify-start items-center mt-1">
+            <input id="inputIdSelectAll" v-model="selectAll" type="checkbox" :disabled="selectAll">
+            <label for="inputIdSelectAll" class="text-xs sm:text-sm flex items-center">Select all</label>
+          </div>
+
           <div v-for="(item, index) in lists" :key="index" class="flex flex-row justify-start items-center mt-1">
             <template v-if="toEdit && editId === item.value && updatable">
               <div class="flex flex-col w-full">
@@ -513,7 +518,7 @@ export default {
     // for multicheckbox
     lists: {
       type: Array,
-      default: () => null,
+      default: () => [],
     },
 
     //
@@ -523,6 +528,11 @@ export default {
     },
 
     isHorizontal: Boolean,
+
+    showSelectAll: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data () {
@@ -544,11 +554,22 @@ export default {
       get () {
         return this.value.length === 0 ? true : false
       },
+
       set (naValue) {
         if (naValue) {
-          return this.$emit("uncheckAll")
-        } else if (!naValue) {
-          return this.value.length > 0 ? false : true
+          this.$emit("uncheckAll")
+        }
+      },
+    },
+
+    selectAll: {
+      get () {
+        return this.value.length === this.lists.length
+      },
+      
+      set (selectAll) {
+        if (selectAll) {
+          this.$emit("selectAll")
         }
       },
     },

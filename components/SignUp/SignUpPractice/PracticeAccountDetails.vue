@@ -94,10 +94,12 @@
             :error="formError.find(item => item.field === 'practice_type_id')"
             :lists="practiceTypes"
             required
-            @checked="checkPracticeType($event)"
-            @unchecked="uncheckPracticeType($event)"
+            :showSelectAll="true"
+            @checked="practiceTypeId => form.practice_type_id.push(parseInt(practiceTypeId))"
+            @unchecked="practiceTypeId => form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt(practiceTypeId))"
+            @selectAll="() => form.practice_type_id = practiceTypes.map(({ value }) => value)"
           />
-          <template v-if="isOOH">
+          <template v-if="false && isOOH">
             <AppInput
               v-model="form.national_insurance_number"
               :type="'text'"
@@ -670,8 +672,6 @@ export default {
 
       selectedPracticeSpoke: null,
       displaySpokes: [],
-      //
-      isOOH: false,
       types,
       hub_types,
       practice_roles,
@@ -743,6 +743,11 @@ export default {
       })
       return lists
     },
+
+    isOOH () {
+      const practiceType = this.practiceTypes.find(practiceType => practiceType.label === 'OOH (Out of Hours)')
+      return practiceType && this.form.practice_type_id.includes(practiceType.value)
+    },
   },
 
   watch: {
@@ -771,10 +776,8 @@ export default {
         return ''
       }
     },
-    "form.practice_type_id" (newValue, oldValue) {
-      this.isOOH = newValue.includes("8") ? true : false
-    },
-    "form.type" (newValue, oldValue) {
+
+    "form.type" () {
       this.search_text = ""
       this.displayPracticeHub = null
       this.selectedPracticeHubId = null
@@ -901,6 +904,8 @@ export default {
             this.showResult = true
           })
           .catch(err => {
+            console.log('err', err.response || err)
+
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
@@ -969,21 +974,6 @@ export default {
           this.$store.dispatch("sign-up/registeredPractice")
         }, 1000)
       }
-    },
-
-    checkPracticeType (value) {
-      let selectedArr = []
-      selectedArr.push(value)
-      this.form.practice_type_id = [
-        ...this.form.practice_type_id,
-        ...selectedArr,
-      ]
-    },
-
-    uncheckPracticeType (value) {
-      this.form.practice_type_id = this.form.practice_type_id.filter(
-        id => id != value
-      )
     },
   },
 }
