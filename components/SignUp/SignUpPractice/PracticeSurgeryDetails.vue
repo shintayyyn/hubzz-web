@@ -103,7 +103,7 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="goBack()" />
+      <AppButton :label="'<<'" @click="this.$emit('nextTab', 'PracticeDetails')" />
       <div class="mx-2" />
       <AppButton :label="'Next'" @click="signUp" />
     </div>
@@ -229,34 +229,8 @@ export default {
         "address_line_5",
       ])
       if (!this.formError.length) {
-        this.$store.commit("sign-up/SET_PRACTICE_DETAILS", {
-          name: this.form.name,
-          phone_number: this.form.phone_number,
-          code: this.form.code,
-          clinical_commissioning_group_name: this.form.clinical_commissioning_group_name,
-          address_line_1: this.form.address_line_1,
-          address_line_2: this.form.address_line_2,
-          address_line_3: this.form.address_line_3,
-          address_line_4: this.form.address_line_4,
-          address_line_5: this.form.address_line_5,
-          postcode: this.form.postcode,
-          coordinates_x: this.form.coordinates_x,
-          coordinates_y: this.form.coordinates_y,
-        })
-        this.$store.commit("sign-up/SET_PRACTICE_SURGERY_DETAILS", {
-          name: this.form.name,
-          phone_number: this.form.phone_number,
-          code: this.form.code,
-          clinical_commissioning_group_name: this.form.clinical_commissioning_group_name,
-          address_line_1: this.form.address_line_1,
-          address_line_2: this.form.address_line_2,
-          address_line_3: this.form.address_line_3,
-          address_line_4: this.form.address_line_4,
-          address_line_5: this.form.address_line_5,
-          postcode: this.form.postcode,
-          coordinates_x: this.form.coordinates_x,
-          coordinates_y: this.form.coordinates_y,
-        })
+        this.$store.commit("sign-up/SET_PRACTICE_DETAILS", this.form)
+        this.$store.commit("sign-up/SET_PRACTICE_SURGERY_DETAILS", this.form)
         this.$emit("nextTab", "PracticeAccountDetails")
       }
     },
@@ -277,7 +251,6 @@ export default {
       })
       
       this.$emit('nextTab', 'PracticeDetails')
-
     },
   },
 }
