@@ -113,9 +113,9 @@
                 <AppInput
                   v-model="mobileNumber"
                   type="text"
-                  label="Mobile Number"
-                  :limit="10"
-                  format="mobile"
+                  label="Mobile number"
+                  :limit="11"
+                  :showMobilePrefix="true"
                   @keydown="inputNumberOnly($event)"
                 />
 

@@ -145,7 +145,8 @@
                   v-model="form.phone_number"
                   :type="'text'"
                   :name="'phone_number'"
-                  :label="'Phone number'"
+                  label="Phone number"
+                  :limit="11"
                   :error="formError.find(item => item.field === 'phone_number')"
                   required
                   @submit="save"

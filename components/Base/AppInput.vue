@@ -132,7 +132,7 @@
             <template v-if="['text','time','email', 'number', 'numberDash'].includes(type)">
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">
-                  <p v-if="format && format === 'mobile'" class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent">
+                  <p v-if="showMobilePrefix" class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent">
                     <span>+44</span>
                   </p>
 
@@ -478,9 +478,9 @@ export default {
       default: null,
     },
 
-    format: {
-      type: String,
-      default: null,
+    showMobilePrefix: {
+      type: Boolean,
+      default: false,
     },
 
     required: {

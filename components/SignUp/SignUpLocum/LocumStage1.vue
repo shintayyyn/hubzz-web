@@ -81,10 +81,10 @@
           <AppInput
             v-model="form.mobile_number"
             :type="'text'"
-            :name="'mobile_number'"
-            :label="'Mobile Number'"
-            :limit="10"
-            format="mobile"
+            name="mobile_number"
+            label="Mobile number"
+            :limit="11"
+            :showMobilePrefix="true"
             @keydown="inputNumberOnly($event)"
           />
 

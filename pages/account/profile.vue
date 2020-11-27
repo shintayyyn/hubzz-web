@@ -667,7 +667,7 @@
               :error="formError.find(item => item.field === 'referee_1_phone_number')"
               :label="'Telephone number'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
-              :limit="10"
+              :limit="11"
               @keypress="inputTelephone($event)"
             />
 
@@ -698,7 +698,7 @@
               :error="formError.find(item => item.field === 'referee_2_phone_number')"
               :label="'Telephone number'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
-              :limit="10"
+              :limit="11"
               @keypress="inputTelephone($event)"
             />
 
@@ -1833,21 +1833,21 @@ export default {
 
       if (
         this.form.referee_1_phone_number
-        && this.form.referee_1_phone_number.length < 10
+        && this.form.referee_1_phone_number.length < 11
       ) {
         this.formError.push({
           field: "referee_1_phone_number",
-          message: "Telephone number should be 10 digits",
+          message: "Telephone number should be 11 digits",
         })
       }
 
       if (
         this.form.referee_2_phone_number
-        && this.form.referee_2_phone_number.length < 10
+        && this.form.referee_2_phone_number.length < 11
       ) {
         this.formError.push({
           field: "referee_2_phone_number",
-          message: "Telephone number should be 10 digits",
+          message: "Telephone number should be 11 digits",
         })
       }
 
