@@ -510,6 +510,14 @@ export default {
       "Locum Notification Locum Form A Sent To Practice",
       this.showRefreshLocumFormAs
     )
+    this.$socket.on(
+      "Locum Notification Locum Form A Locum E-signed",
+      this.showRefreshLocumFormAs
+    )
+    this.$socket.on(
+      "Locum Notification Locum Form A Practice E-signed",
+      this.showRefreshLocumFormAs
+    )
 
     this.initialLoading = true
     this.getJobPartsPromiseAll().finally(() => {
@@ -528,6 +536,14 @@ export default {
     )
     this.$socket.removeListener(
       "Locum Notification Locum Form A Sent To Practice",
+      this.showRefreshLocumFormAs
+    )
+    this.$socket.removeListener(
+      "Locum Notification Locum Form A Locum E-signed",
+      this.showRefreshLocumFormAs
+    )
+    this.$socket.removeListener(
+      "Locum Notification Locum Form A Practice E-signed",
       this.showRefreshLocumFormAs
     )
   },

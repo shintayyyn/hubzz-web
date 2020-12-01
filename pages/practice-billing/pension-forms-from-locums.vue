@@ -210,7 +210,7 @@ export default {
         app.$axios
           .$get(`/api/v1/practice/job-parts/count`, {
             params: {
-              invoice_status: ["Invoiced",],
+              invoice_status: ["Approved",],
               status: ["Approved",],
               locum_invoiceable: true,
               nhs_claimable: true,
@@ -225,7 +225,7 @@ export default {
         app.$axios
           .$get(`/api/v1/practice/job-parts`, {
             params: {
-              invoice_status: ["Invoiced",],
+              invoice_status: ["Approved",],
               status: ["Approved",],
               locum_invoiceable: true,
               nhs_claimable: true,
@@ -315,7 +315,7 @@ export default {
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/job-parts/count`, {
           params: {
-            invoice_status: ["Invoiced",],
+            invoice_status: ["Approved",],
             status: ["Approved",],
             locum_invoiceable: true,
             nhs_claimable: true,
@@ -325,7 +325,7 @@ export default {
         }),
         this.$axios.$get(`/api/v1/practice/job-parts`, {
           params: {
-            invoice_status: ["Invoiced",],
+            invoice_status: ["Approved",],
             status: ["Approved",],
             locum_invoiceable: true,
             nhs_claimable: true,
@@ -384,7 +384,7 @@ export default {
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, {
           params: {
-            invoice_status: ["Invoiced",],
+            invoice_status: ["Approved",],
             status: ["Approved",],
             locum_invoiceable: true,
             nhs_claimable: true,

@@ -31,11 +31,13 @@
           <div>{{ propInvoice.address_line_2 }}</div>
           <div>{{ propInvoice.address_line_3 }}</div>
           <div>{{ propInvoice.postcode }}</div>
-          <div>Tel {{ propInvoice.mobile_number }}</div>
+          <div v-if="$auth.user && $auth.user.contact_detail && $auth.user.contact_detail.mobile_number">
+            Tel {{ propInvoice.mobile_number }}
+          </div>
           <div>{{ propInvoice.locum_user.email }}</div>
-          <div>{{ propInvoice.utr_number ? `UTR ${propInvoice.utr_number}` : '' }}</div>
-          <div>{{ propInvoice.company_registration_number ? `Company Registration Number ${propInvoice.company_registration_number}` : '' }}</div>
-          <div>{{ propInvoice.locum_user_vat_number ? `VAT number: ${propInvoice.locum_user_vat_number}` : '' }}</div>
+          <div>{{ propInvoice.utr_number && propInvoice.employment_type === 'Self Employed' ? `UTR ${propInvoice.utr_number}` : '' }}</div>
+          <div>{{ propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company' ? `Company Registration Number ${propInvoice.company_registration_number}` : '' }}</div>
+          <div>{{ propInvoice.locum_user_vat_number ? `VAT Number: ${propInvoice.locum_user_vat_number}` : '' }}</div>
           <div>{{ propInvoice.invoice_number }}</div>
         </div>
       </div>
@@ -110,7 +112,7 @@
           :invoiceStatus="$route.query.status"
           :tax_rates="tax_rates"
           :locum_vat_registered="propInvoice.locum_user_vat_registered "
-          :toDisplay="propInvoice.approved"
+          :toDisplay="propInvoice.approved || propInvoice.last_disputed_by === 'Practice'"
           @getSchedule="getSchedule"
         />
       </div>
@@ -265,7 +267,7 @@
             class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
             <p class="text-sm w-1/2">
-              PENSION AMOUNT:
+              {{ propInvoice.approved ? "PENSION AMOUNT:" : "PENSION AMOUNT(Tentative):" }}
             </p>
 
             <p class="font-bold w-1/2 text-right">
@@ -299,6 +301,7 @@
       </div>
     </div>
 
+    <!-- SOLO FORM DETAILS MODAL -->
     <transition name="fade">
       <div v-if="toggle_modal" class="rounded-lg shadow-md px-4 py-8 md:px-8 accept-modal border w-5/6 md:w-1/3">
         <p class="font-bold uppercase">
@@ -313,7 +316,7 @@
             :label="'PCSE Code'"
             :error="formError.find(item => item.field === 'ea_code')"
             required
-            @blur="CheckEmptyField(form.ea_code, 'ea_code')"
+            @blur="CheckEmptyField(form.ea_code,'PCSE Code','PCSE Code')"
           />
 
           <AppInput
@@ -330,6 +333,7 @@
           <AppInput
             v-model="form.sd_number"
             :type="'text'"
+            :limit="8"
             :name="'sd_number'"
             :label="'NHS Pension Scheme Membership number'"
             :error="formError.find(item => item.field === 'sd_number')"
@@ -341,6 +345,7 @@
           <AppInput
             v-model="form.paying_reference"
             :type="'text'"
+            :limit="4"
             :name="'paying_reference'"
             :label="'Paying reference number'"
             :error="formError.find(item => item.field === 'paying_reference')"
@@ -368,7 +373,7 @@
 
           <AppInput
             v-model="form.professional_nhs_expenses"
-            :type="'text'"
+            :type="'number'"
             :name="'professional_nhs_expenses'"
             :label="'Professional NHS Expense'"
             :error="formError.find(item => item.field === 'professional_nhs_expenses')"
@@ -378,7 +383,7 @@
 
           <AppInput
             v-model="form.added_year_contributions"
-            :type="'text'"
+            :type="'number'"
             :name="'added_year_contributions'"
             :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
             :error="formError.find(item => item.field === 'added_year_contributions')"
@@ -388,7 +393,7 @@
 
           <AppInput
             v-model="form.added_early_retirement_contributions"
-            :type="'text'"
+            :type="'number'"
             :name="'added_early_retirement_contributions'"
             :label="'Additional contributions for Early Retirement Reduction Buy Out'"
             :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
@@ -398,7 +403,7 @@
 
           <AppInput
             v-model="form.nhsps_employer_contributions"
-            :type="'text'"
+            :type="'number'"
             :name="'nhsps_employer_contributions'"
             :label="'NHSPS employer contributions'"
             :error="formError.find(item => item.field === 'nhsps_employer_contributions')"
@@ -423,6 +428,7 @@
         </div>
       </div>
     </transition>
+    <!-- SOLO FORM DETAILS MODAL ENDS HERE -->
 
     <div v-if="toggle_modal" class="shield" />
 
@@ -431,18 +437,18 @@
       class="flex justify-start items-center mb-6"
     >
       <AppButton
-        v-if="propInvoice && !propInvoice.approved && allowToBill"
+        v-if="propInvoice && !propInvoice.approved && allowToBill && propInvoice.last_disputed_by !== 'Practice'"
         class="m-1"
-        :label="'Accept changes'"
+        :label="'Accept & Approve Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
         :disabled="saveLoading || sched_has_changes"
         @click="toggleModal(true)"
       />
 
       <AppButton
-        v-if="propInvoice && !propInvoice.approved && allowToBill && sched_has_changes"
+        v-if="propInvoice && !propInvoice.approved && allowToBill && sched_has_changes && propInvoice.last_disputed_by !== 'Practice'"
         class="m-1"
-        :label="'Save changes'"
+        :label="'Save Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
         :disabled="saveLoading"
         @click="save(false)"
@@ -563,7 +569,10 @@ export default {
     },
 
     grand_total () {
-      return this.total_gross_locum_wages - this.ni_paye_amount
+      if (this.propInvoice && this.propInvoice.approved) {
+        return this.propInvoice.job_part_gross_rate
+      }
+      return (this.propInvoice.locum_user_vat_registered ? this.taxed_gross_rate : this.total_gross_locum_wages) - this.ni_paye_amount
     },
 
     total_work_payment () {
@@ -909,13 +918,14 @@ export default {
       this.total_deductions = deductions
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = this.propInvoice.locum_user_vat_registered ? taxed_gross_rate : total_gross_locum_wages
-      this.tax_amount = tax_amount
+      this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered ? taxed_gross_rate : total_gross_locum_wages
+      this.tax_amount = this.propInvoice && this.propInvoice.approved ? this.propInvoice.tax_amount : tax_amount
       this.taxed_gross_rate = taxed_gross_rate
       this.hasShiftError = hasError
       this.sched_has_changes
         = this.$route.query.status === "issued" ? false : hasChanges
     },
+
     handleKeyDownEvent (e, formField, limit) {
       let acceptedKeys = [
         "Backspace",
@@ -958,7 +968,8 @@ export default {
     },
 
     save (approved) {
-      console.log("approved", approved)
+      // console.log("banana", approved)
+      // console.log('form', this.form)
       this.formError = []
 
       this.shiftErrors = []
@@ -1007,7 +1018,18 @@ export default {
         )
       }
 
-      this.Validate(this.form, notRequired)
+      const preferredDisplayName = [
+        {
+          field: "ea_code",
+          display: "PCSE Code",
+        },
+        {
+          field: "sd_number",
+          display: "NHS Pension Scheme Membership Number",
+        },
+      ]
+
+      this.Validate(this.form, notRequired, preferredDisplayName)
 
       if (!this.formError.length && !this.shiftErrors.length) {
         this.form.total_amount = this.total_gross_locum_wages
@@ -1055,6 +1077,9 @@ export default {
           .finally(() => {
             this.saveLoading = false
           })
+
+        // for testing only
+        // this.saveLoading = false
       }
     },
 

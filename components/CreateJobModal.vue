@@ -763,1573 +763,1569 @@ const session_requirements_lists = [
 ];
 
 export default {
-	components: {
-		AppInput,
-		AppFilterSearch,
-		// AppMultipleDates,
-		// AppSchedule,
-		AppSchedules,
-		AppDate,
-		AppButton,
-		AppTime,
-		AppLoading
-		// AppConfirmationModal,
-	},
-
-	data() {
-		return {
-			banksCount: 0,
-			loading: false,
-			dataLoading: false,
-
-			// show_saturday: false,
-			// show_sunday: false,
-
-			practices: [],
-			practice_lists: [],
-			rate_lists: [],
-			mandatory_training: [],
-			professions: [],
-			session_requirements_lists,
-			mandatory_training_lists: [],
-			other_mandatory_training_lists: [],
-
-			professions_categories: [],
-
-			professionComplianceCategories: [],
-			practiceProfessionComplianceCategoryComplianceDocuments: [],
-
-			unpaid_breaks: false,
-			auto_assign_job: false,
-			selection_notification: false,
-			bank_first: false,
-			shifts: [],
-
-			selection_date: {
-				date: null,
-				time: null
-			},
-			favorite_only_until: {
-				date: null,
-				time: null
-			},
-
-			selectedQualification: [],
-			selectedClinicalSystem: [],
-			selectedSpokenLanguage: [],
-
-			// SPLIT JOBS
-			tabActive: "details",
-			hasShiftError: false,
-			total_working_hours: 0,
-			total_gross_locum_wages: 0,
-			shiftErrors: [],
-			toPublish: false,
-			schedules: [],
-			job_parts: [],
-
-			// schedule_dates: [],
-			// shift_schedule: [],
-			// initial_schedule: [],
-			// {
-			//   value: "1",
-			//   label: 'Sample Shift',
-			//   shift: 1,
-			//   time_start: '00:00',
-			//   time_end: '10:00',
-			//   locum_detail_rate_type_id: 1,
-			//   rate: 50,
-			//   appliedToAll: false,
-			// }
-			// select_dates: false, //Not used
-			// selected_dates: [], //Not used
-			// schedules: [],
-			// schedule: [],
-			// selected_sched_shift: "", //Not used
-			// overlayData: [],
-			// applyToAllDates: false, //Not used
-			// editingDates: false, //Not used
-			// showShifts: false,
-			// confirmClosing: false,
-			// shiftError: [],
-			// shift_saving: "",
-			// editShiftId: "",
-			// savedShifts: [],
-
-			form: {
-				practice_id: "",
-				title: "",
-				description: "",
-				email: "",
-				report_to: "",
-				is_another_doctor: false,
-				is_nurse_available: false,
-				number_of_patients: 1,
-				duration_for_each_appointment: 1,
-				opportunity_for_catch_up_slots: false,
-				session_requirements: [],
-				session_structure_information: "",
-				extra_information: "",
-				// rate: "",
-				// hours: 0,
-				// minutes: 0,
-				// total_hours: "",
-				// locum_detail_rate_type_id: 1,
-				ir35: false,
-				mandatory_training_id: [],
-				other_mandatory_training_id: [],
-				role: "",
-				specialty: [],
-				clinical_system: [],
-				spoken_language_id: [],
-				compliance_document_id: [],
-				// dates: [],
-				schedules: [],
-				schedule_templates: [],
-				// date_start: null,
-				// date_end: null,
-				// time_start: null,
-				// time_end: null,
-				// include_saturday: true,
-				// include_sunday: true,
-				// unpaid_breaks_in_minutes: "",
-				// shift: "",
-				auto_assign_at: null,
-				selection_date: null,
-				favorite_only: false,
-				favorite_only_until: null
-			},
-			formError: []
-		};
-	},
-
-	computed: {
-		authPermissions() {
-			return this.$store.getters["permissions"];
-		},
-
-		repostJob() {
-			return this.$store.state.calendar.repost_job;
-		},
-
-		hasBanks() {
-			return this.banksCount > 0 ? true : false;
-		},
-
-		complianceListLabel() {
-			return `For ${this.selectedProfession.profession_compliance_category_name}:`;
-		},
-
-		selectedProfession() {
-			if (!this.form.role) {
-				return null;
-			}
-
-			const profession = this.professions_categories.find(
-				profession => profession.id.toString() === this.form.role.toString()
-			);
-
-			if (!profession) {
-				return null;
-			}
-
-			return profession;
-		},
-
-		selectedProfessionComplianceCategory() {
-			if (!this.form.role) {
-				return null;
-			}
-
-			const profession = this.professions_categories.find(
-				profession => profession.id.toString() === this.form.role.toString()
-			);
-
-			if (!profession) {
-				return null;
-			}
-
-			const professionComplianceCategory = this.professionComplianceCategories.find(
-				professionComplianceCategory =>
-					professionComplianceCategory.id ===
-					profession.profession_compliance_category_id
-			);
-
-			return professionComplianceCategory || null;
-		},
-
-		emptyComplianceDocumentId: {
-			get() {
-				return this.form.compliance_document_id.length === 0;
-			},
-			set(emptyComplianceDocumentId) {
-				if (emptyComplianceDocumentId) {
-					this.form.compliance_document_id = [];
-				}
-			}
-		},
-
-		compliances() {
-			if (!this.form.role) {
-				return [];
-			}
-
-			const profession = this.professions_categories.find(
-				profession => profession.id.toString() === this.form.role.toString()
-			);
-
-			if (!profession) {
-				return [];
-			}
-
-			const complianceDocuments = this.professionComplianceCategories.reduce(
-				(compliances, professionComplianceCategory) => {
-					const {
-						reference_compliance_documents: referenceComplianceDocuments,
-						mandatory_compliance_documents: mandatoryComplianceDocuments,
-						optional_compliance_documents: optionalComplianceDocuments
-					} = professionComplianceCategory;
-
-					if (
-						professionComplianceCategory.id ===
-						this.selectedProfessionComplianceCategory.id
-					) {
-						[
-							referenceComplianceDocuments,
-							mandatoryComplianceDocuments,
-							optionalComplianceDocuments
-						].forEach(complianceDocuments => {
-							complianceDocuments.forEach(complianceDocument => {
-								const {
-									id,
-									name,
-									compliance_document_type_name: complianceDocumentTypeName,
-									child_compliance_documents: childComplianceDocuments
-								} = complianceDocument;
-
-								if (complianceDocumentTypeName === "Safeguarding") {
-									childComplianceDocuments.forEach(childComplianceDocument => {
-										const { id, name } = childComplianceDocument;
-
-										compliances.push({
-											label: name,
-											value: id
-										});
-									});
-								} else {
-									compliances.push({
-										label: name,
-										value: id
-									});
-								}
-							});
-						});
-					}
-
-					return compliances;
-				},
-				[]
-			);
-
-			const complianceDocumentIds = complianceDocuments.map(
-				({ value }) => value
-			);
-
-			return this.practiceProfessionComplianceCategoryComplianceDocuments
-				.filter(practiceProfessionComplianceCategoryComplianceDocument => {
-					const {
-						compliance_document_id: complianceDocumentId,
-						profession_compliance_category_id: professionComplianceCategoryId
-					} = practiceProfessionComplianceCategoryComplianceDocument;
-
-					return (
-						professionComplianceCategoryId ===
-							this.selectedProfessionComplianceCategory.id &&
-						complianceDocumentIds.includes(complianceDocumentId)
-					);
-				})
-				.map(practiceProfessionComplianceCategoryComplianceDocument => {
-					const {
-						compliance_document_id: complianceDocumentId,
-						compliance_document_name: complianceDocumentName
-					} = practiceProfessionComplianceCategoryComplianceDocument;
-
-					return {
-						label: complianceDocumentName,
-						value: complianceDocumentId
-					};
-				});
-		},
-
-		practice_rate() {
-			const profession = this.professions_categories.find(
-				profession => profession.id.toString() === this.form.role.toString()
-			);
-
-			const practiceRates =
-				this.$auth.user &&
-				this.$auth.user.practice_detail &&
-				this.$auth.user.practice_detail.practice
-					? this.$auth.user.practice_detail.practice.practice_rates
-					: [];
-
-			const practiceRate = practiceRates.find(
-				item => item.type === profession.profession_category_name
-			);
-
-			return practiceRate ? practiceRate.rate : 0;
-		},
-
-		hubzz_fee() {
-			return this.schedules
-				.reduce((scheduleTotal, sched) => {
-					const shiftTotal = sched.shifts.reduce((shiftTotal, shift) => {
-						const time_start = shift.time_start;
-
-						const time_end = shift.time_end;
-
-						const total_hours = this.totalHours(
-							time_start,
-							time_end,
-							sched.date
-						);
-
-						if (total_hours > 0) {
-							const num = parseInt(total_hours);
-
-							if (!isNaN(num)) {
-								shiftTotal =
-									shiftTotal +
-									Math.round(
-										(Math.round((num / 60) * 100) / 100) *
-											this.practice_rate *
-											100
-									) /
-										100;
-							}
-						}
-
-						return shiftTotal;
-					}, 0);
-
-					return scheduleTotal + shiftTotal;
-				}, 0)
-				.toFixed(2);
-		}
-	},
-
-	watch: {
-		selectedProfessionComplianceCategory() {
-			if (this.selectedProfessionComplianceCategory) {
-				const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
-					.filter(
-						practiceProfessionComplianceCategoryComplianceDocument =>
-							practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id ===
-							this.selectedProfessionComplianceCategory.id
-					)
-					.map(
-						practiceProfessionComplianceCategoryComplianceDocument =>
-							practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
-					);
-
-				this.form.compliance_document_id = defaultSelectedComplianceDocumentIds;
-			} else {
-				this.form.compliance_document_id = [];
-			}
-		},
-		async "form.role"(newValue, oldValue) {
-			this.CheckEmptyField(newValue, "role");
-
-			if (newValue && oldValue) {
-				this.form.specialty = [];
-			}
-		},
-		selectedProfession() {
-			if (this.selectedProfession) {
-				this.$axios
-					.get("/api/v1/practice/locums/count", {
-						params: {
-							profession_category_id: this.selectedProfession
-								.profession_category.id,
-							practice_locum_type: "Favorite"
-						}
-					})
-					.then(response => {
-						this.banksCount = response.data.data.count;
-					});
-			}
-		},
-		"form.specialty"(value) {
-			this.CheckEmptyField(value, "specialty");
-		},
-		"form.clinical_system"(value) {
-			this.CheckEmptyField(value, "clinical_system");
-		},
-		"form.time_start"(value) {
-			console.log(value);
-			// console.log(this.form.date_start, this.form.date_end)
-			// if (this.form.date_start === this.form.date_end) {
-			// console.log(this.form.time_start, this.form.time_end)
-			// let fullDateStart = this.form.date_start
-			// }
-		},
-		schedule(value) {
-			console.log(value);
-		},
-		schedule_dates(value) {
-			if (value.length) {
-				let removedAnItem = false;
-				this.schedule.forEach((sched, index) => {
-					let dateStillExist = value
-						.map(date => sched.date === date)
-						.includes(true);
-					if (!dateStillExist) {
-						this.schedule.splice(index, 1);
-						removedAnItem = true;
-					}
-				});
-				if (!removedAnItem) {
-					this.schedule.push({ date: value[value.length - 1], shift_id: [] });
-				}
-			}
-			if (this.applyToAllDates) {
-				this.editingDates = true;
-			}
-		},
-		toEditShift(newValue, oldValue) {
-			console.log("watch toEditShift", newValue, oldValue);
-		},
-		"form.practice_id"(newValue, oldValue) {
-			if (oldValue && newValue) {
-				this.form.mandatory_training_id = [];
-				this.form.other_mandatory_training_id = [];
-				this.form.compliance_document_id = [];
-			}
-			if (newValue) {
-				let foundPractice = this.practices.find(
-					practice => practice.id === parseInt(newValue)
-				);
-				this.mandatory_training_lists = foundPractice.mandatory_trainings.map(
-					mandatoryTraining => ({
-						label: mandatoryTraining.name,
-						value: mandatoryTraining.id
-					})
-				);
-
-				this.other_mandatory_training_lists = foundPractice.other_mandatory_trainings.map(
-					otherMandatoryTraining => ({
-						label: otherMandatoryTraining.name,
-						value: otherMandatoryTraining.id
-					})
-				);
-
-				this.practiceProfessionComplianceCategoryComplianceDocuments =
-					foundPractice.practice_profession_compliance_category_compliance_documents;
-			}
-		}
-	},
-
-	destroyed() {
-		this.$store.commit("calendar/CLEAR_REPOST_JOB");
-	},
-
-	created() {
-		console.log(this.repostJob);
-		this.dataLoading = true;
-
-		Promise.all([
-			this.$axios.get("/api/v1/practice/me/practice-practices"),
-			this.$axios.get("/api/v1/locum-detail-rate-types").then(response =>
-				response.data.data.locum_detail_rate_types.map(rateType => ({
-					label: rateType.name,
-					value: rateType.id
-				}))
-			),
-			this.$axios.get("/api/v1/shifts").then(response =>
-				response.data.data.shifts.map(shift => ({
-					label: shift.name,
-					value: shift.id
-				}))
-			),
-			this.$axios
-				.get("/api/v1/professions")
-				.then(response => response.data.data.professions),
-			this.$axios
-				.get("/api/v1/practice/me/practice-profile")
-				.then(response => response.data.data.practice),
-			this.$axios
-				.get("/api/v1/profession-compliance-categories")
-				.then(response => {
-					return response.data.data.profession_compliance_categories;
-				})
-		])
-			.then(responses => {
-				const [
-					responsePractices,
-					rateLists,
-					shiftLists,
-					professions,
-					profileProfile,
-					professionComplianceCategories
-				] = responses;
-				this.practices = responsePractices.data.data.practices;
-				this.practice_lists = responsePractices.data.data.practices.map(
-					practice => ({
-						label: practice.name,
-						value: practice.id
-					})
-				);
-				this.rate_lists = rateLists;
-				this.shifts = shiftLists;
-				this.professions = professions.map(profession => ({
-					label: profession.name,
-					value: profession.id
-				}));
-				this.professions_categories = professions;
-				this.professionComplianceCategories = professionComplianceCategories;
-
-				const {
-					report_to: reportTo,
-					email,
-					extra_information: extraInformation
-					// practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
-					// mandatory_trainings: mandatoryTrainings,
-					// other_mandatory_trainings: otherMandatoryTrainings
-				} = profileProfile;
-
-				this.form.report_to = reportTo;
-				this.form.email = email;
-				this.form.extra_information = extraInformation;
-				// this.practiceProfessionComplianceCategoryComplianceDocuments = practiceProfessionComplianceCategoryComplianceDocuments;
-
-				// this.mandatory_training_lists = mandatoryTrainings.map(
-				// 	mandatoryTraining => ({
-				// 		label: mandatoryTraining.name,
-				// 		value: mandatoryTraining.id
-				// 	})
-				// );
-
-				// this.other_mandatory_training_lists = otherMandatoryTrainings.map(
-				// 	otherMandatoryTraining => ({
-				// 		label: otherMandatoryTraining.name,
-				// 		value: otherMandatoryTraining.id
-				// 	})
-				// );
-
-				if (this.repostJob) {
-					const selectedProfession = this.professions_categories.find(
-						profession =>
-							profession.id === this.repostJob.platform_job.profession.id
-					);
-
-					const selectedProfessionCategoryId =
-						selectedProfession.profession_category.id;
-					this.form.practice_id = this.repostJob.platform_job.practice.id;
-					this.form.title = this.repostJob.title;
-					this.form.description = this.repostJob.description;
-					this.form.email = this.repostJob.platform_job.email;
-					this.form.report_to = this.repostJob.platform_job.report_to;
-
-					this.form.is_another_doctor = this.repostJob.platform_job.is_another_doctor;
-					this.form.is_nurse_available = this.repostJob.platform_job.is_nurse_available;
-					this.form.number_of_patients = this.repostJob.platform_job.number_of_patients;
-					this.form.duration_for_each_appointment = this.repostJob.platform_job.duration_for_each_appointment;
-					this.form.opportunity_for_catch_up_slots = this.repostJob.platform_job.opportunity_for_catch_up_slots;
-					if (this.repostJob.platform_job.session_requirements === "") {
-						this.form.session_requirements = [];
-					} else {
-						this.form.session_requirements = this.repostJob.platform_job
-							.session_requirements
-							? this.repostJob.platform_job.session_requirements.split(",")
-							: [];
-					}
-					this.form.session_structure_information = this.repostJob.platform_job.session_structure_information;
-					this.form.extra_information = this.repostJob.platform_job.extra_information;
-
-					// this.form.rate = this.repostJob.rate;
-					// this.form.total_hours = this.repostJob.total_hours;
-					// this.form.locum_detail_rate_type_id = this.repostJob.locum_detail_rate_type.id;
-					this.form.ir35 = this.repostJob.platform_job.ir35;
-
-					this.form.mandatory_training_id = this.repostJob.platform_job.mandatory_trainings.map(
-						item => item.id
-					);
-					this.form.role = this.repostJob.platform_job.profession.id;
-
-					this.repostJob.platform_job.qualifications.forEach(qualification => {
-						this.form.specialty.push({
-							label: qualification.name,
-							value: qualification.id
-						});
-					});
-					this.repostJob.platform_job.clinical_systems.forEach(
-						clinicalSystem => {
-							this.form.clinical_system.push({
-								label: clinicalSystem.name,
-								value: clinicalSystem.id
-							});
-						}
-					);
-
-					this.repostJob.platform_job.spoken_languages.forEach(
-						spokenLanguage => {
-							this.form.spoken_language_id.push({
-								label: spokenLanguage.name,
-								value: spokenLanguage.id
-							});
-						}
-					);
-
-					const complianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
-						.filter(
-							practiceProfessionComplianceCategoryComplianceDocument =>
-								practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id ===
-								selectedProfessionCategoryId
-						)
-						.map(
-							({ compliance_document_id: complianceDocumentId }) =>
-								complianceDocumentId
-						);
-
-					this.$nextTick(() => {
-						this.form.compliance_document_id = this.repostJob.platform_job.compliance_documents
-							.map(complianceDocument => complianceDocument.id)
-							.filter(complianceDocumentId =>
-								complianceDocumentIds.includes(complianceDocumentId)
-							);
-					});
-
-					// this.form.dates = this.repostJob.dates
-
-					// this.form.date_start = this.$moment().isBefore(
-					//   this.repostJob.date_start
-					// )
-					//   ? this.repostJob.date_start
-					//   : null
-
-					// this.form.date_end = this.$moment().isBefore(
-					//   this.repostJob.date_end
-					// )
-					//   ? this.repostJob.date_end
-					//   : null
-
-					// this.form.include_saturday = this.repostJob.include_saturday
-					// this.form.include_sunday = this.repostJob.include_sunday
-
-					// this.form.time_start = this.$moment().isBefore(
-					//   this.repostJob.dates[0])
-					//   ? this.repostJob.time_start
-					//   : null
-					//   this.form.time_end = this.$moment().isBefore(
-					// this.repostJob.dates[this.repostJob.dates.length-1])
-					//   ? this.repostJob.time_end
-					//   : null
-
-					// if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
-					//   this.repostJob.dates.forEach(date => this.form.dates.push(date))
-					// }
-					// if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
-					// 	this.unpaid_breaks = false;
-					// } else if (
-					// 	![15, 30, 60].includes(
-					// 		this.repostJob.platform_job.unpaid_breaks_in_minutes
-					// 	)
-					// ) {
-					// 	this.unpaid_breaks = "other";
-					// 	this.form.unpaid_breaks_in_minutes = this.repostJob.platform_job.unpaid_breaks_in_minutes;
-					// } else {
-					// 	this.unpaid_breaks = this.repostJob.platform_job.unpaid_breaks_in_minutes;
-					// }
-
-					// this.form.shift = this.repostJob.shift.id;
-
-					this.form.auto_assign_at = this.repostJob.platform_job.auto_assign_at;
-					if (this.form.auto_assign_at) {
-						this.auto_assign_job = true;
-					}
-
-					if (this.repostJob.platform_job.selection_date) {
-						this.selection_date.date = this.$moment().isBefore(
-							this.repostJob.platform_job.selection_date
-						)
-							? this.$moment(this.repostJob.platform_job.selection_date).format(
-									"YYYY-MM-DD"
-							  )
-							: null;
-						this.selection_date.time = this.$moment().isBefore(
-							this.repostJob.platform_job.selection_date
-						)
-							? this.$moment(this.repostJob.platform_job.selection_date).format(
-									"HH:mm"
-							  )
-							: null;
-					}
-
-					if (this.repostJob.favorite_only) {
-						this.form.favorite_only = true;
-					} else if (
-						this.$moment(this.repostJob.date_start, "YYYY-MM-DD").diff(
-							this.repostJob.platform_job.favorite_only_until,
-							"seconds"
-						) > 0
-					) {
-						this.bank_first = true;
-						this.favorite_only_until.date = this.$moment(
-							this.repostJob.platform_job.favorite_only_until,
-							"YYYY-MM-DDTHH:mm:ss:sssZ"
-						).format("YYYY-MM-DD");
-						this.favorite_only_until.time = this.$moment(
-							this.repostJob.platform_job.favorite_only_until,
-							"YYYY-MM-DDTHH:mm:ss:sssZ"
-						).format("HH:mm");
-					}
-				}
-			})
-			.finally(() => {
-				this.dataLoading = false;
-			});
-	},
-
-	methods: {
-		totalHours(start, end, date) {
-			let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm");
-			let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm");
-			return start && end
-				? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
-				: 0;
-		},
-
-		// FOR APP SCHEDULE COMPONENT
-		getTemplateSchedules(shift_schedule) {
-			console.log("shift_schedule", shift_schedule);
-			this.form.schedule_templates = [];
-			shift_schedule.forEach(shift => {
-				this.form.schedule_templates.push({
-					name: shift.label,
-					shift_id: shift.shift_id,
-					time_start: shift.time_start,
-					time_end: shift.time_end,
-					locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-					rate: shift.rate
-				});
-			});
-		},
-		getInitialSchedule(payload) {
-			this.form.schedules = [];
-			if (payload.schedule) {
-				payload.schedule.forEach(sched => {
-					sched.shift_id.forEach(id => {
-						let shift = payload.shift_schedule.find(
-							shift => shift.value === id
-						);
-						this.form.schedules.push({
-							date: sched.date,
-							shift_id: shift.shift_id,
-							time_start: shift.time_start,
-							time_end: shift.time_end,
-							locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-							rate: shift.rate,
-							schedule_template_name: shift.label
-						});
-					});
-				});
-			}
-		},
-		// revised app schedule
-		next() {
-			this.formError = [];
-			let notRequired = [
-				"title",
-				"description",
-				"session_requirements",
-				"session_structure_information",
-				"extra_information",
-				"is_another_doctor",
-				"is_nurse_available",
-				"opportunity_for_catch_up_slots",
-				"spoken_language_id",
-				"ir35",
-				"mandatory_training_id",
-				"other_mandatory_training_id",
-				"include_saturday",
-				"include_sunday",
-				"compliance_document_id",
-				"auto_assign_at",
-				"total_hours",
-				"hours",
-				"minutes",
-				"favorite_only",
-				"shift_id",
-				"schedule_templates",
-				"schedules",
-				"unpaid_breaks_in_minutes"
-			];
-			if (!this.hasBanks) {
-				this.form.favorite_only = false;
-				this.bank_first = false;
-				this.favorite_only_until.date = null;
-				this.favorite_only_until.time = null;
-			}
-
-			if (["true", true].includes(this.auto_assign_job)) {
-				this.selection_notification = false;
-			}
-
-			if (["false", false].includes(this.selection_notification)) {
-				notRequired.push("selection_date");
-			} else if (
-				["true", true].includes(this.selection_notification) &&
-				this.selection_date.date &&
-				this.selection_date.time
-			) {
-				notRequired.push("selection_date");
-			}
-
-			if (["true", true].includes(this.form.favorite_only)) {
-				this.bank_first = false;
-			}
-
-			if (["false", false].includes(this.bank_first)) {
-				notRequired.push("favorite_only_until");
-			} else if (
-				["true", true].includes(this.bank_first) &&
-				this.favorite_only_until.date &&
-				this.favorite_only_until.time
-			) {
-				notRequired.push("favorite_only_until");
-			}
-
-			this.Validate(this.form, notRequired);
-			console.log("formError", this.formError);
-			if (!this.formError.length) {
-				this.tabActive = "schedule";
-			} else {
-				this.$nextTick(() => {
-					this.$refs.modalContainer.scrollTop = 0;
-				});
-			}
-		},
-
-		getSchedule(
-			schedule,
-			total_gross_locum_wages,
-			total_working_hours,
-			deductions,
-			total_lates,
-			hasError,
-			job_parts
-		) {
-			this.form.schedules = [];
-
-			this.schedules = schedule;
-
-			schedule.forEach((sched, index) => {
-				if (sched.shifts && sched.shifts.length) {
-					let dateErrIndex = this.shiftErrors.findIndex(
-						err => err.field === `shift-${sched.date}`
-					);
-
-					if (dateErrIndex > -1) {
-						this.shiftErrors.splice(dateErrIndex, 1);
-					}
-
-					sched.shifts.forEach((shift, i) => {
-						this.form.schedules.push({
-							date: this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
-							shift_id: shift.shift_id,
-							time_start: shift.time_start,
-							time_end: shift.time_end,
-							locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
-							rate: shift.rate
-						});
-
-						if (shift.time_start) {
-							let startIndex = this.shiftErrors.findIndex(
-								err => err.field === `time_start-s${index}-${i}`
-							);
-
-							if (startIndex > -1) {
-								this.shiftErrors.splice(startIndex, 1);
-							}
-						}
-
-						if (shift.time_end) {
-							let endIndex = this.shiftErrors.findIndex(
-								err => err.field === `time_end-s${index}-${i}`
-							);
-
-							if (endIndex > -1) {
-								this.shiftErrors.splice(endIndex, 1);
-							}
-						}
-
-						if (
-							shift.locum_detail_rate_type_id !== 0 &&
-							shift.locum_detail_rate_type_id !== ""
-						) {
-							let rateTypeIndex = this.shiftErrors.findIndex(
-								err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
-							);
-
-							if (rateTypeIndex > -1) {
-								this.shiftErrors.splice(rateTypeIndex, 1);
-							}
-						}
-
-						if (shift.shift_id !== 0 && shift.shift_id !== "") {
-							let shiftIdIndex = this.shiftErrors.findIndex(
-								err => err.field === `shift_id-s${index}-${i}`
-							);
-
-							if (shiftIdIndex > -1) {
-								this.shiftErrors.splice(shiftIdIndex, 1);
-							}
-						}
-
-						if (shift.rate !== 0 && shift.rate !== "") {
-							let rateIndex = this.shiftErrors.findIndex(
-								err => err.field === `rate-s${index}-${i}`
-							);
-
-							if (rateIndex > -1) {
-								this.shiftErrors.splice(rateIndex, 1);
-							}
-						}
-					});
-				}
-			});
-
-			this.total_working_hours = total_working_hours;
-
-			this.total_gross_locum_wages = total_gross_locum_wages;
-
-			this.hasShiftError = hasError;
-
-			this.job_parts = job_parts;
-		},
-
-		canPublish() {
-			this.shiftErrors = [];
-			this.formError = [];
-			let has_conflict = false;
-			this.schedules.forEach((sched, index) => {
-				if (!sched.shifts.length) {
-					this.shiftErrors.push({
-						field: `shift-${sched.date}`,
-						message: "Schedule is required. Add Shift to create schedule."
-					});
-				} else {
-					sched.shifts.forEach((shift, i) => {
-						if (!shift.time_start) {
-							this.shiftErrors.push({
-								field: `time_start-s${index}-${i}`,
-								message: "Start is required."
-							});
-						}
-						if (!shift.time_end) {
-							this.shiftErrors.push({
-								field: `time_end-s${index}-${i}`,
-								message: "End is required."
-							});
-						}
-						if (shift.locum_detail_rate_type_id === 0) {
-							this.shiftErrors.push({
-								field: `locum_detail_rate_type_id-s${index}-${i}`,
-								message: "Rate type is required."
-							});
-						}
-						if (shift.shift_id === 0) {
-							this.shiftErrors.push({
-								field: `shift_id-s${index}-${i}`,
-								message: "Shift is required."
-							});
-						}
-						if (shift.rate === 0) {
-							this.shiftErrors.push({
-								field: `rate-s${index}-${i}`,
-								message: "Rate is required."
-							});
-						}
-					});
-				}
-			});
-			if (!this.shiftErrors.length) {
-				this.form.profession_id = this.form.role;
-				this.form.shift_id = this.form.shift;
-				this.selectedClinicalSystem = [...this.form.clinical_system];
-				this.form.clinical_system_id = this.form.clinical_system.map(
-					item => item.value
-				);
-				this.selectedQualification = [...this.form.specialty];
-				this.form.qualification_id = this.form.specialty.map(
-					item => item.value
-				);
-				this.selectedSpokenLanguage = [...this.form.spoken_language_id];
-				this.form.spoken_language_id = this.form.spoken_language_id.map(
-					item => item.value
-				);
-
-				if (Array.isArray(this.form.session_requirements)) {
-					if (this.form.session_requirements.length === 1) {
-						this.form.session_requirements = this.form.session_requirements[0];
-					} else if (this.form.session_requirements.length > 0) {
-						this.form.session_requirements = this.form.session_requirements.join();
-					} else if (this.form.session_requirements.length === 0) {
-						this.form.session_requirements = "";
-					}
-				}
-
-				this.form.auto_assign_at = null;
-				if (["true", true].includes(this.auto_assign_job)) {
-					this.form.auto_assign_at = "1970-01-01 00:00";
-				}
-
-				this.form.selection_date = null;
-				if (["false", false].includes(this.auto_assign_job)) {
-					if (["true", true].includes(this.selection_notification)) {
-						this.form.selection_date = `${this.$moment(
-							this.selection_date.date,
-							"YYYY-MM-DD"
-						).format("YYYY-MM-DD")} ${this.selection_date.time}`;
-					}
-				}
-
-				this.form.favorite_only_until = null;
-				if (["true", true].includes(this.bank_first)) {
-					this.form.favorite_only_until = `${this.$moment(
-						this.favorite_only_until.date,
-						"YYYY-MM-DD"
-					).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
-				}
-
-				if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
-					this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
-				}
-				if (this.unpaid_breaks === "other") {
-					this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
-				}
-				if (["false", false].includes(this.unpaid_breaks)) {
-					this.form.unpaid_breaks_in_minutes = "";
-				}
-
-				this.form.ir35 =
-					this.selectedProfession &&
-					this.selectedProfession.profession_category.name === "GP"
-						? this.form.ir35
-						: false;
-
-				this.loading = true;
-
-				this.$axios
-					.$post(`/api/v1/practice/jobs/check`, {
-						...this.form,
-						old_job_id:
-							this.repostJob && !["Cancelled"].includes(this.repostJob.status)
-								? this.repostJob.id
-								: null
-					})
-					.then(() => {
-						if (
-							!this.shiftErrors.length &&
-							!this.hasShiftError &&
-							!this.formError.length &&
-							!has_conflict
-						) {
-							this.toPublish = true;
-						}
-						this.loading = false;
-					})
-					.catch(err => {
-						console.log("err", err.response || err);
-
-						this.$refs.modalContainer.scrollTop = 0;
-
-						this.form.clinical_system = this.selectedClinicalSystem;
-
-						this.form.specialty = this.selectedQualification;
-
-						this.form.spoken_language_id = this.selectedSpokenLanguage;
-
-						this.form.session_requirements = this.form.session_requirements
-							? this.form.session_requirements.split(",")
-							: [];
-
-						let message = null;
-
-						if (err.response) {
-							if (
-								err.response.data.error_messages &&
-								err.response.data.error_messages.length > 0
-							) {
-								this.shiftErrors = err.response.data.error_messages;
-								// let detailsError = [
-								//   "practice_id",
-								//   "number_of_patients",
-								//   "duration_for_each_appointment",
-								//   "role",
-								//   "specialty",
-								//   "clinical_system",
-								// ]
-								let sched_has_conflict = this.shiftErrors.find(
-									err => err.field === "schedules"
-								);
-								if (sched_has_conflict) {
-									has_conflict = true;
-									sched_has_conflict.conflictSchedules.forEach(item => {
-										this.shiftErrors.push({
-											field: `conflict-${this.$moment(
-												item.date,
-												"YYYY-MM-DD"
-											).format("DD/MM/YYYY")}-${item.index}`,
-											message:
-												"This schedule has a conflict with another schedule."
-										});
-									});
-									let conflictDates = sched_has_conflict.conflictSchedules
-										.map(item => item.date)
-										.filter(item => item);
-									let job_parts = [];
-									conflictDates.forEach(date => {
-										let job_part = this.job_parts.find(item =>
-											item.dates.includes(date)
-										);
-										if (!job_parts.includes(job_part.value)) {
-											job_parts.push(job_part.value);
-										}
-									});
-									this.$store.commit("SET_NOTIFICATION", {
-										enabled: true,
-										status: "danger",
-										text: [
-											`Conflict schedule on Job Part/s (${job_parts.join(",")})`
-										],
-										duration: 3000
-									});
-								}
-							} else {
-								message = err.response.data.message;
-							}
-							// if (this.shiftErrors.length) {
-							//   let sched_has_conflict = this.shiftErrors.find(
-							//     err => err.field === "schedules"
-							//   )
-							// }
-						} else if (err.request) {
-							message = "Something weng wrong!";
-						} else {
-							message = err.message;
-						}
-
-						if (message) {
-							this.$store.commit("SET_NOTIFICATION", {
-								enabled: true,
-								status: "danger",
-								text: [`${message}`]
-							});
-						}
-						this.loading = false;
-					});
-			}
-			if (this.shiftErrors.length) {
-				let has_empty_sched_dates = this.shiftErrors.filter(err =>
-					err.field.includes("shift-")
-				);
-				let job_parts = [];
-				if (has_empty_sched_dates.length) {
-					has_empty_sched_dates.forEach(err => {
-						let empty_date = err.field.split("-")[1];
-						let job_part = this.job_parts.find(part =>
-							part.dates.includes(
-								this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
-							)
-						);
-						let exist = job_parts.find(item => item === `${job_part.value}`);
-						if (job_part && !exist) {
-							job_parts.push(`${job_part.value}`);
-						}
-					});
-					let partsLabel = "";
-					job_parts.forEach((item, index) => {
-						if (job_parts.length > 1) {
-							if (index !== job_parts.length - 1) {
-								partsLabel += `${item}, `;
-							} else if (index === job_parts.length - 1) {
-								partsLabel += `${item}`;
-							}
-							//  else {
-							// partsLabel += ` and ${item}`;
-							// }
-						} else {
-							partsLabel += item;
-						}
-					});
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "danger",
-						text: [`Empty schedule on Job Part/s (${partsLabel})`],
-						duration: 3000
-					});
-				}
-			}
-		},
-
-		// -- END FOR APP SCHEDULE COMPONENT
-		hasValue(value, field) {
-			if (value == 0) {
-				this.form[field] = "";
-			}
-		},
-
-		handleKeyDownEvent(e, formField, limit) {
-			let acceptedKeys = [
-				"Backspace",
-				"Tab",
-				"ArrowUp",
-				"ArrowDown",
-				"ArrowLeft",
-				"ArrowRight"
-			];
-			if (
-				this.form[formField].length >= limit &&
-				!acceptedKeys.includes(e.key)
-			) {
-				e.preventDefault();
-			}
-		},
-
-		// getListofDays (days) {
-		//   // if (days.includes(6) && days.length > 1) {
-		//   //   this.show_saturday = true
-		//   //   this.form.include_saturday = true
-		//   // } else if (days.includes(6) && days.length === 1) {
-		//   //   this.show_saturday = false
-		//   //   this.form.include_saturday = true
-		//   // } else if (!days.includes(6)) {
-		//   //   this.show_saturday = false
-		//   //   this.form.include_saturday = false
-		//   // }
-		//   // if (days.includes(0) && days.length > 1) {
-		//   //   this.show_sunday = true
-		//   //   this.form.include_sunday = true
-		//   // } else if (days.includes(0) && days.length === 1) {
-		//   //   this.show_sunday = false
-		//   //   this.form.include_sunday = true
-		//   // } else if (!days.includes(0)) {
-		//   //   this.show_sunday = false
-		//   //   this.form.include_sunday = false
-		//   // }
-		// },
-
-		close() {
-			this.$store.commit("calendar/CREATE_JOB_MODAL", false);
-			this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false);
-			this.$store.commit("calendar/CLEAR_REPOST_JOB");
-			this.$emit("close");
-		},
-
-		goToProfile() {
-			this.$store.commit("calendar/CREATE_JOB_MODAL", false);
-			this.$store.commit("calendar/CLEAR_REPOST_JOB");
-			window.open("/profile", "_blank");
-		},
-
-		uncheckMandatory(value) {
-			this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
-				id => id != value
-			);
-		},
-
-		validateNumber(value, fieldName) {
-			let displayFieldName =
-				fieldName.charAt(0).toUpperCase() +
-				fieldName.slice(1).replace(/_/g, " ");
-			let index = this.formError.findIndex(item => item.field === fieldName);
-			if (
-				parseInt(value) < 1 ||
-				value.toString().includes("e") ||
-				value === ""
-			) {
-				this.formError.push({
-					field: fieldName,
-					message: `${displayFieldName} is invalid`
-				});
-			} else {
-				this.formError.splice(index, 1);
-			}
-		},
-
-		createJob() {
-			this.formError = [];
-			let notRequired = [
-				"title",
-				"description",
-				"session_requirements",
-				"session_structure_information",
-				"extra_information",
-				"is_another_doctor",
-				"is_nurse_available",
-				"opportunity_for_catch_up_slots",
-				"spoken_language_id",
-				"ir35",
-				"mandatory_training_id",
-				"other_mandatory_training_id",
-				"include_saturday",
-				"include_sunday",
-				"compliance_document_id",
-				"auto_assign_at",
-				"total_hours",
-				"hours",
-				"minutes",
-				"favorite_only",
-				"shift_id",
-				"schedule_templates",
-				"unpaid_breaks_in_minutes"
-			];
-			if (!this.hasBanks) {
-				this.form.favorite_only = false;
-				this.bank_first = false;
-				this.favorite_only_until.date = null;
-				this.favorite_only_until.time = null;
-			}
-
-			if (["true", true].includes(this.auto_assign_job)) {
-				this.selection_notification = false;
-			}
-
-			if (["false", false].includes(this.selection_notification)) {
-				notRequired.push("selection_date");
-			} else if (
-				["true", true].includes(this.selection_notification) &&
-				this.selection_date.date &&
-				this.selection_date.time
-			) {
-				notRequired.push("selection_date");
-			}
-
-			if (["true", true].includes(this.form.favorite_only)) {
-				this.bank_first = false;
-			}
-
-			if (["false", false].includes(this.bank_first)) {
-				notRequired.push("favorite_only_until");
-			} else if (
-				["true", true].includes(this.bank_first) &&
-				this.favorite_only_until.date &&
-				this.favorite_only_until.time
-			) {
-				notRequired.push("favorite_only_until");
-			}
-
-			this.Validate(this.form, notRequired);
-
-			if (!this.formError.length) {
-				this.form.profession_id = this.form.role;
-				this.form.shift_id = this.form.shift;
-				this.selectedClinicalSystem = [...this.form.clinical_system];
-				this.form.clinical_system_id = this.form.clinical_system.map(
-					item => item.value
-				);
-				this.selectedQualification = [...this.form.specialty];
-				this.form.qualification_id = this.form.specialty.map(
-					item => item.value
-				);
-				this.selectedSpokenLanguage = [...this.form.spoken_language_id];
-				this.form.spoken_language_id = this.form.spoken_language_id.map(
-					item => item.value
-				);
-				// this.form.date_start = this.$moment(
-				//   this.form.date_start,
-				//   "YYYY-MM-DD"
-				// ).format("YYYY-MM-DD")
-				// this.form.date_end = this.$moment(
-				//   this.form.date_end,
-				//   "YYYY-MM-DD"
-				// ).format("YYYY-MM-DD")
-
-				if (Array.isArray(this.form.session_requirements)) {
-					if (this.form.session_requirements.length === 1) {
-						this.form.session_requirements = this.form.session_requirements[0];
-					} else if (this.form.session_requirements.length > 0) {
-						this.form.session_requirements = this.form.session_requirements.join();
-					} else if (this.form.session_requirements.length === 0) {
-						this.form.session_requirements = "";
-					}
-				}
-
-				this.form.auto_assign_at = null;
-				if (["true", true].includes(this.auto_assign_job)) {
-					this.form.auto_assign_at = "1970-01-01 00:00";
-				}
-
-				this.form.selection_date = null;
-				if (["false", false].includes(this.auto_assign_job)) {
-					if (["true", true].includes(this.selection_notification)) {
-						this.form.selection_date = `${this.$moment(
-							this.selection_date.date,
-							"YYYY-MM-DD"
-						).format("YYYY-MM-DD")} ${this.selection_date.time}`;
-					}
-				}
-
-				this.form.favorite_only_until = null;
-				if (["true", true].includes(this.bank_first)) {
-					this.form.favorite_only_until = `${this.$moment(
-						this.favorite_only_until.date,
-						"YYYY-MM-DD"
-					).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
-				}
-
-				if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
-					this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
-				}
-				if (this.unpaid_breaks === "other") {
-					this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
-				}
-				if (["false", false].includes(this.unpaid_breaks)) {
-					this.form.unpaid_breaks_in_minutes = "";
-				}
-
-				this.form.ir35 =
-					this.selectedProfession &&
-					this.selectedProfession.profession_category.name === "GP"
-						? this.form.ir35
-						: false;
-
-				this.loading = true;
-
-				this.$axios
-					.$post(`/api/v1/practice/jobs`, {
-						...this.form,
-						old_job_id:
-							this.repostJob && !["Cancelled"].includes(this.repostJob.status)
-								? this.repostJob.id
-								: null
-					})
-					.then(res => {
-						if (this.$route.name === "dashboard-create") {
-							this.$router.push("/dashboard");
-						} else if (this.$route.name !== "dashboard-create") {
-							this.$store.commit("calendar/CREATE_JOB_MODAL", false);
-
-							console.log("res.data", res.data);
-						}
-
-						const job = res.data.job;
-
-						if (job.status === "Live") {
-							this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", job);
-						}
-
-						if (this.repostJob) {
-							if (this.repostJob.status === "Unfilled") {
-								this.$store.commit(
-									"jobs/REMOVE_PRACTICE_UNFILLED_JOB",
-									this.repostJob.id
-								);
-							}
-
-							if (this.repostJob.status === "Withdrawn") {
-								this.$store.commit(
-									"jobs/REMOVE_PRACTICE_WITHDRAWN_JOB_PARTS_WHERE_JOB_ID_IS",
-									this.repostJob.id
-								);
-							}
-						}
-
-						this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: ["Successfully created job"]
-						});
-					})
-					.catch(err => {
-						console.log("err", err.response || err);
-
-						this.$refs.modalContainer.scrollTop = 0;
-
-						this.form.clinical_system = this.selectedClinicalSystem;
-
-						this.form.specialty = this.selectedQualification;
-
-						this.form.spoken_language_id = this.selectedSpokenLanguage;
-
-						this.form.session_requirements = this.form.session_requirements
-							? this.form.session_requirements.split(",")
-							: [];
-
-						let message = null;
-
-						if (err.response) {
-							if (
-								err.response.data.error_messages &&
-								err.response.data.error_messages.length > 0
-							) {
-								this.formError = err.response.data.error_messages;
-								let detailsError = [
-									"practice_id",
-									"number_of_patients",
-									"duration_for_each_appointment",
-									"role",
-									"specialty",
-									"clinical_system"
-								];
-								let hasDetailsError = this.formError
-									.map(err => detailsError.includes(err.field))
-									.includes(true);
-								if (hasDetailsError) {
-									this.tabActive = "details";
-								} else if (
-									this.formError
-										.map(err => ["schedules", "dates"].includes(err.field))
-										.includes(true)
-								) {
-									this.tabActive = "schedule";
-								}
-							} else {
-								message = err.response.data.message;
-							}
-						} else if (err.request) {
-							message = "Something weng wrong!";
-						} else {
-							message = err.message;
-						}
-
-						if (message) {
-							this.$store.commit("SET_NOTIFICATION", {
-								enabled: true,
-								status: "danger",
-								text: [`${message}`]
-							});
-						}
-					})
-					.finally(() => {
-						this.toPublish = false;
-						this.loading = false;
-					});
-			} else {
-				let detailsError = [
-					"practice_id",
-					"number_of_patients",
-					"duration_for_each_appointment",
-					"role",
-					"specialty",
-					"clinical_system"
-				];
-				let hasDetailsError = this.formError
-					.map(err => detailsError.includes(err.field))
-					.includes(true);
-				if (hasDetailsError) {
-					this.tabActive = "details";
-				}
-				console.log("errors", this.formError);
-				this.toPublish = false;
-				this.$nextTick(() => {
-					this.$refs.modalContainer.scrollTop = 0;
-				});
-			}
-		}
-	}
-};
+  components: {
+    AppInput,
+    AppFilterSearch,
+    // AppMultipleDates,
+    // AppSchedule,
+    AppSchedules,
+    AppDate,
+    AppButton,
+    AppTime,
+    AppLoading,
+    // AppConfirmationModal,
+  },
+
+  data () {
+    return {
+      banksCount: 0,
+      loading: false,
+      dataLoading: false,
+
+      // show_saturday: false,
+      // show_sunday: false,
+
+      practices: [],
+      practice_lists: [],
+      rate_lists: [],
+      mandatory_training: [],
+      professions: [],
+      session_requirements_lists,
+      mandatory_training_lists: [],
+      other_mandatory_training_lists: [],
+
+      professions_categories: [],
+
+      professionComplianceCategories: [],
+      practiceProfessionComplianceCategoryComplianceDocuments: [],
+
+      unpaid_breaks: false,
+      auto_assign_job: false,
+      selection_notification: false,
+      bank_first: false,
+      shifts: [],
+
+      selection_date: {
+        date: null,
+        time: null,
+      },
+      favorite_only_until: {
+        date: null,
+        time: null,
+      },
+
+      selectedQualification: [],
+      selectedClinicalSystem: [],
+      selectedSpokenLanguage: [],
+
+      // SPLIT JOBS
+      tabActive: "details",
+      hasShiftError: false,
+      total_working_hours: 0,
+      total_gross_locum_wages: 0,
+      shiftErrors: [],
+      toPublish: false,
+      schedules: [],
+      job_parts: [],
+
+      // schedule_dates: [],
+      // shift_schedule: [],
+      // initial_schedule: [],
+      // {
+      //   value: "1",
+      //   label: 'Sample Shift',
+      //   shift: 1,
+      //   time_start: '00:00',
+      //   time_end: '10:00',
+      //   locum_detail_rate_type_id: 1,
+      //   rate: 50,
+      //   appliedToAll: false,
+      // }
+      // select_dates: false, //Not used
+      // selected_dates: [], //Not used
+      // schedules: [],
+      // schedule: [],
+      // selected_sched_shift: "", //Not used
+      // overlayData: [],
+      // applyToAllDates: false, //Not used
+      // editingDates: false, //Not used
+      // showShifts: false,
+      // confirmClosing: false,
+      // shiftError: [],
+      // shift_saving: "",
+      // editShiftId: "",
+      // savedShifts: [],
+
+      form: {
+        practice_id: "",
+        title: "",
+        description: "",
+        email: "",
+        report_to: "",
+        is_another_doctor: false,
+        is_nurse_available: false,
+        number_of_patients: "",
+        duration_for_each_appointment: "",
+        opportunity_for_catch_up_slots: false,
+        session_requirements: [],
+        session_structure_information: "",
+        extra_information: "",
+        // rate: "",
+        // hours: 0,
+        // minutes: 0,
+        // total_hours: "",
+        // locum_detail_rate_type_id: 1,
+        ir35: false,
+        mandatory_training_id: [],
+        other_mandatory_training_id: [],
+        role: "",
+        specialty: [],
+        clinical_system: [],
+        spoken_language_id: [],
+        compliance_document_id: [],
+        // dates: [],
+        schedules: [],
+        schedule_templates: [],
+        // date_start: null,
+        // date_end: null,
+        // time_start: null,
+        // time_end: null,
+        // include_saturday: true,
+        // include_sunday: true,
+        // unpaid_breaks_in_minutes: "",
+        // shift: "",
+        auto_assign_at: null,
+        selection_date: null,
+        favorite_only: false,
+        favorite_only_until: null,
+      },
+      formError: [],
+    }
+  },
+
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
+
+    repostJob () {
+      return this.$store.state.calendar.repost_job
+    },
+
+    hasBanks () {
+      return this.banksCount > 0 ? true : false
+    },
+
+    complianceListLabel () {
+      return `For ${this.selectedProfession.profession_compliance_category_name}:`
+    },
+
+    selectedProfession () {
+      if (!this.form.role) {
+        return null
+      }
+
+      const profession = this.professions_categories.find(
+        profession => profession.id.toString() === this.form.role.toString()
+      )
+
+      if (!profession) {
+        return null
+      }
+
+      return profession
+    },
+
+    selectedProfessionComplianceCategory () {
+      if (!this.form.role) {
+        return null
+      }
+
+      const profession = this.professions_categories.find(
+        profession => profession.id.toString() === this.form.role.toString()
+      )
+
+      if (!profession) {
+        return null
+      }
+
+      const professionComplianceCategory = this.professionComplianceCategories.find(
+        professionComplianceCategory =>
+          professionComplianceCategory.id
+          === profession.profession_compliance_category_id
+      )
+
+      return professionComplianceCategory || null
+    },
+
+    emptyComplianceDocumentId: {
+      get () {
+        return this.form.compliance_document_id.length === 0
+      },
+      set (emptyComplianceDocumentId) {
+        if (emptyComplianceDocumentId) {
+          this.form.compliance_document_id = []
+        }
+      },
+    },
+
+    compliances () {
+      if (!this.form.role) {
+        return []
+      }
+
+      const profession = this.professions_categories.find(
+        profession => profession.id.toString() === this.form.role.toString()
+      )
+
+      if (!profession) {
+        return []
+      }
+
+      const complianceDocuments = this.professionComplianceCategories.reduce(
+        (compliances, professionComplianceCategory) => {
+          const {
+            reference_compliance_documents: referenceComplianceDocuments,
+            mandatory_compliance_documents: mandatoryComplianceDocuments,
+            optional_compliance_documents: optionalComplianceDocuments,
+          } = professionComplianceCategory
+
+          if (
+            professionComplianceCategory.id
+            === this.selectedProfessionComplianceCategory.id
+          ) {
+            [
+              referenceComplianceDocuments,
+              mandatoryComplianceDocuments,
+              optionalComplianceDocuments,
+            ].forEach(complianceDocuments => {
+              complianceDocuments.forEach(complianceDocument => {
+                const {
+                  id,
+                  name,
+                  compliance_document_type_name: complianceDocumentTypeName,
+                  child_compliance_documents: childComplianceDocuments,
+                } = complianceDocument
+
+                if (complianceDocumentTypeName === "Safeguarding") {
+                  childComplianceDocuments.forEach(childComplianceDocument => {
+                    const { id, name, } = childComplianceDocument
+
+                    compliances.push({
+                      label: name,
+                      value: id,
+                    })
+                  })
+                } else {
+                  compliances.push({
+                    label: name,
+                    value: id,
+                  })
+                }
+              })
+            })
+          }
+
+          return compliances
+        },
+        []
+      )
+
+      const complianceDocumentIds = complianceDocuments.map(
+        ({ value, }) => value
+      )
+
+      return this.practiceProfessionComplianceCategoryComplianceDocuments
+        .filter(practiceProfessionComplianceCategoryComplianceDocument => {
+          const {
+            compliance_document_id: complianceDocumentId,
+            profession_compliance_category_id: professionComplianceCategoryId,
+          } = practiceProfessionComplianceCategoryComplianceDocument
+
+          return (
+            professionComplianceCategoryId
+              === this.selectedProfessionComplianceCategory.id
+            && complianceDocumentIds.includes(complianceDocumentId)
+          )
+        })
+        .map(practiceProfessionComplianceCategoryComplianceDocument => {
+          const {
+            compliance_document_id: complianceDocumentId,
+            compliance_document_name: complianceDocumentName,
+          } = practiceProfessionComplianceCategoryComplianceDocument
+
+          return {
+            label: complianceDocumentName,
+            value: complianceDocumentId,
+          }
+        })
+    },
+
+    practice_rate () {
+      const profession = this.professions_categories
+        .find(profession => profession.id.toString() === this.form.role.toString())
+
+      const practiceRates = this.$auth.user
+        && this.$auth.user.practice_detail
+        && this.$auth.user.practice_detail.practice
+        ? this.$auth.user.practice_detail.practice.practice_rates
+        : []
+        
+      const practiceRate = practiceRates
+        .find(item => item.type === profession.profession_category_name)
+
+      return practiceRate ? practiceRate.rate : 0
+    },
+
+    hubzz_fee () {
+      return this.schedules.reduce((scheduleTotal, sched) => {
+        const shiftTotal = sched.shifts.reduce((shiftTotal, shift) => {
+          const time_start = shift.time_start
+
+          const time_end = shift.time_end
+
+          const total_hours = this.totalHours(time_start, time_end, sched.date)
+
+          if (total_hours > 0) {
+            const num = parseInt(total_hours)
+
+            if (!isNaN(num)) {
+              shiftTotal = shiftTotal + Math.round(Math.round(num / 60 * 100) / 100 * this.practice_rate * 100) / 100
+            }
+          }
+
+          return shiftTotal
+        }, 0)
+
+        return scheduleTotal + shiftTotal
+      }, 0).toFixed(2)
+    },
+  },
+
+  watch: {
+    selectedProfessionComplianceCategory () {
+      if (this.selectedProfessionComplianceCategory) {
+        const defaultSelectedComplianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
+          .filter(
+            practiceProfessionComplianceCategoryComplianceDocument =>
+              practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+              === this.selectedProfessionComplianceCategory.id
+          )
+          .map(
+            practiceProfessionComplianceCategoryComplianceDocument =>
+              practiceProfessionComplianceCategoryComplianceDocument.compliance_document_id
+          )
+
+        this.form.compliance_document_id = defaultSelectedComplianceDocumentIds
+      } else {
+        this.form.compliance_document_id = []
+      }
+    },
+    async "form.role" (newValue, oldValue) {
+      this.CheckEmptyField(newValue, "role")
+
+      if (newValue && oldValue) {
+        this.form.specialty = []
+      }
+    },
+    selectedProfession () {
+      if (this.selectedProfession) {
+        this.$axios
+          .get("/api/v1/practice/locums/count", {
+            params: {
+              profession_category_id: this.selectedProfession
+                .profession_category.id,
+              practice_locum_type: "Favorite",
+            },
+          })
+          .then(response => {
+            this.banksCount = response.data.data.count
+          })
+      }
+    },
+    "form.specialty" (value) {
+      this.CheckEmptyField(value, "specialty")
+    },
+    "form.clinical_system" (value) {
+      this.CheckEmptyField(value, "clinical_system")
+    },
+    "form.time_start" (value) {
+      console.log(value)
+      // console.log(this.form.date_start, this.form.date_end)
+      // if (this.form.date_start === this.form.date_end) {
+      // console.log(this.form.time_start, this.form.time_end)
+      // let fullDateStart = this.form.date_start
+      // }
+    },
+    schedule (value) {
+      console.log(value)
+    },
+    schedule_dates (value) {
+      if (value.length) {
+        let removedAnItem = false
+        this.schedule.forEach((sched, index) => {
+          let dateStillExist = value
+            .map(date => sched.date === date)
+            .includes(true)
+          if (!dateStillExist) {
+            this.schedule.splice(index, 1)
+            removedAnItem = true
+          }
+        })
+        if (!removedAnItem) {
+          this.schedule.push({ date: value[value.length - 1], shift_id: [], })
+        }
+      }
+      if (this.applyToAllDates) {
+        this.editingDates = true
+      }
+    },
+    toEditShift (newValue, oldValue) {
+      console.log("watch toEditShift", newValue, oldValue)
+    },
+    "form.practice_id" (newValue, oldValue) {
+      if (oldValue && newValue) {
+        this.form.mandatory_training_id = []
+        this.form.other_mandatory_training_id = []
+        this.form.compliance_document_id = []
+      }
+      if (newValue) {
+        let foundPractice = this.practices.find(
+          practice => practice.id === parseInt(newValue)
+        )
+        this.mandatory_training_lists = foundPractice.mandatory_trainings.map(
+          mandatoryTraining => ({
+            label: mandatoryTraining.name,
+            value: mandatoryTraining.id,
+          })
+        )
+
+        this.other_mandatory_training_lists = foundPractice.other_mandatory_trainings.map(
+          otherMandatoryTraining => ({
+            label: otherMandatoryTraining.name,
+            value: otherMandatoryTraining.id,
+          })
+        )
+
+        this.practiceProfessionComplianceCategoryComplianceDocuments
+          = foundPractice.practice_profession_compliance_category_compliance_documents
+      }
+    },
+  },
+
+  destroyed () {
+    this.$store.commit("calendar/CLEAR_REPOST_JOB")
+  },
+
+  created () {
+    console.log(this.repostJob)
+    this.dataLoading = true
+
+    Promise.all([
+      this.$axios.get("/api/v1/practice/me/practice-practices"),
+      this.$axios.get("/api/v1/locum-detail-rate-types").then(response =>
+        response.data.data.locum_detail_rate_types.map(rateType => ({
+          label: rateType.name,
+          value: rateType.id,
+        }))
+      ),
+      this.$axios.get("/api/v1/shifts").then(response =>
+        response.data.data.shifts.map(shift => ({
+          label: shift.name,
+          value: shift.id,
+        }))
+      ),
+      this.$axios
+        .get("/api/v1/professions")
+        .then(response => response.data.data.professions),
+      this.$axios
+        .get("/api/v1/practice/me/practice-profile")
+        .then(response => response.data.data.practice),
+      this.$axios
+        .get("/api/v1/profession-compliance-categories")
+        .then(response => {
+          return response.data.data.profession_compliance_categories
+        }),
+    ])
+      .then(responses => {
+        const [
+          responsePractices,
+          rateLists,
+          shiftLists,
+          professions,
+          profileProfile,
+          professionComplianceCategories,
+        ] = responses
+        this.practices = responsePractices.data.data.practices
+        this.practice_lists = responsePractices.data.data.practices.map(
+          practice => ({
+            label: practice.name,
+            value: practice.id,
+          })
+        )
+        this.rate_lists = rateLists
+        this.shifts = shiftLists
+        this.professions = professions.map(profession => ({
+          label: profession.name,
+          value: profession.id,
+        }))
+        this.professions_categories = professions
+        this.professionComplianceCategories = professionComplianceCategories
+
+        const {
+          report_to: reportTo,
+          email,
+          extra_information: extraInformation,
+          // practice_profession_compliance_category_compliance_documents: practiceProfessionComplianceCategoryComplianceDocuments,
+          // mandatory_trainings: mandatoryTrainings,
+          // other_mandatory_trainings: otherMandatoryTrainings
+        } = profileProfile
+
+        this.form.report_to = reportTo
+        this.form.email = email
+        this.form.extra_information = extraInformation
+        // this.practiceProfessionComplianceCategoryComplianceDocuments = practiceProfessionComplianceCategoryComplianceDocuments;
+
+        // this.mandatory_training_lists = mandatoryTrainings.map(
+        // 	mandatoryTraining => ({
+        // 		label: mandatoryTraining.name,
+        // 		value: mandatoryTraining.id
+        // 	})
+        // );
+
+        // this.other_mandatory_training_lists = otherMandatoryTrainings.map(
+        // 	otherMandatoryTraining => ({
+        // 		label: otherMandatoryTraining.name,
+        // 		value: otherMandatoryTraining.id
+        // 	})
+        // );
+
+        if (this.repostJob) {
+          const selectedProfession = this.professions_categories.find(
+            profession =>
+              profession.id === this.repostJob.platform_job.profession.id
+          )
+
+          const selectedProfessionCategoryId
+            = selectedProfession.profession_category.id
+          this.form.practice_id = this.repostJob.platform_job.practice.id
+          this.form.title = this.repostJob.title
+          this.form.description = this.repostJob.description
+          this.form.email = this.repostJob.platform_job.email
+          this.form.report_to = this.repostJob.platform_job.report_to
+
+          this.form.is_another_doctor = this.repostJob.platform_job.is_another_doctor
+          this.form.is_nurse_available = this.repostJob.platform_job.is_nurse_available
+          this.form.number_of_patients = this.repostJob.platform_job.number_of_patients
+          this.form.duration_for_each_appointment = this.repostJob.platform_job.duration_for_each_appointment
+          this.form.opportunity_for_catch_up_slots = this.repostJob.platform_job.opportunity_for_catch_up_slots
+          if (this.repostJob.platform_job.session_requirements === "") {
+            this.form.session_requirements = []
+          } else {
+            this.form.session_requirements = this.repostJob.platform_job
+              .session_requirements
+              ? this.repostJob.platform_job.session_requirements.split(",")
+              : []
+          }
+          this.form.session_structure_information = this.repostJob.platform_job.session_structure_information
+          this.form.extra_information = this.repostJob.platform_job.extra_information
+
+          // this.form.rate = this.repostJob.rate;
+          // this.form.total_hours = this.repostJob.total_hours;
+          // this.form.locum_detail_rate_type_id = this.repostJob.locum_detail_rate_type.id;
+          this.form.ir35 = this.repostJob.platform_job.ir35
+
+          this.form.mandatory_training_id = this.repostJob.platform_job.mandatory_trainings.map(
+            item => item.id
+          )
+          this.form.role = this.repostJob.platform_job.profession.id
+
+          this.repostJob.platform_job.qualifications.forEach(qualification => {
+            this.form.specialty.push({
+              label: qualification.name,
+              value: qualification.id,
+            })
+          })
+          this.repostJob.platform_job.clinical_systems.forEach(
+            clinicalSystem => {
+              this.form.clinical_system.push({
+                label: clinicalSystem.name,
+                value: clinicalSystem.id,
+              })
+            }
+          )
+
+          this.repostJob.platform_job.spoken_languages.forEach(
+            spokenLanguage => {
+              this.form.spoken_language_id.push({
+                label: spokenLanguage.name,
+                value: spokenLanguage.id,
+              })
+            }
+          )
+
+          const complianceDocumentIds = this.practiceProfessionComplianceCategoryComplianceDocuments
+            .filter(
+              practiceProfessionComplianceCategoryComplianceDocument =>
+                practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
+                === selectedProfessionCategoryId
+            )
+            .map(
+              ({ compliance_document_id: complianceDocumentId, }) =>
+                complianceDocumentId
+            )
+
+          this.$nextTick(() => {
+            this.form.compliance_document_id = this.repostJob.platform_job.compliance_documents
+              .map(complianceDocument => complianceDocument.id)
+              .filter(complianceDocumentId =>
+                complianceDocumentIds.includes(complianceDocumentId)
+              )
+          })
+
+          // this.form.dates = this.repostJob.dates
+
+          // this.form.date_start = this.$moment().isBefore(
+          //   this.repostJob.date_start
+          // )
+          //   ? this.repostJob.date_start
+          //   : null
+
+          // this.form.date_end = this.$moment().isBefore(
+          //   this.repostJob.date_end
+          // )
+          //   ? this.repostJob.date_end
+          //   : null
+
+          // this.form.include_saturday = this.repostJob.include_saturday
+          // this.form.include_sunday = this.repostJob.include_sunday
+
+          // this.form.time_start = this.$moment().isBefore(
+          //   this.repostJob.dates[0])
+          //   ? this.repostJob.time_start
+          //   : null
+          //   this.form.time_end = this.$moment().isBefore(
+          // this.repostJob.dates[this.repostJob.dates.length-1])
+          //   ? this.repostJob.time_end
+          //   : null
+
+          // if (this.$moment().isBefore(this.repostJob.dates[this.repostJob.dates.length-1])) {
+          //   this.repostJob.dates.forEach(date => this.form.dates.push(date))
+          // }
+          // if (this.repostJob.platform_job.unpaid_breaks_in_minutes === 0) {
+          // 	this.unpaid_breaks = false;
+          // } else if (
+          // 	![15, 30, 60].includes(
+          // 		this.repostJob.platform_job.unpaid_breaks_in_minutes
+          // 	)
+          // ) {
+          // 	this.unpaid_breaks = "other";
+          // 	this.form.unpaid_breaks_in_minutes = this.repostJob.platform_job.unpaid_breaks_in_minutes;
+          // } else {
+          // 	this.unpaid_breaks = this.repostJob.platform_job.unpaid_breaks_in_minutes;
+          // }
+
+          // this.form.shift = this.repostJob.shift.id;
+
+          this.form.auto_assign_at = this.repostJob.platform_job.auto_assign_at
+          if (this.form.auto_assign_at) {
+            this.auto_assign_job = true
+          }
+
+          if (this.repostJob.platform_job.selection_date) {
+            this.selection_date.date = this.$moment().isBefore(
+              this.repostJob.platform_job.selection_date
+            )
+              ? this.$moment(this.repostJob.platform_job.selection_date).format(
+                "YYYY-MM-DD"
+              )
+              : null
+            this.selection_date.time = this.$moment().isBefore(
+              this.repostJob.platform_job.selection_date
+            )
+              ? this.$moment(this.repostJob.platform_job.selection_date).format(
+                "HH:mm"
+              )
+              : null
+          }
+
+          if (this.repostJob.favorite_only) {
+            this.form.favorite_only = true
+          } else if (
+            this.$moment(this.repostJob.date_start, "YYYY-MM-DD").diff(
+              this.repostJob.platform_job.favorite_only_until,
+              "seconds"
+            ) > 0
+          ) {
+            this.bank_first = true
+            this.favorite_only_until.date = this.$moment(
+              this.repostJob.platform_job.favorite_only_until,
+              "YYYY-MM-DDTHH:mm:ss:sssZ"
+            ).format("YYYY-MM-DD")
+            this.favorite_only_until.time = this.$moment(
+              this.repostJob.platform_job.favorite_only_until,
+              "YYYY-MM-DDTHH:mm:ss:sssZ"
+            ).format("HH:mm")
+          }
+        }
+      })
+      .finally(() => {
+        this.dataLoading = false
+      })
+  },
+
+  methods: {
+    totalHours (start, end, date) {
+      let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
+      let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
+      return start && end
+        ? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
+        : 0
+    },
+
+    // FOR APP SCHEDULE COMPONENT
+    getTemplateSchedules (shift_schedule) {
+      console.log("shift_schedule", shift_schedule)
+      this.form.schedule_templates = []
+      shift_schedule.forEach(shift => {
+        this.form.schedule_templates.push({
+          name: shift.label,
+          shift_id: shift.shift_id,
+          time_start: shift.time_start,
+          time_end: shift.time_end,
+          locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+          rate: shift.rate,
+        })
+      })
+    },
+    getInitialSchedule (payload) {
+      this.form.schedules = []
+      if (payload.schedule) {
+        payload.schedule.forEach(sched => {
+          sched.shift_id.forEach(id => {
+            let shift = payload.shift_schedule.find(
+              shift => shift.value === id
+            )
+            this.form.schedules.push({
+              date: sched.date,
+              shift_id: shift.shift_id,
+              time_start: shift.time_start,
+              time_end: shift.time_end,
+              locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+              rate: shift.rate,
+              schedule_template_name: shift.label,
+            })
+          })
+        })
+      }
+    },
+    // revised app schedule
+    next () {
+      this.formError = []
+      let notRequired = [
+        "title",
+        "description",
+        "session_requirements",
+        "session_structure_information",
+        "extra_information",
+        "is_another_doctor",
+        "is_nurse_available",
+        "opportunity_for_catch_up_slots",
+        "spoken_language_id",
+        "ir35",
+        "mandatory_training_id",
+        "other_mandatory_training_id",
+        "include_saturday",
+        "include_sunday",
+        "compliance_document_id",
+        "auto_assign_at",
+        "total_hours",
+        "hours",
+        "minutes",
+        "favorite_only",
+        "shift_id",
+        "schedule_templates",
+        "schedules",
+        "unpaid_breaks_in_minutes",
+      ]
+      if (!this.hasBanks) {
+        this.form.favorite_only = false
+        this.bank_first = false
+        this.favorite_only_until.date = null
+        this.favorite_only_until.time = null
+      }
+
+      if (["true", true,].includes(this.auto_assign_job)) {
+        this.selection_notification = false
+      }
+
+      if (["false", false,].includes(this.selection_notification)) {
+        notRequired.push("selection_date")
+      } else if (
+        ["true", true,].includes(this.selection_notification)
+        && this.selection_date.date
+        && this.selection_date.time
+      ) {
+        notRequired.push("selection_date")
+      }
+
+      if (["true", true,].includes(this.form.favorite_only)) {
+        this.bank_first = false
+      }
+
+      if (["false", false,].includes(this.bank_first)) {
+        notRequired.push("favorite_only_until")
+      } else if (
+        ["true", true,].includes(this.bank_first)
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
+      ) {
+        notRequired.push("favorite_only_until")
+      }
+
+      this.Validate(this.form, notRequired)
+      console.log("formError", this.formError)
+      if (!this.formError.length) {
+        this.tabActive = "schedule"
+      } else {
+        this.$nextTick(() => {
+          this.$refs.modalContainer.scrollTop = 0
+        })
+      }
+    },
+
+    getSchedule (
+      schedule,
+      total_gross_locum_wages,
+      total_working_hours,
+      deductions,
+      total_lates,
+      hasError,
+      job_parts
+    ) {
+      this.form.schedules = []
+
+      this.schedules = schedule
+
+      schedule.forEach((sched, index) => {
+        if (sched.shifts && sched.shifts.length) {
+          let dateErrIndex = this.shiftErrors.findIndex(
+            err => err.field === `shift-${sched.date}`
+          )
+
+          if (dateErrIndex > -1) {
+            this.shiftErrors.splice(dateErrIndex, 1)
+          }
+
+          sched.shifts.forEach((shift, i) => {
+            this.form.schedules.push({
+              date: this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
+              shift_id: shift.shift_id,
+              time_start: shift.time_start,
+              time_end: shift.time_end,
+              locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
+              rate: shift.rate,
+            })
+
+            if (shift.time_start) {
+              let startIndex = this.shiftErrors.findIndex(
+                err => err.field === `time_start-s${index}-${i}`
+              )
+
+              if (startIndex > -1) {
+                this.shiftErrors.splice(startIndex, 1)
+              }
+            }
+
+            if (shift.time_end) {
+              let endIndex = this.shiftErrors.findIndex(
+                err => err.field === `time_end-s${index}-${i}`
+              )
+
+              if (endIndex > -1) {
+                this.shiftErrors.splice(endIndex, 1)
+              }
+            }
+
+            if (
+              shift.locum_detail_rate_type_id !== 0
+              && shift.locum_detail_rate_type_id !== ""
+            ) {
+              let rateTypeIndex = this.shiftErrors.findIndex(
+                err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
+              )
+
+              if (rateTypeIndex > -1) {
+                this.shiftErrors.splice(rateTypeIndex, 1)
+              }
+            }
+
+            if (shift.shift_id !== 0 && shift.shift_id !== "") {
+              let shiftIdIndex = this.shiftErrors.findIndex(
+                err => err.field === `shift_id-s${index}-${i}`
+              )
+
+              if (shiftIdIndex > -1) {
+                this.shiftErrors.splice(shiftIdIndex, 1)
+              }
+            }
+
+            if (shift.rate !== 0 && shift.rate !== "") {
+              let rateIndex = this.shiftErrors.findIndex(
+                err => err.field === `rate-s${index}-${i}`
+              )
+              
+              if (rateIndex > -1) {
+                this.shiftErrors.splice(rateIndex, 1)
+              }
+            }
+          })
+        }
+      })
+
+      this.total_working_hours = total_working_hours
+
+      this.total_gross_locum_wages = total_gross_locum_wages
+
+      this.hasShiftError = hasError
+
+      this.job_parts = job_parts
+    },
+
+    canPublish () {
+      this.shiftErrors = []
+      this.formError = []
+      let has_conflict = false
+      this.schedules.forEach((sched, index) => {
+        if (!sched.shifts.length) {
+          this.shiftErrors.push({
+            field: `shift-${sched.date}`,
+            message: "Schedule is required. Add Shift to create schedule.",
+          })
+        } else {
+          sched.shifts.forEach((shift, i) => {
+            if (!shift.time_start) {
+              this.shiftErrors.push({
+                field: `time_start-s${index}-${i}`,
+                message: "Start is required.",
+              })
+            }
+            if (!shift.time_end) {
+              this.shiftErrors.push({
+                field: `time_end-s${index}-${i}`,
+                message: "End is required.",
+              })
+            }
+            if (shift.locum_detail_rate_type_id === 0) {
+              this.shiftErrors.push({
+                field: `locum_detail_rate_type_id-s${index}-${i}`,
+                message: "Rate type is required.",
+              })
+            }
+            if (shift.shift_id === 0) {
+              this.shiftErrors.push({
+                field: `shift_id-s${index}-${i}`,
+                message: "Shift is required.",
+              })
+            }
+            if (shift.rate === 0) {
+              this.shiftErrors.push({
+                field: `rate-s${index}-${i}`,
+                message: "Rate is required.",
+              })
+            }
+          })
+        }
+      })
+      if (!this.shiftErrors.length) {
+        this.form.profession_id = this.form.role
+        this.form.shift_id = this.form.shift
+        this.selectedClinicalSystem = [...this.form.clinical_system,]
+        this.form.clinical_system_id = this.form.clinical_system.map(
+          item => item.value
+        )
+        this.selectedQualification = [...this.form.specialty,]
+        this.form.qualification_id = this.form.specialty.map(
+          item => item.value
+        )
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+        this.form.spoken_language_id = this.form.spoken_language_id.map(
+          item => item.value
+        )
+
+        if (Array.isArray(this.form.session_requirements)) {
+          if (this.form.session_requirements.length === 1) {
+            this.form.session_requirements = this.form.session_requirements[0]
+          } else if (this.form.session_requirements.length > 0) {
+            this.form.session_requirements = this.form.session_requirements.join()
+          } else if (this.form.session_requirements.length === 0) {
+            this.form.session_requirements = ""
+          }
+        }
+
+        this.form.auto_assign_at = null
+        if (["true", true,].includes(this.auto_assign_job)) {
+          this.form.auto_assign_at = "1970-01-01 00:00"
+        }
+
+        this.form.selection_date = null
+        if (["false", false,].includes(this.auto_assign_job)) {
+          if (["true", true,].includes(this.selection_notification)) {
+            this.form.selection_date = `${this.$moment(
+              this.selection_date.date,
+              "YYYY-MM-DD"
+            ).format("YYYY-MM-DD")} ${this.selection_date.time}`
+          }
+        }
+
+        this.form.favorite_only_until = null
+        if (["true", true,].includes(this.bank_first)) {
+          this.form.favorite_only_until = `${this.$moment(
+            this.favorite_only_until.date,
+            "YYYY-MM-DD"
+          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
+        }
+
+        if (["15", 15, "30", 30, "60", 60,].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
+        }
+        if (this.unpaid_breaks === "other") {
+          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
+        }
+        if (["false", false,].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = ""
+        }
+
+        this.form.ir35
+          = this.selectedProfession
+          && this.selectedProfession.profession_category.name === "GP"
+            ? this.form.ir35
+            : false
+
+        this.loading = true
+
+        this.$axios
+          .$post(`/api/v1/practice/jobs/check`, {
+            ...this.form,
+            old_job_id:
+              this.repostJob
+              && !["Cancelled",].includes(this.repostJob.status)
+                ? this.repostJob.id
+                : null,
+          })
+          .then(() => {
+            if (
+              !this.shiftErrors.length
+              && !this.hasShiftError
+              && !this.formError.length
+              && !has_conflict
+            ) {
+              this.toPublish = true
+            }
+            this.loading = false
+          })
+          .catch(err => {
+            console.log("err", err.response || err)
+
+            this.$refs.modalContainer.scrollTop = 0
+
+            this.form.clinical_system = this.selectedClinicalSystem
+
+            this.form.specialty = this.selectedQualification
+
+            this.form.spoken_language_id = this.selectedSpokenLanguage
+
+            this.form.session_requirements = this.form.session_requirements
+              ? this.form.session_requirements.split(",")
+              : []
+
+            let message = null
+
+            if (err.response) {
+              if (err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+                this.shiftErrors = err.response.data.error_messages
+                // let detailsError = [
+                //   "practice_id",
+                //   "number_of_patients",
+                //   "duration_for_each_appointment",
+                //   "role",
+                //   "specialty",
+                //   "clinical_system",
+                // ]
+                let sched_has_conflict = this.shiftErrors.find(
+                  err => err.field === "schedules"
+                )
+                if (sched_has_conflict) {
+                  has_conflict = true
+                  sched_has_conflict.conflictSchedules.forEach(item => {
+                    this.shiftErrors.push({
+                      field: `conflict-${this.$moment(
+                        item.date,
+                        "YYYY-MM-DD"
+                      ).format("DD/MM/YYYY")}-${item.index}`,
+                      message:
+                        "This schedule has a conflict with another schedule.",
+                    })
+                  })
+                  let conflictDates = sched_has_conflict.conflictSchedules
+                    .map(item => item.date)
+                    .filter(item => item)
+                  let job_parts = []
+                  conflictDates.forEach(date => {
+                    let job_part = this.job_parts.find(item =>
+                      item.dates.includes(date)
+                    )
+                    if (!job_parts.includes(job_part.value)) {
+                      job_parts.push(job_part.value)
+                    }
+                  })
+                  this.$store.commit("SET_NOTIFICATION", {
+                    enabled: true,
+                    status: "danger",
+                    text: [
+                      `Conflict schedule on Job Part/s (${job_parts.join(",")})`,
+                    ],
+                    duration: 3000,
+                  })
+                }
+
+                this.formError = err.response.data.error_messages
+
+                console.log('formErropr', this.formError)
+                let detailsError = [
+                  "practice_id",
+                  "number_of_patients",
+                  "duration_for_each_appointment",
+                  "role",
+                  "specialty",
+                  "clinical_system",
+                ]
+
+                let hasDetailsError = this.formError
+                  .map(err => detailsError.includes(err.field))
+                  .includes(true)
+                if (hasDetailsError) {
+                  this.tabActive = "details"
+                } else if (
+                  this.formError
+                    .map(err => ["schedules", "dates",].includes(err.field))
+                    .includes(true)
+                ) {
+                  this.tabActive = "schedule"
+                }
+              } else {
+                message = err.response.data.message
+              }
+              // if (this.shiftErrors.length) {
+              //   let sched_has_conflict = this.shiftErrors.find(
+              //     err => err.field === "schedules"
+              //   )
+              // }
+            } else if (err.request) {
+              message = "Something weng wrong!"
+            } else {
+              message = err.message
+            }
+
+            if (message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${message}`,],
+              })
+            }
+            this.loading = false
+          })
+      }
+      if (this.shiftErrors.length) {
+        let has_empty_sched_dates = this.shiftErrors.filter(err =>
+          err.field.includes("shift-")
+        )
+        let job_parts = []
+        if (has_empty_sched_dates.length) {
+          has_empty_sched_dates.forEach(err => {
+            let empty_date = err.field.split("-")[1]
+            let job_part = this.job_parts.find(part =>
+              part.dates.includes(
+                this.$moment(empty_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+              )
+            )
+            let exist = job_parts.find(item => item === `${job_part.value}`)
+            if (job_part && !exist) {
+              job_parts.push(`${job_part.value}`)
+            }
+          })
+          let partsLabel = ""
+          job_parts.forEach((item, index) => {
+            if (job_parts.length > 1) {
+              if (index !== job_parts.length - 1) {
+                partsLabel += `${item}, `
+              } else if (index === job_parts.length - 1) {
+                partsLabel += `${item}`
+              }
+              //  else {
+              // partsLabel += ` and ${item}`;
+              // }
+            } else {
+              partsLabel += item
+            }
+          })
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`Empty schedule on Job Part/s (${partsLabel})`,],
+            duration: 3000,
+          })
+        }
+      }
+    },
+
+    // -- END FOR APP SCHEDULE COMPONENT
+    hasValue (value, field) {
+      if (value == 0) {
+        this.form[field] = ""
+      }
+    },
+
+    handleKeyDownEvent (e, formField, limit) {
+      let acceptedKeys = [
+        "Backspace",
+        "Tab",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+      ]
+      if (
+        this.form[formField].length >= limit
+        && !acceptedKeys.includes(e.key)
+      ) {
+        e.preventDefault()
+      }
+    },
+
+    // getListofDays (days) {
+    //   // if (days.includes(6) && days.length > 1) {
+    //   //   this.show_saturday = true
+    //   //   this.form.include_saturday = true
+    //   // } else if (days.includes(6) && days.length === 1) {
+    //   //   this.show_saturday = false
+    //   //   this.form.include_saturday = true
+    //   // } else if (!days.includes(6)) {
+    //   //   this.show_saturday = false
+    //   //   this.form.include_saturday = false
+    //   // }
+    //   // if (days.includes(0) && days.length > 1) {
+    //   //   this.show_sunday = true
+    //   //   this.form.include_sunday = true
+    //   // } else if (days.includes(0) && days.length === 1) {
+    //   //   this.show_sunday = false
+    //   //   this.form.include_sunday = true
+    //   // } else if (!days.includes(0)) {
+    //   //   this.show_sunday = false
+    //   //   this.form.include_sunday = false
+    //   // }
+    // },
+
+    close () {
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+      this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false)
+      this.$store.commit("calendar/CLEAR_REPOST_JOB")
+      this.$emit("close")
+    },
+
+    goToProfile () {
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+      this.$store.commit("calendar/CLEAR_REPOST_JOB")
+      window.open("/profile", "_blank")
+    },
+
+    uncheckMandatory (value) {
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
+        id => id != value
+      )
+    },
+
+    validateNumber (value, fieldName) {
+      let displayFieldName
+        = fieldName.charAt(0).toUpperCase()
+        + fieldName.slice(1).replace(/_/g, " ")
+      let index = this.formError.findIndex(item => item.field === fieldName)
+      if (
+        parseInt(value) < 1
+        || value.toString().includes("e")
+        || value === ""
+      ) {
+        this.formError.push({
+          field: fieldName,
+          message: `${displayFieldName} is invalid`,
+        })
+      } else {
+        this.formError.splice(index, 1)
+      }
+    },
+
+    createJob () {
+      this.formError = []
+      let notRequired = [
+        "title",
+        "description",
+        "session_requirements",
+        "session_structure_information",
+        "extra_information",
+        "is_another_doctor",
+        "is_nurse_available",
+        "opportunity_for_catch_up_slots",
+        "spoken_language_id",
+        "ir35",
+        "mandatory_training_id",
+        "other_mandatory_training_id",
+        "include_saturday",
+        "include_sunday",
+        "compliance_document_id",
+        "auto_assign_at",
+        "total_hours",
+        "hours",
+        "minutes",
+        "favorite_only",
+        "shift_id",
+        "schedule_templates",
+        "unpaid_breaks_in_minutes",
+      ]
+      if (!this.hasBanks) {
+        this.form.favorite_only = false
+        this.bank_first = false
+        this.favorite_only_until.date = null
+        this.favorite_only_until.time = null
+      }
+
+      if (["true", true,].includes(this.auto_assign_job)) {
+        this.selection_notification = false
+      }
+
+      if (["false", false,].includes(this.selection_notification)) {
+        notRequired.push("selection_date")
+      } else if (
+        ["true", true,].includes(this.selection_notification)
+        && this.selection_date.date
+        && this.selection_date.time
+      ) {
+        notRequired.push("selection_date")
+      }
+
+      if (["true", true,].includes(this.form.favorite_only)) {
+        this.bank_first = false
+      }
+
+      if (["false", false,].includes(this.bank_first)) {
+        notRequired.push("favorite_only_until")
+      } else if (
+        ["true", true,].includes(this.bank_first)
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
+      ) {
+        notRequired.push("favorite_only_until")
+      }
+
+      this.Validate(this.form, notRequired)
+
+      if (!this.formError.length) {
+        this.form.profession_id = this.form.role
+        this.form.shift_id = this.form.shift
+        this.selectedClinicalSystem = [...this.form.clinical_system,]
+        this.form.clinical_system_id = this.form.clinical_system.map(
+          item => item.value
+        )
+        this.selectedQualification = [...this.form.specialty,]
+        this.form.qualification_id = this.form.specialty.map(
+          item => item.value
+        )
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+        this.form.spoken_language_id = this.form.spoken_language_id.map(
+          item => item.value
+        )
+        // this.form.date_start = this.$moment(
+        //   this.form.date_start,
+        //   "YYYY-MM-DD"
+        // ).format("YYYY-MM-DD")
+        // this.form.date_end = this.$moment(
+        //   this.form.date_end,
+        //   "YYYY-MM-DD"
+        // ).format("YYYY-MM-DD")
+
+        if (Array.isArray(this.form.session_requirements)) {
+          if (this.form.session_requirements.length === 1) {
+            this.form.session_requirements = this.form.session_requirements[0]
+          } else if (this.form.session_requirements.length > 0) {
+            this.form.session_requirements = this.form.session_requirements.join()
+          } else if (this.form.session_requirements.length === 0) {
+            this.form.session_requirements = ""
+          }
+        }
+
+        this.form.auto_assign_at = null
+        if (["true", true,].includes(this.auto_assign_job)) {
+          this.form.auto_assign_at = "1970-01-01 00:00"
+        }
+
+        this.form.selection_date = null
+        if (["false", false,].includes(this.auto_assign_job)) {
+          if (["true", true,].includes(this.selection_notification)) {
+            this.form.selection_date = `${this.$moment(
+              this.selection_date.date,
+              "YYYY-MM-DD"
+            ).format("YYYY-MM-DD")} ${this.selection_date.time}`
+          }
+        }
+
+        this.form.favorite_only_until = null
+        if (["true", true,].includes(this.bank_first)) {
+          this.form.favorite_only_until = `${this.$moment(
+            this.favorite_only_until.date,
+            "YYYY-MM-DD"
+          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
+        }
+
+        if (["15", 15, "30", 30, "60", 60,].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
+        }
+        if (this.unpaid_breaks === "other") {
+          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
+        }
+        if (["false", false,].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = ""
+        }
+
+        this.form.ir35
+          = this.selectedProfession
+          && this.selectedProfession.profession_category.name === "GP"
+            ? this.form.ir35
+            : false
+
+        this.loading = true
+
+        this.$axios.$post(`/api/v1/practice/jobs`, {
+          ...this.form,
+          old_job_id:
+            this.repostJob
+            && !["Cancelled",].includes(this.repostJob.status)
+              ? this.repostJob.id
+              : null,
+        }).then(res => {
+          if (this.$route.name === "dashboard-create") {
+            this.$router.push("/dashboard")
+          } else if (this.$route.name !== "dashboard-create") {
+            this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+
+            console.log("res.data", res.data)
+          }
+          
+          const job = res.data.job
+
+          if (job.status === 'Live') {
+            this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", job)
+          }
+
+          if (this.repostJob) {
+            if (this.repostJob.status === 'Unfilled') {
+              this.$store.commit("jobs/REMOVE_PRACTICE_UNFILLED_JOB", this.repostJob.id)
+            }
+
+            if (this.repostJob.status === 'Withdrawn') {
+              this.$store.commit("jobs/REMOVE_PRACTICE_WITHDRAWN_JOB_PARTS_WHERE_JOB_ID_IS", this.repostJob.id)
+            }
+          }
+
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Successfully created job",],
+          })
+        }).catch(err => {
+          console.log("err", err.response || err)
+
+          this.$refs.modalContainer.scrollTop = 0
+
+          this.form.clinical_system = this.selectedClinicalSystem
+
+          this.form.specialty = this.selectedQualification
+
+          this.form.spoken_language_id = this.selectedSpokenLanguage
+
+          this.form.session_requirements = this.form.session_requirements
+            ? this.form.session_requirements.split(",")
+            : []
+
+          let message = null
+
+          if (err.response) {
+            if (err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+              this.formError = err.response.data.error_messages
+              let detailsError = [
+                "practice_id",
+                "number_of_patients",
+                "duration_for_each_appointment",
+                "role",
+                "specialty",
+                "clinical_system",
+              ]
+
+              let hasDetailsError = this.formError
+                .map(err => detailsError.includes(err.field))
+                .includes(true)
+              if (hasDetailsError) {
+                this.tabActive = "details"
+              } else if (
+                this.formError
+                  .map(err => ["schedules", "dates",].includes(err.field))
+                  .includes(true)
+              ) {
+                this.tabActive = "schedule"
+              }
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = "Something weng wrong!"
+          } else {
+            message = err.message
+          }
+
+          if (message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${message}`,],
+            })
+          }
+        }).finally(() => {
+          this.toPublish = false
+          this.loading = false
+        })
+      } else {
+        let detailsError = [
+          "practice_id",
+          "number_of_patients",
+          "duration_for_each_appointment",
+          "role",
+          "specialty",
+          "clinical_system",
+        ]
+        let hasDetailsError = this.formError
+          .map(err => detailsError.includes(err.field))
+          .includes(true)
+        if (hasDetailsError) {
+          this.tabActive = "details"
+        }
+        console.log("errors", this.formError)
+        this.toPublish = false
+        this.$nextTick(() => {
+          this.$refs.modalContainer.scrollTop = 0
+        })
+      }
+    },
+  },
+}
 </script>
 
 <style scoped>

@@ -48,7 +48,6 @@
                 :error="formError.find(item => item.field === 'dates')"
                 is-after
                 multipleSelection
-                @blur="CheckEmptyField(form.dates,'dates')"
               />
             </div>
             <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -128,7 +127,7 @@
             </div>
           </div>
 
-          <div class="flex flex-row flex-wrap justify-start mt-4">
+          <!-- <div class="flex flex-row flex-wrap justify-start mt-4" v-if="false">
             <div class="flex flex-wrap items-center mt-2">
               <AppInput
                 v-model="form.total_hours"
@@ -144,7 +143,7 @@
                 hours
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="mt-4">
             <AppInput
@@ -233,7 +232,7 @@ export default {
         shift_id: "",
         locum_detail_rate_type_id: "",
         rate: "",
-        total_hours: "",
+        // total_hours: "",
         description: "",
       },
       formError: [],
@@ -432,7 +431,7 @@ export default {
       this.form.shift_id = this.job.shift.id
       this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
       this.form.rate = this.job.rate
-      this.form.total_hours = this.job.total_hours
+      // this.form.total_hours = this.job && this.job.total_hours ? this.job.total_hours.toFixed(2) : 0
       this.form.description = this.job.description
       if (this.job.dates) {
         this.job.dates.forEach(date => this.form.dates.push(date))

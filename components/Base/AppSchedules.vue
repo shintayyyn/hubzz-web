@@ -558,7 +558,7 @@
                             v-if="
                               $auth.user.domain === 'Locum'
                                 ? !toDisplay
-                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))
+                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay)
                             "
                           >
                             <AppTime
@@ -614,7 +614,7 @@
                             v-if="
                               $auth.user.domain === 'Locum'
                                 ? !toDisplay
-                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus))
+                                : (shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay)
                             "
                             v-model="shift.final_time_end"
                             :name="`final_time_end-s${index}-${i}`"
@@ -661,7 +661,7 @@
                         <!-- ANY ABSENCES -->
                         <div class="flex items-center justify-center text-center w-2/12">
                           <button
-                            v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus)"
+                            v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay"
                             :disabled="[false, 'false'].includes(shift.dispute)"
                             class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2"
                             :class="[
@@ -990,7 +990,7 @@
               class="flex flex-col text-lg text-gray-600 font-bold text-right"
               :class="type === 'create' ? ' w-2/4' : 'w-2/5'"
             >
-              <div class="flex justify-between">
+              <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Total Hours:
                 </p>
@@ -1002,7 +1002,7 @@
                 </p>
               </div>
 
-              <div class="flex justify-between">
+              <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
                   Job Part {{ job_part_id }}/{{ job_parts.length }} Gross Rate:
                 </p>
@@ -1014,31 +1014,7 @@
                 </p>
               </div>
 
-              <div class="flex justify-between">
-                <p class="w-2/3">
-                  Job Part {{ job_part_id }}/{{ job_parts.length }} Tax Rate:
-                </p>
-
-                <p
-                  class="w-1/3"
-                >
-                  £ {{ getJobTaxRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
-                </p>
-              </div>
-
-              <div class="flex justify-between">
-                <p class="w-2/3">
-                  Job Part {{ job_part_id }}/{{ job_parts.length }} Taxed Gross Rate:
-                </p>
-
-                <p
-                  class="w-1/3"
-                >
-                  £ {{ getJobTaxedGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
-                </p>
-              </div>
-
-              <div class="flex justify-between">
+              <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
                   Total Job Gross Rate:
                 </p>
@@ -1048,7 +1024,67 @@
                 </p>
               </div>
 
+              <!-- ----------------------FOR COMPLETE / TERMINATE ONLY --------------------->
+
               <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Total Hours:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  {{ getTotalHours(filteredSchedule) > 0 ? '' : '-' }} {{ getTotalHours(filteredSchedule) | hoursMinutes }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Gross Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type) && locum_vat_registered" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Tax Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobTaxRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type) && locum_vat_registered" class="flex justify-between">
+                <p class="w-2/3">
+                  Job Part {{ job_part_queue_number }}/{{ jobPartTerminationCompletion.job.job_parts.length }} Taxed Gross Rate:
+                </p>
+
+                <p
+                  class="w-1/3"
+                >
+                  £ {{ getJobTaxedGrossRate(filteredSchedule, ['complete', 'terminate'].includes(type)) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between border-t-2 text-gray-500">
+                <p class="w-2/3">
+                  Total Job Gross Rate(Tentative):
+                </p>
+
+                <p class="w-1/3">
+                  £ {{ getEntireJobGrossRate(jobPartTerminationCompletion.job.schedules) | currency }}
+                </p>
+              </div>
+
+              <div v-if="['complete', 'terminate'].includes(type)" class="flex justify-between text-gray-500">
                 <p class="w-2/3">
                   Hubzz Fee*:
                 </p>
@@ -1063,7 +1099,7 @@
           <transition name="fade">
             <div v-if="show_late_reason" class="message-modal mini-modal fixed bg-white p-4 center">
               <p class="font-bold uppercase">
-                {{ selectedShift.type }} Reason
+                {{ selectedShift.type }} Reason 
               </p>
 
               <AppInput
@@ -1101,7 +1137,7 @@
                 :inStyle="'background-color: transparent'"
                 :resize="false"
                 :error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
-                :disabled="$auth.user.domain === 'Practice' || toDisplay"
+                :disabled="toDisplay"
                 :limit="!toDisplay ? 300 : null"
               />
 
@@ -1129,7 +1165,7 @@
                 <AppButton
                   v-if="
                     type === 'invoice'
-                      ? $auth.user.domain === 'Locum' && !toDisplay
+                      ? !toDisplay
                       : !toDisplay
                   "
                   :label="'Save'"
@@ -1244,6 +1280,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    jobPartTerminationCompletion: {
+      type: Object,
+      default: () => null,
+    },
   },
 
   data () {
@@ -1260,6 +1301,8 @@ export default {
       selectedShift: null,
       cannotAddShift: [],
       original_schedule: [],
+
+      job_part_queue_number: '',
     }
   },
 
@@ -1598,10 +1641,6 @@ export default {
     schedules () {
       this.emitSchedule()
     },
-
-    shiftErrors (value) {
-      console.log("shiftErrors", value)
-    },
   },
 
   created () {
@@ -1693,6 +1732,10 @@ export default {
               dispute: isDisputed,
               remarks: sched.remarks ? sched.remarks : "",
               total: finalRate,
+
+              last_disputed_by: sched.last_disputed_by,
+              practice_last_edit_time_start: sched.practice_last_edit_time_start,
+              practice_last_edit_time_end: sched.practice_last_edit_time_end,
             })
           } else {
             isExisting.shifts.push({
@@ -1802,6 +1845,10 @@ export default {
                   dispute: isDisputed,
                   remarks: sched.remarks ? sched.remarks : "",
                   total: finalRate,
+
+                  last_disputed_by: sched.last_disputed_by,
+                  practice_last_edit_time_start: sched.practice_last_edit_time_start,
+                  practice_last_edit_time_end: sched.practice_last_edit_time_end,
                 },
               ],
             })
@@ -1909,6 +1956,10 @@ export default {
                 dispute: isDisputed,
                 remarks: sched.remarks ? sched.remarks : "",
                 total: finalRate_orig,
+
+                last_disputed_by: sched.last_disputed_by,
+                practice_last_edit_time_start: sched.practice_last_edit_time_start,
+                practice_last_edit_time_end: sched.practice_last_edit_time_end,
               })
             } else {
               isExisting_original.shifts.push({
@@ -2025,6 +2076,10 @@ export default {
                     dispute: isDisputed,
                     remarks: sched.remarks ? sched.remarks : "",
                     total: finalRate_orig,
+
+                    last_disputed_by: sched.last_disputed_by,
+                    practice_last_edit_time_start: sched.practice_last_edit_time_start,
+                    practice_last_edit_time_end: sched.practice_last_edit_time_end,
                   },
                 ],
               })
@@ -2048,7 +2103,11 @@ export default {
         }
       })
     }
-    console.log('vat registered', this.locum_vat_registered)
+    if (['complete', 'terminate',].includes(this.type) && this.jobPartTerminationCompletion) {
+      const job_part_in_job = this.jobPartTerminationCompletion.job.job_parts.find(job_part => job_part.id === this.jobPartTerminationCompletion.id)
+      this.job_part_queue_number =  job_part_in_job.part
+    } 
+    
   },
 
   methods: {
@@ -2138,13 +2197,24 @@ export default {
         )
 
         if (!shift.remarks) {
-          shift.dispute = false
-          if (shift.orig_has_absences) {
-            shift.final_time_start = ""
-            shift.final_time_end = ""
+          if (shift.last_disputed_by === 'Practice') {
+            shift.dispute = false
+            if (shift.practice_last_edit_time_start === shift.practice_last_edit_time_end) {
+              shift.final_time_start = ""
+              shift.final_time_end = ""
+            } else {
+              shift.final_time_start = shift.practice_last_edit_time_start
+              shift.final_time_end = shift.practice_last_edit_time_end
+            }
           } else {
-            shift.final_time_start = shift.orig_final_start
-            shift.final_time_end = shift.orig_final_end
+            shift.dispute = false
+            if (shift.orig_has_absences) {
+              shift.final_time_start = ""
+              shift.final_time_end = ""
+            } else {
+              shift.final_time_start = shift.orig_final_start
+              shift.final_time_end = shift.orig_final_end
+            }
           }
         }
         this.show_late_reason = false
@@ -2524,7 +2594,6 @@ export default {
                 * 100
           ) / 100
       }
-
       switch (rate_type_name) {
       case "Hourly":
         return type !== "deduction"
@@ -2611,21 +2680,51 @@ export default {
       const grossRate = this.getJobGrossRate(schedules,final)
       const locum_tax_rate = this.tax_rates && this.tax_rates.locum_tax_rate_formatted ? this.tax_rates.locum_tax_rate_formatted : 0
       const taxAmount = parseFloat(grossRate) * parseFloat(locum_tax_rate)
-      if (this.locum_vat_registered) {
-        return taxAmount.toFixed(2)
-      } else {
-        return 0
-      }
+
+      return taxAmount.toFixed(2)
     },
 
     getJobTaxedGrossRate (schedules, final) {
       const grossRate = this.getJobGrossRate(schedules,final)
       const taxRate = this.getJobTaxRate(schedules, final)
       const taxedGrossRate = parseFloat(grossRate) + parseFloat(taxRate)
+
+      return taxedGrossRate.toFixed(2)
+    },
+
+    getEntireJobGrossRate (schedules) {
+      const entireSchedule = schedules.map(item => {
+        return {
+          date: this.$moment(item.date).format("DD/MM/YYYY"),
+          shifts: [
+            {
+              absent_reason: item.absent_reason,
+              final_time_end: item.final_time_end,
+              final_time_start: item.final_time_start,
+              has_absences: item.has_absences,
+              has_late: item.has_late,
+              id: item.id,
+              late_hours_reason: item.late_hours_reason,
+              locum_detail_rate_type_id: item.locum_detail_rate_type_id,
+              locum_detail_rate_type_name: item.locum_detail_rate_type.name,
+              rate: item.rate,
+              shift_id: item.shift_id,
+              time_end: item.time_end,
+              time_start: item.time_start,
+            },
+          ],
+        }
+      })
+
+      const rate = this.getJobGrossRate(entireSchedule)
+      const locum_tax_rate = this.tax_rates && this.tax_rates.locum_tax_rate_formatted ? this.tax_rates.locum_tax_rate_formatted : 0
+      const taxAmount = parseFloat(rate) * parseFloat(locum_tax_rate)
+
       if (this.locum_vat_registered) {
-        return taxedGrossRate.toFixed(2)
+        const taxedRate = parseFloat(rate) + parseFloat(taxAmount)
+        return taxedRate
       } else {
-        return 0
+        return rate
       }
     },
 
@@ -2942,16 +3041,29 @@ export default {
     dispute (shift, index, i) {
       shift.dispute = !shift.dispute
       if (shift.dispute === false) {
-        if (shift.orig_final_start === shift.orig_final_end) {
-          shift.has_absences = true
-          shift.final_time_start = ""
-          shift.final_time_end = ""
+        if (shift.last_disputed_by === 'Practice') {
+          if (shift.practice_last_edit_time_start === shift.practice_last_edit_time_end) {
+            shift.has_absences = true
+            shift.final_time_start = ""
+            shift.final_time_end = ""
+          } else {
+            shift.has_absences = false
+            shift.final_time_start = shift.practice_last_edit_time_start
+            shift.final_time_end = shift.practice_last_edit_time_end
+          }
+          shift.remarks = ""
         } else {
-          shift.has_absences = false
-          shift.final_time_start = shift.orig_final_start
-          shift.final_time_end = shift.orig_final_end
+          if (shift.orig_final_start === shift.orig_final_end) {
+            shift.has_absences = true
+            shift.final_time_start = ""
+            shift.final_time_end = ""
+          } else {
+            shift.has_absences = false
+            shift.final_time_start = shift.orig_final_start
+            shift.final_time_end = shift.orig_final_end
+          }
+          shift.remarks = ""
         }
-        shift.remarks = ""
       } else {
         this.lateChange(shift, index, i, "dispute")
         shift.final_time_start = ""

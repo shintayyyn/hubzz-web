@@ -39,11 +39,31 @@
           <div>{{ $auth.user.address_detail.address.line_1 }}</div>
           <div>{{ $auth.user.address_detail.address.line_3 }}</div>
           <div>{{ $auth.user.address_detail.address.post_code }}</div>
-          <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
+          <div v-if="$auth.user.contact_detail.mobile_number">
+            Tel {{ $auth.user.contact_detail.mobile_number }}
+          </div>
           <div>{{ $auth.user.email }}</div>
-          <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
-           <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.company_registration_number ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` : null }}</div>
-          <div>{{ $auth.user.vat_number ? `VAT number: ${$auth.user.vat_number}` : '' }}</div>
+          <div>
+            {{ 
+              $auth.user.locum_detail.invoice_detail 
+                && $auth.user.locum_detail.invoice_detail.utr_number 
+                && $auth.user.locum_detail.invoice_detail.employment_type 
+                  === 'Self Employed' 
+                ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
+                : null 
+            }}
+          </div>
+          <div>
+            {{ 
+              $auth.user.locum_detail.invoice_detail 
+                && $auth.user.locum_detail.invoice_detail.company_registration_number 
+                && $auth.user.locum_detail.invoice_detail.employment_type 
+                  === 'Limited Company' 
+                ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
+                : null 
+            }}
+          </div>
+          <div>{{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}</div>
         </div>
         <div v-if="propInvoice" class="flex flex-wrap justify-between my-2">
           <div
@@ -136,8 +156,33 @@
         </div>
       </div>
 
-      <!-- SUB TOTAL -->
+      <!-- TOTALS  -->
       <div class="flex flex-col">
+        <!-- UNTAXED TOTAL -->
+        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Untaxed Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ untaxedAmount | currency }}
+            </div>
+          </div>
+        </div>
+        <!-- VAT TOTAL -->
+        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">VAT Amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">
+              £
+            </div>
+            <div class="w-full text-right">
+              {{ vatAmount | currency }}
+            </div>
+          </div>
+        </div>
+        <!-- SUB TOTAL -->
         <template v-if="propInvoice && propInvoice.paid">
           <div :ref="'items-sub-total'" class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 font-bold">Subtotal</span>
@@ -173,30 +218,8 @@
             </div>
           </div>
         </template>
-        <!-- UNTAXED TOTAL -->
-        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
-          <span class="w-3/4 font-bold">Untaxed Total</span>
-          <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
-              £
-            </div>
-            <div class="w-full text-right">
-              {{ untaxedAmount | currency }}
-            </div>
-          </div>
-        </div>
-        <!-- VAT TOTAL -->
-        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
-          <span class="w-3/4 font-bold">VAT Amount</span>
-          <div class="w-1/4 flex justify-between">
-            <div class="w-full text-right">
-              £
-            </div>
-            <div class="w-full text-right">
-              {{ vatAmount | currency }}
-            </div>
-          </div>
-        </div>
+        
+        
         <!-- ITEMS TOTAL -->
         <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Total</span>
@@ -331,20 +354,10 @@ export default {
     //   }
     // },
 
-    subTotal () {
-      return this.form.items && this.form.items.length > 0
-        ? this.form.items[0].total
-        : 0
-    },
-
     untaxedAmount () {
-      let total
+      let total = 0
       if (this.form.items && this.form.items.length > 0) {
         total = this.form.items[0].total
-        if (this.propInvoice) {
-          total
-            = total - this.propInvoice.ni_amount - this.propInvoice.paye_amount
-        }
         return total
       }
       return 0
@@ -359,13 +372,15 @@ export default {
       return 0
     },
 
+    subTotal () {
+      return parseFloat(this.untaxedAmount) + parseFloat(this.vatAmount)
+    },
+
     totalAmount () {
-      if (this.vatRegistered === true) {
-        const totalAmount = parseFloat(this.untaxedAmount) + parseFloat(this.vatAmount)
-        return totalAmount
+      if (this.propInvoice && this.propInvoice.paid) {
+        return parseFloat(this.subTotal) - parseFloat(this.propInvoice.ni_amount) - parseFloat(this.propInvoice.paye_amount)
       } else {
-        const untaxedAmount = this.untaxedAmount
-        return untaxedAmount
+        return this.subTotal
       }
     },
   },
@@ -379,9 +394,9 @@ export default {
 
       let total
         = this.propJobPart.job.locum_detail_rate_type.name === "Hourly"
-          ? this.propJobPart.job.rate * this.propJobPart.final_hours
-          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours)
-            * this.propJobPart.final_hours
+          ? this.propJobPart.job.rate.toFixed(2) * this.propJobPart.final_hours.toFixed(2)
+          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours).toFixed(2)
+            * this.propJobPart.final_hours.toFixed(2)
         
 
       const jobPartNumber = this.propJobPart.job_part_number
@@ -418,8 +433,6 @@ export default {
         },
       ]
 
-      console.log('banana', this.totalAmount)
-
       this.form.total_amount = this.totalAmount
       this.form.tax_amount = this.vatAmount
       this.form.final = false
@@ -449,6 +462,7 @@ export default {
         - this.propInvoice.ni_amount
         - this.propInvoice.paye_amount
 
+      this.form.tax_amount = this.vatAmount
       this.form.final = false
       this.form.ir35 = this.propInvoice.ir35
     }
@@ -458,12 +472,11 @@ export default {
     save (final) {
       this.formError = []
       this.Validate(this.form, ["final", "ir35", "total_amount", "tax_amount",])
+      console.log('form', this.form)
       if (!this.formError.length) {
         this.saveLoading = true
-        console.log('pakshet', this.form)
         if (this.propJobPart && !this.propInvoice) {
           this.form.final = final
-          console.log('form', this.form)
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -479,7 +492,7 @@ export default {
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "success",
+                  status: "danger",
                   text: [`${err.response.data.message}`,],
                 })
               } else if (err.response.data.error_messages) {
@@ -514,7 +527,7 @@ export default {
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
-                  status: "success",
+                  status: "danger",
                   text: [`${err.response.data.message}`,],
                 })
               } else if (err.response.data.error_messages) {

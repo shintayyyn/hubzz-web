@@ -31,6 +31,7 @@
         :type="'complete'"
         :locum_vat_registered="job_part.locum_details_vat_registered"
         :tax_rates="tax_rates"
+        :jobPartTerminationCompletion="job_part"
         @getSchedule="getSchedule"
       />
 
@@ -78,9 +79,12 @@ export default {
         schedules: [],
       },
       schedule: [],
+      job_all_schedules:[],
       formError: [],
       shiftErrors: [],
       confirmation_modal: false,
+
+      tax_rates: {},
     }
   },
   computed: {

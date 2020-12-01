@@ -61,11 +61,31 @@
             <div>{{ $auth.user.address_detail.address.line_2 }}</div>
             <div>{{ $auth.user.address_detail.address.line_3 }}</div>
             <div>{{ $auth.user.address_detail.address.post_code }}</div>
-            <div>Tel {{ $auth.user.contact_detail.mobile_number }}</div>
+            <div v-if="$auth.user.contact_detail.mobile_number">
+              Tel {{ $auth.user.contact_detail.mobile_number }}
+            </div>
             <div>{{ $auth.user.email }}</div>
-            <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null }}</div>
-            <div>{{ $auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.company_registration_number ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` : null }}</div>
-            <div>{{ $auth.user.vat_number ? `VAT number: ${$auth.user.vat_number}` : '' }}</div>
+            <div>
+              {{ 
+                $auth.user.locum_detail.invoice_detail 
+                  && $auth.user.locum_detail.invoice_detail.utr_number 
+                  && $auth.user.locum_detail.invoice_detail.employment_type 
+                    === 'Self Employed' 
+                  ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
+                  : null 
+              }}
+            </div>
+            <div>
+              {{ 
+                $auth.user.locum_detail.invoice_detail 
+                  && $auth.user.locum_detail.invoice_detail.company_registration_number 
+                  && $auth.user.locum_detail.invoice_detail.employment_type 
+                    === 'Limited Company' 
+                  ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
+                  : null 
+              }}
+            </div>
+            <div>{{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}</div>
             <div v-if="propInvoice">
               {{ propInvoice.invoice_number }}
             </div>
@@ -234,8 +254,15 @@
             </div>
 
             <div 
-              v-if="locum_vat_registered 
-                && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+              v-if="propInvoice 
+                ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
+                  ? true 
+                  : false 
+                : propJobPart 
+                  ? locum_vat_registered 
+                    ? true
+                    : false 
+                  : false" 
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -248,8 +275,15 @@
             </div>
 
             <div 
-              v-if="locum_vat_registered 
-                && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+              v-if="propInvoice 
+                ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
+                  ? true 
+                  : false 
+                : propJobPart 
+                  ? locum_vat_registered 
+                    ? true
+                    : false  
+                  : false" 
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -289,7 +323,7 @@
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
               <p class="text-sm w-1/2">
-                PENSION AMOUNT:
+                {{ propInvoice.approved ? "PENSION AMOUNT:" : "PENSION AMOUNT(Tentative):" }}
               </p>
 
               <p class="font-bold w-1/2 text-right">
@@ -478,7 +512,10 @@ export default {
     },
 
     grand_total () {
-      return this.total_gross_locum_wages - this.ni_paye_amount
+      if (this.propInvoice && this.propInvoice.approved) {
+        return this.propInvoice.job_part_gross_rate
+      }
+      return (this.propInvoice.locum_user_vat_registered ? this.taxed_gross_rate : this.total_gross_locum_wages) - this.ni_paye_amount
     },
 
     total_work_payment () {
@@ -899,8 +936,13 @@ export default {
       this.total_deductions = deductions
       this.total_working_hours = total_working_hours
       this.total_gross_locum_wages = total_gross_locum_wages
-      this.form.total_amount = this.locum_vat_registered ? taxed_gross_rate : total_gross_locum_wages
-      this.tax_amount = tax_amount
+      // this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered 
+      //   ? this.$auth.user.vat_registered === true
+      //     ? taxed_gross_rate 
+      //     : total_gross_locum_wages 
+      //   : total_gross_locum_wages
+
+      this.tax_amount = this.propInvoice && this.propInvoice.approved ? this.propInvoice.tax_amount : tax_amount
       this.taxed_gross_rate = taxed_gross_rate
       this.hasShiftError = hasError
       this.sched_has_changes = hasChanges
@@ -975,7 +1017,12 @@ export default {
           },
         ]
 
-        this.form.total_amount = total
+        // this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered 
+        //   ? this.$auth.user.vat_registered === true
+        //     ? this.taxed_gross_rate 
+        //     : this.total_gross_locum_wages 
+        //   : this.total_gross_locum_wages
+
         this.form.final = false
         this.form.ir35 = this.propJobPart.job_ir35
       }
@@ -1011,6 +1058,8 @@ export default {
       this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
       this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
       this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
+      
+      console.log('initalstate', this.form)
     },
 
     handleKeyDownEvent (e, formField, limit) {
@@ -1079,15 +1128,15 @@ export default {
         if (this.propJobPart && !this.propInvoice) {
           if (this.locum_vat_registered === true) {
             this.form.total_amount = this.taxed_gross_rate
+            this.form.tax_amount = this.tax_amount
           } else {
             this.form.total_amount = this.total_gross_locum_wages
+            this.form.tax_amount = 0
           }
-          
-          this.form.tax_amount = this.tax_amount
 
           this.form.final = final
 
-          console.log('invoice to push', this.form)
+          console.log('this.form', this.form)
 
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
@@ -1123,20 +1172,17 @@ export default {
               this.saveLoading = false
             })
 
-          // for testing onli
-          // console.log('locum invoice form', this.form)
           // this.saveLoading = false
         } else if (this.propInvoice && !this.propJobPart) {
           if (this.locum_vat_registered === true) {
             this.form.total_amount = this.taxed_gross_rate
+            this.form.tax_amount = this.tax_amount
           } else {
             this.form.total_amount = this.total_gross_locum_wages
+            this.form.tax_amount = 0
           }
-          this.form.tax_amount = this.tax_amount
 
           this.form.final = final
-
-          console.log('invoice to push', this.form)
 
           this.$axios
             .$put(
@@ -1174,9 +1220,6 @@ export default {
             .finally(() => {
               this.saveLoading = false
             })
-
-          // for testing onli
-          // console.log('locum invoice form', this.form)
           // this.saveLoading = false
         }
       } else {

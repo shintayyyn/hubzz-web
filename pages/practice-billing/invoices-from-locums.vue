@@ -220,6 +220,8 @@
 
               <!-- v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
               && $route.query.status === 'approved'"-->
+
+              <!-- Mark as paid - NI/PAYE -->
               <button
                 v-if="
                   $route.query.status === 'approved' 
@@ -261,6 +263,7 @@
           No Jobs Found
         </div>
 
+        <!-- NI / PAYE Payment Modal -->
         <div v-if="payment_modal" class="p-2">
           <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
             <AppDate
@@ -751,19 +754,19 @@ export default {
         locum_invoiceable = true
         break
       case "approved":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         break
       case "solo-form":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         ooh = true
         // generate_form = true
         break
       case "pension-form-a":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         nhs_claimable = true
@@ -869,19 +872,19 @@ export default {
         locum_invoiceable = true
         break
       case "approved":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         break
       case "solo-form":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         ooh = true
         // generate_form = true
         break
       case "pension-form-a":
-        invoice_status.push("Invoiced")
+        invoice_status.push("Approved")
         status.push("Approved")
         locum_invoiceable = true
         nhs_claimable = true
@@ -1007,6 +1010,8 @@ export default {
           notRequired.push("paye_amount")
         }
       }
+
+      console.log('mark as paid form', this.form)
 
       this.formError = []
       this.Validate(this.form, notRequired)

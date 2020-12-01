@@ -14,7 +14,9 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <template v-if="!input_details">
-        <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Practice</div>
+        <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">
+          Add Practice
+        </div>
         <div class="rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
           <AppInput v-model="search_text" :type="'text'" :name="'search'" />
           <AppButton :label="'Search Practice'" :inStyle="'padding:5px 14px;'" @click="search" />
@@ -27,7 +29,9 @@
         <div v-if="showResult && surgeries.length === 0" class="mt-5">
           <div
             class="text-xs xl:text-base font-bold"
-          >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+          >
+            No practice matched that name. Try again with whole words, practice code or CCG.
+          </div>
           <AppButton
             class="rounded-lg shadow-lg mt-5"
             :label="'Input manually'"
@@ -40,7 +44,9 @@
         >
           <div
             class="text-xs lg:text-base font-bold p-4"
-          >Select by clicking on the practice that you wish to add</div>
+          >
+            Select by clicking on the practice that you wish to add
+          </div>
           <div
             v-for="(item) in surgeries"
             :key="item.id"
@@ -52,25 +58,41 @@
               <span v-if="selectedSurgeries.includes(item.id)" class="absolute right-0">
                 <svgicon name="success-checkmark" width="25" height="25" />
               </span>
-              <div class="font-bold">{{ item.name }}</div>
+              <div class="font-bold">
+                {{ item.name }}
+              </div>
               <div
                 class="mt-4"
-              >{{ item.address.line_1 }}, {{ item.address.line_2 }}, {{ item.address.line_3 }}, {{ item.address.post_code }}</div>
-              <div class="flex flex-row flex-no-wrap mt-1">
-                <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
-                <div class="flex items-center">{{ item.clinical_commissioning_group.name }}</div>
+              >
+                {{ item.address.line_1 }}, {{ item.address.line_2 }}, {{ item.address.line_3 }}, {{ item.address.post_code }}
               </div>
               <div class="flex flex-row flex-no-wrap mt-1">
-                <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
-                <div class="flex items-center">{{ item.code }}</div>
+                <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                  CCG
+                </div>
+                <div class="flex items-center">
+                  {{ item.clinical_commissioning_group.name }}
+                </div>
+              </div>
+              <div class="flex flex-row flex-no-wrap mt-1">
+                <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
+                  Practice Code
+                </div>
+                <div class="flex items-center">
+                  {{ item.code }}
+                </div>
               </div>
             </div>
           </div>
           <div class="border-t-2 p-4 text-xs xl:text-base">
-            <p class="font-bold">These are just top 10 matches from your search term.</p>
+            <p class="font-bold">
+              These are just top 10 matches from your search term.
+            </p>
             <p
               class="font-bold"
-            >Try again with practice code or its full name if the practice isn't in the result.</p>
+            >
+              Try again with practice code or its full name if the practice isn't in the result.
+            </p>
           </div>
         </div>
       </template>
@@ -85,9 +107,10 @@
                   v-model="form.phone_number"
                   :type="'text'"
                   :name="'phone_number'"
-                  :label="'Phone number'"
+                  label="Phone number"
+                  :limit="11"
                   :placeholder="'Phone number'"
-                  :error="this.formError.find(item => item.field === 'phone_number')"
+                  :error="formError.find(item => item.field === 'phone_number')"
                   @blur="CheckEmptyField(form.phone_number,'phone_number')"
                 />
                 <AppPostCode
@@ -105,7 +128,7 @@
                   :type="'text'"
                   :name="'code'"
                   :label="'Code'"
-                  :error="this.formError.find(item => item.field === 'code')"
+                  :error="formError.find(item => item.field === 'code')"
                   @blur="CheckEmptyField(form.code,'code')"
                 />
                 <AppPostCode
@@ -122,7 +145,7 @@
                   :type="'text'"
                   :name="'address_line_1'"
                   :label="'address_line_1'"
-                  :error="this.formError.find(item => item.field === 'address_line_1')"
+                  :error="formError.find(item => item.field === 'address_line_1')"
                   @blur="CheckEmptyField(form.address_line_1,'address_line_1')"
                 />
                 <AppInput
@@ -130,28 +153,28 @@
                   :type="'text'"
                   :name="'address_line_2'"
                   :label="'address_line_2'"
-                  :error="this.formError.find(item => item.field === 'address_line_2')"
+                  :error="formError.find(item => item.field === 'address_line_2')"
                 />
                 <AppInput
                   v-model="form.address_line_3"
                   :type="'text'"
                   :name="'address_line_3'"
                   :label="'address_line_3'"
-                  :error="this.formError.find(item => item.field === 'address_line_3')"
+                  :error="formError.find(item => item.field === 'address_line_3')"
                 />
                 <AppInput
                   v-model="form.address_line_4"
                   :type="'text'"
                   :name="'address_line_4'"
                   :label="'address_line_4'"
-                  :error="this.formError.find(item => item.field === 'address_line_4')"
+                  :error="formError.find(item => item.field === 'address_line_4')"
                 />
                 <AppInput
                   v-model="form.address_line_5"
                   :type="'text'"
                   :name="'address_line_5'"
                   :label="'address_line_5'"
-                  :error="this.formError.find(item => item.field === 'address_line_5')"
+                  :error="formError.find(item => item.field === 'address_line_5')"
                 />
               </form>
             </div>
@@ -168,20 +191,20 @@
   </section>
 </template>
 <script>
-import AppInput from "@/components/Base/AppInput";
-import AppButton from "@/components/Base/AppButton";
-import AppPostCode from "@/components/Base/AppPostCode";
-import AppFormError from "@/components/Base/AppFormError";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppPostCode from "@/components/Base/AppPostCode"
+import AppFormError from "@/components/Base/AppFormError"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
   components: {
     AppInput,
     AppButton,
     AppPostCode,
     AppFormError,
-    AppConfirmationModal
+    AppConfirmationModal,
   },
-  data() {
+  data () {
     return {
       search_text: "",
       surgeries: [],
@@ -204,106 +227,106 @@ export default {
         address_line_5: "",
         postcode: "",
         coordinate_x: "",
-        coordinate_y: ""
+        coordinate_y: "",
       },
-      formError: []
-    };
+      formError: [],
+    }
   },
   methods: {
-    search() {
+    search () {
       this.$axios
         .$get(`/api/v1/locum/private-practices`)
         .then(res => {
           res.data.private_practices.find(item => {
-            this.selectedSurgeries.push(item.surgery.id);
-          });
+            this.selectedSurgeries.push(item.surgery.id)
+          })
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
+              text: [`${err.response.data.message}`,],
+            })
           }
-        });
+        })
       this.$axios
         .$get(
           `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
         )
         .then(res => {
-          this.surgeries = res.data.surgeries;
-          this.showResult = true;
+          this.surgeries = res.data.surgeries
+          this.showResult = true
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
-            });
+              text: [`${err.response.data.message}`,],
+            })
           }
-        });
+        })
     },
-    select(item) {
+    select (item) {
       if (!this.selectedSurgeries.includes(item.id)) {
-        this.selectedSurgery = item;
-        this.confirmation_add_modal = true;
+        this.selectedSurgery = item
+        this.confirmation_add_modal = true
       }
     },
-    proceed() {
-      this.form.name = this.selectedSurgery.name;
-      this.form.phone_number = this.selectedSurgery.phone_number;
-      this.form.code = this.selectedSurgery.code;
-      this.form.clinical_commissioning_group_name = this.selectedSurgery.clinical_commissioning_group_name;
-      this.form.address_line_1 = this.selectedSurgery.address_line_1;
-      this.form.address_line_2 = this.selectedSurgery.address_line_2;
-      this.form.address_line_3 = this.selectedSurgery.address_line_3;
-      this.form.address_line_4 = this.selectedSurgery.address_line_4;
-      this.form.address_line_5 = this.selectedSurgery.address_line_5;
-      this.form.postcode = this.selectedSurgery.postcode;
+    proceed () {
+      this.form.name = this.selectedSurgery.name
+      this.form.phone_number = this.selectedSurgery.phone_number
+      this.form.code = this.selectedSurgery.code
+      this.form.clinical_commissioning_group_name = this.selectedSurgery.clinical_commissioning_group_name
+      this.form.address_line_1 = this.selectedSurgery.address_line_1
+      this.form.address_line_2 = this.selectedSurgery.address_line_2
+      this.form.address_line_3 = this.selectedSurgery.address_line_3
+      this.form.address_line_4 = this.selectedSurgery.address_line_4
+      this.form.address_line_5 = this.selectedSurgery.address_line_5
+      this.form.postcode = this.selectedSurgery.postcode
 
-      this.formError = [];
-      this.input_details = true;
-      this.confirmation_add_modal = false;
+      this.formError = []
+      this.input_details = true
+      this.confirmation_add_modal = false
     },
-    checkCoordinates(postcode) {
+    checkCoordinates (postcode) {
       return this.$axios
-        .$post("/api/v1/postcode-to-coordinates", { postcode })
+        .$post("/api/v1/postcode-to-coordinates", { postcode, })
         .then(res => {
           if (res.data && res.data.postcode_coordinate) {
-            this.form.coordinate_x = res.data.postcode_coordinate.coordinate_x;
-            this.form.coordinate_y = res.data.postcode_coordinate.coordinate_y;
+            this.form.coordinate_x = res.data.postcode_coordinate.coordinate_x
+            this.form.coordinate_y = res.data.postcode_coordinate.coordinate_y
           }
         })
         .catch(err => {
-          console.log("err", err.response || err);
+          console.log("err", err.response || err)
           if (
-            err.response.data.status === 404 &&
-            err.response.data.message === "Postcode Coordinate Not Found"
+            err.response.data.status === 404
+            && err.response.data.message === "Postcode Coordinate Not Found"
           ) {
             this.formError.push({
               field: "postcode",
-              message: "Invalid post code"
-            });
+              message: "Invalid post code",
+            })
           }
-        });
+        })
     },
-    async add() {
-      this.formError = [];
+    async add () {
+      this.formError = []
       this.Validate(this.form, [
         "coordinate_x",
         "coordinate_y",
         "address_line_2",
         "address_line_3",
         "address_line_4",
-        "address_line_5"
-      ]);
-      this.adding_surgery_loading = true;
-      await this.checkCoordinates(this.form.postcode);
-      this.adding_surgery_loading = false;
+        "address_line_5",
+      ])
+      this.adding_surgery_loading = true
+      await this.checkCoordinates(this.form.postcode)
+      this.adding_surgery_loading = false
       if (!this.formError.length) {
         this.$axios
           .$post(`/api/v1/locum/private-practices`, this.form)
@@ -311,43 +334,43 @@ export default {
             this.$store.commit(
               "ADD_LOCUM_PRIVATE_PRACTICE",
               res.data.private_practice
-            );
+            )
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`]
-            });
+              text: [`${res.message}`,],
+            })
             // this.confirmation_add_modal = false;
-            this.$emit("addPractice", res.data.private_practice);
-            this.$emit("close");
+            this.$emit("addPractice", res.data.private_practice)
+            this.$emit("close")
           })
           .catch(err => {
-            console.log("err", err.response || err);
+            console.log("err", err.response || err)
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
-                text: [`${err.response.data.message}`]
-              });
+                text: [`${err.response.data.message}`,],
+              })
             }
-          });
+          })
       }
     },
-    closeInputDetails() {
-      this.input_details = false;
-      this.form.name = "";
-      this.form.phone_number = "";
-      this.form.clinical_commissioning_group_name = "";
-      this.form.code = "";
-      this.form.address_line_1 = "";
-      this.form.address_line_2 = "";
-      this.form.address_line_3 = "";
-      this.form.address_line_4 = "";
-      this.form.address_line_5 = "";
-      this.form.postcode = "";
-      this.form.coordinate_x = "";
-      this.form.coordinate_y = "";
-    }
-  }
-};
+    closeInputDetails () {
+      this.input_details = false
+      this.form.name = ""
+      this.form.phone_number = ""
+      this.form.clinical_commissioning_group_name = ""
+      this.form.code = ""
+      this.form.address_line_1 = ""
+      this.form.address_line_2 = ""
+      this.form.address_line_3 = ""
+      this.form.address_line_4 = ""
+      this.form.address_line_5 = ""
+      this.form.postcode = ""
+      this.form.coordinate_x = ""
+      this.form.coordinate_y = ""
+    },
+  },
+}
 </script>

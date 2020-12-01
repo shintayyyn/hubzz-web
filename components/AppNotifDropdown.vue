@@ -221,8 +221,12 @@ export default {
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
+        "Locum Notification Locum Form A Locum E-signed",
+        "Locum Notification Locum Form A Practice E-signed",
 
         "Locum Notification Locum Solo Form",
+        "Locum Notification Locum Solo Form Locum E-signed",
+        "Locum Notification Locum Solo Form Practice E-signed",
 
         "Locum Notification Locum Payment Details Updated",
         "Locum Notification Locum Status Updated",
@@ -266,6 +270,11 @@ export default {
 
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
+        "Practice Notification Locum Form A Locum E-signed",
+        "Practice Notification Locum Form A Practice E-signed",
+
+        "Practice Notification Locum Solo Form Locum E-signed",
+        "Practice Notification Locum Solo Form Practice E-signed",
 
         "Practice Notification Locum Payment Details Updated",
 
@@ -596,10 +605,18 @@ export default {
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
+        "Locum Notification Locum Form A Locum E-signed",
+        "Locum Notification Locum Form A Practice E-signed",
         "Locum Notification Locum Solo Form",
+        "Locum Notification Locum Solo Form Locum E-signed",
+        "Locum Notification Locum Solo Form Practice E-signed",
         
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
+        "Practice Notification Locum Form A Locum E-signed",
+        "Practice Notification Locum Form A Practice E-signed",
+        "Practice Notification Locum Solo Form Locum E-signed",
+        "Practice Notification Locum Solo Form Practice E-signed",
         "Practice Notification Locum Payment Details Updated",
       ]
 
@@ -610,6 +627,33 @@ export default {
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
+
+        console.log('notification.payload_type', notification.payload_type)
+
+        if ([
+          "Locum Notification Locum Form A Paid",
+          "Locum Notification Locum Form A Paid By Practice",
+          "Locum Notification Locum Form A Sent To Practice",
+          "Locum Notification Locum Form A Locum E-signed",
+          "Locum Notification Locum Form A Practice E-signed",
+          "Practice Notification Locum Form A Paid",
+          "Practice Notification Locum Form A Sent To Practice",
+          "Practice Notification Locum Form A Locum E-signed",
+          "Practice Notification Locum Form A Practice E-signed",
+        ].includes(notificationTypeName) && notification.payload_type === 'locum_form_a') {
+          window.open(`${process.env.API_URL}/api/v1/locum-form-a/${payload.id}/pdf`)
+        }
+
+        if ([
+          "Locum Notification Locum Solo Form",
+          "Locum Notification Locum Solo Form Locum E-signed",
+          "Locum Notification Locum Solo Form Practice E-signed",
+          "Practice Notification Locum Solo Form Locum E-signed",
+          "Practice Notification Locum Solo Form Practice E-signed",
+        ].includes(notificationTypeName) && notification.payload_type === 'solo_form') {
+          window.open(`${process.env.API_URL}/api/v1/locum-solo-form/${payload.id}/pdf`)
+        }
+
         return
       }
 
@@ -1135,8 +1179,6 @@ export default {
         const {
           id: permanentJobId,
         } = permanentJob
-
-        console.log("permanentjob inside notif dropdown", permanentJob)
 
         if (
           notificationTypeName

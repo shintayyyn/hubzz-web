@@ -533,8 +533,8 @@ export default {
         },
         {
           name: "£ Amount",
-          dataIndex: "total_amount",
-          class: "text-center currency",
+          dataIndex: "job_part_gross_rate_formatted",
+          class: "text-center",
           sortable: true,
         }
       )

@@ -237,12 +237,12 @@
 
       <AppInput
         v-model="locumForm.mobile_number"
-        :type="'text'"
-        :name="'mobile_number'"
-        :label="'Mobile Number'"
+        type="text"
+        name="mobile_number"
+        label="Mobile number"
         :error="formError.find(item => item.field === 'mobile_number')"
-        :limit="10"
-        :format="!locumForm.mobile_number || locumForm.mobile_number !== user.contact_detail.mobile_number ? 'mobile':''"
+        :limit="11"
+        :showMobilePrefix="true"
         required
         @submit="save"
         @keydown="inputNumberOnly($event)"
@@ -251,20 +251,20 @@
 
       <AppInput
         v-model="locumForm.home_number"
-        :type="'text'"
-        :name="'home_number'"
-        :label="'Home Number'"
-        :limit="13"
+        type="text"
+        name="home_number"
+        label="Home number"
+        :limit="11"
         @keydown="inputTelephone($event)"
         @submit="save"
       />
 
       <AppInput
         v-model="locumForm.work_number"
-        :type="'text'"
-        :name="'work_number'"
-        :label="'Work Number'"
-        :limit="13"
+        type="text"
+        name="work_number"
+        label="Work number"
+        :limit="11"
         @keydown="inputTelephone($event)"
         @submit="save"
       />
@@ -642,7 +642,7 @@ export default {
 
         this.loading = true
 
-        this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}`
+        // this.locumForm.mobile_number = `+44${this.locumForm.mobile_number}`
 
         this.$axios.put(`/api/v1/locum/me/account`, this.locumForm).then(() => {
           this.$store.commit("SET_NOTIFICATION", {
