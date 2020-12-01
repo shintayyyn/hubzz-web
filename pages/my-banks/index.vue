@@ -1,5 +1,12 @@
 <template>
   <section>
+    <AppInput
+      v-model="search"
+      :type="'text'"
+      :name="'search'"
+      :placeholder="'Search locum by name'"
+      :disabled="loading"
+    />
     <div
       v-if="
         [
@@ -45,7 +52,10 @@
       </div>
     </div>
 
-    <div class="flex flex-row justify-start overflow-x-auto py-3 mb-3">
+    <div 
+      v-if="practiceLocumType !== 'All'"
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+    >
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
@@ -187,10 +197,12 @@
 </template>
 
 <script>
+import debounce from "lodash.debounce"
 import AppLoading from "@/components/Base/AppLoading"
 import AppAvatar from "@/components/Base/AppAvatar"
 import AppPagination from "@/components/Base/AppPagination"
 import SendMessageModal from "@/components/Messages/SendMessageModal"
+import AppInput from "@/components/Base/AppInput"
 
 export default {
   transition: {
@@ -203,6 +215,7 @@ export default {
     AppAvatar,
     AppPagination,
     SendMessageModal,
+    AppInput,
   },
 
   middleware ({ query, error, }) {
@@ -217,6 +230,7 @@ export default {
         "rejected",
         "withdrawn",
         "lates",
+        "all",
       ].includes(query.practice_locum_type.toLowerCase())
     ) {
       return error({
@@ -228,6 +242,7 @@ export default {
 
   data () {
     return {
+      search: '',
       locums: [],
       total: 0,
       current_page: 1,
@@ -286,6 +301,10 @@ export default {
   },
 
   watch: {
+    search (value) {
+      this.searchSubmit(value)
+    },
+
     practiceLocumType () {
       this.toggleTable = false
       this.getLocumsCount()
@@ -309,6 +328,11 @@ export default {
   },
   
   methods: {
+    searchSubmit: debounce (function () {
+      this.getLocumsCount()
+      // this.$router.push('/my-banks?practice_locum_type=All')
+    }, 500),
+    
     message (user) {
       this.selectedId = user.id
       this.user = user
@@ -319,9 +343,10 @@ export default {
       this.loading = true
       this.$axios.get(`/api/v1/practice/locums/count`, {
         params: {
+          search: this.search,
           practice_locum_type: this.practiceLocumType,
           practice_locum_type_surgeries : this.surgeriesBank,
-          profession_category_name: this.professionCategoryName,
+          profession_category_name: this.practiceLocumType === 'All' ? '' : this.professionCategoryName,
         },
       }).then((response) => {
         this.total = response.data.data.count
@@ -333,12 +358,12 @@ export default {
     
     getLocums (page) {
       this.current_page = page
-
       this.$axios.get(`/api/v1/practice/locums`, {
         params: {
+          search: this.search,
           practice_locum_type: this.practiceLocumType,
           practice_locum_type_surgeries : this.surgeriesBank,
-          profession_category_name: this.professionCategoryName,
+          profession_category_name: this.practiceLocumType === 'All' ? '' : this.professionCategoryName,
           limit: this.perPage,
           offset: this.offset,
         },

@@ -9,7 +9,7 @@
         @click="$router.go(-1)"
       />
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">
-        Create a permanent job
+        Create a Permanent Job
       </div>
       <div class="flex flex-col md:flex-row pb-4">
         <div class="md:w-1/2 px-2">
@@ -157,7 +157,7 @@
               :type="'select'"
               :name="'work_hours'"
               :placeholder="'Select...'"
-              :label="'Work Hours'"
+              :label="'Job Type'"
               :error="formError.find(item => item.field === 'work_hours')"
               :items="work_hours_type"
               @blur="CheckEmptyField(form.work_hours, 'work_hours')"

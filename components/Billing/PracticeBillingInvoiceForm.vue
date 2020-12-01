@@ -267,7 +267,7 @@
             class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
             <p class="text-sm w-1/2">
-              PENSION AMOUNT:
+              {{ propInvoice.approved ? "PENSION AMOUNT:" : "PENSION AMOUNT(Tentative):" }}
             </p>
 
             <p class="font-bold w-1/2 text-right">
@@ -968,8 +968,8 @@ export default {
     },
 
     save (approved) {
-      console.log("approved", approved)
-      console.log('form', this.form)
+      // console.log("banana", approved)
+      // console.log('form', this.form)
       this.formError = []
 
       this.shiftErrors = []
@@ -1046,41 +1046,40 @@ export default {
         }
         this.form.tax_amount = this.tax_amount
 
-        // this.$axios
-        //   .$put(
-        //     `/api/v1/practice/locum-invoices/${
-        //       this.propId ? this.propId : this.$route.params.id
-        //     }`,
-        //     {
-        //       ...this.form,
-        //     }
-        //   )
-        //   .then(res => {
-        //     this.$store.commit("SET_NOTIFICATION", {
-        //       enabled: true,
-        //       status: "success",
-        //       text: [`${res.message}`,],
-        //     })
-        //     this.toggle_modal = false
-        //     this.$emit("updateInvoice", res.data.locum_invoice)
-        //   })
-        //   .catch(err => {
-        //     console.log("err", err.response || err)
-        //     if (
-        //       err.response
-        //       && err.response.data
-        //       && err.response.data.error_messages
-        //     ) {
-        //       this.formError = err.response.data.error_messages
-        //     }
-        //   })
-        //   .finally(() => {
-        //     this.saveLoading = false
-        //   })
+        this.$axios
+          .$put(
+            `/api/v1/practice/locum-invoices/${
+              this.propId ? this.propId : this.$route.params.id
+            }`,
+            {
+              ...this.form,
+            }
+          )
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`,],
+            })
+            this.toggle_modal = false
+            this.$emit("updateInvoice", res.data.locum_invoice)
+          })
+          .catch(err => {
+            console.log("err", err.response || err)
+            if (
+              err.response
+              && err.response.data
+              && err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages
+            }
+          })
+          .finally(() => {
+            this.saveLoading = false
+          })
 
         // for testing only
-        console.log('form', this.form)
-        this.saveLoading = false
+        // this.saveLoading = false
       }
     },
 
