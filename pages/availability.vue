@@ -100,16 +100,19 @@
     </template>
   </section>
 </template>
+
 <script>
 import AvailabilityCalendar from "@/components/Availability/AvailabilityCalendar"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
+
 export default {
   components: {
     AvailabilityCalendar,
     AppLoading,
     AppButton,
   },
+
   data () {
     return {
       loading: false,
@@ -125,6 +128,7 @@ export default {
       ongoingDate: null,
     }
   },
+
   watch: {
     "$route.name" (value) {
       if (["availability-id", "availability-create",].includes(value)) {
@@ -133,12 +137,14 @@ export default {
         document.body.style.overflow = "auto"
       }
     },
+
     selectedShifts (value) {
       if (value.length >= 1) {
         this.shifts_error = false
       }
     },
   },
+
   async asyncData ({ app, store, }) {
     store.commit("availability/SET_DATE_TODAY")
 
@@ -174,6 +180,7 @@ export default {
       throw err
     }
   },
+
   methods: {
     select (id) {
       let shiftId = this.selectedShifts.find(item => item === id)
@@ -184,6 +191,7 @@ export default {
         this.selectedShifts.splice(shiftIndex, 1)
       }
     },
+
     update () {
       this.shifts_error = false
 
@@ -235,34 +243,41 @@ export default {
   },
 }
 </script>
+
 <style scoped>
-.availability-shift {
-  max-width: 800px;
-}
-.availability-calendar {
-  height: auto;
-  max-width: 800px;
-}
-@media screen and (min-width: 568px) {
-  .availability-calendar {
-    height: 450px;
+  .availability-shift {
+    max-width: 800px;
   }
-}
-@media screen and (min-width: 768px) {
+
   .availability-calendar {
     height: auto;
+    max-width: 800px;
   }
-}
-.shield {
-  z-index: 509;
-}
-/* .modal-container {
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
+
+  @media screen and (min-width: 568px) {
+    .availability-calendar {
+      height: 450px;
+    }
   }
-} */
+
+  @media screen and (min-width: 768px) {
+    .availability-calendar {
+      height: auto;
+    }
+  }
+
+  .shield {
+    z-index: 509;
+  }
+
+  /* .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 80%;
+    }
+  } */
 </style>
 

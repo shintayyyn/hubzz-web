@@ -98,7 +98,7 @@ export default {
         })
 
         locumTabList.push({
-          navigationTabTitle: "Account",
+          navigationTabTitle: "Profile",
           route: "/account",
           active: `/${this.$route.path.split('/')[1]}` === '/account',
         })
