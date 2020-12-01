@@ -142,7 +142,7 @@
         </div>
         <div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
           <div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
-            <div class="font-semibold">Job Pitch</div>
+            <div class="font-semibold">About Me</div>
             <div>
               <no-ssr>
                 <quill-editor
@@ -267,6 +267,21 @@
               class="text-xs md:text-sm"
             >(none)</div>
           </div>
+
+          <div v-if="$auth.user.domain === 'Practice'" class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
+            <AppInput
+              v-model="interview_notes"
+              :type="'textarea'"
+              :name="'interview_notes'"
+              :label="'Interview Notes'"
+              :resize="false"
+            />
+            <AppButton
+              :label="'Save Interview Notes'"
+              class="mx-1"
+              @click="writeInterviewNotes"
+            />
+          </div>
           <!-- <AppButton
             v-if="permanentJobApp.invitation_schedule && permanentJobApp.application_status === 'For Interview'"
             :label="'Appoint to this job'"
@@ -306,6 +321,7 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 import AppDate from "@/components/Base/AppDate";
 import AppTime from "@/components/Base/AppTime";
+import AppInput from "@/components/Base/AppInput";
 
 export default {
   components: {
@@ -315,6 +331,7 @@ export default {
     AppAvatar,
     AppDate,
     AppTime,
+    AppInput,
   },
   props: {
     user: {
@@ -348,8 +365,12 @@ export default {
       options: {
         modules: {
           toolbar: null,
-        }
-      }
+        },
+      },
+
+      // new
+      showInterviewNotes: false,
+      interview_notes: '',
     };
   },
   computed: {
@@ -364,6 +385,7 @@ export default {
     );
     this.mandatoryTrainings = this.user.locum_detail.other_mandatory_trainings;
     this.permanentJobApp = this.permanent_job_application;
+    this.interview_notes = this.permanent_job_application.interview_notes
   },
 
   methods: {
@@ -434,6 +456,30 @@ export default {
             });
           });
       }
+    },
+
+    async writeInterviewNotes () {
+      await this.$axios.$put(`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/write-interview-notes`, {
+        interview_notes: this.interview_notes,
+      }).then(res => {
+        console.log("perm job app", res.data)
+        this.permanentJobApp = res.data.permanent_job_application
+        // this.$emit("close");
+        this.$emit("updateApplicants");
+        this.accepted = false;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Success"]
+        });
+      }).catch(err => {
+        console.log("err", err.reponse | err);
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
+      });
     },
 
     async rejectLocum () {

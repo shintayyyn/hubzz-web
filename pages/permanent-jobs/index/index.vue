@@ -2,7 +2,7 @@
 	<section class="flex flex-col items-start w-full">
 		<div class="w-full">
 			<AppInput
-				v-if="($auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0) || ($auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0)"
+				v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0"
 				v-model="search"
 				:type="'text'"
 				:name="'search'"
@@ -10,10 +10,112 @@
 				:disabled="loading"
 			/>
 		</div>
+		<!-- Filters -->
+			<div
+				v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" 
+				class="w-full"
+			>
+				<div class="flex">
+					<AppButton
+						class="mr-2"
+						:label="'Filter'"
+						:in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+						@click="filterModal = !filterModal"
+					/>
+				</div>
+				<div
+					class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg my-2"
+					:class="filterModal ? 'flex' : 'hidden'"
+				>
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppInput
+							v-model="params.title"
+							placeholder="Search Permanent Job Title"
+							type="text"
+							label="Permanent Job Title"
+						/>
+					</div>
+
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppInput
+							v-model="params.surgery"
+							placeholder="Search Surgery Name"
+							type="text"
+							label="Surgery Name"
+						/>
+					</div>
+
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppInput
+							v-model="params.job_type"
+							:type="'select'"
+							:name="'job_type'"
+							:label="'Job Type'"
+							:placeholder="'Select...'"
+							:items="job_types"
+						/>
+					</div>
+
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppInput
+							v-model="params.profession"
+							:type="'select'"
+							:name="'profession'"
+							:label="'Profession'"
+							:placeholder="'Select...'"
+							:items="professions"
+						/>
+					</div>
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppInput
+							v-model="params.job_posting_status"
+							:type="'select'"
+							:name="'Permanent Job Status'"
+							:label="'Permanent Job Status'"
+							:placeholder="'Select...'"
+							:items="permanent_job_status"
+						/>
+					</div>
+					
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppDate
+							v-model="params.date_posted_start"
+							label="Date Start"
+							format="YYYY-MM-DD"
+						/>
+					</div>
+
+					<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+						<AppDate
+							v-model="params.date_posted_end"
+							label="Date End"
+							format="YYYY-MM-DD"
+						/>
+					</div>
+
+					<div class="md:px-1 flex flex-wrap w-full justify-end">
+						<AppButton
+							label="Reset"
+							:in-style="'padding:5px 14px;margin-bottom:5px'"
+							@click="filterReset"
+						/>
+
+						<AppButton
+							class="mx-2"
+							label="Submit"
+							:in-style="'padding:5px 14px;margin-bottom:5px'"
+							@click="getJobs(params)"
+						/>
+					</div>
+				</div>
+			</div>
+			<!-- Filters end here -->
+		
 		<transition name="fade" mode="out-in">
 			<div v-if="loading" class="relative flex w-full" style="min-height:80px">
 				<AppLoading :loading="loading" spinner />
 			</div>
+			
 			<template v-if="$auth.user.domain === 'Practice' && !loading">
 				<AppTable
 					v-if="permanent_jobs_for_practice_count > 0"
@@ -128,15 +230,19 @@
 	</section>
 </template>
 <script>
-import debounce from "lodash.debounce";
-import AppTable from "@/components/Base/AppTable";
-import AppInput from "@/components/Base/AppInput";
-import AppLoading from "@/components/Base/AppLoading";
+import debounce from "lodash.debounce"
+import AppTable from "@/components/Base/AppTable"
+import AppInput from "@/components/Base/AppInput"
+import AppLoading from "@/components/Base/AppLoading"
+import AppButton from "@/components/Base/AppButton"
+import AppDate from "@/components/Base/AppDate"
 export default {
 	components: {
 		AppLoading,
 		AppTable,
-		AppInput
+		AppInput,
+		AppButton,
+		AppDate,
 	},
 
 	middleware({ query, error }) {
@@ -153,9 +259,10 @@ export default {
 		}
 	},
 
-	data() {
+	data () {
 		return {
 			search: "",
+			filterModal: false,
 			total: 0,
 			current_page: 1,
 			// app table params
@@ -163,7 +270,16 @@ export default {
 				job_id: null,
 				limit: 5,
 				offset: 0,
-				search: ""
+				search: "",
+
+				// new
+				title: "",
+				surgery: "",
+				job_type: "",
+				profession: "",
+				date_posted_start: "",
+				date_posted_end: "",
+				job_posting_status: "",
 			},
 			loading: false,
 			defaultColumns: [
@@ -227,7 +343,21 @@ export default {
 			permanent_job_applications: [],
 
 			permanent_jobs_for_locum_count: 0,
-			permanent_jobs_for_locum: []
+			permanent_jobs_for_locum: [],
+
+			job_types: [
+				{
+					label: 'Part Time', 
+					value: 'Part Time',
+				},
+				{
+					label: 'Full Time', 
+					value: 'Full Time',
+				}
+			],
+			permanent_job_status: [],
+			professions: [],
+			professions_categories: [],
 		};
 	},
 
@@ -367,7 +497,31 @@ export default {
 						});
 					}
 				}
-			);
+			)
+
+			if(!this.$route.query.status || this.$route.query.status === 'Available') {
+				this.permanent_job_status = [
+					{
+						label: 'Available', 
+						value: 'Available',
+					},
+					{
+						label: 'Applied', 
+						value: 'Applied',
+					},
+				]
+			} else if (this.$route.query.status === 'Closed') {
+				this.permanent_job_status = [
+					{
+						label: 'Closed due to Specified Reason', 
+						value: 'Closed',
+					},
+					{
+						label: 'Closed for being Unfilled', 
+						value: 'Unfilled',
+					},
+				]
+			}
 		},
 
 		search(value) {
@@ -387,6 +541,10 @@ export default {
 			let permanent_jobs_for_locum_count = "";
 
 			let params = {};
+
+			// for filters
+			let professions = []
+			let professions_categories = []
 
 			// ------------------FOR LOCUM---------------
 			if (app.$auth.user.domain === "Locum") {
@@ -547,6 +705,15 @@ export default {
 					permanent_jobs_for_practice
 				);
 			}
+
+			await app.$axios.get(`/api/v1/professions`).then((response) => {
+				response.data.data.professions.forEach(item => {
+					professions.push({ label: item.name, value: item.id })
+					professions_categories.push(item)
+				})
+			})
+			
+			
 			return {
 				permanent_jobs_for_practice_count,
 				permanent_jobs_for_practice,
@@ -554,6 +721,9 @@ export default {
 				permanent_jobs_for_locum,
 				permanent_job_applications_count,
 				permanent_job_applications,
+
+				professions,
+				professions_categories,
 				params
 			};
 		} catch (err) {
@@ -638,9 +808,43 @@ export default {
 				];
 			}
 		}
+		if(!this.$route.query.status || this.$route.query.status === 'Available') {
+			this.permanent_job_status = [
+				{
+					label: 'Available', 
+					value: 'Available',
+				},
+				{
+					label: 'Applied', 
+					value: 'Applied',
+				},
+			]
+		} else if (this.$route.query.status === 'Closed') {
+			this.permanent_job_status = [
+				{
+					label: 'Closed due to Specified Reason', 
+					value: 'Closed',
+				},
+				{
+					label: 'Closed for being Unfilled', 
+					value: 'Unfilled',
+				},
+			]
+		}
 	},
 
 	methods: {
+		filterReset() {
+			this.params.title=""
+			this.params.surgery=""
+			this.params.job_type=""
+			this.params.profession=""
+			this.params.date_posted_start=""
+			this.params.date_posted_end=""
+			this.params.permanent_job_status = !this.$route.query.status || this.$route.query.status === 'Available' ? 'Available' : 'Closed'
+
+			this.getJobs(this.params)
+		},
 		statusStyle(jobStatus) {
 			switch (jobStatus) {
 				case "Available":

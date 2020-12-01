@@ -150,7 +150,7 @@ export default {
           && this.view_permanent_jobs
         ) {
           locumTabList.push({
-            navigationTabTitle: "Permanent Jobs",
+            navigationTabTitle: "Permanent Job/Salaried Role",
             route: "/permanent-jobs",
             active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
           })
@@ -376,7 +376,7 @@ export default {
           && this.authPermissions.includes("View Permanent Job")
         ) {
           practiceTabList.push({
-            navigationTabTitle: "Permanent Jobs",
+            navigationTabTitle: "Permanent Job/Salaried Role",
             route: "/permanent-jobs",
             active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
           })

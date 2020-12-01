@@ -41,7 +41,7 @@
       </div>
       <AppButton
         v-if="$auth.user.domain === 'Practice'"
-        :label="'Create Permanent Job'"
+        :label="'Create Permanent Job/Salaried Role '"
         :class="'whitespace-no-wrap my-1'"
         @click="$router.push('/permanent-jobs/create')"
       />
