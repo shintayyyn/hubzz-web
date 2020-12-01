@@ -658,17 +658,29 @@ export default {
     ]
     this.hired_through = [
       {
-        label: "Through HUBZZ",
-        value: "Through HUBZZ",
+        label: "Filed through HUBZZ",
+        value: "Filed through HUBZZ",
       },
       {
-        label: "Direct Hiring",
-        value: "Direct Hiring",
+        label: "Filed through Recruitment Agency",
+        value: "Filed through Recruitment Agency",
       },
       {
-        label: "Closed by Practice",
-        value: "Closed by Practice",
-      }
+        label: "Filed by Direct Applicant",
+        value: "Filed by Direct Applicant",
+      },
+      {
+        label: "Filed by Advert",
+        value: "Filed by Advert",
+      },
+      {
+        label: "Filed Internally",
+        value: "Filed Internally",
+      },
+      {
+        label: "Withdrawn",
+        value: "Withdrawn",
+      },
     ]
   },
   methods: {

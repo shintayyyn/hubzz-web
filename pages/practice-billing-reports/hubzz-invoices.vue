@@ -17,7 +17,7 @@
 
       <!-- FILTER -->
       <div
-        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
+        class="flex flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg  bg-waterloo my-2"
       >
         <div class="md:px-1 w-full">
           <label class="text-md md:text-lg text-bold">Filters</label>
