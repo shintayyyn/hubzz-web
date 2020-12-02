@@ -263,11 +263,11 @@
           </template>
 
           <div
-            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+            v-if="propInvoice && propInvoice.approved && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
             class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
             <p class="text-sm w-1/2">
-              {{ propInvoice.approved ? "PENSION AMOUNT:" : "PENSION AMOUNT(Tentative):" }}
+              PENSION AMOUNT:
             </p>
 
             <p class="font-bold w-1/2 text-right">
