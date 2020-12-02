@@ -202,7 +202,7 @@ export default {
       return Promise.all([
         this.$axios.$get(`/api/v1/locum/job-parts/count`, {
           params: {
-            invoice_status: this.type === "Platform" ? ["Invoiced",] : null,
+            invoice_status: this.type === "Platform" ? ["Invoiced","Approved",] : null,
             locum_status: ["Approved",],
             locum_invoiceable: this.type === "Platform" ? true : null,
             nhs_claimable: true,
@@ -214,7 +214,7 @@ export default {
         }),
         this.$axios.$get(`/api/v1/locum/job-parts`, {
           params: {
-            invoice_status: this.type === "Platform" ? ["Invoiced",] : null,
+            invoice_status: this.type === "Platform" ? ["Invoiced","Approved",] : null,
             locum_status: ["Approved",],
             locum_invoiceable: this.type === "Platform" ? true : null,
             nhs_claimable: true,
@@ -250,7 +250,7 @@ export default {
       return this.$axios
         .$get(`/api/v1/locum/job-parts`, {
           params: {
-            invoice_status: this.type === "Platform" ? ["Invoiced",] : null,
+            invoice_status: this.type === "Platform" ? ["Invoiced","Approved",] : null,
             locum_status: ["Approved",],
             locum_invoiceable: this.type === "Platform" ? true : null,
             nhs_claimable: true,

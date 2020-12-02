@@ -318,7 +318,7 @@
               </div>
             </template>
             <div
-              v-if="propInvoice.approved && form.generate_form || (propInvoice && propInvoice.approved && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
+              v-if="propInvoice && propInvoice.approved && form.generate_form || (propInvoice && propInvoice.approved && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
               <p class="text-sm w-1/2">

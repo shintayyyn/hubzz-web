@@ -12,7 +12,6 @@
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
-
           <AppInput
             v-if="false"
             v-model="form.profession_id"
