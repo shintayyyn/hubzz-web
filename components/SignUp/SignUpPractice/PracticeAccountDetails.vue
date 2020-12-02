@@ -99,6 +99,7 @@
             @checked="practiceTypeId => form.practice_type_id.push(parseInt(practiceTypeId))"
             @unchecked="practiceTypeId => form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt(practiceTypeId))"
             @selectAll="() => form.practice_type_id = practiceTypes.map(({ value }) => value)"
+            @unselectAll="() => form.practice_type_id = []"
           />
           <template v-if="false && isOOH">
             <AppInput

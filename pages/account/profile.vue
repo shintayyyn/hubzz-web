@@ -273,6 +273,7 @@
             @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @selectAll="form.practice_type_id = practiceTypesSelectionList.map(({ value }) => value), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+            @unselectAll="() => form.practice_type_id = []"
           />
 
           <AppInput
