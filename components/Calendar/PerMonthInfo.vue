@@ -4,26 +4,36 @@
       v-if="info && info.status && info.status.includes('Allocated')"
       class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white"
     />
+
     <span
       v-if="info && info.status && info.status.includes('Applied')"
       class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white"
     />
+
     <template v-if="$auth.user.domain === 'Locum'">
       <span
         v-if="info && info.status && info.status.includes('Ongoing')"
         class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
       />
+
+      <span
+        v-if="info && info.dateUnavailabilities && info.dateUnavailabilities.length > 0"
+        class="bg-red-400 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
+      />
     </template>
+
     <template v-if="$auth.user.domain === 'Practice'">
       <span
         v-if="info && info.status && info.status.includes('Live')"
         class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white"
       />
+
       <span
         v-if="info && info.status && (info.status.includes('Unfilled') || info.status.includes('Declined') || info.status.includes('Withdrawn'))"
         class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white"
       />
     </template>
+
     <template v-if="info && info.shifts.length === 1">
       <div
         :class="shiftType(info && info.shifts[0])"
@@ -63,6 +73,7 @@
         style="height:50%"
       />
     </template>
+
     <template v-if="info && info.shifts.length === 2">
       <div
         :class="shiftType(info && info.shifts[0])"
@@ -102,6 +113,7 @@
         style="height:50%"
       />
     </template>
+
     <template v-else-if="info && info.shifts.length === 3">
       <div
         :class="shiftType(info && info.shifts[0])"
@@ -142,6 +154,7 @@
         style="height:50%"
       />
     </template>
+
     <template v-else-if="info && info.shifts.length === 4">
       <div class="bg-shift-am h-1 w-1/2 absolute left-0 bottom-0 rounded-bl border-r-2 border-white" />
       <div
@@ -170,32 +183,40 @@
     </template>
   </div>
 </template>
+
 <script>
 export default {
-  props: ["item", "info",],
+  props: {
+    item: {
+      type: Object,
+      default: () => null,
+    },
+
+    info: {
+      type: Object,
+      default: () => null,
+    },
+  },
+
   methods: {
     shiftType (shift) {
       switch (shift) {
       case "AM":
         return "bg-shift-am"
-        break
       case "PM":
         return "bg-shift-pm"
-        break
       case "Whole Day":
         return "bg-shift-whole-day"
-        break
       case "OOH":
         return "bg-shift-ooh"
-        break
       default:
         return ""
-        break
       }
     },
   },
 }
 </script>
+
 <style>
 .bg-job-active {
 	background-color: #66cc88;
