@@ -208,11 +208,11 @@ export default {
           dataIndex: "fullname",
           class: "text-center",
         },
-        {
-          name: "Suffix",
-          dataIndex: "personal_detail.suffix",
-          class: "text-center",
-        },
+        // {
+        //   name: "Suffix",
+        //   dataIndex: "personal_detail.suffix",
+        //   class: "text-center",
+        // },
         {
           name: "Username",
           dataIndex: "username",

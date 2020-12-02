@@ -76,6 +76,7 @@
           />
 
           <AppInput
+            v-if="false"
             v-model="practiceForm.suffix"
             :type="'text'"
             :name="'suffix'"
@@ -205,6 +206,7 @@
       />
 
       <AppInput
+        v-if="false"
         v-model="locumForm.suffix"
         :type="'text'"
         :name="'suffix'"

@@ -48,6 +48,7 @@
               />
 
               <AppInput
+                v-if="false"
                 v-model="suffix"
                 type="text"
                 label="Suffix"

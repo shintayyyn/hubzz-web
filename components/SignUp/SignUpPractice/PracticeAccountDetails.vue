@@ -69,6 +69,7 @@
             @blur="CheckEmptyField(form.last_name,'last_name')"
           />
           <AppInput
+            v-if="false"
             v-model="form.suffix"
             :type="'text'"
             :name="'suffix'"
