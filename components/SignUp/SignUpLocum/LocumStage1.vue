@@ -71,6 +71,7 @@
             required
           />
           <AppInput
+            v-if="false"
             v-model="form.suffix"
             :type="'text'"
             :name="'suffix'"

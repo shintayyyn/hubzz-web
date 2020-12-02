@@ -22,7 +22,8 @@
             {{ user.first_name }} {{ user.last_name }}
           </div>
         </div>
-        <div class="flex flex-col mt-4">
+
+        <div v-if="false" class="flex flex-col mt-4">
           <div class="text-sm">
             Suffix:
           </div>
@@ -31,6 +32,7 @@
             {{ user.suffix }}
           </div>
         </div>
+
         <div class="flex flex-col mt-4">
           <div class="text-sm">
             Status:
@@ -238,172 +240,172 @@
 </template>
 
 <script>
-  import AppLoading from "@/components/Base/AppLoading"
-  import AppInput from "@/components/Base/AppInput"
-  import AppButton from "@/components/Base/AppButton"
-  import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppLoading from "@/components/Base/AppLoading"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
-  const practice_roles = [
-    { value: "Partner", label: "Partner" },
-    { value: "Practice Manager", label: "Practice Manager" },
-    { value: "Practice Staff", label: "Practice Staff" }
-  ]
+const practice_roles = [
+  { value: "Partner", label: "Partner", },
+  { value: "Practice Manager", label: "Practice Manager", },
+  { value: "Practice Staff", label: "Practice Staff", },
+]
 
-  export default {
-    components: {
-      AppLoading,
-      AppInput,
-      AppButton,
-      AppConfirmationModal
+export default {
+  components: {
+    AppLoading,
+    AppInput,
+    AppButton,
+    AppConfirmationModal,
+  },
+
+  transition: {
+    name: "fade",
+    mode: "out-in",
+  },
+
+  props: {
+    user: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  data () {
+    return {
+      practice_roles,
+      user_roles: [],
+      roles: [],
+      form: {
+        username: "",
+        email: "",
+        title: "",
+        first_name: "",
+        last_name: "",
+        suffix: "",
+        practice_role: "",
+        practice_user_role_id: "",
+        status: "",
+      },
+      loading: false,
+      modal: false,
+      formError: [],
+    }
+  },
+
+  computed: {
+    authPermissions () {
+      return this.$store.getters["permissions"]
     },
 
-    transition: {
-      name: "fade",
-      mode: "out-in"
+    verifiedEmail () {
+      return this.user && this.user.email_verified_at ? true : false
     },
+  },
 
-    props: {
-      user: {
-        type: Object,
-        required: true,
-      }
-    },
+  async asyncData ({ app, error, }) {
+    try {
+      const practiceRoles = await app.$axios.get(`/api/v1/practice/practice-roles`)
+        .then(response => response.data.data.roles)
 
-    data () {
+      const roles = practiceRoles.map(practiceRole => ({
+        label: practiceRole.name,
+        value: practiceRole.id,
+      }))
+
       return {
-        practice_roles,
-        user_roles: [],
-        roles: [],
-        form: {
-          username: "",
-          email: "",
-          title: "",
-          first_name: "",
-          last_name: "",
-          suffix: "",
-          practice_role: "",
-          practice_user_role_id: "",
-          status: ""
-        },
-        loading: false,
-        modal: false,
-        formError: []
+        roles,
       }
-    },
+    } catch (err) {
+      console.log("err", err || err.response)
+      return error({ status: 404, message: "Page Not Found", })
+    }
+  },
 
-    computed: {
-      authPermissions () {
-        return this.$store.getters["permissions"]
-      },
+  mounted () {
+    this.form.username = this.user.username
+    this.form.email = this.user.email
+    this.form.title = this.user.personal_detail.title
+    this.form.first_name = this.user.personal_detail.first_name
+    this.form.last_name = this.user.personal_detail.last_name
+    this.form.suffix = this.user.personal_detail.suffix
+    this.form.practice_role = this.user.practice_detail.practice_role
+    this.form.practice_user_role_id = this.user.practice_detail.role
+      ? this.user.practice_detail.role.id
+      : null
+    this.form.status = this.user.status
+  },
 
-      verifiedEmail () {
-        return this.user && this.user.email_verified_at ? true : false
-      },
-    },
+  methods: {
 
-    async asyncData ({ app, error }) {
-      try {
-        const practiceRoles = await app.$axios.get(`/api/v1/practice/practice-roles`)
-          .then(response => response.data.data.roles)
-
-        const roles = practiceRoles.map(practiceRole => ({
-          label: practiceRole.name,
-          value: practiceRole.id
-        }))
-
-        return {
-          roles,
-        }
-      } catch (err) {
-        console.log("err", err || err.response)
-        return error({ status: 404, message: "Page Not Found" })
-      }
-    },
-
-    mounted () {
-      this.form.username = this.user.username
-      this.form.email = this.user.email
-      this.form.title = this.user.personal_detail.title
-      this.form.first_name = this.user.personal_detail.first_name
-      this.form.last_name = this.user.personal_detail.last_name
-      this.form.suffix = this.user.personal_detail.suffix
-      this.form.practice_role = this.user.practice_detail.practice_role
-      this.form.practice_user_role_id = this.user.practice_detail.role
-        ? this.user.practice_detail.role.id
-        : null
-      this.form.status = this.user.status
-    },
-
-    methods: {
-
-      save () {
-        this.formError = []
-        this.Validate(this.form, ["title", "suffix"])
-        if (!this.formError.length) {
-          this.loading = true
-          this.$axios
-            .$put(
-              `/api/v1/practice/practice-users/${this.$route.params.id}/account`,
-              this.form
-            )
-            .then(res => {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: [`${res.message}`]
-              })
-              this.$emit("updateUser", res.data.user)
-              this.$router.push("/profile/users")
-            })
-            .catch(err => {
-              console.log("err", err.response || err)
-              if (err.response.data.message) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "danger",
-                  text: [`${err.response.data.message}`]
-                })
-              }
-              if (err.response.data.error_messages) {
-                this.formError = err.response.data.error_messages
-              }
-            })
-            .finally(() => {
-              this.loading = false
-            })
-        }
-      },
-
-      remove () {
+    save () {
+      this.formError = []
+      this.Validate(this.form, ["title", "suffix",])
+      if (!this.formError.length) {
         this.loading = true
         this.$axios
-          .$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
+          .$put(
+            `/api/v1/practice/practice-users/${this.$route.params.id}/account`,
+            this.form
+          )
           .then(res => {
-            console.log(res)
-            this.loading = false
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`]
+              text: [`${res.message}`,],
             })
-            // let index = this.users.findIndex(
-            // 	item => item.id == this.this.user.id
-            // );
-            // if (index >= 0) {
-            // 	this.users.splice(index, 1);
-            // }
-            this.modal = false
+            this.$emit("updateUser", res.data.user)
             this.$router.push("/profile/users")
           })
           .catch(err => {
-            this.loading = false
-            this.modal = false
-            console.log("err", err.response)
-            this.formError = err.response.data.error_messages
+            console.log("err", err.response || err)
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`,],
+              })
+            }
+            if (err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages
+            }
           })
-      },
-
+          .finally(() => {
+            this.loading = false
+          })
+      }
     },
 
-  }
+    remove () {
+      this.loading = true
+      this.$axios
+        .$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
+        .then(res => {
+          console.log(res)
+          this.loading = false
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`,],
+          })
+          // let index = this.users.findIndex(
+          // 	item => item.id == this.this.user.id
+          // );
+          // if (index >= 0) {
+          // 	this.users.splice(index, 1);
+          // }
+          this.modal = false
+          this.$router.push("/profile/users")
+        })
+        .catch(err => {
+          this.loading = false
+          this.modal = false
+          console.log("err", err.response)
+          this.formError = err.response.data.error_messages
+        })
+    },
+
+  },
+
+}
 </script>

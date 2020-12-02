@@ -38,7 +38,12 @@
           required
           @blur="CheckEmptyField(form.first_name, 'last_name')"
         />
-        <AppInput v-model="form.suffix" :type="'text'" :name="'suffix'" :label="'Suffix'" />
+
+        <AppInput
+          v-if="false"
+          v-model="form.suffix" :type="'text'" :name="'suffix'" :label="'Suffix'"
+        />
+
         <AppInput
           v-model="form.username"
           :type="'text'"
@@ -116,16 +121,16 @@ import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
 const practice_roles = [
-  { value: "Partner", label: "Partner" },
-  { value: "Practice Manager", label: "Practice Manager" },
-  { value: "Practice Staff", label: "Practice Staff" }
+  { value: "Partner", label: "Partner", },
+  { value: "Practice Manager", label: "Practice Manager", },
+  { value: "Practice Staff", label: "Practice Staff", },
 ]
 export default {
   components: {
     AppFormError,
     AppInput,
     AppLoading,
-    AppButton
+    AppButton,
   },
   data () {
     return {
@@ -142,9 +147,9 @@ export default {
         practice_role: "",
         practice_user_role_id: "",
         password: "",
-        password_confirmation: ""
+        password_confirmation: "",
       },
-      formError: []
+      formError: [],
     }
   },
   async mounted () {
@@ -158,7 +163,7 @@ export default {
         .$get(`/api/v1/practice/practice-roles`)
         .then(res => {
           return res.data.roles.forEach(role => {
-            this.user_roles.push({ label: role.name, value: role.id })
+            this.user_roles.push({ label: role.name, value: role.id, })
           })
         })
         .catch(err => {
@@ -167,14 +172,14 @@ export default {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [`${err.response.data.message}`]
+              text: [`${err.response.data.message}`,],
             })
           }
         })
     },
     create () {
       this.formError = []
-      this.Validate(this.form, ["title", "suffix"])
+      this.Validate(this.form, ["title", "suffix",])
       if (!this.formError.length) {
         this.$axios
           .$post(`/api/v1/practice/practice-users`, this.form)
@@ -182,7 +187,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.message}`]
+              text: [`${res.message}`,],
             })
             this.$emit("addUser", res.data.user)
             this.$router.push("/profile/users")
@@ -193,12 +198,12 @@ export default {
               err.response.data.error_messages.forEach(error => {
                 this.formError.push({
                   field:
-                    error.field === "new_password" &&
-                    error.validation === "confirmed"
+                    error.field === "new_password"
+                    && error.validation === "confirmed"
                       ? "new_password_confirmation"
                       : error.field,
                   message: error.message,
-                  validation: error.validation
+                  validation: error.validation,
                 })
               })
               this.$nextTick(() => {
@@ -218,8 +223,8 @@ export default {
           this.$refs.modalContainer.scrollTop = 0
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>
