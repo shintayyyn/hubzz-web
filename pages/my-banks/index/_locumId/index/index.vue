@@ -237,6 +237,20 @@
                   class="px-2"
                   @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 >{{ item.compliance_document.name }}</a>
+                <span class="p-1 rounded-lg" :class="statusStyle(item.status)">
+                  {{ item && item.status ? item.status : null }}
+                </span>
+                <span class="text-xs p-1 mx-1">
+                  {{ item && item.expired_at 
+                    ? item.status === 'Approved' 
+                      ? 'until ' + $moment(item.expired_at).format('DD/MM/YYYY')
+                      : item.status === 'Expiring' 
+                        ?'on ' + $moment(item.expired_at).format('DD/MM/YYYY')
+                        : item.status === 'Expired'
+                          ? 'at ' + $moment(item.expired_at).format('DD/MM/YYYY')
+                          : null
+                    : null }}
+                </span>
               </div>
               <template v-if="mandatory && !mandatory.length">
                 <span class="text-sm">(none)</span>
@@ -440,6 +454,9 @@ export default {
             }
           )
         })
+        .finally(() => {
+          console.log('mandatory', this.mandatory)
+        })
     },
 
     downloadItem (fileUrl, fileName) {
@@ -456,6 +473,21 @@ export default {
         document.body.appendChild(link)
         link.click()
       })
+    },
+
+    statusStyle (status) {
+      switch (status) {
+      case 'Approved':
+        return 'bg-green-500 text-white text-xs'
+      case 'Expiring':
+      case 'Pending':
+        return 'bg-yellow-500 text-black-700 text-xs'
+      case 'Expired':
+      case 'Rejected':
+        return 'bg-red-800 text-red-400 text-xs'
+      default:
+        return
+      }
     },
   },
 }

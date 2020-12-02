@@ -37,7 +37,7 @@
                   v-model="viewLocumJobs"
                   type="single-checkbox"
                   name="view_locum_jobs"
-                  label="Hubzz Jobs"
+                  label="Hubzz Locum Jobs"
                   :error="formErrors.find(({ field }) => field === 'view_locum_jobs')"
                 />
 

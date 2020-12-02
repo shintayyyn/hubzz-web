@@ -213,14 +213,24 @@
       />
 
       <AppInput
-        v-model="locumForm.gender"
+        v-model="genderSelected"
         :type="'select'"
-        :name="'gender'"
+        :name="'genderSelected'"
         :label="'Gender'"
-        :error="formError.find(item => item.field === 'gender')"
-        :items="[{ label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }]"
+        :error="formError.find(item => item.field === 'gender' && genderSelected !== 'Other')"
+        :items="[{ label: 'Select..', value: ''}, { label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }, { label: 'Other', value: 'Other' }]"
         required
-        @blur="CheckEmptyField(locumForm.gender, 'gender')"
+      />
+
+      <AppInput
+        v-if="genderSelected === 'Other'"
+        v-model="locumForm.gender"
+        :type="'text'"
+        :name="'gender'"
+        :label="'Please specify'"
+        :error="formError.find(item => item.field === 'gender')"
+        required
+        @submit="save"
       />
 
       <AppDate
@@ -412,6 +422,8 @@ export default {
         memorable_number: '',
       },
 
+      genderSelected: '',
+
       locumForm: {
         email: "",
         title: "",
@@ -441,6 +453,32 @@ export default {
 
     authPermissions () {
       return this.$store.getters["permissions"]
+    },
+  },
+
+  watch: {
+    genderSelected (newVal, oldVal) {
+      if (newVal === 'Male') {
+        this.locumForm.gender = 'Male'
+      } else if (newVal === 'Female') {
+        this.locumForm.gender = 'Female'
+      } else if (oldVal === 'Male') {
+        this.locumForm.gender = ''
+      } else if (oldVal === 'Female') {
+        this.locumForm.gender = ''
+      }
+    },
+
+    'locumForm.gender' () {
+      this.formError = this.formError.filter(formError => formError.field !== 'gender')
+    
+      if (!this.locumForm.gender) {
+        this.formError.push({
+          message: 'Gender is required',
+          field: 'gender',
+          validation: 'required',
+        })
+      }
     },
   },
 
@@ -482,10 +520,10 @@ export default {
 
         practiceForm.username = user.username
         practiceForm.email = user.email
-        practiceForm.title = user.personal_detail.title
-        practiceForm.first_name = user.personal_detail.first_name
-        practiceForm.last_name = user.personal_detail.last_name
-        practiceForm.suffix = user.personal_detail.suffix
+        practiceForm.title = user.title
+        practiceForm.first_name = user.first_name
+        practiceForm.last_name = user.last_name
+        practiceForm.suffix = user.suffix
         practiceForm.practice_role = user.practice_detail.practice_role
         practiceForm.memorable_word_category_id = user.memorable_word_category_id
         practiceForm.memorable_word = user.memorable_word
@@ -499,12 +537,24 @@ export default {
         let locumForm = {}
 
         locumForm.email = user.email
-        locumForm.title = user.personal_detail.title
-        locumForm.first_name = user.personal_detail.first_name
-        locumForm.last_name = user.personal_detail.last_name
-        locumForm.suffix = user.personal_detail.suffix
-        locumForm.gender = user.personal_detail.gender
-        locumForm.date_of_birth = user.personal_detail.date_of_birth
+        locumForm.title = user.title
+        locumForm.first_name = user.first_name
+        locumForm.last_name = user.last_name
+        locumForm.suffix = user.suffix
+        if (user.gender === 'Male') {
+          this.genderSelected = 'Male'
+          locumForm.gender = 'Male'
+        } else if (user.gender === 'Female') {
+          this.genderSelected = 'Female'
+          locumForm.gender = 'Female'
+        } else if (user.gender) {
+          this.genderSelected = 'Other'
+          locumForm.gender = user.gender
+        } else {
+          this.genderSelected = ''
+          locumForm.gender = ''
+        }
+        locumForm.date_of_birth = user.date_of_birth
         // locumForm.mobile_number = user.contact_detail.mobile_number
         locumForm.mobile_number = user.contact_detail.mobile_number ? user.contact_detail.mobile_number.replace("+44", '') : ''
         locumForm.home_number = user.contact_detail.home_number

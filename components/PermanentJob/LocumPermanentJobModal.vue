@@ -202,7 +202,7 @@
               {{ permanent_job ? permanent_job.professions.name : null }}
             </p>
             <p class="font-bold">
-              Hours
+              Job Type
             </p>
             <p class="pl-2 pb-3">
               {{ permanent_job ? permanent_job.work_hours : null }}
@@ -221,7 +221,7 @@
               && permanent_job_application 
               && permanent_job_application.application_status !== 'Rejected')"
             class="my-2"
-            label="Share"
+            label="Share with a friend"
             @click="toShowLink = !toShowLink"
           />
           <div v-if="toShowLink" class="rounded-lg p-4 shadow-lg mb-2">
