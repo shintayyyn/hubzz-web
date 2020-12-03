@@ -8,7 +8,7 @@
 				class="mt-10 flex items-center justify-between"
 			>
 				<div class="font-bold text-xs sm:text-base">Reference you need to be approved by Hubzz HQ</div>
-				<div class="text-xs cursor-pointer">Edit</div>
+				<!-- <div class="text-xs cursor-pointer">Edit</div> -->
 			</div>
 
 			<div class="mt-5 px-1">
