@@ -8,17 +8,21 @@
         >
           <PerMonth
             v-if="$store.state.calendar.view_type === 'per_month'"
+            :locumUnavailabilities="locumUnavailabilities"
             @getCalendarJobAndJobParts="getCalendarJobAndJobParts"
           />
 
           <PerWeek
             v-if="$store.state.calendar.view_type === 'per_week'"
+            :locumUnavailabilities="locumUnavailabilities"
             @getCalendarJobAndJobParts="getCalendarJobAndJobParts"
           />
         </div>
 
         <div class="w-full lg:w-1/3">
-          <Info />
+          <Info
+            :locumUnavailabilities="locumUnavailabilities"
+          />
         </div>
       </div>
     </div>
@@ -35,6 +39,12 @@ export default {
     PerMonth,
     PerWeek,
     Info,
+  },
+
+  data () {
+    return {
+      locumUnavailabilities: [],
+    }
   },
   
   computed: {
@@ -149,7 +159,15 @@ export default {
               },
             }).then(response => response.data.data.permanent_job_applications)
             : [],
-        ]).then(([jobParts, jobs, permanentJobApplications,]) => {
+
+          this.$axios.get('/api/v1/locum/unavailabilities', {
+            params: {
+              date_start: calendarDateStart,
+              date_end: calendarDateEnd,
+              limit: 100000000,
+            },
+          }).then(response => response.data.data.unavailabilities),
+        ]).then(([jobParts, jobs, permanentJobApplications, locumUnavailabilities,]) => {
           const allocatedJobParts = jobParts.filter(({ status, type, }) => status === 'Allocated' && type === 'Platform')
           const privateJobParts = jobParts.filter(({ type, }) => type === 'Private')
 
@@ -158,6 +176,8 @@ export default {
 
           this.$store.commit('jobs/SET_LOCUM_APPLIED_JOBS', jobs)
           this.$store.commit('jobs/SET_LOCUM_PERMANENT_JOBS', permanentJobApplications)
+
+          this.locumUnavailabilities = locumUnavailabilities.filter((locumUnavailability) => locumUnavailability.shifts.length > 0)
         }).finally(() => {
           this.$store.commit('calendar/TOGGLE_LOADING', false)
         })

@@ -4,12 +4,12 @@
       <p class="text-gray-900 quick-view text-sm">
         QUICK VIEW
       </p>
-      <p
-        class="text-white uppercase text-lg font-bold"
-      >
+
+      <p class="text-white uppercase text-lg font-bold">
         {{ $moment(dateInfo).format('DD / MM / YYYY') }}
       </p>
     </div>
+
     <div class="flex flex-col overflow-y-auto overflow-x-hidden px-2 mx-2 h-full info-card">
       <transition name="slide" mode="out-in">
         <div
@@ -19,6 +19,7 @@
         >
           No jobs to display.
         </div>
+
         <div v-if="viewPracticeJobs && !loading">
           <div v-for="job in foundPracticeJobs" :key="`${job.id}-${job.status}`">
             <PracticeJobCard
@@ -27,6 +28,7 @@
             />
           </div>
         </div>
+
         <div v-if="viewLocumJobs && !loading">
           <div v-for="job in foundLocumJobs" :key="`${job.id}-${job.locum_status}`">
             <LocumJobCard
@@ -48,6 +50,14 @@ export default {
     PracticeJobCard,
     LocumJobCard,
   },
+
+  props: {
+    locumUnavailabilities: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
   data () {
     return {
       foundPracticeJobs: [],
@@ -208,6 +218,7 @@ export default {
 					|| job.include_sunday === true)
       )
     },
+
     // PRACTICE
     findPerMonthPractice (date) {
       this.loading = true

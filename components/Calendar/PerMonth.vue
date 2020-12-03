@@ -457,6 +457,14 @@
                   For Interview Permanent Jobs
                 </p>
               </div>
+
+              <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+                <span class="bg-red-400 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Not Availabile
+                </p>
+              </div>
             </div>
 
             <div class="md:w-2/5">
@@ -515,6 +523,13 @@ export default {
     AppLoading,
     AppButton,
     PerMonthInfo,
+  },
+
+  props: {
+    locumUnavailabilities: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data () {
@@ -594,11 +609,13 @@ export default {
           ...this.getPracticeUnfilledJobs,
           ...this.getPracticeAvailableJobs,
         ]
+
         let jobParts = [
           // ...this.getPracticeOngoingJobs,
           ...this.getPracticeWithdrawnJobs,
           ...this.getPracticeAllocatedPartJobs,
         ]
+
         this.daysInMonth.forEach(days => {
           if (jobs.length > 0) {
             jobs.forEach(job => {
@@ -720,6 +737,7 @@ export default {
               }
             })
           }
+
           if (jobParts.length > 0) {
             jobParts.forEach(jobPart => {
               if (jobPart.dates.includes(days.fullDate)) {
@@ -857,6 +875,7 @@ export default {
               }
             })
           }
+
           if (jobParts.length > 0) {
             jobParts.forEach(jobPart => {
               if (jobPart.dates.includes(days.fullDate)) {
@@ -931,6 +950,7 @@ export default {
               }
             })
           }
+
           if (this.getLocumPermanentJobs.length > 0) {
             this.getLocumPermanentJobs.forEach(item => {
               if (
@@ -968,6 +988,36 @@ export default {
                 }
               }
             })
+          }
+
+        })
+
+        jobsInMonth.forEach((dateInCalendar) => {
+          dateInCalendar.dateUnavailabilities = dateInCalendar.dateUnavailabilities || []
+        })
+
+        this.locumUnavailabilities.forEach((locumUnavailability) => {
+          if (locumUnavailability.shifts.length) {
+            const dateInCalendar = jobsInMonth.find(dateInCalendar => dateInCalendar.date === locumUnavailability.date)
+
+            if (dateInCalendar) {
+              dateInCalendar.dateUnavailabilities.push(locumUnavailability)
+
+              // locumUnavailability.shifts.forEach((shift) => {
+              //   if (!dateInCalendar.shifts.includes(shift.name)) {
+              //     dateInCalendar.shifts.push(shift.name)
+              //   }
+              // })
+            } else {
+              jobsInMonth.push({
+                date: locumUnavailability.date,
+                // shifts: locumUnavailability.shifts.map((shift) => shift.name),
+                shifts: [],
+                status: [],
+                jobs: [],
+                dateUnavailabilities: [locumUnavailability,],
+              })
+            }
           }
         })
       }

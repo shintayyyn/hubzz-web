@@ -12,7 +12,6 @@
           <div class="ml-2 font-bold my-2 mb-4">
             {{ user.profession.name }}
           </div>
-
           <AppInput
             v-if="false"
             v-model="form.profession_id"
@@ -273,6 +272,7 @@
             @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @selectAll="form.practice_type_id = practiceTypesSelectionList.map(({ value }) => value), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+            @unselectAll="() => form.practice_type_id = []"
           />
 
           <AppInput
