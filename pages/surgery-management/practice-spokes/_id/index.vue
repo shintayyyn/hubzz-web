@@ -101,7 +101,7 @@
                 :class="practice_surgery.allow_surgery_bill_hubzz ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
               />
             </span>
-            <p class="font-semibold">Is this Spoke allowed to bill of HUBZZ?</p>
+            <p class="font-semibold">Does Hub permit billing for Hubzz?</p>
           </div>
 
           <div class="flex items-center py-1">
