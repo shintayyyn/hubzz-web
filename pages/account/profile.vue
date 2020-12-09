@@ -284,15 +284,48 @@
           />
 
           <AppInput
-            v-if="form.vat_registered === true"
+            v-if="form.vat_registered"
             v-model="form.vat_number"
             :type="'numberDash'"
             :name="'vat_number'"
             :label="'VAT Number'"
             :error="formError.find(item => item.field === 'vat_number')"
-            :limit="9"
+            :limit="11"
             @submit="updateLocumProfile"
           />
+
+          <section v-if="false && form.vat_registered">
+            <div class="flex flex-col mb-3 md:mb-6 py-2">
+              <div class="relative flex flex-wrap leading-none items-center">
+                <label class="text-xs sm:text-sm py-1">
+                  <span>VAT Number</span>
+        
+                  <span class="text-red-500">*</span>
+                </label>
+              </div>
+        
+              <div class="flex flex-row justify-start mt-1">
+                <div class="flex flex-col w-full">
+                  <div class="flex items-center justify-start">
+                    <input
+                      v-model="form.vat_number"
+                      class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
+                      :class="[formError.find(item => item.field === 'vat_number') ? 'border-red-500' : '']"
+                    >
+                  </div>
+        
+                  <transition name="drop-down">
+                    <div v-if="formError.find(item => item.field === 'vat_number')" class="text-red-500 py-1 text-xs text-white">
+                      {{
+                        formError.find(item => item.field === 'vat_number').message.charAt(0).toUpperCase()
+                          + formError.find(item => item.field === 'vat_number').message.slice(1).replace(/_/g, " ")
+                      }}
+                    </div>
+                  </transition>
+                </div>
+              </div>
+            </div>
+          </section>
 
           <div v-if="form.vat_registered === true" class="flex flex-col items-start mb-4">
             <p class="text-sm">
@@ -1104,6 +1137,26 @@ export default {
   },
 
   watch: {
+    'form.vat_number' () {
+      const array = this.form.vat_number.split('')
+        .filter(v => ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',].includes(v))
+        .slice(0, 9)
+
+      if (array.length > 3) {
+        array.splice(3, 0, ' ')
+      }
+
+      if (array.length > 8) {
+        array.splice(8, 0, ' ')
+      }
+
+      const value = array.join('')
+
+      if (this.form.vat_number !== value) {
+        this.form.vat_number = value
+      }
+    },
+
     selectedProfession () {
       if (this.selectedProfession) {
         if (this.selectedProfession.sub_professionable) {
@@ -1724,17 +1777,17 @@ export default {
       if (!this.form.vat_registered) {
         notRequired.push("vat_certificate")
       } else {
-        if (this.form.vat_number) {
-          const firstSlice = this.form.vat_number.slice(0, 3)
-          const secondSlice = this.form.vat_number.slice(3, 7)
-          const thirdSlice = this.form.vat_number.slice(7, 9)
-          this.form.vat_number = firstSlice.concat(
-            " ",
-            secondSlice,
-            " ",
-            thirdSlice
-          )
-        }
+        // if (this.form.vat_number) {
+        //   const firstSlice = this.form.vat_number.slice(0, 3)
+        //   const secondSlice = this.form.vat_number.slice(3, 7)
+        //   const thirdSlice = this.form.vat_number.slice(7, 9)
+        //   this.form.vat_number = firstSlice.concat(
+        //     " ",
+        //     secondSlice,
+        //     " ",
+        //     thirdSlice
+        //   )
+        // }
       }
 
       if (this.form.employment_type === "Self-Employed") {
