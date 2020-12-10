@@ -12,45 +12,56 @@
                   <div class="text-xs sm:text-sm">
                     Practice name
                   </div>
+
                   <div class="text-xs font-bold py-2">
                     {{ practice ? practice.name : '' }}
                   </div>
+
                   <div class="text-xs sm:text-sm mt-4">
                     CCG
                   </div>
+
                   <div class="text-xs font-bold py-2">
                     {{ practice ? practice.clinical_commissioning_group_name : '' }}
                   </div>
                 </div>
+
                 <div class="flex flex-col w-full lg:w-1/2 xl:w-1/5 p-1">
                   <div class="text-xs sm:text-sm" mt-4>
                     Practice code
                   </div>
+
                   <div class="text-xs font-bold py-2">
                     {{ practice ? practice.code : '' }}
                   </div>
+
                   <div class="text-xs sm:text-sm mt-4">
                     Phone number
                   </div>
+
                   <div class="text-xs font-bold py-2">
                     {{ practice ? practice.phone_number : '' }}
                   </div>
                 </div>
+
                 <div class="flex flex-col lg:flex-row xl:flex-col w-full xl:w-2/5 p-1">
                   <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
                     <div class="text-xs sm:text-sm">
                       Type
                     </div>
+
                     <div
                       class="text-xs font-bold py-2"
                     >
                       {{ practice ? !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board' : '' }}
                     </div>
                   </div>
+
                   <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
                     <div class="text-xs sm:text-sm">
                       Address
                     </div>
+
                     <div class="text-xs font-bold py-2">
                       {{ practice ? practice.address_line_1 : '' }} {{ practice ? practice.address_line_2 : '' }}
                       {{ practice ? practice.address_line_3 : '' }} {{ practice ? practice.address_line_4 : '' }} {{ practice ? practice.address_line_5 : '' }}
@@ -138,7 +149,9 @@
         <div class="w-full p-1">
           <div class="relative bg-white rounded-lg shadow-lg p-2 md:p-6">
             <AppLoading :loading="loading" spinner />
+
             <AppFormError v-if="formError.length" :formError="formError" />
+
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
@@ -152,6 +165,7 @@
                   @submit="save"
                   @blur="CheckEmptyField(form.phone_number, 'phone_number')"
                 />
+
                 <AppInput
                   v-model="form.report_to"
                   :type="'text'"
@@ -162,6 +176,7 @@
                   @submit="save"
                   @blur="CheckEmptyField(form.report_to, 'report_to')"
                 />
+
                 <AppInput
                   v-model="form.email"
                   :type="'email'"
@@ -307,6 +322,7 @@
                   />
                 </template>
               </div>
+
               <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
                   v-model="form.practice_type_id"
@@ -324,10 +340,12 @@
                 />
               </div>
             </div>
+
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm mt-3 px-2">
                 Compliance Documents
               </div>
+
               <div class="flex flex-row flex-wrap justify-bettwen">
                 <template v-for="profession_compliance_category in profession_compliance_categories">
                   <div
@@ -445,6 +463,7 @@
                 </template>
               </div>
             </div>
+
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
@@ -458,6 +477,7 @@
                   @uncheckAll="form.mandatory_training_id = []"
                 />
               </div>
+
               <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
                   v-model="form.other_mandatory_training_id"
@@ -474,6 +494,7 @@
                   @remove="toggleRemoveMandatoryModal"
                 />
               </div>
+
               <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
                   v-model="form.vat_registered"
@@ -481,6 +502,7 @@
                   :name="'vat_registered'"
                   :label="'Are you VAT registered?'"
                 />
+
                 <template v-if="form.vat_registered">
                   <AppInput
                     v-model="form.vat_number"
@@ -488,7 +510,9 @@
                     :name="'vat_number'"
                     :label="'VAT Number'"
                     :error="formError.find(item => item.field === 'vat_number')"
+                    :limit="11"
                   />
+
                   <AppDate
                     v-model="form.tax_year_end_date"
                     :name="'tax_year_end_date'"
@@ -496,9 +520,11 @@
                     :error="formError.find(item => item.field === 'tax_year_end_date')"
                   />
                 </template>
+
                 <div class="font-bold text-sm my-4">
                   Bank Details
                 </div>
+
                 <AppInput
                   v-model="form.account_name"
                   :type="'text'"
@@ -507,6 +533,7 @@
                   :error="formError.find(item => item.field === 'account_name')"
                   required
                 />
+
                 <AppInput
                   v-model="form.bank_name"
                   :type="'text'"
@@ -538,6 +565,7 @@
                 />
               </div>
             </div>
+
             <div class="flex flex-row flex-wrap justify-between px-2">
               <AppInput
                 v-model="form.extra_information"
@@ -730,6 +758,26 @@ export default {
   },
 
   watch: {
+    'form.vat_number' () {
+      const array = this.form.vat_number.split('')
+        .filter(v => ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',].includes(v))
+        .slice(0, 9)
+
+      if (array.length > 3) {
+        array.splice(3, 0, ' ')
+      }
+
+      if (array.length > 8) {
+        array.splice(8, 0, ' ')
+      }
+
+      const value = array.join('')
+
+      if (this.form.vat_number !== value) {
+        this.form.vat_number = value
+      }
+    },
+
     modal (value) {
       value
         ? (document.body.style.overflow = "hidden")
