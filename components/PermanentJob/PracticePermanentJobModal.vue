@@ -397,7 +397,7 @@
           <div v-if="toCloseJob === true">
             <AppInput
               v-model="form.hired_through"
-              :label="'Closing Job Due to External Reason? (Optional)'"
+              :label="'Reasons for Closing Job'"
               :type="'select'"
               :name="'hired_through'"
               :placeholder="'Select...'"
@@ -431,8 +431,8 @@ export default {
     return {
       options: {
         modules: {
-          toolbar: null
-        }
+          toolbar: null,
+        },
       },
       edit: false,
       toCloseJob: false,
@@ -441,7 +441,7 @@ export default {
 
       approve_or_reject: {
         approved_or_rejected: "",
-        cancelled_reason: ""
+        cancelled_reason: "",
       },
       showCancel: false,
 
@@ -460,7 +460,7 @@ export default {
         salary_description_2: "",
         work_hours: "",
         hired_through: "",
-        update_remarks: ""
+        update_remarks: "",
       },
       salary_range: false,
       practice_lists: [],
@@ -485,21 +485,21 @@ export default {
         placeholder: "Please type the description here",
         modules: {
           toolbar: [
-            ["bold", "italic", "underline", "strike"],
-            ["blockquote", "code-block"],
-            [{ header: 1 }, { header: 2 }],
-            [{ list: "ordered" }, { list: "bullet" }],
-            [{ script: "sub" }, { script: "super" }],
-            [{ size: ["small", false, "large", "huge"] }],
-            [{ header: [1, 2, 3, 4, 5, 6, false] }],
-            [{ font: [] }],
-            [{ color: [] }, { background: [] }],
-            [{ align: [] }],
-            ["clean"],
-            ["link"]
-          ]
-        }
-      }
+            ["bold", "italic", "underline", "strike",],
+            ["blockquote", "code-block",],
+            [{ header: 1, }, { header: 2, },],
+            [{ list: "ordered", }, { list: "bullet", },],
+            [{ script: "sub", }, { script: "super", },],
+            [{ size: ["small", false, "large", "huge",], },],
+            [{ header: [1, 2, 3, 4, 5, 6, false,], },],
+            [{ font: [], },],
+            [{ color: [], }, { background: [], },],
+            [{ align: [], },],
+            ["clean",],
+            ["link",],
+          ],
+        },
+      },
       // displayOption: {
       // 	modules: {
       // 		toolbar: null
@@ -540,7 +540,7 @@ export default {
       if (this.$moment(value).isAfter(this.form.date_closing)) {
         this.formError.push({
           field: "date_closing",
-          message: "Date Closing is not valid"
+          message: "Date Closing is not valid",
         })
       }
     },
@@ -548,7 +548,7 @@ export default {
       if (this.$moment(value).isBefore(this.form.date_posted)) {
         this.formError.push({
           field: "date_posted",
-          message: "Date Posted is not valid"
+          message: "Date Posted is not valid",
         })
       }
       let index = this.formError.findIndex(
@@ -562,7 +562,7 @@ export default {
       if (value) {
         this.validateNumber(this.form.salary_amount, "salary_amount")
       }
-    }
+    },
   },
   created () {
     console.log('router name', this.$route.name)
@@ -629,12 +629,12 @@ export default {
     this.work_hours_type = [
       {
         label: "Part Time",
-        value: "Part Time"
+        value: "Part Time",
       },
       {
         label: "Full Time",
         value: "Full Time",
-      }
+      },
     ]
     this.industry_types = [
       {
@@ -644,7 +644,7 @@ export default {
       {
         label: "Private",
         value: "Private",
-      }
+      },
     ]
     this.salary_description_type_2 = [
       {
@@ -654,28 +654,28 @@ export default {
       {
         label: "Non-negotiable",
         value: "Non-negotiable",
-      }
+      },
     ]
     this.hired_through = [
       {
-        label: "Filed through HUBZZ",
-        value: "Filed through HUBZZ",
+        label: "Filled through HUBZZ",
+        value: "Filled through HUBZZ",
       },
       {
-        label: "Filed through Recruitment Agency",
-        value: "Filed through Recruitment Agency",
+        label: "Filled through Recruitment Agency",
+        value: "Filled through Recruitment Agency",
       },
       {
-        label: "Filed by Direct Applicant",
-        value: "Filed by Direct Applicant",
+        label: "Filled by Direct Applicant",
+        value: "Filled by Direct Applicant",
       },
       {
-        label: "Filed by Advert",
-        value: "Filed by Advert",
+        label: "Filled by Advert",
+        value: "Filled by Advert",
       },
       {
-        label: "Filed Internally",
-        value: "Filed Internally",
+        label: "Filled Internally",
+        value: "Filled Internally",
       },
       {
         label: "Withdrawn",
@@ -685,14 +685,14 @@ export default {
   },
   methods: {
     validateNumber (value, fieldName) {
-      let displayFieldName =
-        fieldName.charAt(0).toUpperCase() +
-        fieldName.slice(1).replace(/_/g, " ")
+      let displayFieldName
+        = fieldName.charAt(0).toUpperCase()
+        + fieldName.slice(1).replace(/_/g, " ")
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (
-        parseInt(value) < 1 ||
-        value.toString().includes("e") ||
-        value === ""
+        parseInt(value) < 1
+        || value.toString().includes("e")
+        || value === ""
       ) {
         this.formError.push({
           field: fieldName,
@@ -735,16 +735,16 @@ export default {
     editJobLabel (edit) {
       console.log("edit", edit)
       if (
-        (edit === false &&
-          this.permanent_job.job_posting_status == "Available") ||
-        this.permanent_job.job_posting_status == "Pending"
+        (edit === false
+          && this.permanent_job.job_posting_status == "Available")
+        || this.permanent_job.job_posting_status == "Pending"
       ) {
         console.log("status", this.permanent_job.job_posting_status)
         return "Edit Closing Date"
       }
       if (
-        (edit === false && this.permanent_job.job_posting_status == "Closed") ||
-        this.permanent_job.job_posting_status == "Unfilled"
+        (edit === false && this.permanent_job.job_posting_status == "Closed")
+        || this.permanent_job.job_posting_status == "Unfilled"
       ) {
         console.log("status", this.permanent_job.job_posting_status)
         return "Re-post Job"
@@ -781,14 +781,14 @@ export default {
             `/api/v1/practice/permanent-jobs/${this.permanent_job.id}`,
             {
               ...this.form,
-              salary_amount : this.form.salary_amount ? this.form.salary_amount : 0
+              salary_amount : this.form.salary_amount ? this.form.salary_amount : 0,
             }
           )
           .then(() => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Successfully Edited Job"]
+              text: ["Successfully Edited Job",],
             })
             this.edit = false
           })
@@ -828,7 +828,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Successfully Created Permanent Job"]
+              text: ["Successfully Created Permanent Job",],
             })
             this.$router.push(goToRoute)
           })
@@ -841,7 +841,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: [err.response.data.message]
+              text: [err.response.data.message,],
             })
           })
       } else {
@@ -852,21 +852,30 @@ export default {
     },
     
     async forceCloseJob () {
-      await this.$axios
-        .$put(
-          `/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
-          {
-            hired_through: this.form.hired_through === 'Closed by Practice' ? null : this.form.hired_through 
-          }
-        )
-        .then(() => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Successfully Closed Job"]
-          })
-          this.$router.go(-1)
+      if (this.form.hired_through === '') {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Reasons for Closing Job is Required",],
         })
+      } else {
+        await this.$axios
+          .$put(
+            `/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
+            {
+              hired_through: this.form.hired_through === 'Closed by Practice' ? null : this.form.hired_through, 
+            }
+          )
+          .then(() => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Successfully Closed Job",],
+            })
+            this.$router.go(-1)
+          })
+      }
+      
     },
 
     async acceptRejectSpokePermanentJob (approveReject) {
@@ -889,7 +898,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`Job  has successfully ${this.approve_or_reject.approved_or_rejected}`]
+              text: [`Job  has successfully ${this.approve_or_reject.approved_or_rejected}`,],
             })
             this.$router.go(-1)
           })
