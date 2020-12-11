@@ -18,7 +18,7 @@
 				<span
 					class="mx-2 py-2 px-4 rounded my-1 font-semibold"
 					:class="statusStyle(permanent_job.status)"
-				>{{ permanent_job.status }}</span>
+				>{{ permanent_job_application.application_status_formatted ? permanent_job_application.application_status_formatted : permanent_job.status }}</span>
 
 				<span
 					v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) 
@@ -119,7 +119,7 @@
 			</div>
 			<div
 				class="bg-gray-200 p-2 my-4 rounded-lg shadow"
-				v-if="permanent_job_application && permanent_job_application.invitation_schedule_formatted && ['For Interview', 'Accepted'].includes(permanent_job_application.application_status)"
+				v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job_application && permanent_job_application.invitation_schedule_formatted && ['For Interview', 'Accepted'].includes(permanent_job_application.application_status)"
 			>
 				<span class="font-bold block">Congratulations!</span>
 				<!-- You have been invited for interview. Please attend on {{ $moment(permanent_job_application.invitation_schedule_formatted_formatted, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT -->
@@ -505,6 +505,8 @@ export default {
 				case "For Interview":
 					return "px-4 bg-green-800 text-white";
 				case "Accepted":
+				case "Hired":
+				case "Offered":
 					return "px-4 bg-green-700 text-white";
 				case "Rejected":
 					return "px-4 bg-red-700 text-white";
