@@ -39,14 +39,14 @@ export default (ctx, inject) => {
       socket.connect()
     }
     // api shut down
-    if (reason === 'transport close') {
-      ctx.store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "danger",
-        text: ['Server shut down',],
-        closable: true,
-      })
-    }
+    // if (reason === 'transport close') {
+    //   ctx.store.commit("SET_NOTIFICATION", {
+    //     enabled: true,
+    //     status: "danger",
+    //     text: ['Server shut down',],
+    //     closable: true,
+    //   })
+    // }
   })
 
   ctx.$socket = socket
