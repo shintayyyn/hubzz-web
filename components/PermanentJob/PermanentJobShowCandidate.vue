@@ -256,7 +256,7 @@
 								>{{ item.locum_other_mandatory_trainings.name }}</a>
 							</div>
 						</div>
-
+						<!-- 
 						<div class="font-bold text-sm sm:text-md">Preferred rates</div>
 						<div class="flex flex-col mb-4 md:mb-8">
 							<div
@@ -266,7 +266,7 @@
 							>
 								<div class="text-xs sm:text-sm">{{ item.rate_type.name }}: £ {{ item.min }}</div>
 							</div>
-						</div>
+						</div>-->
 						<div class="font-bold text-sm sm:text-md">Referees</div>
 						<div v-if="user.locum_detail.referees.length > 0">
 							<div
