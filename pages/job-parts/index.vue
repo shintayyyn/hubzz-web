@@ -275,8 +275,6 @@ export default {
       job_title: "",
       type: "",
       job_type: "",
-      practice_id: "",
-      job_practice_id: "",
       shift_id: "",
       profession_id: "",
       favorite_only: "",
@@ -292,7 +290,6 @@ export default {
       time_start: "",
       time_end: "",
       invoice_status: "",
-      viewing_locum_user_id: [],
       title_includes: "",
       job_title_includes: "",
       job_number_includes: "",
@@ -308,10 +305,6 @@ export default {
   },
 
   computed: {
-    isJobPart () {
-      return true
-    },
-
     noJobsToDisplay () {
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
@@ -635,20 +628,11 @@ export default {
           params: {
             status,
             order_by: [],
-            type: !this.isJobPart ? this.type : "",
-            job_type: this.isJobPart ? this.job_type : "",
-            practice_id: !this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            job_practice_id: this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+            job_type: this.job_type,
+            include_current_surgeries_jobs: false,
+            job_shift_id: this.job_shift_id,
+            job_rate: this.job_rate,
+            job_rate_type_id: this.job_rate_type_id,
             near_post_code: this.near_post_code,
             miles: this.miles,
             calendar_date_start: this.calendar_date_start,
@@ -656,22 +640,8 @@ export default {
             time_start: this.time_start,
             time_end: this.time_end,
             invoice_status: this.invoice_status,
-            viewing_locum_user_id: this.viewing_locum_user_id,
-            title_includes: !this.isJobPart ? this.title_includes : "",
-            job_title_includes: this.isJobPart ? this.job_title_includes : "",
-            job_number_includes: !this.isJobPart
-              ? this.job_number_includes
-              : "",
-            job_part_number_includes: this.isJobPart
-              ? this.job_part_number_includes
-              : "",
-            // has_favorite_applicants:
-            //   queryStatus === "Applied" && bankStatus === "true"
-            //     ? true
-            //     : queryStatus === "Applied" &&
-            //       (bankStatus === "false" || !bankStatus)
-            //     ? false
-            //     : null,
+            job_title_includes: this.job_title_includes,
+            job_part_number_includes:  this.job_part_number_includes,
             profession_id: this.profession_id,
             favorite_only: this.favorite_only,
             ended: this.ended,
@@ -683,36 +653,20 @@ export default {
             limit: 5,
             status,
             order_by: [],
-            type: !this.isJobPart ? this.type : "",
-            job_type: this.isJobPart ? this.job_type : "",
-            practice_id: !this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            job_practice_id: this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
+            job_type: this.job_type,
+            include_current_surgeries_jobs: false,
+            job_shift_id: this.job_shift_id,
+            job_rate: this.job_rate,
+            job_rate_type_id: this.job_rate_type_id,
             near_post_code: this.near_post_code,
             miles: this.miles,
             calendar_date_start: this.calendar_date_start,
             calendar_date_end: this.calendar_date_end,
             time_start: this.time_start,
             time_end: this.time_end,
-            invoice_status: this.isJobPart ? this.invoice_status : "",
-            viewing_locum_user_id: this.viewing_locum_user_id,
-            title_includes: !this.isJobPart ? this.title_includes : "",
-            job_title_includes: this.isJobPart ? this.job_title_includes : "",
-            job_number_includes: !this.isJobPart
-              ? this.job_number_includes
-              : "",
-            job_part_number_includes: this.isJobPart
-              ? this.job_part_number_includes
-              : "",
+            invoice_status: this.invoice_status,
+            job_title_includes: this.job_title_includes,
+            job_part_number_includes:  this.job_part_number_includes,
             // has_favorite_applicants:
             //   queryStatus === "Applied" && bankStatus === "true"
             //     ? true
@@ -772,50 +726,27 @@ export default {
       }
 
       return this.$axios
-        .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+        .$get('/api/v1/practice/job-parts', {
           params: {
             offset: this.offset,
             limit: this.limit,
             status,
             order_by: this.order_by,
-            type: !this.isJobPart ? this.type : "",
-            job_type: this.isJobPart ? this.job_type : "",
-            practice_id: !this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            job_practice_id: this.isJobPart
-              ? this.$auth.user.practice_detail.practice.id
-              : "",
-            shift_id: !this.isJobPart ? this.shift_id : "",
-            job_shift_id: this.isJobPart ? this.job_shift_id : "",
-            rate: !this.isJobPart ? this.rate : "",
-            job_rate: this.isJobPart ? this.job_rate : "",
-            rate_type_id: !this.isJobPart ? this.rate_type_id : "",
-            job_rate_type_id: this.isJobPart ? this.job_rate_type_id : "",
-            near_post_code: this.isJobPart ? this.near_post_code : "",
-            miles: this.isJobPart ? this.miles : "",
-            calendar_date_start: this.isJobPart ? this.calendar_date_start : "",
-            calendar_date_end: this.isJobPart ? this.calendar_date_end : "",
-            time_start: this.isJobPart ? this.time_start : "",
-            time_end: this.isJobPart ? this.time_end : "",
-            invoice_status: this.isJobPart ? this.invoice_status : "",
-            viewing_locum_user_id: this.viewing_locum_user_id,
-            title_includes: !this.isJobPart ? this.title_includes : "",
-            job_title_includes: this.isJobPart ? this.job_title_includes : "",
-            job_number_includes: !this.isJobPart
-              ? this.job_number_includes
-              : "",
-            job_part_number_includes: this.isJobPart
-              ? this.job_part_number_includes
-              : "",
+            job_type: this.job_type,
+            include_current_surgeries_jobs: false,
+            job_shift_id: this.job_shift_id,
+            job_rate: this.job_rate,
+            job_rate_type_id: this.job_rate_type_id,
+            near_post_code: this.near_post_code,
+            miles: this.miles,
+            calendar_date_start: this.calendar_date_start,
+            calendar_date_end: this.calendar_date_end,
+            time_start: this.time_start,
+            time_end: this.time_end,
+            invoice_status: this.invoice_status,
+            job_title_includes: this.job_title_includes,
+            job_part_number_includes: this.job_part_number_includes,
             ended: this.ended,
-            // has_favorite_applicants:
-            //   queryStatus === "Applied" && bankStatus === "true"
-            //     ? true
-            //     : queryStatus === "Applied" &&
-            //       (bankStatus === "false" || !bankStatus)
-            //     ? false
-            //     : null
           },
         })
         .then(res => {
@@ -1139,8 +1070,6 @@ export default {
       this.job_title = ""
       this.type = ""
       this.job_type = ""
-      this.practice_id = ""
-      this.job_practice_id = ""
       this.shift_id = ""
       this.job_shift_id = ""
       this.rate = ""
@@ -1154,7 +1083,6 @@ export default {
       this.time_start = ""
       this.time_end = ""
       this.invoice_status = ""
-      this.viewing_locum_user_id = []
       this.title_includes = ""
       this.job_title_includes = ""
       this.job_number_includes = ""
