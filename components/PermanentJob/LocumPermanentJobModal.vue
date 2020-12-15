@@ -18,7 +18,7 @@
 				<span
 					class="mx-2 py-2 px-4 rounded my-1 font-semibold"
 					:class="statusStyle(permanent_job.status)"
-				>{{ permanent_job_application.application_status_formatted ? permanent_job_application.application_status_formatted : permanent_job.status }}</span>
+				>{{ permanent_job_application && permanent_job_application.application_status_formatted ? permanent_job_application.application_status_formatted : permanent_job.status }}</span>
 
 				<span
 					v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) 
@@ -168,7 +168,7 @@
 						<!-- <div class="my-4">
               <span v-html="permanent_job ? permanent_job.description : null"></span>
 						</div>-->
-						<div>
+						<div v-if="permanent_job.description">
 							<no-ssr>
 								<quill-editor
 									class="border-none"
@@ -178,11 +178,35 @@
 								/>
 							</no-ssr>
 						</div>
+						<div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2 ml-2 pb-3">
+							<div class="flex items-center">
+								<a
+									class="text-sm leading-tight"
+									:href="permanent_job.description_file.url"
+									:download="permanent_job.description_file.filename"
+									target="_blank"
+									@click.prevent="downloadItem(permanent_job.description_file.url, permanent_job.description_file.filename)"
+								>
+									<span>
+										<svgicon name="cloud-download" height="24" width="24" />
+									</span>
+								</a>
+								<span
+									class="mx-2 hover:text-gray-800 cursor-pointer"
+									@click="viewFile={file: permanent_job.description_file}"
+								>
+									<svgicon name="eye" class="fill-current" height="20" width="20" />
+								</span>
+							</div>
+
+							<p>{{ permanent_job.description_file.filename }}</p>
+						</div>
 						<p class="font-bold">Salary</p>
 						<p
 							v-if="permanent_job && permanent_job.salary_amount !== 0"
-							class="pl-2 pb-3"
+							class="ml-2 mb-3"
 						>£ {{ permanent_job.salary_amount | currency }}</p>
+						<p v-else class="pl-2 pb-3">N/A</p>
 						<p class="font-bold">Salary Description</p>
 						<p
 							class="pl-2 pb-3"
@@ -231,19 +255,28 @@
 					<PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
 				</div>
 			</div>
+			<transition name="slide" mode="out-in">
+				<div class="modal-container" v-if="viewFile">
+					<FileModal @close="viewFile=null" :file="viewFile" />
+				</div>
+			</transition>
+			<div v-if="viewFile" class="shield file" @click="viewFile=null" />
 		</div>
 	</section>
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
+import FileModal from "@/components/FileModal";
 export default {
 	components: {
 		AppButton,
-		PermanentJobMap
+		PermanentJobMap,
+		FileModal
 	},
 	data() {
 		return {
+			viewFile: null,
 			approveInterview: "",
 			toApply: false,
 			toShowLink: false,
@@ -553,6 +586,22 @@ export default {
 				.then(res => {
 					this.getJob();
 				});
+		},
+
+		downloadItem(fileUrl, fileName) {
+			const axios = require("axios");
+			axios({
+				url: fileUrl,
+				method: "GET",
+				responseType: "blob" // important
+			}).then(response => {
+				const url = window.URL.createObjectURL(new Blob([response.data]));
+				const link = document.createElement("a");
+				link.href = url;
+				link.setAttribute("download", fileName);
+				document.body.appendChild(link);
+				link.click();
+			});
 		}
 	}
 };
