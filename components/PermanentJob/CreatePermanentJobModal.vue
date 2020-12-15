@@ -456,7 +456,7 @@ export default {
 				await formData.append("practice_id", this.form.practice_id);
 				await formData.append("profession_id", this.form.profession_id);
 				await formData.append("report_to", this.form.report_to);
-				await formData.append("salary_amount", this.form.salary_amount);
+				// await formData.append("salary_amount", this.form.salary_amount);
 				await formData.append(
 					"salary_description_2",
 					this.form.salary_description_2
@@ -464,6 +464,7 @@ export default {
 				await formData.append("title", this.form.title);
 				await formData.append("work_hours", this.form.work_hours);
 				await formData.append("salary_amount", salary_amount);
+				console.log("salary_amount", parseFloat(salary_amount));
 
 				// await this.$axios
 				// 	.post(`/api/v1/practice/permanent-jobs`, {
