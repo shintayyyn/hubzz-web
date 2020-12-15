@@ -586,9 +586,6 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
-	z-index: 56;
-}
 .document-filename {
 	white-space: nowrap;
 	overflow: hidden;
@@ -604,6 +601,10 @@ export default {
 
 img {
 	border-radius: 50%;
+}
+
+.modal-container {
+	z-index: 56;
 }
 @media screen and (min-width: 1200px) {
 	.modal-container {
