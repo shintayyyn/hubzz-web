@@ -256,8 +256,6 @@ export default {
       job_title: "",
       type: "",
       job_type: "",
-      practice_id: "",
-      job_practice_id: "",
       shift_id: "",
       profession_id: "",
       favorite_only: "",
@@ -290,7 +288,7 @@ export default {
   computed: {
     getRequestQueryFilters () {
       return {
-        practice_id: this.$auth.user.practice_detail.practice.id,
+        include_current_surgeries_jobs: false,
         status: this.$route.query.status
           ? [`${this.$route.query.status}`,]
           : ["Allocated",],
@@ -947,8 +945,6 @@ export default {
       this.job_title = ""
       this.type = ""
       this.job_type = ""
-      this.practice_id = ""
-      this.job_practice_id = ""
       this.shift_id = ""
       this.job_shift_id = ""
       this.rate = ""
