@@ -125,10 +125,10 @@
 
 							<div
 								v-if="
-                  $route.name.includes('hub-surgery-management') && 
+                  
                     $auth.user.practice_detail.practice.type === 'Hub' &&
                     permanent_job.job_posting_status === 'Pending'"
-								class="w-full"
+								class="w-full mt-4"
 							>
 								<AppButton
 									class="font-semibold"
