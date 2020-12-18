@@ -150,7 +150,7 @@
 						<div class="flex items-center justify-center">
 							<div
 								class="rounded-full text-sm px-2 w-full py-2 bg-yellow-400 text-black leading-tight"
-							>{{ jobClosingTag(slotProps.item) }}</div>
+							>{{ jobClosingTag(slotProps.item) }} asdas</div>
 						</div>
 					</template>
 				</AppTable>
@@ -477,9 +477,17 @@ export default {
 						});
 						this.loading = false;
 					} else if (this.$auth.user.domain === "Practice") {
+						let practice_type = this.$auth.user.practice_detail.practice.type;
 						this.params = {
 							job_posting_status: newStatus ? newStatus : "Available",
-							practice_id: this.$auth.user.practice_id,
+							practice_id:
+								practice_type === "Hub" && newStatus === "Pending"
+									? null
+									: this.$auth.user.practice_id,
+							parent_practice_id:
+								practice_type === "Hub" && newStatus === "Pending"
+									? this.$auth.user.practice_id
+									: null,
 							limit: 5
 						};
 						setTimeout(async () => {
@@ -625,11 +633,19 @@ export default {
 				);
 				// ------------------FOR PRACTICE---------------
 			} else if (app.$auth.user.domain === "Practice") {
+				let practice_type = app.$auth.user.practice_detail.practice.type;
 				params = {
 					job_posting_status: route.query.status
 						? route.query.status
 						: "Available",
-					practice_id: app.$auth.user.practice_id,
+					practice_id:
+						practice_type === "Hub" && route.query.status === "Pending"
+							? null
+							: app.$auth.user.practice_id,
+					parent_practice_id:
+						practice_type === "Hub" && route.query.status === "Pending"
+							? app.$auth.user.practice_id
+							: null,
 					limit: 5
 				};
 				let response = await app.$axios.$get(
@@ -857,6 +873,8 @@ export default {
 					return "bg-green-600 text-white";
 				case "Rejected":
 					return "bg-red-700 text-white";
+				case "Pending":
+					return "bg-orange-500 text-white";
 				case "Closed":
 					return "bg-gray-700 text-white";
 				case "Unfilled":
