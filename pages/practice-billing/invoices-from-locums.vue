@@ -225,6 +225,8 @@
               <button
                 v-if="
                   $route.query.status === 'approved' 
+                    && slotProps.item.locum_invoice_item
+                    && slotProps.item.locum_invoice_item.locum_invoice
                     && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
                     && authPermissions.includes('Process Billings')"
                 class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
