@@ -236,6 +236,9 @@ export default {
         "Practice Notification Practice Suspended",
 
         "Practice Notification Locum Compliance Expired",
+        "Practice Notification Locum Compliance Expiring",
+
+        "Practice Notification Locum Compliance Status Changed",
 
         "Practice Notification Permanent Job Applied",
         "Practice Notification Approve Permanent Job Spoke",
@@ -618,6 +621,8 @@ export default {
         "Practice Notification Locum Solo Form Locum E-signed",
         "Practice Notification Locum Solo Form Practice E-signed",
         "Practice Notification Locum Payment Details Updated",
+        
+        "Practice Notification Locum Compliance Status Changed",
       ]
 
       if (validNotificationUrl.includes(notificationTypeName)) {
@@ -709,6 +714,7 @@ export default {
 
       const practiceComplianceDocumentNotifications = [
         "Practice Notification Locum Compliance Expired",
+        "Practice Notification Locum Compliance Expiring",
       ]
 
       const practicePermanentJobNotifications = [

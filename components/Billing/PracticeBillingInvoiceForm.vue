@@ -358,7 +358,7 @@
             v-model="form.percentage_rate"
             :type="'select'"
             :name="'percentage_rate'"
-            :label="'Percentage rate'"
+            :label="'Percentage rate (D)'"
             :items="[
               { label: '5%', value: 5 },
               { label: '5.6%', value: 5.6 },
@@ -375,7 +375,7 @@
             v-model="form.professional_nhs_expenses"
             :type="'number'"
             :name="'professional_nhs_expenses'"
-            :label="'Professional NHS Expense'"
+            :label="'Professional NHS Expense (B)'"
             :error="formError.find(item => item.field === 'professional_nhs_expenses')"
             required
             @blur="CheckEmptyField(form.professional_nhs_expenses, 'professional_nhs_expenses')"
@@ -385,7 +385,7 @@
             v-model="form.added_year_contributions"
             :type="'number'"
             :name="'added_year_contributions'"
-            :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
+            :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme (F)'"
             :error="formError.find(item => item.field === 'added_year_contributions')"
             required
             @blur="CheckEmptyField(form.added_year_contributions, 'added_year_contributions')"
@@ -395,7 +395,7 @@
             v-model="form.added_early_retirement_contributions"
             :type="'number'"
             :name="'added_early_retirement_contributions'"
-            :label="'Additional contributions for Early Retirement Reduction Buy Out'"
+            :label="'Additional contributions for Early Retirement Reduction Buy Out (G)'"
             :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
             required
             @blur="CheckEmptyField(form.added_early_retirement_contributions, 'added_early_retirement_contributions')"
@@ -591,6 +591,7 @@ export default {
           if (this.propInvoice.locum_form_a_id) {
             return this.propInvoice.locum_form_a_pension_amount
           }
+
           if (this.propInvoice.locum_solo_form_id) {
             return this.propInvoice.locum_solo_form_pension_amount
           }
@@ -600,24 +601,20 @@ export default {
           if (!this.propInvoice.ooh) {
             return this.total_work_payment * 0.9 * 0.1438
           }
+
           if (this.propInvoice.ooh) {
-            let boxA = this.total_work_payment
-            // let boxB = this.practice.professional_nhs_expenses;
-            let boxB = 0
-            let boxC = boxA - boxB
-            // let boxD = boxC * (this.practice.percentage_rate / 100);
-            let boxD = boxC * (0 / 100)
-            let boxE = boxC * boxD
-            let boxF = 0
-            let boxG = 0
-            // let boxF = this.practice.added_year_contributions;
-            // let boxG = this.practice.added_early_retirement_contributions;
-            let boxH = boxE + boxF + boxG
-            // let boxI = boxC - boxH
-            let boxJ = 0 + boxC * 0.1438
-            // let boxJ =
-            //   this.practice.nhsps_employer_contributions + boxC * 0.1438;
-            let boxK = boxH + boxJ
+            const boxA = this.total_work_payment
+            const boxB = 0 // professional_nhs_expenses
+            const boxC = boxA - boxB // gp_nhs_pensionable_pay
+            const boxD = 0 // percentage_rate
+            const boxE = Math.round(boxC * (boxD / 100) * 100) / 100 // employee_contributions
+            const boxF = 0 // added_year_contributions
+            const boxG = 0 // added_early_retirement_contributions
+            const boxH = boxE + boxF + boxG // total_employee_contributions
+            // const boxI = boxC - boxH // total_paid_to_member
+            const boxJ = 0 + (Math.round((boxC * (14.38 / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
+            const boxK = boxH + boxJ // total_nhs_pension_scheme_contributions
+
             return boxK
           }
         }

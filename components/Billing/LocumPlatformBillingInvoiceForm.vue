@@ -533,6 +533,7 @@ export default {
           if (this.propInvoice.locum_form_a_id) {
             return this.propInvoice.locum_form_a_pension_amount
           }
+
           if (this.propInvoice.locum_solo_form_id) {
             return this.propInvoice.locum_solo_form_pension_amount
           }
@@ -543,19 +544,19 @@ export default {
           if (!this.propInvoice.ooh) {
             return this.total_work_payment * 0.9 * 0.1438
           }
+
           if (this.propInvoice.ooh && this.practice) {
-            let boxA = this.total_work_payment
-            let boxB = this.practice.professional_nhs_expenses
-            let boxC = boxA - boxB
-            let boxD = boxC * (this.practice.percentage_rate / 100)
-            let boxE = boxC * boxD
-            let boxF = this.practice.added_year_contributions
-            let boxG = this.practice.added_early_retirement_contributions
-            let boxH = boxE + boxF + boxG
-            // let boxI = boxC - boxH
-            let boxJ
-              = this.practice.nhsps_employer_contributions + boxC * 0.1438
-            let boxK = boxH + boxJ
+            const boxA = this.total_work_payment
+            const boxB = 0 // professional_nhs_expenses
+            const boxC = boxA - boxB // gp_nhs_pensionable_pay
+            const boxD = 0 // percentage_rate
+            const boxE = Math.round(boxC * (boxD / 100) * 100) / 100 // employee_contributions
+            const boxF = 0 // added_year_contributions
+            const boxG = 0 // added_early_retirement_contributions
+            const boxH = boxE + boxF + boxG // total_employee_contributions
+            // const boxI = boxC - boxH // total_paid_to_member
+            const boxJ = 0 + (Math.round((boxC * (14.38 / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
+            const boxK = boxH + boxJ // total_nhs_pension_scheme_contributions
 
             return boxK
           }
@@ -566,24 +567,20 @@ export default {
         if (!this.propJobPart.ooh) {
           return this.total_work_payment * 0.9 * 0.1438
         }
+
         if (this.propJobPart.ooh) {
-          let boxA = this.total_work_payment
-          // let boxB = this.practice.professional_nhs_expenses;
-          let boxB = 0
-          let boxC = boxA - boxB
-          // let boxD = boxC * (this.practice.percentage_rate / 100);
-          let boxD = boxC * (0 / 100)
-          let boxE = boxC * boxD
-          let boxF = 0
-          let boxG = 0
-          // let boxF = this.practice.added_year_contributions;
-          // let boxG = this.practice.added_early_retirement_contributions;
-          let boxH = boxE + boxF + boxG
-          // let boxI = boxC - boxH
-          let boxJ = 0 + boxC * 0.1438
-          // let boxJ =
-          //   this.practice.nhsps_employer_contributions + boxC * 0.1438;
-          let boxK = boxH + boxJ
+          const boxA = this.total_work_payment
+          const boxB = 0 // professional_nhs_expenses
+          const boxC = boxA - boxB // gp_nhs_pensionable_pay
+          const boxD = 0 // percentage_rate
+          const boxE = Math.round(boxC * (boxD / 100) * 100) / 100 // employee_contributions
+          const boxF = 0 // added_year_contributions
+          const boxG = 0 // added_early_retirement_contributions
+          const boxH = boxE + boxF + boxG // total_employee_contributions
+          // const boxI = boxC - boxH // total_paid_to_member
+          const boxJ = 0 + (Math.round((boxC * (14.38 / 100)) * 100) / 100) // nhs_pension_scheme_employer_contributions
+          const boxK = boxH + boxJ // total_nhs_pension_scheme_contributions
+
           return boxK
         }
       }
