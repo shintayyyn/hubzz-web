@@ -375,14 +375,10 @@ export default {
 					this.practice.type === "Spoke" && this.practice.parent_practice_id
 						? this.practice.parent_practice_id
 						: null
-				this.form.email = this.practice.email 
-					? this.practice.email 
-					: this.$auth.user.email 
+				this.form.email =  this.$auth.user.email 
 						? this.$auth.user.email
 						: null
-				this.form.report_to = this.practice.report_to
-					? this.practice.report_to
-					: this.$auth.user.name 
+				this.form.report_to =this.$auth.user.name 
 						? this.$auth.user.name 
 						: null
 				this.loading = false
