@@ -150,7 +150,7 @@
 						<div class="flex items-center justify-center">
 							<div
 								class="rounded-full text-sm px-2 w-full py-2 bg-yellow-400 text-black leading-tight"
-							>{{ jobClosingTag(slotProps.item) }} asdas</div>
+							>{{ jobClosingTag(slotProps.item) }}</div>
 						</div>
 					</template>
 				</AppTable>
