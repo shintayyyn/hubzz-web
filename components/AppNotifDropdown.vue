@@ -556,8 +556,6 @@ export default {
         this.$axios
           .put(`/api/v1/${this.domain}/notifications/${notificationId}/seen`)
           .then(response => {
-            const updatedNotification = response.data.data.notification
-
             const index = this.unseenNotificationIds.findIndex(
               unseenNotificationId => unseenNotificationId === notificationId
             )
@@ -565,6 +563,8 @@ export default {
             if (index > -1) {
               this.unseenNotificationIds.splice(index, 1)
             }
+
+            const updatedNotification = response.data.data.notification
 
             const notificationIndex = this.notifications.findIndex(
               ({ id, }) => id === notificationId

@@ -48,33 +48,8 @@ export default {
   },
   
   computed: {
-    loading () {
-      return this.$store.state.calendar.loading
-    },
-
-    create_job_modal () {
-      return this.$store.state.calendar.create_job_modal
-    },
-
     authPermissions () {
       return this.$store.getters["permissions"]
-    },
-
-    canCreateJob () {
-      if (this.$auth.user.domain === "Locum") {
-        return false
-      } else if (
-        !this.authPermissions.includes("Create Sessions Job")
-        || (
-          this.$auth.user.practice_detail.practice.type === "Spoke"
-          && this.$auth.user.practice_detail.practice.parent_practice_id
-          && !this.$auth.user.practice_detail.practice.allow_surgery_create_sessions
-        )
-      ) {
-        return false
-      }
-      
-      return true
     },
   },
 
