@@ -221,6 +221,8 @@
 						>{{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : null }}</p>
 						<p class="font-bold">Report to</p>
 						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : null }}</p>
+						<p class="font-bold">Email</p>
+						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.email : null }}</p>
 						<p class="font-bold">Role</p>
 						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.professions.name : null }}</p>
 						<p class="font-bold">Job Type</p>

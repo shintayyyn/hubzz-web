@@ -374,12 +374,14 @@ export default {
 				this.form.parent_practice_id =
 					this.practice.type === "Spoke" && this.practice.parent_practice_id
 						? this.practice.parent_practice_id
-						: null;
-				this.form.email = this.practice.email ? this.practice.email : null;
-				this.form.report_to = this.practice.report_to
-					? this.practice.report_to
-					: null;
-				this.loading = false;
+						: null
+				this.form.email =  this.$auth.user.email 
+						? this.$auth.user.email
+						: null
+				this.form.report_to =this.$auth.user.name 
+						? this.$auth.user.name 
+						: null
+				this.loading = false
 			});
 	},
 	methods: {
@@ -413,7 +415,7 @@ export default {
 		async createPermanentJob() {
 			if (
 				this.form.practice_id !== this.$auth.user.practice_detail.practice.id &&
-				this.$auth.user.practice_detail.practice.type === "Hub"
+				(this.$auth.user.practice_detail.practice.type === "Hub" || this.$auth.user.practice_detail.practice.type === "Stand Alone")
 			) {
 				this.form.parent_practice_id = await this.$auth.user.practice_detail
 					.practice.id;
