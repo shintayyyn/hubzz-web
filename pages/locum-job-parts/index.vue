@@ -387,6 +387,7 @@ export default {
         columns.push({
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
+          sortable: true,
           class: "text-center",
         })
       }
@@ -396,11 +397,13 @@ export default {
           {
             name: "Cancelled At",
             dataIndex: "cancelled_at_in_gb_formatted",
+            sortable: true,
             class: "text-center",
           },
           {
             name: "Tag",
             dataIndex: "tag_status",
+            sortable: true,
             class: "text-center",
           }
         )
@@ -411,11 +414,13 @@ export default {
           {
             name: "Completed At",
             dataIndex: "completed_at_in_gb_formatted",
+            sortable: true,
             class: "text-center",
           },
           {
             name: "Invoice status",
             dataIndex: "locum_invoice_status",
+            sortable: true,
             class: "text-center",
           }
         )
@@ -426,6 +431,7 @@ export default {
           {
             name: "Approved At",
             dataIndex: "approved_at_in_gb_formatted",
+            sortable: true,
             class: "text-center",
           },
         )
