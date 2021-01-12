@@ -1,5 +1,5 @@
 <template>
-  <section class="relative">
+  <section class="relative my-2">
     <AppButton
       v-if="!['pension-form-b'].includes($route.query.status)"
       :label="'Filter'"

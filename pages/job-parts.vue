@@ -1,6 +1,6 @@
 <template>
 	<section class="sessions-section">
-		<div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
+		<!-- <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
 			<AppLoading :loading="loading" spinner />
 
 			<div class="flex flex-row justify-start overflow-x-auto">
@@ -27,15 +27,15 @@
 					@click="findJobNumber"
 				>Search</div>
 			</div>
-		</div>
+		</div> -->
 
-		<div class="flex flex-row justify-start overflow-x-auto py-3">
-			<div v-for="tab in tabs" :key="tab.title" class="relative">
+		<div class="flex flex-row justify-start py-3 border-b-2 border-yellow-300 overflow-x-auto lg:overflow-y-hidden">
+			<div v-for="tab in tabs" :key="tab.title" class="relative ">
 				<nuxt-link
 					:event="$store.state.jobs.loading_jobs ? '' : 'click'"
 					:to="tab.route"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-					:class="tab.active ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+					:class="tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
 				>{{ tab.title }}</nuxt-link>
 			</div>
 		</div>

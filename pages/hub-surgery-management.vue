@@ -1,12 +1,12 @@
 <template>
   <section>
-    <div class="flex overflow-x-auto">
+    <div class="flex overflow-x-auto border-b-2 border-yellow-300">
       <nuxt-link
         :to="`/hub-surgery-management`"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
           $route.name === 'hub-surgery-management-index' || $route.name.includes('hub-surgery-management-id')
-            ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+            ? 'border-b-2 border-yellow-500'
             : 'text-gray-600'
         "
       >
@@ -19,7 +19,7 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
           $route.name.includes('hub-surgery-management-invitations')
-            ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+            ? 'border-b-2 border-yellow-500'
             : 'text-gray-600'
         "
       >
