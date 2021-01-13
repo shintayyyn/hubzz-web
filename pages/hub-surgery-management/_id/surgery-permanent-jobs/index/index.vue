@@ -84,7 +84,7 @@ export default {
 				},
 				{
 					name: "Surgery",
-					dataIndex: "practice.name"
+					dataIndex: "practice_name"
 				},
 				{
 					name: "Salary £",
@@ -116,7 +116,7 @@ export default {
 				},
 				{
 					name: "Profession",
-					dataIndex: "professions.name",
+					dataIndex: "profession_name",
 					class: "text-center"
 				},
 				{

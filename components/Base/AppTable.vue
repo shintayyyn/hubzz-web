@@ -3,17 +3,17 @@
     <div class="relative">
       <AppLoading :loading="loading" spinner />
       <div
-        class="relative flex flex-col overflow-x-auto w-full px-2 mt-4"
+        class="relative flex flex-col overflow-x-auto w-full mt-4 border"
         :style="totalPages > 1 && `min-height: ${minHeight}`"
       >
         <div
           :style="`min-width: ${customWidth}px`"
-          class="row flex justify-start font-bold leading-none text-sm"
+          class="row flex justify-start font-bold leading-none text-xs py-2"
         >
           <div
             v-for="(column, index) in columns"
             :key="`${column}-${index}`"
-            class="flex-1 flex items-center p-2"
+            class="flex-1 flex items-center"
             :class="[
               column.class &&
                 column.class.includes('text-center') &&
@@ -21,16 +21,17 @@
               column.sortable && 'cursor-pointer'
             ]"
             @click="column.sortable && sort(column.dataIndex)"
+            :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}`"
           >
-            <span class="pr-1">{{ column.name }}</span>
+            <span class="px-2">{{ column.name }}</span>
             <svgicon v-if="column.sortable" :name="sortIcon(column.dataIndex)" height="12" width="12" />
           </div>
         </div>
         <div
-          v-for="item in items"
+          v-for="(item, index) in items"
           :key="item.id"
           :style="`${customWidth ? `min-width: ${customWidth}px` : ``}`"
-          class="row py-2"
+          class="row"
         >
           <nuxt-link
             :to="routerLink && {}.toString.call(routerLink) === '[object Function]'
@@ -44,18 +45,19 @@
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
-              class="flex justify-start shadow-md rounded-lg items-center py-3 bg-white"
-              :class="routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default'"
+              class="flex justify-start items-center text-xs py-2 "
+              :class="[routerLink ? 'stripe-hover' : 'cursor-default', index % 2 === 0 ? 'stripe-gray':'bg-white']"
             >
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 px-2 break-word hyphens"
+                class="flex-1 px-1 break-word hyphens"
                 :class="
                   column.class &&
                     column.class.includes('text-center') &&
                     'text-center'
                 "
+                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}`"
               >
                 <template v-if="Array.isArray(dataCell(item, column))">
                   <div v-for="(item, index) in dataCell(item, column)" :key="`${item}-${index}`">
@@ -154,7 +156,7 @@ export default {
         },
         perPage: {
             type: Number,
-            default: 10
+            default: 15
         },
         columns: {
             type: Array,
@@ -314,5 +316,15 @@ export default {
 <style scoped>
   .row {
       min-width: 1200px;
+  }
+  .stripe-gray {
+    background-color: #f8f8f8;
+  }
+  .stripe-hover:hover {
+    background-color: #eee;
+  }
+  .table-font-size {
+    font-size: 100vb;
+    max-height: 50px;
   }
 </style>

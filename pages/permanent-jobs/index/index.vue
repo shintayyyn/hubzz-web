@@ -1,50 +1,62 @@
 <template>
 	<section class="flex flex-col items-start w-full">
-		<div class="w-full">
-			<AppInput
+		<div class="w-full lg:w-1/2">
+			<AppInputSmall
 				v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0"
 				v-model="search"
 				:type="'text'"
 				:name="'search'"
-				:placeholder="'Search Job by ID, Title, Practice Name, Profession Name or keywords'"
+				:button="true"
+				:buttonLabel="'Search'"
+				:placeholder="'Title / Practice Name / Profession'"
 				:disabled="loading"
+				@click="getPermanentJobsForLocum()"
 			/>
 		</div>
 		<!-- Filters -->
 		<div
-			v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0"
+			v-if="$auth.user.domain === 'Practice'"
 			class="w-full"
 		>
-			<div class="flex">
-				<AppButton
-					class="my-2"
-					:label="'Filter'"
-					:in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-					@click="filterModal = !filterModal"
-				/>
+			<div class="flex justify-between">
+				<div class="flex">
+					<div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-full">
+						<AppInputSmall
+							v-model="search"
+							:type="'text'"
+							:name="'search'"
+							:button="true"
+							:buttonLabel="'Search'"
+							:placeholder="'Title / Practice Name'"
+							:disabled="loading"
+							@click="getPermanentJobsForPractice()"
+						/>
+					</div>
+					<div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="m-3">
+						<button
+							class="px-6 py-1 border-2 border-gray-400 rounded-lg font-bold text-gray-600"
+							@click="filterModal = !filterModal"
+						>
+							Filters
+						</button>
+					</div>
+				</div>
+				<div class="mt-3">
+					<button
+						v-if="$auth.user.domain === 'Practice'"
+						class="px-3 py-1 text-sm font-bold cursor-pointer justify-end"
+						:class="'border rounded-lg border-yellow-500 bg-yellow-500'"
+						@click="$router.push('/permanent-jobs/create')"
+					>
+						+ Create Salaried Role 
+					</button>
+				</div>
 			</div>
+			
 			<div
 				class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg my-2"
 				:class="filterModal ? 'flex' : 'hidden'"
 			>
-				<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-					<AppInput
-						v-model="params.title"
-						placeholder="Search Permanent Job Title"
-						type="text"
-						label="Permanent Job Title"
-					/>
-				</div>
-
-				<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-					<AppInput
-						v-model="params.surgery"
-						placeholder="Search Surgery Name"
-						type="text"
-						label="Surgery Name"
-					/>
-				</div>
-
 				<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
 					<AppInput
 						v-model="params.job_type"
@@ -228,13 +240,15 @@ import AppInput from "@/components/Base/AppInput";
 import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
 import AppDate from "@/components/Base/AppDate";
+import AppInputSmall from "@/components/Base/AppInputSmall";
 export default {
 	components: {
 		AppLoading,
 		AppTable,
 		AppInput,
 		AppButton,
-		AppDate
+		AppDate,
+		AppInputSmall,
 	},
 
 	middleware({ query, error }) {
@@ -354,28 +368,28 @@ export default {
 	},
 
 	computed: {
-		locum_permanent_job_count() {
+		locum_permanent_job_count () {
 			return this.$store.state.permanentjobs.locum_permanent_job_count;
 		},
-		locum_permanent_jobs() {
+		locum_permanent_jobs () {
 			return this.$store.state.permanentjobs.locum_permanent_jobs;
 		},
-		practice_permanent_job_count() {
+		practice_permanent_job_count () {
 			return this.$store.state.permanentjobs.practice_permanent_job_count;
 		},
-		practice_permanent_jobs() {
+		practice_permanent_jobs () {
 			return this.$store.state.permanentjobs.practice_permanent_jobs;
 		},
-		permanent_job_applications_state_count() {
+		permanent_job_applications_state_count () {
 			return this.$store.state.permanent_job_applications_count;
 		},
-		permanent_job_applications_state() {
+		permanent_job_applications_state () {
 			return this.$store.state.permanent_job_applications;
 		}
 	},
 
-	watch: {
-		"$route.query.status"(newStatus) {
+  watch: {
+    "$route.query.status"(newStatus) {
 			this.params = {};
 			this.current_page = 1;
 			this.search = "";
