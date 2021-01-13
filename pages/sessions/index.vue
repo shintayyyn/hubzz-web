@@ -616,7 +616,7 @@ export default {
           params: {
             ...this.getRequestQueryFilters,
             offset: this.offset,
-            limit: 5,
+            limit: this.limit,
             order_by: [],
           },
         }),
@@ -637,7 +637,7 @@ export default {
           params: {
             ...this.getRequestQueryFilters,
             offset: this.offset,
-            limit: 5,
+            limit: this.limit,
             order_by: this.order_by,
           },
         })
