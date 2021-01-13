@@ -1,62 +1,8 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
-    <div class="w-full flex flex-col">
-      <AppInput
-        v-model="email"
-        type="text"
-        name="email"
-        label="Email address or Username"
-        placeholder=""
-        :error="formErrors.find(formError => formError.field === 'email')"
-        @submit="login"
-      />
-
-      <div class="flex flex-col">
-        <label class="text-xs md:text-sm">Password</label>
-        <div class="w-full relative">
-          <input
-            v-model="password"
-            :type="passwordInputType"
-            class="w-full py-3 border-b-2 focus:border-yellow-400 focus:outline-none text-xs md:text-sm"
-            :class="formErrors.find(formError => formError.field === 'password') ? 'border-red-500' : ''"
-            @submit="login"
-            @keyup.enter="login"
-          >
-          <button v-if="password" tabindex="-1" class="absolute top-0 right-0 mx-2 h-full focus:outline-none"
-                  @click="passwordInputType === 'password' ? passwordInputType = 'text' : passwordInputType = 'password'"
-          >
-            <svgicon v-if="passwordInputType === 'password'" name="eye" height="24" width="24"
-                     class="fill-current text-gray-500 hover:text-gray-600"
-            />
-            <svgicon v-else name="hide-eye" height="24" width="24"
-                     class="fill-current text-gray-500 hover:text-gray-600"
-            />
-          </button>
-        </div>
-        <transition name="drop-down">
-          <div
-            v-if="formErrors.find(formError => formError.field === 'password')"
-            class="text-red-500 py-1 text-xs text-white"
-          >
-            {{ formErrors.find(formError => formError.field === 'password').message }}
-          </div>
-        </transition>
-      </div>
+  <div class="h-full relative">
+      <img src="../../assets/images/landing-page.png" class=" object-cover w-screen h-full">
+      <p class="absolute z-10 message text-6xl font-bold text-center mr-32 py-2 text-white rounded-lg leading-tight">Despite these uncertain times, we're here to serve you</p>
     </div>
-
-    <div class="flex flex-col items-end justify-end mt-2 mb-8">
-      <nuxt-link to="/forgot-password">
-        <span class="hover:underline text-sm cursor-pointer">Forgot password?</span>
-      </nuxt-link>
-      <nuxt-link to="/change-email-request">
-        <span class="hover:underline text-sm cursor-pointer">Forgot email?</span>
-      </nuxt-link>
-    </div>
-
-    <div class="flex justify-center">
-      <AppButton label="Sign In" :disabled="loggingIn" @click="login" />
-    </div>
-  </div>
 </template>
 
 <script>

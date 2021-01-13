@@ -1,12 +1,12 @@
 <template>
   <button
     :disabled="disabled"
-    class="rounded-lg p-2 md:px-4 focus:outline-none transition-hover"
+    class="rounded-lg p-2 md:px-6 focus:outline-none transition-hover"
     :class="[
       disabled ? 'disabled-button' : '',
       (label.includes('Filter') || label.includes('Sort')) && 'flex items-center',
       inClass,
-      customTheme ? customTheme : 'button font-bold md:text-lg',
+      customTheme ? customTheme : 'button',
     ]"
     :style="inStyle"
     @click.prevent="$emit('click')"
@@ -55,12 +55,14 @@ export default {
 
 <style >
   .button {
-    background: linear-gradient(to top, #f2d024, #efde86);
+    background: #f9a423;
+    /* background: linear-gradient(to top, #f2d024, #efde86); */
   }
 
   .button:hover,
   .button:focus {
-    background: linear-gradient(to top, #e6c520, #f1d130);
+    background: #eb9a1f;
+    /* background: linear-gradient(to top, #e6c520, #f1d130); */
   }
 
   .button:hover {

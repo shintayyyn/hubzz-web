@@ -237,24 +237,22 @@ export default {
     z-index: 55;
   }
 
-  @media screen and (min-width: 1280px) {
+  .content,
+    .content-message {
+      padding: 1px 3% 0;
+    }
+
+  @media (min-width: 1280px) {
     .content,
     .content-message {
       margin-left: 200px;
     }
   }
 
-  @media screen and (min-width: 480px) {
+  @media (min-width: 720px) {
     .content,
     .content-message {
-      padding: 1px 5% 0;
-    }
-  }
-
-  @media screen and (min-width: 320px) {
-    .content,
-    .content-message {
-      padding: 1px 3% 0;
+      padding: 1px 1% 0;
     }
   }
 </style>
