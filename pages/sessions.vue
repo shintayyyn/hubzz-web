@@ -1,438 +1,444 @@
 <template>
-	<section class="sessions-section">
-		<!-- <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
-			<AppLoading :loading="loading" spinner />
+  <section class="sessions-section">
+    <div v-if="false" class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
+      <AppLoading :loading="loading" spinner />
 
-			<div class="flex flex-row justify-start overflow-x-auto">
-				<div class="flex flex-col mb-2">
-					<label for="search" class="text-xs sm:text-sm">Job number</label>
+      <div class="flex flex-row justify-start overflow-x-auto">
+        <div class="flex flex-col mb-2">
+          <label for="search" class="text-xs sm:text-sm">Job number</label>
 
-					<div class="flex flex-row justify-start">
-						<input
-							v-model="search"
-							type="text"
-							class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-						/>
-					</div>
+          <div class="flex flex-row justify-start">
+            <input
+              v-model="search"
+              type="text"
+              class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
+            >
+          </div>
 
-					<transition name="fade" mode="out-in">
-						<div v-if="noFoundJob" class="text-xs text-red-500">No matching job number</div>
-					</transition>
-				</div>
-			</div>
+          <transition name="fade" mode="out-in">
+            <div v-if="noFoundJob" class="text-xs text-red-500">
+              No matching job number
+            </div>
+          </transition>
+        </div>
+      </div>
 
-			<div class="flex justify-start">
-				<div
-					class="bg-yellow-500 hover:text-white cursor-pointer shadow-lg rounded-lg px-2 py-1 font-bold mb-5 min-w-sm"
-					@click="findJobNumber"
-				>Search</div>
-			</div>
-		</div> -->
+      <div class="flex justify-start">
+        <div
+          class="bg-yellow-500 hover:text-white cursor-pointer shadow-lg rounded-lg px-2 py-1 font-bold mb-5 min-w-sm"
+          @click="findJobNumber"
+        >
+          Search
+        </div>
+      </div>
+    </div>
 
-		<div class="flex flex-row justify-start py-3 border-b-2 border-yellow-300 overflow-x-auto lg:overflow-y-hidden">
-			<div v-for="tab in tabs" :key="tab.title" class="relative">
-				<nuxt-link
-					:event="$store.state.jobs.loading_jobs ? '' : 'click'"
-					:to="tab.route"
-					class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-					:class="tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
-				>{{ tab.title }}</nuxt-link>
-			</div>
-		</div>
+    <div class="flex flex-row justify-start py-3 border-b-2 border-yellow-300 overflow-x-auto lg:overflow-y-hidden">
+      <div v-for="tab in tabs" :key="tab.title" class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="tab.route"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
+        >
+          {{ tab.title }}
+        </nuxt-link>
+      </div>
+    </div>
 
-		<div class="mt-5">
-			<nuxt-child :invoiceStatusList="invoiceStatusList" />
-		</div>
+    <div class="mt-5">
+      <nuxt-child :invoiceStatusList="invoiceStatusList" />
+    </div>
 
-		<AppConfirmationModal
-			:label="'You\'ve been revoked to view this Page'"
-			:confirmLabel="'OK'"
-			:modal="confirmation_modal"
-			@confirm="goTo"
-		/>
-	</section>
+    <AppConfirmationModal
+      :label="'You\'ve been revoked to view this Page'"
+      :confirmLabel="'OK'"
+      :modal="confirmation_modal"
+      @confirm="goTo"
+    />
+  </section>
 </template>
 
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import AppLoading from "@/components/Base/AppLoading";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppLoading from "@/components/Base/AppLoading"
 
 export default {
-	transition: (to, from) => {
-		if (
-			(to &&
-				to.name === "job-parts-index" &&
-				from &&
-				from.name === "sessions-index") ||
-			(from &&
-				from.name === "job-parts-index" &&
-				to &&
-				to.name === "sessions-index") ||
-			(to &&
-				to.name === "job-parts-index-jobPartId" &&
-				from &&
-				from.name === "sessions-index") ||
-			(from &&
-				from.name === "job-parts-index-jobPartId" &&
-				to &&
-				to.name === "sessions-index") ||
-			(to &&
-				to.name === "job-parts-index" &&
-				from &&
-				from.name === "sessions-index-id") ||
-			(from &&
-				from.name === "job-parts-index" &&
-				to &&
-				to.name === "sessions-index-id") ||
-			(to && to.name === "sessions-index-id") ||
-			(to && to.name === "sessions-index-id-job-parts-jobPartId") ||
-			(from && from.name.includes("practice-job-reports")) ||
-			(to && to.name.includes("practice-job-reports"))
-		) {
-			return {
-				name: "",
-				mode: "out-in"
-			};
-		}
+  transition: (to, from) => {
+    if (
+      (to
+				&& to.name === "job-parts-index"
+				&& from
+				&& from.name === "sessions-index")
+			|| (from
+				&& from.name === "job-parts-index"
+				&& to
+				&& to.name === "sessions-index")
+			|| (to
+				&& to.name === "job-parts-index-jobPartId"
+				&& from
+				&& from.name === "sessions-index")
+			|| (from
+				&& from.name === "job-parts-index-jobPartId"
+				&& to
+				&& to.name === "sessions-index")
+			|| (to
+				&& to.name === "job-parts-index"
+				&& from
+				&& from.name === "sessions-index-id")
+			|| (from
+				&& from.name === "job-parts-index"
+				&& to
+				&& to.name === "sessions-index-id")
+			|| (to && to.name === "sessions-index-id")
+			|| (to && to.name === "sessions-index-id-job-parts-jobPartId")
+			|| (from && from.name.includes("practice-job-reports"))
+			|| (to && to.name.includes("practice-job-reports"))
+    ) {
+      return {
+        name: "",
+        mode: "out-in",
+      }
+    }
 
-		return {
-			name: "page",
-			mode: "out-in"
-		};
-	},
+    return {
+      name: "page",
+      mode: "out-in",
+    }
+  },
 
-	middleware: "isVerified",
+  middleware: "isVerified",
 
-	components: {
-		AppConfirmationModal,
-		AppLoading
-	},
+  components: {
+    AppConfirmationModal,
+    AppLoading,
+  },
 
-	data() {
-		return {
-			search: null,
-			noFoundJob: false,
-			loading: false,
-			confirmation_modal: false,
-			invoiceStatusList: [
-				{
-					label: "All",
-					value: ""
-				},
-				{
-					label: "To Be Invoice",
-					value: "To Be Invoice"
-				},
-				{
-					label: "Disputed",
-					value: "Disputed"
-				},
-				{
-					label: "Invoiced",
-					value: "Invoiced"
-				}
-			]
-		};
-	},
+  data () {
+    return {
+      search: null,
+      noFoundJob: false,
+      loading: false,
+      confirmation_modal: false,
+      invoiceStatusList: [
+        {
+          label: "All",
+          value: "",
+        },
+        {
+          label: "To Be Invoice",
+          value: "To Be Invoice",
+        },
+        {
+          label: "Disputed",
+          value: "Disputed",
+        },
+        {
+          label: "Invoiced",
+          value: "Invoiced",
+        },
+      ],
+    }
+  },
 
-	computed: {
-		practice() {
-			return this.$auth.loggedIn && this.$auth.user.practice_detail
-				? this.$auth.user.practice_detail.practice
-				: null;
-		},
+  computed: {
+    practice () {
+      return this.$auth.loggedIn && this.$auth.user.practice_detail
+        ? this.$auth.user.practice_detail.practice
+        : null
+    },
 
-		authPermissions() {
-			return this.$store.getters["permissions"];
-		},
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
 
-		tabs() {
-			const { name, query } = this.$route;
+    tabs () {
+      const { name, query, } = this.$route
 
-			const { status = "Allocated" } = query;
+      const { status = "Allocated", } = query
 
-			const tabs = [];
+      const tabs = []
 
-			if (
-				this.practice &&
-				(this.practice.type === "Spoke" || this.practice.type === "Hub")
-			) {
-				tabs.push(
-					...[
-						{
-							title: "Pending",
-							route: {
-								name: "sessions-index",
-								query: {
-									status: "Pending"
-								}
-							},
-							active:
-								name === "job-parts-index" &&
-								status &&
-								status.toLowerCase() === "Pending".toLowerCase()
-						}
-					]
-				);
-			}
+      if (
+        this.practice
+				&& (this.practice.type === "Spoke" || this.practice.type === "Hub")
+      ) {
+        tabs.push(
+          ...[
+            {
+              title: "Pending",
+              route: {
+                name: "sessions-index",
+                query: {
+                  status: "Pending",
+                },
+              },
+              active:
+								name === "sessions-index"
+								&& status
+								&& status.toLowerCase() === "Pending".toLowerCase(),
+            },
+          ]
+        )
+      }
 
-			tabs.push(
-				...[
-					{
-						title: "Allocated",
-						route: {
-							name: "job-parts-index",
-							query: {
-								status: "Allocated"
-							}
-						},
-						active:
-							name === "job-parts-index" &&
-							status &&
-							status.toLowerCase() === "Allocated".toLowerCase()
-					},
-					{
-						title: "Ongoing",
-						route: {
-							name: "job-parts-index",
-							query: {
-								status: "Ongoing"
-							}
-						},
-						active:
-							name === "job-parts-index" &&
-							status &&
-							status.toLowerCase() === "Ongoing".toLowerCase()
-					},
-					{
-						title: "Live",
-						route: {
-							name: "sessions-index",
-							query: {
-								status: "Live"
-							}
-						},
-						active:
-							name === "sessions-index" &&
-							status &&
-							status.toLowerCase() === "Live".toLowerCase()
-					},
-					{
-						title: "Applied",
-						route: {
-							name: "sessions-index",
-							query: {
-								status: "Applied"
-							}
-						},
-						active:
-							name === "sessions-index" &&
-							status &&
-							status.toLowerCase() === "Applied".toLowerCase()
-					},
-					{
-						title: "Unfilled",
-						route: {
-							name: "sessions-index",
-							query: {
-								status: "Unfilled"
-							}
-						},
-						active:
-							name === "sessions-index" &&
-							status &&
-							status.toLowerCase() === "Unfilled".toLowerCase()
-					},
-					{
-						title: "Withdrawn",
-						route: {
-							name: "job-parts-index",
-							query: {
-								status: "Withdrawn"
-							}
-						},
-						active:
-							name === "job-parts-index" &&
-							status &&
-							status.toLowerCase() === "Withdrawn".toLowerCase()
-					},
-					{
-						title: "Cancelled",
-						route: {
-							name: "job-parts-index",
-							query: {
-								status: "Cancelled"
-							}
-						},
-						active:
-							name === "job-parts-index" &&
-							status &&
-							status.toLowerCase() === "Cancelled".toLowerCase()
-					},
-					{
-						title: "Completed",
-						route: {
-							name: "job-parts-index",
-							query: {
-								status: "Completed"
-							}
-						},
-						active:
-							name === "job-parts-index" &&
-							status &&
-							status.toLowerCase() === "Completed".toLowerCase()
-					},
-					{
-						title: "Approved",
-						route: {
-							name: "job-parts-index",
-							query: {
-								status: "Approved"
-							}
-						},
-						active:
-							name === "job-parts-index" &&
-							status &&
-							status.toLowerCase() === "Approved".toLowerCase()
-					},
-					{
-						title: "Reports",
-						route: {
-							name: "practice-job-reports"
-						},
-						active: name === "practice-job-reports"
-					}
-				]
-			);
+      tabs.push(
+        ...[
+          {
+            title: "Allocated",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Allocated",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Allocated".toLowerCase(),
+          },
+          {
+            title: "Ongoing",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Ongoing",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Ongoing".toLowerCase(),
+          },
+          {
+            title: "Live",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Live",
+              },
+            },
+            active:
+							name === "sessions-index"
+							&& status
+							&& status.toLowerCase() === "Live".toLowerCase(),
+          },
+          {
+            title: "Applied",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Applied",
+              },
+            },
+            active:
+							name === "sessions-index"
+							&& status
+							&& status.toLowerCase() === "Applied".toLowerCase(),
+          },
+          {
+            title: "Unfilled",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Unfilled",
+              },
+            },
+            active:
+							name === "sessions-index"
+							&& status
+							&& status.toLowerCase() === "Unfilled".toLowerCase(),
+          },
+          {
+            title: "Withdrawn",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Withdrawn",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Withdrawn".toLowerCase(),
+          },
+          {
+            title: "Cancelled",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Cancelled",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Cancelled".toLowerCase(),
+          },
+          {
+            title: "Completed",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Completed",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Completed".toLowerCase(),
+          },
+          {
+            title: "Approved",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Approved",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Approved".toLowerCase(),
+          },
+          {
+            title: "Reports",
+            route: {
+              name: "practice-job-reports",
+            },
+            active: name === "practice-job-reports",
+          },
+        ]
+      )
 
-			return tabs;
-		}
-	},
+      return tabs
+    },
+  },
 
-	watch: {
-		authPermissions(value) {
-			if (!this.CheckPermissions(value).hasPermission) {
-				this.confirmation_modal = true;
-			}
-		}
-	},
+  watch: {
+    authPermissions (value) {
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true
+      }
+    },
+  },
 
-	async asyncData({ app, error, store }) {
-		try {
-			const authPermissions = store.getters["permissions"];
+  async asyncData ({ app, error, store, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
 
-			if (
-				app.$auth.user.domain === "Practice" &&
-				authPermissions.includes("View Sessions Job") === false
-			) {
-				error({
-					statusCode: 403,
-					message: "You are not authorized to view this page."
-				});
-				return;
-			}
-		} catch (err) {
-			console.log("err", err.response || err);
-			error({
-				statusCode: 403,
-				message: "You are not authorized to view this page."
-			});
-		}
-	},
+      if (
+        app.$auth.user.domain === "Practice"
+				&& authPermissions.includes("View Sessions Job") === false
+      ) {
+        error({
+          statusCode: 403,
+          message: "You are not authorized to view this page.",
+        })
+        return
+      }
+    } catch (err) {
+      console.log("err", err.response || err)
+      error({
+        statusCode: 403,
+        message: "You are not authorized to view this page.",
+      })
+    }
+  },
 
-	methods: {
-		goTo() {
-			this.confirmation_modal = false;
-			setTimeout(() => {
-				this.$router.push("/");
-			}, 500);
-		},
+  methods: {
+    goTo () {
+      this.confirmation_modal = false
+      setTimeout(() => {
+        this.$router.push("/")
+      }, 500)
+    },
 
-		async findJobNumber() {
-			if (!this.search) {
-				return;
-			}
+    async findJobNumber () {
+      if (!this.search) {
+        return
+      }
 
-			this.loading = true;
+      this.loading = true
 
-			let resJob = await this.findJob();
-			let resJobPart = await this.findJobParts();
-			let job = null;
-			let urlPath = null;
-			this.noFoundJob = false;
+      let resJob = await this.findJob()
+      let resJobPart = await this.findJobParts()
+      let job = null
+      let urlPath = null
+      this.noFoundJob = false
 
-			this.loading = false;
+      this.loading = false
 
-			if (resJob.length > 0) {
-				job = resJob[0];
-				urlPath = `/sessions/${job.id}`;
-			}
+      if (resJob.length > 0) {
+        job = resJob[0]
+        urlPath = `/sessions/${job.id}`
+      }
 
-			if (resJobPart.length > 0) {
-				job = resJobPart[0];
-				urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`;
-			}
+      if (resJobPart.length > 0) {
+        job = resJobPart[0]
+        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
+      }
 
-			if (resJob.length > 0 || resJobPart.length > 0) {
-				this.$router.push({
-					path: `/sessions`,
-					query: { status: job.status }
-				});
+      if (resJob.length > 0 || resJobPart.length > 0) {
+        this.$router.push({
+          path: `/sessions`,
+          query: { status: job.status, },
+        })
 
-				setTimeout(() => {
-					this.$router.push({
-						path: urlPath,
-						query: { status: job.status }
-					});
-				}, 500);
-			}
+        setTimeout(() => {
+          this.$router.push({
+            path: urlPath,
+            query: { status: job.status, },
+          })
+        }, 500)
+      }
 
-			if (resJob.length === 0 && resJobPart.length === 0) {
-				this.noFoundJob = true;
-			}
-		},
+      if (resJob.length === 0 && resJobPart.length === 0) {
+        this.noFoundJob = true
+      }
+    },
 
-		findJob() {
-			return this.$axios
-				.$get(`/api/v1/practice/jobs`, {
-					params: {
-						status: ["Pending", "Live", "Applied", "Unfilled"],
-						job_number: this.search
-					}
-				})
-				.then(res => {
-					return res.data.jobs;
-				})
-				.catch(err => {
-					console.log("job err", err.response);
-					return [];
-				});
-		},
+    findJob () {
+      return this.$axios
+        .$get(`/api/v1/practice/jobs`, {
+          params: {
+            status: ["Pending", "Live", "Applied", "Unfilled",],
+            job_number: this.search,
+          },
+        })
+        .then(res => {
+          return res.data.jobs
+        })
+        .catch(err => {
+          console.log("job err", err.response)
+          return []
+        })
+    },
 
-		findJobParts() {
-			return this.$axios
-				.$get(`/api/v1/practice/job-parts`, {
-					params: {
-						status: [
-							"Allocated",
-							"Ongoing",
-							"Withdrawn",
-							"Cancelled",
-							"Completed",
-							"Approved",
-							"Terminated"
-						],
-						job_part_number: this.search
-					}
-				})
-				.then(res => {
-					return res.data.job_parts;
-				})
-				.catch(err => {
-					console.log("job part err", err.response);
-					return [];
-				});
-		}
-	}
-};
+    findJobParts () {
+      return this.$axios
+        .$get(`/api/v1/practice/job-parts`, {
+          params: {
+            status: [
+              "Allocated",
+              "Ongoing",
+              "Withdrawn",
+              "Cancelled",
+              "Completed",
+              "Approved",
+              "Terminated",
+            ],
+            job_part_number: this.search,
+          },
+        })
+        .then(res => {
+          return res.data.job_parts
+        })
+        .catch(err => {
+          console.log("job part err", err.response)
+          return []
+        })
+    },
+  },
+}
 </script>
