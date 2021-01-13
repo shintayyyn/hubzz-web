@@ -4,7 +4,7 @@
 			<div class="flex overflow-x-auto items-center">
 				<nuxt-link
 					v-if="$auth.user.domain === 'Practice' 
-            && ($auth.user.practice_detail.practice.type === 'Spoke'  || $auth.user.practice_detail.practice.type === 'Hub' )
+            && ($auth.user.practice_detail.practice.type === 'Spoke' || $auth.user.practice_detail.practice.type === 'Hub' )
             && $auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false"
 					to="/permanent-jobs?status=Pending"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -33,15 +33,8 @@
           "
 				>Closed</nuxt-link>
 			</div>
-			<div
-				v-if="$auth.user.domain === 'Practice'"
-				class="px-3 py-1 text-sm font-bold cursor-pointer"
-        :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
-				@click="$router.push('/permanent-jobs/create')"
-			>
-				Create Permanent Job/Salaried Role 
-			</div>
 		</div>
+		
 
 		<div
 			v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"

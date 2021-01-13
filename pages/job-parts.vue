@@ -104,7 +104,7 @@ export default {
 
 	components: {
 		AppConfirmationModal,
-		AppLoading
+		AppLoading,
 	},
 
 	data() {

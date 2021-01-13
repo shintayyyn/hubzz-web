@@ -1,12 +1,18 @@
 <template>
   <section>
-    <AppInput
-      v-model="search"
-      :type="'text'"
-      :name="'search'"
-      :placeholder="'Search locum by name'"
-      :disabled="loading"
-    />
+    <div class="w-1/2">
+      <AppInputSmall
+        v-model="search"
+        :type="'text'"
+        :name="'search'"
+        :button="true"
+        :buttonLabel="'Search'"
+        :placeholder="'Locum Name'"
+        :disabled="loading"
+        @click="getLocumsCount()"
+      />
+    </div>
+    
     <div
       v-if="
         [
@@ -202,7 +208,7 @@ import AppLoading from "@/components/Base/AppLoading"
 import AppAvatar from "@/components/Base/AppAvatar"
 import AppPagination from "@/components/Base/AppPagination"
 import SendMessageModal from "@/components/Messages/SendMessageModal"
-import AppInput from "@/components/Base/AppInput"
+import AppInputSmall from "@/components/Base/AppInputSmall"
 
 export default {
   transition: {
@@ -215,7 +221,7 @@ export default {
     AppAvatar,
     AppPagination,
     SendMessageModal,
-    AppInput,
+    AppInputSmall,
   },
 
   middleware ({ query, error, }) {
