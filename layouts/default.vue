@@ -238,9 +238,9 @@ export default {
   }
 
   .content,
-    .content-message {
-      padding: 1px 3% 0;
-    }
+  .content-message {
+    padding: 1px 3% 0;
+  }
 
   @media (min-width: 1280px) {
     .content,

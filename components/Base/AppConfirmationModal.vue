@@ -19,10 +19,10 @@
 					<div v-if="loading" class="flex justify-center">
 						<svgicon v-if="loading" name="loader" width="60" height="60" />
 					</div>
-					<div v-if="!loading" class="flex justify-center my-2">
+					<div v-if="!loading" class="flex justify-center my-2 mt-4">
 						<div class="mx-2">
 							<button
-								class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 px-2 rounded-lg"
+								class="button border hover:text-white focus:outline-none text-black font-bold py-2 px-2 rounded-lg"
 								style="min-width:120px;"
 								:disabled="loading"
 								@click.prevent="$emit('confirm')"
@@ -30,7 +30,7 @@
 						</div>
 						<div v-if="cancelLabel" class="mx-2">
 							<button
-								class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 px-2 rounded-lg"
+								class="button border hover:text-white focus:outline-none text-black font-bold py-2 px-2 rounded-lg"
 								style="min-width:120px;"
 								:disabled="loading"
 								@click.prevent="$emit('cancel')"
@@ -79,6 +79,10 @@ export default {
 <style scoped>
 .button {
 	background: linear-gradient(to top, #f2d024, #efde86);
+}
+
+.button:hover {
+	background: linear-gradient(to top, #ebc91f, #e7d475);
 }
 .shield {
 	z-index: 511;

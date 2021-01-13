@@ -189,7 +189,7 @@ export default {
     perPage: {
       type: Number,
       required: false,
-      default: 5,
+      default: 15,
     },
   },
   data () {

@@ -3,7 +3,7 @@
     <template
       v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number', 'numberDash'].includes(type)"
     >
-      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : ' mb-2 py-2'">
+      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-6 py-2'">
         <div
           v-if="label || info"
           class="relative flex flex-wrap leading-none"
@@ -162,7 +162,7 @@
                     :value="value"
                     :type="type"
                     :placeholder="placeholder"
-                    class="bg-gray-200 rounded-lg w-full text-xs sm:text-sm focus:border transition-fade outline-none py-2 px-4"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
                     :class="[error ? 'border-red-500' : '', inClass]"
                     :style="inStyle"
                     :checked="value"

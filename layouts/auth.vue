@@ -1,6 +1,6 @@
 <template>
-  <div class="w-screen h-screen flex flex-col overflow-hidden">
-    <!-- <div class="__bg_logo flex justify-center items-center pt-5 pb-8">
+  <div class="__layout_index w-screen h-screen flex flex-col xl:flex-row">
+    <div class="__bg_logo flex justify-center items-center pt-5 pb-8">
       <div class="absolute top-0 left-0 p-1 m-1">
         <template v-if="false">
           <button class="bg-white text-black p-1 m-1" @click="toggle">
@@ -19,40 +19,34 @@
       <nuxt-link to="/" class="__logo">
         <img src="~/assets/images/hubzz-logo.png">
       </nuxt-link>
-    </div> -->
+    </div>
 
-    <div class="__main relative h-full">
+    <div class="__main overflow-y-auto overflow-x-hidden relative">
       <nuxt />
       <div class="absolute bottom-0">
         <AppNotification />
       </div>
     </div>
 
-    <div class="__privacy_notice md:w-1/2 mx-auto mb-2 absolute bottom-0 left-0 right-0 flex text-sm px-3 py-4 rounded-lg" 
-         style="background-color: #f9a423"
+    <div class="__privacy_notice absolute bottom-0 left-0 right-0 flex text-sm px-3 py-4"
+         style="background-color: #FFDA3A"
          :style="`z-index: ${showPrivacyNotice ? 100 : -100}; opacity: ${showPrivacyNotice ? 1 : 0};`"
     >
-      <div  class="flex items-center justify-between w-full px-8">
+      <div style="flex: 0 0 80%;">
         <h2 class="font-bold">
-          Cookie Policy
+          Your Privacy
         </h2>
-        <div class="text-center">
-          <p>We use cookies to improve your experience on our site.</p>
-          <p>To find out more, read our
+        <div>
+          <span>We use cookies to improve your experience on our site. To find out more, read our</span>
           <nuxt-link to="/" class="underline hover:no-underline">
             privacy policy.
-          </nuxt-link></p>
+          </nuxt-link>
         </div>
-        <div class="flex justify-end items-center">
-          <button class="" @click="acceptCookies">
-            <svgicon
-              name="times-solid"
-              width="18"
-              height="18"
-              class="fill-current mr-1"
-            />
-          </button>
-        </div>
+      </div>
+      <div style="flex: 0 0 20%;" class="flex justify-end items-center">
+        <button class="py-2 px-4 md:mx-4 font-bold border-2 border-white rounded-lg shadow-lg" @click="acceptCookies">
+          OK
+        </button>
       </div>
     </div>
   </div>
@@ -71,7 +65,7 @@
 
     data () {
       return {
-        showPrivacyNotice: false,
+        showPrivacyNotice: false
       }
     },
 
@@ -106,7 +100,6 @@
 </script>
 
 <style>
-  
   .__privacy_notice {
     transition: 0.8s;
   }

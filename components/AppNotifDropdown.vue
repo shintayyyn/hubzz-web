@@ -1,6 +1,12 @@
 <template>
   <div>
-    <button
+    <AppButton
+      icon="notification"
+      :label="'Notification'"
+      :badge="unseenNotificationIds.length"
+      @click="showNotificationsDropdown = !showNotificationsDropdown"
+    />
+    <!-- <button
       class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
       @click="showNotificationsDropdown = !showNotificationsDropdown"
     >
@@ -12,7 +18,7 @@
       >
         {{ unseenNotificationIds.length }}
       </p>
-    </button>
+    </button> -->
 
     <transition name="drop-down">
       <div
@@ -162,10 +168,12 @@
 <script>
 import { mixin as clickaway, } from "vue-clickaway"
 import PopUpNotification from "@/components/Notifications/PopUpNotification"
+import AppButton from "@/components/Base/AppButton"
 
 export default {
   components: {
     PopUpNotification,
+    AppButton
   },
   
   mixins: [clickaway,],

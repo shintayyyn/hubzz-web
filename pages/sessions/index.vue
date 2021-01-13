@@ -248,7 +248,7 @@ export default {
 			current_page: 1,
 			// app table params
 			offset: 0,
-			limit: 5,
+			limit: 20,
 			order_by: [],
 			job_number: "",
 			job_part_number: "",
@@ -346,7 +346,8 @@ export default {
 				{
 					name: "Job Number",
 					dataIndex: "job_number",
-					sortable: true
+					sortable: true,
+					 width: 130
 				},
 				{
 					name: "Practice",
@@ -370,19 +371,22 @@ export default {
 					name: "Shifts",
 					dataIndex: "job_shift_names_formatted",
 					sortable: true,
-					class: "text-center"
+					class: "text-center",
+					width: 150
 				},
 				{
 					name: "Rates",
 					dataIndex: "job_rate_ranged_formatted",
 					sortable: true,
-					class: "text-center"
+					class: "text-center",
+					width: 100
 				},
 				{
 					name: "Rate Type",
 					dataIndex: "job_rate_type_names_formatted",
 					sortable: true,
-					class: "text-center"
+					class: "text-center",
+					width: 100
 				}
 			);
 
@@ -391,13 +395,15 @@ export default {
 					name: "From",
 					dataIndex: "date_time_start",
 					sortable: true,
-					class: "text-center"
+					class: "text-center",
+					width: 130
 				},
 				{
 					name: "To",
 					dataIndex: "date_time_end",
 					sortable: true,
-					class: "text-center"
+					class: "text-center",
+					width: 130
 				}
 			);
 
@@ -415,7 +421,7 @@ export default {
 					dataIndex: "ended",
 					slotName: "ended",
 					class: "text-center",
-					sortable: true
+					sortable: true,
 				});
 			}
 
@@ -424,7 +430,8 @@ export default {
 					name: "Favorite only",
 					dataIndex: "favorite_only",
 					class: "text-center",
-					sortable: true
+					sortable: true,
+					width: 120
 				});
 			}
 
@@ -699,7 +706,7 @@ export default {
 					params: {
 						...this.getRequestQueryFilters,
 						offset: this.offset,
-						limit: 5,
+						limit: 20,
 						order_by: []
 					}
 				})
@@ -735,7 +742,7 @@ export default {
 					params: {
 						...this.getRequestQueryFilters,
 						offset: this.offset,
-						limit: 5,
+						limit: 20,
 						order_by: this.order_by
 					}
 				})
@@ -944,7 +951,7 @@ export default {
 		async refreshJobs() {
 			this.current_page = 1;
 			this.offset = 0;
-			this.limit = 5;
+			this.limit = 20;
 			this.initialLoading = true;
 			await this.getSessions();
 			this.initialLoading = false;
@@ -954,7 +961,7 @@ export default {
 		async filterJob() {
 			this.current_page = 1;
 			this.offset = 0;
-			this.limit = 5;
+			this.limit = 20;
 			this.initialLoading = true;
 			this.isFiltered = true;
 			await this.getSessions();
@@ -1029,7 +1036,7 @@ export default {
 
 		clearFilters() {
 			this.offset = 0;
-			this.limit = 5;
+			this.limit = 20;
 			this.order_by = [];
 			this.job_number = "";
 			this.job_part_number = "";

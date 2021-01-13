@@ -8,7 +8,7 @@
       >
         <div
           :style="`min-width: ${customWidth}px`"
-          class="row flex justify-start font-bold leading-none text-sm py-2"
+          class="row flex justify-start font-bold leading-none text-xs py-2"
         >
           <div
             v-for="(column, index) in columns"
@@ -45,13 +45,13 @@
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
-              class="flex justify-start items-center text-xs py-1"
-              :class="[routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default', index % 2 === 0 ? 'stripe-gray':'bg-white']"
+              class="flex justify-start items-center text-xs py-2 "
+              :class="[routerLink ? 'stripe-hover' : 'cursor-default', index % 2 === 0 ? 'stripe-gray':'bg-white']"
             >
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 px-2 break-word hyphens"
+                class="flex-1 px-1 break-word hyphens"
                 :class="
                   column.class &&
                     column.class.includes('text-center') &&
@@ -156,7 +156,7 @@ export default {
         },
         perPage: {
             type: Number,
-            default: 10
+            default: 15
         },
         columns: {
             type: Array,
@@ -319,5 +319,12 @@ export default {
   }
   .stripe-gray {
     background-color: #f8f8f8;
+  }
+  .stripe-hover:hover {
+    background-color: #eee;
+  }
+  .table-font-size {
+    font-size: 100vb;
+    max-height: 50px;
   }
 </style>

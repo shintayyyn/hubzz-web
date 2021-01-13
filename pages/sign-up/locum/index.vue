@@ -1,11 +1,11 @@
 <template>
-  <div ref="signUpContainer" class="w-full flex justify-center">
+  <div ref="signUpContainer" class="w-full">
     <div class="w-full xl:max-w-3xl p-4 md:p-6">
       <div class="flex w-full justify-center xl:justify-start">
         <div class="flex flex-col items-start mb-6 mt-1 md:mx-4" style="flex: 0 1 600px;">
-          <!-- <nuxt-link to="/sign-up" class="text-black focus:outline-none">
+          <nuxt-link to="/sign-up" class="text-black focus:outline-none">
             <svgicon name="left-arrow" height="32" width="32" />
-          </nuxt-link> -->
+          </nuxt-link>
           <div class="mt-1 text-xl font-bold">
             Sign up for a Locum account
           </div>
