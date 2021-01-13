@@ -7,11 +7,11 @@
       <div class="font-bold text-xs sm:text-sm">Practice</div>
       <div
         class="font-bold text-sm sm:text-md"
-      >{{permanent_job ? permanent_job.practice.name : 'Static Surgery Name'}}</div>
+      >{{permanent_job ? permanent_job.practice_name : 'Static Surgery Name'}}</div>
       <div
         v-if="permanent_job"
         class="text-sm sm:text-md"
-      >{{permanent_job.practice.address_line_1}} {{permanent_job.practice.address_line_2}} {{permanent_job.practice.address_line_3}} {{permanent_job.practice.postcode}}</div>
+      >{{permanent_job.address_line_1}} {{permanent_job.address_line_2}} {{permanent_job.address_line_3}} {{permanent_job.postcode}}</div>
       <div class="mt-4">
         <GmapMap
           :center="{lat:latLang.coordinate_y, lng:latLang.coordinate_x}"
@@ -55,7 +55,7 @@ export default {
 	mounted () {
 		this.$axios
 			.$get(
-				`/api/v1/postcode-coordinates?postcode=${this.permanent_job.practice.postcode}`
+				`/api/v1/postcode-coordinates?postcode=${this.permanent_job.practice_postcode}`
 			)
 			.then(res => {
 				this.coordinates =

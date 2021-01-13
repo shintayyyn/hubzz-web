@@ -17,7 +17,7 @@
 		>
 			<div class="flex">
 				<AppButton
-					class="mr-2"
+					class="my-2"
 					:label="'Filter'"
 					:in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
 					@click="filterModal = !filterModal"
@@ -287,7 +287,7 @@ export default {
 				},
 				{
 					name: "Surgery",
-					dataIndex: "practice.name",
+					dataIndex: "practice_name",
 					class: "text-center"
 				},
 				{
@@ -315,7 +315,7 @@ export default {
 				},
 				{
 					name: "Profession",
-					dataIndex: "professions.name",
+					dataIndex: "profession_name",
 					class: "text-center"
 				},
 				{
@@ -884,7 +884,7 @@ export default {
 					return;
 			}
 		},
-		jobClosingTag(item) {
+		jobClosingTag (item) {
 			let closingTag = "";
 			if (this.$auth.user.domain === "Locum") {
 				const permJobApp = item.permanent_job_applications.find(

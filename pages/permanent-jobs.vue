@@ -1,7 +1,7 @@
 <template>
 	<section class="flex flex-col items-start w-full">
-		<div class="flex flex-wrap items-center justify-between w-full">
-			<div class="my-1 flex overflow-x-auto items-center">
+		<div class="flex flex-wrap items-center justify-between w-full border-b-2 border-yellow-300">
+			<div class="flex overflow-x-auto items-center">
 				<nuxt-link
 					v-if="$auth.user.domain === 'Practice' 
             && ($auth.user.practice_detail.practice.type === 'Spoke'  || $auth.user.practice_detail.practice.type === 'Hub' )
@@ -10,7 +10,7 @@
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
             ($route.query.status && $route.query.status.toLowerCase() === 'pending')
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-yellow-500'
               : 'text-gray-600'
           "
 				>Pending</nuxt-link>
@@ -19,7 +19,7 @@
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
             !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'available')
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-yellow-500'
               : 'text-gray-600'
           "
 				>Available</nuxt-link>
@@ -28,17 +28,19 @@
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
             ($route.query.status && $route.query.status.toLowerCase() === 'closed')
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-yellow-500'
               : 'text-gray-600'
           "
 				>Closed</nuxt-link>
 			</div>
-			<AppButton
+			<div
 				v-if="$auth.user.domain === 'Practice'"
-				:label="'Create Permanent Job/Salaried Role '"
-				:class="'whitespace-no-wrap my-1'"
+				class="px-3 py-1 text-sm font-bold cursor-pointer"
+        :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
 				@click="$router.push('/permanent-jobs/create')"
-			/>
+			>
+				Create Permanent Job/Salaried Role 
+			</div>
 		</div>
 
 		<div

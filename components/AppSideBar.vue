@@ -1,30 +1,37 @@
 <template>
   <section>
     <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
-      <div class="sidebar-nav pt-8 xl:pt-20">
-        <button
-          class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
-          @click="close"
-        >
-          X
-        </button>
+      <div class="sidebar-nav pt-8 xl:pt-10">
+        <div class="flex flex-row justify-center pb-4">
+          <div class="font-extrabold text-white text-2xl">
+            HUBZZ
+          </div>
+          
+          <button
+            class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
+            @click="close"
+          >
+            X
+          </button>
+        </div>
+        
 
         <div v-for="(navigationTab, index) in navigationTabs" :key="index" class="text-sm relative">
-          <span v-if="navigationTab.active" class="absolute inset-y-0 left-0 border-solid bg-sunglow w-1 h-full" />
+          <span v-if="navigationTab.active" class="absolute ml-3 mt-5 bg-sunglow p-1.5 h-1.5 rounded-sm" />
 
           <nuxt-link
             :to="navigationTab.route"
             :event="$route.path.includes(navigationTab.route) ? '' : 'click'"
-            class="block no-underline p-4 transition-hover"
-            :class="navigationTab.active ? 'text-sunglow font-bold' : 'hover:text-sunglow hover:font-bold'"
+            class="block no-underline p-4 mx-4 transition-hover"
+            :class="navigationTab.active ? 'text-white font-bold' : 'text-gray-500 hover:text-white hover:font-bold'"
           >
             <span>{{ navigationTab.navigationTabTitle }}</span>
           </nuxt-link>
         </div>
 
-        <div class="text-sm relative">
+        <div class="text-sm relative ml-4">
           <button
-            class="block no-underline p-4 transition-hover focus:outline-none hover:text-sunglow hover:font-bold"
+            class="block no-underline p-4 transition-hover focus:outline-none text-gray-500 hover:text-white hover:font-bold"
             @click.prevent="signout_modal = true"
           >
             <span>Sign Out</span>
@@ -150,7 +157,7 @@ export default {
           && this.view_permanent_jobs
         ) {
           locumTabList.push({
-            navigationTabTitle: "Permanent Job/Salaried Role",
+            navigationTabTitle: "Salaried Roles",
             route: "/permanent-jobs",
             active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
           })
@@ -376,7 +383,7 @@ export default {
           && this.authPermissions.includes("View Permanent Job")
         ) {
           practiceTabList.push({
-            navigationTabTitle: "Permanent Job/Salaried Role",
+            navigationTabTitle: "Salaried Roles",
             route: "/permanent-jobs",
             active: `/${this.$route.path.split('/')[1]}` === '/permanent-jobs',
           })
@@ -637,7 +644,7 @@ export default {
   overflow: auto;
   border-right: solid 1px#ccc;
   transition: all 0.3s ease-in-out;
-  background-color: white;
+  background-color: rgb(2, 4, 12);
   z-index: 55;
 }
 

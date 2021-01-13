@@ -19,7 +19,7 @@
         ].includes(practiceLocumType.toLowerCase())
           && loggedInPracticeType === 'Hub'
       "
-      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+      class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden py-3 mb-3 border-b-2 border-gray-300"
     >
       <div class="relative">
         <nuxt-link
@@ -28,7 +28,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             !surgeriesBank
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -43,7 +43,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             surgeriesBank
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -54,7 +54,7 @@
 
     <div 
       v-if="practiceLocumType !== 'All'"
-      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+      class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden py-3 mb-3 border-b-2 border-gray-300"
     >
       <div class="relative">
         <nuxt-link
@@ -63,7 +63,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             professionCategoryName.toLowerCase() === 'gp'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -78,7 +78,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             professionCategoryName.toLowerCase() === 'others'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
