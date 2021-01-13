@@ -246,7 +246,7 @@ export default {
       current_page: 1,
       // app table params
       offset: 0,
-      limit: 5,
+      limit: 20,
       order_by: [],
       job_number: "",
       title: "",
@@ -530,8 +530,8 @@ export default {
       const [professions, shifts, rates,] = responses
 
       this.professions = professions
-      this.shifts = shifts
-      this.rates = rates
+      this.shifts = [{ label: "All", value: "", }, ...shifts,]
+      this.rates = [{ label: "All", value: "", }, ...rates,]
     })
   },
 
@@ -841,7 +841,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       await this.getSessions()
       this.initialLoading = false
@@ -851,7 +851,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       this.isFiltered = true
       await this.getSessions()
@@ -926,7 +926,7 @@ export default {
 
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.order_by = []
       this.job_number = ""
       this.title = ""
