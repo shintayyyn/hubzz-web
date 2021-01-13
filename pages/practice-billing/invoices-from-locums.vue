@@ -475,7 +475,7 @@ export default {
           name: "Job Part No.",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Job Title",
@@ -487,19 +487,19 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 120
+          width: 120,
         },
         {
           name: "Under IR35",
           dataIndex: "job_ir35",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice",
           class: "text-center",
-          width: 150
+          width: 150,
         }
       )
 
@@ -509,7 +509,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
-          width: 100
+          width: 100,
         })
 
         columns.push({
@@ -517,7 +517,7 @@ export default {
           dataIndex: "paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 100
+          width: 100,
         })
       }
 
@@ -526,14 +526,14 @@ export default {
           name: "Paid By Practice At",
           dataIndex: "locum_form_a_paid_by_practice_at_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
 
         columns.push({
           name: "Paid By Locum At",
           dataIndex: "locum_form_a_paid_at_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -543,7 +543,7 @@ export default {
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -551,7 +551,7 @@ export default {
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       } else {
         columns.push({
@@ -559,7 +559,7 @@ export default {
           dataIndex: "issued_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       }
 
@@ -574,7 +574,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
-          width: ["approved",].includes(queryStatus) ? 200 : 100
+          width: ["approved",].includes(queryStatus) ? 200 : 100,
         })
       }
 

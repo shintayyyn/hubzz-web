@@ -1,38 +1,38 @@
 <template>
-	<section class="fixed z-50 w-full shadow lg:shadow-none">
-		<div class="flex flex-row justify-between">
-			<div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
+  <section class="fixed z-50 w-full shadow lg:shadow-none">
+    <div class="flex flex-row justify-between">
+      <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
-			<div class="header-section flex items-center w-full justify-between bg-white">
-				<div class="w-1/3 flex items-center">
-					<button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
-						<div class="my-2 bg-yellow-500" />
-						<div class="my-2 bg-yellow-500" />
-					</button>
-					<div
-						v-if="
-							$auth.user.domain === 'Practice' &&
-								$auth.user.status === 'Active' &&
-								($auth.user.practice_detail.practice.status === 'Active' 
-								|| $auth.user.practice_detail.practice.status === 'Dormant') &&
-								($auth.user.practice_detail.practice.type === 'Hub' 
-								||$auth.user.practice_detail.practice.type === 'Stand Alone' 
-								||($auth.user.practice_detail.practice.type === 'Spoke' &&
-								$auth.user.practice_detail.practice.parent_practice_id)) 
-						"
-						class="mx-2"
-					>
-						<div class="flex flex-col items-start">
-							<AppButton
-								:disabled="!authPermissions.includes('Create Sessions Job')"
-								:label="'+ Create Job'"
-								class="whitespace-no-wrap font-bold"
-								:customTheme="'bg-info text-white'"
-								@click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-							/>
-						</div>
+      <div class="header-section flex items-center w-full justify-between bg-white">
+        <div class="w-1/3 flex items-center">
+          <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
+            <div class="my-2 bg-yellow-500" />
+            <div class="my-2 bg-yellow-500" />
+          </button>
+          <div
+            v-if="
+              $auth.user.domain === 'Practice' &&
+                $auth.user.status === 'Active' &&
+                ($auth.user.practice_detail.practice.status === 'Active' 
+                || $auth.user.practice_detail.practice.status === 'Dormant') &&
+                ($auth.user.practice_detail.practice.type === 'Hub' 
+                ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+                ||($auth.user.practice_detail.practice.type === 'Spoke' &&
+                $auth.user.practice_detail.practice.parent_practice_id)) 
+            "
+            class="mx-2"
+          >
+            <div class="flex flex-col items-start">
+              <AppButton
+                :disabled="!authPermissions.includes('Create Sessions Job')"
+                :label="'+ Create Job'"
+                class="whitespace-no-wrap font-bold"
+                :customTheme="'bg-info text-white'"
+                @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+              />
+            </div>
 
-						<!-- <button
+            <!-- <button
 							class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
 							:class="
 								$route.name === 'messages-slug' ||
@@ -44,24 +44,26 @@
 						>
 							<svgicon name="create-job" color="#444 #555" width="21" height="21" />
 						</button> -->
-					</div>
-				</div>
+          </div>
+        </div>
 
-				<!-- <div class="w-1/3 flex justify-center">
+        <!-- <div class="w-1/3 flex justify-center">
 					<button class="focus:outline-none" @click="goHome">
 						<img src="/images/hubzz-icon-transparent.png" class="logo" />
 					</button>
 				</div> -->
 
-				<div class="w-1/3 leading-loose py-2">
-					<div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
-						<div
-							v-if="$auth.user.domain === 'Locum'"
-							class="text-xs xl:text-sm mr-2 hidden md:block"
-						>Hi, {{ $auth.user.personal_detail.first_name }}</div>
+        <div class="w-1/3 leading-loose py-2">
+          <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
+            <div
+              v-if="$auth.user.domain === 'Locum'"
+              class="text-xs xl:text-sm mr-2 hidden md:block"
+            >
+              Hi, {{ $auth.user.personal_detail.first_name }}
+            </div>
 
-						<div class="flex justify-end mr-2">
-							<!-- <div
+            <div class="flex justify-end mr-2">
+              <!-- <div
 								v-if="
                   $auth.user.domain === 'Practice' &&
                     $auth.user.status === 'Active' &&
@@ -97,23 +99,23 @@
 									<svgicon name="create-job" color="#444 #555" width="21" height="21" />
 								</button>
 							</div> -->
-							<div
-								v-if="$route.name != 'messages-slug' && $route.name != 'messages-create'"
-								class="relative"
-							>
-								<AppButton
-									icon="message"
-									class="h-full message-btn"
-									:label="'Messages'"
-									:badge="unreadMessages"
-									@click="$router.push('/messages')"
-								/>
-								<!-- <span
+              <div
+                v-if="$route.name != 'messages-slug' && $route.name != 'messages-create'"
+                class="relative"
+              >
+                <AppButton
+                  icon="message"
+                  class="h-full message-btn"
+                  :label="'Messages'"
+                  :badge="unreadMessages"
+                  @click="$router.push('/messages')"
+                />
+                <!-- <span
 									v-if="unreadMessages > 0"
 									class="-m-2 absolute bg-red-600 text-white block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
 								>{{ unreadMessages }}</span> -->
-							</div>
-							<!-- <button
+              </div>
+              <!-- <button
 								v-if="
                   $route.name != 'messages-slug' &&
                     $route.name != 'messages-create'
@@ -127,9 +129,9 @@
 									class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
 								>{{ unreadMessages }}</span>
 							</button> -->
-						</div>
-						<AppNotifDropdown />
-						<!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
+            </div>
+            <AppNotifDropdown />
+            <!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
               <AppButton
                 :label="'Expenses'"
                 @click="expense_modal = true"
@@ -143,93 +145,93 @@
                 <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
               </button>
 						</div>-->
-					</div>
-				</div>
-			</div>
-		</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-		<transition name="shield" mode="out-in">
-			<div v-if="create_job_modal || expense_modal" class="shield" @click="close" />
-		</transition>
+    <transition name="shield" mode="out-in">
+      <div v-if="create_job_modal || expense_modal" class="shield" @click="close" />
+    </transition>
 
-		<transition name="slide" mode="out-in">
-			<div v-if="create_job_modal" class="modal-container shadow-lg">
-				<CreateJobModal :job="repost_job" />
-			</div>
-		</transition>
-	</section>
+    <transition name="slide" mode="out-in">
+      <div v-if="create_job_modal" class="modal-container shadow-lg">
+        <CreateJobModal :job="repost_job" />
+      </div>
+    </transition>
+  </section>
 </template>
 
 <script>
-import AppButton from "@/components/Base/AppButton";
-import CreateJobModal from "@/components/CreateJobModal";
-import AppNotifDropdown from "@/components/AppNotifDropdown";
+import AppButton from "@/components/Base/AppButton"
+import CreateJobModal from "@/components/CreateJobModal"
+import AppNotifDropdown from "@/components/AppNotifDropdown"
 
 export default {
-	components: {
-		AppButton,
-		CreateJobModal,
-		AppNotifDropdown
-	},
+  components: {
+    AppButton,
+    CreateJobModal,
+    AppNotifDropdown,
+  },
 
-	data() {
-		return {
-			notAllowed: false,
-			expense_modal: false
-		};
-	},
+  data () {
+    return {
+      notAllowed: false,
+      expense_modal: false,
+    }
+  },
 
-	computed: {
-		create_job_modal() {
-			return this.$store.state.calendar.create_job_modal;
-		},
+  computed: {
+    create_job_modal () {
+      return this.$store.state.calendar.create_job_modal
+    },
 
-		unreadMessages() {
-			return this.$store.getters["chat/getUnreadMessagesTotal"];
-		},
+    unreadMessages () {
+      return this.$store.getters["chat/getUnreadMessagesTotal"]
+    },
 
-		authPermissions() {
-			return this.$store.getters["permissions"];
-		},
+    authPermissions () {
+      return this.$store.getters["permissions"]
+    },
 
-		repost_job() {
-			return this.$store.state.calendar.repost_job;
-		}
-	},
+    repost_job () {
+      return this.$store.state.calendar.repost_job
+    },
+  },
 
-	watch: {
-		create_job_modal(value) {
-			if (value) {
-				document.body.style.overflow = "hidden";
-			} else {
-				document.body.style.overflow = "auto";
-			}
-		}
-	},
+  watch: {
+    create_job_modal (value) {
+      if (value) {
+        document.body.style.overflow = "hidden"
+      } else {
+        document.body.style.overflow = "auto"
+      }
+    },
+  },
 
-	async created() {
-		this.$store.dispatch("chat/fetchTotalUnreadMessages");
-	},
+  async created () {
+    this.$store.dispatch("chat/fetchTotalUnreadMessages")
+  },
 
-	methods: {
-		toggle() {
-			this.$store.commit("TOGGLE_SIDEBAR", true);
-			document.body.style.overflow = "hidden";
-		},
+  methods: {
+    toggle () {
+      this.$store.commit("TOGGLE_SIDEBAR", true)
+      document.body.style.overflow = "hidden"
+    },
 
-		close() {
-			this.expense_modal = false;
-			this.$store.commit("calendar/CREATE_JOB_MODAL", false);
-			document.body.style.overflow = "hidden";
-		},
+    close () {
+      this.expense_modal = false
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+      document.body.style.overflow = "hidden"
+    },
 
-		goHome() {
-			if (this.$route.path != "/dashboard") {
-				this.$router.push("/dashboard");
-			}
-		}
-	}
-};
+    goHome () {
+      if (this.$route.path != "/dashboard") {
+        this.$router.push("/dashboard")
+      }
+    },
+  },
+}
 </script>
 
 <style scoped>

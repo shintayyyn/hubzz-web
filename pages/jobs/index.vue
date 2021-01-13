@@ -372,7 +372,7 @@ export default {
           name: "Job Number",
           dataIndex: "job_number",
           sortable: true,
-          width: 130
+          width: 130,
         },
         {
           name: "Surgery",
@@ -391,35 +391,35 @@ export default {
           dataIndex: "shift_names",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Rates",
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 120
+          width: 120,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 120
+          width: 120,
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
       ]
 
@@ -438,7 +438,7 @@ export default {
           dataIndex: "appointed_at_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
