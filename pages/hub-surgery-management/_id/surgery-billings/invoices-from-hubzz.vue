@@ -1,29 +1,35 @@
 <template>
   <section class="relative">
-    <AppTable
-      v-if="invoices.length > 0"
-      :total="totalInvoices"
-      :items="invoices"
-      :loading="loading"
-      :currentPage="current_page"
-      :perPage="params.limit"
-      :columns="columns"
-      :orderBy="params.order_by"
-      :routerLink="'/practice-billing/invoices-from-hubzz'"
-      @pagechanged="pagechanged"
-      @limitchanged="limitchanged"
-      @sorted="sorted"
-    >
-      <template v-slot:actions="slotProps">
-        <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
-          <button
-            class="px-4 py-2 font-bold rounded-lg focus:outline-none"
-            :class="[slotProps.item.paid ? 'bg-green-600 text-white' : slotProps.item.disputed_items_count > 0 ? 'bg-gray-500 text-white' : 'bg-yellow-400']"
-            v-text="`${slotProps.item.paid ? 'Already Paid' : slotProps.item.disputed_items_count > 0 ? 'Disputed' : 'Mark as paid'}`"
-          />
-        </div>
-      </template>
-    </AppTable>
+    <div class="my-2">
+      <AppTable
+        v-if="invoices.length > 0"
+        :total="totalInvoices"
+        :items="invoices"
+        :loading="loading"
+        :currentPage="current_page"
+        :perPage="params.limit"
+        :columns="columns"
+        :orderBy="params.order_by"
+        :routerLink="'/practice-billing/invoices-from-hubzz'"
+        @pagechanged="pagechanged"
+        @limitchanged="limitchanged"
+        @sorted="sorted"
+      >
+        <template v-slot:actions="slotProps">
+          <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
+            <button
+              class="px-4 py-2 font-bold rounded-lg focus:outline-none"
+              :class="[slotProps.item.paid ? 'bg-green-600 text-white' : slotProps.item.disputed_items_count > 0 ? 'bg-gray-500 text-white' : 'bg-yellow-400']"
+              v-text="`${slotProps.item.paid ? 'Already Paid' : slotProps.item.disputed_items_count > 0 ? 'Disputed' : 'Mark as paid'}`"
+            />
+          </div>
+        </template>
+      </AppTable>
+      <div v-else>
+        This spoke has no Hubzz Invoices
+      </div>
+    </div>
+    
 
     <div v-if="paymentModal" v-on-clickaway="closePaymentModal" class="p-2">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">

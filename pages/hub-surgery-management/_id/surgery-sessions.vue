@@ -1,6 +1,6 @@
 <template>
   <section class="surgery-sessions-sections">
-    <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
+    <!-- <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
       <AppLoading :loading="loading" spinner />
 
       <div class="flex flex-row justify-start overflow-x-auto">
@@ -31,16 +31,16 @@
           Search
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <div class="flex flex-row justify-start overflow-x-auto py-3 mt-2">
+    <div class="flex flex-row justify-start overflow-x-auto py-3 mt-2 border-b-2 border-gray-300">
       <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'pending'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -54,7 +54,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             !$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated')
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -68,7 +68,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -82,7 +82,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -96,7 +96,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -110,7 +110,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -124,7 +124,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -138,7 +138,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -152,7 +152,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -166,7 +166,7 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved'
-              ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+              ? 'border-b-2 border-gray-500'
               : 'text-gray-600'
           "
         >

@@ -1,13 +1,16 @@
 <template>
 	<section class="flex flex-col items-start w-full">
-		<div class="w-full">
-			<AppInput
+		<div class="w-full lg:w-1/2">
+			<AppInputSmall
 				v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0"
 				v-model="search"
 				:type="'text'"
 				:name="'search'"
-				:placeholder="'Search Job by ID, Title, Practice Name, Profession Name or keywords'"
+				:button="true"
+				:buttonLabel="'Search'"
+				:placeholder="'Title / Practice Name / Profession'"
 				:disabled="loading"
+				@click="getPermanentJobsForLocum()"
 			/>
 		</div>
 		<!-- Filters -->
@@ -17,14 +20,14 @@
 		>
 			<div class="flex justify-between">
 				<div class="flex">
-					<div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-1/2">
+					<div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-full">
 						<AppInputSmall
 							v-model="search"
 							:type="'text'"
 							:name="'search'"
 							:button="true"
 							:buttonLabel="'Search'"
-							:placeholder="'Locum Name'"
+							:placeholder="'Title / Practice Name'"
 							:disabled="loading"
 							@click="getPermanentJobsForPractice()"
 						/>
@@ -45,7 +48,7 @@
 						:class="'border rounded-lg border-yellow-500 bg-yellow-500'"
 						@click="$router.push('/permanent-jobs/create')"
 					>
-						Create Salaried Role 
+						+ Create Salaried Role 
 					</button>
 				</div>
 			</div>
@@ -54,24 +57,6 @@
 				class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg my-2"
 				:class="filterModal ? 'flex' : 'hidden'"
 			>
-				<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-					<AppInput
-						v-model="params.title"
-						placeholder="Search Permanent Job Title"
-						type="text"
-						label="Permanent Job Title"
-					/>
-				</div>
-
-				<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-					<AppInput
-						v-model="params.surgery"
-						placeholder="Search Surgery Name"
-						type="text"
-						label="Surgery Name"
-					/>
-				</div>
-
 				<div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
 					<AppInput
 						v-model="params.job_type"

@@ -11,12 +11,12 @@
         />
       </div>
 
-      <div class="flex overflow-x-auto">
+      <div class="flex overflow-x-auto border-b-2 border-yellow-300">
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Management')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}`}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'hub-surgery-management-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.name === 'hub-surgery-management-id' ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
         >
           Surgery Profile
         </nuxt-link>
@@ -25,7 +25,7 @@
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Sessions')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions` }"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'hub-surgery-management-id-surgery-sessions' || $route.name.includes('hub-surgery-management-id-surgery-sessions-index') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.name === 'hub-surgery-management-id-surgery-sessions' || $route.name.includes('hub-surgery-management-id-surgery-sessions-index') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
         >
           Surgery Sessions
         </nuxt-link>
@@ -34,7 +34,7 @@
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Billings')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'hub-surgery-management-id-surgery-billings' || $route.name.includes('hub-surgery-management-id-surgery-billings') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.name === 'hub-surgery-management-id-surgery-billings' || $route.name.includes('hub-surgery-management-id-surgery-billings') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
         >
           Surgery Billing
         </nuxt-link>
@@ -43,7 +43,7 @@
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Banks')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-banks`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'hub-surgery-management-id-surgery-banks' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
+          :class="$route.name === 'hub-surgery-management-id-surgery-banks' ? 'border-b-2 border-yellow-500'	: 'text-gray-600'"
         >
           Surgery Banks
         </nuxt-link>
@@ -52,7 +52,7 @@
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Permanent Jobs')"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
+          :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border-b-2 border-yellow-500'	: 'text-gray-600'"
         >
           Surgery Permanent Jobs
         </nuxt-link>
@@ -61,7 +61,7 @@
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('Request for Termination Surgery Management')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/request-for-termination`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'hub-surgery-management-id-request-for-termination' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
+          :class="$route.name === 'hub-surgery-management-id-request-for-termination' ? 'border-b-2 border-yellow-500'	: 'text-gray-600'"
         >
           Request For Termination
         </nuxt-link>

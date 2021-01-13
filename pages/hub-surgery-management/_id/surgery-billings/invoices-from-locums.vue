@@ -1,38 +1,38 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto pb-3">
+    <div class="flex flex-row justify-start overflow-x-auto border-b-2 border-gray-300">
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=to-be-invoiced` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-2 border-gray-500' : 'text-gray-600'"
       >
         To be Invoiced
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=disputed` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
       >
         Disputed Invoices
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=issued` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
       >
         Invoiced
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=approved` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
       >
         Approved Invoices
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=pension-form-a` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
       >
         NHS Pension Form A
       </nuxt-link>
@@ -41,7 +41,7 @@
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
-      <div v-if="!initialLoading">
+      <div v-if="!initialLoading" class="my-2">
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
