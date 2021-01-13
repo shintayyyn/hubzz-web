@@ -333,6 +333,10 @@ table thead th {
   }
 } */
 
+.transition-fade {
+	transition: all 0.3s ease-in-out;
+}
+
 /* modal */
 .slide-enter-active,
 .slide-leave-active {

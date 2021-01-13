@@ -262,7 +262,7 @@ export default {
       search_practice: null,
       search_private_practice: null,
       offset: 0,
-      limit: 5,
+      limit: 20,
       order_by: [],
       job_number: "",
       title: "",
@@ -372,6 +372,7 @@ export default {
           name: "Job Number",
           dataIndex: "job_number",
           sortable: true,
+          width: 130
         },
         {
           name: "Surgery",
@@ -390,30 +391,35 @@ export default {
           dataIndex: "shift_names",
           sortable: true,
           class: "text-center",
+          width: 150
         },
         {
           name: "Rates",
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
+          width: 120
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
+          width: 120
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         },
       ]
 
@@ -432,6 +438,7 @@ export default {
           dataIndex: "appointed_at_in_gb_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         })
       }
 
@@ -603,7 +610,7 @@ export default {
         this.$axios.get('/api/v2/locum/locum-user-jobs', {
           params: {
             offset: 0,
-            limit: 5,
+            limit: 20,
             order_by: [],
             ...this.getRequestQueryFilters,
           },
@@ -846,7 +853,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       await this.getLocumJobs()
       this.initialLoading = false
@@ -856,7 +863,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       this.isFiltered = true
       await this.getLocumJobs()
@@ -930,7 +937,7 @@ export default {
       this.search_practice = null
       this.search_private_practice = null
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.order_by = []
       this.job_number = ""
       this.title = ""

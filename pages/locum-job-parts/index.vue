@@ -249,7 +249,7 @@ export default {
       search_practice: null,
       search_private_practice: null,
       offset: 0,
-      limit: 5,
+      limit: 20,
       order_by: [],
 
       job_part_number: "",
@@ -335,9 +335,10 @@ export default {
 
       columns.push(
         {
-          name: "Job Part Number",
+          name: "Job Part No.",
           dataIndex: "job_part_number",
           sortable: true,
+          width: 150
         },
         {
           name: "Surgery",
@@ -356,30 +357,35 @@ export default {
           dataIndex: "shift_names",
           sortable: true,
           class: "text-center",
+          width: 150
         },
         {
           name: "Rates",
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
+          width: 120
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
+          width: 120
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         }
       )
 
@@ -389,6 +395,7 @@ export default {
           dataIndex: "declined_at_in_gb_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         })
       }
 
@@ -399,12 +406,14 @@ export default {
             dataIndex: "cancelled_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
+            width: 150
           },
           {
             name: "Tag",
             dataIndex: "tag_status",
             sortable: true,
             class: "text-center",
+            width: 100
           }
         )
       }
@@ -416,12 +425,14 @@ export default {
             dataIndex: "completed_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
+            width: 150
           },
           {
             name: "Invoice status",
             dataIndex: "locum_invoice_status",
             sortable: true,
             class: "text-center",
+            width: 150
           }
         )
       }
@@ -433,6 +444,7 @@ export default {
             dataIndex: "approved_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
+            width: 150
           },
         )
       }
@@ -571,7 +583,7 @@ export default {
         this.$axios.get('/api/v2/locum/locum-user-job-parts', {
           params: {
             offset: 0,
-            limit: 5,
+            limit: 20,
             order_by: [],
             ...this.getRequestQueryFilters,
           },
@@ -754,7 +766,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       await this.getLocumJobParts()
       this.initialLoading = false
@@ -764,7 +776,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       this.isFiltered = true
       await this.getLocumJobParts()
@@ -800,7 +812,7 @@ export default {
 
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.order_by = []
       this.job_shift_id = ""
       this.job_rate = ""

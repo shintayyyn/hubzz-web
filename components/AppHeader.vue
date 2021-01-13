@@ -3,19 +3,55 @@
 		<div class="flex flex-row justify-between">
 			<div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
-			<div class="header-section flex w-full justify-between bg-white">
-				<div class="w-1/3">
+			<div class="header-section flex items-center w-full justify-between bg-white">
+				<div class="w-1/3 flex items-center">
 					<button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
 						<div class="my-2 bg-yellow-500" />
 						<div class="my-2 bg-yellow-500" />
 					</button>
+					<div
+						v-if="
+							$auth.user.domain === 'Practice' &&
+								$auth.user.status === 'Active' &&
+								($auth.user.practice_detail.practice.status === 'Active' 
+								|| $auth.user.practice_detail.practice.status === 'Dormant') &&
+								($auth.user.practice_detail.practice.type === 'Hub' 
+								||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+								||($auth.user.practice_detail.practice.type === 'Spoke' &&
+								$auth.user.practice_detail.practice.parent_practice_id)) 
+						"
+						class="mx-2"
+					>
+						<div class="flex flex-col items-start">
+							<AppButton
+								:disabled="!authPermissions.includes('Create Sessions Job')"
+								:label="'+ Create Job'"
+								class="whitespace-no-wrap font-bold"
+								:customTheme="'bg-info text-white'"
+								@click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+							/>
+						</div>
+
+						<!-- <button
+							class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+							:class="
+								$route.name === 'messages-slug' ||
+									$route.name === 'messages-create'
+									? ''
+									: 'mx-2'
+							"
+							@click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+						>
+							<svgicon name="create-job" color="#444 #555" width="21" height="21" />
+						</button> -->
+					</div>
 				</div>
 
-				<div class="w-1/3 flex justify-center">
+				<!-- <div class="w-1/3 flex justify-center">
 					<button class="focus:outline-none" @click="goHome">
 						<img src="/images/hubzz-icon-transparent.png" class="logo" />
 					</button>
-				</div>
+				</div> -->
 
 				<div class="w-1/3 leading-loose py-2">
 					<div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
@@ -25,7 +61,7 @@
 						>Hi, {{ $auth.user.personal_detail.first_name }}</div>
 
 						<div class="flex justify-end mr-2">
-							<div
+							<!-- <div
 								v-if="
                   $auth.user.domain === 'Practice' &&
                     $auth.user.status === 'Active' &&
@@ -60,23 +96,24 @@
 								>
 									<svgicon name="create-job" color="#444 #555" width="21" height="21" />
 								</button>
-							</div>
+							</div> -->
 							<div
 								v-if="$route.name != 'messages-slug' && $route.name != 'messages-create'"
 								class="relative"
 							>
 								<AppButton
+									icon="message"
+									class="h-full message-btn"
 									:label="'Messages'"
-									class="hidden md:block"
-									:in-style="'padding-top: 0; padding-bottom: 0;'"
+									:badge="unreadMessages"
 									@click="$router.push('/messages')"
 								/>
-								<span
+								<!-- <span
 									v-if="unreadMessages > 0"
 									class="-m-2 absolute bg-red-600 text-white block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-								>{{ unreadMessages }}</span>
+								>{{ unreadMessages }}</span> -->
 							</div>
-							<button
+							<!-- <button
 								v-if="
                   $route.name != 'messages-slug' &&
                     $route.name != 'messages-create'
@@ -89,7 +126,7 @@
 									v-if="unreadMessages > 0"
 									class="-m-2 absolute bg-red-600 text-white border bottom-0 right-0 flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
 								>{{ unreadMessages }}</span>
-							</button>
+							</button> -->
 						</div>
 						<AppNotifDropdown />
 						<!-- <div class="relative" v-if="$auth.user.domain === 'Locum'">
@@ -249,6 +286,7 @@ export default {
 .header-section {
 	padding: 0 20px;
 	min-height: 50px;
+    padding: 1px 3% 0;
 }
 
 @media (min-width: 1280px) {
@@ -256,18 +294,17 @@ export default {
 		display: none;
 	}
 }
-
-@media (min-width: 480px) {
-	.header-section {
-		padding: 0 5%;
+@media (min-width: 768px) {
+	.message-btn {
+		min-width: 150px;
 	}
 }
 
-@media (min-width: 320px) {
-	.header-section {
-		padding: 0 3%;
-	}
-}
+ @media (min-width: 720px) {
+    .header-section {
+      padding: 1px 1% 0;
+    }
+  }
 
 a {
 	text-decoration: none;
