@@ -280,7 +280,7 @@ export default {
     getRequestQueryFilters () {
       return {
         practice_id: this.$route.query.status === "Pending" ? null : this.$auth.user.practice_detail.practice.id,
-        job_status: this.$route.query.status || "Allocated",
+        practice_job_status: this.$route.query.status || "Allocated",
         type: this.type,
         shift_id_includes: this.shift_id,
         rate_range_includes: this.rate,
@@ -382,6 +382,15 @@ export default {
           sortable: true,
         },
       ]
+
+      if (queryStatus === "live") {
+        columns.push({
+          name: "Favorite only",
+          dataIndex: "favorite_only_formatted",
+          class: "text-center",
+          sortable: true,
+        })
+      }
 
       if (queryStatus === "applied") {
         columns.push({
