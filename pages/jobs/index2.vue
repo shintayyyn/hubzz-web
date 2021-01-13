@@ -1,5 +1,35 @@
 <template>
   <section class="relative">
+    <!-- <div
+      v-if="$route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase())"
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+    >
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Available"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Available</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Public"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'public' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Public</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Bank"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'bank' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Bank</nuxt-link>
+      </div>
+    </div>-->
+
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -32,7 +62,6 @@
               :label="'Job number'"
             />
           </div>
-
           <div
             v-if="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() !== 'private')"
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
@@ -46,7 +75,19 @@
               :items="practiceLists"
             />
           </div>
-
+          <!-- <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
+          >
+            <AppInput
+              v-model="private_practice_id"
+              :type="'select'"
+              :name="'practice_id'"
+              :placeholder="'Select...'"
+              :label="'Surgery'"
+              :items="practiceLists"
+            />
+          </div>-->
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               v-model="title_includes"
@@ -56,7 +97,6 @@
               :label="'Job Title'"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               v-model="shift_id"
@@ -67,7 +107,6 @@
               :items="shifts"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               v-model="rate"
@@ -80,7 +119,6 @@
               @keydown="isNumber($event)"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               v-model="rate_type_id"
@@ -91,7 +129,6 @@
               :items="rates"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="calendar_date_start"
@@ -100,11 +137,9 @@
               :format="'YYYY-MM-DD'"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="calendar_date_end"
@@ -113,11 +148,9 @@
               :format="'YYYY-MM-DD'"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppPostCode
               v-model="near_post_code"
@@ -126,26 +159,21 @@
               :label="'Post code'"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput v-model="miles" class="px-1" :type="'number'" :name="'miles'" :label="'Miles'" />
           </div>
-
           <div class="md:px-1 flex w-full">
             <AppButton
               :label="'Clear'"
               :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="clearFilters"
             />
-
             <AppButton
               class="mx-2"
               :label="'Search'"
               :in-style="'padding:5px 14px;margin-bottom:5px'"
-              k="filterJob"
               @click="filterJob"
             />
-
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
@@ -170,11 +198,24 @@
           @sorted="sorted"
         />
 
-        <div v-if="!jobs.length && !loading && !isFiltered" class="flex justify-center py-4">
+        <!-- <div
+          class="relative flex w-full"
+          v-if="jobs.length === 0 && loading"
+          style="min-height:80px"
+        >
+          <AppLoading :loading="loading" spinner />
+        </div>-->
+        <div
+          v-if="!jobs.length && !loading && !isFiltered"
+          class="flex justify-center py-4"
+        >
           {{ noJobsToDisplay }}
         </div>
 
-        <div v-if="!jobs.length && !loading && isFiltered" class="flex justify-center py-4">
+        <div
+          v-if="!jobs.length && !loading && isFiltered"
+          class="flex justify-center py-4"
+        >
           No Jobs Found
         </div>
 
@@ -237,6 +278,8 @@ export default {
         "allocated",
         "ongoing",
         "available",
+        "public",
+        "bank",
         "applied",
         "unsuccessful",
         "withdrawn",
@@ -265,21 +308,33 @@ export default {
       limit: 5,
       order_by: [],
       job_number: "",
+      job_part_number: "",
       title: "",
+      job_title: "",
       type: "",
+      job_type: "",
       practice_id: "",
+      job_practice_id: "",
+      private_practice_id: "",
+      job_private_practice_id: "",
       shift_id: "",
+      job_shift_id: "",
       rate: "",
       job_rate: "",
       rate_type_id: "",
+      job_rate_type_id: "",
       near_post_code: "",
       miles: "",
       calendar_date_start: "",
       calendar_date_end: "",
       time_start: "",
       time_end: "",
+      invoice_status: "",
+      viewing_locum_user_id: [],
       title_includes: "",
+      job_title_includes: "",
       job_number_includes: "",
+      job_part_number_includes: "",
       shifts: [],
       rates: [],
       filterModal: false,
@@ -296,9 +351,18 @@ export default {
 
       if (queryStatus) {
         switch (queryStatus) {
+        // case "Bank":
+        //   locum_status = ["Matched"];
+        //   break;
+        case "Completed":
+          locum_status = ["Completed",]
+          break
         case "Available":
           locum_status = ["Matched", "Available",]
           break
+          // case "Public":
+          //   locum_status = ["Available"];
+          //   break;
         case "Private":
           locum_status = []
           break
@@ -311,17 +375,20 @@ export default {
       }
 
       return {
-        locum_job_status: locum_status,
+        locum_status,
         practice_id: this.practice_id,
-        shift_id_includes: this.shift_id,
-        rate_range_includes: this.rate,
-        rate_type_id_includes: this.rate_type_id,
-        near_postcode: this.near_post_code,
-        near_postcode_travel_miles: this.miles,
+        private_practice_id: this.private_practice_id,
+        shift_id: this.shift_id,
+        rate: this.rate,
+        rate_type_id: this.rate_type_id,
+        near_post_code: this.near_post_code,
+        miles: this.miles,
         calendar_date_start: this.calendar_date_start,
         calendar_date_end: this.calendar_date_end,
         time_start: this.time_start,
         time_end: this.time_end,
+        invoice_status: this.invoice_status,
+        viewing_locum_user_id: [],
         title_includes: this.title_includes,
         job_number_includes: this.job_number_includes,
         type: queryStatus === "Private"
@@ -363,104 +430,174 @@ export default {
     },
 
     columns () {
-      const queryStatus = this.$route.query.status
+      let columns = []
+      let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
         : "allocated"
-
-      const columns = [
-        {
-          name: "Job Number",
-          dataIndex: "job_number",
-          sortable: true,
-        },
-        {
-          name: "Surgery",
-          dataIndex: "practice_name",
-          class: "text-center",
-          sortable: true,
-        },
-        {
-          name: "Title",
-          dataIndex: "title",
-          class: "text-center",
-          sortable: true,
-        },
-        {
-          name: "Shifts",
-          dataIndex: "shift_names",
-          sortable: true,
-          class: "text-center",
-        },
-        {
-          name: "Rates",
-          dataIndex: "rate_range_formatted",
-          sortable: true,
-          class: "text-center",
-        },
-        {
-          name: "Rate Type",
-          dataIndex: "rate_type_names",
-          sortable: true,
-          class: "text-center",
-        },
+      if (
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn",].includes(
+          queryStatus
+        )
+      ) {
+        columns.push(
+          {
+            name: "Job Part Number",
+            dataIndex: "job_part_number",
+            sortable: true,
+          },
+          {
+            name: "Surgery",
+            dataIndex: "practice_name",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Title",
+            dataIndex: "job_title",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Shifts",
+            dataIndex: "job.shift.name",
+            slotName: "shifts",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Rates",
+            dataIndex: "job.rate",
+            slotName: "rates",
+            sortable: true,
+            class: "text-center currency",
+          },
+          {
+            name: "Rate Type",
+            dataIndex: "job.locum_detail_rate_type.name",
+            slotName: "rate_type",
+            class: "text-center",
+            sortable: true,
+          }
+        )
+      } else if (
+        ![
+          "ongoing",
+          "completed",
+          "approved",
+          "cancelled",
+          "withdrawn",
+        ].includes(queryStatus)
+      ) {
+        columns.push(
+          {
+            name: "Job Number",
+            dataIndex: "job_number",
+            sortable: true,
+          },
+          {
+            name: "Surgery",
+            dataIndex: "practice_name",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Title",
+            dataIndex: "title",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Shifts",
+            dataIndex: "job_shift_names_formatted",
+            sortable: true,
+            class: "text-center",
+          },
+          {
+            name: "Rates",
+            dataIndex: "job_rate_ranged_formatted",
+            sortable: true,
+            class: "text-center",
+          },
+          {
+            name: "Rate Type",
+            dataIndex: "job_rate_type_names_formatted",
+            sortable: true,
+            class: "text-center",
+          },
+        )
+      }
+      columns.push(
         {
           name: "From",
-          dataIndex: "datetime_start_in_gb_formatted",
+          dataIndex: "date_time_start",
           sortable: true,
           class: "text-center",
         },
         {
           name: "To",
-          dataIndex: "datetime_end_in_gb_formatted",
+          dataIndex: "date_time_end",
           sortable: true,
           class: "text-center",
-        },
-      ]
-
+        }
+      )
       if (queryStatus === "applied") {
         columns.push({
           name: "Applicants",
           dataIndex: "applicants_count",
-          sortable: true,
           class: "text-center",
         })
       }
-
       if (queryStatus === "unsuccessful") {
         columns.push({
           name: "Rejected At",
           dataIndex: "appointed_at_in_gb_formatted",
-          sortable: true,
           class: "text-center",
         })
       }
-
       if (queryStatus === "withdrawn") {
         columns.push({
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
-          sortable: true,
           class: "text-center",
         })
       }
-
       if (queryStatus === "cancelled") {
         columns.push(
           {
             name: "Cancelled At",
             dataIndex: "cancelled_at_in_gb_formatted",
-            sortable: true,
             class: "text-center",
           },
           {
             name: "Tag",
             dataIndex: "tag_status",
-            sortable: true,
             class: "text-center",
           }
         )
       }
-      
+      if (["completed",].includes(queryStatus)) {
+        columns.push(
+          {
+            name: "Completed At",
+            dataIndex: "completed_at_in_gb_formatted",
+            class: "text-center",
+          },
+          {
+            name: "Invoice status",
+            dataIndex: "invoice_status",
+            class: "text-center",
+          }
+        )
+      }
+      if (["approved",].includes(queryStatus)) {
+        columns.push(
+          {
+            name: "Approved At",
+            dataIndex: "approved_at_in_gb_formatted",
+            class: "text-center",
+          },
+        )
+      }
       return columns
     },
   },
@@ -586,6 +723,16 @@ export default {
       }
     },
 
+    addPractice (payload) {
+      this.search_practice = payload.name
+      this.practice_id = payload.id
+    },
+
+    addPrivatePractice (payload) {
+      this.search_private_practice = payload.name
+      this.private_practice_id = payload.id
+    },
+
     async filterJobList () {
       // this.jobs = this.jobs.filter(item => item.id !== id);
       this.loading = true
@@ -595,12 +742,12 @@ export default {
 
     getLocumJobs () {
       return Promise.all([
-        this.$axios.get('/api/v2/locum/locum-user-jobs/count', {
+        this.$axios.get('/api/v1/locum/jobs/count', {
           params: {
             ...this.getRequestQueryFilters,
           },
         }),
-        this.$axios.get('/api/v2/locum/locum-user-jobs', {
+        this.$axios.get('/api/v1/locum/jobs', {
           params: {
             offset: 0,
             limit: 5,
@@ -610,7 +757,15 @@ export default {
         }),
       ]).then(([responseCount, responseJobs,]) => {
         this.total = responseCount.data.data.count
-        this.jobs = responseJobs.data.data.jobs
+        this.jobs = responseJobs.data.data.jobs.map(item => ({
+          ...item,
+          date_time_start: `${this.$moment(item.date_start).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_start}`,
+          date_time_end: `${this.$moment(item.date_end).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_end}`,
+        }))
       }).catch(err => {
         console.log("err", err.response || err)
         throw err
@@ -618,7 +773,7 @@ export default {
     },
 
     getJobs () {
-      return this.$axios.get('/api/v2/locum/locum-user-jobs', {
+      return this.$axios.get('/api/v1/locum/jobs', {
         params: {
           offset: this.offset,
           limit: this.limit,
@@ -626,7 +781,15 @@ export default {
           ...this.getRequestQueryFilters,
         },
       }).then(response => {
-        this.jobs = response.data.data.jobs
+        this.jobs = response.data.data.jobs.map(item => ({
+          ...item,
+          date_time_start: `${this.$moment(item.date_start).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_start}`,
+          date_time_end: `${this.$moment(item.date_end).format(
+            "DD-MM-YYYY"
+          )} | ${item.time_end}`,
+        }))
       }).catch(err => {
         console.log("err", err.response || err)
         throw err
@@ -933,21 +1096,33 @@ export default {
       this.limit = 5
       this.order_by = []
       this.job_number = ""
+      this.job_part_number = ""
       this.title = ""
+      this.job_title = ""
       this.type = ""
+      this.job_type = ""
       this.practice_id = ""
+      this.job_practice_id = ""
+      this.private_practice_id = ""
+      this.job_private_practice_id = ""
       this.shift_id = ""
+      this.job_shift_id = ""
       this.rate = ""
       this.job_rate = ""
       this.rate_type_id = ""
+      this.job_rate_type_id = ""
       this.near_post_code = ""
       this.miles = ""
       this.calendar_date_start = ""
       this.calendar_date_end = ""
       this.time_start = ""
       this.time_end = ""
+      this.invoice_status = ""
+      this.viewing_locum_user_id = []
       this.title_includes = ""
+      this.job_title_includes = ""
       this.job_number_includes = ""
+      this.job_part_number_includes = ""
     },
 
   },

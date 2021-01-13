@@ -1,6 +1,6 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-row justify-start overflow-x-auto py-3">
+    <div class="flex flex-row justify-start overflow-x-auto border-b-2 border-yellow-300">
       <nuxt-link
         v-if="authPermissions.includes('View Billings')"
         :to="{ path: '/practice-billing/invoices-from-locums' }"
@@ -9,7 +9,7 @@
           $route.name.includes('practice-billing-invoices-from-locums')
             || $route.name === 'practice-billing-form-as'
             || $route.name === 'practice-billing-solo-forms'
-            ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+            ? 'border-b-2 border-yellow-500'
             : 'text-gray-600'
         "
       >
@@ -26,7 +26,7 @@
         v-if="authPermissions.includes('View Billings')"
         :to="{ name: 'practice-billing-invoices-from-hubzz'}"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-hubzz') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-hubzz') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
       >
         Invoices from hubzz
       </nuxt-link>
@@ -39,7 +39,7 @@
           && authPermissions.includes('View Billings')"
         :to="{ name: 'practice-billing-invoicing-details' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoicing-details') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoicing-details') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
       >
         Invoicing Details
       </nuxt-link>
@@ -48,7 +48,7 @@
         v-if="authPermissions.includes('View Billings')"
         :to="{ name: 'practice-billing-finance-reports-hq-invoice' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-finance-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-finance-reports') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
       >
         Finance Reports
       </nuxt-link>
@@ -57,7 +57,7 @@
         v-if="authPermissions.includes('View Practice Reports')"
         :to="{ name: 'practice-billing-reports' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-reports') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
       >
         Reports
       </nuxt-link>
