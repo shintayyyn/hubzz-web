@@ -53,7 +53,7 @@
 					</button>
 				</div> -->
 
-        <div class="w-1/3 leading-loose py-2">
+        <div class="w-2/3 leading-loose py-2">
           <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
             <div
               v-if="$auth.user.domain === 'Locum'"

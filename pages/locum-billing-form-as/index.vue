@@ -1,34 +1,34 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto pb-3">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 mb-4 pt-1">
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-invoices') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         To be invoiced
       </nuxt-link>
 
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'disputed' } }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Disputed Invoices
       </nuxt-link>
 
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'issued' } }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Invoiced
       </nuxt-link>
 
       <nuxt-link
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'approved' } }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Approved Invoices
       </nuxt-link>
@@ -36,8 +36,8 @@
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ name: 'locum-billing-solo-forms' }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'locum-billing-solo-forms' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'locum-billing-solo-forms' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Solo Forms
       </nuxt-link>
@@ -45,8 +45,8 @@
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ name: 'locum-billing-form-as' }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'locum-billing-form-as' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'locum-billing-form-as' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         NHS Pensions Form A
       </nuxt-link>
@@ -54,8 +54,8 @@
       <nuxt-link
         v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
         :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         NHS Pensions Form B
       </nuxt-link>

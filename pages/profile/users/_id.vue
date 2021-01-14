@@ -9,7 +9,7 @@
         <div class="relative">
           <nuxt-link
             :to="`/profile/users/${$route.params.id}`"
-            class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
             :class="['profile-users-id-general', 'profile-users-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >
             General
@@ -19,7 +19,7 @@
         <div v-if="authPermissions.includes('Update Profile Users') && practiceUser && practiceUser.status !== 'Deactivated'" class="relative">
           <nuxt-link
             :to="`/profile/users/${$route.params.id}/change-password`"
-            class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
             :class="$route.name === 'profile-users-id-change-password' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >
             Change Password

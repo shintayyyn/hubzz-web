@@ -1,13 +1,13 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-col md:flex-row lg:items-center justify-between border-b-2 border-yellow-300">
+    <div class="flex flex-col md:flex-row lg:items-center justify-between border-b-2 border-sunglow">
       <div class="flex flex-row justify-start overflow-x-auto">
         <nuxt-link
           to="/locum-billing/invoices"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             $route.name.includes('locum-billing-invoices')
-              ? 'border-b-2 border-yellow-500'
+              ? 'border-b-4 border-sunglow'
               : 'text-gray-600'
           "
         >
@@ -16,10 +16,10 @@
 
         <nuxt-link
           :to="{ name: 'locum-billing-private-invoices'}"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             $route.name.includes('locum-billing-private-invoices')
-              ? 'border-b-2 border-yellow-500'
+              ? 'border-b-4 border-sunglow'
               : 'text-gray-600'
           "
         >
@@ -28,10 +28,10 @@
 
         <nuxt-link
           :to="{ name: 'locum-billing-reports'}"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             $route.name.includes('locum-billing-reports')
-              ? 'border-b-2 border-yellow-500'
+              ? 'border-b-4 border-sunglow'
               : 'text-gray-600'
           "
         >

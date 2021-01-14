@@ -1,13 +1,13 @@
 <template>
   <section class="flex flex-col items-start w-full">
-    <div class="flex flex-wrap items-center justify-between w-full border-b-2 border-gray-300">
+    <div class="flex flex-wrap items-center justify-between w-full border-b border-gray-500">
       <div class="flex overflow-x-auto items-center">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs?status=Pending`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             ($route.query.status && $route.query.status.toLowerCase() === 'pending')
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -15,10 +15,10 @@
         </nuxt-link>
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'available')
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
@@ -26,10 +26,10 @@
         </nuxt-link>
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs?status=Closed`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             ($route.query.status && $route.query.status.toLowerCase() === 'closed')
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >

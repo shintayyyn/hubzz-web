@@ -1,12 +1,12 @@
 <template>
   <section>
-    <div class="flex overflow-x-auto border-b-2 border-yellow-300">
+    <div class="flex overflow-x-auto border-b border-sunglow">
       <nuxt-link
         :to="`/hub-surgery-management`"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
           $route.name === 'hub-surgery-management-index' || $route.name.includes('hub-surgery-management-id')
-            ? 'border-b-2 border-yellow-500'
+            ? 'border-b-4 border-sunglow'
             : 'text-gray-600'
         "
       >
@@ -16,10 +16,10 @@
       <nuxt-link
         v-if="authPermissions.includes('Invitation Processes Surgery Management')"
         :to="{ name: 'hub-surgery-management-invitations-spoke'}"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
           $route.name.includes('hub-surgery-management-invitations')
-            ? 'border-b-2 border-yellow-500'
+            ? 'border-b-4 border-sunglow'
             : 'text-gray-600'
         "
       >

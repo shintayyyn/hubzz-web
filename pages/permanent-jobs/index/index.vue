@@ -2,7 +2,7 @@
   <section class="flex flex-col items-start w-full">
     <div class="w-full lg:w-1/2">
       <AppInputSmall
-        v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0"
+        v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count !== null"
         v-model="search"
         :type="'text'"
         :name="'search'"
@@ -983,7 +983,7 @@ export default {
         .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
         .then(res => {
           this.permanent_jobs_for_locum_count
-						= res.data && res.data.count ? res.data.count : null
+						= res.data && res.data.count ? res.data.count : 0
         })
 
       await this.$axios
@@ -999,7 +999,7 @@ export default {
         .$get(`/api/v1/locum/permanent-job-applications/count`)
         .then(res => {
           this.permanent_job_applications_count
-						= res.data && res.data.count ? res.data.count : null
+						= res.data && res.data.count ? res.data.count : 0
         })
 
       await this.$axios

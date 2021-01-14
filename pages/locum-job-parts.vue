@@ -1,15 +1,18 @@
 <template>
   <section class="jobs-section">
-    <div class="flex flex-row justify-start overflow-x-auto py-3">
-      <div v-for="tab in tabs" :key="tab.title" class="relative">
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="tab.route"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="tab.active ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >
-          {{ tab.title }}
-        </nuxt-link>
+     <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
+      <div class="flex overflow-x-auto items-center">
+        <template v-for="tab in tabs" >
+           <nuxt-link
+            :key="tab.title"
+            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+            :to="tab.route"
+            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+            :class="tab.active ? 'border-b-4 border-sunglow' : 'text-gray-600'"
+          >
+            {{ tab.title }}
+          </nuxt-link>
+        </template>
       </div>
     </div>
 

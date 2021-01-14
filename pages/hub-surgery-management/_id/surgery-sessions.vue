@@ -33,146 +33,126 @@
       </div>
     </div> -->
 
-    <div class="flex flex-row justify-start overflow-x-auto py-3 mt-2 border-b-2 border-gray-300">
-      <div class="relative">
+    <div class="flex flex-row justify-start overflow-x-auto mt-2 border-b border-gray-500">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'pending'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Pending
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Allocated`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             !$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated')
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Allocated
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Ongoing`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Ongoing
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Live`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Live
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Applied
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Unfilled`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Unfilled
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Withdrawn
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Cancelled`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Cancelled
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Completed`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Completed
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Approved`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Approved
         </nuxt-link>
-      </div>
     </div>
 
     <div class="mt-5">

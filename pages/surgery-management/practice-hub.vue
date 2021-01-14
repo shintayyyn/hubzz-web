@@ -3,7 +3,7 @@
   <div class="flex overflow-x-auto">
     <nuxt-link
       :to="`/surgery-management/practice-hub`"
-      class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+      class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
       :class="
         $route.name === 'surgery-management-practice-hub'
           ? 'border rounded-lg border-yellow-500 bg-yellow-500'
@@ -14,7 +14,7 @@
     <nuxt-link
       v-if="myPractice.share_banks_to_other_surgeries === true"
       :to="`/surgery-management/practice-hub/spoke-siblings`"
-      class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+      class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
       :class="
         $route.name.includes(
           'surgery-management-practice-hub-id-surgery-sessions'
