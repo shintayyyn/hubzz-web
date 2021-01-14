@@ -46,8 +46,8 @@
 			>
 				<div class="mx-4 mt-4">
 					<div class="w-full">
-						<p class="font-bold text-sm">Must submit at least one (Pitch/Cover Email)</p>
-						<p class="text-sm">Please write a short pitch to apply for this Permanent Job (Optional)</p>
+						<p class="font-bold text-sm">Please attach your latest CV</p>
+						<p class="text-sm">Write a short description about yourself (Optional)</p>
 						<div class="mb-3 md:mb-6">
 							<no-ssr placeholder="Loading..." class>
 								<quill-editor
@@ -308,7 +308,7 @@ export default {
 
 			// quill
 			editorOption: {
-				placeholder: "Please write your pitch here",
+				placeholder: "About me",
 				modules: {
 					toolbar: [
 						["bold", "italic", "underline", "strike"],
