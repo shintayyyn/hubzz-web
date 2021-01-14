@@ -173,7 +173,7 @@ import AppButton from "@/components/Base/AppButton"
 export default {
   components: {
     PopUpNotification,
-    AppButton
+    AppButton,
   },
   
   mixins: [clickaway,],

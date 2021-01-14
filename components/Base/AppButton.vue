@@ -12,9 +12,8 @@
     :style="inStyle"
     @click.prevent="$emit('click')"
   >
-   
     <p :class="icon ? 'flex items-center' : 'text-center'">
-        <svgicon
+      <svgicon
         v-if="icon"
         :name="icon"
         width="14"
@@ -45,7 +44,7 @@ export default {
     },
 
     badge: {
-      type: [String, Number],
+      type: [String, Number,],
     },
 
     inClass: {

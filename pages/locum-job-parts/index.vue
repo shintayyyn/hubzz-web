@@ -338,7 +338,7 @@ export default {
           name: "Job Part No.",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Surgery",
@@ -357,35 +357,35 @@ export default {
           dataIndex: "shift_names",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Rates",
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 120
+          width: 120,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 120
+          width: 120,
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         }
       )
 
@@ -395,7 +395,7 @@ export default {
           dataIndex: "declined_at_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -406,14 +406,14 @@ export default {
             dataIndex: "cancelled_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
-            width: 150
+            width: 150,
           },
           {
             name: "Tag",
             dataIndex: "tag_status",
             sortable: true,
             class: "text-center",
-            width: 100
+            width: 100,
           }
         )
       }
@@ -425,14 +425,14 @@ export default {
             dataIndex: "completed_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
-            width: 150
+            width: 150,
           },
           {
             name: "Invoice status",
             dataIndex: "locum_invoice_status",
             sortable: true,
             class: "text-center",
-            width: 150
+            width: 150,
           }
         )
       }
@@ -444,7 +444,7 @@ export default {
             dataIndex: "approved_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
-            width: 150
+            width: 150,
           },
         )
       }

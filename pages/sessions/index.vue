@@ -246,7 +246,7 @@ export default {
       current_page: 1,
       // app table params
       offset: 0,
-      limit: 5,
+      limit: 20,
       order_by: [],
       job_number: "",
       title: "",
@@ -280,7 +280,7 @@ export default {
     getRequestQueryFilters () {
       return {
         practice_id: this.$route.query.status === "Pending" ? null : this.$auth.user.practice_detail.practice.id,
-        job_status: this.$route.query.status || "Allocated",
+        practice_job_status: this.$route.query.status || "Allocated",
         type: this.type,
         shift_id_includes: this.shift_id,
         rate_range_includes: this.rate,
@@ -382,6 +382,15 @@ export default {
           sortable: true,
         },
       ]
+
+      if (queryStatus === "live") {
+        columns.push({
+          name: "Favorite only",
+          dataIndex: "favorite_only_formatted",
+          class: "text-center",
+          sortable: true,
+        })
+      }
 
       if (queryStatus === "applied") {
         columns.push({
@@ -521,8 +530,8 @@ export default {
       const [professions, shifts, rates,] = responses
 
       this.professions = professions
-      this.shifts = shifts
-      this.rates = rates
+      this.shifts = [{ label: "All", value: "", }, ...shifts,]
+      this.rates = [{ label: "All", value: "", }, ...rates,]
     })
   },
 
@@ -832,7 +841,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       await this.getSessions()
       this.initialLoading = false
@@ -842,7 +851,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.initialLoading = true
       this.isFiltered = true
       await this.getSessions()
@@ -917,7 +926,7 @@ export default {
 
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 20
       this.order_by = []
       this.job_number = ""
       this.title = ""

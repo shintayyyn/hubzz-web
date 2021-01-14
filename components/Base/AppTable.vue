@@ -20,8 +20,8 @@
                 'justify-center',
               column.sortable && 'cursor-pointer'
             ]"
-            @click="column.sortable && sort(column.dataIndex)"
             :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}`"
+            @click="column.sortable && sort(column.dataIndex)"
           >
             <span class="px-2">{{ column.name }}</span>
             <svgicon v-if="column.sortable" :name="sortIcon(column.dataIndex)" height="12" width="12" />
@@ -133,183 +133,183 @@
 import AppPagination from "@/components/Base/AppPagination"
 import AppLoading from "@/components/Base/AppLoading"
 export default {
-    components: {
-        AppLoading,
-        AppPagination
+  components: {
+    AppLoading,
+    AppPagination,
+  },
+  props: {
+    total: {
+      type: Number,
+      required: true,
     },
-    props: {
-        total: {
-            type: Number,
-            required: true
-        },
-        items: {
-            type: Array,
-            required: true
-        },
-        loading: {
-            type: Boolean,
-            default: false
-        },
-        currentPage: {
-            type: Number,
-            default: 1
-        },
-        perPage: {
-            type: Number,
-            default: 15
-        },
-        columns: {
-            type: Array,
-            required: true
-        },
-        orderBy: {
-            type: Array,
-            required: false
-        },
-        routerLink: {
-            type: [String, Function]
-        },
-        routerId: {
-            type: String
-        },
-        customWidth: {
-            type: Number
-        },
-        minHeight: {
-            type: String
-        }
+    items: {
+      type: Array,
+      required: true,
     },
-    data () {
-        return {
-            params: []
-            // totalPages: 0
-        }
+    loading: {
+      type: Boolean,
+      default: false,
     },
-    computed: {
-        totalPages () {
-            return Math.ceil(this.total / this.perPage)
-        }
+    currentPage: {
+      type: Number,
+      default: 1,
     },
-    mounted () {
-        this.params = this.orderBy
-        // this.totalPages = Math.ceil(this.total / this.perPage);
+    perPage: {
+      type: Number,
+      default: 15,
     },
-    methods: {
-        sort (dataIndex) {
-            if (!this.params.some(item => item.includes(`${dataIndex}`))) {
-                this.params = []
-                this.params.push(`${dataIndex}:desc`)
-            } else {
-                let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
-                if (index >= 0) {
-                    this.params.splice(index, 1, `${dataIndex}:asc`)
-                } else {
-                    this.params.splice(
-                        this.params.findIndex(item => item === `${dataIndex}:asc`),
-                        1
-                    )
-                }
-            }
-            this.$emit("sorted", this.params)
-        },
-        pagechanged (e) {
-            this.$emit("pagechanged", e)
-        },
-        limitchanged (limit) {
-            this.$emit("limitchanged", limit)
-        },
-        sortIcon (dataIndex) {
-            if (!this.params.some(item => item.includes(dataIndex))) {
-                return "sort"
-            } else {
-                let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
-                if (index >= 0) {
-                    return "sort-descend"
-                } else {
-                    return "sort-ascend"
-                }
-            }
-        },
-        dataCell (item, column) {
-            var dataIndexArr = column.dataIndex.split(".")
-            let str = null
-            if (Array.isArray(item[dataIndexArr[0]])) {
-                str = []
-                item[dataIndexArr[0]].forEach(item => {
-                    if (item[dataIndexArr[2]]) {
-                        str.push(item[dataIndexArr[1]][dataIndexArr[2]])
-                    } else {
-                        str.push(item[dataIndexArr[1]])
-                    }
-                })
-            } else {
-                str = ""
-                if (dataIndexArr.length === 1) {
-                    str = item[dataIndexArr[0]]
-                }
-                if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
-                    str = item[dataIndexArr[0]][dataIndexArr[1]]
-                }
-                if (
-                    dataIndexArr.length === 3 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]]
-                ) {
-                    str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
-                }
-                if (
-                    dataIndexArr.length === 4 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
-                ) {
-                    str =
-                        item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                            dataIndexArr[3]
-                        ]
-                }
-                if (
-                    dataIndexArr.length === 5 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                        dataIndexArr[3]
-                    ]
-                ) {
-                    str =
-                        item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                            dataIndexArr[3]
-                        ][dataIndexArr[4]]
-                }
-                if (
-                    dataIndexArr.length === 6 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                        dataIndexArr[3]
-                    ] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                        dataIndexArr[3]
-                    ][dataIndexArr[4]]
-                ) {
-                    str =
-                        item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                            dataIndexArr[3]
-                        ][dataIndexArr[4]][dataIndexArr[5]]
-                }
-            }
-            if (str === false) {
-                str = "No"
-            }
-            if (str === true) {
-                str = "Yes"
-            }
-            if (str === null) {
-                str = "(none)"
-            }
-            return str
-        }
+    columns: {
+      type: Array,
+      required: true,
+    },
+    orderBy: {
+      type: Array,
+      required: false,
+    },
+    routerLink: {
+      type: [String, Function,],
+    },
+    routerId: {
+      type: String,
+    },
+    customWidth: {
+      type: Number,
+    },
+    minHeight: {
+      type: String,
+    },
+  },
+  data () {
+    return {
+      params: [],
+      // totalPages: 0
     }
+  },
+  computed: {
+    totalPages () {
+      return Math.ceil(this.total / this.perPage)
+    },
+  },
+  mounted () {
+    this.params = this.orderBy
+    // this.totalPages = Math.ceil(this.total / this.perPage);
+  },
+  methods: {
+    sort (dataIndex) {
+      if (!this.params.some(item => item.includes(`${dataIndex}`))) {
+        this.params = []
+        this.params.push(`${dataIndex}:desc`)
+      } else {
+        let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
+        if (index >= 0) {
+          this.params.splice(index, 1, `${dataIndex}:asc`)
+        } else {
+          this.params.splice(
+            this.params.findIndex(item => item === `${dataIndex}:asc`),
+            1
+          )
+        }
+      }
+      this.$emit("sorted", this.params)
+    },
+    pagechanged (e) {
+      this.$emit("pagechanged", e)
+    },
+    limitchanged (limit) {
+      this.$emit("limitchanged", limit)
+    },
+    sortIcon (dataIndex) {
+      if (!this.params.some(item => item.includes(dataIndex))) {
+        return "sort"
+      } else {
+        let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
+        if (index >= 0) {
+          return "sort-descend"
+        } else {
+          return "sort-ascend"
+        }
+      }
+    },
+    dataCell (item, column) {
+      var dataIndexArr = column.dataIndex.split(".")
+      let str = null
+      if (Array.isArray(item[dataIndexArr[0]])) {
+        str = []
+        item[dataIndexArr[0]].forEach(item => {
+          if (item[dataIndexArr[2]]) {
+            str.push(item[dataIndexArr[1]][dataIndexArr[2]])
+          } else {
+            str.push(item[dataIndexArr[1]])
+          }
+        })
+      } else {
+        str = ""
+        if (dataIndexArr.length === 1) {
+          str = item[dataIndexArr[0]]
+        }
+        if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
+          str = item[dataIndexArr[0]][dataIndexArr[1]]
+        }
+        if (
+          dataIndexArr.length === 3
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+        ) {
+          str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
+        }
+        if (
+          dataIndexArr.length === 4
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
+        ) {
+          str
+                        = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ]
+        }
+        if (
+          dataIndexArr.length === 5
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+                      dataIndexArr[3]
+                    ]
+        ) {
+          str
+                        = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]]
+        }
+        if (
+          dataIndexArr.length === 6
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+                      dataIndexArr[3]
+                    ]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+                      dataIndexArr[3]
+                    ][dataIndexArr[4]]
+        ) {
+          str
+                        = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]][dataIndexArr[5]]
+        }
+      }
+      if (str === false) {
+        str = "No"
+      }
+      if (str === true) {
+        str = "Yes"
+      }
+      if (str === null) {
+        str = "(none)"
+      }
+      return str
+    },
+  },
 }
 </script>
 
