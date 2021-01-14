@@ -24,7 +24,7 @@
 					<div
 						class="flex md:block md:py-1 md:px-4 rounded-full whitespace-no-wrap text-xs md:text-sm font-bold text-center md:mx-auto"
 						:class="statusStyle(application.application_status)"
-					>{{ application.application_status === 'Applied' ? 'Pending' : ['Accepted', 'Rejected'].includes(application.application_status) ? `Interview ${application.application_status}` : application.application_status_formatted }}</div>
+					>{{ application.application_status === 'Applied' ? 'Pending' : ['Accepted', 'Rejected'].includes(application.application_status) ? `Interview ${application.application_status === 'Rejected' ? 'Declined' : application.application_status}` : application.application_status_formatted }}</div>
 				</div>
 
 				<div class="flex items-center">

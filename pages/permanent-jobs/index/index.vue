@@ -215,9 +215,9 @@
             <div class="flex items-center justify-center">
               <div
                 class="rounded-full text-sm px-2 w-full py-2"
-                :class="statusStyle(slotProps.item.status)"
+                :class="statusStyle(slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status)"
               >
-                {{ slotProps.item.status }}
+                {{ slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status }}
               </div>
             </div>
           </template>
@@ -883,6 +883,8 @@ export default {
         },
       ]
     }
+
+    console.log("permanent_jobs_for_locum", this.permanent_jobs_for_locum)
   },
 
   methods: {
@@ -914,6 +916,7 @@ export default {
       case "Offered":
         return "bg-green-600 text-white"
       case "Rejected":
+      case "Declined":
         return "bg-red-700 text-white"
       case "Pending":
         return "bg-orange-500 text-white"
