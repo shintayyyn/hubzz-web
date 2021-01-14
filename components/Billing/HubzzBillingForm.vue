@@ -416,10 +416,10 @@
             Total
           </div>
           <div class="my-1 px-1 text-right text-lg font-semibold">
-            £ {{ practice.vat_registered === true ? practiceInvoice.untaxed_total_amount : practiceInvoice.total_amount | currency }}
+            £ {{ practiceInvoice.untaxed_total_amount | currency }}
           </div>
         </div>
-        <div v-if="practice.vat_registered === true" class="flex flex-row px-4 justify-between w-full">
+        <div class="flex flex-row px-4 justify-between w-full">
           <div class="my-1 px-1 font-bold">
             VAT Amount
           </div>
@@ -427,7 +427,7 @@
             £ {{ practiceInvoice.tax_amount | currency }}
           </div>
         </div>
-        <div v-if="practice.vat_registered === true" class="flex flex-row px-4 justify-between w-full">
+        <div class="flex flex-row px-4 justify-between w-full">
           <div class="my-1 px-1 font-bold">
             Total (with added VAT)
           </div>
