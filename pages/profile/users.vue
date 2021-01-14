@@ -5,6 +5,7 @@
         v-if="authPermissions.includes('Create Profile Users')"
         :label="'Add User'"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+        customTheme="border-2"
         @click="$router.push('/profile/users/create')"
       />
 
@@ -12,6 +13,7 @@
         class="mx-2"
         :label="'Filter'"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+        customTheme="border-2"
         @click="filterModal = !filterModal"
       />
 

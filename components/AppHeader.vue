@@ -106,6 +106,7 @@
                 <AppButton
                   icon="message"
                   class="h-full message-btn"
+                  :customTheme="'border-2'"
                   :label="'Messages'"
                   :badge="unreadMessages"
                   @click="$router.push('/messages')"

@@ -17,12 +17,12 @@
         
 
         <div v-for="(navigationTab, index) in navigationTabs" :key="index" class="text-sm relative">
-          <span v-if="navigationTab.active" class="absolute ml-3 mt-5 bg-sunglow p-1.5 h-1.5 rounded-sm" />
+          <span v-if="navigationTab.active" class="absolute ml-3 mt-4 bg-sunglow p-1.5 h-1.5 rounded-sm" />
 
           <nuxt-link
             :to="navigationTab.route"
             :event="$route.path.includes(navigationTab.route) ? '' : 'click'"
-            class="block no-underline p-4 mx-4 transition-hover"
+            class="block no-underline pl-4 py-3 mx-4 transition-hover"
             :class="navigationTab.active ? 'text-white font-bold' : 'text-gray-500 hover:text-white hover:font-bold'"
           >
             <span>{{ navigationTab.navigationTabTitle }}</span>

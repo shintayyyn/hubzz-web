@@ -65,6 +65,7 @@
         <AppButton
           :label="'Filter'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="filterModal = !filterModal"
         />
 
@@ -72,6 +73,7 @@
           v-if="showRefresh"
           :label="'Refresh'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="refreshInvoices"
         />
 

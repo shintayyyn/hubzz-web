@@ -20,6 +20,7 @@ module.exports = {
       white: '#fff',
 
       sunglow: "#FFC72C",
+      "sunglow-dark": "#ECAF05",
 
       gray: {
         100: '#f7fafc',

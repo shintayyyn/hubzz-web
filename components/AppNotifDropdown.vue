@@ -3,6 +3,8 @@
     <AppButton
       icon="notification"
       :label="'Notification'"
+      class="notif-btn"
+      :customTheme="'border-2'"
       :badge="unseenNotificationIds.length"
       @click="showNotificationsDropdown = !showNotificationsDropdown"
     />
@@ -2145,6 +2147,13 @@ export default {
     }
   }
 
+  @media (min-width: 720px) {
+    .dropdown {
+      margin-left: 1%;
+      margin-right: 1%;
+    }
+  }
+
   .job-notification {
     position: fixed;
     bottom: 0;
@@ -2204,4 +2213,9 @@ export default {
     text-overflow: ellipsis;
     transition: all 0.3s linear;
   }
+  @media (min-width: 768px) {
+	.notif-btn {
+		min-width: 150px;
+	}
+}
 </style>

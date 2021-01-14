@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 mb-4 pt-1">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 pt-1">
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'to-be-invoiced' } }"
@@ -66,12 +66,14 @@
           v-if="!['pension-form-b'].includes($route.query.status)"
           :label="'Filter'"
           class="mt-4"
+          customTheme="border-2"
           @click="filterModal = !filterModal"
         />
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="refreshInvoices"
         />
         <div
@@ -424,7 +426,7 @@ export default {
       current_page: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_ir35: null,
       invoice_number: null,
@@ -475,7 +477,7 @@ export default {
           name: "Job Part No.",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 150,
+          width: 130,
         },
         {
           name: "Job Title",
@@ -824,7 +826,7 @@ export default {
             job_part_number_includes: this.job_part_number_includes,
             include_current_surgeries_jobs: false,
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ])
@@ -851,7 +853,7 @@ export default {
     async filterJobParts () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobPartsPromiseAll()
@@ -948,7 +950,7 @@ export default {
       this.loading = true
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       await this.getJobPartsPromiseAll()
       this.loading = false
       this.showRefresh = false
@@ -1204,7 +1206,7 @@ export default {
     },
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_ir35 = null
       this.is_paid = null

@@ -39,23 +39,12 @@
 
         <template v-slot:status_slot="slotProps">
           <div class="flex items-center justify-center">
-            <div
-              class="rounded-full text-sm px-2 w-full py-2"
-              :class="statusStyle(slotProps.item.status)"
-            >
               {{ slotProps.item.status }}
-            </div>
           </div>
         </template>
 
         <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
-          <div class="flex items-center justify-center">
-            <div
-              class="rounded-full text-sm px-2 w-full py-2 bg-yellow-400 text-black leading-tight"
-            >
               {{ jobClosingTag(slotProps.item) }}
-            </div>
-          </div>
         </template>
       </AppTable>
       <p
@@ -90,7 +79,7 @@ export default {
         {
           name: "ID",
           dataIndex: "id",
-          class: "text-center",
+          width: 80
         },
         {
           name: "Title",
@@ -105,18 +94,21 @@ export default {
           slotName: "salary_slot",
           dataIndex: "",
           class: "text-center",
+          width: 80
         },
         {
           name: "Posted",
           dataIndex: "",
           slotName: "date_posted",
           class: "text-center",
+          width: 80
         },
         {
           name: "Closes",
           dataIndex: "",
           slotName: "date_closing",
           class: "text-center",
+          width: 80
         },
         // {
         // 	name: "Role",
@@ -127,6 +119,7 @@ export default {
           name: "Work Hours",
           dataIndex: "work_hours",
           class: "text-center",
+          width: 100
         },
         {
           name: "Profession",
@@ -137,6 +130,7 @@ export default {
           name: "Industry",
           dataIndex: "industry_type",
           class: "text-center",
+          width: 80
         },
       ],
       columns: [],
@@ -179,6 +173,7 @@ export default {
               slotName: "status_slot",
               dataIndex: "",
               class: "text-center",
+              width: 100
             },
           ]
         } else if (newStatus === "Closed") {
@@ -188,6 +183,7 @@ export default {
               name: "Closed At",
               dataIndex: "closed_at",
               class: "text-center localDate",
+              width: 120
             },
             {
               name: "Status",
@@ -195,6 +191,7 @@ export default {
               slotName: "status_slot",
               dataIndex: "",
               class: "text-center",
+              width: 100
             },
             {
               name: "Closing tag",
@@ -202,6 +199,7 @@ export default {
               slotName: "closing_tag",
               dataIndex: "",
               class: "text-center",
+              width: 130
             },
           ]
         }
@@ -318,6 +316,7 @@ export default {
         slotName: "status_slot",
         dataIndex: "",
         class: "text-center",
+        width: 100
       },
     ]
     if (this.$route.query.status) {
@@ -327,6 +326,7 @@ export default {
           name: "Closed At",
           dataIndex: "closed_at",
           class: "text-center localDate",
+          width: 120
         },
         {
           name: "Status",
@@ -334,6 +334,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
+          width: 100
         },
         {
           name: "Closing Tag",
@@ -341,6 +342,7 @@ export default {
           slotName: "closing_tag",
           dataIndex: "",
           class: "text-center",
+          width: 130
         },
       ]
     }

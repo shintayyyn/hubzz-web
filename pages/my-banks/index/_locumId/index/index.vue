@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="w-full mt-5">
     <AppLoading :loading="loading" spinner />
 
     <template v-if="!loading && user">
