@@ -51,7 +51,7 @@
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 px-1 break-word hyphens border-r"
+                class="flex-1 px-1 break-word hyphens"
                 :class="
                   column.class &&
                     column.class.includes('text-center') &&

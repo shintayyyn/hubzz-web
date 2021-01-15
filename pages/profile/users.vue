@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div class="flex overflow-x-auto whitespace-no-wrap">
+    <div class="flex overflow-x-auto whitespace-no-wrap mt-4">
       <AppButton
         v-if="authPermissions.includes('Create Profile Users')"
         :label="'Add User'"
