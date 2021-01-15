@@ -157,7 +157,7 @@
             v-if="authPermissions.includes('Deactivate Profile Users') && user.status !== 'Deactivated'"
             :label="'Deactivate User'"
             :disabled="loading"
-            :custom-theme="'bg-red-500 hover:bg-red-600 font-bold md:text-lg text-white'"
+            :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
             @click="modal = true"
           />
         </div>
