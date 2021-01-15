@@ -255,6 +255,8 @@ export default {
         "Practice Notification Reject Permanent Job Spoke",
         "Practice Notification Hub Created Permanent Job for Spoke",
         "Practice Notification Spoke Created Pending Permanent Job",
+        "Practice Notification Locum Accept Permanent Job Invitation",
+        "Practice Notification Locum Reject Permanent Job Invitation",
 
         "Practice Notification Job Allocated",
         "Practice Notification Job Amended",
@@ -733,6 +735,8 @@ export default {
         "Practice Notification Reject Permanent Job Spoke",
         "Practice Notification Hub Created Permanent Job for Spoke",
         "Practice Notification Spoke Created Pending Permanent Job",
+        "Practice Notification Locum Accept Permanent Job Invitation",
+        "Practice Notification Locum Reject Permanent Job Invitation",
       ]
 
       const practiceJobNotifications = [
@@ -1208,6 +1212,33 @@ export default {
             },
           })
         }
+
+        if (
+          notificationTypeName
+            === "Practice Notification Locum Accept Permanent Job Invitation"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
+        }
+
+        if (
+          notificationTypeName
+            === "Practice Notification Locum Reject Permanent Job Invitation"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
+        }
+
         if (
           notificationTypeName
             === "Practice Notification Approve Permanent Job Spoke"
