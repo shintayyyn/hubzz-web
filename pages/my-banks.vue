@@ -107,7 +107,7 @@
         </nuxt-link>
       </div>
       
-      <div class="flex mt-2 md:mt-0">
+      <div class="hidden md:flex my-2 md:mt-0">
         <nuxt-link
           to="/invite"
           class="md:mr-5 px-3 py-1 text-sm font-bold cursor-pointer"
@@ -117,8 +117,17 @@
         </nuxt-link>
       </div>
     </div>
+    <div class="flex md:hidden mt-3">
+        <nuxt-link
+          to="/invite"
+          class="md:mr-5 px-3 py-1 text-sm font-bold cursor-pointer"
+          :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
+        >
+          Invite Locum
+        </nuxt-link>
+      </div>
 
-    <div class="mt-2">
+    <div class="md:mt-2">
       <nuxt-child />
     </div>
   </section>

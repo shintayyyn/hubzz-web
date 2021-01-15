@@ -163,7 +163,7 @@
                     :type="type"
                     :placeholder="placeholder"
                     class="border-l-2 border-t-2 border-b-2 border-gray-500 focus:border-gray-600 focus:outline-none p-1 font-bold text-xs sm:text-sm w-full shadow-none"
-                    :class="[error ? 'border-red-500' : '', button ? 'rounded-l-lg':'rounded-lg' ,inClass]"
+                    :class="[error ? 'border-red-500' : '', button ? 'rounded-l-lg px-2':'rounded-lg' ,inClass]"
                     :style="inStyle"
                     :checked="value"
                     :readonly="disabled"
@@ -180,7 +180,7 @@
                   >
                   <button
                     v-if="button" 
-                    class="bg-gray-500 p-1 rounded-r-lg border-r-2 border-t-2 border-b-2 text-md text-white font-bold hover:text-black"
+                    class="bg-gray-500 px-2 py-1 border-gray-500 rounded-r-lg border-r-2 border-t-2 border-b-2 text-xs sm:text-sm text-white font-bold hover:bg-gray-600 transition-hover"
                     @click.prevent="$emit('click')"
                   >
                     {{ buttonLabel ? buttonLabel : 'Button' }}

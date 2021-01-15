@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="w-1/2">
+    <div class="w-full md:w-1/2 lg:w-2/5">
       <AppInputSmall
         v-model="search"
         :type="'text'"
