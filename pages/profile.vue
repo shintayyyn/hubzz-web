@@ -1,23 +1,23 @@
 <template>
   <section class="profile-section">
-    <div class="flex items-center overflow-x-auto whitespace-no-wrap border-b-2 border-yellow-300">
+    <div class="flex items-center overflow-x-auto whitespace-no-wrap border-b border-sunglow">
       <nuxt-link
         v-if="authPermissions.includes('View Profile Practice')"
         to="/profile"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="['profile', 'profile-practice', 'profile-index', 'profile-index-practice'].includes($route.name) ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="['profile', 'profile-practice', 'profile-index', 'profile-index-practice'].includes($route.name) ? 'border-b-4 border-sunglow' : 'text-gray-600'"
       >Practice</nuxt-link>
       <nuxt-link
         v-if="authPermissions.includes('View Profile Users')"
         to="/profile/users"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('profile-users') ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('profile-users') ? 'border-b-4 border-sunglow' : 'text-gray-600'"
       >Users</nuxt-link>
       <nuxt-link
         v-if="authPermissions.includes('View Profile Practice Document')"
         to="/profile/practice-documents"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="['profile-practice-documents', 'profile-standard-terms-id'].includes($route.name) ? 'border-b-2 border-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="['profile-practice-documents', 'profile-standard-terms-id'].includes($route.name) ? 'border-b-4 border-sunglow' : 'text-gray-600'"
       >Practice Documents</nuxt-link>
     </div>
     <div class="mt-2">

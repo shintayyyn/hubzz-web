@@ -1,38 +1,38 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto border-b-2 border-gray-300">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=to-be-invoiced` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         To be Invoiced
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=disputed` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Disputed Invoices
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=issued` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Invoiced
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=approved` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Approved Invoices
       </nuxt-link>
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums?status=pension-form-a` }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        :class="$route.name.includes('hub-surgery-management-id-surgery-billings-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         NHS Pension Form A
       </nuxt-link>
@@ -62,17 +62,17 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-wrap justify-center">
+            <div class="flex flex-wrap items-center justify-center">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
                 @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
               >
                 Edit
               </div>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && $route.query.status !== 'pension-form-a'"
-                class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
                 @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
               >
                 View
@@ -239,15 +239,17 @@ export default {
 
       if (queryStatus !== "to-be-invoiced") {
         columns.push({
-          name: "Invoice Number",
+          name: "Invoice No.",
           dataIndex: "invoice_number",
+          width: 150
         })
       }
 
       columns.push(
         {
-          name: "Job Part Number",
+          name: "Job Part No.",
           dataIndex: "job_part_number",
+          width: 150
         },
         {
           name: "Job Title",
@@ -258,11 +260,13 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
+          width: 100
         },
         {
           name: "Under IR35",
           dataIndex: "job_ir35",
           class: "text-center",
+          width: 80
         },
         {
           name: "Under Parent Practice",
@@ -277,6 +281,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
+          width: 80
         })
       }
 
@@ -294,6 +299,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
+          width: 130
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -322,6 +328,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
+          width: ["approved"].includes(queryStatus) ? 150 : 100,
         })
       }
 

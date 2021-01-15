@@ -2,7 +2,7 @@
   <section class="flex flex-col items-start w-full">
     <div class="w-full lg:w-1/2">
       <AppInputSmall
-        v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count > 0"
+        v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count !== null"
         v-model="search"
         :type="'text'"
         :name="'search'"
@@ -159,22 +159,13 @@
 
           <template v-slot:status_slot="slotProps">
             <div v-if="slotProps.item.status" class="flex items-center justify-center">
-              <div
-                class="rounded-full text-sm px-2 w-full py-2"
-                :class="statusStyle(slotProps.item.status)"
-              >
                 {{ slotProps.item.status }}
-              </div>
             </div>
           </template>
 
           <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
-              <div
-                class="rounded-full text-sm px-2 w-full py-2 bg-yellow-400 text-black leading-tight"
-              >
                 {{ jobClosingTag(slotProps.item) }}
-              </div>
             </div>
           </template>
         </AppTable>
@@ -215,9 +206,9 @@
             <div class="flex items-center justify-center">
               <div
                 class="rounded-full text-sm px-2 w-full py-2"
-                :class="statusStyle(slotProps.item.status)"
+                :class="statusStyle(slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status)"
               >
-                {{ slotProps.item.status }}
+                {{ slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status }}
               </div>
             </div>
           </template>
@@ -302,7 +293,7 @@ export default {
       // app table params
       params: {
         job_id: null,
-        limit: 5,
+        limit: 10,
         offset: 0,
         search: "",
 
@@ -320,7 +311,7 @@ export default {
         {
           name: "ID",
           dataIndex: "id",
-          class: "text-center",
+          width: 70
         },
         {
           name: "Title",
@@ -337,23 +328,27 @@ export default {
           slotName: "salary_slot",
           dataIndex: "",
           class: "text-center",
+          width: 80
         },
         {
           name: "Posted",
           dataIndex: "",
           slotName: "date_posted",
           class: "text-center",
+          width: 100
         },
         {
           name: "Closes",
           dataIndex: "",
           slotName: "date_closing",
           class: "text-center",
+          width: 100
         },
         {
           name: "Work Hours",
           dataIndex: "work_hours",
           class: "text-center",
+          width: 100
         },
         {
           name: "Profession",
@@ -364,6 +359,7 @@ export default {
           name: "Industry",
           dataIndex: "industry_type",
           class: "text-center",
+          width: 80
         },
       ],
 
@@ -510,7 +506,7 @@ export default {
               locum_user_id: this.$auth.user.id,
               profession_id: this.$auth.user.locum_detail.profession.id,
               near_post_code: this.$auth.user.locum_postcode,
-              limit: 5,
+              limit: 20,
             }
             setTimeout(async () => {
               this.loading = true
@@ -530,7 +526,7 @@ export default {
 								practice_type === "Hub" && newStatus === "Pending"
 								  ? this.$auth.user.practice_id
 								  : null,
-              limit: 5,
+              limit: 20,
             }
             setTimeout(async () => {
               this.loading = true
@@ -600,7 +596,7 @@ export default {
           locum_user_id: app.$auth.user.id,
           profession_id: app.$auth.user.locum_detail.profession.id,
           near_post_code: app.$auth.user.locum_postcode,
-          limit: 5,
+          limit: 20,
         }
         let response = await app.$axios.$get(
           `/api/v1/locum/permanent-jobs/count`,
@@ -688,7 +684,7 @@ export default {
 						practice_type === "Hub" && route.query.status === "Pending"
 						  ? app.$auth.user.practice_id
 						  : null,
-          limit: 5,
+          limit: 20,
         }
         let response = await app.$axios.$get(
           `/api/v1/practice/permanent-jobs/count`,
@@ -833,6 +829,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
+          width: 100
         },
       ]
       if (this.$route.query.status) {
@@ -842,6 +839,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
+            width: 140
           },
           {
             name: "Status",
@@ -849,6 +847,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
+            width: 100
           },
           {
             name: "Closing Tag",
@@ -856,6 +855,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
+            width: 130
           },
         ]
       }
@@ -914,6 +914,7 @@ export default {
       case "Offered":
         return "bg-green-600 text-white"
       case "Rejected":
+      case "Declined":
         return "bg-red-700 text-white"
       case "Pending":
         return "bg-orange-500 text-white"
@@ -980,7 +981,7 @@ export default {
         .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
         .then(res => {
           this.permanent_jobs_for_locum_count
-						= res.data && res.data.count ? res.data.count : null
+						= res.data && res.data.count ? res.data.count : 0
         })
 
       await this.$axios
@@ -996,7 +997,7 @@ export default {
         .$get(`/api/v1/locum/permanent-job-applications/count`)
         .then(res => {
           this.permanent_job_applications_count
-						= res.data && res.data.count ? res.data.count : null
+						= res.data && res.data.count ? res.data.count : 0
         })
 
       await this.$axios

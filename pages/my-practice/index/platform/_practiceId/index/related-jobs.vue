@@ -6,7 +6,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Allocated`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="!$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated')? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Allocated</nuxt-link>
       </div>
@@ -14,7 +14,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Ongoing`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Ongoing</nuxt-link>
       </div>
@@ -22,7 +22,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Available`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && ['available', 'public', 'bank'].includes($route.query.jobStatus.toLowerCase()) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Available</nuxt-link>
       </div>
@@ -30,7 +30,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Applied`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Applied</nuxt-link>
       </div>
@@ -38,7 +38,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Unsuccessful`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Unsuccessful</nuxt-link>
       </div>
@@ -46,7 +46,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Withdrawn`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
       </div>
@@ -54,7 +54,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Cancelled`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
       </div>
@@ -62,7 +62,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Completed`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Completed</nuxt-link>
       </div>
@@ -70,7 +70,7 @@
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Approved`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Approved</nuxt-link>
       </div>

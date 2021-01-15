@@ -5,7 +5,7 @@
     :class="[
       disabled ? 'disabled-button' : '',
       inClass,
-      customTheme ? customTheme : 'button border-2',
+      customTheme ? customTheme : 'button bg-sunglow hover:bg-sunglow-dark',
       badge && icon ? 'flex items-center justify-between' : '',
       icon ? 'flex items-center' : ''
     ]"
@@ -96,7 +96,7 @@ export default {
 
   .button:hover,
   .button:focus {
-    background: #f8f8f8;
+    /* background: #f8f8f8; */
     /* background: linear-gradient(to top, #e6c520, #f1d130); */
   }
 
@@ -104,6 +104,9 @@ export default {
     border-radius: 6px;
   }
   
+   button:focus{
+     outline: none;
+   }
   .default-btn:hover {
     transform: translate(1px, 1px);
   }

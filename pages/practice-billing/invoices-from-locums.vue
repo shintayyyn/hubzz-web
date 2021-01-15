@@ -1,11 +1,11 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto border-b-2 border-gray-300">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 pt-1">
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'to-be-invoiced' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         To be Invoiced
       </nuxt-link>
@@ -13,8 +13,8 @@
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'disputed' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Disputed Invoices
       </nuxt-link>
@@ -22,8 +22,8 @@
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'issued' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Invoiced
       </nuxt-link>
@@ -31,24 +31,24 @@
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'approved' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Approved Invoices
       </nuxt-link>
 
       <nuxt-link
         :to="{ name: 'practice-billing-solo-forms' }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'practice-billing-solo-forms' ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'practice-billing-solo-forms' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Solo Forms
       </nuxt-link>
 
       <nuxt-link
         :to="{ name: 'practice-billing-form-as' }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'practice-billing-form-as' ? 'border-b-2 border-gray-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'practice-billing-form-as' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         NHS Pension Form A
       </nuxt-link>
@@ -66,16 +66,18 @@
           v-if="!['pension-form-b'].includes($route.query.status)"
           :label="'Filter'"
           class="mt-4"
+          customTheme="border-2"
           @click="filterModal = !filterModal"
         />
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="refreshInvoices"
         />
         <div
-          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg px-3 py-2 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -424,7 +426,7 @@ export default {
       current_page: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_ir35: null,
       invoice_number: null,
@@ -475,7 +477,7 @@ export default {
           name: "Job Part No.",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 150,
+          width: 130,
         },
         {
           name: "Job Title",
@@ -824,7 +826,7 @@ export default {
             job_part_number_includes: this.job_part_number_includes,
             include_current_surgeries_jobs: false,
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ])
@@ -851,7 +853,7 @@ export default {
     async filterJobParts () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobPartsPromiseAll()
@@ -948,7 +950,7 @@ export default {
       this.loading = true
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       await this.getJobPartsPromiseAll()
       this.loading = false
       this.showRefresh = false
@@ -1204,7 +1206,7 @@ export default {
     },
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_ir35 = null
       this.is_paid = null

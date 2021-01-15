@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="w-1/2">
+    <div class="w-full md:w-1/2 lg:w-2/5">
       <AppInputSmall
         v-model="search"
         :type="'text'"
@@ -25,72 +25,64 @@
         ].includes(practiceLocumType.toLowerCase())
           && loggedInPracticeType === 'Hub'
       "
-      class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden py-3 mb-3 border-b-2 border-gray-300"
+      class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden mb-3 border-b border-gray-500"
     >
-      <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: undefined }}"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             !surgeriesBank
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Banks
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: 'true' }}"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             surgeriesBank
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Surgeries Banks
         </nuxt-link>
-      </div>
     </div>
 
     <div 
       v-if="practiceLocumType !== 'All'"
-      class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden py-3 mb-3 border-b-2 border-gray-300"
+      class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden mb-3 border-b border-gray-500"
     >
-      <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: undefined }}"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             professionCategoryName.toLowerCase() === 'gp'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           GP
         </nuxt-link>
-      </div>
 
-      <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: 'Others' }}"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
           :class="
             professionCategoryName.toLowerCase() === 'others'
-              ? 'border-b-2 border-gray-500'
+              ? 'border-b-4 border-gray-500'
               : 'text-gray-600'
           "
         >
           Others
         </nuxt-link>
-      </div>
     </div>
 
     <AppLoading :loading="loading" spinner />

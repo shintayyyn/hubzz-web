@@ -12,6 +12,7 @@
           <AppButton
             class="mr-2"
             :label="'Filter'"
+            customTheme="border-2"
             :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
             @click="filterModal = !filterModal"
           />
@@ -19,6 +20,7 @@
           <AppButton
             v-if="showRefresh"
             :label="'Refresh'"
+            customTheme="border-2"
             :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
             @click="refreshJobs"
           />
@@ -404,14 +406,14 @@ export default {
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 100,
+          width: 120,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 100,
+          width: 150,
         }
       )
 

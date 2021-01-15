@@ -29,12 +29,14 @@
         <AppButton
           :label="'Filter'"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="filterModal = !filterModal"
         />
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="refreshJobs"
         />
         <div

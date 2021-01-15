@@ -9,6 +9,7 @@
         <AppButton
           :label="'Filter'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="filterModal = !filterModal"
         />
 
@@ -16,6 +17,7 @@
           v-if="showRefresh"
           :label="'Refresh'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="refreshJobs"
         />
 
@@ -371,7 +373,7 @@ export default {
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 120,
+          width: 150,
         },
         {
           name: "From",

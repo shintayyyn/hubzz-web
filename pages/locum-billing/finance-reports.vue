@@ -4,13 +4,13 @@
       <div class="flex w-full md:w-4/5">
         <nuxt-link
           to="/locum-billing/finance-reports/invoices-by-month"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer text-gray-600"
-          :class="$route.path === '/locum-billing/finance-reports/invoices-by-month' ? 'border-b-2 border-yellow-500' : ''"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer text-gray-600"
+          :class="$route.path === '/locum-billing/finance-reports/invoices-by-month' ? 'border-b-4 border-sunglow' : ''"
         >Invoices by month</nuxt-link>
         <nuxt-link
           to="/locum-billing/finance-reports/tax-year-totals"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer text-gray-600"
-          :class="$route.path === '/locum-billing/finance-reports/tax-year-totals' ? 'border-b-2 border-yellow-500' : ''"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer text-gray-600"
+          :class="$route.path === '/locum-billing/finance-reports/tax-year-totals' ? 'border-b-4 border-sunglow' : ''"
         >Tax Year Totals</nuxt-link>
       </div>
     </div>

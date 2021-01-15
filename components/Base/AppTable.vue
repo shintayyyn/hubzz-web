@@ -17,7 +17,7 @@
             :class="[
               column.class &&
                 column.class.includes('text-center') &&
-                'justify-center',
+                'justify-center text-center',
               column.sortable && 'cursor-pointer'
             ]"
             :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}`"
@@ -45,13 +45,13 @@
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
-              class="flex justify-start items-center text-xs py-2 "
+              class="flex justify-start items-center text-xs py-2"
               :class="[routerLink ? 'stripe-hover' : 'cursor-default', index % 2 === 0 ? 'stripe-gray':'bg-white']"
             >
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 px-1 break-word hyphens"
+                class="flex-1 px-1 break-word hyphens border-r"
                 :class="
                   column.class &&
                     column.class.includes('text-center') &&

@@ -1,16 +1,16 @@
 <template>
   <section class="flex flex-col items-start w-full">
-    <div class="flex flex-wrap items-center justify-between w-full border-b-2 border-yellow-300">
+    <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
       <div class="flex overflow-x-auto items-center">
         <nuxt-link
           v-if="$auth.user.domain === 'Practice' 
             && ($auth.user.practice_detail.practice.type === 'Spoke' || $auth.user.practice_detail.practice.type === 'Hub' )
             && $auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false"
           to="/permanent-jobs?status=Pending"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             ($route.query.status && $route.query.status.toLowerCase() === 'pending')
-              ? 'border-b-2 border-yellow-500'
+              ? 'border-b-4 border-sunglow'
               : 'text-gray-600'
           "
         >
@@ -18,10 +18,10 @@
         </nuxt-link>
         <nuxt-link
           to="/permanent-jobs"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'available')
-              ? 'border-b-2 border-yellow-500'
+              ? 'border-b-4 border-sunglow'
               : 'text-gray-600'
           "
         >
@@ -29,10 +29,10 @@
         </nuxt-link>
         <nuxt-link
           to="/permanent-jobs?status=Closed"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="
             ($route.query.status && $route.query.status.toLowerCase() === 'closed')
-              ? 'border-b-2 border-yellow-500'
+              ? 'border-b-4 border-sunglow'
               : 'text-gray-600'
           "
         >

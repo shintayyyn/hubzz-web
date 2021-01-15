@@ -1,8 +1,8 @@
 <template>
   <section>
-    <div class="flex flex-no-wrap justify-start border-b-2 border-yellow-300">
+    <div class="flex flex-no-wrap justify-start border-b border-sunglow">
       <div
-        class="p-3 text-sm font-bold border-b-2 border-yellow-500"
+        class="px-3 py-2 text-sm font-bold border-b-4 border-sunglow"
       >
         Frequently asked questions
       </div>

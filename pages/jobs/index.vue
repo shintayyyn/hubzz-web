@@ -8,6 +8,7 @@
       <div v-if="!initialLoading">
         <AppButton
           :label="'Filter'"
+          customTheme="border-2"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="filterModal = !filterModal"
         />
@@ -15,6 +16,7 @@
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
+          customTheme="border-2"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="refreshJobs"
         />
