@@ -334,6 +334,7 @@ export default {
           name: "Job Number",
           dataIndex: "job_number",
           sortable: true,
+          width: 120
         },
         {
           name: "Practice",
@@ -358,30 +359,35 @@ export default {
           dataIndex: "shift_names",
           sortable: true,
           class: "text-center",
+          width: 150
         },
         {
           name: "Rates",
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
+          width: 150
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
+          width: 170
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 130
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 130
         },
       ]
 
@@ -391,6 +397,7 @@ export default {
           dataIndex: "favorite_only_formatted",
           class: "text-center",
           sortable: true,
+          width: 100
         })
       }
 
