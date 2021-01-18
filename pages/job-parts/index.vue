@@ -406,14 +406,14 @@ export default {
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 120,
+          width: 150,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 170,
         }
       )
 
@@ -449,7 +449,7 @@ export default {
           dataIndex: "ongoing_status",
           class: "text-center",
           sortable: true,
-          width: 200,
+          width: 140,
         })
       }
 
@@ -489,12 +489,14 @@ export default {
             dataIndex: "completed_at_in_gb_formatted",
             sortable: true,
             class: "text-center",
+            width: 130,
           },
           {
             name: "Invoice status",
             dataIndex: "locum_invoice_status",
             sortable: true,
             class: "text-center",
+            width: 130
           }
         )
       }
