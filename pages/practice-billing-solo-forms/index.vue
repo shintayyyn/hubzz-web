@@ -165,10 +165,12 @@
               v-if="practice.type !== 'Spoke' || 
                 (practice.type === 'Spoke' && !practice.parent_practice_id) ||
                 (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
-              class="flex flex-wrap justify-center"
+              class="flex justify-center flex-wrap"
             >
+            <!-- flex-col bg-white p-2 shadow -->
               <div
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="text-xs mr-1 py-1 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                :class="!slotProps.item.practice_electronic_signature && !slotProps.item.sent_to_locum && authPermissions.includes('Process Billings') ? 'mb-1' : 'my-1'"
                 @click="viewAsPdf(slotProps.item.id)"
               >
                 View Solo Form
@@ -176,19 +178,20 @@
 
               <div
                 v-if="!slotProps.item.practice_electronic_signature"
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                class="text-xs mr-1 py-1 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
                 @click="setLocumSoloFormIdToSign(slotProps.item.id)"
+                :class="!slotProps.item.practice_electronic_signature && !slotProps.item.sent_to_locum && authPermissions.includes('Process Billings') ? 'mb-1' : 'my-1'"
               >
                 E-sign Form
               </div>
 
               <div
                 v-if="!slotProps.item.sent_to_locum && authPermissions.includes('Process Billings')"
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                class="text-xs mr-1 py-1 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
                 @click="locumSoloFormIdToBeSend = slotProps.item.id"
               >
                 Send Form to Locum
-              </div>
+              </div> 
             </div>
 
             <div v-else class="text-gray-600">
@@ -339,7 +342,7 @@ export default {
       current_page: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       ir35: null,
       invoice_number: null,
@@ -386,11 +389,13 @@ export default {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           sortable: true,
+          width: 120
         },
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
+          width: 150
         },
         {
           name: "Job Title",
@@ -402,22 +407,26 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
+          width: 120
         },
         {
           name: "Under IR35",
           dataIndex: "ir35_formatted",
           class: "text-center",
+          width: 100
         },
         {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice_formatted",
           class: "text-center",
+          width: 150
         },
         {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         },
         {
           name: "Locum",
@@ -428,7 +437,9 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
+          width: 180
         },
+        // dropdown
       ]
     },
 
@@ -556,7 +567,7 @@ export default {
             job_part_number_includes: this.jobPartNumberIncludes,
             practice_id: this.$auth.user.practice_id,
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ])
@@ -576,7 +587,7 @@ export default {
     async filterJobParts () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getLocumSoloFormsPromiseAll()
@@ -611,7 +622,7 @@ export default {
       this.loading = true
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       await this.getLocumSoloFormsPromiseAll()
       this.loading = false
       this.showRefresh = false
@@ -796,7 +807,7 @@ export default {
 
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.ir35 = null
       this.paid = null

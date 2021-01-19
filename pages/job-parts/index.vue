@@ -178,7 +178,7 @@
         >
           <template v-slot:ended="slotProps">
             <div class="flex items-center justify-center">
-              <div class="rounded-full px-6 py-1">
+              <div class="rounded-full px-6">
                 {{ slotProps.item.ended ? "For Completion" : "Ongoing" }}
               </div>
             </div>
@@ -186,7 +186,7 @@
           <template v-slot:practiceInvoiced="slotProps">
             <div class="flex items-center justify-center">
               <div
-                class="rounded-full px-6 py-1"
+                class="rounded-full px-6"
               >
                 {{ slotProps.item.practice_invoiced ? "Invoiced by HUBZZ" : "To be Invoiced by HUBZZ" }}
               </div>

@@ -3,12 +3,13 @@
     <div class="relative">
       <AppLoading :loading="loading" spinner />
       <div
-        class="relative flex flex-col overflow-x-auto w-full mt-4 border"
-        :style="totalPages > 1 && `min-height: ${minHeight}`"
+        v-if="!loading"
+        class="relative flex flex-col overflow-x-auto w-full mt-4"
+        :style=" `min-height: ${minHeight ? minHeight : '70vh'}`"
       >
         <div
           :style="`min-width: ${customWidth}px`"
-          class="row flex justify-start font-bold leading-none text-xs py-2"
+          class="row flex justify-start font-bold leading-none text-xs py-2 border-l border-r border-t"
         >
           <div
             v-for="(column, index) in columns"
@@ -28,7 +29,7 @@
           </div>
         </div>
         <div
-          v-for="(item, index) in items"
+          v-for="(item, rowIndex) in items"
           :key="item.id"
           :style="`${customWidth ? `min-width: ${customWidth}px` : ``}`"
           class="row"
@@ -45,19 +46,21 @@
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
-              class="flex justify-start items-center text-xs py-2"
-              :class="[routerLink ? 'stripe-hover' : 'cursor-default', index % 2 === 0 ? 'stripe-gray':'bg-white']"
+              class="flex justify-start items-center text-xs py-2 border-l border-r"
+              :class="[routerLink ? 'stripe-hover' : 'cursor-default', rowIndex % 2 === 0 ? 'stripe-gray':'bg-white', rowIndex === items.length-1 ? 'border-b' : '']"
             >
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 px-1 break-word hyphens"
+                class="flex-1 px-1 break-word hyphens h-full"
                 :class="
                   column.class &&
                     column.class.includes('text-center') &&
                     'text-center'
                 "
-                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}`"
+                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}; ${countLines(index, column.width, rowIndex)}`"
+                :ref="`col${index}`"
+                style="line-height:20px; "
               >
                 <template v-if="Array.isArray(dataCell(item, column))">
                   <div v-for="(item, index) in dataCell(item, column)" :key="`${item}-${index}`">
@@ -69,7 +72,20 @@
                     <slot :name="column.slotName" :item="item" @click="$emit(column.eventName, item)" />
                   </template>
                   <template v-if="column.dataIndex === 'actions'">
-                    <slot name="actions" :item="item" @click="$emit('click', item)" />
+                    <template v-if="column.class.includes('dropdown')">
+                      <div class="relative" @click="dropdownIndex===rowIndex ? dropdownIndex=null : dropdownIndex=rowIndex">
+                        <div class="cursor-pointer border-2 rounded flex items-center justify-between px-4 text-xs">
+                          <span>Dropdown</span>
+                          <span><svgicon name="caret-down" width="10" /></span>
+                        </div>
+                        <div class="absolute bottom-0 dropdown bg-blue-500"
+                          :class="rowIndex === items.length-1 ? 'dropdown-up' : ''"
+                         v-if="dropdownIndex !== null && dropdownIndex===rowIndex">
+                            <slot name="actions" :item="item" @click="$emit('click', item)" />
+                        </div>
+                      </div>
+                    </template>
+                    <slot v-else name="actions" :item="item" @click="$emit('click', item)" />
                   </template>
                   <template v-if="column.dataIndex === 'shared'">
                     <slot name="shared" :item="item" @click="$emit('click', item)" />
@@ -116,7 +132,7 @@
         </div>
       </div>
     </div>
-    <div v-if="total > 5" class="bottom-0 w-full">
+    <div v-if="!loading && total > 5" class="bottom-0 w-full">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -132,6 +148,7 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination"
 import AppLoading from "@/components/Base/AppLoading"
+import { isArray } from 'highcharts'
 export default {
   components: {
     AppLoading,
@@ -182,6 +199,7 @@ export default {
   data () {
     return {
       params: [],
+      dropdownIndex: null
       // totalPages: 0
     }
   },
@@ -309,6 +327,21 @@ export default {
       }
       return str
     },
+    countLines(index, width, rowIndex) {
+      let el = null
+      if (this.$refs[`col${index}`]) {
+        el = this.$refs[`col${index}`].find((item, ind) => ind === rowIndex)
+        if (el) {
+          let colHeight = el.offsetHeight
+          let lineHeight = parseInt(el.style.lineHeight)
+          let lines = colHeight / lineHeight
+          if (lines && lines > 1) {
+            return `font-size: ${(12-lines)}px;`
+          }
+        }
+      }
+    
+    }
   },
 }
 </script>
@@ -326,5 +359,16 @@ export default {
   .table-font-size {
     font-size: 100vb;
     max-height: 50px;
+  }
+  .dropdown, .dropdown-up {
+    z-index: 1;
+    width: 100%;
+    padding-top: 26px;
+  }
+  .dropdown {
+    top: 0;
+  }
+  .dropdown-up {
+    bottom: 0;
   }
 </style>

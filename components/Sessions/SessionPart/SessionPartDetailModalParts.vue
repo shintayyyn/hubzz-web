@@ -22,7 +22,7 @@
       <template v-slot:complete="slotProps">
         <button
           v-if="slotProps.item.status === 'Ongoing'"
-          class="text-white px-3 py-2 rounded-lg transition-hover focus:outline-none"
+          class="text-white px-3 py-1 rounded-lg text-xs transition-hover focus:outline-none"
           :class="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? 'bg-green-500 hover:bg-green-600 ' : 'cursor-not-allowed bg-gray-400'"
           @click="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? [completeJobPart=true, job_part = slotProps.item] : ''"
         >
@@ -32,7 +32,7 @@
       <template v-slot:terminate="slotProps">
         <button
           v-if="slotProps.item.status === 'Ongoing' "
-          class="text-white px-3 py-2 rounded-lg transition-hover focus:outline-none"
+          class="text-white px-3 py-1 rounded-lg text-xs transition-hover focus:outline-none"
           :class="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Cancel Sessions Job')) ? 'bg-red-500 hover:bg-red-600 ' : 'cursor-not-allowed bg-gray-400'"
           @click="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Cancel Sessions Job')) ? [terminateJobPart=true, job_part = slotProps.item] : ''"
         >
@@ -178,6 +178,7 @@ export default {
             slotName: "complete",
             dataIndex: "",
             class: "text-center",
+            width: 100
           },
           {
             name: "",
@@ -185,6 +186,7 @@ export default {
             slotName: "terminate",
             dataIndex: "",
             class: "text-center",
+            width: 100
           }
         )
       }
