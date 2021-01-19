@@ -342,7 +342,7 @@ export default {
       // app table params
       viewing_locum_user_id: null,
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_number: "",
       job_part_number: "",
@@ -760,7 +760,7 @@ export default {
             {
               params: {
                 offset: 0,
-                limit: 5,
+                limit: 15,
                 locum_status,
                 order_by: [],
                 job_number: !isJobPart ? job_number : "",
@@ -972,7 +972,7 @@ export default {
           {
             params: {
               offset: 0,
-              limit: 5,
+              limit: 15,
               locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
@@ -1299,7 +1299,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       await this.getJobsPromiseAll()
       this.initialLoading = false
@@ -1366,7 +1366,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobsPromiseAll()
@@ -1425,7 +1425,7 @@ export default {
     },
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_number = ""
       this.job_part_number = ""
