@@ -90,38 +90,37 @@
             @sorted="sorted"
           >
             <template v-slot:actions="slotProps">
-              <div class="flex flex-row flex-wrap justify-center">
+              <div class="flex flex-col bg-white border rounded border-gray-500">
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="my-1 p-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/private-invoices/${slotProps.item.id}/create`, query: {...$route.query }})"
                 >
                   Generate Invoice
                 </div>
 
-                <div
+                <template
                   v-if="
                     $route.query.status
                       && $route.query.status === 'issued'
                       && slotProps.item.locum_invoice_id
                       && slotProps.item.locum_status === 'Approved'
                   "
-                  class="flex justify-between my-1"
                 >
                   <div
-                    class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                    class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                     @click="$router.push({ name: `locum-billing-private-invoices-id-edit`, params: { id: slotProps.item.locum_invoice_id }, query: {...$route.query }})"
                   >
                     Edit
                   </div>
 
                   <button
-                    class="mx-1 p-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
+                    class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
                   >
                     Delete
                   </button>
-                </div>
+                </template>
 
                 <button
                   v-if="
@@ -131,7 +130,7 @@
                       && slotProps.item.locum_status === 'Approved'
                       && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
                   "
-                  class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
                 >
                   Mark as Paid
@@ -149,7 +148,7 @@
                       !slotProps.item.locum_form_a_id
                         && !slotProps.item.locum_solo_form_id
                     "
-                    class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
+                    class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                     @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
                   >
                     Generate Form A
@@ -160,7 +159,7 @@
                       !slotProps.item.locum_form_a_id
                         && !slotProps.item.locum_solo_form_id
                     "
-                    class="my-1 p-1 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
+                    class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                     @click="select_invoice(slotProps.item.locum_invoice_id, 'generateSoloForm')"
                   >
                     Generate Solo Form
@@ -173,7 +172,7 @@
                       && $route.query.status === 'solo-form'
                       && slotProps.item.locum_solo_form_id
                   "
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
                 >
                   View Solo Form
@@ -186,7 +185,7 @@
                       && slotProps.item.locum_solo_form_id
                       && !slotProps.item.locum_solo_form_paid
                   "
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="locumSoloFormIdToPay = slotProps.item.locum_solo_form_id"
                 >
                   Mark as Paid
@@ -198,7 +197,7 @@
                       && $route.query.status === 'pension-form-a'
                       && slotProps.item.locum_form_a_id
                   "
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                 >
                   View Form A
@@ -211,7 +210,7 @@
                       && slotProps.item.locum_form_a_id
                       && !slotProps.item.locum_form_a_paid
                   "
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="locumFormAIdToPay = slotProps.item.locum_form_a_id"
                 >
                   Mark as Paid
@@ -460,7 +459,7 @@ export default {
       current_page: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
 
       form: {
@@ -526,16 +525,19 @@ export default {
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
+          width: 130
         },
         {
           name: "Job Number",
           dataIndex: "job_part_number",
+          width: 130
         },
         {
           name: "£ Amount",
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
+          width: 130
         }
       )
       if (["issued", "pension-form-a",].includes(queryStatus)) {
@@ -543,12 +545,15 @@ export default {
           name: "Paid",
           dataIndex: "paid",
           class: "text-center",
+          width: 100
         })
       }
       columns.push({
         name: "Actions",
         dataIndex: "actions",
-        class: "text-center",
+        class: ['issued', 'pension-form-a', 'solo-form'].includes(queryStatus) ? 'dropdown' : "text-center",
+        initialDropdown: queryStatus === 'pension-form-a' ? 'View Form A' : queryStatus === 'solo-form' ? 'View Solo Form' : 'Edit',
+        width: 120
       })
       return columns
     },
@@ -669,7 +674,7 @@ export default {
               job_type: "Private",
               type: "Private",
               offset: 0,
-              limit: 5,
+              limit: 15,
             },
           })
           .then(res => {
@@ -927,7 +932,7 @@ export default {
             job_type: "Private",
             type: "Private",
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ])
