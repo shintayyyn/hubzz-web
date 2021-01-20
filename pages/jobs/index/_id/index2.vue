@@ -9,9 +9,8 @@
       @appointmentUpdated="$emit('appointmentUpdated')"
     />
 
-    <LocumUserJobView
+    <JobDetailModal
       v-if="job && job.type === 'Platform'"
-      :jobId="parseInt($route.params.id, 10)"
       :job="job"
       @close="close"
       @applied="$emit('applied', $event)"
@@ -23,7 +22,7 @@
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
-import LocumUserJobView from "@/components/Jobs/LocumUserJobView"
+import JobDetailModal from "@/components/Jobs/JobDetailModal"
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
 export default {
@@ -34,7 +33,7 @@ export default {
 
   components: {
     AppLoading,
-    LocumUserJobView,
+    JobDetailModal,
     JobDetailModalAppointment,
   },
 
@@ -65,7 +64,7 @@ export default {
 
   methods: {
     getLocumJob () {
-      return this.$axios.get(`/api/v2/locum/locum-user-jobs/${this.$route.params.id}`).then((response) => {
+      return this.$axios.get(`/api/v1/locum/jobs/${this.$route.params.id}`).then((response) => {
         this.job = response.data.data.job
       }).catch((err) => {
         console.log('err', err.response || err)

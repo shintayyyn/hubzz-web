@@ -59,11 +59,11 @@
                 </p>
 
                 <p class="lg:w-1/6 lg:text-center">
-                  {{ sched.shift.name }}
+                  {{ sched.shift_name }}
                 </p>
 
                 <p class="lg:w-2/6 lg:text-center">
-                  £{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}
+                  £{{ sched.rate }} {{ sched.rate_type_name }}
                 </p>
               </div>
             </div>
@@ -93,7 +93,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job.schedules.map(schedule => schedule.original_hours_in_minutes).reduce((acc, cur) => acc + cur) | hoursMinutes }}
+          {{ job.total_original_hours_in_minutes | hoursMinutes }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -117,7 +117,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job.practice.phone_number ? job.practice.phone_number : '(none)' }}
+          {{ job && job.practice_phone_number ? job.practice_phone_number : '(none)' }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
@@ -229,7 +229,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job.profession.name }}
+          {{ job.profession_name }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">

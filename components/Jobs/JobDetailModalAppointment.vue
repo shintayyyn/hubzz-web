@@ -428,8 +428,8 @@ export default {
       this.form.time_start = this.job.time_start
       this.form.date_end = this.job.date_end
       this.form.time_end = this.job.time_end
-      this.form.shift_id = this.job.shift.id
-      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
+      this.form.shift_id = this.job.shift_id
+      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type_id
       this.form.rate = this.job.rate
       // this.form.total_hours = this.job && this.job.total_hours ? this.job.total_hours.toFixed(2) : 0
       this.form.description = this.job.description
