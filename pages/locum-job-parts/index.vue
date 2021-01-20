@@ -279,8 +279,6 @@ export default {
 
   computed: {
     getRequestQueryFilters () {
-      let queryStatus = this.$route.query.status
-
       return {
         locum_job_part_status: this.$route.query.status || 'Allocated',
         shift_id_includes: this.job_shift_id,
@@ -295,7 +293,7 @@ export default {
         locum_invoice_status: this.invoice_status,
         title_includes: this.job_title_includes,
         job_part_number_includes: this.job_part_number_includes,
-        type: queryStatus === "Private"
+        type: this.$route.query.status === "Private"
           ? "Private"
           : "Platform",
       }
