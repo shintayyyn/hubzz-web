@@ -5,7 +5,7 @@
       <div
         v-if="!loading"
         class="relative flex flex-col overflow-x-auto w-full mt-4"
-        :style=" `min-height: ${minHeight ? minHeight : '70vh'}`"
+        :style="`min-height: ${minHeight ? minHeight : '60vh'}`"
       >
         <div
           :style="`min-width: ${customWidth}px`"
@@ -46,8 +46,8 @@
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
-              class="flex justify-start items-center text-xs py-2 border-l border-r"
-              :class="[routerLink ? 'stripe-hover' : 'cursor-default', rowIndex % 2 === 0 ? 'stripe-gray':'bg-white', rowIndex === items.length-1 ? 'border-b' : '']"
+              class="flex justify-start items-center text-xs py-2 border-l border-r stripe-hover"
+              :class="[routerLink ? 'cursor-pointer ' : 'cursor-default', rowIndex % 2 === 0 ? 'stripe-gray':'bg-white', rowIndex === items.length-1 ? 'border-b' : '']"
             >
               <div
                 v-for="(column, index) in columns"
@@ -58,7 +58,7 @@
                     column.class.includes('text-center') &&
                     'text-center'
                 "
-                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}; ${countLines(index, column.width, rowIndex)}`"
+                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}; ${column.dataIndex === 'actions' ? '' : countLines(index, column.width, rowIndex)}`"
                 :ref="`col${index}`"
                 style="line-height:20px; "
               >
@@ -73,15 +73,26 @@
                   </template>
                   <template v-if="column.dataIndex === 'actions'">
                     <template v-if="column.class.includes('dropdown')">
-                      <div class="relative" @click="dropdownIndex===rowIndex ? dropdownIndex=null : dropdownIndex=rowIndex">
-                        <div class="cursor-pointer border-2 rounded flex items-center justify-between px-4 text-xs">
-                          <span>Dropdown</span>
-                          <span><svgicon name="caret-down" width="10" /></span>
-                        </div>
-                        <div class="absolute bottom-0 dropdown bg-blue-500"
-                          :class="rowIndex === items.length-1 ? 'dropdown-up' : ''"
-                         v-if="dropdownIndex !== null && dropdownIndex===rowIndex">
-                            <slot name="actions" :item="item" @click="$emit('click', item)" />
+                      <div class="relative" @click="dropdownIndex===rowIndex ? dropdownIndex=null : dropdownIndex=rowIndex" >
+                        <div class="flex items-center w-full">
+                          <div class="flex flex-col relative w-full" >
+                            <div class="cursor-pointer rounded flex items-center justify-between px-2 text-xs border border-gray-500 bg-white"
+                              :class="dropdownIndex !== null && dropdownIndex===rowIndex ? 'bg-white' : ''">
+                                <span>{{ column.initialDropdown ? column.initialDropdown : 'Select Action' }}</span>
+                                <span v-if="dropdownIndex!==rowIndex"><svgicon name="caret-down" width="8" /></span>
+                              </div>
+                              <div class="absolute bottom-0 "
+                              :class="items.length > 1 && rowIndex === items.length-1 ? 'dropdown-up' :'dropdown'"
+                                v-if="dropdownIndex !== null && dropdownIndex===rowIndex">
+                                  <slot name="actions" :item="item" @click="$emit('click', item)"/>
+                              </div>
+                          </div>
+                          <span 
+                              v-if="dropdownIndex !== null && dropdownIndex===rowIndex"
+                              class="p-1 bg-orange-400 ml-1 rounded"
+                            >
+                            <svgicon name="left-arrow" style="transform:rotate(180deg)" width="8" />
+                            </span>
                         </div>
                       </div>
                     </template>
@@ -132,7 +143,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!loading && total > 5" class="bottom-0 w-full">
+    <div v-if="!loading && total > perPage" class="w-full">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -336,12 +347,13 @@ export default {
           let lineHeight = parseInt(el.style.lineHeight)
           let lines = colHeight / lineHeight
           if (lines && lines > 1) {
+          console.log(index, " lines: ", lines)
             return `font-size: ${(12-lines)}px;`
           }
         }
       }
     
-    }
+    },
   },
 }
 </script>
@@ -354,7 +366,7 @@ export default {
     background-color: #f8f8f8;
   }
   .stripe-hover:hover {
-    background-color: #eee;
+    background-color: #fee8c7;
   }
   .table-font-size {
     font-size: 100vb;
@@ -363,7 +375,7 @@ export default {
   .dropdown, .dropdown-up {
     z-index: 1;
     width: 100%;
-    padding-top: 26px;
+    /* margin-top: -4px; */
   }
   .dropdown {
     top: 0;

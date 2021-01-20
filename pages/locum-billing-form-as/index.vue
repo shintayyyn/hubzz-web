@@ -168,9 +168,9 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-wrap justify-center">
+            <div class="flex flex-col bg-white border rounded border-gray-500">
               <div
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="viewLocumFormA(slotProps.item.id)"
               >
                 View Form A
@@ -178,7 +178,7 @@
 
               <div
                 v-if="!slotProps.item.locum_electronic_signature"
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="setLocumFormAIdToSign(slotProps.item.id)"
               >
                 E-sign Form
@@ -186,7 +186,7 @@
 
               <div
                 v-if="!slotProps.item.sent_to_practice"
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="locumInvoiceIdToSend = slotProps.item.locum_invoice_id"
               >
                 Send Form to Practice
@@ -194,7 +194,7 @@
 
               <div
                 v-if="slotProps.item.sent_to_practice && !slotProps.item.paid"
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click.stop.prevent="form.paid_at = null, locumFormAIdToPay = slotProps.item.id"
               >
                 Mark as Paid
@@ -366,7 +366,7 @@ export default {
       currentPage: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
 
       ir35: null,
@@ -405,6 +405,7 @@ export default {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
+          width: 130
         },
         {
           name: "Job Title",
@@ -416,6 +417,7 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
+          width: 130
         },
         // {
         //   name: 'OOH',
@@ -433,22 +435,27 @@ export default {
           name: "Paid By Practice At",
           dataIndex: "paid_by_practice_at_formatted",
           class: "text-center",
+          width: 130
         },
         {
           name: "Paid By Locum At",
           dataIndex: "paid_at_formatted",
           class: "text-center",
+          width: 130
         },
         {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         },
         {
           name: "Actions",
           dataIndex: "actions",
-          class: "text-center",
+          class: "dropdown",
+          initialDropdown: 'View Form A',
+          width: 170
         },
       ]
     },
@@ -605,7 +612,7 @@ export default {
             locum_invoice_number_includes: this.locumInvoiceNumberIncludes,
             job_part_number_includes: this.jobPartNumberIncludes,
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ]).then(([responseTotal, response,]) => {
@@ -617,7 +624,7 @@ export default {
     async filterJobParts () {
       this.currentPage = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobPartsPromiseAll()
@@ -653,7 +660,7 @@ export default {
       this.loading = true
       this.currentPage = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       await this.getJobPartsPromiseAll()
       this.loading = false
       this.showRefresh = false
@@ -843,7 +850,7 @@ export default {
 
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.ir35 = null
       this.paid = null

@@ -102,7 +102,7 @@ export default {
       current_page: 1,
       practices: [],
       total: 0,
-      perPage: 5,
+      perPage: 12,
     }
   },
 

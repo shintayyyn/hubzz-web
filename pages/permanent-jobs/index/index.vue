@@ -204,12 +204,7 @@
 
           <template v-slot:status_slot="slotProps">
             <div class="flex items-center justify-center">
-              <div
-                class="rounded-full text-sm px-2 w-full py-2"
-                :class="statusStyle(slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status)"
-              >
-                {{ slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status }}
-              </div>
+              {{ slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status }}
             </div>
           </template>
 
@@ -227,12 +222,7 @@
 
           <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
-              <div
-                class="rounded-full text-sm px-2 w-full py-2 text-black leading-tight"
-                :class="jobClosingTag(slotProps.item) === 'Rejected' ? 'bg-red-500 text-white' : 'bg-yellow-400'"
-              >
-                {{ jobClosingTag(slotProps.item) }}
-              </div>
+              {{ jobClosingTag(slotProps.item) }} 
             </div>
           </template>
         </AppTable>
@@ -793,6 +783,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
+          width: 100
         },
       ]
 
@@ -803,6 +794,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
+            width: 140
           },
           {
             name: "Status",
@@ -810,6 +802,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
+          width: 100
           },
           {
             name: "Closing Tag",
@@ -817,6 +810,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
+            width: 130
           },
         ]
       }
