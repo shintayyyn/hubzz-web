@@ -216,7 +216,7 @@ export default {
   computed: {
     isReadyToApply () {
       let isComplete = true
-      this.job.platform_job.compliance_documents
+      this.job.compliance_documents
         .map(item => item.id)
         .forEach(id => {
           if (!this.userCompliance.includes(id)) {
