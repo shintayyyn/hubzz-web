@@ -14,12 +14,12 @@
         </button>
       </div>
 
-      <div class="w-full flex flex-row justify-start overflow-x-auto mt-4">
+      <div class="w-full flex flex-row justify-start overflow-x-auto mt-4 border-b border-sunglow">
         <nuxt-link
           :to="{ path: `/my-banks/${$route.params.locumId}`, query: { ...$route.query }}"
           :event="$route.name === 'my-banks-index-locumId-index' ? '':'click'"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'my-banks-index-locumId-index' || $route.name === `my-banks-index-locumId-index-profile` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          class="mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          :class="$route.name === 'my-banks-index-locumId-index' || $route.name === `my-banks-index-locumId-index-profile` ? 'border-b-4 border-sunglow' : 'text-gray-600'"
         >
           Profile
         </nuxt-link>
@@ -27,8 +27,8 @@
         <nuxt-link
           :to="{ path: `/my-banks/${$route.params.locumId}/related-jobs`, query: { ...$route.query }}"
           :event="$route.name.includes(`my-banks-index-locumId-index-related-jobs`) ? '':'click'"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name.includes(`my-banks-index-locumId-index-related-jobs`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          class="mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          :class="$route.name.includes(`my-banks-index-locumId-index-related-jobs`) ? 'border-b-4 border-sunglow' : 'text-gray-600'"
         >
           Related Jobs
         </nuxt-link>
@@ -42,7 +42,7 @@
 
       <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
 
-      <div class="w-full mt-5">
+      <div class="w-full">
         <nuxt-child />
       </div>
     </div>

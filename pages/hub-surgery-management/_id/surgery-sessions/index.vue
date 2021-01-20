@@ -7,7 +7,7 @@
 
       <div v-if="!initialLoading">
         <AppTable
-          v-if="jobs.length > 0"
+          v-if="jobs && jobs.length > 0"
           :total="total"
           :items="jobs"
           :currentPage="current_page"
@@ -38,14 +38,14 @@
         </AppTable>
 
         <div
-          v-if="!jobs.length && !loading && !isFiltered"
+          v-if="(jobs && !jobs.length) && !loading && !isFiltered"
           class="flex justify-center py-4"
         >
           {{ noJobsToDisplay }}
         </div>
 
         <div
-          v-if="!jobs.length && !loading && isFiltered"
+          v-if="(jobs && !jobs.length) && !loading && isFiltered"
           class="flex justify-center py-4"
         >
           No Jobs Found
@@ -109,7 +109,7 @@ export default {
       current_page: 1,
       // app table params
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_number: "",
       job_part_number: "",
@@ -193,6 +193,7 @@ export default {
             name: "Job Part Number",
             dataIndex: "job_part_number",
             sortable: true,
+            width: 150
           },
           {
             name: "Practice",
@@ -211,18 +212,21 @@ export default {
             dataIndex: "job_part_shift_names_formatted",
             class: "text-center",
             sortable: true,
+            width: 150
           },
           {
             name: "Rates",
             dataIndex: "job_part_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
+            width: 120
           },
           {
             name: "Rate Types",
             dataIndex: "job_part_rate_type_names_formatted",
             class: "text-center",
             sortable: true,
+            width: 150
           },
         )
       } else {
@@ -231,6 +235,7 @@ export default {
             name: "Job Number",
             dataIndex: "job_number",
             sortable: true,
+            width: 150
           },
           {
             name: "Practice",
@@ -249,18 +254,21 @@ export default {
             dataIndex: "job_shift_names_formatted",
             class: "text-center",
             sortable: true,
+            width: 150
           },
           {
             name: "Rates",
             dataIndex: "job_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
+            width: 120
           },
           {
             name: "Rate Types",
             dataIndex: "job_rate_type_names_formatted",
             class: "text-center",
             sortable: true,
+            width: 150
           },
         )
       }
@@ -271,12 +279,14 @@ export default {
           dataIndex: "date_start",
           sortable: true,
           class: "text-center",
+          width: 100
         },
         {
           name: "To",
           dataIndex: "date_end",
           sortable: true,
           class: "text-center",
+          width: 100
         }
       )
 
@@ -294,6 +304,7 @@ export default {
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
           class: "text-center",
+          width: 150
         })
       }
 
@@ -302,6 +313,7 @@ export default {
           name: "Cancelled At",
           dataIndex: "cancelled_at_in_gb_formatted",
           class: "text-center",
+          width: 150
         })
       }
 
@@ -310,6 +322,7 @@ export default {
           name: "Completed At",
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
+          width: 150
         })
       }
 
@@ -318,6 +331,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
+          width: 150
         })
       }
 
@@ -337,6 +351,7 @@ export default {
             name: "Tag",
             dataIndex: "status",
             class: "text-center",
+            width: 100
           }
         )
       }
@@ -472,7 +487,7 @@ export default {
             ...this.params,
             order_by: [],
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }).then(response => this.isJobPart ? response.data.data.job_parts : response.data.data.jobs),
       ]).then(([jobOrJobPartCount, jobOrJobParts,]) => {
@@ -505,7 +520,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       await this.getJobsPromiseAll()
       this.initialLoading = false

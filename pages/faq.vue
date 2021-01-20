@@ -1,15 +1,13 @@
 <template>
   <section>
-    <div class="lg:px-6">
-      <div class="flex flex-no-wrap justify-start">
-        <div
-          class="p-3 text-sm font-bold border rounded-lg border-yellow-500 bg-yellow-500"
-        >
-          Frequently asked questions
-        </div>
+    <div class="flex flex-no-wrap justify-start border-b border-sunglow">
+      <div
+        class="px-3 py-2 text-sm font-bold border-b-4 border-sunglow"
+      >
+        Frequently asked questions
       </div>
     </div>
-    <div class="lg:px-6 mt-2 md:mt-5">
+    <div class="mt-2 md:mt-5">
       <div class="bg-white rounded-lg shadow-lg md:pt-10 px-5 py-5 mb-10">
         <div class="font-bold text-xl">
           FAQs

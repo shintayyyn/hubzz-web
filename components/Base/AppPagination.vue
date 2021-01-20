@@ -1,6 +1,6 @@
 <template>
   <div class="w-full pagination flex flex-col">
-    <div class="w-full flex flex-wrap justify-between py-2 text-sm md:px-4">
+    <div class="w-full flex flex-wrap justify-between py-2 text-sm">
       <div class="text-gray-500">
         <div>{{ pageInfo(perPage, currentPage, total) }}</div>
       </div>
@@ -38,7 +38,7 @@
       </div>
     </div>
     <div v-if="totalPages > 1" class="flex flex-col justify-center items-center py-2">
-      <div class="flex">
+      <!-- <div class="flex items-center">
         <div v-for="page in pages" :key="page.name" class="md:hidden pagination-item m-1">
           <button
             type="button"
@@ -50,10 +50,10 @@
             {{ page.name }}
           </button>
         </div>
-      </div>
+      </div> -->
 
-      <div class="flex">
-        <div class="pagination-item m-1">
+      <div class="flex items-center">
+        <!-- <div class="pagination-item m-1">
           <button
             type="button"
             class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
@@ -68,10 +68,18 @@
               </svg>
             </span>
           </button>
-        </div>
+        </div> -->
 
         <div class="pagination-item m-1">
-          <button
+          <button 
+            type="button"
+            :disabled="loading || isInFirstPage"
+            :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
+            @click="onClickPreviousPage"
+          >
+            <svgicon name="caret-down" width="12" height="12" class="fill-current" style="transform: rotate(90deg)" />
+          </button>
+          <!-- <button
             type="button"
             class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
@@ -84,11 +92,20 @@
                 <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" />
               </svg>
             </span>
-          </button>
+          </button> -->
         </div>
 
-        <div v-for="page in pages" :key="page.name" class="hidden md:block pagination-item m-1">
+        <div v-for="page in pages" :key="page.name" class="pagination-item m-1">
           <button
+            type="button"
+            class="text-gray-700 font-bold text-xs md:text-sm py-2 px-1 mx-1 focus:outline-none"
+            :disabled="loading || page.isDisabled"
+            :class="{ active: isPageActive(page.name) }"
+            @click="onClickPage(page.name)"
+          >
+            {{ page.name }}
+          </button>
+          <!-- <button
             type="button"
             class="rounded-lg page-button py-2 px-3 md:px-4 font-bold text-xs md:text-sm focus:outline-none"
             :disabled="loading || page.isDisabled"
@@ -96,11 +113,19 @@
             @click="onClickPage(page.name)"
           >
             {{ page.name }}
-          </button>
+          </button> -->
         </div>
 
         <div class="pagination-item next m-1">
-          <button
+          <button 
+            type="button"
+            :disabled="loading || isInLastPage"
+            :class="{ 'text-gray-500 cursor-not-allowed': isInLastPage }"
+            @click="onClickNextPage"
+          >
+            <svgicon name="caret-down" width="12" height="12" class="fill-current" style="transform: rotate(-90deg)" />
+          </button>
+          <!-- <button
             type="button"
             class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             :class="{ 'text-gray-500 cursor-not-allowed': isInLastPage }"
@@ -113,9 +138,9 @@
                 <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
               </svg>
             </span>
-          </button>
+          </button> -->
         </div>
-
+        <!-- 
         <div class="pagination-item m-1">
           <button
             type="button"
@@ -131,7 +156,7 @@
               </svg>
             </span>
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -164,7 +189,7 @@ export default {
     perPage: {
       type: Number,
       required: false,
-      default: 5,
+      default: 15,
     },
   },
   data () {
@@ -278,9 +303,10 @@ button:disabled svg {
 	background: linear-gradient(to top, #f2d024, #efde86);
 }
 .active {
-	background: linear-gradient(to top, #dbb013, #ecc94b);
-	color: #000;
-	box-shadow: 0 3px 5px #333;
+	/* background: linear-gradient(to top, #dbb013, #ecc94b); */
+	/* color: #000; */
+  border-bottom: 2px solid #999999;
+	/* box-shadow: 0 3px 5px #333; */
 }
 
 /* button:active {
@@ -293,7 +319,7 @@ button:active :not(button:disabled) {
 }
 button:disabled,
 button:disabled svg {
-	background: #e2e2e2;
+	/* background: #e2e2e2; */
 	color: #999999;
 	cursor: not-allowed;
 	fill: #999999;

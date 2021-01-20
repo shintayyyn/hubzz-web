@@ -31,12 +31,14 @@
             class="mr-2"
             :label="'Filter'"
             :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+            customTheme="border-2"
             @click="filterModal = !filterModal"
           />
           <AppButton
             v-if="showRefresh"
             :label="'Refresh'"
             :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+            customTheme="border-2"
             @click="refreshJobs"
           />
         </div>
@@ -340,7 +342,7 @@ export default {
       // app table params
       viewing_locum_user_id: null,
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_number: "",
       job_part_number: "",
@@ -435,9 +437,10 @@ export default {
       ) {
         columns.push(
           {
-            name: "Job Part Number",
+            name: "Job Part No.",
             dataIndex: "job_part_number",
             sortable: true,
+            width: 150,
           },
           {
             name: "Practice",
@@ -456,18 +459,21 @@ export default {
             dataIndex: "job.shift.name",
             class: "text-center",
             sortable: true,
+            width: 150
           },
           {
             name: "Rate",
             dataIndex: "job.rate",
             class: "text-center",
             sortable: true,
+            width: 120
           },
           {
-            name: "per",
+            name: "Rate Type",
             dataIndex: "job.locum_detail_rate_type.name",
             class: "text-center",
             sortable: true,
+            width: 150
           }
         )
       } else if (
@@ -484,6 +490,7 @@ export default {
             name: "Job Number",
             dataIndex: "job_number",
             sortable: true,
+            width: 150
           },
           {
             name: "Practice",
@@ -502,18 +509,21 @@ export default {
             dataIndex: "shift_name",
             class: "text-center",
             sortable: true,
+            width: 150
           },
           {
             name: "Rate",
             dataIndex: "rate",
             class: "text-center",
             sortable: true,
+            width: 120
           },
           {
-            name: "per",
+            name: "Rate Type",
             dataIndex: "rate_type_name",
             class: "text-center",
             sortable: true,
+            width: 150
           }
         )
       }
@@ -523,12 +533,14 @@ export default {
           dataIndex: "date_start",
           sortable: true,
           class: "text-center",
+            width: 100
         },
         {
           name: "To",
           dataIndex: "date_end",
           sortable: true,
           class: "text-center",
+            width: 100
         }
       )
       if (queryStatus === "allocated") {
@@ -543,6 +555,7 @@ export default {
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
           class: "text-center",
+            width: 150
         })
       }
       if (queryStatus === "cancelled") {
@@ -550,6 +563,7 @@ export default {
           name: "Cancelled At",
           dataIndex: "cancelled_at_in_gb_formatted",
           class: "text-center",
+            width: 150
         })
       }
       if (["completed",].includes(queryStatus)) {
@@ -557,6 +571,7 @@ export default {
           name: "Completed At",
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
+            width: 150
         })
       }
       if (["approved",].includes(queryStatus)) {
@@ -564,6 +579,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
+            width: 150
         })
       }
 
@@ -573,6 +589,7 @@ export default {
             name: "Invoice status",
             dataIndex: "invoice_status",
             class: "text-center",
+            width: 120
           },
         )
       }
@@ -583,6 +600,7 @@ export default {
             name: "Tag",
             dataIndex: "status",
             class: "text-center",
+            width: 100
           }
         )
       }
@@ -742,7 +760,7 @@ export default {
             {
               params: {
                 offset: 0,
-                limit: 5,
+                limit: 15,
                 locum_status,
                 order_by: [],
                 job_number: !isJobPart ? job_number : "",
@@ -954,7 +972,7 @@ export default {
           {
             params: {
               offset: 0,
-              limit: 5,
+              limit: 15,
               locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
@@ -1281,7 +1299,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       await this.getJobsPromiseAll()
       this.initialLoading = false
@@ -1348,7 +1366,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobsPromiseAll()
@@ -1407,7 +1425,7 @@ export default {
     },
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_number = ""
       this.job_part_number = ""

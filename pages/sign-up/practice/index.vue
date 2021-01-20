@@ -7,56 +7,55 @@
           <nuxt-link to="/sign-up" class="focus:outline-none text-black">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
-          <div class="mt-1 text-xl font-bold">Sign up for a Practice</div>
+          <div class="mt-1 text-xl font-bold">
+            Sign up for a Practice
+          </div>
         </div>
       </div>
 
       <transition name="fade" mode="out-in">
-        <component :is="activeTab" @nextTab="activeTab = $event"></component>
+        <component :is="activeTab" @nextTab="activeTab = $event" />
       </transition>
     </div>
   </div>
 </template>
 
 <script>
-import ProgressBar from "~/components/SignUp/ProgressBar";
-import PracticeDetails from "~/components/SignUp/SignUpPractice/PracticeDetails";
-import PracticeSurgeryDetails from "~/components/SignUp/SignUpPractice/PracticeSurgeryDetails";
-import PracticeAccountDetails from "~/components/SignUp/SignUpPractice/PracticeAccountDetails";
+import ProgressBar from "~/components/SignUp/ProgressBar"
+import PracticeDetails from "~/components/SignUp/SignUpPractice/PracticeDetails"
+import PracticeSurgeryDetails from "~/components/SignUp/SignUpPractice/PracticeSurgeryDetails"
+import PracticeAccountDetails from "~/components/SignUp/SignUpPractice/PracticeAccountDetails"
 export default {
   layout: "auth",
   components: {
     ProgressBar,
     PracticeDetails,
     PracticeSurgeryDetails,
-    PracticeAccountDetails
+    PracticeAccountDetails,
   },
-  data() {
+  data () {
     return {
-      activeTab: "PracticeDetails"
-    };
+      activeTab: "PracticeDetails",
+    }
   },
   computed: {
-    percentage() {
+    percentage () {
       switch (this.activeTab) {
-        case "PracticeDetails":
-          return 75;
-          break;
-        case "PracticeSurgeryDetails":
-          return 85;
-          break;
-        case "PracticeAccountDetails":
-          return 100;
-          break;
-        default:
-          return 0;
+      case "PracticeDetails":
+        return 75
+        break
+      case "PracticeSurgeryDetails":
+        return 85
+        break
+      case "PracticeAccountDetails":
+        return 100
+        break
+      default:
+        return 0
       }
-    }
-  }
-};
+    },
+  },
+}
 </script>
 <style scoped>
 </style>
-
-
-

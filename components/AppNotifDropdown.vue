@@ -1,6 +1,14 @@
 <template>
   <div>
-    <button
+    <AppButton
+      icon="notification"
+      :label="'Notification'"
+      class="notif-btn"
+      :customTheme="'border-2'"
+      :badge="unseenNotificationIds.length"
+      @click="showNotificationsDropdown = !showNotificationsDropdown"
+    />
+    <!-- <button
       class="relative button rounded-lg p-2 focus:outline-none cursor-pointer"
       @click="showNotificationsDropdown = !showNotificationsDropdown"
     >
@@ -12,7 +20,7 @@
       >
         {{ unseenNotificationIds.length }}
       </p>
-    </button>
+    </button> -->
 
     <transition name="drop-down">
       <div
@@ -162,10 +170,12 @@
 <script>
 import { mixin as clickaway, } from "vue-clickaway"
 import PopUpNotification from "@/components/Notifications/PopUpNotification"
+import AppButton from "@/components/Base/AppButton"
 
 export default {
   components: {
     PopUpNotification,
+    AppButton,
   },
   
   mixins: [clickaway,],
@@ -245,6 +255,8 @@ export default {
         "Practice Notification Reject Permanent Job Spoke",
         "Practice Notification Hub Created Permanent Job for Spoke",
         "Practice Notification Spoke Created Pending Permanent Job",
+        "Practice Notification Locum Accept Permanent Job Invitation",
+        "Practice Notification Locum Reject Permanent Job Invitation",
 
         "Practice Notification Job Allocated",
         "Practice Notification Job Amended",
@@ -723,6 +735,8 @@ export default {
         "Practice Notification Reject Permanent Job Spoke",
         "Practice Notification Hub Created Permanent Job for Spoke",
         "Practice Notification Spoke Created Pending Permanent Job",
+        "Practice Notification Locum Accept Permanent Job Invitation",
+        "Practice Notification Locum Reject Permanent Job Invitation",
       ]
 
       const practiceJobNotifications = [
@@ -1198,6 +1212,33 @@ export default {
             },
           })
         }
+
+        if (
+          notificationTypeName
+            === "Practice Notification Locum Accept Permanent Job Invitation"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
+        }
+
+        if (
+          notificationTypeName
+            === "Practice Notification Locum Reject Permanent Job Invitation"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
+        }
+
         if (
           notificationTypeName
             === "Practice Notification Approve Permanent Job Spoke"
@@ -2137,6 +2178,13 @@ export default {
     }
   }
 
+  @media (min-width: 720px) {
+    .dropdown {
+      margin-left: 1%;
+      margin-right: 1%;
+    }
+  }
+
   .job-notification {
     position: fixed;
     bottom: 0;
@@ -2196,4 +2244,9 @@ export default {
     text-overflow: ellipsis;
     transition: all 0.3s linear;
   }
+  @media (min-width: 768px) {
+	.notif-btn {
+		min-width: 150px;
+	}
+}
 </style>

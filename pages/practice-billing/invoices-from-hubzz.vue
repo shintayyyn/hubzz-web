@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="flex flex-row justify-start overflow-x-auto pb-3">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-300 mb-4 pt-1">
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-hubzz'}"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'practice-billing-invoices-from-hubzz' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'practice-billing-invoices-from-hubzz' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         HUBZZ Invoices
       </nuxt-link>
@@ -16,7 +16,7 @@
               && practice.parent_practice_id 
               && practice.allow_surgery_bill_hubzz === true))"
         :to="{ path: '/practice-billing/invoices-from-hubzz/hubzz-billing-reports'}"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-hubzz-hubzz-billing-reports') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >
         HUBZZ Billing Reports

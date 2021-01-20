@@ -2,7 +2,7 @@
   <div>
     <AppLoading :loading="loading" spinner />
     <div v-if="!loading && practice && practice.tax_year_end_date">
-      <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
+      <div class="relative bg-white rounded-lg shadow-lg my-2 p-4 md:p-8 max-w-3xl">
         <AppFormError v-if="false && formError.length > 0" :formError="formError" />
         <div class="flex flex-wrap ">
           <div class="w-full">

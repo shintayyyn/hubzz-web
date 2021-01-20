@@ -48,7 +48,7 @@
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Practice</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice.name : '' }}</p>
+									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : '' }}</p>
 									<p class="font-bold">Salary</p>
 									<p class="pl-2 pb-3">
 										<template
@@ -78,7 +78,7 @@
 									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : '' }}</p>
 
 									<p class="font-bold">Role</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.professions.name : '' }}</p>
+									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.profession_name : '' }}</p>
 
 									<p class="font-bold">Hours</p>
 									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : '' }}</p>
@@ -113,6 +113,7 @@
 										</span>
 									</a>
 									<span
+										v-if="permanent_job.description_file.subtype === 'jpeg' || permanent_job.description_file.subtype === 'pdf'"
 										class="mx-2 hover:text-gray-800 cursor-pointer"
 										@click="viewFile={file: permanent_job.description_file}"
 									>
@@ -125,9 +126,8 @@
 
 							<div
 								v-if="
-                  
-                    $auth.user.practice_detail.practice.type === 'Hub' &&
-                    permanent_job.job_posting_status === 'Pending'"
+									$auth.user.practice_detail.practice.type === 'Hub' &&
+									permanent_job.job_posting_status === 'Pending'"
 								class="w-full mt-4"
 							>
 								<AppButton

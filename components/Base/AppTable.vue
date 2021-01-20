@@ -3,34 +3,36 @@
     <div class="relative">
       <AppLoading :loading="loading" spinner />
       <div
-        class="relative flex flex-col overflow-x-auto w-full px-2 mt-4"
-        :style="totalPages > 1 && `min-height: ${minHeight}`"
+        v-if="!loading"
+        class="relative flex flex-col overflow-x-auto w-full mt-4"
+        :style=" `min-height: ${minHeight ? minHeight : '70vh'}`"
       >
         <div
           :style="`min-width: ${customWidth}px`"
-          class="row flex justify-start font-bold leading-none text-sm"
+          class="row flex justify-start font-bold leading-none text-xs py-2 border-l border-r border-t"
         >
           <div
             v-for="(column, index) in columns"
             :key="`${column}-${index}`"
-            class="flex-1 flex items-center p-2"
+            class="flex-1 flex items-center"
             :class="[
               column.class &&
                 column.class.includes('text-center') &&
-                'justify-center',
+                'justify-center text-center',
               column.sortable && 'cursor-pointer'
             ]"
+            :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}`"
             @click="column.sortable && sort(column.dataIndex)"
           >
-            <span class="pr-1">{{ column.name }}</span>
+            <span class="px-2">{{ column.name }}</span>
             <svgicon v-if="column.sortable" :name="sortIcon(column.dataIndex)" height="12" width="12" />
           </div>
         </div>
         <div
-          v-for="item in items"
+          v-for="(item, rowIndex) in items"
           :key="item.id"
           :style="`${customWidth ? `min-width: ${customWidth}px` : ``}`"
-          class="row py-2"
+          class="row"
         >
           <nuxt-link
             :to="routerLink && {}.toString.call(routerLink) === '[object Function]'
@@ -44,18 +46,21 @@
             :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
-              class="flex justify-start shadow-md rounded-lg items-center py-3 bg-white"
-              :class="routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default'"
+              class="flex justify-start items-center text-xs py-2 border-l border-r"
+              :class="[routerLink ? 'stripe-hover' : 'cursor-default', rowIndex % 2 === 0 ? 'stripe-gray':'bg-white', rowIndex === items.length-1 ? 'border-b' : '']"
             >
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 px-2 break-word hyphens"
+                class="flex-1 px-1 break-word hyphens h-full"
                 :class="
                   column.class &&
                     column.class.includes('text-center') &&
                     'text-center'
                 "
+                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}; ${countLines(index, column.width, rowIndex)}`"
+                :ref="`col${index}`"
+                style="line-height:20px; "
               >
                 <template v-if="Array.isArray(dataCell(item, column))">
                   <div v-for="(item, index) in dataCell(item, column)" :key="`${item}-${index}`">
@@ -67,7 +72,20 @@
                     <slot :name="column.slotName" :item="item" @click="$emit(column.eventName, item)" />
                   </template>
                   <template v-if="column.dataIndex === 'actions'">
-                    <slot name="actions" :item="item" @click="$emit('click', item)" />
+                    <template v-if="column.class.includes('dropdown')">
+                      <div class="relative" @click="dropdownIndex===rowIndex ? dropdownIndex=null : dropdownIndex=rowIndex">
+                        <div class="cursor-pointer border-2 rounded flex items-center justify-between px-4 text-xs">
+                          <span>Dropdown</span>
+                          <span><svgicon name="caret-down" width="10" /></span>
+                        </div>
+                        <div class="absolute bottom-0 dropdown bg-blue-500"
+                          :class="rowIndex === items.length-1 ? 'dropdown-up' : ''"
+                         v-if="dropdownIndex !== null && dropdownIndex===rowIndex">
+                            <slot name="actions" :item="item" @click="$emit('click', item)" />
+                        </div>
+                      </div>
+                    </template>
+                    <slot v-else name="actions" :item="item" @click="$emit('click', item)" />
                   </template>
                   <template v-if="column.dataIndex === 'shared'">
                     <slot name="shared" :item="item" @click="$emit('click', item)" />
@@ -114,7 +132,7 @@
         </div>
       </div>
     </div>
-    <div v-if="total > 5" class="bottom-0 w-full">
+    <div v-if="!loading && total > 5" class="bottom-0 w-full">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -130,189 +148,227 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination"
 import AppLoading from "@/components/Base/AppLoading"
+import { isArray } from 'highcharts'
 export default {
-    components: {
-        AppLoading,
-        AppPagination
+  components: {
+    AppLoading,
+    AppPagination,
+  },
+  props: {
+    total: {
+      type: Number,
+      required: true,
     },
-    props: {
-        total: {
-            type: Number,
-            required: true
-        },
-        items: {
-            type: Array,
-            required: true
-        },
-        loading: {
-            type: Boolean,
-            default: false
-        },
-        currentPage: {
-            type: Number,
-            default: 1
-        },
-        perPage: {
-            type: Number,
-            default: 10
-        },
-        columns: {
-            type: Array,
-            required: true
-        },
-        orderBy: {
-            type: Array,
-            required: false
-        },
-        routerLink: {
-            type: [String, Function]
-        },
-        routerId: {
-            type: String
-        },
-        customWidth: {
-            type: Number
-        },
-        minHeight: {
-            type: String
-        }
+    items: {
+      type: Array,
+      required: true,
     },
-    data () {
-        return {
-            params: []
-            // totalPages: 0
-        }
+    loading: {
+      type: Boolean,
+      default: false,
     },
-    computed: {
-        totalPages () {
-            return Math.ceil(this.total / this.perPage)
-        }
+    currentPage: {
+      type: Number,
+      default: 1,
     },
-    mounted () {
-        this.params = this.orderBy
-        // this.totalPages = Math.ceil(this.total / this.perPage);
+    perPage: {
+      type: Number,
+      default: 15,
     },
-    methods: {
-        sort (dataIndex) {
-            if (!this.params.some(item => item.includes(`${dataIndex}`))) {
-                this.params = []
-                this.params.push(`${dataIndex}:desc`)
-            } else {
-                let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
-                if (index >= 0) {
-                    this.params.splice(index, 1, `${dataIndex}:asc`)
-                } else {
-                    this.params.splice(
-                        this.params.findIndex(item => item === `${dataIndex}:asc`),
-                        1
-                    )
-                }
-            }
-            this.$emit("sorted", this.params)
-        },
-        pagechanged (e) {
-            this.$emit("pagechanged", e)
-        },
-        limitchanged (limit) {
-            this.$emit("limitchanged", limit)
-        },
-        sortIcon (dataIndex) {
-            if (!this.params.some(item => item.includes(dataIndex))) {
-                return "sort"
-            } else {
-                let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
-                if (index >= 0) {
-                    return "sort-descend"
-                } else {
-                    return "sort-ascend"
-                }
-            }
-        },
-        dataCell (item, column) {
-            var dataIndexArr = column.dataIndex.split(".")
-            let str = null
-            if (Array.isArray(item[dataIndexArr[0]])) {
-                str = []
-                item[dataIndexArr[0]].forEach(item => {
-                    if (item[dataIndexArr[2]]) {
-                        str.push(item[dataIndexArr[1]][dataIndexArr[2]])
-                    } else {
-                        str.push(item[dataIndexArr[1]])
-                    }
-                })
-            } else {
-                str = ""
-                if (dataIndexArr.length === 1) {
-                    str = item[dataIndexArr[0]]
-                }
-                if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
-                    str = item[dataIndexArr[0]][dataIndexArr[1]]
-                }
-                if (
-                    dataIndexArr.length === 3 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]]
-                ) {
-                    str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
-                }
-                if (
-                    dataIndexArr.length === 4 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
-                ) {
-                    str =
-                        item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                            dataIndexArr[3]
-                        ]
-                }
-                if (
-                    dataIndexArr.length === 5 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                        dataIndexArr[3]
-                    ]
-                ) {
-                    str =
-                        item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                            dataIndexArr[3]
-                        ][dataIndexArr[4]]
-                }
-                if (
-                    dataIndexArr.length === 6 &&
-                    item[dataIndexArr[0]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                        dataIndexArr[3]
-                    ] &&
-                    item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                        dataIndexArr[3]
-                    ][dataIndexArr[4]]
-                ) {
-                    str =
-                        item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
-                            dataIndexArr[3]
-                        ][dataIndexArr[4]][dataIndexArr[5]]
-                }
-            }
-            if (str === false) {
-                str = "No"
-            }
-            if (str === true) {
-                str = "Yes"
-            }
-            if (str === null) {
-                str = "(none)"
-            }
-            return str
-        }
+    columns: {
+      type: Array,
+      required: true,
+    },
+    orderBy: {
+      type: Array,
+      required: false,
+    },
+    routerLink: {
+      type: [String, Function,],
+    },
+    routerId: {
+      type: String,
+    },
+    customWidth: {
+      type: Number,
+    },
+    minHeight: {
+      type: String,
+    },
+  },
+  data () {
+    return {
+      params: [],
+      dropdownIndex: null
+      // totalPages: 0
     }
+  },
+  computed: {
+    totalPages () {
+      return Math.ceil(this.total / this.perPage)
+    },
+  },
+  mounted () {
+    this.params = this.orderBy
+    // this.totalPages = Math.ceil(this.total / this.perPage);
+  },
+  methods: {
+    sort (dataIndex) {
+      if (!this.params.some(item => item.includes(`${dataIndex}`))) {
+        this.params = []
+        this.params.push(`${dataIndex}:desc`)
+      } else {
+        let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
+        if (index >= 0) {
+          this.params.splice(index, 1, `${dataIndex}:asc`)
+        } else {
+          this.params.splice(
+            this.params.findIndex(item => item === `${dataIndex}:asc`),
+            1
+          )
+        }
+      }
+      this.$emit("sorted", this.params)
+    },
+    pagechanged (e) {
+      this.$emit("pagechanged", e)
+    },
+    limitchanged (limit) {
+      this.$emit("limitchanged", limit)
+    },
+    sortIcon (dataIndex) {
+      if (!this.params.some(item => item.includes(dataIndex))) {
+        return "sort"
+      } else {
+        let index = this.params.findIndex(item => item === `${dataIndex}:desc`)
+        if (index >= 0) {
+          return "sort-descend"
+        } else {
+          return "sort-ascend"
+        }
+      }
+    },
+    dataCell (item, column) {
+      var dataIndexArr = column.dataIndex.split(".")
+      let str = null
+      if (Array.isArray(item[dataIndexArr[0]])) {
+        str = []
+        item[dataIndexArr[0]].forEach(item => {
+          if (item[dataIndexArr[2]]) {
+            str.push(item[dataIndexArr[1]][dataIndexArr[2]])
+          } else {
+            str.push(item[dataIndexArr[1]])
+          }
+        })
+      } else {
+        str = ""
+        if (dataIndexArr.length === 1) {
+          str = item[dataIndexArr[0]]
+        }
+        if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
+          str = item[dataIndexArr[0]][dataIndexArr[1]]
+        }
+        if (
+          dataIndexArr.length === 3
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+        ) {
+          str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
+        }
+        if (
+          dataIndexArr.length === 4
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
+        ) {
+          str
+                        = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ]
+        }
+        if (
+          dataIndexArr.length === 5
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+                      dataIndexArr[3]
+                    ]
+        ) {
+          str
+                        = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]]
+        }
+        if (
+          dataIndexArr.length === 6
+                    && item[dataIndexArr[0]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+                      dataIndexArr[3]
+                    ]
+                    && item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+                      dataIndexArr[3]
+                    ][dataIndexArr[4]]
+        ) {
+          str
+                        = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]][dataIndexArr[5]]
+        }
+      }
+      if (str === false) {
+        str = "No"
+      }
+      if (str === true) {
+        str = "Yes"
+      }
+      if (str === null) {
+        str = "(none)"
+      }
+      return str
+    },
+    countLines(index, width, rowIndex) {
+      let el = null
+      if (this.$refs[`col${index}`]) {
+        el = this.$refs[`col${index}`].find((item, ind) => ind === rowIndex)
+        if (el) {
+          let colHeight = el.offsetHeight
+          let lineHeight = parseInt(el.style.lineHeight)
+          let lines = colHeight / lineHeight
+          if (lines && lines > 1) {
+            return `font-size: ${(12-lines)}px;`
+          }
+        }
+      }
+    
+    }
+  },
 }
 </script>
 
 <style scoped>
   .row {
       min-width: 1200px;
+  }
+  .stripe-gray {
+    background-color: #f8f8f8;
+  }
+  .stripe-hover:hover {
+    background-color: #eee;
+  }
+  .table-font-size {
+    font-size: 100vb;
+    max-height: 50px;
+  }
+  .dropdown, .dropdown-up {
+    z-index: 1;
+    width: 100%;
+    padding-top: 26px;
+  }
+  .dropdown {
+    top: 0;
+  }
+  .dropdown-up {
+    bottom: 0;
   }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="py-2">
+  <div class="py-2 mt-2">
     <AppLoading :loading="loading" />
 
     <AppButton
@@ -107,7 +107,7 @@ export default {
       selectedItems: [],
       loading: false,
       currentPage: 1,
-      limit: 5,
+      limit: 10,
       orderBy: [],
       columns: [
         {

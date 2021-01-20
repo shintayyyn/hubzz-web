@@ -1,18 +1,24 @@
 <template>
   <section>
-    <div class="flex flex-no-wrap justify-start">
-      <nuxt-link to="/invite" class="mr-5 p-3 text-sm font-bold cursor-pointer"
-                 :class="$route.name === 'invite' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        Invite
-        Locums
-      </nuxt-link>
+   <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
+      <div class="flex overflow-x-auto items-center">
+        <nuxt-link 
+          to="/invite" 
+          class="mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'invite' ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
+        >
+          Invite
+          Locums
+        </nuxt-link>
 
-      <nuxt-link to="/invite/invite-practices" class="mr-5 p-3 text-sm font-bold cursor-pointer"
-                 :class="$route.name === 'invite-invite-practices' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >
-        Invite Practices
-      </nuxt-link>
+        <nuxt-link 
+          to="/invite/invite-practices" 
+          class="mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'invite-invite-practices' ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
+        >
+          Invite Practices
+        </nuxt-link>
+      </div>
     </div>
 
     <div class="mt-3">

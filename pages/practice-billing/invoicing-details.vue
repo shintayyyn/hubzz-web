@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="rounded-lg bg-gray-300 p-4 mb-4">
+    <div class="rounded-lg bg-gray-300 p-4 mb-4 my-2">
       <div class="flex flex-col py-2 mb-1 md:mb-2">
         <div class="relative flex flex-wrap leading-none items-center">
           <label class="text-xs sm:text-sm py-1">Sage Reference</label>

@@ -1,11 +1,11 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto pb-3">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 pt-1">
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'to-be-invoiced' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         To be Invoiced
       </nuxt-link>
@@ -13,8 +13,8 @@
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'disputed' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Disputed Invoices
       </nuxt-link>
@@ -22,8 +22,8 @@
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'issued' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Invoiced
       </nuxt-link>
@@ -31,24 +31,24 @@
       <nuxt-link
         :event="initialLoading ? '' : 'click'"
         :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'approved' } }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Approved Invoices
       </nuxt-link>
 
       <nuxt-link
         :to="{ name: 'practice-billing-solo-forms' }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'practice-billing-solo-forms' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'practice-billing-solo-forms' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         Solo Forms
       </nuxt-link>
 
       <nuxt-link
         :to="{ name: 'practice-billing-form-as' }"
-        class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'practice-billing-form-as' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name === 'practice-billing-form-as' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
         NHS Pension Form A
       </nuxt-link>
@@ -65,17 +65,19 @@
         <AppButton
           v-if="!['pension-form-b'].includes($route.query.status)"
           :label="'Filter'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          class="mt-4"
+          customTheme="border-2"
           @click="filterModal = !filterModal"
         />
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
           :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          customTheme="border-2"
           @click="refreshInvoices"
         />
         <div
-          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg px-3 py-2 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -161,7 +163,7 @@
               v-if="practice.type !== 'Spoke' || 
                 (practice.type === 'Spoke' && !practice.parent_practice_id) ||
                 (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
-              class="flex flex-wrap justify-center"
+              class="flex flex-wrap items-center justify-center"
             >
               <div
                 v-if="
@@ -169,7 +171,7 @@
                     && slotProps.item.invoice_status !== 'To Be Invoice' 
                     && slotProps.item.status !== 'Approved' 
                     && $route.query.status !== 'issued'"
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
+                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
               >
                 {{ authPermissions.includes('Process Billings') ? 'Edit' : 'View' }}
@@ -177,7 +179,7 @@
 
               <div
                 v-if="['approved', 'issued'].includes($route.query.status)"
-                class="mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
+                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
               >
                 View
@@ -188,7 +190,7 @@
                   $route.query.status && $route.query.status === 'pension-form-a'
                     && slotProps.item.locum_form_a_id
                 "
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer"
                 @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
               >
                 View Form A
@@ -200,7 +202,7 @@
                     && slotProps.item.locum_form_a_id
                     && !slotProps.item.locum_form_a_paid_by_practice
                 "
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer"
                 @click.stop.prevent="locumFormAIdToBePaid = slotProps.item.locum_form_a_id, locumFormAPaidAt = null"
               >
                 Mark as Paid
@@ -212,7 +214,7 @@
                     && slotProps.item.ooh
                     && slotProps.item.locum_solo_form_id
                 "
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer"
                 @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
               >
                 View Solo Form
@@ -229,7 +231,7 @@
                     && slotProps.item.locum_invoice_item.locum_invoice
                     && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
                     && authPermissions.includes('Process Billings')"
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover bg-yellow-400 hover:bg-yellow-500"
+                class="mx-1 py-1 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover button default-btn border-2"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
                 Mark as Paid
@@ -243,8 +245,8 @@
                     && slotProps.item.locum_solo_form_sent_to_locum === 0
                     && authPermissions.includes('Process Billings')
                 "
-                class="my-1 py-2 px-3 font-bold rounded-lg focus:outline-none"
-                :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-400 cursor-pointer'"
+                class="mx-1 py-1 px-3 font-bold rounded-lg focus:outline-none"
+                :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'button default-btn border-2 cursor-pointer'"
                 @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_solo_form_sent_to_locum)"
               >
                 Send Form to Locum
@@ -424,7 +426,7 @@ export default {
       current_page: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_ir35: null,
       invoice_number: null,
@@ -472,9 +474,10 @@ export default {
 
       columns.push(
         {
-          name: "Job Part Number",
+          name: "Job Part No.",
           dataIndex: "job_part_number",
           sortable: true,
+          width: 130,
         },
         {
           name: "Job Title",
@@ -486,16 +489,19 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
+          width: 120,
         },
         {
           name: "Under IR35",
           dataIndex: "job_ir35",
           class: "text-center",
+          width: 100,
         },
         {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice",
           class: "text-center",
+          width: 150,
         }
       )
 
@@ -505,6 +511,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
+          width: 100,
         })
 
         columns.push({
@@ -512,6 +519,7 @@ export default {
           dataIndex: "paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 100,
         })
       }
 
@@ -520,12 +528,14 @@ export default {
           name: "Paid By Practice At",
           dataIndex: "locum_form_a_paid_by_practice_at_formatted",
           class: "text-center",
+          width: 150,
         })
 
         columns.push({
           name: "Paid By Locum At",
           dataIndex: "locum_form_a_paid_at_formatted",
           class: "text-center",
+          width: 150,
         })
       }
 
@@ -535,6 +545,7 @@ export default {
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150,
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -542,6 +553,7 @@ export default {
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150,
         })
       } else {
         columns.push({
@@ -549,6 +561,7 @@ export default {
           dataIndex: "issued_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150,
         })
       }
 
@@ -563,6 +576,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
+          width: ["approved",].includes(queryStatus) ? 200 : 100,
         })
       }
 
@@ -812,7 +826,7 @@ export default {
             job_part_number_includes: this.job_part_number_includes,
             include_current_surgeries_jobs: false,
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ])
@@ -839,7 +853,7 @@ export default {
     async filterJobParts () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobPartsPromiseAll()
@@ -936,7 +950,7 @@ export default {
       this.loading = true
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       await this.getJobPartsPromiseAll()
       this.loading = false
       this.showRefresh = false
@@ -1192,7 +1206,7 @@ export default {
     },
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_ir35 = null
       this.is_paid = null

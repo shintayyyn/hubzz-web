@@ -5,26 +5,23 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
 
-      <div class="w-full flex justify-start overflow-x-auto py-3 mt-4">
-        <div class="relative">
+      <div class="w-full flex justify-start overflow-x-auto my-3 mt-4 border-b border-sunglow">
           <nuxt-link
             :to="`/profile/users/${$route.params.id}`"
-            class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-            :class="['profile-users-id-general', 'profile-users-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+            :class="['profile-users-id-general', 'profile-users-id'].includes($route.name) ? 'border-b-4 border-sunglow' : 'text-gray-600'"
           >
             General
           </nuxt-link>
-        </div>
-
-        <div v-if="authPermissions.includes('Update Profile Users') && practiceUser && practiceUser.status !== 'Deactivated'" class="relative">
+        <template v-if="authPermissions.includes('Update Profile Users') && practiceUser && practiceUser.status !== 'Deactivated'" >
           <nuxt-link
             :to="`/profile/users/${$route.params.id}/change-password`"
-            class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-            :class="$route.name === 'profile-users-id-change-password' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+            :class="$route.name === 'profile-users-id-change-password' ? 'border-b-4 border-sunglow' : 'text-gray-600'"
           >
             Change Password
           </nuxt-link>
-        </div>
+        </template>
       </div>
 
       <div class="w-full mt-5">

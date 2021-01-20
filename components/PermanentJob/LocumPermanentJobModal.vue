@@ -46,8 +46,8 @@
 			>
 				<div class="mx-4 mt-4">
 					<div class="w-full">
-						<p class="font-bold text-sm">Must submit at least one (Pitch/Cover Email)</p>
-						<p class="text-sm">Please write a short pitch to apply for this Permanent Job (Optional)</p>
+						<p class="font-bold text-sm">Please attach your latest CV</p>
+						<p class="text-sm">Write a short description about yourself (Optional)</p>
 						<div class="mb-3 md:mb-6">
 							<no-ssr placeholder="Loading..." class>
 								<quill-editor
@@ -163,7 +163,7 @@
 				<div class="w-full md:w-3/5 lg:w-2/3 pr-2">
 					<div class="bg-white rounded-lg shadow-lg p-4">
 						<p class="font-bold">Practice</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice.name : null }}</p>
+						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : null }}</p>
 						<p class="font-bold">Description</p>
 						<!-- <div class="my-4">
               <span v-html="permanent_job ? permanent_job.description : null"></span>
@@ -192,6 +192,7 @@
 									</span>
 								</a>
 								<span
+									v-if="permanent_job.description_file.subtype === 'jpeg' || permanent_job.description_file.subtype === 'pdf'"
 									class="mx-2 hover:text-gray-800 cursor-pointer"
 									@click="viewFile={file: permanent_job.description_file}"
 								>
@@ -224,7 +225,7 @@
 						<p class="font-bold">Email</p>
 						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.email : null }}</p>
 						<p class="font-bold">Role</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.professions.name : null }}</p>
+						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.profession_name : null }}</p>
 						<p class="font-bold">Job Type</p>
 						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : null }}</p>
 
@@ -307,7 +308,7 @@ export default {
 
 			// quill
 			editorOption: {
-				placeholder: "Please write your pitch here",
+				placeholder: "About me",
 				modules: {
 					toolbar: [
 						["bold", "italic", "underline", "strike"],
