@@ -14,6 +14,7 @@
       :loading="loading"
       :routerLink="routerLink"
       :customWidth="600"
+      minHeight="0"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     />
