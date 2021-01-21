@@ -455,7 +455,7 @@ export default {
       search_practice: null,
       search_private_practice: null,
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_number: "",
       job_part_number: "",
@@ -565,6 +565,7 @@ export default {
             name: "Job Part Number",
             dataIndex: "job_part_number",
             sortable: true,
+            width: 120
           },
           {
             name: "Surgery",
@@ -583,18 +584,21 @@ export default {
             dataIndex: "job.shift.name",
             class: "text-center",
             sortable: true,
+            width: 140
           },
           {
             name: "Rate",
             dataIndex: "job.rate",
             sortable: true,
             class: "text-center",
+            width: 100
           },
           {
-            name: "per",
+            name: "Rate Type",
             dataIndex: "job.locum_detail_rate_type.name",
             class: "text-center",
             sortable: true,
+            width: 140
           }
         )
       } else if (
@@ -611,6 +615,7 @@ export default {
             name: "Job Number",
             dataIndex: "job_number",
             sortable: true,
+            width: 130
           },
           {
             name: "Surgery",
@@ -629,18 +634,21 @@ export default {
             dataIndex: "shift_name",
             class: "text-center",
             sortable: true,
+            width: 150
           },
           {
             name: "Rate",
             dataIndex: "rate",
             sortable: true,
             class: "text-center",
+            width: 130
           },
           {
-            name: "per",
+            name: "Rate Type",
             dataIndex: "rate_type_name",
             class: "text-center",
             sortable: true,
+            width: 130
           }
         )
       }
@@ -652,6 +660,7 @@ export default {
           // dataIndex: "date_start",
           sortable: true,
           class: "text-center",
+          width: 130
         },
         {
           name: "To",
@@ -660,6 +669,7 @@ export default {
           // dataIndex: "date_end",
           sortable: true,
           class: "text-center",
+          width: 130
         }
       )
       if (queryStatus === "applied") {
@@ -674,6 +684,7 @@ export default {
           name: "Rejected At",
           dataIndex: "appointed_at_in_gb_formatted",
           class: "text-center",
+          width: 130
         })
       }
       if (queryStatus === "withdrawn") {
@@ -681,6 +692,7 @@ export default {
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
           class: "text-center",
+          width: 130
         })
       }
       if (queryStatus === "cancelled") {
@@ -688,6 +700,7 @@ export default {
           name: "Cancelled At",
           dataIndex: "cancelled_at_in_gb_formatted",
           class: "text-center",
+          width: 130
         })
       }
       if (["completed",].includes(queryStatus)) {
@@ -695,6 +708,7 @@ export default {
           name: "Completed At",
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
+          width: 130
         })
       }
       if (["approved",].includes(queryStatus)) {
@@ -702,6 +716,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
+          width: 130
         })
       }
       
@@ -711,6 +726,7 @@ export default {
             name: "Invoice status",
             dataIndex: "invoice_status",
             class: "text-center",
+            width: 100
           },
         )
       }
@@ -721,6 +737,7 @@ export default {
             name: "Tag",
             dataIndex: "locum_status",
             class: "text-center",
+            width: 80
           }
         )
       }
@@ -866,7 +883,7 @@ export default {
           .$get(`/api/v1/locum/${isJobPart ? "job-parts" : "jobs"}`, {
             params: {
               offset: 0,
-              limit: 5,
+              limit: 15,
               locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
@@ -1089,7 +1106,7 @@ export default {
           {
             params: {
               offset: 0,
-              limit: 5,
+              limit: 15,
               locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
@@ -1420,7 +1437,7 @@ export default {
     async refreshJobs () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       await this.getJobsPromiseAll()
       this.initialLoading = false
@@ -1495,7 +1512,7 @@ export default {
     async filterJob () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobsPromiseAll()
@@ -1547,7 +1564,7 @@ export default {
       this.search_practice = null
       this.search_private_practice = null
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_number = ""
       this.job_part_number = ""

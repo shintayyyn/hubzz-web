@@ -15,12 +15,12 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          <p v-if="job.dates.length > 1" class="px-1">
+          <p v-if="job && job.dates && job.dates.length && job.dates.length > 1" class="px-1">
             {{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}
           </p>
 
           <div class="px-1">
-            <p>Days: {{ job.dates.length }}</p>
+            <p>Days: {{ job && job.dates ? job.dates.length : null }}</p>
           </div>
 
           <div class="px-1">
@@ -271,7 +271,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="job.compliance_documents.length === 0" class="mt-1">
+          <div v-if="job.compliance_documents && job.compliance_documents.length === 0" class="mt-1">
             (none)
           </div>
 
@@ -285,7 +285,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="job.mandatory_trainings.length === 0" class="mt-1 text-xs sm:text-sm">
+          <div v-if="job.mandatory_trainings && job.mandatory_trainings.length === 0" class="mt-1 text-xs sm:text-sm">
             (none)
           </div>
 
@@ -299,7 +299,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="job.other_mandatory_trainings.length === 0" class="mt-1 text-xs sm:text-sm">
+          <div v-if="job.other_mandatory_trainings && job.other_mandatory_trainings.length === 0" class="mt-1 text-xs sm:text-sm">
             (none)
           </div>
 

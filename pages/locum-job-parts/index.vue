@@ -369,28 +369,28 @@ export default {
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 120,
+          width: 150,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 170,
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 130,
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 130,
         }
       )
 
@@ -437,7 +437,7 @@ export default {
             dataIndex: "locum_invoice_status",
             sortable: true,
             class: "text-center",
-            width: 150,
+            width: 125,
           }
         )
       }

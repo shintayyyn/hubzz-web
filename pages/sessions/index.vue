@@ -407,6 +407,7 @@ export default {
           dataIndex: "applicants_count",
           sortable: true,
           class: "text-center",
+          width: 100
         })
       }
 

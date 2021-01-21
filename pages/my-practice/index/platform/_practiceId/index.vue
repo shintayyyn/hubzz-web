@@ -7,38 +7,38 @@
       >
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
-      <div class="w-full flex flex-row justify-start overflow-x-auto mt-4">
+      <div class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow w-full">
         <nuxt-link
           :to="{ path: `/my-practice/platform/${$route.params.practiceId}`, query: { ...$route.query}}"
           :event="$route.name === 'my-practice-index-platform-practiceId-index'? '' : 'click'"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name === 'my-practice-index-platform-practiceId-index'? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-practice-index-platform-practiceId-index'? 'border-b-6 border-sunglow' : 'text-gray-600'"
         >Profile</nuxt-link>
         <nuxt-link
           :to="{ path: `/my-practice/platform/${$route.params.practiceId}/users`, query: { ...$route.query}}"
           :event="$route.name.includes('my-practice-index-platform-practiceId-index-users') ? '' : 'click'"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name.includes('my-practice-index-platform-practiceId-index-users') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+          :class="$route.name.includes('my-practice-index-platform-practiceId-index-users') ? 'border-b-6 border-sunglow' : 'text-gray-600'"
         >Users</nuxt-link>
         <nuxt-link
           :to="{ path: `/my-practice/platform/${$route.params.practiceId}/surgeries`, query: { ...$route.query}}"
           :event="$route.name.includes('my-practice-index-platform-practiceId-index-surgeries') ? '' : 'click'"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name.includes('my-practice-index-platform-practiceId-index-surgeries') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+          :class="$route.name.includes('my-practice-index-platform-practiceId-index-surgeries') ? 'border-b-6 border-sunglow' : 'text-gray-600'"
         >Surgeries</nuxt-link>
         <!-- <nuxt-link
 					:to="{ path: `/my-practice/platform/${$route.params.practiceId}/standard-terms`, query: { ...$route.query}}"
-					class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-					:class="$route.name.includes('my-practice-index-platform-practiceId-index-standard-terms') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+					class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+					:class="$route.name.includes('my-practice-index-platform-practiceId-index-standard-terms') ? 'border-b-6 border-sunglow' : 'text-gray-600'"
         >Standard Terms</nuxt-link>-->
         <nuxt-link
           :to="{ path: `/my-practice/platform/${$route.params.practiceId}/related-jobs`, query: { ...$route.query }}"
           :event="$route.name.includes('my-practice-index-platform-practiceId-index-related-jobs') ? '' : 'click'"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.name.includes('my-practice-index-platform-practiceId-index-related-jobs') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+          :class="$route.name.includes('my-practice-index-platform-practiceId-index-related-jobs') ? 'border-b-6 border-sunglow' : 'text-gray-600'"
         >Related Jobs</nuxt-link>
       </div>
-      <div class="w-full mt-5">
+      <div class="w-full">
         <nuxt-child :practice="practice" />
       </div>
     </div>

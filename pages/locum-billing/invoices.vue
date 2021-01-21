@@ -72,25 +72,23 @@
 
     <div
       v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
-      class="flex flex-row justify-start overflow-x-auto pb-3"
+      class="flex flex-row justify-start overflow-x-auto"
     >
       <nuxt-link
         :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-sm border-2 rounded-lg text-black bg-yellow-400 hover:bg-yellow-500"
+        class="default-btn rounded-md p-2 focus:outline-none transition-hover text-sm flex items-center button bg-sunglow hover:bg-sunglow-dark"
       >
-        <div class="flex">
           <div class="mx-1">
             <svgicon
               name="create-job"
-              width="21"
-              height="21"
+              width="18"
+              height="18"
               class="fill-current text-black"
             />
           </div>
           <div>
             Generate NHS Form B
           </div>
-        </div>
       </nuxt-link>
     </div>
 
@@ -207,40 +205,39 @@
             @sorted="sorted"
           >
             <template v-slot:actions="slotProps">
-              <div class="flex flex-wrap justify-center">
+              <div class="flex flex-col bg-white border rounded border-gray-500">
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="my-1 py-2 px-3 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer text-sm"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                 >
                   Generate Invoice
                 </div>
 
-                <div
+                <template
                   v-if="
                     slotProps.item.locum_invoice_id
                       && slotProps.item.locum_status !== 'Approved' && !['approved', 'issued'].includes($route.query.status)
                   "
-                  class="flex flex-wrap justify-around"
                 >
                   <div
-                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                    class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                   >
                     Edit
                   </div>
                   <button
                     v-if="!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced'"
-                    class="whitespace-no-wrap my-1 mx-1 py-2 px-3 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
+                    class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer text-left"
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
                   >
                     Delete
                   </button>
-                </div>
+                </template>
 
                 <div
                   v-if="['approved', 'issued'].includes($route.query.status)"
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 >
                   View
@@ -252,7 +249,7 @@
                       && slotProps.item.nhs_claimable
                       && slotProps.item.locum_form_a_id
                   "
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                 >
                   View Form A
@@ -278,7 +275,7 @@
                       && slotProps.item.ooh
                       && slotProps.item.locum_solo_form_id
                   "
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
                 >
                   View Solo Form
@@ -290,7 +287,7 @@
                       && slotProps.item.locum_invoice_item
                       && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
                   "
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'payInvoice')"
                 >Mark as Paid</div>-->
 
@@ -302,7 +299,7 @@
                       && slotProps.item.locum_form_a_sent_to_practice
                       && !slotProps.item.locum_form_a_paid
                   "
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_form_a_id, 'payFormA')"
                 >
                   Mark as Paid
@@ -316,7 +313,7 @@
                       && slotProps.item.locum_solo_form_sent_to_locum === 1
                       && slotProps.item.locum_solo_form_paid === 0
                   "
-                  class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_solo_form_id, 'paySoloForm')"
                 >
                   Mark as Paid
@@ -351,9 +348,9 @@
             @sorted="sorted"
           >
             <template v-slot:actions="slotProps">
-              <div class="flex justify-center">
+              <div class="flex flex-col bg-white border rounded border-gray-500">
                 <div
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                   @click="viewAsPdf(slotProps.item.id, 'form-b')"
                 >
                   View Form B
@@ -578,7 +575,7 @@ export default {
       current_page: 1,
 
       offset: 0,
-      limit: 5,
+      limit: 15,
       order_by: [],
       job_ir35: null,
       invoice_number: null,
@@ -589,6 +586,7 @@ export default {
         {
           name: "Type",
           dataIndex: "type",
+          width: 120
         },
         {
           name: "Practice",
@@ -603,11 +601,13 @@ export default {
           name: "Date Created",
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
+          width: 150
         },
         {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
+          width: 130
         },
       ],
 
@@ -674,6 +674,7 @@ export default {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
+          width: 130
         },
         {
           name: "Job Title",
@@ -685,6 +686,7 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
+          width: 130
         },
       )
 
@@ -695,12 +697,14 @@ export default {
             dataIndex: "ooh",
             class: "text-center",
             sortable: true,
+          width: 80
           },
           {
             name: "NHS Claimable",
             dataIndex: "nhs_claimable_formatted",
             class: "text-center",
             sortable: true,
+          width: 130
           }
         )
       }
@@ -711,6 +715,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         })
       }
 
@@ -720,6 +725,7 @@ export default {
           dataIndex: "paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         })
       }
 
@@ -728,12 +734,14 @@ export default {
           name: "Paid By Practice At",
           dataIndex: "locum_form_a_paid_by_practice_at_formatted",
           class: "text-center",
+          width: 150
         })
 
         columns.push({
           name: "Paid By Locum At",
           dataIndex: "locum_form_a_paid_at_formatted",
           class: "text-center",
+          width: 150
         })
       }
 
@@ -743,6 +751,7 @@ export default {
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -750,6 +759,7 @@ export default {
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         })
       } else {
         columns.push({
@@ -757,13 +767,15 @@ export default {
           dataIndex: "issued_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         })
       }
 
       columns.push({
         name: "Actions",
         dataIndex: "actions",
-        class: "text-center",
+        class: queryStatus !== 'to-be-invoiced' ? "text-center" : 'dropdown',
+        width: queryStatus !== 'to-be-invoiced' ? 100 : 150
       })
 
       return columns
@@ -1044,7 +1056,7 @@ export default {
             job_part_number_includes: this.job_part_number_includes,
             viewing_locum_user_id: this.$auth.user.id,
             offset: 0,
-            limit: 5,
+            limit: 15,
           },
         }),
       ])
@@ -1078,7 +1090,7 @@ export default {
     async filterJobParts () {
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.initialLoading = true
       this.isFiltered = true
       await this.getJobPartsPromiseAll()
@@ -1190,7 +1202,7 @@ export default {
       this.loading = true
       this.current_page = 1
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       await this.getJobPartsPromiseAll()
       this.loading = false
       this.showRefresh = false
@@ -1482,7 +1494,7 @@ export default {
     },
     clearFilters () {
       this.offset = 0
-      this.limit = 5
+      this.limit = 15
       this.order_by = []
       this.job_ir35 = null
       this.is_paid = null

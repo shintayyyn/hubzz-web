@@ -1,6 +1,6 @@
 <template>
   <section class="flex flex-col items-start w-full">
-    <div class="w-full lg:w-1/2">
+    <div class="w-full lg:w-1/2 mt-2">
       <AppInputSmall
         v-if="$auth.user.domain === 'Locum' && permanent_jobs_for_locum_count !== null"
         v-model="search"
@@ -204,12 +204,7 @@
 
           <template v-slot:status_slot="slotProps">
             <div class="flex items-center justify-center">
-              <div
-                class="rounded-full text-sm px-2 w-full py-2"
-                :class="statusStyle(slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status)"
-              >
-                {{ slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status }}
-              </div>
+              {{ slotProps.item.status === 'Closed' && slotProps.item.job_posting_status === 'Available' ? 'Rejected' : slotProps.item.status }}
             </div>
           </template>
 
@@ -227,12 +222,7 @@
 
           <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
-              <div
-                class="rounded-full text-sm px-2 w-full py-2 text-black leading-tight"
-                :class="jobClosingTag(slotProps.item) === 'Rejected' ? 'bg-red-500 text-white' : 'bg-yellow-400'"
-              >
-                {{ jobClosingTag(slotProps.item) }}
-              </div>
+              {{ jobClosingTag(slotProps.item) }} 
             </div>
           </template>
         </AppTable>
@@ -293,7 +283,7 @@ export default {
       // app table params
       params: {
         job_id: null,
-        limit: 10,
+        limit: 15,
         offset: 0,
         search: "",
 
@@ -437,6 +427,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
+                  width: 120
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -448,6 +439,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
+                  width: 120
                 },
               ]
             }
@@ -459,6 +451,7 @@ export default {
                   name: "Closed At",
                   dataIndex: "closed_at_in_gb_formatted",
                   class: "text-center",
+                  width: 150
                 },
                 {
                   name: "Status",
@@ -466,6 +459,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
+                  width: 120
                 },
                 {
                   name: "Closing tag",
@@ -473,6 +467,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
+                  width: 150
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -482,6 +477,7 @@ export default {
                   name: "Closed At",
                   dataIndex: "closed_at_in_gb_formatted",
                   class: "text-center",
+                  width: 150
                 },
                 {
                   name: "Status",
@@ -489,6 +485,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
+                  width: 120
                 },
                 {
                   name: "Closing tag",
@@ -496,6 +493,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
+                  width: 150
                 },
               ]
             }
@@ -506,7 +504,7 @@ export default {
               locum_user_id: this.$auth.user.id,
               profession_id: this.$auth.user.locum_detail.profession.id,
               near_post_code: this.$auth.user.locum_postcode,
-              limit: 20,
+              limit: 15,
             }
             setTimeout(async () => {
               this.loading = true
@@ -526,7 +524,7 @@ export default {
 								practice_type === "Hub" && newStatus === "Pending"
 								  ? this.$auth.user.practice_id
 								  : null,
-              limit: 20,
+              limit: 15,
             }
             setTimeout(async () => {
               this.loading = true
@@ -596,7 +594,7 @@ export default {
           locum_user_id: app.$auth.user.id,
           profession_id: app.$auth.user.locum_detail.profession.id,
           near_post_code: app.$auth.user.locum_postcode,
-          limit: 20,
+          limit: 15,
         }
         let response = await app.$axios.$get(
           `/api/v1/locum/permanent-jobs/count`,
@@ -684,7 +682,7 @@ export default {
 						practice_type === "Hub" && route.query.status === "Pending"
 						  ? app.$auth.user.practice_id
 						  : null,
-          limit: 20,
+          limit: 15,
         }
         let response = await app.$axios.$get(
           `/api/v1/practice/permanent-jobs/count`,
@@ -793,6 +791,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
+          width: 100
         },
       ]
 
@@ -803,6 +802,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
+            width: 140
           },
           {
             name: "Status",
@@ -810,6 +810,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
+          width: 100
           },
           {
             name: "Closing Tag",
@@ -817,6 +818,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
+            width: 130
           },
         ]
       }
