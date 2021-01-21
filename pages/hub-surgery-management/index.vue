@@ -114,6 +114,7 @@ export default {
           name: "Shared my banks",
           dataIndex: "shared",
           class: "text-center",
+          width: 150
         },
         {
           name: "Surgery",
@@ -137,6 +138,7 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
+          width: 120
         },
       ],
     }
