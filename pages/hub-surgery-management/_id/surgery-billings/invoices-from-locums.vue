@@ -62,17 +62,17 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-wrap items-center justify-center">
+            <div class="flex flex-col bg-white border rounded border-gray-500">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
               >
                 Edit
               </div>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && $route.query.status !== 'pension-form-a'"
-                class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="$router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
               >
                 View
@@ -82,7 +82,7 @@
                   $route.query.status && $route.query.status === 'pension-form-a'
                     && slotProps.item.locum_form_a_id
                 "
-                class="my-1 py-2 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
               >
                 View Form A
@@ -90,7 +90,7 @@
 
               <button
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at && $route.query.status !== 'pension-form-a'"
-                class="my-1 p-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
               >
                 Mark as Paid
@@ -241,7 +241,7 @@ export default {
         columns.push({
           name: "Invoice No.",
           dataIndex: "invoice_number",
-          width: 150
+          width: 130
         })
       }
 
@@ -249,7 +249,7 @@ export default {
         {
           name: "Job Part No.",
           dataIndex: "job_part_number",
-          width: 150
+          width: 130
         },
         {
           name: "Job Title",
@@ -272,6 +272,7 @@ export default {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice",
           class: "text-center",
+          width: 150
         }
       )
 
@@ -281,7 +282,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
-          width: 80
+          width: 60
         })
       }
 
@@ -291,6 +292,7 @@ export default {
           dataIndex: "paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 100
         })
       }
 
@@ -327,8 +329,9 @@ export default {
         columns.push({
           name: "Actions",
           dataIndex: "actions",
-          class: "text-center",
-          width: ["approved"].includes(queryStatus) ? 150 : 100,
+          class: ["approved"].includes(queryStatus) ? "dropdown" : "text-center",
+          initialDropdown: 'View',
+          width: ["approved"].includes(queryStatus) ? 115 : 80
         })
       }
 
