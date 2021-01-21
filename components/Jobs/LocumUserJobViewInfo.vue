@@ -93,7 +93,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-8">
-          {{ job.total_original_hours_in_minutes | hoursMinutes }}
+          {{ job.job_total_original_hours_in_minutes | hoursMinutes }}
         </div>
 
         <div class="font-bold text-sm sm:text-md">
