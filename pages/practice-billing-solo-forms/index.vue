@@ -165,12 +165,10 @@
               v-if="practice.type !== 'Spoke' || 
                 (practice.type === 'Spoke' && !practice.parent_practice_id) ||
                 (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
-              class="flex justify-center flex-wrap"
+              class="flex flex-col bg-white border rounded border-gray-500"
             >
-            <!-- flex-col bg-white p-2 shadow -->
               <div
-                class="text-xs mr-1 py-1 px-3 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
-                :class="!slotProps.item.practice_electronic_signature && !slotProps.item.sent_to_locum && authPermissions.includes('Process Billings') ? 'mb-1' : 'my-1'"
+                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
                 @click="viewAsPdf(slotProps.item.id)"
               >
                 View Solo Form
@@ -178,16 +176,15 @@
 
               <div
                 v-if="!slotProps.item.practice_electronic_signature"
-                class="text-xs mr-1 py-1 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
                 @click="setLocumSoloFormIdToSign(slotProps.item.id)"
-                :class="!slotProps.item.practice_electronic_signature && !slotProps.item.sent_to_locum && authPermissions.includes('Process Billings') ? 'mb-1' : 'my-1'"
               >
                 E-sign Form
               </div>
 
               <div
                 v-if="!slotProps.item.sent_to_locum && authPermissions.includes('Process Billings')"
-                class="text-xs mr-1 py-1 px-3 font-bold rounded-lg focus:outline-none bg-yellow-500 hover:bg-yellow-400 cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
                 @click="locumSoloFormIdToBeSend = slotProps.item.id"
               >
                 Send Form to Locum
@@ -436,10 +433,10 @@ export default {
         {
           name: "Actions",
           dataIndex: "actions",
-          class: "text-center",
-          width: 180
+          class: "dropdown",
+          initialDropdown: 'View Solo Form',
+          width: 165
         },
-        // dropdown
       ]
     },
 

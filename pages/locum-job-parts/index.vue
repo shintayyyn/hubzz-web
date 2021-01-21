@@ -279,8 +279,6 @@ export default {
 
   computed: {
     getRequestQueryFilters () {
-      let queryStatus = this.$route.query.status
-
       return {
         locum_job_part_status: this.$route.query.status || 'Allocated',
         shift_id_includes: this.job_shift_id,
@@ -295,7 +293,7 @@ export default {
         locum_invoice_status: this.invoice_status,
         title_includes: this.job_title_includes,
         job_part_number_includes: this.job_part_number_includes,
-        type: queryStatus === "Private"
+        type: this.$route.query.status === "Private"
           ? "Private"
           : "Platform",
       }
@@ -371,28 +369,28 @@ export default {
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 120,
+          width: 150,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 170,
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 130,
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           sortable: true,
           class: "text-center",
-          width: 150,
+          width: 130,
         }
       )
 
@@ -439,7 +437,7 @@ export default {
             dataIndex: "locum_invoice_status",
             sortable: true,
             class: "text-center",
-            width: 150,
+            width: 125,
           }
         )
       }

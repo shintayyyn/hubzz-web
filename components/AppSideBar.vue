@@ -148,7 +148,7 @@ export default {
           locumTabList.push({
             navigationTabTitle: "Jobs",
             route: "/locum-job-parts",
-            active: `/${this.$route.path.split('/')[1]}` === '/jobs' || `/${this.$route.path.split('/')[1]}` === '/locum-job-parts',
+            active:['/jobs','/locum-job-parts' ,'/locum-job-reports'].includes(`/${this.$route.path.split('/')[1]}`),
           })
         }
 
@@ -320,7 +320,7 @@ export default {
           practiceTabList.push({
             navigationTabTitle: "My Banks",
             route: "/my-banks",
-            active: `/${this.$route.path.split('/')[1]}` === '/my-banks',
+            active: ['/my-banks', '/my-banks-reports'].includes(`/${this.$route.path.split('/')[1]}`),
           })
         }
 
@@ -356,7 +356,7 @@ export default {
           practiceTabList.push({
             navigationTabTitle: "Sessions",
             route: "/job-parts",
-            active: `/${this.$route.path.split('/')[1]}` === '/sessions' || `/${this.$route.path.split('/')[1]}` === '/job-parts',
+            active: ['/sessions', '/job-parts', '/practice-job-reports'].includes(`/${this.$route.path.split('/')[1]}`) ,
           })
         }
         if (

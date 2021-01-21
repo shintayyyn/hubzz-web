@@ -163,7 +163,7 @@
               v-if="practice.type !== 'Spoke' || 
                 (practice.type === 'Spoke' && !practice.parent_practice_id) ||
                 (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
-              class="flex flex-wrap items-center justify-center"
+              class="flex flex-col bg-white border rounded border-gray-500"
             >
               <div
                 v-if="
@@ -171,16 +171,18 @@
                     && slotProps.item.invoice_status !== 'To Be Invoice' 
                     && slotProps.item.status !== 'Approved' 
                     && $route.query.status !== 'issued'"
-                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                :class="$route.query.status === 'approved' ? '' : 'text-center'"
               >
                 {{ authPermissions.includes('Process Billings') ? 'Edit' : 'View' }}
               </div>
 
               <div
                 v-if="['approved', 'issued'].includes($route.query.status)"
-                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                :class="$route.query.status === 'approved' ? '' : 'text-center'"
               >
                 View
               </div>
@@ -190,8 +192,9 @@
                   $route.query.status && $route.query.status === 'pension-form-a'
                     && slotProps.item.locum_form_a_id
                 "
-                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
+                :class="$route.query.status === 'approved' ? '' : 'text-center'"
               >
                 View Form A
               </div>
@@ -202,8 +205,9 @@
                     && slotProps.item.locum_form_a_id
                     && !slotProps.item.locum_form_a_paid_by_practice
                 "
-                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click.stop.prevent="locumFormAIdToBePaid = slotProps.item.locum_form_a_id, locumFormAPaidAt = null"
+                :class="$route.query.status === 'approved' ? '' : 'text-center'"
               >
                 Mark as Paid
               </div>
@@ -214,7 +218,8 @@
                     && slotProps.item.ooh
                     && slotProps.item.locum_solo_form_id
                 "
-                class="mx-1 py-1 px-3 button default-btn border-2 font-bold rounded-lg focus:outline-none cursor-pointer"
+                :class="$route.query.status === 'approved' ? '' : 'text-center'"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click="viewAsPdf(slotProps.item.locum_solo_form_id, 'solo-form')"
               >
                 View Solo Form
@@ -231,8 +236,9 @@
                     && slotProps.item.locum_invoice_item.locum_invoice
                     && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
                     && authPermissions.includes('Process Billings')"
-                class="mx-1 py-1 px-3 font-bold rounded-lg focus:outline-none cursor-pointer transition-hover button default-btn border-2"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
+                :class="$route.query.status === 'approved' ? '' : 'text-center'"
               >
                 Mark as Paid
               </button>
@@ -245,7 +251,7 @@
                     && slotProps.item.locum_solo_form_sent_to_locum === 0
                     && authPermissions.includes('Process Billings')
                 "
-                class="mx-1 py-1 px-3 font-bold rounded-lg focus:outline-none"
+                class="rounded text-xs px-2 hover:bg-orange-400 text-left cursor-pointer"
                 :class="slotProps.item.locum_form_a_sent_to_practice === 1 ? 'bg-gray-600 text-white cursor-not-allowed' : 'button default-btn border-2 cursor-pointer'"
                 @click="toggleSendFormAModal(slotProps.item.locum_invoice_id, slotProps.item.locum_solo_form_sent_to_locum)"
               >
@@ -469,6 +475,7 @@ export default {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           sortable: true,
+          width: 130,
         })
       }
 
@@ -575,8 +582,9 @@ export default {
         columns.push({
           name: "Actions",
           dataIndex: "actions",
-          class: "text-center",
-          width: ["approved",].includes(queryStatus) ? 200 : 100,
+          class: `${queryStatus === 'approved' ? 'dropdown' : 'text-center'}`,
+          initialDropdown: 'View',
+          width: queryStatus === 'approved' ? 115 : 80
         })
       }
 
