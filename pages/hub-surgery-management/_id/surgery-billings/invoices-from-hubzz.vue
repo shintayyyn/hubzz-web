@@ -18,7 +18,7 @@
         <template v-slot:actions="slotProps">
           <div class="flex justify-center" @click.stop.prevent="onClick(slotProps.item)">
             <button
-              class="px-4 py-2 font-bold rounded-lg focus:outline-none"
+              class="rounded text-xs px-2 text-left cursor-pointer"
               :class="[slotProps.item.paid ? 'bg-green-600 text-white' : slotProps.item.disputed_items_count > 0 ? 'bg-gray-500 text-white' : 'bg-yellow-400']"
               v-text="`${slotProps.item.paid ? 'Already Paid' : slotProps.item.disputed_items_count > 0 ? 'Disputed' : 'Mark as paid'}`"
             />
@@ -106,7 +106,7 @@ export default {
       // app table params
       params: {
         offset: 0,
-        limit: 5,
+        limit: 15,
         order_by: [],
       },
       // app table column
@@ -125,6 +125,7 @@ export default {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left",
+          width: 130
         },
         {
           name: "£ Amount",
@@ -135,16 +136,19 @@ export default {
           name: "Paid At",
           dataIndex: "paid_at",
           class: "text-center",
+          width: 150
         },
         {
           name: "Created At",
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
+          width: 150
         },
         {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
+          width: 120
         },
       ],
     }
@@ -169,7 +173,7 @@ export default {
         app.$axios.get('/api/v1/practice/practice-invoices', {
           params: {
             practice_surgery_id: practiceSurgeryId,
-            limit: 5,
+            limit: 15,
             offset: 0,
           },
         }).then(response => response.data.data.practice_invoices),
