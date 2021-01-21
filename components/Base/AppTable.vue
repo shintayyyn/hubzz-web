@@ -82,7 +82,7 @@
                                 <span v-if="dropdownIndex!==rowIndex"><svgicon name="caret-down" width="8" /></span>
                               </div>
                               <div class="absolute bottom-0 "
-                              :class="items.length > 1 && rowIndex === items.length-1 ? 'dropdown-up' :'dropdown'"
+                              :class="(items.length > 1 && total > perPage-5) && rowIndex === items.length-1 ? 'dropdown-up' :'dropdown'"
                                 v-if="dropdownIndex !== null && dropdownIndex===rowIndex">
                                   <slot name="actions" :item="item" @click="$emit('click', item)"/>
                               </div>
