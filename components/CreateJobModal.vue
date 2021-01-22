@@ -49,6 +49,10 @@
 							<p>Total Gross Locum Wages:</p>
 							<p class="pl-1">£ {{ total_gross_locum_wages | currency }}</p>
 						</div>
+						<div class="flex justify-between pb-2 text-red-600">
+							<p>Total Gross Locum Wages (If VAT Registered):</p>
+							<p class="pl-1">£ {{ taxed_total_gross_locum_wages_preview | currency }}</p>
+						</div>
 						<div class="flex justify-between pb-2">
 							<p>
 								Hubzz Fee*
@@ -725,6 +729,7 @@
 						:error="formError.find(err => err.field === 'schedules')"
 						:shiftErrors="shiftErrors"
 						:type="'create'"
+						:tax_rates_for_preview="tax_rates_for_preview"
 						@getSchedule="getSchedule"
 					/>
 					<div class="pt-4 pb-8 w-full flex justify-between">
@@ -822,10 +827,15 @@ export default {
 			hasShiftError: false,
 			total_working_hours: 0,
 			total_gross_locum_wages: 0,
+			tax_rate_preview: 0,
+			taxed_total_gross_locum_wages_preview: 0,
 			shiftErrors: [],
 			toPublish: false,
 			schedules: [],
 			job_parts: [],
+
+			// TAX RATES FOR PREVIEW
+			tax_rates_for_preview: {},
 
 			// schedule_dates: [],
 			// shift_schedule: [],
@@ -1260,7 +1270,12 @@ export default {
 				.get("/api/v1/profession-compliance-categories")
 				.then(response => {
 					return response.data.data.profession_compliance_categories;
-				})
+				}),
+			this.$axios
+				.get("/api/v1/tax-rates")
+				.then(response => 
+					response.data.data.tax_rates
+				),
 		])
 			.then(responses => {
 				const [
@@ -1269,7 +1284,8 @@ export default {
 					shiftLists,
 					professions,
 					profileProfile,
-					professionComplianceCategories
+					professionComplianceCategories,
+					taxRates,
 				] = responses;
 				this.practices = responsePractices.data.data.practices;
 				this.practice_lists = responsePractices.data.data.practices.map(
@@ -1483,6 +1499,10 @@ export default {
 						).format("HH:mm");
 					}
 				}
+
+				console.log('taxRatexxxxxxs', taxRates)
+
+				this.tax_rates_for_preview = taxRates
 			})
 			.finally(() => {
 				this.dataLoading = false;
@@ -1612,6 +1632,8 @@ export default {
 		getSchedule(
 			schedule,
 			total_gross_locum_wages,
+			tax_rate_for_preview,
+			taxed_total_gross_locum_wages_preview,
 			total_working_hours,
 			deductions,
 			total_lates,
@@ -1694,13 +1716,17 @@ export default {
 								this.shiftErrors.splice(rateIndex, 1);
 							}
 						}
-					});
+					})
 				}
-			});
+			})
 
 			this.total_working_hours = total_working_hours;
 
 			this.total_gross_locum_wages = total_gross_locum_wages;
+
+			this.tax_rate_for_preview = tax_rate_for_preview;
+
+			this.taxed_total_gross_locum_wages_preview = taxed_total_gross_locum_wages_preview
 
 			this.hasShiftError = hasError;
 

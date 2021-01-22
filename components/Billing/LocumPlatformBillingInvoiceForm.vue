@@ -150,7 +150,7 @@
             :shiftErrors="shiftErrors"
             toInvoice
             :invoiceDetails="propInvoice"
-            :toDisplay="propInvoice && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum')"
+            :toDisplay="propInvoice && propInvoice.issued && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum')"
             :type="'invoice'"
             :invoiceStatus="$route.query.status"
             :tax_rates="tax_rates"
@@ -386,7 +386,11 @@
 
       <div class="flex flex-wrap items-center mb-6">
         <AppButton
-          v-if="propJobPart || (propInvoice && !propInvoice.approved && propInvoice.last_disputed_by === 'Practice')"
+          v-if="
+            propJobPart
+              || (propInvoice && !propInvoice.approved && propInvoice.last_disputed_by === 'Practice')
+              || (propInvoice && !propInvoice.issued)
+          "
           class="m-1"
           :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
           :inStyle="'padding:5px 14px;font-size:1em'"
@@ -395,7 +399,7 @@
         />
 
         <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
+          v-if="propJobPart || (propInvoice && !propInvoice.issued)"
           class="m-1"
           :label="'Save as final'"
           :inStyle="'padding:5px 14px;font-size:1em'"

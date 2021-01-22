@@ -1131,6 +1131,12 @@ export default {
 			default: () => null
 		},
 
+		// FOR PREVIEW ONLY
+		tax_rates_for_preview: {
+			type: Object,
+			default: () => null
+		},
+
 		jobPartTerminationCompletion: {
 			type: Object,
 			default: () => null
@@ -1989,6 +1995,8 @@ export default {
 					"getSchedule",
 					this.schedules,
 					this.getJobGrossRate(this.schedules),
+					this.getJobTaxRateForPreview(this.schedules),
+					this.getJobTaxedGrossRateForPreview(this.schedules),
 					this.getTotalHours(this.schedules),
 					this.getDeductions(this.schedules),
 					this.getTotalLates(this.schedules),
@@ -2564,6 +2572,24 @@ export default {
 			const taxRate = this.getJobTaxRate(schedules, final);
 			const taxedGrossRate = parseFloat(grossRate) + parseFloat(taxRate);
 
+			return taxedGrossRate.toFixed(2);
+		},
+
+		getJobTaxRateForPreview (schedules, final) {
+			const grossRate = this.getJobGrossRate(schedules, final);
+			const locum_tax_rate =
+				this.tax_rates_for_preview && this.tax_rates_for_preview.locum_tax_rate_formatted
+					? this.tax_rates_for_preview.locum_tax_rate_formatted
+					: 0;
+			const taxAmount = parseFloat(grossRate) * parseFloat(locum_tax_rate);
+
+			return taxAmount.toFixed(2);
+		},
+
+		getJobTaxedGrossRateForPreview (schedules, final) {
+			const grossRate = this.getJobGrossRate(schedules, final);
+			const taxRate = this.getJobTaxRateForPreview(schedules, final);
+			const taxedGrossRate = parseFloat(grossRate) + parseFloat(taxRate);
 			return taxedGrossRate.toFixed(2);
 		},
 

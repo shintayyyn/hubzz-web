@@ -12,12 +12,20 @@
         <div class="font-bold text-xl">
           FAQs
         </div>
+        <div>
+          <AppInput
+            v-model="search"
+            :type="'text'"
+            :name="'search'"
+            :label="'Search'"
+          />
+        </div>
         
-        <div v-if="$auth.user.domain === 'Locum'">
+        <div>
           <div class="font-bold mt-4 mb-2">
-            Locum
+            {{ $auth.user.domain }}
           </div>
-          <div v-for="item in locum_faqs" :key="item.id">
+          <div v-for="item in faqs" :key="item.id">
             <div
               class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
               @click="item.toggled = !item.toggled"
@@ -42,7 +50,7 @@
           </div>
         </div>
 				
-        <div v-if="$auth.user.domain === 'Practice'">
+        <!-- <div v-if="$auth.user.domain === 'Practice'">
           <div class="font-bold mt-4 mb-2">
             Practice
           </div>
@@ -69,15 +77,22 @@
               </div>
             </transition>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </section>
 </template>
 <script>
+import AppInput from "@/components/Base/AppInput"
+import debounce from "lodash.debounce"
 export default {
+  components: { 
+    AppInput,
+  },
   data () {
     return {
+      search: '',
+      faqs: [],
       locum_faqs: [],
       practice_faqs: [],
       options: {
@@ -87,30 +102,39 @@ export default {
       },
     }
   },
-  async asyncData ({ app, }) {
-    const response = await app.$axios.$get(`/api/v1/faqs`)
 
-    let faqs
-			= response && response.data && response.data.faqs ? response.data.faqs : []
+  watch: {
+    search (value) {
+      this.searchSubmit(value)
+    },
+  },
 
-    faqs = faqs.map(faq => {
-      return {
-        ...faq,
-        toggled: false,
+  created () {
+    this.getFaqs()
+  },
+
+  methods: {
+    async getFaqs (search) {
+      const params = {
+        search: search,
+        domain: this.$auth.user.domain,
       }
-    })
+      await this.$axios.$get(`/api/v1/faqs`, { 
+        params,
+      }).then(res => {
+        this.faqs = res.data.faqs.map(faq => {
+          return {
+            ...faq,
+            toggled: false,
+          }
+        })
+      })
+    },
 
-    const locum_faqs = faqs.filter(faq => faq.domain === "Locum")
-
-    // locum_faqs[0].answer
-    // 	= "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    
-    const practice_faqs = faqs.filter(faq => faq.domain === "Practice")
-
-    return {
-      locum_faqs,
-      practice_faqs,
-    }
+    searchSubmit: debounce(function (value) {
+      console.log('is it working?')
+      this.getFaqs(value)
+    }, 500),
   },
 }
 </script>
