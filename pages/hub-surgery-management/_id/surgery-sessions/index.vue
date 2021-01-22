@@ -261,7 +261,7 @@ export default {
             dataIndex: "job_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
-            width: 120
+            width: 150
           },
           {
             name: "Rate Types",
