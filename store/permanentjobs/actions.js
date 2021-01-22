@@ -19,12 +19,23 @@ export default {
       }
     })
 
+    
+
     this.$socket.on('Locum Notification Permanent Job Rejected', async (permanentJob) => {
       console.log('rejected')
       let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.notification.payload.id}`)
 
       if(response.data && response.data.permanent_job) {
-        commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {...response.data.permanent_job, notificationType: 'Locum Notification Permanent Job Invited',})
+        commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {...response.data.permanent_job, notificationType: 'Locum Notification Permanent Job Rejected',})
+      }
+    })
+
+    this.$socket.on('Locum Notification Permanent Job Hired', async (permanentJob) => {
+      console.log('Application is accepted and offered.', permanentJob)
+      let response = await this.$axios.$get(`/api/v1/locum/permanent-jobs/${permanentJob.notification.payload.id}`)
+
+      if(response.data && response.data.permanent_job) {
+        commit('ADD_PRACTICE_PERMANENT_JOB_NOTIFICATION', {...response.data.permanent_job, notificationType: 'Locum Notification Permanent Job Hired',})
       }
     })
     //====================================PRACTICE===========================================
