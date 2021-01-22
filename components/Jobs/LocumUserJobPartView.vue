@@ -1,5 +1,7 @@
 <template>
   <div class="p-4 md:p-8">
+    <AppLoading :loading="loading" spinner />
+
     <div>
       <svgicon
         name="left-arrow"
@@ -12,21 +14,34 @@
 
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">
-        {{ job.title }}
+        {{ job_part.title }}
       </div>
 
-      <div class="mx-2 py-2 px-4 rounded font-semibold" :class="bgStatus(job.locum_job_status)">
-        {{ status(job.locum_job_status) }}
+      <div
+        class="py-2 px-4 mx-1 rounded font-semibold"
+        :class="bgStatus(job_part.locum_job_part_status)"
+        @click="['Approved','Cancelled'].includes(job_part.locum_job_part_status) ? toggle_invoice_modal = true : null"
+      >
+        {{ status(job_part.locum_job_part_status) }}
       </div>
       
       <div
-        v-if="job && job.terminated"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300"
+        v-if="job_part && job_part.terminated"
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        @click="toggle_invoice_modal = true"
       >
         TERMINATED
       </div>
+      
+      <div
+        v-if="job_part && job_part.locum_invoiceable && job_part.locum_invoice_status && job_part.locum_job_part_status !== 'Approved'"
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        @click="toggle_invoice_modal = true"
+      >
+        {{ job_part.locum_invoice_status.toUpperCase() }}
+      </div>
 
-      <template v-if="job.practice_is_favorite_of_locum">
+      <template v-if="job_part.practice_is_favorite_of_locum">
         <svgicon
           name="on-star"
           height="25"
@@ -36,7 +51,7 @@
         />
       </template>
 
-      <template v-else-if="!job.practice_is_favorite_of_locum">
+      <template v-else-if="!job_part.practice_is_favorite_of_locum">
         <svgicon
           name="off-star"
           height="25"
@@ -47,14 +62,14 @@
       </template>
     </div>
 
-    <template v-if="job && job.locum_job_status === 'Allocated' && job.update_accepted_until && !job.update_accepted">
+    <template v-if="job_part.locum_job_part_status === 'Allocated' && job_part.update_accepted_until && !job_part.update_accepted">
       <div class="text-md">
         The Practice made changes on this Job, Accept these changes?
       </div>
 
       <div class="text-sm">
-        <span>You must accept the changes within {{ job.update_accepted_until_duration_in_minutes_formatted }}, </span>
-        <span>before {{ job.update_accepted_until_in_gb_formatted }}.</span>
+        <span>You must accept the changes within {{ job_part.update_accepted_until_duration_in_minutes_formatted }}, </span>
+        <span>before {{ job_part.update_accepted_until_in_gb_formatted }}.</span>
       </div>
 
       <div class="flex items-center justify-start mt-1">
@@ -76,14 +91,14 @@
       </div>
     </template>
 
-    <template v-if="job && job.locum_job_status === 'Applied' && job.applied_update_accepted_until && !job.applied_update_accepted">
+    <template v-if="job_part.locum_job_part_status === 'Applied' && job_part.applied_update_accepted_until && !job_part.applied_update_accepted">
       <div class="text-md">
         The Practice made changes on this Job, Accept these changes?
       </div>
 
       <div class="text-sm">
-        <span>You must accept the changes within {{ job.applied_update_accepted_until_duration_in_minutes_formatted }}, </span>
-        <span>before {{ job.applied_update_accepted_until_in_gb_formatted }}.</span>
+        <span>You must accept the changes within {{ job_part.applied_update_accepted_until_duration_in_minutes_formatted }}, </span>
+        <span>before {{ job_part.applied_update_accepted_until_in_gb_formatted }}.</span>
       </div>
 
       <div class="flex items-center justify-start mt-1">
@@ -105,7 +120,7 @@
       </div>
     </template>
 
-    <div v-if="job && job.conflict" class="flex flex-col">
+    <div v-if="job_part.conflict" class="flex flex-col">
       <div class="flex flex-wrap justify-start">
         <div class="p-0 lg:pr-4 w-full lg:w-1/2">
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
@@ -114,7 +129,7 @@
                 Job Conflicts
               </p>
 
-              <p v-for="conflictJob in job.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm">
+              <p v-for="conflictJob in job_part.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm">
                 {{ conflictJob.job_number }}
               </p>
             </div>
@@ -125,15 +140,15 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
-          <div v-if="job.locum_job_status === 'Withdrawn'" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+          <div v-if="!loadingJobPart && job_part.locum_job_part_status === 'Withdrawn'" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
             <div class="leading-tight pb-4">
               <p class="font-bold text-sm sm:text-md">
                 Reason for Withdrawal
               </p>
 
               <p class="text-xs sm:text-sm break-words">
-                {{ job.declined_reason ? job.declined_reason : '(none)' }}
+                {{ job_part.declined_reason ? job_part.declined_reason : '(none)' }}
               </p>
             </div>
 
@@ -143,19 +158,19 @@
               </p>
 
               <p class="text-xs sm:text-sm">
-                {{ job.declined_at_in_gb_formatted }}
+                {{ job_part.declined_at_in_gb_formatted }}
               </p>
             </div>
           </div>
 
-          <div v-if="job.locum_job_status === 'Cancelled' && job.terminated" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+          <div v-if="job_part.locum_job_part_status === 'Cancelled' && job_part.terminated" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
             <div class="leading-tight pb-4">
               <p class="font-bold text-sm sm:text-md">
                 Terminated At
               </p>
 
               <p class="text-xs sm:text-sm break-words">
-                {{ job.cancelled_at_in_gb_formatted }}
+                {{ job_part.cancelled_at_in_gb_formatted }}
               </p>
             </div>
 
@@ -165,19 +180,19 @@
               </p>
 
               <p class="text-xs sm:text-sm">
-                {{ job.cancelled_reason }}
+                {{ job_part.cancelled_reason }}
               </p>
             </div>
           </div>
 
-          <div v-if="job.locum_job_status === 'Cancelled' && !job.terminated" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+          <div v-if="job_part.locum_job_part_status === 'Cancelled' && !job_part.terminated" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
             <div class="leading-tight pb-4">
               <p class="font-bold text-sm sm:text-md">
                 Cancelled At
               </p>
 
               <p class="text-xs sm:text-sm break-words">
-                {{ job.cancelled_at_in_gb_formatted }}
+                {{ job_part.cancelled_at_in_gb_formatted }}
               </p>
             </div>
 
@@ -187,45 +202,36 @@
               </p>
               
               <p class="text-xs sm:text-sm">
-                {{ job.cancelled_reason }}
+                {{ job_part.cancelled_reason }}
               </p>
             </div>
           </div>
 
           <div class="flex flex-col">
-            <LocumUserJobViewInfo :job="job" />
+            <LocumUserJobPartViewInfo
+              :loadingJobPart="loadingJobPart"
+              :jobPart="job_part"
+            />
 
             <JobDetailModalUnassignForm
-              v-if="job.locum_job_status === 'Allocated'"
+              v-if="!loadingJobPart && (job_part.locum_job_part_status === 'Ongoing' || job_part.locum_job_part_status === 'Allocated')"
               :ref="'unassignForm'"
-              :job="job"
-              @unassign="$emit('close'), $emit('unassign', $event)"
-            />
-
-            <JobDetailModalApplyForm
-              v-if="job.locum_job_status === 'Available' || job.locum_job_status === 'Matched'"
-              :job="job"
-              @applied="$emit('close'), $emit('applied', $event)"
-            />
-
-            <JobDetailModalCancelForm
-              v-if="job.locum_job_status === 'Applied'"
-              :job="job"
-              @cancelled="$emit('close'), $emit('cancelled', $event)"
+              :job="job_part.job"
+              @unassign="$emit('close')"
             />
           </div>
         </div>
 
         <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
-            <LocumUserJobViewJobParts :jobId="jobId" :disabled-link="true" />
+            <LocumUserJobViewJobParts :jobId="job_part.job_id" />
 
             <LocumUserJobViewJobMap
-              :practiceName="job.practice_name"
-              :practiceTypes="job.practice_types"
-              :practiceAddress="`${job.practice_address_line_1} ${job.practice_address_line_2} ${job.practice_address_line_3} ${job.practice_postcode}`"
-              :practiceCoordinateX="job.practice_coordinate_x"
-              :practiceCoordinateY="job.practice_coordinate_y"
+              :practiceName="job_part.practice_name"
+              :practiceTypes="job_part.practice_types"
+              :practiceAddress="`${job_part.practice_address_line_1} ${job_part.practice_address_line_2} ${job_part.practice_address_line_3} ${job_part.practice_postcode}`"
+              :practiceCoordinateX="job_part.practice_coordinate_x"
+              :practiceCoordinateY="job_part.practice_coordinate_y"
             />
           </div>
         </div>
@@ -236,150 +242,184 @@
       :label="'Proceed to cancel your application to this Job?'"
       :confirm-label="'Yes'"
       :cancel-label="'Cancel'"
-      :modal="cancelApplicationModal"
+      :modal="cancel_application_modal"
       @confirm="cancel"
-      @cancel="cancelApplicationModal = false"
+      @cancel="cancel_application_modal = false"
     />
 
     <AppConfirmationModal
-      :label="confirmationText"
+      :label="'Proceed to Invoice?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'No'"
+      :modal="toggle_invoice_modal"
+      @confirm="goToGenerateInvoice"
+      @cancel="toggle_invoice_modal = false"
+    />
+
+    <AppConfirmationModal
+      :label="confirmation_text"
       :confirm-label="'Yes'"
       :cancel-label="'Cancel'"
-      :modal="confirmationModal"
+      :modal="confirmation_modal"
       @confirm="confirm"
-      @cancel="confirmationModal = false"
+      @cancel="confirmation_modal = false"
     />
   </div>
 </template>
 
 <script>
-import LocumUserJobViewInfo from "@/components/Jobs/LocumUserJobViewInfo"
-import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm"
-import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm"
-import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-
-
+import AppLoading from "@/components/Base/AppLoading"
+import LocumUserJobPartViewInfo from "@/components/Jobs/LocumUserJobPartViewInfo"
 import LocumUserJobViewJobParts from "@/components/Jobs/LocumUserJobViewJobParts"
 import LocumUserJobViewJobMap from "@/components/Jobs/LocumUserJobViewJobMap"
+import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 export default {
   components: {
-    LocumUserJobViewInfo,
-    JobDetailModalUnassignForm,
-    JobDetailModalApplyForm,
-    JobDetailModalCancelForm,
-    AppConfirmationModal,
-
+    AppLoading,
+    LocumUserJobPartViewInfo,
     LocumUserJobViewJobParts,
     LocumUserJobViewJobMap,
+    JobDetailModalUnassignForm,
+    AppConfirmationModal,
   },
 
   props: {
-    jobId: {
-      type: Number,
-      required: true,
+    loadingJobPart: {
+      type: Boolean,
+      default: false,
     },
 
-    job: {
+    job_part: {
       type: Object,
-      default: () => ({}),
+      default: () => null,
     },
   },
 
   data () {
     return {
-      showMap: false,
-      cancelApplicationModal: false,
-      confirmationText: "",
-      confirmationModal: false,
+      loading: false,
+      toggle_invoice_modal: false,
+      cancel_application_modal: false,
+      confirmation_text: "",
+      confirmation_modal: false,
     }
   },
 
-  mounted () {
-    setTimeout(() => {
-      this.showMap = true
-    }, 1)
+  computed: {
+    job () {
+      return this.job_part && this.job_part.job
+        ? this.job_part.job
+        : null
+    },
   },
 
   methods: {
     favorite () {
-      this.confirmationText = "Add this Practice to Favorites?"
-      this.confirmationModal = true
+      this.confirmation_text = "Add this Practice to Favorites?"
+      this.confirmation_modal = true
     },
 
     unfavorite () {
-      this.confirmationText = "Remove this Practice to Favorites?"
-      this.confirmationModal = true
+      this.confirmation_text = "Remove this Practice to Favorites?"
+      this.confirmation_modal = true
     },
 
     confirm () {
-      if (!this.job.practice_is_favorite_of_locum) {
+      if (!this.job_part.practice_is_favorite_of_locum) {
         this.$axios
-          .$post(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .$post(`/api/v1/locum/practices/${this.job_part.practice_id}/favorite`)
           .then(() => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Added to favourites",],
             })
-            this.job.practice_is_favorite_of_locum = true
+
+            const jobPart = {
+              ...this.job_part,
+            }
+
+            jobPart.practice_is_favorite_of_locum = true
+
+            this.$emit('setJobPart', jobPart)
           })
           .catch(err => {
             console.log("err", err.response || err)
             throw err
           })
           .finally(() => {
-            this.confirmationModal = false
+            this.confirmation_modal = false
           })
-      } else if (this.job.practice_is_favorite_of_locum) {
+      } else if (this.job_part.practice_is_favorite_of_locum) {
         this.$axios
-          .$delete(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .$delete(`/api/v1/locum/practices/${this.job_part.practice_id}/favorite`)
           .then(() => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Remove to favourites",],
             })
-            this.job.practice_is_favorite_of_locum = false
+
+            const jobPart = {
+              ...this.job_part,
+            }
+
+            jobPart.practice_is_favorite_of_locum = false
+
+            this.$emit('setJobPart', jobPart)
           })
           .catch(err => {
             console.log("err", err.response || err)
             throw err
           })
           .finally(() => {
-            this.confirmationModal = false
+            this.confirmation_modal = false
           })
       }
     },
 
+    goToGenerateInvoice () {
+      this.$router.push(`/locum-billing/invoices`)
+
+      setTimeout(() => {
+        if (this.job_part.locum_invoice_id) {
+          if (this.job_part.status === 'Approved') {
+            this.$router.push({
+              path: `/locum-billing/invoices/${this.job_part.locum_invoice_id}`,
+            })
+          } else {
+            this.$router.push({
+              path: `/locum-billing/invoices/${this.job_part.locum_invoice_id}/edit`,
+            })
+          }
+        } else {
+          this.$router.push(`/locum-billing/invoices/${this.job_part.id}/create`)
+        }
+      }, 500)
+    },
+
     status (status) {
-      return status === "Matched" ? "AVAILABLE" : status.toUpperCase()
+      return status.toUpperCase()
     },
 
     bgStatus (status) {
-      let str = ""
-
       switch (status) {
-      case "Available":
-      case "Matched":
-        str = "bg-yellow-500"
-        break
-      case "Applied":
-        str = "bg-orange-500 text-white"
-        break
-      case "Allocated":
-        str = "bg-green-600 text-white"
-        break
+      case "Ongoing":
+      case "Completed":
+        return "bg-green-600 text-white"
+      case "Approved":
+        return "bg-green-600 text-white cursor-pointer"
+      case "Cancelled":
+        return "bg-red-500 text-white cursor-pointer"
       default:
-        str = "bg-red-500 text-white"
+        return "bg-red-500 text-white"
       }
-
-      return str
     },
 
     decline () {
-      if (this.job.locum_job_status === "Allocated") {
+      if (this.job_part.locum_job_part_status === "Allocated") {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
@@ -393,23 +433,27 @@ export default {
           block: "end",
           inline: "end",
         })
-      } else if (this.job.locum_job_status === "Applied") {
-        this.cancelApplicationModal = true
+      } else if (this.locum_job_part_status === "Applied") {
+        this.cancel_application_modal = true
       }
     },
 
     accept () {
-      const jobId = this.job.id
+      const jobId = this.job_part.job_id
+
+      this.loading = true
 
       this.$axios
         .$post(`/api/v1/locum/jobs/${jobId}/update-accept`)
         .then(res => {
           this.$emit("close")
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [`${res.message}`,],
           })
+
           setTimeout(() => {
             this.$router.push({
               path: `/jobs/${jobId}`,
@@ -417,10 +461,13 @@ export default {
             })
           }, 500)
         })
+        .finally(() => {
+          this.loading = false
+        })
     },
 
     cancel () {
-      const jobId = this.job.id
+      const jobId = this.job_part.job_id
 
       this.$axios
         .$delete(`/api/v1/locum/jobs/${jobId}/apply`)
@@ -444,7 +491,6 @@ export default {
           }
         })
     },
-
   },
 
 }

@@ -78,17 +78,17 @@
         :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
         class="default-btn rounded-md p-2 focus:outline-none transition-hover text-sm flex items-center button bg-sunglow hover:bg-sunglow-dark"
       >
-          <div class="mx-1">
-            <svgicon
-              name="create-job"
-              width="18"
-              height="18"
-              class="fill-current text-black"
-            />
-          </div>
-          <div>
-            Generate NHS Form B
-          </div>
+        <div class="mx-1">
+          <svgicon
+            name="create-job"
+            width="18"
+            height="18"
+            class="fill-current text-black"
+          />
+        </div>
+        <div>
+          Generate NHS Form B
+        </div>
       </nuxt-link>
     </div>
 
@@ -280,16 +280,6 @@
                 >
                   View Solo Form
                 </div>
-
-                <!-- <div
-                  v-if="
-                    $route.query.status && $route.query.status === 'approved'
-                      && slotProps.item.locum_invoice_item
-                      && !slotProps.item.locum_invoice_item.locum_invoice.paid_at
-                  "
-                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
-                  @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'payInvoice')"
-                >Mark as Paid</div>-->
 
                 <div
                   v-if="
@@ -586,7 +576,7 @@ export default {
         {
           name: "Type",
           dataIndex: "type",
-          width: 120
+          width: 120,
         },
         {
           name: "Practice",
@@ -601,13 +591,13 @@ export default {
           name: "Date Created",
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
-          width: 130
+          width: 130,
         },
       ],
 
@@ -650,6 +640,7 @@ export default {
 
     columns () {
       let columns = []
+
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
         : "to-be-invoiced"
@@ -674,7 +665,7 @@ export default {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 130
+          width: 130,
         },
         {
           name: "Job Title",
@@ -686,7 +677,7 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
+          width: 130,
         },
       )
 
@@ -697,14 +688,14 @@ export default {
             dataIndex: "ooh",
             class: "text-center",
             sortable: true,
-          width: 80
+            width: 80,
           },
           {
             name: "NHS Claimable",
             dataIndex: "nhs_claimable_formatted",
             class: "text-center",
             sortable: true,
-          width: 130
+            width: 130,
           }
         )
       }
@@ -715,7 +706,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       }
 
@@ -725,7 +716,7 @@ export default {
           dataIndex: "paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       }
 
@@ -734,14 +725,14 @@ export default {
           name: "Paid By Practice At",
           dataIndex: "locum_form_a_paid_by_practice_at_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
 
         columns.push({
           name: "Paid By Locum At",
           dataIndex: "locum_form_a_paid_at_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -751,7 +742,7 @@ export default {
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -759,7 +750,7 @@ export default {
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       } else {
         columns.push({
@@ -767,7 +758,7 @@ export default {
           dataIndex: "issued_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         })
       }
 
@@ -775,7 +766,7 @@ export default {
         name: "Actions",
         dataIndex: "actions",
         class: queryStatus !== 'to-be-invoiced' ? "text-center" : 'dropdown',
-        width: queryStatus !== 'to-be-invoiced' ? 100 : 150
+        width: queryStatus !== 'to-be-invoiced' ? 100 : 150,
       })
 
       return columns

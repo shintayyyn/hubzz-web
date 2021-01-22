@@ -553,7 +553,7 @@ export default {
         dataIndex: "actions",
         class: ['issued', 'pension-form-a', 'solo-form'].includes(queryStatus) ? 'dropdown' : "text-center",
         initialDropdown: queryStatus === 'pension-form-a' ? 'View Form A' : queryStatus === 'solo-form' ? 'View Solo Form' : 'Edit',
-        width: 120
+        width: queryStatus === 'solo-form' ? 140 : 120
       })
       return columns
     },

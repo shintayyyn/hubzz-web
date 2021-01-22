@@ -15,6 +15,7 @@
       :columns="columns"
       :loading="loading"
       :routerLink="routerLink"
+      minHeight="unset"
       :customWidth="600"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"

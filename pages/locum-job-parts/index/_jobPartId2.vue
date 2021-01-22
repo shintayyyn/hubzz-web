@@ -3,14 +3,14 @@
     <AppLoading :loading="initialLoading" spinner />
 
     <JobDetailModalAppointment
-      v-if="jobPart && jobPart.type === 'Private'"
+      v-if="jobPart && jobPart.job && jobPart.job.type === 'Private'"
       :job="jobPart.job"
       @close="close"
       @appointmentUpdated="appointmentUpdatedHandler"
     />
 
-    <LocumUserJobPartView
-      v-if="jobPart && jobPart.type === 'Platform'"
+    <JobPartDetailModal
+      v-if="jobPart && jobPart.job && jobPart.job.type === 'Platform'"
       :job_part="jobPart"
       :loadingJobPart="loadingJobPart"
       @setJobPart="newJobPart => jobPart = newJobPart"
@@ -21,7 +21,7 @@
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
-import LocumUserJobPartView from "@/components/Jobs/LocumUserJobPartView"
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
 export default {
@@ -32,7 +32,7 @@ export default {
 
   components: {
     AppLoading,
-    LocumUserJobPartView,
+    JobPartDetailModal,
     JobDetailModalAppointment,
   },
 
@@ -67,7 +67,7 @@ export default {
     },
 
     getLocumJobPart () {
-      return this.$axios.get(`/api/v2/locum/locum-user-job-parts/${this.$route.params.jobPartId}`).then((response) => {
+      return this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.jobPartId}`).then((response) => {
         this.jobPart = response.data.data.job_part
       }).catch((err) => {
         console.log('err', err.response || err)
