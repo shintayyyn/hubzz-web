@@ -193,7 +193,7 @@ export default {
             name: "Job Part Number",
             dataIndex: "job_part_number",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Practice",
@@ -212,21 +212,21 @@ export default {
             dataIndex: "job_part_shift_names_formatted",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Rates",
             dataIndex: "job_part_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
-            width: 120
+            width: 120,
           },
           {
             name: "Rate Types",
             dataIndex: "job_part_rate_type_names_formatted",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
         )
       } else {
@@ -235,7 +235,7 @@ export default {
             name: "Job Number",
             dataIndex: "job_number",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Practice",
@@ -254,21 +254,21 @@ export default {
             dataIndex: "job_shift_names_formatted",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Rates",
             dataIndex: "job_rate_ranged_formatted",
             sortable: true,
             class: "text-center",
-            width: 150
+            width: 150,
           },
           {
             name: "Rate Types",
             dataIndex: "job_rate_type_names_formatted",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
         )
       }
@@ -279,14 +279,14 @@ export default {
           dataIndex: "date_start",
           sortable: true,
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "To",
           dataIndex: "date_end",
           sortable: true,
           class: "text-center",
-          width: 100
+          width: 100,
         }
       )
 
@@ -304,7 +304,7 @@ export default {
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -313,7 +313,7 @@ export default {
           name: "Cancelled At",
           dataIndex: "cancelled_at_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -322,7 +322,7 @@ export default {
           name: "Completed At",
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -331,7 +331,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         })
       }
 
@@ -351,7 +351,7 @@ export default {
             name: "Tag",
             dataIndex: "status",
             class: "text-center",
-            width: 100
+            width: 100,
           }
         )
       }
