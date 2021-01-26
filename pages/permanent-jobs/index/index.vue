@@ -159,13 +159,13 @@
 
           <template v-slot:status_slot="slotProps">
             <div v-if="slotProps.item.status" class="flex items-center justify-center">
-                {{ slotProps.item.status }}
+              {{ slotProps.item.status }}
             </div>
           </template>
 
           <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
-                {{ jobClosingTag(slotProps.item) }}
+              {{ jobClosingTag(slotProps.item) }}
             </div>
           </template>
         </AppTable>
@@ -810,7 +810,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
-          width: 100
+            width: 100
           },
           {
             name: "Closing Tag",
@@ -895,10 +895,10 @@ export default {
       this.params.profession = ""
       this.params.date_posted_start = ""
       this.params.date_posted_end = ""
-      this.params.permanent_job_status
-				= !this.$route.query.status || this.$route.query.status === "Available"
-				  ? "Available"
-				  : "Closed"
+      this.params.permanent_job_status = 
+        this.$route.query.status === null || this.$route.query.status === "Available"
+          ? "Available"
+          : "Closed"
 
       this.getJobs(this.params)
     },
@@ -938,9 +938,10 @@ export default {
         )
         if (permJobApp && permJobApp.application_status === "Rejected") {
           closingTag = "Rejected"
-        } else {
-          closingTag = item.hired_through
-        }
+        } else if (permJobApp && permJobApp.rejected_by_locum_at) {
+          console.log('bananaa')
+          closingTag = "Rejected by Locum"
+        } 
       } else {
         closingTag = item.hired_through
       }
@@ -954,6 +955,8 @@ export default {
         return "Rejected"
       case "Unfilled":
         return "Unfilled"
+      case "Rejected by Locum":
+        return "Rejected by ocum"
       default:
         return "Closed By Practice"
       }
