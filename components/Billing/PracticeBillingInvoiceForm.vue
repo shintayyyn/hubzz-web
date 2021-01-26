@@ -212,8 +212,15 @@
           </div>
 
           <div 
-            v-if="propInvoice.locum_user_vat_registered 
-              && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+            v-if="propInvoice 
+              ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
+                ? true 
+                : false 
+              : propJobPart 
+                ? propInvoice.locum_user_vat_registered  
+                  ? true
+                  : false 
+                : false" 
             class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">
@@ -226,8 +233,15 @@
           </div>
 
           <div 
-            v-if="propInvoice.locum_user_vat_registered 
-              && (propInvoice ? propInvoice.untaxed_total_amount !== propInvoice.total_amount ? true : false : true)" 
+            v-if="propInvoice 
+              ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
+                ? true 
+                : false 
+              : propJobPart 
+                ? propInvoice.locum_user_vat_registered  
+                  ? true
+                  : false 
+                : false" 
             class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">
