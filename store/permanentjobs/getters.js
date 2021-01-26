@@ -18,6 +18,9 @@ export default {
       case 'Locum Notification Permanent Job Unsuccessful':
         message = 'Your application for a Permanent Job position has been Unsuccessful'
         break
+      case 'Locum Notification Permanent Job Hired':
+        message = 'Application is accepted and offered'
+        break
       default:
         message = ''
       }

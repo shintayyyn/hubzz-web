@@ -526,8 +526,8 @@ export default {
 				});
 		},
 
-		appoint() {
-			this.$axios
+		async appoint() {
+			await this.$axios
 				.$put(
 					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/appoint-locum-to-job/${this.permanent_job_application.permanent_job_id}`
 				)
@@ -537,10 +537,11 @@ export default {
 						status: "success",
 						text: ["Assign locum successfully"]
 					});
+					$emit('close')
 					this.$route.push("/permanent-jobs");
 				})
 				.catch(err => {
-					console.log("err", err.reponse | err);
+					console.log("err", err.response | err);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "danger",

@@ -13,16 +13,20 @@
         <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
           <AppLoading :loading="loading" spinner />
 
-          <div class="font-bold text-sm sm:text-md mt-4">
+          <div v-if="false" class="font-bold text-sm sm:text-md mt-4">
             I won't be available
           </div>
 
           <AppInput
-            v-if="false"
+            v-if="true"
             v-model="availabilityType"
             type="select"
             :items="[{ label: 'I won\'t be available', value: 'unavailable' }, { label: 'I will be available', value: 'available' }]"
           />
+
+          <div v-if="availabilityType === 'unavailable'" class="text-gray-600 font-bold italic text-sm sm:text-md mt-4">
+            *Please take note that being unavailable on AM / PM Shifts would also mean that you will not be available for Whole Day Sessions.
+          </div>
 
           <div class="flex flex-row flex-wrap justify-between">
             <div class="w-full p-0 sm:w-1/2 pr-2">
@@ -182,13 +186,30 @@ export default {
       let index = this.selectedShifts.findIndex(({ id, }) => id === shift.id)
 
       if (index > -1) {
-        if (shift.name === 'Whole Day' && this.availabilityType === 'unavailable') {
-          if (!this.selectedShifts.some(({ name, }) => name === 'AM' || name === 'PM')) {
+        if (shift.name === 'Whole Day') {
+          if (
+            (
+              this.availabilityType === 'unavailable'
+              && !this.selectedShifts.some(({ name, }) => name === 'AM' || name === 'PM')
+            )
+            || this.availabilityType === 'available'
+          ) {
             this.selectedShifts.splice(index, 1)
           }
+
         } else {
           this.selectedShifts.splice(index, 1)
         }
+
+        const wholeDayIndex = this.selectedShifts.findIndex(({ name, }) => name === 'Whole Day')
+
+        if (
+          (shift.name === 'AM' || shift.name === 'AM')
+          && this.availabilityType === 'available'
+          && wholeDayIndex > -1
+        ) {
+          this.selectedShifts.splice(wholeDayIndex, 1)
+        } 
       } else {
         this.selectedShifts.push(shift)
 
@@ -198,14 +219,48 @@ export default {
 
     addWholeDayIfAmAndPm () {
       if (
-        this.selectedShifts.some(({ name, }) => name === 'AM' || name === 'PM')
-        && !this.selectedShifts.some(({ name, }) => name === 'Whole Day')
-        && this.availabilityType === 'unavailable'
+        (
+          this.selectedShifts.some(({ name, }) => name === 'AM' || name === 'PM')
+          && !this.selectedShifts.some(({ name, }) => name === 'Whole Day')
+          && this.availabilityType === 'unavailable'
+        )
+        ||         (
+          this.selectedShifts.some(({ name, }) => name === 'AM')
+          && this.selectedShifts.some(({ name, }) => name === 'PM')
+          && !this.selectedShifts.some(({ name, }) => name === 'Whole Day')
+          && this.availabilityType === 'available'
+        )
       ) {
         const wholeDayShift = this.shifts.find(({ name, }) => name === 'Whole Day')
 
         if (wholeDayShift) {
           this.selectedShifts.push(wholeDayShift)
+        }
+      }
+      
+
+      if (
+        this.availabilityType === 'available'
+        && this.selectedShifts.some(({ name, }) => name === 'Whole Day')
+        && !this.selectedShifts.some(({ name, }) => name === 'PM')
+      ) {
+        const pmShift = this.shifts.find(({ name, }) => name === 'PM')
+
+        if (pmShift) {
+          this.selectedShifts.push(pmShift)
+        }
+      }
+      
+
+      if (
+        this.availabilityType === 'available'
+        && this.selectedShifts.some(({ name, }) => name === 'Whole Day')
+        && !this.selectedShifts.some(({ name, }) => name === 'AM')
+      ) {
+        const amShift = this.shifts.find(({ name, }) => name === 'AM')
+
+        if (amShift) {
+          this.selectedShifts.push(amShift)
         }
       }
     },
@@ -250,12 +305,20 @@ export default {
         return
       }
 
+      const selectedShiftIds = this.selectedShifts.map(({ id, }) => id)
+
+      const notSelectedShiftIds = this.shifts
+        .map(({ id, }) => id)
+        .filter(id => selectedShiftIds.indexOf(id) === -1)
+
       this.loading = true
       this.$axios
         .post(`/api/v1/locum/unavailabilities`, {
           date_start: this.date_start,
           date_end: this.date_end,
-          shift_id: this.selectedShifts.map(({ id, }) => id),
+          shift_id: this.availabilityType === 'unavailability'
+            ? selectedShiftIds
+            : notSelectedShiftIds,
         })
         .then(response => {
           this.$store.commit("jobs/ADD_OR_UPDATE_LOCUM_UNAVAILABILITIES", response.data.data.unavailabilities)

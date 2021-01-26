@@ -202,6 +202,7 @@ export default {
         "Locum Notification Permanent Job Matched",
         "Locum Notification Permanent Job Invited",
         "Locum Notification Permanent Job Rejected",
+        "Locum Notification Permanent Job Hired",
 
         "Locum Notification Job Allocated",
         "Locum Notification Job Amended",
@@ -686,6 +687,7 @@ export default {
         "Locum Notification Permanent Job Matched",
         "Locum Notification Permanent Job Invited",
         "Locum Notification Permanent Job Rejected",
+        "Locum Notification Permanent Job Hired",
       ]
 
       const locumJobNotifications = [
@@ -889,6 +891,19 @@ export default {
         if (
           notificationTypeName
             === "Locum Notification Permanent Job Rejected"
+          && permanentJob
+        ) {
+          this.$router.push({
+            name: "permanent-jobs-index-id",
+            params: {
+              id: permanentJobId,
+            },
+          })
+        }
+
+        if (
+          notificationTypeName
+            === "Locum Notification Permanent Job Hired"
           && permanentJob
         ) {
           this.$router.push({
