@@ -269,7 +269,7 @@ Vue.mixin({
         "ArrowDown",
         "ArrowLeft",
         "ArrowRight",
-        "Delete"
+        "Delete",
       ]
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
@@ -331,7 +331,7 @@ Vue.mixin({
       // numbers only [0-9]
       e = (e) ? e : window.event
       var charCode = (e.which) ? e.which : e.keyCode
-      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40) && (![46].includes(charCode)))) {
+      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40) && (![46,].includes(charCode)))) {
         e.preventDefault()
       } else {
         return true
@@ -349,7 +349,7 @@ Vue.mixin({
           return true
         }
       } else {
-        if ((charCode > 31) && (charCode < 65 || charCode > 122) && (charCode < 48 || charCode > 57) && (!specialKeys.includes(charCode)) && (![46].includes(charCode))) {
+        if ((charCode > 31) && (charCode < 65 || charCode > 122) && (charCode < 48 || charCode > 57) && (!specialKeys.includes(charCode)) && (![46,].includes(charCode))) {
           e.preventDefault()
         } else {
           return true
@@ -368,7 +368,7 @@ Vue.mixin({
           return true
         }
       }
-      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40) && (![107, 46].includes(charCode)))) {
+      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40) && (![107, 46,].includes(charCode)))) {
         e.preventDefault()
       } else {
         return true

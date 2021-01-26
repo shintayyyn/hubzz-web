@@ -317,8 +317,23 @@
                 </p>
               </div>
             </template>
+
             <div
-              v-if="propInvoice && propInvoice.approved && form.generate_form || (propInvoice && propInvoice.approved && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
+              v-if="
+                propInvoice && propInvoice.approved && form.generate_form
+                  || (
+                    propInvoice
+                  && propInvoice.approved
+                  && (
+                    (!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)
+                  )
+                  )
+                  || (
+                    !propInvoice
+                  && propJobPart
+                  && form.generate_form
+                  )
+              "
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
               <p class="text-sm w-1/2">
@@ -530,8 +545,10 @@ export default {
       // this.propInvoice && this.propInvoice.generate_form
       if (
         this.propInvoice
-        && ((!this.propInvoice.ooh && this.propInvoice.generate_form)
-          || this.propInvoice.ooh)
+        && (
+          (!this.propInvoice.ooh && this.propInvoice.generate_form)
+          || this.propInvoice.ooh
+        )
       ) {
         if (this.propInvoice.approved) {
           if (this.propInvoice.locum_form_a_id) {
@@ -816,7 +833,6 @@ export default {
         rate = practice_rate.rate
       } else {
         rate = 0
-        // practice_rates[practice_rates.length - 1].rate
       }
       return rate
     },
