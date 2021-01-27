@@ -437,7 +437,7 @@ export default {
 				});
 		},
 
-		async inviteLocum() {
+		async inviteLocum () {
 			this.formError = [];
 			this.Validate(this.form);
 			if (!this.formError.length) {
@@ -516,6 +516,7 @@ export default {
 						status: "success",
 						text: ["Successfully Rejected Locum"]
 					});
+					this.$router.push("/permanent-jobs");
 				})
 				.catch(err => {
 					this.$store.commit("SET_NOTIFICATION", {
@@ -526,22 +527,23 @@ export default {
 				});
 		},
 
-		async appoint() {
+		async appoint () {
 			await this.$axios
 				.$put(
 					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/appoint-locum-to-job/${this.permanent_job_application.permanent_job_id}`
 				)
 				.then(() => {
+					this.$emit("close");
+					this.$emit("updateApplicants");
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
 						text: ["Assign locum successfully"]
 					});
-					$emit('close')
-					this.$route.push("/permanent-jobs");
+					this.$router.push("/permanent-jobs");
 				})
 				.catch(err => {
-					console.log("err", err.response | err);
+					console.log("err", err.response.data.message);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "danger",

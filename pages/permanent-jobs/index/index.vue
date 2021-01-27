@@ -261,11 +261,8 @@ export default {
   },
 
   middleware ({ query, error, }) {
-    if (
-      query.status
-			&& !["available", "closed", "unfilled", "pending",].includes(
-			  query.status.toLowerCase()
-			)
+    if (query.status && !["available", "closed", "unfilled", "pending",]
+      .includes(query.status.toLowerCase())
     ) {
       return error({
         status: 404,
@@ -301,7 +298,7 @@ export default {
         {
           name: "ID",
           dataIndex: "id",
-          width: 70
+          width: 70,
         },
         {
           name: "Title",
@@ -318,27 +315,27 @@ export default {
           slotName: "salary_slot",
           dataIndex: "",
           class: "text-center",
-          width: 80
+          width: 80,
         },
         {
           name: "Posted",
           dataIndex: "",
           slotName: "date_posted",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Closes",
           dataIndex: "",
           slotName: "date_closing",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Work Hours",
           dataIndex: "work_hours",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Profession",
@@ -349,7 +346,7 @@ export default {
           name: "Industry",
           dataIndex: "industry_type",
           class: "text-center",
-          width: 80
+          width: 80,
         },
       ],
 
@@ -427,7 +424,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -439,7 +436,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
               ]
             }
@@ -451,7 +448,7 @@ export default {
                   name: "Closed At",
                   dataIndex: "closed_at_in_gb_formatted",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
                 {
                   name: "Status",
@@ -459,7 +456,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
                 {
                   name: "Closing tag",
@@ -467,7 +464,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -477,7 +474,7 @@ export default {
                   name: "Closed At",
                   dataIndex: "closed_at_in_gb_formatted",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
                 {
                   name: "Status",
@@ -485,7 +482,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
                 {
                   name: "Closing tag",
@@ -493,7 +490,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
               ]
             }
@@ -516,14 +513,12 @@ export default {
             let practice_type = this.$auth.user.practice_detail.practice.type
             this.params = {
               job_posting_status: newStatus ? newStatus : "Available",
-              practice_id:
-								practice_type === "Hub" && newStatus === "Pending"
-								  ? null
-								  : this.$auth.user.practice_id,
-              parent_practice_id:
-								practice_type === "Hub" && newStatus === "Pending"
-								  ? this.$auth.user.practice_id
-								  : null,
+              practice_id: practice_type === "Hub" && newStatus === "Pending"
+                ? null
+                : this.$auth.user.practice_id,
+              parent_practice_id: practice_type === "Hub" && newStatus === "Pending"
+                ? this.$auth.user.practice_id
+                : null,
               limit: 15,
             }
             setTimeout(async () => {
@@ -612,10 +607,9 @@ export default {
           params,
         })
 
-        permanent_jobs_for_locum
-					= response.data && response.data.permanent_jobs
-					  ? response.data.permanent_jobs
-					  : null
+        permanent_jobs_for_locum = response.data && response.data.permanent_jobs
+          ? response.data.permanent_jobs
+          : null
 
         response = await app.$axios.$get(
           `/api/v1/locum/permanent-job-applications/count`
@@ -632,10 +626,9 @@ export default {
           `/api/v1/locum/permanent-job-applications`
         )
 
-        permanent_job_applications
-					= response.data && response.data.permanent_job_applications
-					  ? response.data.permanent_job_applications
-					  : null
+        permanent_job_applications = response.data && response.data.permanent_job_applications
+          ? response.data.permanent_job_applications
+          : null
 
         permanent_jobs_for_locum = permanent_jobs_for_locum.map(
           permanent_job => {
@@ -674,14 +667,12 @@ export default {
           job_posting_status: route.query.status
             ? route.query.status
             : "Available",
-          practice_id:
-						practice_type === "Hub" && route.query.status === "Pending"
-						  ? null
-						  : app.$auth.user.practice_id,
-          parent_practice_id:
-						practice_type === "Hub" && route.query.status === "Pending"
-						  ? app.$auth.user.practice_id
-						  : null,
+          practice_id: practice_type === "Hub" && route.query.status === "Pending"
+            ? null
+            : app.$auth.user.practice_id,
+          parent_practice_id: practice_type === "Hub" && route.query.status === "Pending"
+            ? app.$auth.user.practice_id
+            : null,
           limit: 15,
         }
         let response = await app.$axios.$get(
@@ -700,10 +691,9 @@ export default {
           params,
         })
 
-        permanent_jobs_for_practice
-					= response.data && response.data.permanent_jobs
-					  ? response.data.permanent_jobs
-					  : null
+        permanent_jobs_for_practice = response.data && response.data.permanent_jobs
+          ? response.data.permanent_jobs
+          : null
 
         permanent_job_applications_count
 					= response.data && response.data.count ? response.data.count : null
@@ -717,10 +707,9 @@ export default {
           `/api/v1/practice/permanent-job-applications`
         )
 
-        permanent_job_applications
-					= response.data && response.data.permanent_job_applications
-					  ? response.data.permanent_job_applications
-					  : null
+        permanent_job_applications = response.data && response.data.permanent_job_applications
+          ? response.data.permanent_job_applications
+          : null
 
         await store.commit(
           "permanentjobs/SET_PERMANENT_JOB_APPLICATIONS",
@@ -791,7 +780,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
-          width: 100
+          width: 100,
         },
       ]
 
@@ -802,7 +791,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
-            width: 140
+            width: 140,
           },
           {
             name: "Status",
@@ -810,7 +799,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
-            width: 100
+            width: 100,
           },
           {
             name: "Closing Tag",
@@ -818,7 +807,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
-            width: 130
+            width: 130,
           },
         ]
       }
@@ -831,7 +820,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
-          width: 100
+          width: 100,
         },
       ]
       if (this.$route.query.status) {
@@ -841,7 +830,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
-            width: 140
+            width: 140,
           },
           {
             name: "Status",
@@ -849,7 +838,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
-            width: 100
+            width: 100,
           },
           {
             name: "Closing Tag",
@@ -857,7 +846,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
-            width: 130
+            width: 130,
           },
         ]
       }
@@ -895,10 +884,9 @@ export default {
       this.params.profession = ""
       this.params.date_posted_start = ""
       this.params.date_posted_end = ""
-      this.params.permanent_job_status = 
-        this.$route.query.status === null || this.$route.query.status === "Available"
-          ? "Available"
-          : "Closed"
+      this.params.permanent_job_status = this.$route.query.status === null || this.$route.query.status === "Available"
+        ? "Available"
+        : "Closed"
 
       this.getJobs(this.params)
     },
@@ -939,8 +927,7 @@ export default {
         if (permJobApp && permJobApp.application_status === "Rejected") {
           closingTag = "Rejected"
         } else if (permJobApp && permJobApp.rejected_by_locum_at) {
-          console.log('bananaa')
-          closingTag = "Rejected by Locum"
+          closingTag = "Interview Declined"
         } 
       } else {
         closingTag = item.hired_through
@@ -955,8 +942,8 @@ export default {
         return "Rejected"
       case "Unfilled":
         return "Unfilled"
-      case "Rejected by Locum":
-        return "Rejected by ocum"
+      case "Interview Declined":
+        return "Interview Declined"
       default:
         return "Closed By Practice"
       }
@@ -992,10 +979,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/locum/permanent-jobs`, { params, })
         .then(res => {
-          this.permanent_jobs_for_locum
-						= res.data && res.data.permanent_jobs
-						  ? res.data.permanent_jobs
-						  : null
+          this.permanent_jobs_for_locum = res.data && res.data.permanent_jobs
+            ? res.data.permanent_jobs
+            : null
         })
 
       await this.$axios
@@ -1008,10 +994,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/locum/permanent-job-applications`)
         .then(res => {
-          this.permanent_job_applications
-						= res.data && res.data.permanent_job_applications
-						  ? res.data.permanent_job_applications
-						  : null
+          this.permanent_job_applications = res.data && res.data.permanent_job_applications
+            ? res.data.permanent_job_applications
+            : null
         })
 
       this.permanent_jobs_for_locum = await this.permanent_jobs_for_locum.map(
@@ -1057,10 +1042,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/practice/permanent-jobs`, { params, })
         .then(res => {
-          this.permanent_jobs_for_practice
-						= res.data && res.data.permanent_jobs
-						  ? res.data.permanent_jobs
-						  : null
+          this.permanent_jobs_for_practice = res.data && res.data.permanent_jobs
+            ? res.data.permanent_jobs
+            : null
         })
 
       await this.$axios
@@ -1073,10 +1057,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/practice/permanent-job-applications`)
         .then(res => {
-          this.permanent_job_applications
-						= res.data && res.data.permanent_job_applications
-						  ? res.data.permanent_job_applications
-						  : null
+          this.permanent_job_applications = res.data && res.data.permanent_job_applications
+            ? res.data.permanent_job_applications
+            : null
         })
 
       this.permanent_jobs_for_practice = await this.permanent_jobs_for_practice.map(
