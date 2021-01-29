@@ -468,6 +468,15 @@
             />
 
             <AppInput
+              v-model="form.payroll_company_email"
+              :type="'text'"
+              :name="'payroll_company_email'"
+              :label="'Payroll Company Email Address'"
+              :error="formError.find(item => item.field === 'payroll_company_email')"
+              required
+            />
+
+            <AppInput
               v-model="form.payroll_bank_name"
               :type="'text'"
               :name="'payroll_bank_name'"
@@ -893,6 +902,7 @@ export default {
         utr_number: "",
         paid_under_payroll: false,
         payroll_account_name: "",
+        payroll_company_email: "",
         payroll_bank_name: "",
         payroll_sort_code: "",
         payroll_account_number: "",
@@ -1469,6 +1479,7 @@ export default {
       this.form.paid_under_payroll = this.user.paid_under_payroll
 
       this.form.payroll_account_name = this.user.payroll_account_name
+      this.form.payroll_company_email = this.user.payroll_company_email
       this.form.payroll_account_number = this.user.payroll_account_number
       this.form.payroll_reference_number = this.user.payroll_reference_number
       this.form.payroll_sort_code = this.user.payroll_sort_code
@@ -1874,12 +1885,14 @@ export default {
 
       if (["false", false,].includes(this.form.paid_under_payroll)) {
         // this.form.payroll_account_name = ""
+        // this.form.payroll_company_email = ""
         // this.form.payroll_account_number = ""
         // this.form.payroll_reference_number = ""
         // this.form.payroll_sort_code = ""
         // this.form.payroll_bank_name = ""
         notRequired.push(
           "payroll_account_name",
+          "payroll_company_email",
           "payroll_bank_name",
           "payroll_sort_code",
           "payroll_account_number",
