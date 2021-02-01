@@ -111,7 +111,7 @@
           :invoiceDetails="propInvoice"
           :invoiceStatus="$route.query.status"
           :tax_rates="tax_rates"
-          :locum_vat_registered="propInvoice.locum_user_vat_registered "
+          :locum_vat_registered="propInvoice.locum_user_vat_registered"
           :toDisplay="propInvoice.approved || propInvoice.last_disputed_by === 'Practice'"
           @getSchedule="getSchedule"
         />
@@ -800,7 +800,6 @@ export default {
   },
 
   created () {
-    this.taxRatesLoading = true
     Promise.all([
       this.$axios.$get("/api/v1/tax-rates").then(response => 
         response.data.tax_rates
@@ -809,9 +808,6 @@ export default {
       .then(responses => {
         const [taxRates,] = responses
         this.tax_rates = taxRates
-      })
-      .finally(() => {
-        this.taxRatesLoading = false
       })
   },
 
@@ -979,8 +975,6 @@ export default {
     },
 
     save (approved) {
-      // console.log("banana", approved)
-      // console.log('form', this.form)
       this.formError = []
 
       this.shiftErrors = []
