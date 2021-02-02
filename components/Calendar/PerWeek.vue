@@ -1,5 +1,5 @@
 <template>
-  <section class="py-3">
+  <section class="pt-3">
     <div class="flex flex-row flex-wrap justify-between mx-1">
         <div class="w-1/2 flex items-center justify-between">
           <span class="cursor-pointer mx-2" @click="adjustWeek('previous')">

@@ -523,6 +523,10 @@ input::placeholder, textarea::placeholder {
 	color: #8896a9;
 }
 
+.required-placeholder {
+	content: attr('placeholder', 'value', '*');
+}
+
 /* Customized Select Dropdown */
 .customized-select {
 	position: relative;

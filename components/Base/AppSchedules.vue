@@ -19,7 +19,7 @@
 
     <div class="flex">
       <div v-if="type === 'create'" class="pl-0 p-4">
-        <div class="border rounded-lg w-full h-full">
+        <div class="border rounded-lg w-full h-full" v-if="!hideDates">
           <p class="text-gray-700 text-center text-lg font-bold pt-6">
             <span>DATES</span>
           </p>
@@ -82,15 +82,15 @@
       <div class="w-full py-4">
         <div
           class="w-full h-full pb-6 flex flex-col justify-between"
-          :class="['complete', 'terminate', 'invoice'].includes(type) ? '' : 'border rounded-lg '"
+          :class="hideDates ? '' : ['complete', 'terminate', 'invoice'].includes(type) ? '' : 'border rounded-lg'"
         >
           <div>
-            <p v-if="type === 'create'" class="text-gray-700 text-center text-lg font-bold py-6">
+            <p v-if="type === 'create'" class="font-bold" :class="hideDates ? 'text-left' : 'text-gray-700 text-lg text-center py-6'">
               <span>SHIFTS &amp; RATES</span>
             </p>
 
             <template v-if="schedules && schedules.length">
-              <div v-if="type === 'create'" class="flex items-center w-2/5 mx-auto mb-6 text-gray-600">
+              <div v-if="type === 'create'" class="flex items-center mb-6 text-gray-600" :class="hideDates ? 'px-2 w-3/5' :'mx-auto w-2/5'">
                 <p class="text-sm whitespace-no-wrap mr-2 font-bold">
                   <span>Job Part</span>
                 </p>
@@ -957,7 +957,7 @@
             :class="type === 'create' ? 'w-10/12' : 'w-full px-4'"
           >
             <div
-              class="flex flex-col text-lg text-gray-600 font-bold text-right"
+              class="flex flex-col text-gray-600 font-bold text-right"
               :class="type === 'create' ? ' w-2/4' : 'w-2/5'"
             >
               <div v-if="['create'].includes(type)" class="flex justify-between">
@@ -1253,6 +1253,21 @@ export default {
       default: false,
     },
 
+    hideDates: {
+      type: Boolean,
+      default: false,
+    },
+
+    importedSchedule: {
+      type: Array,
+      default: () => null,
+    },
+
+    importedDateRange: {
+      type: Object,
+      default: () => null,
+    },
+
     invoiceDetails: {
       type: Object,
       default: () => null,
@@ -1457,6 +1472,9 @@ export default {
         })
       })
 
+      if (this.hideDates) {
+        this.$emit('getJobParts', jobParts)
+      }
       return jobParts
     },
 
@@ -1564,6 +1582,11 @@ export default {
   },
 
   watch: {
+    importedSchedule(value) {
+      if (this.hideDates) {
+        this.scheduleDates = value
+      }
+    },
     scheduleDates (value) {
       if (!this.schedules.length) {
         value.forEach(date => {
@@ -1592,7 +1615,6 @@ export default {
           })
         }
       }
-
       this.schedules.sort(
         (a, b) =>
           this.$moment(a.date, "DD/MM/YYYY")
@@ -1633,6 +1655,12 @@ export default {
     schedules () {
       this.emitSchedule()
     },
+
+    importedDateRange({ start_date, end_date}) {
+      this.start_date = start_date
+      this.end_date = end_date
+      this.$emit('exportSched', this.scheduleDates)
+    }
   },
 
   created () {
