@@ -35,8 +35,9 @@
             :error="formError.find(item => item.field === 'private_practice_id')"
           />
 
-          <div class="-mt-6 md:-mt-10 pt-4">
-            <AppButton :label="'Add'" :in-style="'padding:8px 16px;'" @click="surgery_modal = true" />
+          <div class="-mt-6 md:-mt-8 pt-4">
+            <AppButton :label="'Add'" :in-style="'font-size:12px;'"
+              :inClass="'text-xs py-1 px-4 rounded'" @click="surgery_modal = true" />
           </div>
 
           <div class="flex flex-row flex-wrap justify-start mt-8">

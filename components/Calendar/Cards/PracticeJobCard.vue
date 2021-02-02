@@ -1,7 +1,7 @@
 <template>
   <nuxt-link
     :to="link"
-    class="flex flex-col items-start pl-2 rounded-lg mb-2 job-card transition-hover"
+    class="flex flex-col items-start pl-2 pb-2 rounded-lg mb-2 job-card transition-hover shadow-md"
     :class="[bgStatus, hasPermissionToShow ? 'show' : 'cursor-default']"
   >
     <div class="bg-white shadow w-full rounded-t rounded-bl-lg rounded-br p-2 transition-hover">
@@ -11,7 +11,7 @@
       <div class="text-gray-800 my-1 font-bold">
         {{ jobTitle }}
       </div>
-      <div class="flex flex-wrap items-center w-full">
+       <!--<div class="flex flex-wrap items-center w-full">
         <div v-for="shift in jobShift" :key="shift.id" class="w-1/2">
           <div
             :key="shift.id"
@@ -20,8 +20,8 @@
           >
             {{ shift.name }}
           </div>
-        </div>
-      </div>
+        </div> 
+      </div>-->
       <div class="text-gray-600 mt-2 text-sm sm:text-md">
         {{ jobSurgeryName }}
       </div>
@@ -34,12 +34,12 @@
         {{ $moment(dateEnd).format('DD / MM / YYYY') }}
       </div>
     </div>
-    <p
+    <!-- <p
       v-if="hasPermissionToShow"
       class="text-center text-white py-1 text-sm w-full font-bold"
     >
       Click to view Details
-    </p>
+    </p> -->
   </nuxt-link>
 </template>
 
@@ -228,6 +228,9 @@ export default {
 .job-card:hover {
 	background-color: #35cc65;
 } */
+.job-card {
+  box-shadow: 1px -1px 6px #ddd;
+}
 .job-card.show:hover > div {
 	background-color: #f0f0f0;
 }

@@ -3,7 +3,7 @@
     <template
       v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number', 'numberDash'].includes(type)"
     >
-      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-6 py-2'">
+      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-6'">
         <div
           v-if="label || info"
           class="relative flex flex-wrap leading-none"
@@ -232,15 +232,16 @@
             </template>
 
             <template v-if="type === 'select'">
-              <div :class="['w-full relative', inClass]">
+              <div :class="['w-full relative pt-2', inClass]">
                 <div class="w-full customized-select flex items-center">
                   <select
                     ref="inputSelect"
                     :value="value"
-                    class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                    class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm w-full"
                     :class="[
                       (error && !disabled) ? 'border-red-500' : inClass,
                       disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
+                      !value && placeholder && 'text-gray-500 focus:text-black' 
                     ]"
                     :style="inStyle"
                     :disabled="disabled"
@@ -267,9 +268,8 @@
                     :class="[disabled ? 'text-gray-500' : '', wrapperClass ? '' : '-mt-1']"
                   >
                     <svgicon
-                      name="arrow-up"
-                      class="h-full w-10 p-2 mt-2 fill-current"
-                      style="transform: rotate(180deg)"
+                      name="caret-down"
+                      class="h-full w-3 -mt-4 fill-current"
                     />
                   </span>
                 </div>

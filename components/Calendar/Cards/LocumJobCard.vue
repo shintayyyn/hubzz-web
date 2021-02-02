@@ -1,7 +1,7 @@
 <template>
   <nuxt-link
     :to="link"
-    class="flex flex-col items-start pl-2 rounded-lg mb-2 job-card transition-hover"
+    class="flex flex-col items-start pl-2 pb-2 rounded-lg mb-2 job-card transition-hover"
     :class="bgStatus"
   >
     <template>
@@ -14,7 +14,7 @@
         <div class="text-gray-800 my-1 font-bold">
           {{ jobTitle }}
         </div>
-        <div
+        <!-- <div
           v-if="propJob.locum_status === 'Permanent'"
           class="my-2 text-sm px-1 text-white rounded w-1/2 sm:w-1/4 lg:w-1/2 text-center"
           :class="shiftStyle(jobShift)"
@@ -31,7 +31,7 @@
               {{ shift.name }}
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="text-gray-600 mt-2 text-sm sm:text-md">
           {{ jobSurgeryName }}
         </div>
@@ -50,12 +50,12 @@
         </div>
       </div>
     </template>
-    <p
+    <!-- <p
       class="text-center py-1 text-sm w-full font-bold"
       :class="['Applied'].includes(job.locum_status) ? 'text-black' : 'text-white'"
     >
       Click to view Details
-    </p>
+    </p> -->
   </nuxt-link>
 </template>
 
