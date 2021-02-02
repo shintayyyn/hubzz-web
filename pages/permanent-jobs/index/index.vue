@@ -713,21 +713,21 @@ export default {
 
         await store.commit(
           "permanentjobs/SET_PERMANENT_JOB_APPLICATIONS",
-          permanent_job_applications_count
+          permanent_job_applications
         )
 
         permanent_jobs_for_practice = permanent_jobs_for_practice.map(
           permanent_job => {
-            const permanent_job_app_found = permanent_job_applications.find(
-              permanent_job_application =>
-                permanent_job_application.permanent_job_id === permanent_job.id
-            )
-            if (permanent_job_app_found) {
-              // DIFFERENT STATUSES ONLY IF IN AVAILABLE TAB
+            if (permanent_job.permanent_job_applications.length > 0) {
+              console.log(permanent_job.permanent_job_applications.filter(permJobApp => permJobApp.application_status === 'Rejected'))
               if (route.query.status === permanent_job.job_posting_status) {
                 permanent_job.status = permanent_job.job_posting_status
               } else {
-                permanent_job.status = "Applied"
+                if ( permanent_job.permanent_job_applications.filter(permJobApp => permJobApp.application_status === 'Rejected').length > 0) {
+                  permanent_job.status = permanent_job.job_posting_status
+                } else {
+                  permanent_job.status = "Applied"
+                }
               }
             } else {
               permanent_job.status = permanent_job.job_posting_status
