@@ -447,7 +447,7 @@ export default {
           params: {
             seen: false,
             id_only: true,
-            limit: 999,
+            limit: 999999,
           },
         })
         .then(response => {
