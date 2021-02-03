@@ -385,7 +385,8 @@ export default {
         ) {
           this.$store.commit("calendar/SET_REPOST_JOB", this.job)
           
-          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
+          this.$router.push('/create-job')
+          // this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
       }, 500)
     },

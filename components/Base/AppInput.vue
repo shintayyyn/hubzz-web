@@ -269,7 +269,9 @@
                   >
                     <svgicon
                       name="caret-down"
-                      class="h-full w-3 -mt-2 fill-current"
+                      width="10" 
+                      height="10"
+                      class="h-full -mt-4 fill-current"
                     />
                   </span>
                 </div>

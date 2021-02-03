@@ -28,10 +28,11 @@
                 :label="'+ Create Job'"
                 class="whitespace-no-wrap font-bold"
                 :customTheme="'bg-info text-white'"
-                @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+                @click="$router.push('/create-job')"
               />
             </div>
                 
+                <!-- @click="$store.commit('calendar/CREATE_JOB_MODAL', true)" -->
                 <!-- @click="$router.push('/create-job')" -->
             <!-- <button
 							class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"

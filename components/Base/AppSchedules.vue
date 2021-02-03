@@ -717,7 +717,7 @@
                         <div class="flex items-end w-full">
                           <div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
                             <div
-                              class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
+                              class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-1 py-1 text-xs rounded cursor-pointer"
                               :class="shiftColor(shift.shift_id)"
                             >
                               <div class="flex justify-between items-center font-bold">
@@ -728,12 +728,12 @@
                                 }}
                               </div>
 
-                              <svgicon name="down" width="12" height="12" class="fill-current" />
+                              <svgicon name="caret-down" width="10" height="10" class="fill-current" />
                             </div>
 
                             <select
                               v-model="shift.shift_id"
-                              class="custom-select -mt-8 py-1 text-sm px-2"
+                              class="custom-select -mt-8 py-1 text-sm px-1"
                               @change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
                             >
                               <option
@@ -958,7 +958,7 @@
           >
             <div
               class="flex flex-col text-gray-600 font-bold text-right"
-              :class="type === 'create' ? ' w-2/4' : 'w-2/5'"
+              :class="hideDates ? 'w-3/4' : type === 'create' ? ' w-2/4' : 'w-2/5'"
             >
               <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">

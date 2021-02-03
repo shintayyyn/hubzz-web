@@ -424,7 +424,8 @@ export default {
             dates: this.jobPart.dates,
           })
           
-          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
+          this.$router.push('/create-job')
+          // this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
       }, 500)
     },

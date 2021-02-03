@@ -6,13 +6,14 @@
         type="text"
         name="email"
         label="Email address or Username"
+        :inClass="'pt-2'"
         :error="formErrors.find(formError => formError.field === 'email')"
         @submit="login"
       />
 
       <div class="flex flex-col">
         <label class="text-xs md:text-sm">Password</label>
-        <div class="w-full relative">
+        <div class="w-full relative pt-1">
           <input
             v-model="password"
             :type="passwordInputType"
