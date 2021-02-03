@@ -1,26 +1,26 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl">
+    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl my-3">
       <svgicon v-if="!statistics.length" name="loader" width="60" height="60" />
       <div
         v-for="(item, index) in statistics"
         :key="index"
-        class="sm:px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
-        :class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
+        class="pr-3 my-1 w-full sm:w-1/2 lg:max-w-sm"
+        :class="$auth.user.domain === 'Locum' ? 'md:w-1/5' : 'md:w-1/5'"
       >
         <nuxt-link
           :event="($auth.user.domain === 'Practice' && authPermissions.includes('View Sessions Job')) || $auth.user.domain === 'Locum' ? 'click' : disabled"
           :to="item.route"
         >
           <div
-            class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white"
+            class="statistics-card rounded-lg border px-4 py-2 bg-white h-full"
             :class="($auth.user.domain === 'Practice' && authPermissions.includes('View Sessions Job')) || $auth.user.domain === 'Locum'? 'hover:bg-gray-300' : ''"
           >
-            <div class="flex flex-col">
-              <div class="text-sm sm:text-md">
+            <div class="flex flex-col w-full justify-between">
+              <div class="text-sm sm:text-md text-gray-600">
                 {{ item.label }}
               </div>
-              <div class="font-bold text-5xl">
+              <div class="font-bold text-4xl">
                 {{ item.value }}
               </div>
             </div>
@@ -438,8 +438,8 @@ a {
 }
 
 .statistics-card {
-	min-height: 130px;
-	display: flex;
-	align-items: center;
+	min-height: 100px;
+  display: flex;
+	/* align-items: center; */
 }
 </style>
