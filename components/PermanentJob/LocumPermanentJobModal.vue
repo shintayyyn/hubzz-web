@@ -4,7 +4,6 @@
 			<nuxt-link :to="{ path: `/permanent-jobs`, query:$route.query}">
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
-
 			<div class="flex flex-row flex-wrap justify-start items-center mt-4 md:mt-8">
 				<h4 class="text-lg md:text-xl font-bold flex items-center my-1">
 					<span>{{ permanent_job.title }}</span>
@@ -27,7 +26,7 @@
 				>{{ jobClosingTag(permanent_job) }}</span>
 
 				<AppButton
-					v-if="permanent_job.status == 'Available'"
+					v-if="permanent_job.status == 'Available' || (permanent_job_application && permanent_job_application.rejected_by_locum_at !== null)"
 					class="mx-2"
 					:label="toApply ? 'Cancel':'Apply'"
 					@click="toApply = !toApply"
@@ -161,6 +160,9 @@
 
 			<div class="flex flex-col md:flex-row">
 				<div class="w-full md:w-3/5 lg:w-2/3 pr-2">
+					<div v-if="permanent_job_application && permanent_job_application.rejected_by_locum_at !== null" class="text-xs text-red-500">
+						* You have rejected an invitation for interview for this job on {{ permanent_job_application && permanent_job_application.rejected_by_locum_at_in_gb_formatted ? permanent_job_application.rejected_by_locum_at_in_gb_formatted : null }}
+					</div>
 					<div class="bg-white rounded-lg shadow-lg p-4">
 						<p class="font-bold">Practice</p>
 						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : null }}</p>
