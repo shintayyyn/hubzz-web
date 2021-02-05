@@ -62,7 +62,7 @@
               isAfter
             />
 						</div>-->
-            <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+            <div class="px-1 py-3 w-full sm:w-1/2 md:w-1/4">
               <AppTime
                 v-model="form.time_start"
                 :name="'time_start'"
@@ -80,7 +80,7 @@
               isAfter
             />
 						</div>-->
-            <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+            <div class="px-1 py-3 w-full sm:w-1/2 md:w-1/4">
               <AppTime
                 v-model="form.time_end"
                 :name="'time_end'"
@@ -103,7 +103,7 @@
               />
             </div>
 
-            <div class="px-1 w-full sm:w-1/2 md:w-1/3">
+            <div class="px-1 py-2 w-full sm:w-1/2 md:w-1/3">
               <AppInput
                 v-model="form.rate"
                 :type="'text'"

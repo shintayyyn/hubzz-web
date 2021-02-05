@@ -1,5 +1,7 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div class="">
+    <AppBreadcrumbs :links="links" />
+
     <template v-if="practice_modal">
       <SessionDetailModal
         :job="practice_job"
@@ -44,6 +46,7 @@ import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal
 import JobDetailModal from "@/components/Jobs/JobDetailModal"
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 
 export default {
   components: {
@@ -52,6 +55,7 @@ export default {
     JobDetailModal,
     JobDetailModalAppointment,
     JobPartDetailModal,
+    AppBreadcrumbs
   },
 
   data () {
@@ -66,11 +70,19 @@ export default {
       locum_job_part: null,
       locum_appointment_modal: false,
       locum_appointment_job: null,
+
+      links: []
     }
   },
 
   async asyncData ({ app, params, query, error, }) {
     try {
+      let links = [
+        {
+          title: 'Dashboard',
+          url: '/dashboard'
+        },
+      ]
       if (app.$auth.user.domain === "Practice") {
         let url = `/api/v1/practice/jobs`
 
@@ -87,20 +99,24 @@ export default {
         if (response.data.data.job) {
           let practice_job = response.data.data.job
           let practice_modal = true
+          links.push({title: practice_job.title})
 
           return {
             practice_job,
             practice_modal,
+            links
           }
         }
 
         if (response.data.data.job_part) {
           let practice_job_part = response.data.data.job_part
           let practice_modal_part = true
+          links.push({title: practice_job_part.title})
 
           return {
             practice_job_part,
             practice_modal_part,
+            links
           }
         }
       } else if (app.$auth.user.domain === "Locum") {
@@ -120,18 +136,22 @@ export default {
           if (response.data.data.job.type === "Platform") {
             let locum_job = response.data.data.job
             let locum_modal = true
+            links.push({title: locum_job.title})
 
             return {
               locum_job,
               locum_modal,
+              links
             }
           } else if (response.data.data.job.type === "Private") {
             let locum_appointment_job = response.data.data.job
             let locum_appointment_modal = true
+            links.push({title: locum_appointment_job.title})
 
             return {
               locum_appointment_job,
               locum_appointment_modal,
+              links
             }
           }
         }
@@ -140,18 +160,22 @@ export default {
           if (response.data.data.job_part.job.type === "Platform") {
             let locum_job_part = response.data.data.job_part
             let locum_modal_part = true
+            links.push({title: locum_job_part.title})
 
             return {
               locum_job_part,
               locum_modal_part,
+              links
             }
           } else if (response.data.data.job_part.job.type === "Private") {
             let locum_appointment_job = response.data.data.job_part.job
             let locum_appointment_modal = true
+            links.push({title: locum_appointment_job.title})
 
             return {
               locum_appointment_job,
               locum_appointment_modal,
+              links
             }
           }
         }

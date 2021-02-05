@@ -6,7 +6,7 @@
     class="flex"
     :class="index !== links.length-1 ? 'text-gray-600' :'font-bold'"
   >
-    <p class="px-2" @click="onClickHandler(link.url, index)" :class="index !== links.length-1 ? 'cursor-pointer hover:text-blue-500' : 'text-gray-700'">
+    <p class="" @click="onClickHandler(link.url, index)" :class="index !== links.length-1 ? `cursor-pointer hover:text-blue-500 ${index===0?'pr-1' : 'px-1'}` : 'text-gray-700 pl-1'">
       {{ link.title }}</p>
     <span>{{ index !== links.length-1 ? '/' : ''}}</span>
   </div>

@@ -1,6 +1,7 @@
 <template>
     <div>
-      <div class="flex justify-between items-center font-bold text-sm sm:text-xl">
+      <AppBreadcrumbs v-if="repostJob" :links="links" />
+      <div class="flex justify-between items-center font-bold text-sm sm:text-xl ">
         <div class="flex flex-col">
           <div>CREATE JOB</div>
           <div
@@ -539,6 +540,7 @@ import AppSchedules from "@/components/Base/AppSchedules"
 import AppButton from "@/components/Base/AppButton"
 import AppTime from "@/components/Base/AppTime"
 import AppLoading from "@/components/Base/AppLoading"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 
 const session_requirements_lists = [
   { label: "Practice admin", value: "Practice admin", },
@@ -555,7 +557,8 @@ export default {
     AppButton,
     AppTime,
     AppLoading,
-    AppMultipleDates
+    AppMultipleDates,
+    AppBreadcrumbs
   },
 
   data () {
@@ -563,6 +566,7 @@ export default {
       banksCount: 0,
       loading: false,
       dataLoading: false,
+      links: [],
 
       // sched dates
       start_date: null,
@@ -1080,6 +1084,20 @@ export default {
             profession =>
               profession.id === this.repostJob.platform_job.profession.id
           )
+
+        this.links = [
+          {
+            title: 'Dashboard',
+            url: '/dashboard'
+          },
+          {
+            title: this.repostJob.title,
+            url: `/dashboard/${this.repostJob.id}`
+          },
+          {
+            title: 'Repost Job'
+          }
+        ]
 
           const selectedProfessionCategoryId
 						= selectedProfession.profession_category.id

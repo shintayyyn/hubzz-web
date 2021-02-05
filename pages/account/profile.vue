@@ -170,14 +170,14 @@
           </div>
 
           <div class="flex flex-col my-8">
-            <div class="relative flex flex-row flex-wrap justify-between">
+            <div class="relative flex flex-row flex-wrap items-center justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">
                 <span>Your preferred rates £</span>
 
                 <small>(minimum)</small>
               </label>
 
-              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
+              <div class="rounded bg-gray-300 px-4 text-xs sm:text-sm">
                 <span>To match available jobs with</span>
               </div>
             </div>
