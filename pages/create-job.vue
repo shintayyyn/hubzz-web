@@ -1380,8 +1380,6 @@ export default {
     getSchedule (
       schedule,
       total_gross_locum_wages,
-      tax_rate_for_preview,
-      taxed_total_gross_locum_wages_preview,
       total_working_hours,
       deductions,
       total_lates,
@@ -1471,7 +1469,11 @@ export default {
       this.total_working_hours = total_working_hours
 
       this.total_gross_locum_wages = total_gross_locum_wages
+      
+      const tax_rate_for_preview = parseFloat(total_gross_locum_wages) * parseFloat(this.tax_rates_for_preview.locum_tax_rate_formatted)
 
+      const taxed_total_gross_locum_wages_preview = parseFloat(total_gross_locum_wages) + parseFloat(tax_rate_for_preview)
+      
       this.tax_rate_for_preview = tax_rate_for_preview
 
       this.taxed_total_gross_locum_wages_preview = taxed_total_gross_locum_wages_preview
@@ -1484,7 +1486,7 @@ export default {
     canPublish () {
       this.shiftErrors = []
       this.formError = []
-       let notRequired = [
+      let notRequired = [
         "title",
         "description",
         "session_requirements",

@@ -133,6 +133,16 @@
             <AppInput v-model="miles" class="px-1" :type="'number'" :name="'miles'" :label="'Miles'" />
           </div>
 
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              v-model="matchedRate"
+              class="px-1"
+              type="select"
+              label="Matched Rate"
+              :items="[{ label: 'All', value: null, }, { label: 'Yes', value: 'true', }, { label: 'No', value: 'false', }]"
+            />
+          </div>
+
           <div class="md:px-1 flex w-full">
             <AppButton
               :label="'Clear'"
@@ -282,6 +292,7 @@ export default {
       time_end: "",
       title_includes: "",
       job_number_includes: "",
+      matchedRate: null,
       shifts: [],
       rates: [],
       filterModal: false,
@@ -291,6 +302,12 @@ export default {
   },
 
   computed: {
+    defaultMatchedRate () {
+      return this.$route.query.status && this.$route.query.status.toLowerCase() === 'available'
+        ? 'true'
+        : null
+    },
+
     getRequestQueryFilters () {
       let locum_status = []
 
@@ -329,6 +346,7 @@ export default {
         type: queryStatus === "Private"
           ? "Private"
           : "Platform",
+        matched_rate: this.matchedRate,
       }
     },
 
@@ -431,7 +449,7 @@ export default {
           dataIndex: "applicants_count",
           sortable: true,
           class: "text-center",
-          width: 100
+          width: 100,
         })
       }
 
@@ -961,6 +979,7 @@ export default {
       this.time_end = ""
       this.title_includes = ""
       this.job_number_includes = ""
+      this.matchedRate = this.defaultMatchedRate
     },
 
   },

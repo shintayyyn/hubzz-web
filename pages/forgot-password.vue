@@ -22,7 +22,7 @@
                 an email with further instruction to proceed.
               </div>
 
-              <form class="w-full">
+              <section class="w-full">
                 <div
                   class="relative flex flex-col mt-2 md:mt-8 border-b-2 border-gray-300"
                   :class="[
@@ -47,7 +47,7 @@
                   v-if="formError.find(item => item.field === 'email')"
                   class="text-red-500 text-sm py-2"
                 >{{ formError.find(item => item.field === "email").message.charAt(0).toUpperCase() + formError.find(item => item.field === "email").message.slice(1) }}</span>
-              </form>
+              </section>
               <button
                 class="rounded-lg bg-yellow-500 shadow-md py-2 px-4 mt-3 font-bold md:text-xl focus:outline-none hover:text-white transition-hover"
                 @click="send"
@@ -62,74 +62,74 @@
   </section>
 </template>
 <script>
-  export default {
-    layout: "auth",
+export default {
+  layout: "auth",
 
-    data () {
-      return {
-        form: {
-          email: ""
-        },
-        formError: [],
-        setFocus: "",
-        // sample
-        success: false
+  data () {
+    return {
+      form: {
+        email: "",
+      },
+      formError: [],
+      setFocus: "",
+      // sample
+      success: false,
+    }
+  },
+
+  mounted () {
+    this.success = false
+    this.$refs.email.focus()
+  },
+
+  methods: {
+
+    async send () {
+      try {
+        this.formError = await this.$validator(this.form, {
+          email: 'required|string',
+        }, {
+          'email.required': 'Email is required.',
+          'email.string': 'Invalid email.',
+        }).then(() => []).catch((errors) => errors)
+
+        if (this.formError.length) {
+          return
+        }
+
+        await this.$axios.post(`/api/v1/forgot-password`, this.form)
+
+        this.success = true
+      } catch (err) {
+        console.log('err', err.response || err)
+
+        let message = null
+
+        if (err.response) {
+          if (err.response.status === 400 && err.response.data.error_messages) {
+            this.formError = err.response.data.error_messages
+          } else {
+            message = err.response.data.message
+          }
+        } else if (err.request) {
+          message = 'Something went wrong!'
+        } else {
+          message = err.message
+        }
+
+        if (message) {
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'danger',
+            text: [`${message}`,],
+          })
+        }
       }
     },
-
-    mounted () {
-      this.success = false
-      this.$refs.email.focus()
-    },
-
-    methods: {
-
-      async send () {
-        try {
-          this.formError = await this.$validator(this.form, {
-            email: 'required|string',
-          }, {
-            'email.required': 'Email is required.',
-            'email.string': 'Invalid email.',
-          }).then(() => []).catch((errors) => errors)
-
-          if (this.formError.length) {
-            return
-          }
-
-          await this.$axios.post(`/api/v1/forgot-password`, this.form)
-
-          this.success = true
-        } catch (err) {
-          console.log('err', err.response || err)
-
-          let message = null
-
-          if (err.response) {
-            if (err.response.status === 400 && err.response.data.error_messages) {
-              this.formError = err.response.data.error_messages
-            } else {
-              message = err.response.data.message
-            }
-          } else if (err.request) {
-            message = 'Something went wrong!'
-          } else {
-            message = err.message
-          }
-
-          if (message) {
-            this.$store.commit('SET_NOTIFICATION', {
-              enabled: true,
-              status: 'danger',
-              text: [`${message}`],
-            })
-          }
-        }
-      },
       
-    },
+  },
 
-  }
+}
 </script>
 
 <style scoped>
