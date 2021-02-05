@@ -1,6 +1,6 @@
 <template>
-  <section ref="modalContainer" class="modal-container shadow-lg p-4 md:py-8">
-    <div class="px-4">
+  <section ref="modalContainer" :class="modal ? 'modal-container shadow-lg p-4 md:py-8' : ''">
+    <div v-if="modal" class="px-4">
       <svgicon
         name="left-arrow"
         height="32"
@@ -87,6 +87,10 @@ export default {
       type: Object,
       default: () => null,
     },
+    modal: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data () {

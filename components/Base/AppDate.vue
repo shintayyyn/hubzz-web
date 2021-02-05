@@ -1,5 +1,5 @@
 <template>
-  <div v-on-clickaway="toggledOff" class="flex flex-col py-2 mb-4 md:mb-6 leading-normal">
+  <div v-on-clickaway="toggledOff" class="flex flex-col mb-3 md:mb-4 leading-normal">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">
         {{ label }}
@@ -11,14 +11,14 @@
       >{{error.message}}</div>-->
     </div>
 
-    <div class="flex flex-row justify-start mt-1">
+    <div class="flex flex-row justify-start">
       <div class="flex flex-col w-full">
         <input
           :name="name"
           :value="placeholder"
           type="input"
           :placeholder="'DD/MM/YYYY'"
-          class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full text-center"
           :class="{ inClass, 'border-red-500': error}"
           :style="inStyle"
           :format="format"

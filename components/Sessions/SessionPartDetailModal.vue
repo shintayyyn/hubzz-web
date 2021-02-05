@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div class="px-2">
+    <!-- <div>
       <svgicon
         name="left-arrow"
         height="32"
@@ -8,7 +8,7 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-tight font-bold text-md sm:text-lg mr-2">
@@ -16,7 +16,7 @@
       </div>
 
       <div
-        class="py-2 px-4 mx-1 rounded font-semibold"
+        class="py-1 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(jobPart.status)"
         @click="['Approved','Cancelled'].includes(jobPart.status) ? toggle_invoice_modal = true : null"
       >

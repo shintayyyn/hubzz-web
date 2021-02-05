@@ -1,10 +1,12 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <AppLoading :loading="initialLoading" spinner />
+  <div class="">
+    <AppLoading :loading="initialLoading" spinner :message="'Loading Job'"/>
+    <AppBreadcrumbs :links="links" />
 
     <JobDetailModalAppointment
       v-if="jobPart && jobPart.type === 'Private'"
       :job="jobPart.job"
+      :isModal="false"
       @close="close"
       @appointmentUpdated="appointmentUpdatedHandler"
     />
@@ -21,6 +23,7 @@
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 import LocumUserJobPartView from "@/components/Jobs/LocumUserJobPartView"
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
@@ -32,6 +35,7 @@ export default {
 
   components: {
     AppLoading,
+    AppBreadcrumbs,
     LocumUserJobPartView,
     JobDetailModalAppointment,
   },
@@ -41,6 +45,7 @@ export default {
       initialLoading: false,
       loadingJobPart: false,
       jobPart: null,
+      links: []
     }
   },
 
@@ -57,6 +62,15 @@ export default {
     this.jobPart = null
     this.initialLoading = true
     this.getLocumJobPart().finally(() => {
+      this.links = [
+          {
+            title: `${this.jobPart.locum_job_part_status} Jobs`,
+            url: `/locum-job-parts/?status=${this.jobPart.locum_job_part_status}`
+          },
+          {
+            title: this.jobPart.title
+          }
+        ]
       this.initialLoading = false
     })
   },

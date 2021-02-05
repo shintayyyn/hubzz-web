@@ -1,6 +1,6 @@
 <template>
   <section class="jobs-section">
-     <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
+     <!-- <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
       <div class="flex overflow-x-auto items-center">
         <template v-for="tab in tabs" >
            <nuxt-link
@@ -14,7 +14,7 @@
           </nuxt-link>
         </template>
       </div>
-    </div>
+    </div> -->
 
     <div class="mt-5">
       <nuxt-child :invoiceStatusList="invoiceStatusList" :practiceTypeList="practiceTypeList" />

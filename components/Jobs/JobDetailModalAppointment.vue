@@ -9,13 +9,15 @@
       @cancel="delete_modal = false"
     />
 
-    <div class="flex flex-col items-start p-4 md:p-8 w-full">
-      <nuxt-link
-        :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ? '' : {...$route.query}}"
-        class="cursor-pointer"
-      >
-        <svgicon name="left-arrow" height="32" width="32" />
-      </nuxt-link>
+    <div class="flex flex-col items-start w-full" :class="isModal ? 'p-4 md:p-8 ' : 'px-2'">
+      <template v-if="isModal">
+        <nuxt-link
+          :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ? '' : {...$route.query}}"
+          class="cursor-pointer"
+        >
+          <svgicon name="left-arrow" height="32" width="32" />
+        </nuxt-link>
+      </template>
 
       <div class="flex flex-row justify-start font-bold mt-8">
         Appointment
@@ -35,7 +37,7 @@
             :error="formError.find(item => item.field === 'private_practice_id')"
           />
 
-          <div class="-mt-6 md:-mt-8 pt-4">
+          <div class="-mt-6 md:-mt-4 pt-4">
             <AppButton :label="'Add'" :in-style="'font-size:12px;'"
               :inClass="'text-xs py-1 px-4 rounded'" @click="surgery_modal = true" />
           </div>
@@ -212,6 +214,10 @@ export default {
       type: Object,
       default: () => null,
     },
+    isModal: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data () {

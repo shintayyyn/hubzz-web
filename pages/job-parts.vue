@@ -29,7 +29,7 @@
 			</div>
 		</div> -->
 
-    <div class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden">
+    <!-- <div class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden">
       <template v-for="tab in tabs" >
         <nuxt-link
           :key="tab.title"
@@ -47,12 +47,16 @@
       <nuxt-child :invoiceStatusList="invoiceStatusList" />
     </div>
 
+   -->
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"
       :confirmLabel="'OK'"
       :modal="confirmation_modal"
       @confirm="goTo"
-    />
+    /> 
+    <div class="mt-5">
+      <nuxt-child :invoiceStatusList="invoiceStatusList"/>
+    </div>
   </section>
 </template>
 
