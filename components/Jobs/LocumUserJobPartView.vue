@@ -216,7 +216,7 @@
             <JobDetailModalUnassignForm
               v-if="!loadingJobPart && (job_part.locum_job_part_status === 'Ongoing' || job_part.locum_job_part_status === 'Allocated')"
               :ref="'unassignForm'"
-              :job="job_part.job"
+              :job="job"
               @unassign="$emit('close')"
             />
           </div>
@@ -295,6 +295,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    job_part_job: {
+      type: Object,
+      default: () => null,
+    }
   },
 
   data () {
@@ -309,6 +314,10 @@ export default {
 
   computed: {
     job () {
+      console.log("job_part_job", this.job_part_job)
+      if (this.job_part_job) {
+        return this.job_part_job
+      }
       return this.job_part && this.job_part.job
         ? this.job_part.job
         : null

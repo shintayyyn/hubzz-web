@@ -347,8 +347,7 @@ export default {
           let lineHeight = parseInt(el.style.lineHeight)
           let lines = colHeight / lineHeight
           if (lines && lines > 1) {
-          console.log(index, " lines: ", lines)
-            return `font-size: ${(12-lines)}px;`
+            return `font-size: ${(12-lines)}px; line-height: ${(12-lines)+4}px;`
           }
         }
       }
