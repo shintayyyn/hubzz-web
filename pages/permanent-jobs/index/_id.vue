@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <transition name="slide">
-      <div v-if="$auth.user.domain === 'Locum'">
-        <LocumPermanentJobModal />
-      </div>
-      <div v-else class="modal-container">
-        <PracticePermanentJobModal />
-      </div>
-    </transition>
+  <div class="w-full">
+    <!-- <transition name="slide"> -->
+      <template v-if="$auth.user.domain === 'Locum'">
+        <LocumPermanentJobModal isPage/>
+      </template>
+      <template v-else>
+        <PracticePermanentJobModal isPage/>
+      </template>
+    <!-- </transition> -->
   </div>
 </template>
 <script>

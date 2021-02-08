@@ -1,5 +1,5 @@
 <template>
-  <CreatePermanentJobModal />
+  <CreatePermanentJobModal isPage/>
 </template>
 
 <script>

@@ -1,372 +1,377 @@
 <template>
 	<section ref="modalContainer">
-		<div class="p-4 md:p-8">
-			<nuxt-link
-				:to="{
-          path: $route.name.includes('hub-surgery-management') ? 
-            `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs` : 
-            `/permanent-jobs` ,
-          query:$route.query
-        }"
-			>
-				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
-			</nuxt-link>
-
-			<div class="flex justify-start items-center flex-wrap md:px-2">
-				<h4 class="text-lg md:text-xl font-bold mr-2">
-					<span>{{ permanent_job.title }}</span>
-				</h4>
-				<span
-					class="mr-2 py-2 px-4 rounded my-1 font-semibold"
-					:class="statusStyle(permanent_job.job_posting_status)"
-				>{{ permanent_job.job_posting_status }}</span>
-				<span
-					v-if="permanent_job.job_posting_status === 'Closed'"
-					class="mr-2 py-2 px-4 rounded my-1 font-semibold bg-yellow-500"
-				>{{ jobClosingTag(permanent_job.hired_through) }}</span>
-				<!-- v-if="permanent_job.job_posting_status !== 'Unfilled'" -->
-				<AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
-			</div>
-			<div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
-				<div>
-					Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
-					<!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
+		<AppBreadcrumbs :links="links" />
+		<div :class="isPage ? 'px-2' : 'p-4 md:p-8'">
+			<template v-if="!isPage">
+				<nuxt-link
+					:to="{
+						path: $route.name.includes('hub-surgery-management') ? 
+							`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs` : 
+							`/permanent-jobs` ,
+						query:$route.query
+					}"
+				>
+					<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
+				</nuxt-link>
+			</template>
+    	<AppLoading :loading="loading" spinner :message="'Loading Job'" class="w-full"/>
+			<template v-if="!loading">
+				<div class="flex justify-start items-center flex-wrap md:px-2">
+					<h4 class="text-lg md:text-xl font-bold mr-2">
+						<span>{{ permanent_job.title }}</span>
+					</h4>
+					<span
+						class="mr-2 py-1 px-4 rounded my-1 font-semibold"
+						:class="statusStyle(permanent_job.job_posting_status)"
+					>{{ permanent_job.job_posting_status }}</span>
+					<span
+						v-if="permanent_job.job_posting_status === 'Closed'"
+						class="mr-2 py-1 px-4 rounded my-1 font-semibold bg-yellow-500"
+					>{{ jobClosingTag(permanent_job.hired_through) }}</span>
+					<!-- v-if="permanent_job.job_posting_status !== 'Unfilled'" -->
+					<AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
 				</div>
-				<div
-					v-if="$auth.user.domain === 'Practice'
-            && permanent_job 
-            && permanent_job.cancelled_reason"
-					class="m-2"
-				>Closed By Hub for the reason : {{ permanent_job && permanent_job.cancelled_reason ? permanent_job.cancelled_reason : null }}</div>
-				<!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }} -->
-			</div>
-			<div class="flex flex-col md:flex-row">
-				<div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
-					<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
-						<!-- VIEW PERMANENT JOB DETAILS -->
-						<template v-if="edit === false">
-							<div class="w-full flex flex-col md:flex-row">
-								<div class="w-full md:flex-w-1/2">
-									<p class="font-bold">Practice</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : '' }}</p>
-									<p class="font-bold">Salary</p>
-									<p class="pl-2 pb-3">
-										<template
-											v-if="permanent_job && permanent_job.salary_amount !== 0"
-										>£ {{ permanent_job.salary_amount | currency }}</template>
-										<template v-else>N/A</template>
-									</p>
-									<p class="font-bold">Salary Description</p>
-									<p
-										class="pl-2 pb-3"
-									>{{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}</p>
-									<p class="font-bold">Posted</p>
-									<p
-										class="pl-2 pb-3"
-									>{{ permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : '' }}</p>
-									<p class="font-bold">Closes</p>
-									<p
-										class="pl-2 pb-3"
-									>{{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : '' }}</p>
-								</div>
-
-								<div class="w-full md:flex-w-1/2">
-									<p class="font-bold">Email</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.email : '' }}</p>
-
-									<p class="font-bold">Report to</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : '' }}</p>
-
-									<p class="font-bold">Role</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.profession_name : '' }}</p>
-
-									<p class="font-bold">Hours</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : '' }}</p>
-
-									<p class="font-bold">Industry</p>
-									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : '' }}</p>
-								</div>
-							</div>
-							<p class="font-bold">Description</p>
-							<div v-if="permanent_job.description">
-								<no-ssr>
-									<quill-editor
-										class="border-none break-all"
-										:options="options"
-										:content="permanent_job.description"
-										disabled
-									/>
-								</no-ssr>
-							</div>
-
-							<div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2">
-								<div class="flex items-center">
-									<a
-										class="text-sm leading-tight"
-										:href="permanent_job.description_file.url"
-										:download="permanent_job.description_file.filename"
-										target="_blank"
-										@click.prevent="downloadItem(permanent_job.description_file.url, permanent_job.description_file.filename)"
-									>
-										<span>
-											<svgicon name="cloud-download" height="24" width="24" />
-										</span>
-									</a>
-									<span
-										v-if="permanent_job.description_file.subtype === 'jpeg' || permanent_job.description_file.subtype === 'pdf'"
-										class="mx-2 hover:text-gray-800 cursor-pointer"
-										@click="viewFile={file: permanent_job.description_file}"
-									>
-										<svgicon name="eye" class="fill-current" height="20" width="20" />
-									</span>
-								</div>
-
-								<p>{{ permanent_job.description_file.filename }}</p>
-							</div>
-
-							<div
-								v-if="
-									$auth.user.practice_detail.practice.type === 'Hub' &&
-									permanent_job.job_posting_status === 'Pending'"
-								class="w-full mt-4"
-							>
-								<AppButton
-									class="font-semibold"
-									:label="'Approve'"
-									:custom-theme="'bg-green-500 hover:bg-green-600 text-white'"
-									@click="acceptRejectSpokePermanentJob('Approved')"
-								/>
-								<AppButton
-									class="font-semibold"
-									:label="'Reject'"
-									:custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
-									@click="showCancel = true"
-								/>
-								<div v-if="showCancel === true" class="mt-2 w-full">
-									<AppInput
-										v-if="showCancel === true"
-										v-model="approve_or_reject.cancelled_reason"
-										:type="'textarea'"
-										:label="'Reason for Rejection'"
-										:name="'cancelled_reason'"
-										:rows="3"
-										:error="formError.find(item => item.field === 'cancelled_reason')"
-										:resize="false"
-									/>
-									<AppButton
-										class="font-semibold -mt-8"
-										:label="'Submit'"
-										@click="acceptRejectSpokePermanentJob('Rejected')"
-									/>
-									<AppButton
-										class="font-semibold -mt-8"
-										:label="'Cancel'"
-										@click="showCancel = false, formError=[]"
-									/>
-								</div>
-							</div>
-						</template>
-						<!-- EDIT PERMANENT JOB -->
-						<template v-if="edit === true">
-							<!-- IF JOB IS NOT YET CLOSED -->
-							<AppDate
-								v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
-								v-model="form.date_closing"
-								:name="'date_closing'"
-								:label="'Date Closing'"
-								is-after
-								:start-date="$moment(form.date_posted).add(1, 'days').format('YYYY-MM-DD')"
-								:error="formError.find(item => item.field === 'date_closing')"
-							/>
-							<!-- IF JOB IS NOW CLOSED -->
-							<div v-else class="w-full flex flex-col md:flex-row">
-								<!-- LEFT -->
-								<div class="w-full md:flex-w-1/2 pr-2">
-									<p class="font-bold">Title</p>
-									<AppInput
-										v-model="form.title"
-										:type="'text'"
-										:name="'title'"
-										:error="formError.find(item => item.field === 'title')"
-									/>
-
-									<p class="font-bold">Practice</p>
-									<AppInput
-										v-model="form.practice_id"
-										:type="'select'"
-										:name="'practice_id'"
-										:placeholder="'Select...'"
-										:error="formError.find(item => item.field === 'practice_id')"
-										:items="practice_lists"
-										@blur="CheckEmptyField(form.practice_id, 'practice_id')"
-									/>
-
-									<p class="font-bold">Salary</p>
-									<div class="flex flex-wrap">
-										<AppInput
-											v-model="form.salary_amount"
-											class="w-full pr-1"
-											:type="'number'"
-											:name="'salary_amount'"
-											:label="'Salary Amount'"
-											:min="0"
-											:in-style="'text-align:right'"
-											:limit="8"
-										/>
-										<AppInput
-											v-model="form.salary_description_2"
-											class="w-full pl-1"
-											:type="'select'"
-											:name="'salary_description_2'"
-											:placeholder="'Select...'"
-											:label="'Salary Description'"
-											:error="formError.find(item => item.field === 'salary_description_2')"
-											:items="salary_description_type_2"
-											:disabled="!form.salary_amount"
-											@blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
-										/>
+				<div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
+					<div>
+						Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
+						<!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
+					</div>
+					<div
+						v-if="$auth.user.domain === 'Practice'
+							&& permanent_job 
+							&& permanent_job.cancelled_reason"
+						class="m-2"
+					>Closed By Hub for the reason : {{ permanent_job && permanent_job.cancelled_reason ? permanent_job.cancelled_reason : null }}</div>
+					<!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }} -->
+				</div>
+				<div class="flex flex-col md:flex-row">
+					<div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
+						<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
+							<!-- VIEW PERMANENT JOB DETAILS -->
+							<template v-if="edit === false">
+								<div class="w-full flex flex-col md:flex-row">
+									<div class="w-full md:flex-w-1/2">
+										<p class="font-bold">Practice</p>
+										<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : '' }}</p>
+										<p class="font-bold">Salary</p>
+										<p class="pl-2 pb-3">
+											<template
+												v-if="permanent_job && permanent_job.salary_amount !== 0"
+											>£ {{ permanent_job.salary_amount | currency }}</template>
+											<template v-else>N/A</template>
+										</p>
+										<p class="font-bold">Salary Description</p>
+										<p
+											class="pl-2 pb-3"
+										>{{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}</p>
+										<p class="font-bold">Posted</p>
+										<p
+											class="pl-2 pb-3"
+										>{{ permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : '' }}</p>
+										<p class="font-bold">Closes</p>
+										<p
+											class="pl-2 pb-3"
+										>{{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : '' }}</p>
 									</div>
 
-									<AppDate
-										v-model="form.date_posted"
-										:name="'date_posted'"
-										:label="'Date Posted'"
-										is-after
-										disabled
-										:error="formError.find(item => item.field === 'date_posted')"
-									/>
+									<div class="w-full md:flex-w-1/2">
+										<p class="font-bold">Email</p>
+										<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.email : '' }}</p>
 
-									<AppDate
-										v-model="form.date_closing"
-										:name="'date_closing'"
-										:label="'Date Closing'"
-										is-after
-										:start-date="form.date_posted"
-										:error="formError.find(item => item.field === 'date_closing')"
-									/>
+										<p class="font-bold">Report to</p>
+										<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : '' }}</p>
+
+										<p class="font-bold">Role</p>
+										<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.profession_name : '' }}</p>
+
+										<p class="font-bold">Hours</p>
+										<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : '' }}</p>
+
+										<p class="font-bold">Industry</p>
+										<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : '' }}</p>
+									</div>
 								</div>
-								<!-- RIGHT -->
-								<div class="w-full md:flex-w-1/2 pl-2">
-									<p class="font-bold">E-Mail</p>
-									<AppInput
-										v-model="form.email"
-										:type="'text'"
-										:name="'email'"
-										:error="formError.find(item => item.field === 'email')"
-									/>
-
-									<p class="font-bold">Report to</p>
-									<AppInput
-										v-model="form.report_to"
-										:type="'text'"
-										:name="'report_to'"
-										:error="formError.find(item => item.field === 'report_to')"
-									/>
-
-									<p class="font-bold">Role</p>
-									<AppInput
-										v-model="form.profession_id"
-										:type="'select'"
-										:name="'profession_id'"
-										:placeholder="'Select...'"
-										:error="formError.find(item => item.field === 'profession_id')"
-										:items="professions"
-										@blur="CheckEmptyField(form.profession_id, 'profession_id')"
-									/>
-
-									<p class="font-bold">Hours</p>
-									<AppInput
-										v-model="form.work_hours"
-										:type="'select'"
-										:name="'work_hours'"
-										:placeholder="'Select...'"
-										:label="'Work Hours'"
-										:error="formError.find(item => item.field === 'work_hours')"
-										:items="work_hours_type"
-										@blur="CheckEmptyField(form.work_hours, 'work_hours')"
-									/>
-
-									<p class="font-bold">Industry</p>
-									<AppInput
-										v-model="form.industry_type"
-										:type="'select'"
-										:name="'industry_type'"
-										:placeholder="'Select...'"
-										:error="formError.find(item => item.field === 'industry_type')"
-										:items="industry_types"
-										@blur="CheckEmptyField(form.industry_type, 'industry_type')"
-									/>
-								</div>
-							</div>
-							<!-- DESCRIPTION BOX -->
-							<div v-if="permanent_job.job_posting_status === 'Closed'" class="w-full">
 								<p class="font-bold">Description</p>
-								<no-ssr placeholder="Loading...">
-									<quill-editor
-										ref="myTextEditor"
-										v-model="form.description"
-										class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
-										:options="editorOption"
-										@blur="CheckEmptyField(form.description, 'description')"
-										@focus="onEditorFocus($event)"
-										@ready="onEditorReady($event)"
+								<div v-if="permanent_job.description">
+									<no-ssr>
+										<quill-editor
+											class="border-none break-all"
+											:options="options"
+											:content="permanent_job.description"
+											disabled
+										/>
+									</no-ssr>
+								</div>
+
+								<div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2">
+									<div class="flex items-center">
+										<a
+											class="text-sm leading-tight"
+											:href="permanent_job.description_file.url"
+											:download="permanent_job.description_file.filename"
+											target="_blank"
+											@click.prevent="downloadItem(permanent_job.description_file.url, permanent_job.description_file.filename)"
+										>
+											<span>
+												<svgicon name="cloud-download" height="24" width="24" />
+											</span>
+										</a>
+										<span
+											v-if="permanent_job.description_file.subtype === 'jpeg' || permanent_job.description_file.subtype === 'pdf'"
+											class="mx-2 hover:text-gray-800 cursor-pointer"
+											@click="viewFile={file: permanent_job.description_file}"
+										>
+											<svgicon name="eye" class="fill-current" height="20" width="20" />
+										</span>
+									</div>
+
+									<p>{{ permanent_job.description_file.filename }}</p>
+								</div>
+
+								<div
+									v-if="
+										$auth.user.practice_detail.practice.type === 'Hub' &&
+										permanent_job.job_posting_status === 'Pending'"
+									class="w-full mt-4"
+								>
+									<AppButton
+										class="font-semibold"
+										:label="'Approve'"
+										:custom-theme="'bg-green-500 hover:bg-green-600 text-white'"
+										@click="acceptRejectSpokePermanentJob('Approved')"
 									/>
-								</no-ssr>
-							</div>
-							<!-- <p class="font-bold">Update Remarks</p>
-              <AppInput
-                v-model="form.update_remarks"
-                :type="'textarea'"
-                :name="'update_remarks'"
-                :error="formError.find(item => item.field === 'update_remarks')"
-                :resize="false"
-                :rows="4"
-							/>-->
-							<AppButton
-								v-if="permanent_job.job_posting_status === 'Available' || permanent_job.job_posting_status === 'Pending'"
-								:label="'Save Changes'"
-								@click="editPermanentJob()"
-							/>
-							<AppButton
-								v-if="permanent_job.job_posting_status === 'Closed' || permanent_job.job_posting_status === 'Unfilled'"
-								:label="'Confirm Repost Job'"
-								@click="repostPermanentJob()"
-							/>
-						</template>
-					</div>
-					<PermanentJobMap
-						v-if="permanent_job && permanent_job.job_posting_status === 'Closed' && permanent_job.appointed_to_locum_user_id"
-						:permanent_job="permanent_job"
-					/>
-				</div>
+									<AppButton
+										class="font-semibold"
+										:label="'Reject'"
+										:custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
+										@click="showCancel = true"
+									/>
+									<div v-if="showCancel === true" class="mt-2 w-full">
+										<AppInput
+											v-if="showCancel === true"
+											v-model="approve_or_reject.cancelled_reason"
+											:type="'textarea'"
+											:label="'Reason for Rejection'"
+											:name="'cancelled_reason'"
+											:rows="3"
+											:error="formError.find(item => item.field === 'cancelled_reason')"
+											:resize="false"
+										/>
+										<AppButton
+											class="font-semibold -mt-8"
+											:label="'Submit'"
+											@click="acceptRejectSpokePermanentJob('Rejected')"
+										/>
+										<AppButton
+											class="font-semibold -mt-8"
+											:label="'Cancel'"
+											@click="showCancel = false, formError=[]"
+										/>
+									</div>
+								</div>
+							</template>
+							<!-- EDIT PERMANENT JOB -->
+							<template v-if="edit === true">
+								<!-- IF JOB IS NOT YET CLOSED -->
+								<AppDate
+									v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
+									v-model="form.date_closing"
+									:name="'date_closing'"
+									:label="'Date Closing'"
+									is-after
+									:start-date="$moment(form.date_posted).add(1, 'days').format('YYYY-MM-DD')"
+									:error="formError.find(item => item.field === 'date_closing')"
+								/>
+								<!-- IF JOB IS NOW CLOSED -->
+								<div v-else class="w-full flex flex-col md:flex-row">
+									<!-- LEFT -->
+									<div class="w-full md:flex-w-1/2 pr-2">
+										<p class="font-bold">Title</p>
+										<AppInput
+											v-model="form.title"
+											:type="'text'"
+											:name="'title'"
+											:error="formError.find(item => item.field === 'title')"
+										/>
 
-				<div v-if="permanent_job" class="md:mx-2 w-full md:w-2/5 lg:w-1/2">
-					<template v-if="permanent_job.appointed_to_locum_user_id">
-						<PermanentJobLocum class="my-4" :user="assignedLocum" />
-					</template>
-					<PermanentJobCandidates :permanent_job="permanent_job" />
-					<PermanentJobMap :permanent_job="permanent_job" />
+										<p class="font-bold">Practice</p>
+										<AppInput
+											v-model="form.practice_id"
+											:type="'select'"
+											:name="'practice_id'"
+											:placeholder="'Select...'"
+											:error="formError.find(item => item.field === 'practice_id')"
+											:items="practice_lists"
+											@blur="CheckEmptyField(form.practice_id, 'practice_id')"
+										/>
 
-					<AppButton
-						v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
-						class="my-4"
-						:label="'Close Job'"
-						@click="toCloseJob = !toCloseJob"
-					/>
+										<p class="font-bold">Salary</p>
+										<div class="flex flex-wrap">
+											<AppInput
+												v-model="form.salary_amount"
+												class="w-full pr-1"
+												:type="'number'"
+												:name="'salary_amount'"
+												:label="'Salary Amount'"
+												:min="0"
+												:in-style="'text-align:right'"
+												:limit="8"
+											/>
+											<AppInput
+												v-model="form.salary_description_2"
+												class="w-full pl-1"
+												:type="'select'"
+												:name="'salary_description_2'"
+												:placeholder="'Select...'"
+												:label="'Salary Description'"
+												:error="formError.find(item => item.field === 'salary_description_2')"
+												:items="salary_description_type_2"
+												:disabled="!form.salary_amount"
+												@blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
+											/>
+										</div>
 
-					<div v-if="toCloseJob === true">
-						<AppInput
-							v-model="form.hired_through"
-							:label="'Reasons for Closing Job'"
-							:type="'select'"
-							:name="'hired_through'"
-							:placeholder="'Select...'"
-							:items="hired_through"
+										<AppDate
+											v-model="form.date_posted"
+											:name="'date_posted'"
+											:label="'Date Posted'"
+											is-after
+											disabled
+											:error="formError.find(item => item.field === 'date_posted')"
+										/>
+
+										<AppDate
+											v-model="form.date_closing"
+											:name="'date_closing'"
+											:label="'Date Closing'"
+											is-after
+											:start-date="form.date_posted"
+											:error="formError.find(item => item.field === 'date_closing')"
+										/>
+									</div>
+									<!-- RIGHT -->
+									<div class="w-full md:flex-w-1/2 pl-2">
+										<p class="font-bold">E-Mail</p>
+										<AppInput
+											v-model="form.email"
+											:type="'text'"
+											:name="'email'"
+											:error="formError.find(item => item.field === 'email')"
+										/>
+
+										<p class="font-bold">Report to</p>
+										<AppInput
+											v-model="form.report_to"
+											:type="'text'"
+											:name="'report_to'"
+											:error="formError.find(item => item.field === 'report_to')"
+										/>
+
+										<p class="font-bold">Role</p>
+										<AppInput
+											v-model="form.profession_id"
+											:type="'select'"
+											:name="'profession_id'"
+											:placeholder="'Select...'"
+											:error="formError.find(item => item.field === 'profession_id')"
+											:items="professions"
+											@blur="CheckEmptyField(form.profession_id, 'profession_id')"
+										/>
+
+										<p class="font-bold">Hours</p>
+										<AppInput
+											v-model="form.work_hours"
+											:type="'select'"
+											:name="'work_hours'"
+											:placeholder="'Select...'"
+											:label="'Work Hours'"
+											:error="formError.find(item => item.field === 'work_hours')"
+											:items="work_hours_type"
+											@blur="CheckEmptyField(form.work_hours, 'work_hours')"
+										/>
+
+										<p class="font-bold">Industry</p>
+										<AppInput
+											v-model="form.industry_type"
+											:type="'select'"
+											:name="'industry_type'"
+											:placeholder="'Select...'"
+											:error="formError.find(item => item.field === 'industry_type')"
+											:items="industry_types"
+											@blur="CheckEmptyField(form.industry_type, 'industry_type')"
+										/>
+									</div>
+								</div>
+								<!-- DESCRIPTION BOX -->
+								<div v-if="['Closed', 'Unfilled'].includes(permanent_job.job_posting_status)" class="w-full">
+									<p class="font-bold">Description</p>
+									<no-ssr placeholder="Loading...">
+										<quill-editor
+											ref="myTextEditor"
+											v-model="form.description"
+											class="bg-white text-black border-b-2 mb-3 md:mb-6 w-full"
+											:options="editorOption"
+											@blur="CheckEmptyField(form.description, 'description')"
+											@focus="onEditorFocus($event)"
+											@ready="onEditorReady($event)"
+										/>
+									</no-ssr>
+								</div>
+								<!-- <p class="font-bold">Update Remarks</p>
+								<AppInput
+									v-model="form.update_remarks"
+									:type="'textarea'"
+									:name="'update_remarks'"
+									:error="formError.find(item => item.field === 'update_remarks')"
+									:resize="false"
+									:rows="4"
+								/>-->
+								<AppButton
+									v-if="permanent_job.job_posting_status === 'Available' || permanent_job.job_posting_status === 'Pending'"
+									:label="'Save Changes'"
+									@click="editPermanentJob()"
+								/>
+								<AppButton
+									v-if="permanent_job.job_posting_status === 'Closed' || permanent_job.job_posting_status === 'Unfilled'"
+									:label="'Confirm Repost Job'"
+									@click="repostPermanentJob()"
+								/>
+							</template>
+						</div>
+						<PermanentJobMap
+							v-if="permanent_job && permanent_job.job_posting_status === 'Closed' && permanent_job.appointed_to_locum_user_id"
+							:permanent_job="permanent_job"
 						/>
-						<AppButton class="my-4" :label="'Confirm'" @click="forceCloseJob()" />
+					</div>
+
+					<div v-if="permanent_job" class="md:mx-2 w-full md:w-2/5 lg:w-1/2">
+						<template v-if="permanent_job.appointed_to_locum_user_id">
+							<PermanentJobLocum class="my-4" :user="assignedLocum" />
+						</template>
+						<PermanentJobCandidates :permanent_job="permanent_job" />
+						<PermanentJobMap :permanent_job="permanent_job" />
+
+						<AppButton
+							v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
+							class="my-4"
+							:label="'Close Job'"
+							@click="toCloseJob = !toCloseJob"
+						/>
+
+						<div v-if="toCloseJob === true">
+							<AppInput
+								v-model="form.hired_through"
+								:label="'Reasons for Closing Job'"
+								:type="'select'"
+								:name="'hired_through'"
+								:placeholder="'Select...'"
+								:items="hired_through"
+							/>
+							<AppButton class="my-4" :label="'Confirm'" @click="forceCloseJob()" />
+						</div>
 					</div>
 				</div>
-			</div>
+			</template>
 			<transition name="slide" mode="out-in">
 				<div class="modal-container" v-if="viewFile">
 					<FileModal @close="viewFile=null" :file="viewFile" />
@@ -380,6 +385,8 @@
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
+import AppLoading from "@/components/Base/AppLoading";
 // import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate"
 import PermanentJobCandidates from "@/components/PermanentJob/PermanentJobCandidates";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
@@ -393,7 +400,15 @@ export default {
 		PermanentJobCandidates,
 		PermanentJobMap,
 		PermanentJobLocum,
-		FileModal
+		FileModal,
+		AppBreadcrumbs,
+		AppLoading
+	},
+	props: {
+		isPage: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data() {
 		return {
@@ -468,7 +483,9 @@ export default {
 						["link"]
 					]
 				}
-			}
+			},
+			links: [],
+			loading: false
 			// displayOption: {
 			// 	modules: {
 			// 		toolbar: null
@@ -680,11 +697,26 @@ export default {
 			} else {
 				permJobId = this.$route.params.id;
 			}
+			this.loading = true
 
 			this.$axios
 				.$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
 				.then(res => {
 					this.permanent_job = res.data.permanent_job;
+
+					let status = this.permanent_job.job_posting_status !== 'Available' ? 
+						['Unfilled', 'Closed'].includes(this.permanent_job.job_posting_status) ? 'Closed' : this.permanent_job.job_posting_status
+						: 'Available'
+
+					this.links = [
+						{
+							title: `${status} Salaried Roles`,
+							url: `/permanent-jobs${status !== 'Available' ? '/?status='+status : ''}`
+						},
+						{
+							title: this.permanent_job.title
+						}
+					]
 				})
 				.finally(() => {
 					if (this.permanent_job.appointed_to_locum_user_id) {
@@ -692,6 +724,7 @@ export default {
 							this.permanent_job.appointed_to_locum_user_id
 						);
 					}
+					this.loading = false
 				});
 		},
 
