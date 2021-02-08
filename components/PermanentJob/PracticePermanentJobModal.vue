@@ -341,12 +341,11 @@
 				</div>
 
 				<div v-if="permanent_job" class="md:mx-2 w-full md:w-2/5 lg:w-1/2">
-					<PermanentJobCandidates :permanent_job="permanent_job" />
-					<PermanentJobMap :permanent_job="permanent_job" />
-
 					<template v-if="permanent_job.appointed_to_locum_user_id">
 						<PermanentJobLocum class="my-4" :user="assignedLocum" />
 					</template>
+					<PermanentJobCandidates :permanent_job="permanent_job" />
+					<PermanentJobMap :permanent_job="permanent_job" />
 
 					<AppButton
 						v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
@@ -478,7 +477,7 @@ export default {
 		};
 	},
 	watch: {
-		edit(value) {
+		edit (value) {
 			if (value === false) {
 				this.getPermanentJob();
 			} else {
@@ -486,8 +485,7 @@ export default {
 				this.form.parent_practice_id =
 					this.permanent_job.parent_practice_id ||
 					this.$auth.user.practice_detail.practice.parent_practice_id
-						? this.permanent_job.parent_practice_id ||
-						  this.$auth.user.practice_detail.practice.parent_practice_id
+						? this.permanent_job.parent_practice_id || this.$auth.user.practice_detail.practice.parent_practice_id
 						: null;
 				this.form.title = this.permanent_job.title;
 				this.form.description = this.permanent_job.description;
@@ -508,7 +506,7 @@ export default {
 				this.loading = false;
 			}
 		},
-		"form.date_posted"(value) {
+		"form.date_posted" (value) {
 			if (this.$moment(value).isAfter(this.form.date_closing)) {
 				this.formError.push({
 					field: "date_closing",
@@ -516,7 +514,7 @@ export default {
 				});
 			}
 		},
-		"form.date_closing"(value) {
+		"form.date_closing" (value) {
 			if (this.$moment(value).isBefore(this.form.date_posted)) {
 				this.formError.push({
 					field: "date_posted",
@@ -530,13 +528,13 @@ export default {
 				this.formError.splice(index, 1);
 			}
 		},
-		"form.salary_amount"(oldValue, value) {
+		"form.salary_amount" (oldValue, value) {
 			if (value) {
 				this.validateNumber(this.form.salary_amount, "salary_amount");
 			}
 		}
 	},
-	created() {
+	created () {
 		console.log("router name", this.$route.name);
 		this.loading = true;
 		this.getPermanentJob(),
@@ -592,10 +590,8 @@ export default {
 					this.form.work_hours = this.permanent_job.work_hours;
 					this.form.practice_id = this.permanent_job.practice_id;
 					this.form.parent_practice_id =
-						this.permanent_job.parent_practice_id ||
-						this.$auth.user.practice_detail.practice.parent_practice_id
-							? this.permanent_job.parent_practice_id ||
-							  this.$auth.user.practice_detail.practice.parent_practice_id
+						this.permanent_job.parent_practice_id || this.$auth.user.practice_detail.practice.parent_practice_id
+							? this.permanent_job.parent_practice_id ||this.$auth.user.practice_detail.practice.parent_practice_id
 							: null;
 					this.form.profession_id = this.permanent_job.profession_id;
 					this.loading = false;
@@ -658,7 +654,7 @@ export default {
 		];
 	},
 	methods: {
-		validateNumber(value, fieldName) {
+		validateNumber (value, fieldName) {
 			let displayFieldName =
 				fieldName.charAt(0).toUpperCase() +
 				fieldName.slice(1).replace(/_/g, " ");
@@ -677,7 +673,7 @@ export default {
 			}
 		},
 
-		async getPermanentJob() {
+		async getPermanentJob () {
 			let permJobId = "";
 			if (this.$route.name.includes("hub-surgery-management")) {
 				permJobId = this.$route.params.permJobId;

@@ -265,7 +265,11 @@ const reasons = [
 	{
 		label: "Locum did not show up",
 		value: "Locum did not show up"
-	}
+	},
+	{
+		label: "Locums compliance documents have expired",
+		value: "Locums compliance documents have expired",
+	},
 ];
 export default {
 	components: {

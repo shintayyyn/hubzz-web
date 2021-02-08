@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col w-full">
-		<div class="text-xs sm:text-sm font-bold">Locum</div>
+		<div class="text-xs sm:text-sm font-bold">Offered to</div>
 		<div v-if="!user && loading" class="relative flex w-full" style="min-height:80px">
 			<AppLoading :loading="loading" spinner />
 		</div>

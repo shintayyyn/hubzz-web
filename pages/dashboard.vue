@@ -1,7 +1,18 @@
 <template>
   <section class="dashboard-section">
-    <div v-if="$auth.user.domain === 'Locum' || $auth.user.domain === 'Practice'" class="reminders-section">
+    <div v-if="$auth.user.domain === 'Locum' || $auth.user.domain === 'Practice'" class="reminders-section mb-4">
       <Reminders />
+    </div>
+
+    <div
+      v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_locum_jobs))"
+      class="statistics-section"
+    >
+      <div class="text-sm sm:text-base font-bold">
+        Quick Statistics
+      </div>
+
+      <Statistics />
     </div>
 
     <div v-if="userIsAuthorized" class="appointment-section">
@@ -43,17 +54,6 @@
       </div>
 
       <Calendar />
-    </div>
-
-    <div
-      v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_locum_jobs))"
-      class="statistics-section"
-    >
-      <div class="text-sm sm:text-base font-bold pt-4">
-        Quick Statistics
-      </div>
-
-      <Statistics />
     </div>
 
     <div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">

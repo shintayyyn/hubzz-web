@@ -358,7 +358,15 @@
                 v-if="form.vat_certificate && form.vat_certificate.name"
                 class="text-sm mx-2"
               >
-                {{ form.vat_certificate.name }}
+                <a
+                  :href="user.vat_cert_file_url"
+                  :download="user.vat_cert_file_filename"
+                  target="_blank"
+                  class="truncate"
+                  @click.stop.prevent="downloadItem(user.vat_cert_file_url, user.vat_cert_file_filename)"
+                >
+                  <span class="underline">{{ user.vat_cert_file_filename }}</span>
+                </a>
               </p>
             </div>
             <transition name="drop-down">
@@ -416,7 +424,15 @@
                   v-if="form.certificate_of_incorporation && form.certificate_of_incorporation.name"
                   class="text-sm mx-2"
                 >
-                  {{ form.certificate_of_incorporation.name }}
+                  <a
+                    :href="user.cert_of_incorp_file_url"
+                    :download="user.cert_of_incorp_file_filename"
+                    target="_blank"
+                    class="truncate"
+                    @click.stop.prevent="downloadItem(user.cert_of_incorp_file_url, user.cert_of_incorp_file_filename)"
+                  >
+                    <span class="underline">{{ user.cert_of_incorp_file_filename }}</span>
+                  </a>
                 </p>
               </div>
               <transition name="drop-down">
@@ -464,6 +480,15 @@
               :name="'payroll_account_name'"
               :label="'Payroll Company Name'"
               :error="formError.find(item => item.field === 'payroll_account_name')"
+              required
+            />
+
+            <AppInput
+              v-model="form.payroll_company_email"
+              :type="'text'"
+              :name="'payroll_company_email'"
+              :label="'Payroll Company Email Address'"
+              :error="formError.find(item => item.field === 'payroll_company_email')"
               required
             />
 
@@ -893,6 +918,7 @@ export default {
         utr_number: "",
         paid_under_payroll: false,
         payroll_account_name: "",
+        payroll_company_email: "",
         payroll_bank_name: "",
         payroll_sort_code: "",
         payroll_account_number: "",
@@ -1469,6 +1495,7 @@ export default {
       this.form.paid_under_payroll = this.user.paid_under_payroll
 
       this.form.payroll_account_name = this.user.payroll_account_name
+      this.form.payroll_company_email = this.user.payroll_company_email
       this.form.payroll_account_number = this.user.payroll_account_number
       this.form.payroll_reference_number = this.user.payroll_reference_number
       this.form.payroll_sort_code = this.user.payroll_sort_code
@@ -1874,12 +1901,14 @@ export default {
 
       if (["false", false,].includes(this.form.paid_under_payroll)) {
         // this.form.payroll_account_name = ""
+        // this.form.payroll_company_email = ""
         // this.form.payroll_account_number = ""
         // this.form.payroll_reference_number = ""
         // this.form.payroll_sort_code = ""
         // this.form.payroll_bank_name = ""
         notRequired.push(
           "payroll_account_name",
+          "payroll_company_email",
           "payroll_bank_name",
           "payroll_sort_code",
           "payroll_account_number",
@@ -2230,6 +2259,24 @@ export default {
       this.new_certificate_of_incorporation = true
 
       console.log("cert file", this.form.certificate_of_incorporation)
+    },
+
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob", // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
     },
   },
 }

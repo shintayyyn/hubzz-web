@@ -6,18 +6,18 @@
         type="text"
         name="email"
         label="Email address or Username"
-        placeholder=""
+        :inClass="'pt-2'"
         :error="formErrors.find(formError => formError.field === 'email')"
         @submit="login"
       />
 
       <div class="flex flex-col">
         <label class="text-xs md:text-sm">Password</label>
-        <div class="w-full relative">
+        <div class="w-full relative pt-1">
           <input
             v-model="password"
             :type="passwordInputType"
-            class="w-full py-3 border-b-2 focus:border-yellow-400 focus:outline-none text-xs md:text-sm"
+            class="w-full py-1 border-b-2 focus:border-yellow-400 focus:outline-none text-xs md:text-sm"
             :class="formErrors.find(formError => formError.field === 'password') ? 'border-red-500' : ''"
             @submit="login"
             @keyup.enter="login"
