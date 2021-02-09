@@ -241,6 +241,7 @@ export default {
 
         "Locum Notification Locum Payment Details Updated",
         "Locum Notification Locum Status Updated",
+        "Locum Notification Dormanted",
 
         "Practice Notification Practice Actived",
         "Practice Notification Practice Reactivated",
