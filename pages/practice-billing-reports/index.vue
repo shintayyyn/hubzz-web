@@ -1,6 +1,6 @@
 <template>
   <section class="billing-section">
-    <div v-if="!$route.params.id" class="flex flex-row justify-start overflow-x-auto border-b border-sunglow">
+    <div class="flex flex-row justify-start overflow-x-auto border-b border-sunglow">
       <nuxt-link
         v-if="authPermissions.includes('View Billings')"
         :to="{ path: '/practice-billing/invoices-from-locums' }"
@@ -19,7 +19,7 @@
       <!-- <nuxt-link
         :to="{ name: 'practice-billing-pension-forms-from-locums' }"
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-pension-forms-from-locums') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-pension-forms-from-locums') ? 'border-b-4 border-sunglow' : 'text-gray-600'"
       >Pension forms from Locums</nuxt-link>-->
 
       <nuxt-link
@@ -54,7 +54,6 @@
       </nuxt-link>
 
       <nuxt-link
-        v-if="authPermissions.includes('View Practice Reports')"
         :to="{ name: 'practice-billing-reports' }"
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-reports') ? 'border-b-4 border-sunglow' : 'text-gray-600'"
@@ -64,7 +63,30 @@
     </div>
 
     <div>
-      <nuxt-child />
+      <div class="flex-1 flex flex-col py-2 px-4 md:px-6">
+        <div class="flex flex-col">
+          <nuxt-link
+            v-for="practiceBillingReport in practiceBillingReports"
+            :key="`practiceBillingReports-${practiceBillingReport.title}`"
+            :to="practiceBillingReport.url"
+            class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
+          >
+            <div class="flex flex-no-wrap items-center text-sm w-full">
+              <span class="px-2 whitespace-no-wrap font-semibold">{{ practiceBillingReport.title }}</span>
+              <span class="px-2 w-full leading-tight flex items-center">{{ practiceBillingReport.subtitle }}</span>
+              <div class="flex items-center px-1 md:px-0">
+                <svgicon name="arrow-right" width="21" height="21" color="black" />
+              </div>
+            </div>
+          </nuxt-link>
+        </div>
+        <nuxt-link
+          v-if="$route.name !== 'practice-billing-reports'"
+          class="shield z-511 fixed inset-0 opacity-50"
+          to="/practice-billing-reports"
+        />
+        <nuxt-child />
+      </div>
     </div>
   </section>
 </template>
@@ -99,6 +121,28 @@ export default {
   data () {
     return {
       practice: null,
+      practiceBillingReports: [
+        {
+          title: 'REP-001',
+          subtitle: 'Tax and NI Deductions',
+          url: '/practice-billing-reports/deductions',
+        },
+        {
+          title: 'REP-002',
+          subtitle: 'Payments',
+          url: '/practice-billing-reports/payments',
+        },
+        {
+          title: 'REP-003',
+          subtitle: 'Pension Contributions',
+          url: '/practice-billing-reports/pension-contributions',
+        },
+        {
+          title: 'REP-010',
+          subtitle: 'Hubzz Invoices',
+          url: '/practice-billing-reports/hubzz-invoices',
+        },
+      ],
     }
   },
 
@@ -122,7 +166,7 @@ export default {
       }
 
       if (app.$auth.user.domain === 'Practice'
-          && authPermissions.includes('View Billings') === false) {
+          && authPermissions.includes('View Practice Reports') === false) {
         error({
           statusCode: 403,
           message: 'You are not authorized to view this page.',
@@ -151,6 +195,19 @@ export default {
     } catch (err) {
       console.log('err', err.response || err)
       error(err)
+    }
+  },
+
+  created () {
+    if (
+      this.$auth.user
+      && this.$auth.user.practice_detail
+      && this.$auth.user.practice_detail.practice
+      && this.$auth.user.practice_detail.practice.type === 'Spoke'
+      && !this.$auth.user.practice_detail.practice.allow_surgery_bill_locum
+    ) {
+      this.practiceReports = this.practiceReports
+        .filter(practiceReport => !['REP-001', 'REP-002', 'REP-003', 'REP-010',].includes(practiceReport.title))
     }
   },
 

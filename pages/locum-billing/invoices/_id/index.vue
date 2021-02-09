@@ -1,14 +1,15 @@
 <template>
-	<div class="modal-container shadow-lg">
-		<div class="p-4 md:p-8 h-screen">
-			<div class="flex flex-row flex-wrap justify-start pb-4">
+	<div class="">
+		<div class="px-2">
+			<!-- <div class="flex flex-row flex-wrap justify-start pb-4">
 				<nuxt-link
 					:to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
 					class="cursor-pointer"
 				>
 					<svgicon name="left-arrow" height="32" width="32" />
 				</nuxt-link>
-			</div>
+			</div> -->
+			<AppBreadcrumbs :links="links" />
 			<LocumPlatformBillingInvoiceForm
 				:propInvoice="invoice"
 				:propJobPart="null"
@@ -18,6 +19,7 @@
 	</div>
 </template>
 <script>
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm";
 export default {
 	transition: {
@@ -25,9 +27,10 @@ export default {
 		mode: "out-in"
 	},
 	components: {
+		AppBreadcrumbs,
 		LocumPlatformBillingInvoiceForm
 	},
-	async asyncData({ app, error, params }) {
+	async asyncData({ app, error, params, route }) {
 		try {
 			const response = await app.$axios.get(
 				`/api/v1/locum/locum-invoices/${params.id}`
@@ -38,8 +41,23 @@ export default {
 					? response.data.data.locum_invoice
 					: null;
 
+			const links = [ 
+				{
+					title: 'Billing',
+					url: '/locum-billing/invoices'
+				},
+				{
+					title: `${invoice.status}${['Approved', 'Disputed'].includes(invoice.status) ? ' Invoices' : ''}`,
+					url: `/locum-billing/invoices?status=${route.query.status}`
+				},
+				{
+					title: invoice.invoice_number
+				}
+			]
+
 			return {
-				invoice
+				invoice,
+				links
 			};
 		} catch (err) {
 			if (err && err.response.status === 404) {

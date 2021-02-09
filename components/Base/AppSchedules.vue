@@ -465,7 +465,7 @@
                   <template v-else-if="type === 'invoice'">
                     <div
                       class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
-                      :class="[index % 2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-3' : 'pb-4 pt-6']"
+                      :class="[index % 2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
                     >
                       {{ item.date }}
                     </div>
@@ -474,7 +474,7 @@
                       class="w-11/12 py-2 rounded-r-lg border-r border-t border-b"
                       :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                     >
-                      <div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full">
+                      <div v-for="(shift, i) in item.shifts" :key="i" class="flex items-center w-full">
                         <div class="flex items-center justify-center text-center w-2/12">
                           {{ shift.shift.name }}
                         </div>

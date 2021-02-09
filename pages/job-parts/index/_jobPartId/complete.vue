@@ -53,7 +53,6 @@ export default {
   created() {
     this.loading = true
     this.$axios.$get(`/api/v1/practice/job-parts/${this.$route.params.jobPartId}`).then(res =>{
-      console.log("res", res)
       this.job_part = res.data.job_part
       this.params.job_id = res.data.job_id
       this.links = [

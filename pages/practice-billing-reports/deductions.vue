@@ -1,11 +1,12 @@
 <template>
-  <div class="report-modal p-4 md:p-8 shadow-lg">
+  <div class="px-2">
+    <AppBreadcrumbs :links="links" />
     <div class="page-overlap flex-1 flex flex-col self-end ">
-      <div class="flex justify-between text-sm">
+      <!-- <div class="flex justify-between text-sm">
         <nuxt-link to="/practice-billing-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
-      </div>
+      </div> -->
 
       <div class="text-lg md:text-2xl">
         Tax and NI Deductions
@@ -216,6 +217,7 @@
 
 <script>
 import AppButton from '@/components/Base/AppButton'
+import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
 import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
 
@@ -229,6 +231,7 @@ export default {
     AppButton,
     AppInput,
     AppDate,
+    AppBreadcrumbs
   },
 
   data () {
@@ -265,6 +268,19 @@ export default {
       calendarDateEnd: '',
       paidDateStart: '',
       paidDateEnd: '',
+      links: [
+        {
+          title: 'Billing',
+          url: '/practice-billing'
+        }, 
+        {
+          title: 'Reports',
+          url: '/practice-billing-reports'
+        },
+        {
+          title: 'Rep-001'
+        }
+      ]
     }
   },
 

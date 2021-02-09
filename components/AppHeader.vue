@@ -1,5 +1,5 @@
 <template>
-  <section class="fixed z-50 w-full shadow lg:shadow-none">
+  <section class="fixed z-10 w-full border-b shadow lg:shadow-none">
     <div class="flex flex-row justify-between">
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
@@ -22,7 +22,7 @@
             "
             class="mx-2"
           >
-            <div class="flex flex-col items-start">
+            <!-- <div class="flex flex-col items-start">
               <AppButton
                 :disabled="!authPermissions.includes('Create Sessions Job')"
                 :label="'+ Create Job'"
@@ -30,7 +30,7 @@
                 :customTheme="'bg-info text-white'"
                 @click="$router.push('/create-job')"
               />
-            </div>
+            </div> -->
                 
                 <!-- @click="$store.commit('calendar/CREATE_JOB_MODAL', true)" -->
                 <!-- @click="$router.push('/create-job')" -->
@@ -57,6 +57,27 @@
 
         <div class="w-2/3 leading-loose py-2">
           <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
+            <div
+                v-if="
+                  $auth.user.domain === 'Practice' &&
+                    $auth.user.status === 'Active' &&
+                    ($auth.user.practice_detail.practice.status === 'Active' 
+                    || $auth.user.practice_detail.practice.status === 'Dormant') &&
+                    ($auth.user.practice_detail.practice.type === 'Hub' 
+                    ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+                    ||($auth.user.practice_detail.practice.type === 'Spoke' &&
+                    $auth.user.practice_detail.practice.parent_practice_id)) 
+                "
+                class="mx-2"
+              >
+              <AppButton
+                  :disabled="!authPermissions.includes('Create Sessions Job')"
+                  :label="'+ Create Job'"
+                  class="whitespace-no-wrap font-bold"
+                  :customTheme="'bg-info text-white'"
+                  @click="$router.push('/create-job')"
+                />
+            </div>
             <div
               v-if="$auth.user.domain === 'Locum'"
               class="text-xs xl:text-sm mr-2 hidden md:block"

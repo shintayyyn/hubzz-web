@@ -1,14 +1,15 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 h-screen">
-      <div class="flex flex-row flex-wrap justify-start pb-4">
+  <div class="">
+    <div class="px-2">
+      <!-- <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link
           :to="{ name: 'locum-billing-private-invoices', query: {...$route.query}}"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
-      </div>
+      </div> -->
+			<AppBreadcrumbs :links="links" />
       <LocumPlatformBillingInvoiceFormB
         :type="'Private'"
         @createFormB="$emit('createFormB', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
@@ -23,13 +24,48 @@
 <script>
 import LocumPrivateBillingInvoiceFormB from "@/components/Billing/LocumPrivateBillingInvoiceFormB";
 import LocumPlatformBillingInvoiceFormB from "@/components/Billing/LocumPlatformBillingInvoiceFormB";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 export default {
   components: {
     LocumPrivateBillingInvoiceFormB,
-    LocumPlatformBillingInvoiceFormB
+    LocumPlatformBillingInvoiceFormB,
+    AppBreadcrumbs
+  },
+  data() {
+    return {
+      links: [
+        {
+          title: 'Billing',
+          url: '/locum-billing/private-invoices'
+        },
+        {
+          title: 'NHS Pensions Form B',
+          url: '/locum-billing/private-invoices/?status=pension-form-b'
+        },
+        {
+          title: 'Generate NHS Form B'
+        }
+      ]
+    }
   },
   async asyncData({ app, params, error }) {
     try {
+
+      const links = [
+        {
+          title: 'Billing',
+          url: '/locum-billing/private-invoices'
+        },
+        {
+          title: 'NHS Pensions Form B',
+          url: '/locum-billing/private-invoices/form-b'
+        },
+        {
+          title: 'Generate NHS Form B'
+        }
+      ]
+
+      return links
       //   const response = await app.$axios.$get(`/api/v1/me`);
       //   console.log(response);
       //   const locum_user =
