@@ -9,7 +9,7 @@
             <div class="my-2 bg-yellow-500" />
             <div class="my-2 bg-yellow-500" />
           </button>
-          <AppBreadcrumbs :fixed="false" />
+          <!-- <AppBreadcrumbs :fixed="false" /> -->
           <!-- <div
             v-if="
               $auth.user.domain === 'Practice' &&
