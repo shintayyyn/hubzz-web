@@ -1,114 +1,112 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8">
-      <div class="flex flex-row flex-no-wrap items-center text-lg">
-        <div class="cursor-pointer" @click="$router.push('/compliance')">
-          <svgicon name="left-arrow" height="32" />
-        </div>
-        <a
-          class="text-black no-underline flex items-center w-auto hover:bg-yellow-500 rounded-lg cursor-pointer p-2 mx-4"
-          @click.prevent="downloadItem(compliance_document.file.url,compliance_document.file.filename)"
-        >
-          <svgicon
-            name="cloud-download"
-            width="21"
-            height="21"
-            color="black"
-            hover="transparent black"
-            class="inline"
-          />
-          <span class="mx-1" />
-          <span>Download</span>
-        </a>
-      </div>
+  <div class="p-2">
+    <div class="flex flex-row flex-no-wrap items-center">
+      <!-- <div class="cursor-pointer" @click="$router.push('/compliance')">
+        <svgicon name="left-arrow" height="32" />
+      </div> -->
+      <a
+        class="text-black no-underline flex items-center w-auto text-sm transition-hover hover:bg-yellow-500 rounded-lg cursor-pointer py-2 px-4 border"
+        @click.prevent="downloadItem(compliance_document.file.url,compliance_document.file.filename)"
+      >
+        <svgicon
+          name="cloud-download"
+          width="18"
+          height="18"
+          color="black"
+          hover="transparent black"
+          class="inline"
+        />
+        <span class="mx-1" />
+        <span>Download</span>
+      </a>
+    </div>
 
-      <div class="flex flex-col md:p-4">
-        <div class="shadow-lg rounded-lg bg-gray-300 mt-5 max-w-5xl">
-          <div class="flex flex-row flex-wrap justify-start p-4 md:p-8">
-            <div class="flex flex-col w-full lg:w-1/4 pr-4">
-              <p class="font-bold text-lg">
-                Type
-              </p>
-              <p
-                class="mt-2 text-sm md:text-base"
-              >
-                {{ compliance_document.compliance_document ? compliance_document.compliance_document.name: null }}
-              </p>
-              <div v-if="compliance_document.has_reference">
-                <p class="font-bold text-lg mt-5">
-                  Reference
-                </p>
-                <p class="mt-2 text-sm md:text-base">
-                  {{ compliance_document.reference }}
-                </p>
-              </div>
-              <div v-if="compliance_document.country">
-                <p class="font-bold text-lg mt-5">
-                  Country
-                </p>
-                <p class="mt-2 text-sm md:text-base">
-                  {{ compliance_document.country.name }}
-                </p>
-              </div>
-              <p class="mt-5 font-bold text-lg">
-                Date uploaded
-              </p>
-              <p
-                class="mt-2 text-sm md:text-base"
-              >
-                {{ compliance_document.uploaded_at_in_gb_formatted }}
-              </p>
-              <p class="mt-5 font-bold text-lg">
-                Status
+    <div class="flex flex-col">
+      <div class="shadow-lg rounded-lg bg-gray-300 mt-4 max-w-5xl">
+        <div class="flex flex-row flex-wrap justify-start p-4 md:p-8">
+          <div class="flex flex-col w-full lg:w-1/4 pr-4">
+            <p class="font-bold text-lg">
+              Type
+            </p>
+            <p
+              class="mt-2 text-sm md:text-base"
+            >
+              {{ compliance_document.compliance_document ? compliance_document.compliance_document.name: null }}
+            </p>
+            <div v-if="compliance_document.has_reference">
+              <p class="font-bold text-lg mt-5">
+                Reference
               </p>
               <p class="mt-2 text-sm md:text-base">
-                {{ compliance_document.status }}
+                {{ compliance_document.reference }}
               </p>
-              <div v-if="compliance_document.status === 'Approved'">
-                <p class="mt-5 font-bold text-lg">
-                  Expiration Date
-                </p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >
-                  {{ compliance_document.expired_at_in_gb_formatted }}
-                </p>
-              </div>
-              <div v-if="compliance_document.status === 'Rejected'">
-                <p class="mt-5 font-bold text-lg">
-                  Rejected At
-                </p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >
-                  {{ compliance_document.rejected_at_in_gb_formatted }}
-                </p>
-                <p class="mt-5 font-bold text-lg">
-                  Notes
-                </p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >
-                  {{ compliance_document && compliance_document.note ? compliance_document.note : null }}
-                </p>
-              </div>
-
-              <div v-if="false">
-                <p class="mt-5 font-bold text-lg">
-                  Note
-                </p>
-                <p class="mt-2 text-sm md:text-base">
-                  {{ compliance_document.note }}
-                </p>
-              </div>
             </div>
-            <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
-              <embed
-                class="object-contain object-top w-full"
-                :class="compliance_document.file.type == 'image' ? 'image' : 'document h-full'"
-                :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(compliance_document.file.subtype) ? convertDoc(compliance_document.file.url) : compliance_document.file.url"
+            <div v-if="compliance_document.country">
+              <p class="font-bold text-lg mt-5">
+                Country
+              </p>
+              <p class="mt-2 text-sm md:text-base">
+                {{ compliance_document.country.name }}
+              </p>
+            </div>
+            <p class="mt-5 font-bold text-lg">
+              Date uploaded
+            </p>
+            <p
+              class="mt-2 text-sm md:text-base"
+            >
+              {{ compliance_document.uploaded_at_in_gb_formatted }}
+            </p>
+            <p class="mt-5 font-bold text-lg">
+              Status
+            </p>
+            <p class="mt-2 text-sm md:text-base">
+              {{ compliance_document.status }}
+            </p>
+            <div v-if="compliance_document.status === 'Approved'">
+              <p class="mt-5 font-bold text-lg">
+                Expiration Date
+              </p>
+              <p
+                class="mt-2 text-sm md:text-base"
               >
+                {{ compliance_document.expired_at_in_gb_formatted }}
+              </p>
             </div>
+            <div v-if="compliance_document.status === 'Rejected'">
+              <p class="mt-5 font-bold text-lg">
+                Rejected At
+              </p>
+              <p
+                class="mt-2 text-sm md:text-base"
+              >
+                {{ compliance_document.rejected_at_in_gb_formatted }}
+              </p>
+              <p class="mt-5 font-bold text-lg">
+                Notes
+              </p>
+              <p
+                class="mt-2 text-sm md:text-base"
+              >
+                {{ compliance_document && compliance_document.note ? compliance_document.note : null }}
+              </p>
+            </div>
+
+            <div v-if="false">
+              <p class="mt-5 font-bold text-lg">
+                Note
+              </p>
+              <p class="mt-2 text-sm md:text-base">
+                {{ compliance_document.note }}
+              </p>
+            </div>
+          </div>
+          <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
+            <embed
+              class="object-contain object-top w-full"
+              :class="compliance_document.file.type == 'image' ? 'image' : 'document h-full'"
+              :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(compliance_document.file.subtype) ? convertDoc(compliance_document.file.url) : compliance_document.file.url"
+            >
           </div>
         </div>
       </div>
