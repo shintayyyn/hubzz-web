@@ -154,6 +154,14 @@ export default {
     }
   },
 
+  watch: {
+    "$route"(route) {
+      if (route.name === "practice-billing") {
+        this.$router.push("/practice-billing/invoices-from-locums")
+      }
+    }
+  },
+
   mounted () {
     if (this.$route.name === "practice-billing") {
       this.$router.push("/practice-billing/invoices-from-locums")

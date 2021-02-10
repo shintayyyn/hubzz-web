@@ -4,12 +4,13 @@
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
       <div class="header-section flex items-center w-full justify-between bg-white">
-        <div class="w-1/3 flex items-center">
-          <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
+        <div class="w-3/5 flex items-center">
+          <button class="burger cursor-pointer py-2 focus:outline-none h-full mr-4" @click="toggle">
             <div class="my-2 bg-yellow-500" />
             <div class="my-2 bg-yellow-500" />
           </button>
-          <div
+          <AppBreadcrumbs :fixed="false" />
+          <!-- <div
             v-if="
               $auth.user.domain === 'Practice' &&
                 $auth.user.status === 'Active' &&
@@ -21,7 +22,7 @@
                 $auth.user.practice_detail.practice.parent_practice_id)) 
             "
             class="mx-2"
-          >
+          > -->
             <!-- <div class="flex flex-col items-start">
               <AppButton
                 :disabled="!authPermissions.includes('Create Sessions Job')"
@@ -46,7 +47,7 @@
 						>
 							<svgicon name="create-job" color="#444 #555" width="21" height="21" />
 						</button> -->
-          </div>
+          <!-- </div> -->
         </div>
 
         <!-- <div class="w-1/3 flex justify-center">
@@ -55,7 +56,7 @@
 					</button>
 				</div> -->
 
-        <div class="w-2/3 leading-loose py-2">
+        <div class="w-2/5 leading-loose py-2">
           <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
             <div
                 v-if="
@@ -190,12 +191,14 @@
 import AppButton from "@/components/Base/AppButton"
 import CreateJobModal from "@/components/CreateJobModal"
 import AppNotifDropdown from "@/components/AppNotifDropdown"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 
 export default {
   components: {
     AppButton,
     CreateJobModal,
     AppNotifDropdown,
+    AppBreadcrumbs
   },
 
   data () {
@@ -221,6 +224,10 @@ export default {
     repost_job () {
       return this.$store.state.calendar.repost_job
     },
+
+    links () {
+      return this.$store.state.breadcrumbs
+    }
   },
 
   watch: {

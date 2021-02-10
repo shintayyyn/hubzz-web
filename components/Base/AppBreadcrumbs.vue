@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center py-2 text-sm" :class="fixed && 'fixed top-0 mt-3 z-40'">
+    <div v-if="links.length" class="flex items-center py-2 text-sm" :class="fixed && 'fixed top-0 mt-3 z-40'">
       <div 
         v-for="(link, index) in links" 
         :key="index" 
@@ -26,6 +26,36 @@ export default {
       default: true
     }
   },
+
+  computed: {
+    crumbs () {
+      const routeMatched = this.$route.path.split("/")
+      routeMatched.shift()
+      console.log(this.$route.matched)
+      let breadcrumbs = routeMatched.reduce((breadcrumbArray, path, index) => {
+        let text = this.$route.matched[index] && this.$route.matched[index].meta && this.$route.matched[index].meta.breadCrumb ? this.$route.matched[index].meta.breadCrumb : path
+        if (text.includes('-')) {
+          text = text.replace(/-/g, ' ')
+        }
+        text = text.replace(/(^\w{1})|(\s{1}\w{1})/g, word => word.toUpperCase())
+        let prevCrumb = breadcrumbArray.find((item, i) => i === index-1)
+        let url = '' 
+        if (prevCrumb) {
+          url = `${prevCrumb.to.endsWith('/') ? prevCrumb.to : prevCrumb.to+'/'}${path}`
+        }else {
+          url = '/'+path
+        }
+        breadcrumbArray.push({
+          path: path,
+          to: url,
+          text,
+        })
+        return breadcrumbArray.filter(item => item.path && item.text)
+      }, [])
+      return breadcrumbs
+    }
+  },
+
   methods: {
     onClickHandler (url, index) {
       if (index !== this.links.length-1) {

@@ -1,6 +1,6 @@
 <template>
   <section class="my-practice-section">
-    <div class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow">
+    <div v-if="!$route.params.practiceId" class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow">
       <nuxt-link
         :to="{ name: 'my-practice-index-platform'}"
         :event="$route.name === 'my-practice' || $route.name.includes('my-practice-index-platform') ? '' : 'click'"

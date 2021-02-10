@@ -65,7 +65,6 @@ export default {
 			// 	default:
 			// 		break;
 			// }
-			console.log("inv route", route)
 			links.push(
 				{
 					title: `${invoice.status}${['Disputed', 'Approved'].includes(invoice.status) ? ' Invoices' : ''}`,
@@ -75,7 +74,6 @@ export default {
 					title: invoice.invoice_number
 				}
 			)
-			console.log("invoice", invoice);
 			return {
 				invoice,
 				links

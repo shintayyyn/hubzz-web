@@ -327,6 +327,11 @@ export default {
         this.confirmation_modal = true
       }
     },
+    "$route"(route) {
+      if (route.path === "/sessions") {
+        this.$router.push("/job-parts/?status=Allocated")
+      }
+    }
   },
 
   async asyncData ({ app, error, store, }) {

@@ -800,7 +800,6 @@ export default {
   },
 
   created () {
-    console.log("asd", this.propInvoice)
     Promise.all([
       this.$axios.$get("/api/v1/tax-rates").then(response => 
         response.data.tax_rates

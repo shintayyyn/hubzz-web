@@ -52,8 +52,6 @@ export default {
 					? response.data.data.locum_invoice
 					: null;
 
-					console.log("invoice", invoice)
-
 				const links = [
 					{
 						title: 'Billing',
