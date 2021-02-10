@@ -8,7 +8,7 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link> -->
       <AppBreadcrumbs :links="links" />
-      <div class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow w-full">
+      <div v-if="!$route.params.jobId && !$route.params.userId" class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow w-full">
         <nuxt-link
           :to="{ path: `/my-practice/platform/${$route.params.practiceId}`, query: { ...$route.query}}"
           :event="$route.name === 'my-practice-index-platform-practiceId-index'? '' : 'click'"
@@ -53,15 +53,14 @@ export default {
   },
   computed: {
     links() {
-      console.log("practiceeee", this.practice)
       let links = [
         {
           title: 'My Practice',
-          url: '/my-practice'
+          url: '/my-practice/platform'
         },
         {
           title: 'Platform',
-          url: '/my-practice/platform'
+          url: `/my-practice/platform${this.$route.query.status ? '?status='+this.$route.query.status : ''}`
         },
         {
           title: this.practice.name,
@@ -83,6 +82,26 @@ export default {
         links.push({
           title: 'Related Jobs',
           url: `/my-practice/platform/${this.practice.id}/related-jobs?status=${this.$route.query.status}`
+        },{
+          title: `${this.$route.query.jobStatus ? this.$route.query.jobStatus : 'Allocated'} Jobs`,
+          url: `/my-practice/platform/${this.practice.id}/related-jobs?status=${this.$route.query.status}&jobStatus=${this.$route.query.jobStatus}`
+        })
+      }
+
+      if (this.$route.params.jobId) {
+        links.push({
+          title: this.$route.params.jobId,
+          url: `/my-practice/platform/${this.practice.id}/related-jobs/${this.$route.params.jobId}?status=${this.$route.query.status}`
+        })
+      }
+
+      if (this.$route.params.userId) {
+        links.push({
+          title: 'Users',
+          url: `/my-practice/platform/${this.practice.id}/users`
+        },{
+          title: this.$route.params.userId,
+          url: `/my-practice/platform/${this.practice.id}/users/${this.$route.params.userId}`
         })
       }
       return links

@@ -1,6 +1,6 @@
 <template>
   <section class="my-practice-section">
-    <div v-if="!$route.params.practiceId" class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow">
+    <div v-if="toShowTabs" class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow">
       <nuxt-link
         :to="{ name: 'my-practice-index-platform'}"
         :event="$route.name === 'my-practice' || $route.name.includes('my-practice-index-platform') ? '' : 'click'"
@@ -29,6 +29,24 @@ export default {
       this.$router.push("/my-practice/platform?status=Favorite")
     }
   },
+  watch: {
+    "$route" (route) {
+      if (!route.query.status && route.name === "my-practice") {
+        this.$router.push("/my-practice/platform?status=Favorite")
+      }
+    }
+  },
+  computed: {
+    toShowTabs() {
+      console.log("show tabs", this.$route)
+      if (this.$route.name === 'my-practice-private-practice-create') {
+        return false
+      }else if (this.$route.params.practiceId) {
+        return false
+      }
+      return true
+    }
+  }
 }
 </script>
 

@@ -9,8 +9,8 @@
       @cancel="confirmation_add_modal = false"
     />
 
-    <div class="p-4 md:p-8 max-w-5xl">
-      <div class="cursor-pointer" @click="$emit('close')">
+    <div class="max-w-5xl" :class="page ? 'px-2' : 'p-4 md:p-8'">
+      <div v-if="!page" class="cursor-pointer" @click="$emit('close')">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <template v-if="!input_details">
@@ -203,6 +203,12 @@ export default {
     AppPostCode,
     AppFormError,
     AppConfirmationModal,
+  },
+  props: {
+    page: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {

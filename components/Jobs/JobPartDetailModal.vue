@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div :class="isModal ? 'p-4 md:p-8' : 'px-2'">
+    <div v-if="isModal">
       <svgicon
         name="left-arrow"
         height="32"
@@ -247,6 +247,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    isModal:{
+      type: Boolean,
+      default: true
+    }
   },
 
   data () {
