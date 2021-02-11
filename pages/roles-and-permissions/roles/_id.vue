@@ -1,5 +1,5 @@
 <template>
-  <div ref="modalContainer" class="modal-container shadow-lg">
+  <div ref="modalContainer" class="p-2">
     <PracticeRoleDetail
       :role="role"
       @close="$router.push(`/roles-and-permissions/roles`)"

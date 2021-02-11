@@ -1,8 +1,8 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loading" spinner />
-    <div class="p-4 md:p-8">
-      <div>
+    <div class="">
+      <!-- <div>
         <svgicon
           name="left-arrow"
           height="32"
@@ -10,7 +10,7 @@
           class="cursor-pointer"
           @click="$emit('close')"
         />
-      </div>
+      </div> -->
       <div class="flex flex-col mt-4">
         <AppInput
           v-model="form.name"
@@ -153,7 +153,6 @@ export default {
         permission_id: [],
       },
       formError: [],
-
     }
   },
   computed: {

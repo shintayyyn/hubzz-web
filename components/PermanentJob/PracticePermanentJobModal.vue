@@ -15,6 +15,7 @@
 			</template>
     	<AppLoading :loading="loading" spinner :message="'Loading Job'" class="w-full"/>
 			<template v-if="!loading">
+				<template v-if="!hideDetails"> 
 				<div class="flex justify-start items-center flex-wrap md:px-2">
 					<h4 class="text-lg md:text-xl font-bold mr-2">
 						<span>{{ permanent_job.title }}</span>
@@ -43,8 +44,9 @@
 					>Closed By Hub for the reason : {{ permanent_job && permanent_job.cancelled_reason ? permanent_job.cancelled_reason : null }}</div>
 					<!-- This Job Posting has been closed by the Practice for the reason that someone might have already been hired {{ permanent_job.hired_through === 'Through HUBZZ' ? "thru HUBZZ." : "thru Direct Hiring." }} -->
 				</div>
+				</template>
 				<div class="flex flex-col md:flex-row">
-					<div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
+					<div v-if="!hideDetails" class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
 						<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
 							<!-- VIEW PERMANENT JOB DETAILS -->
 							<template v-if="edit === false">
@@ -343,21 +345,21 @@
 						/>
 					</div>
 
-					<div v-if="permanent_job" class="md:mx-2 w-full md:w-2/5 lg:w-1/2">
-						<template v-if="permanent_job.appointed_to_locum_user_id">
+					<div v-if="permanent_job" class="md:mx-2 w-full " :class="hideDetails ? '' :'md:w-2/5 lg:w-1/2'">
+						<template v-if="permanent_job.appointed_to_locum_user_id && !hideDetails">
 							<PermanentJobLocum class="my-4" :user="assignedLocum" />
 						</template>
-						<PermanentJobCandidates :permanent_job="permanent_job" />
-						<PermanentJobMap :permanent_job="permanent_job" />
+						<PermanentJobCandidates :permanent_job="permanent_job"/>
+						<PermanentJobMap v-if="!hideDetails" :permanent_job="permanent_job" />
 
 						<AppButton
-							v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled'"
+							v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled' && !hideDetails"
 							class="my-4"
 							:label="'Close Job'"
 							@click="toCloseJob = !toCloseJob"
 						/>
 
-						<div v-if="toCloseJob === true">
+						<div v-if="toCloseJob === true && !hideDetails">
 							<AppInput
 								v-model="form.hired_through"
 								:label="'Reasons for Closing Job'"
@@ -366,7 +368,7 @@
 								:placeholder="'Select...'"
 								:items="hired_through"
 							/>
-							<AppButton class="my-4" :label="'Confirm'" @click="forceCloseJob()" />
+							<AppButton v-if="!hideDetails" class="my-4" :label="'Confirm'" @click="forceCloseJob()" />
 						</div>
 					</div>
 				</div>
@@ -416,6 +418,7 @@ export default {
 					toolbar: null
 				}
 			},
+			hideDetails: false,
 			edit: false,
 			toCloseJob: false,
 			modal: false,
