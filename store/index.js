@@ -18,6 +18,7 @@ export const state = () => ({
   view_locum_jobs: false,
   view_permanent_jobs: false,
   session_expiring: false,
+  breadcrumbs: []
 })
 
 export const mutations = {
@@ -36,6 +37,12 @@ export const mutations = {
   },
   TOGGLE_SIDEBAR (state, payload) {
     state.toggled_sidebar = payload
+  },
+  SET_BREADCRUMBS(state, payload) {
+    state.breadcrumbs = payload
+  },
+  ADD_BREADCRUMB(state, payload) {
+    state.breadcrumbs.push(payload)
   },
   SET_LOCUM_PRIVATE_PRACTICES (state, payload) {
     state.locum_private_practices = payload

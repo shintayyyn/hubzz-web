@@ -74,13 +74,13 @@
       You do not have any spokes.
     </div>
 
-    <transition name="fade" mode="out-in">
+    <!-- <transition name="fade" mode="out-in">
       <nuxt-link
         v-if="$route.name.includes('hub-surgery-management-id')"
         :to="`/hub-surgery-management`"
         class="shield"
       />
-    </transition>
+    </transition> -->
   </div>
 </template>
 

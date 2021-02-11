@@ -204,7 +204,7 @@ export default {
           ]
         }
 
-        console.log("new status", newStatus)
+        // console.log("new status", newStatus)
         this.params = {
           job_posting_status: newStatus,
           practice_id: this.practice_surgery.child_practice_id,
@@ -370,15 +370,13 @@ export default {
       }
     },
     async getSurgeryPermanentJobs (params) {
-      console.log("params", params)
       try {
         await this.$axios
           .$get("/api/v1/practice/permanent-jobs/count", { params, })
           .then(res => {
-            console.log("permanent", res)
             this.permanent_job_count
 							= res.data && res.data.count ? res.data.count : null
-            console.log("permanent job count", res.data.count)
+            // console.log("permanent job count", res.data.count)
           })
 
         await this.$axios
@@ -388,7 +386,7 @@ export default {
 							= res.data && res.data.permanent_jobs
 							  ? res.data.permanent_jobs
 							  : null
-            console.log("permanent jobs", res.data.permanent_jobs)
+            // console.log("permanent jobs", res.data.permanent_jobs)
           })
 
         await this.$axios
@@ -396,7 +394,7 @@ export default {
           .then(res => {
             this.permanent_job_applications_count
 							= res.data && res.data.count ? res.data.count : null
-            console.log("permanent applications count", res.data.count)
+            // console.log("permanent applications count", res.data.count)
           })
 
         await this.$axios
@@ -406,10 +404,10 @@ export default {
 							= res.data && res.data.permanent_job_applications
 							  ? res.data.permanent_job_applications
 							  : null
-            console.log(
-              "permanent applications",
-              res.data.permanent_job_applications
-            )
+            // console.log(
+            //   "permanent applications",
+            //   res.data.permanent_job_applications
+            // )
           })
 
         this.permanent_jobs = await this.permanent_jobs.map(permanent_job => {
@@ -427,7 +425,7 @@ export default {
           } else {
             permanent_job.status = permanent_job.job_posting_status
           }
-          console.log("permanent_job", permanent_job)
+          // console.log("permanent_job", permanent_job)
           return permanent_job
         })
       } catch (err) {

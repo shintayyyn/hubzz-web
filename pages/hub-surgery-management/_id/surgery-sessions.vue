@@ -33,7 +33,7 @@
       </div>
     </div> -->
 
-    <div class="flex flex-row justify-start overflow-x-auto mt-2 border-b border-gray-500">
+    <div v-if="!$route.params.jobId && !$route.params.sessionId && !$route.params.jobPartId" class="flex flex-row justify-start overflow-x-auto mt-2 border-b border-gray-500">
         <nuxt-link
           :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"

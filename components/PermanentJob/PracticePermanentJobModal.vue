@@ -1,6 +1,5 @@
 <template>
 	<section ref="modalContainer">
-		<AppBreadcrumbs :links="links" />
 		<div :class="isPage ? 'px-2' : 'p-4 md:p-8'">
 			<template v-if="!isPage">
 				<nuxt-link
@@ -484,7 +483,6 @@ export default {
 					]
 				}
 			},
-			links: [],
 			loading: false
 			// displayOption: {
 			// 	modules: {
@@ -707,16 +705,6 @@ export default {
 					let status = this.permanent_job.job_posting_status !== 'Available' ? 
 						['Unfilled', 'Closed'].includes(this.permanent_job.job_posting_status) ? 'Closed' : this.permanent_job.job_posting_status
 						: 'Available'
-
-					this.links = [
-						{
-							title: `${status} Salaried Roles`,
-							url: `/permanent-jobs${status !== 'Available' ? '/?status='+status : ''}`
-						},
-						{
-							title: this.permanent_job.title
-						}
-					]
 				})
 				.finally(() => {
 					if (this.permanent_job.appointed_to_locum_user_id) {

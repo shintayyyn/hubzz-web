@@ -1,10 +1,10 @@
 <template>
-    <div v-if="links.length" class="flex items-center py-2 text-sm" :class="fixed && 'fixed top-0 mt-3 z-40'">
+    <div v-if="links.length" class="flex items-center py-2 text-sm" :class="fixed && 'fixed top-0 mt-3 z-40 ml-10 xl:ml-0'">
       <div 
         v-for="(link, index) in links" 
         :key="index" 
         class="flex items-center"
-        :class="[index !== links.length-1 ? 'text-gray-600' :'font-bold', link.class]"
+        :class="[index !== links.length-1 ? 'text-gray-600' :'', link.class]"
       >
         <p @click="onClickHandler(link.url, index)" :class="index !== links.length-1 ? `cursor-pointer hover:text-blue-500 ${index===0?'pr-1' : 'px-1'}` : 'text-gray-700 pl-1'">
           {{ link.title }}</p>

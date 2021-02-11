@@ -1,5 +1,6 @@
 <template>
   <section class="flex flex-col items-start w-full">
+		<AppBreadcrumbs :links="links" v-if="$route.name !== 'permanent-jobs-index'"/>
     <template v-if="$route.name === 'permanent-jobs-index'">
       <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
         <div class="flex overflow-x-auto items-center">
@@ -62,16 +63,38 @@
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppButton from "@/components/Base/AppButton"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 export default {
   components: {
     AppButton,
     AppConfirmationModal,
+    AppBreadcrumbs
   },
 
   data () {
     return {
       spokeIsNotAllowed: false,
       confirmation_modal: false,
+    }
+  },
+  computed: {
+    links() {
+      console.log("hello world", this.$route)
+      let route = this.$route
+      let links = [
+						{
+							title: `${route.query.status ? route.query.status : 'Available'} Salaried Roles`,
+							url: `/permanent-jobs${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+						},
+          ]
+      if (route.params.id) {
+        links.push({
+          title: route.params.id,
+          url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+        })
+      }
+      console.log(links)
+      return links
     }
   },
   watch: {

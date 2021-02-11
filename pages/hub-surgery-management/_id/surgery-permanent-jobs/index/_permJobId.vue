@@ -1,6 +1,6 @@
 <template>
-  <div class="modal-container">
-    <PracticePermanentJobModal />
+  <div class="pt-2">
+    <PracticePermanentJobModal isPage />
   </div>
 </template>
 
