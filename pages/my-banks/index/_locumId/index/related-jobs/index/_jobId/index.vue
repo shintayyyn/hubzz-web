@@ -1,5 +1,6 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div class="">
+    <AppBreadcrumbs :links="links" />
     <template v-if="job && !job_part">
       <SessionDetailModal :job="job" @close="close" />
     </template>
@@ -11,6 +12,7 @@
 <script>
 import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 export default {
   transition: {
     name: "slide",
@@ -18,7 +20,8 @@ export default {
   },
   components: {
     SessionDetailModal,
-    SessionPartDetailModal
+    SessionPartDetailModal,
+    AppBreadcrumbs
   },
   data () {
     return {
@@ -26,7 +29,7 @@ export default {
       job_part: null
     }
   },
-  async asyncData ({ app, params, query, error }) {
+  async asyncData ({ app, params, query, error, store, route }) {
     try {
       let url = `/api/v1/practice/locums/${params.locumId}/jobs`
 
@@ -40,18 +43,40 @@ export default {
         url = `/api/v1/practice/locums/${params.locumId}/job-parts`
       }
 
+
       let response = await app.$axios.get(`${url}/${params.jobId}`)
       if (response.data.data.job) {
         let job = response.data.data.job
+      
+        const links = [...store.state.breadcrumbs,
+          {
+            title: `${query.jobStatus} Jobs`,
+          }
+        ]
+        
         return {
-          job
+          job,
+          links
+
         }
       }
 
       if (response.data.data.job_part) {
         let job_part = response.data.data.job_part
+        console.log("job_part", job_part)
+        let url = `/my-banks/${job_part.viewing_locum_user_id}/related-jobs?jobStatus=${job_part.status}`
+        const links = [...store.state.breadcrumbs,
+        {
+          title: `${query.jobStatus} Jobs`,
+          url: url
+        }, {
+          title: job_part.job_title,
+          url: route.path
+        }
+      ]
         return {
-          job_part
+          job_part,
+          links
         }
       }
     } catch (err) {

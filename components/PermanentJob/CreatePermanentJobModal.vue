@@ -1,7 +1,9 @@
 <template>
-	<section ref="modalContainer" class="modal-container">
-		<div class="p-4 md:p-8">
+	<section ref="modalContainer" :class="isPage ? '' : 'modal-container'">
+		<AppBreadcrumbs :links="links" />
+		<div :class="isPage ? 'px-2' : 'p-4 md:p-8'">
 			<svgicon
+				v-if="!isPage" 
 				name="left-arrow"
 				height="32"
 				width="32"
@@ -223,12 +225,14 @@
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppDate from "@/components/Base/AppDate";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 
 export default {
 	components: {
 		AppInput,
 		AppButton,
-		AppDate
+		AppDate,
+		AppBreadcrumbs
 	},
 	data() {
 		return {
@@ -319,8 +323,23 @@ export default {
 						["link"]
 					]
 				}
-			}
+			},
+			links: [
+				{
+					title: 'Permanent Jobs',
+					url: '/permanent-jobs'
+				},
+				{
+					title: 'Create Permanent Job'
+				}
+			],
 		};
+	},
+	props: {
+		isPage: {
+			type: Boolean,
+			default: false
+		}
 	},
 	computed: {
 		// salary_amount_final:function () {

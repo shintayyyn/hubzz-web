@@ -1,5 +1,6 @@
 <template>
   <div class="w-full mt-5">
+    <AppBreadcrumbs :links="links" />
     <AppLoading :loading="loading" spinner />
 
     <template v-if="!loading && user">
@@ -371,6 +372,7 @@
 <script>
 import AppLoading from "@/components/Base/AppLoading"
 import AppAvatar from "@/components/Base/AppAvatar"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 
 export default {
   transition: {
@@ -381,6 +383,7 @@ export default {
   components: {
     AppLoading,
     AppAvatar,
+    AppBreadcrumbs
   },
 
   data () {
@@ -391,6 +394,7 @@ export default {
       optional: [],
       mandatoryTrainings: [],
       referees: [],
+      links: []
     }
   },
 
@@ -398,6 +402,48 @@ export default {
     this.loading = true
     this.$axios.get(`/api/v1/practice/locums/${this.$route.params.locumId}`).then((response) => {
       this.user = response.data.data.user
+
+      let parent_tab = this.$route.query.practice_locum_type ? this.$route.query.practice_locum_type : 'Favorites'
+      let surg_tab = this.$route.query.surgeries_bank ? 'Surgeries Banks' : 'Banks'
+      let prof_tab = this.$route.query.profession_category_name ? 'Others' : 'GP'
+
+
+      let url = `/my-banks?${parent_tab !== 'Favorites' ? 'practice_locum_type='+parent_tab : ''}${parent_tab !== 'All' ? prof_tab === 'Others' ? '&profession_category_name=Others' : '' : ''}${this.$route.query.surgeries_bank ==='true' ? '&surgeries_bank=true' : ''}`
+
+      this.links = [
+        {
+          title: 'My Banks',
+          url: '/my-banks'
+        },
+        {
+          title: parent_tab,
+          url: url
+        },
+      ]
+
+      console.log("parent_tab", parent_tab)
+
+      if (!['Favorites', 'All'].includes(parent_tab)){
+        this.links.push({
+          title: surg_tab,
+          url: url
+        })
+      }
+
+      if (parent_tab !== 'All') {
+        this.links.push({
+          title: prof_tab,
+          url: url
+        },)
+      }
+
+      this.links.push(
+        {
+          title: this.user.personal_detail.name,
+          url: this.$route.path
+        }
+      )
+
 
       this.getLocumCompliancesByLocumProfessionProfessionComplianceCategoryId(this.user.locum_detail.profession.profession_compliance_category_id)
       
@@ -428,6 +474,8 @@ export default {
       })
     }).finally(() => {
       this.loading = false
+      this.$store.commit("SET_BREADCRUMBS", this.links)
+      console.log("linkssss", this.$store.state.breadcrumbs)
     })
   },
   

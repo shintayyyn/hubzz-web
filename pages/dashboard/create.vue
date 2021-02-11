@@ -1,7 +1,9 @@
 <template>
-  <div ref="modalContainer" class="modal-container shadow-lg">
+  <div ref="modalContainer" class="">
+    <AppBreadcrumbs :links="links" />
     <JobDetailModalAppointment
       v-if="locumUser && !practiceUser"
+      :isModal="false"
       :job="null"
       @close="$router.push({ path: '/dashboard' })"
       @scrollTop="scrollToTop()"
@@ -18,6 +20,7 @@
 <script>
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 import CreateJobModal from "@/components/CreateJobModal"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 
 export default {
   middleware: "isVerified",
@@ -25,12 +28,22 @@ export default {
   components: {
     JobDetailModalAppointment,
     CreateJobModal,
+    AppBreadcrumbs
   },
 
   data () {
     return {
       locumUser: null,
       practiceUser: null,
+      links: [
+        {
+          title: 'Dashboard',
+          url: '/dashboard'
+        },
+        {
+          title: 'Create Appointment'
+        }
+      ]
     }
   },
 

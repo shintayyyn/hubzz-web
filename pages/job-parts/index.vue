@@ -1,1087 +1,441 @@
 <template>
-  <section class="relative">
-    <transition name="fade" mode="out-in">
-      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
-        <AppLoading :loading="initialLoading" spinner />
-      </div>
-    </transition>
+  <section class="sessions-section">
+    <!-- <div class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
+			<AppLoading :loading="loading" spinner />
 
-    <transition name="fade" mode="out-in">
-      <div>
-        <div class="flex">
-          <AppButton
-            class="mr-2"
-            :label="'Filter'"
-            customTheme="border-2"
-            :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-            @click="filterModal = !filterModal"
-          />
+			<div class="flex flex-row justify-start overflow-x-auto">
+				<div class="flex flex-col mb-2">
+					<label for="search" class="text-xs sm:text-sm">Job number</label>
 
-          <AppButton
-            v-if="showRefresh"
-            :label="'Refresh'"
-            customTheme="border-2"
-            :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-            @click="refreshJobs"
-          />
-        </div>
+					<div class="flex flex-row justify-start">
+						<input
+							v-model="search"
+							type="text"
+							class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
+						/>
+					</div>
 
-        <div
-          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="flex flex-col md:flex-row g-full items-end">
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_part_number_includes"
-                class="px-1"
-                :type="'text'"
-                :name="'job_part_number'"
-                :label="'Job part number'"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_title_includes"
-                class="px-1"
-                :type="'text'"
-                :name="'job_title'"
-                :label="'Job Title'"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_rate"
-                class="px-1"
-                :type="'text'"
-                :name="'job_rate'"
-                :label="'Rate £'"
-                :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-                :limit="8"
-                @keydown="isNumber($event)"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_rate_type_id"
-                class="px-1"
-                :type="'select'"
-                :name="'job_rate_type_id'"
-                :label="'per'"
-                :items="rates"
-              />
-            </div>
-          </div>
+					<transition name="fade" mode="out-in">
+						<div v-if="noFoundJob" class="text-xs text-red-500">No matching job number</div>
+					</transition>
+				</div>
+			</div>
 
-          <div class="flex flex-col md:flex-row g-full items-end">
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="profession_id"
-                :type="'select'"
-                :name="'profession_id'"
-                :label="'Roles'"
-                :placeholder="'Select...'"
-                :items="professions"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                v-model="job_shift_id"
-                class="px-1"
-                :type="'select'"
-                :name="'job_shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-              />
-            </div>
-          </div>
-
-          <div
-            v-if="$route.query.status && $route.query.status === 'Ongoing'"
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-          >
-            <AppInput
-              v-model="ended"
-              class="px-1"
-              :type="'select'"
-              :name="'ended'"
-              :label="'Status'"
-              :items="[{label: 'All', value: null}, {label: 'For Completion', value: true}, {label: 'Ongoing', value: false}]"
-            />
-          </div>
-
-          <div
-            v-if="$route.query.status && $route.query.status !== 'Ongoing'"
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-          >
-            <AppInput
-              v-model="invoice_status"
-              class="px-1"
-              :type="'select'"
-              :name="'invoice_status'"
-              :label="'Invoice Status'"
-              :items="invoiceStatusList"
-            />
-          </div>
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJob"
-            />
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
-        </div>
-
-        <AppTable
-          v-if="jobs.length > 0 && !initialLoading"
-          :total="total"
-          :items="jobs"
-          :current-page="current_page"
-          :per-page="limit"
-          :columns="columns"
-          :order-by="order_by"
-          :loading="loading"
-          :routerLink="routerLink"
-          :min-height="'55vh'"
-          :customWidth="1400"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
-        >
-          <template v-slot:ended="slotProps">
-            <div class="flex items-center justify-center">
-              <div class="rounded-full px-6">
-                {{ slotProps.item.ended ? "For Completion" : "Ongoing" }}
-              </div>
-            </div>
-          </template>
-          <template v-slot:practiceInvoiced="slotProps">
-            <div class="flex items-center justify-center">
-              <div
-                class="rounded-full px-6"
-              >
-                {{ slotProps.item.practice_invoiced ? "Invoiced by HUBZZ" : "To be Invoiced by HUBZZ" }}
-              </div>
-            </div>
-          </template>
-        </AppTable>
-
-        <div
-          v-if="!jobs.length && !initialLoading && !loading && !isFiltered"
-          class="flex justify-center py-4"
-        >
-          {{ noJobsToDisplay }}
-        </div>
-
-        <div
-          v-if="!jobs.length && !initialLoading && !loading && isFiltered"
-          class="flex justify-center py-4"
-        >
-          No Jobs Found
-        </div>
-
-        <transition name="fade" mode="out-in">
+			<div class="flex justify-start">
+				<div
+					class="bg-yellow-500 hover:text-white cursor-pointer shadow-lg rounded-lg px-2 py-1 font-bold mb-5 min-w-sm"
+					@click="findJobNumber"
+				>Search</div>
+			</div>
+		</div> -->
+    <template v-if="$route.name === 'job-parts-index'">
+      <div class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden">
+        <template v-for="tab in tabs" >
           <nuxt-link
-            v-if="showShield"
-            class="shield"
-            :to="{ name: 'job-parts-index', query: $route.query }"
-          />
-        </transition>
-
-        <div>
-          <nuxt-child @cancelled="filterJobList" @appointed="filterJobList" />
-        </div>
+            :key="tab.title"
+            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+            :to="tab.route"
+            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+            :class="tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
+          >
+            {{ tab.title }}
+          </nuxt-link>
+        </template>
       </div>
-    </transition>
+    </template>
+
+    <div class="mt-5">
+      <nuxt-child :invoiceStatusList="invoiceStatusList" />
+    </div>
+
+    <AppConfirmationModal
+      :label="'You\'ve been revoked to view this Page'"
+      :confirmLabel="'OK'"
+      :modal="confirmation_modal"
+      @confirm="goTo"
+    />
   </section>
 </template>
 
 <script>
-import AppTable from "@/components/Base/AppTable"
-import AppInput from "@/components/Base/AppInput"
-import AppDate from "@/components/Base/AppDate"
-import AppButton from "@/components/Base/AppButton"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppLoading from "@/components/Base/AppLoading"
 
 export default {
-  components: {
-    AppTable,
-    AppInput,
-    AppDate,
-    AppButton,
-    AppLoading,
-  },
-
-  props: {
-    invoiceStatusList: {
-      type: Array,
-      default: () => {
-        return []
-      },
-    },
-  },
-
-  middleware ({ query, error, }) {
+  transition: (to, from) => {
     if (
-      query.status
-			&& ![
-			  "pending",
-			  "allocated",
-			  "ongoing",
-			  "live",
-			  "applied",
-			  "unfilled",
-			  "withdrawn",
-			  "cancelled",
-			  "completed",
-			  "approved",
-			].includes(query.status.toLowerCase())
+      (to
+				&& to.name === "job-parts-index"
+				&& from
+				&& from.name === "sessions-index")
+			|| (from
+				&& from.name === "job-parts-index"
+				&& to
+				&& to.name === "sessions-index")
+			|| (to
+				&& to.name === "job-parts-index-jobPartId"
+				&& from
+				&& from.name === "sessions-index")
+			|| (from
+				&& from.name === "job-parts-index-jobPartId"
+				&& to
+				&& to.name === "sessions-index")
+			|| (to
+				&& to.name === "job-parts-index"
+				&& from
+				&& from.name === "sessions-index-id")
+			|| (from
+				&& from.name === "job-parts-index"
+				&& to
+				&& to.name === "sessions-index-id")
+			|| (to && to.name === "job-parts-index-jobPartId")
+			|| (from && from.name.includes("practice-job-reports"))
+			|| (to && to.name.includes("practice-job-reports"))
     ) {
-      return error({ status: 404, message: "This Session Status is Invalid", })
+      return {
+        name: "",
+        mode: "out-in",
+      }
     }
+
+    return {
+      name: "page",
+      mode: "out-in",
+    }
+  },
+
+  middleware: "isVerified",
+
+  components: {
+    AppConfirmationModal,
+    AppLoading,
   },
 
   data () {
     return {
-      showShield: false,
-      total: 0,
-      jobs: [],
-      initialLoading: false,
+      search: null,
+      noFoundJob: false,
       loading: false,
-      current_page: 1,
-      // app table params
-      offset: 0,
-      limit: 20,
-      order_by: [],
-      job_number: "",
-      job_part_number: "",
-      title: "",
-      job_title: "",
-      type: "",
-      job_type: "",
-      shift_id: "",
-      profession_id: "",
-      favorite_only: "",
-      job_shift_id: "",
-      rate: "",
-      job_rate: "",
-      rate_type_id: "",
-      job_rate_type_id: "",
-      near_post_code: "",
-      miles: "",
-      calendar_date_start: "",
-      calendar_date_end: "",
-      time_start: "",
-      time_end: "",
-      invoice_status: "",
-      title_includes: "",
-      job_title_includes: "",
-      job_number_includes: "",
-      job_part_number_includes: "",
-      shifts: [],
-      rates: [],
-      professions: [],
-      ended: null,
-      filterModal: false,
-      isFiltered: false,
-      showRefresh: false,
+      confirmation_modal: false,
+      invoiceStatusList: [
+        {
+          label: "All",
+          value: "",
+        },
+        {
+          label: "To Be Invoice",
+          value: "To Be Invoice",
+        },
+        {
+          label: "Disputed",
+          value: "Disputed",
+        },
+        {
+          label: "Invoiced",
+          value: "Invoiced",
+        },
+      ],
     }
   },
 
   computed: {
-    noJobsToDisplay () {
-      let queryStatus = this.$route.query.status
-        ? this.$route.query.status.toLowerCase()
-        : ""
-      switch (queryStatus) {
-      case "pending":
-      case "allocated":
-      case "ongoing":
-      case "declined":
-      case "withdrawn":
-      case "approved":
-      case "unfilled":
-      case "live":
-        return `You do not have any ${queryStatus} jobs`
-      case "applied":
-        return `There were no Locums who applied on your jobs yet`
-      case "completed":
-      case "cancelled":
-        return `You have not yet ${queryStatus} any job`
-      default:
-        return "You do not have any allocated jobs"
-      }
+    practice () {
+      return this.$auth.loggedIn && this.$auth.user.practice_detail
+        ? this.$auth.user.practice_detail.practice
+        : null
     },
 
-    getRequestQueryFilters () {
-      return {
-        practice_id: this.$route.query.status === "Pending" ? null : this.$auth.user.practice_detail.practice.id,
-        practice_job_part_status: this.$route.query.status || 'Allocated',
-        type: this.job_type,
-        shift_id_includes: this.job_shift_id,
-        rate_range_includes: this.job_rate,
-        rate_type_id_includes: this.job_rate_type_id,
-        near_postcode: this.near_post_code,
-        near_postcode_travel_miles: this.miles,
-        calendar_date_start: this.calendar_date_start,
-        calendar_date_end: this.calendar_date_end,
-        time_start: this.time_start,
-        time_end: this.time_end,
-        locum_invoice_status: this.invoice_status,
-        title_includes: this.title_includes,
-        job_part_number_includes: this.job_part_number_includes,
-        ended: this.ended,
-      }
+    authPermissions () {
+      console.log(this.$route)
+      return this.$store.getters["permissions"]
     },
-    
-    columns () {
-      let columns = []
 
-      let queryStatus = this.$route.query.status
-        ? this.$route.query.status.toLowerCase()
-        : "allocated"
+    tabs () {
+      const { name, query, } = this.$route
 
-      columns.push(
-        {
-          name: "Job Part No.",
-          dataIndex: "job_part_number",
-          sortable: true,
-          width: 130,
-        },
-        {
-          name: "Practice",
-          dataIndex: "practice_name",
-          class: "text-center",
-          sortable: true,
-        },
-        {
-          name: "Profession",
-          dataIndex: "profession_name",
-          class: "text-center",
-          sortable: true,
-        },
-        {
-          name: "Title",
-          dataIndex: "title",
-          class: "text-center",
-          sortable: true,
-        },
-        {
-          name: "Shifts",
-          dataIndex: "shift_names",
-          sortable: true,
-          class: "text-center",
-          width: 150,
-        },
-        {
-          name: "Rates",
-          dataIndex: "rate_range_formatted",
-          sortable: true,
-          class: "text-center",
-          width: 150,
-        },
-        {
-          name: "Rate Type",
-          dataIndex: "rate_type_names",
-          sortable: true,
-          class: "text-center",
-          width: 170,
-        }
+      const { status = "Allocated", } = query
+
+      const tabs = []
+
+      console.log("practice", this.practice)
+
+      if (
+        this.practice
+				&& (this.practice.type === "Spoke" || this.practice.type === "Hub")
+      ) {
+        tabs.push(
+          ...[
+            {
+              title: "Pending",
+              route: {
+                name: "sessions-index",
+                query: {
+                  status: "Pending",
+                },
+              },
+              active:
+								name === "job-parts-index"
+								&& status
+								&& status.toLowerCase() === "Pending".toLowerCase(),
+            },
+          ]
+        )
+      }
+
+      tabs.push(
+        ...[
+          {
+            title: "Allocated",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Allocated",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Allocated".toLowerCase(),
+          },
+          {
+            title: "Ongoing",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Ongoing",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Ongoing".toLowerCase(),
+          },
+          {
+            title: "Live",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Live",
+              },
+            },
+            active:
+							name === "sessions-index"
+							&& status
+							&& status.toLowerCase() === "Live".toLowerCase(),
+          },
+          {
+            title: "Applied",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Applied",
+              },
+            },
+            active:
+							name === "sessions-index"
+							&& status
+							&& status.toLowerCase() === "Applied".toLowerCase(),
+          },
+          {
+            title: "Unfilled",
+            route: {
+              name: "sessions-index",
+              query: {
+                status: "Unfilled",
+              },
+            },
+            active:
+							name === "sessions-index"
+							&& status
+							&& status.toLowerCase() === "Unfilled".toLowerCase(),
+          },
+          {
+            title: "Withdrawn",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Withdrawn",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Withdrawn".toLowerCase(),
+          },
+          {
+            title: "Cancelled",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Cancelled",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Cancelled".toLowerCase(),
+          },
+          {
+            title: "Completed",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Completed",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Completed".toLowerCase(),
+          },
+          {
+            title: "Approved",
+            route: {
+              name: "job-parts-index",
+              query: {
+                status: "Approved",
+              },
+            },
+            active:
+							name === "job-parts-index"
+							&& status
+							&& status.toLowerCase() === "Approved".toLowerCase(),
+          },
+          {
+            title: "Reports",
+            route: {
+              name: "practice-job-reports",
+            },
+            active: name === "practice-job-reports",
+          },
+        ]
       )
 
-      columns.push(
-        {
-          name: "From",
-          dataIndex: "datetime_start_in_gb_formatted",
-          sortable: true,
-          class: "text-center",
-          width: 130,
-        },
-        {
-          name: "To",
-          dataIndex: "datetime_end_in_gb_formatted",
-          sortable: true,
-          class: "text-center",
-          width: 130,
-        }
-      )
-
-      if (queryStatus === "allocated") {
-        columns.push({
-          name: "Assigned",
-          dataIndex: "appointed_to_locum_user_name",
-          sortable: true,
-          class: "text-center",
-        })
-      }
-
-      if (queryStatus === "ongoing") {
-        columns.push({
-          name: "Status",
-          dataIndex: "ongoing_status",
-          class: "text-center",
-          sortable: true,
-          width: 140,
-        })
-      }
-
-      if (queryStatus === "withdrawn") {
-        columns.push({
-          name: "Withdrawn At",
-          dataIndex: "declined_at_in_gb_formatted",
-          class: "text-center",
-          sortable: true,
-          width: 130,
-        })
-      }
-
-      if (queryStatus === "cancelled") {
-        columns.push(
-          {
-            name: "Cancelled At",
-            dataIndex: "cancelled_at_in_gb_formatted",
-            class: "text-center",
-            sortable: true,
-            width: 130,
-          },
-          {
-            name: "Tag",
-            dataIndex: "tag_status",
-            class: "text-center",
-            sortable: true,
-            width: 80,
-          }
-        )
-      }
-
-      if (["completed",].includes(queryStatus)) {
-        columns.push(
-          {
-            name: "Completed At",
-            dataIndex: "completed_at_in_gb_formatted",
-            sortable: true,
-            class: "text-center",
-            width: 130,
-          },
-          {
-            name: "Invoice status",
-            dataIndex: "locum_invoice_status",
-            sortable: true,
-            class: "text-center",
-            width: 130
-          }
-        )
-      }
-
-      if (["approved",].includes(queryStatus)) {
-        columns.push(
-          {
-            name: "Approved At",
-            dataIndex: "approved_at_in_gb_formatted",
-            class: "text-center",
-            sortable: true,
-            width: 130,
-          },
-          {
-            name: "Invoiced by HUBZZ?",
-            dataIndex: "practice_invoiced",
-            slotName: "practiceInvoiced",
-            class: "text-center",
-            sortable: true,
-            width: 200,
-          }
-        )
-      }
-
-      return columns
+      return tabs
     },
   },
 
   watch: {
-    async "$route.query" (newValue, oldValue) {
-      let newStatus = newValue.status
-      let oldStatus = oldValue.status
-      // let newBank = newValue.bank;
-      // let oldBank = oldValue.bank;
-      if (
-        newStatus
-				&& newStatus !== null
-				&& newStatus !== oldStatus
-				// || (newBank && newBank !== null && newBank !== oldBank)
-      ) {
-        this.current_page = 1
-        this.filterModal = false
-        this.showRefresh = false
-        this.total = 0
-        this.jobs = []
-        this.clearFilters()
-        this.isFiltered = false
-        this.initialLoading = true
-        await this.getJobsPromiseAll()
-        this.initialLoading = false
+    authPermissions (value) {
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true
       }
     },
-
-    $route () {
-      this.showShield = this.$route.name === "job-parts-index-jobPartId"
-    },
   },
 
-  mounted () {
-    this.showShield = this.$route.name === "job-parts-index-jobPartId"
-
-    this.$socket.on(
-      "Practice Notification Job Available",
-      this.getAvailableJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Application",
-      this.getAppliedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Application Cancelled",
-      this.getAppliedCancelledJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Allocated",
-      this.getCurrentJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Ongoing",
-      this.getOngoingJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Part Completed",
-      this.getCompletedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Completed",
-      this.getCompletedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Locum Invoice Updated",
-      this.getApprovedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Cancelled",
-      this.getCancelledJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Amended",
-      this.getAmendedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Declined",
-      this.getDeclinedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Auto Declined",
-      this.getAutoDeclinedJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Update Accept",
-      this.getUpdateAcceptJobsRealTime
-    )
-    this.$socket.on(
-      "Practice Notification Job Unfilled",
-      this.getUnfilledJobsRealTime
-    )
-
-    this.current_page = 1
-    this.filterModal = false
-    this.showRefresh = false
-    this.total = 0
-    this.jobs = []
-    this.clearFilters()
-    this.isFiltered = false
-    this.initialLoading = true
-    this.getJobsPromiseAll().finally(() => {
-      this.initialLoading = false
-    })
-
-    Promise.all([
-      this.$axios.get("/api/v1/professions?limit=999").then(response =>
-        response.data.data.professions.map(profession => ({
-          label: profession.name,
-          value: profession.id,
-        }))
-      ),
-
-      this.$axios.get("/api/v1/shifts?limit=999").then(response =>
-        response.data.data.shifts.map(shift => ({
-          label: shift.name,
-          value: shift.id,
-        }))
-      ),
-
-      this.$axios
-        .get("/api/v1/locum-detail-rate-types?limit=999")
-        .then(response =>
-          response.data.data.locum_detail_rate_types.map(
-            locumDetailRateType => ({
-              label: locumDetailRateType.name,
-              value: locumDetailRateType.id,
-            })
-          )
-        ),
-    ]).then(responses => {
-      const [professions, shifts, rates,] = responses
-
-      this.professions = professions
-      this.shifts = [{ label: "All", value: "", }, ...shifts,]
-      this.rates = [{ label: "All", value: "", }, ...rates,]
-    })
-  },
-
-  destroyed () {
-    this.$socket.removeListener(
-      "Practice Notification Job Available",
-      this.getAvailableJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Application",
-      this.getAppliedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Application Cancelled",
-      this.getAppliedCancelledJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Allocated",
-      this.getCurrentJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Ongoing",
-      this.getOngoingJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Part Completed",
-      this.getCompletedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Completed",
-      this.getCompletedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Locum Invoice Updated",
-      this.getApprovedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Cancelled",
-      this.getCancelledJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Amended",
-      this.getAmendedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Declined",
-      this.getDeclinedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Auto Declined",
-      this.getAutoDeclinedJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Update Accept",
-      this.getUpdateAcceptJobsRealTime
-    )
-    this.$socket.removeListener(
-      "Practice Notification Job Unfilled",
-      this.getUnfilledJobsRealTime
-    )
-
-    this.showRefresh = false
+  async asyncData ({ app, error, store, }) {
+    try {
+      const authPermissions = store.getters["permissions"]
+      if (
+        app.$auth.user.domain === "Practice"
+				&& authPermissions.includes("View Sessions Job") === false
+      ) {
+        error({
+          statusCode: 403,
+          message: "You are not authorized to view this page.",
+        })
+        return
+      }
+    } catch (err) {
+      console.log("err", err.response || err)
+      error({
+        statusCode: 403,
+        message: "You are not authorized to view this page.",
+      })
+    }
   },
 
   methods: {
-    routerLink (jobOrJobPart) {
-      return {
-        name: "job-parts-index-jobPartId",
-        params: {
-          jobPartId: jobOrJobPart.id,
-        },
-        query: {
-          ...this.$route.query,
-        },
+    goTo () {
+      this.confirmation_modal = false
+      setTimeout(() => {
+        this.$router.push("/")
+      }, 500)
+    },
+
+    async findJobNumber () {
+      if (!this.search) {
+        return
+      }
+
+      this.loading = true
+
+      let resJob = await this.findJob()
+      let resJobPart = await this.findJobParts()
+      let job = null
+      let urlPath = null
+      this.noFoundJob = false
+
+      this.loading = false
+
+      if (resJob.length > 0) {
+        job = resJob[0]
+        urlPath = `/sessions/${job.id}`
+      }
+
+      if (resJobPart.length > 0) {
+        job = resJobPart[0]
+        urlPath = `/sessions/${job.job.id}/job-parts/${job.id}`
+      }
+
+      if (resJob.length > 0 || resJobPart.length > 0) {
+        this.$router.push({
+          path: `/sessions`,
+          query: { status: job.status, },
+        })
+
+        setTimeout(() => {
+          this.$router.push({
+            path: urlPath,
+            query: { status: job.status, },
+          })
+        }, 500)
+      }
+
+      if (resJob.length === 0 && resJobPart.length === 0) {
+        this.noFoundJob = true
       }
     },
 
-    filterJobList (id) {
-      this.jobs = this.jobs.filter(item => item.id !== id)
-    },
-
-    getJobsPromiseAll () {
-      return Promise.all([
-        this.$axios.$get("/api/v2/practice/practice-job-parts/count", {
-          params: {
-            ...this.getRequestQueryFilters,
-          },
-        }),
-        this.$axios.$get("/api/v2/practice/practice-job-parts", {
-          params: {
-            order_by: [],
-            offset: 0,
-            limit: this.limit,
-            ...this.getRequestQueryFilters,
-          },
-        }),
-      ])
-        .then(([responseCount, responseJobs,]) => {
-          this.jobs = responseJobs.data.job_parts
-          this.total = responseCount.data.count
-        })
-        .catch(err => {
-          console.log("err", err.response || err)
-          throw err
-        })
-        .finally(() => {
-          return
-        })
-    },
-
-    getJobs () {
+    findJob () {
       return this.$axios
-        .$get("/api/v2/practice/practice-job-parts", {
+        .$get(`/api/v1/practice/jobs`, {
           params: {
-            order_by: this.order_by,
-            offset: this.offset,
-            limit: this.limit,
-            ...this.getRequestQueryFilters,
+            status: ["Pending", "Allocated", "Live", "Applied", "Unfilled",],
+            job_number: this.search,
           },
         })
         .then(res => {
-          this.jobs = res.data.job_parts
+          return res.data.jobs
         })
         .catch(err => {
-          console.log("err", err.response || err)
-          throw err
+          console.log("job err", err.response)
+          return []
         })
     },
 
-    async getAvailableJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getAppliedJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Applied"
-					|| this.$route.query.status === "Live")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getAppliedCancelledJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Applied"
-					|| this.$route.query.status === "Live")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getCurrentJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getOngoingJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Allocated")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getCompletedJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Completed"
-					|| this.$route.query.status === "Ongoing")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getApprovedJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Approved"
-					|| this.$route.query.status === "Completed")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getCancelledJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Cancelled"
-					|| this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getAmendedJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getDeclinedJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Declined"
-					|| this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getAutoDeclinedJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Declined"
-					|| this.$route.query.status === "Allocated")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getUpdateAcceptJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& this.$route.query.status === "Allocated"
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async getUnfilledJobsRealTime (job) {
-      if (!job) {
-        return
-      }
-      if (
-        this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Unfilled"
-					|| this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true
-      }
-    },
-
-    async refreshJobs () {
-      this.current_page = 1
-      this.offset = 0
-      this.limit = 20
-      this.initialLoading = true
-      await this.getJobsPromiseAll()
-      this.initialLoading = false
-      this.showRefresh = false
-    },
-
-    async filterJob () {
-      this.current_page = 1
-      this.offset = 0
-      this.limit = 20
-      this.initialLoading = true
-      this.isFiltered = true
-      await this.getJobsPromiseAll()
-      this.initialLoading = false
-      this.filterModal = false
-    },
-
-    async sorted (order_by) {
-      let orderBy = order_by.map(item => {
-        let order = item.split(":")[1]
-        let sorting = item.split(":")[0]
-        switch (sorting) {
-        case "date_time_start":
-          sorting = "date_start"
-          break
-        case "date_time_end":
-          sorting = "date_end"
-          break
-        case "calendar_date_start":
-          sorting = "calendar_date_start"
-          break
-        case "calendar_date_end":
-          sorting = "calendar_date_end"
-          break
-        case "job.rate":
-          sorting = "job_rate"
-          break
-        case "job.locum_detail_rate_type.name":
-          sorting = "job_rate_type_name"
-          break
-        case "isGp":
-          sorting = "profession_name"
-          break
-        default:
-          sorting
-        }
-        return `${sorting}:${order}`
-      })
-      if (orderBy.includes("date_start:desc")) {
-        orderBy.push("time_start:desc")
-      } else if (orderBy.includes("date_start:asc")) {
-        orderBy.push("time_start:asc")
-      } else if (orderBy.includes("date_end:asc")) {
-        orderBy.push("time_end:asc")
-      } else if (orderBy.includes("date_end:desc")) {
-        orderBy.push("time_end:desc")
-      }
-      this.current_page = 1
-      this.offset = 0
-      this.order_by = orderBy
-      this.loading = true
-      await this.getJobs()
-      this.loading = false
-    },
-
-    async pagechanged (page) {
-      this.current_page = page
-      this.offset = this.limit * (page - 1)
-      this.loading = true
-      await this.getJobs()
-      this.loading = false
-    },
-
-    async limitchanged (limit) {
-      this.current_page = 1
-      this.offset = 0
-      this.limit = limit
-      this.loading = true
-      await this.getJobs()
-      this.loading = false
-    },
-
-    clearFilters () {
-      this.offset = 0
-      this.limit = 20
-      this.order_by = []
-      this.job_number = ""
-      this.job_part_number = ""
-      this.title = ""
-      this.job_title = ""
-      this.type = ""
-      this.job_type = ""
-      this.shift_id = ""
-      this.job_shift_id = ""
-      this.rate = ""
-      this.job_rate = ""
-      this.rate_type_id = ""
-      this.job_rate_type_id = ""
-      this.near_post_code = ""
-      this.miles = ""
-      this.calendar_date_start = ""
-      this.calendar_date_end = ""
-      this.time_start = ""
-      this.time_end = ""
-      this.invoice_status = ""
-      this.title_includes = ""
-      this.job_title_includes = ""
-      this.job_number_includes = ""
-      this.job_part_number_includes = ""
-      this.profession_id = ""
-      this.favorite_only = ""
-      this.ended = null
+    findJobParts () {
+      return this.$axios
+        .$get(`/api/v1/practice/job-parts`, {
+          params: {
+            status: [
+              "Ongoing",
+              "Withdrawn",
+              "Cancelled",
+              "Completed",
+              "Approved",
+              "Terminated",
+            ],
+            job_part_number: this.search,
+          },
+        })
+        .then(res => {
+          return res.data.job_parts
+        })
+        .catch(err => {
+          console.log("job part err", err.response)
+          return []
+        })
     },
   },
 }

@@ -112,7 +112,7 @@
           :invoiceStatus="$route.query.status"
           :tax_rates="tax_rates"
           :locum_vat_registered="propInvoice.locum_user_vat_registered"
-          :toDisplay="propInvoice.approved || propInvoice.last_disputed_by === 'Practice'"
+          :toDisplay="propInvoice.approved || propInvoice.last_disputed_by === 'Practice' || $route.query.status === 'issued'"
           @getSchedule="getSchedule"
         />
       </div>

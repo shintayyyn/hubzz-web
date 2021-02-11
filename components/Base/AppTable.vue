@@ -58,7 +58,7 @@
                     column.class.includes('text-center') &&
                     'text-center'
                 "
-                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}; ${column.dataIndex === 'actions' ? '' : countLines(index, column.width, rowIndex)}`"
+                :style="`${column.width ? `min-width: ${column.width}px; max-width: ${column.width}px` : ``}; ${column.dataIndex !== 'actions' ? countLines(index, column.width, rowIndex) : '' }`"
                 :ref="`col${index}`"
                 style="line-height:20px; "
               >
@@ -347,8 +347,7 @@ export default {
           let lineHeight = parseInt(el.style.lineHeight)
           let lines = colHeight / lineHeight
           if (lines && lines > 1) {
-          console.log(index, " lines: ", lines)
-            return `font-size: ${(12-lines)}px;`
+            return `font-size: ${(12-lines)}px; line-height: ${(12-lines)+4}px;`
           }
         }
       }

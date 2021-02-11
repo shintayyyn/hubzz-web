@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div class="px-2">
+    <!-- <div>
       <svgicon
         name="left-arrow"
         height="32"
@@ -8,7 +8,7 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">

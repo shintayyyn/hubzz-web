@@ -1,6 +1,8 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
+    <div 
+      v-if="!$route.params.id && !['locum-billing-private-invoices-form-b-create', 'locum-billing-invoices-form-b-create'].includes($route.name)" 
+      class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
       <div class="flex overflow-x-auto items-center">
         <nuxt-link
           to="/locum-billing/invoices"
@@ -70,6 +72,14 @@ export default {
     return {
       name: 'page',
       mode: 'out-in',
+    }
+  },
+
+  watch: {
+    "$route"(route) {
+      console.log("watch route", route)
+      console.log("watch route params.id", route.name)
+      console.log("see", !route.params.id && route.name !== 'locum-billing-private-invoices-form-b-create')
     }
   },
 

@@ -1,19 +1,10 @@
 <template>
-	<div class="modal-container shadow-lg">
-		<div class="p-4 md:p-8 h-screen">
-			<div class="flex flex-row flex-wrap justify-start pb-4">
-				<nuxt-link
-					:to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query }}"
-				>
-					<svgicon name="left-arrow" height="32" width="32" />
-				</nuxt-link>
-			</div>
-			<PracticeBillingInvoiceForm
-				:prop-invoice="invoice"
-				:prop-id="$route.params.invoiceId"
-				@updateInvoice="$emit('updateInvoice', $event), $router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query} })"
-			/>
-		</div>
+	<div class="p-2">
+		<PracticeBillingInvoiceForm
+			:prop-invoice="invoice"
+			:prop-id="$route.params.invoiceId"
+			@updateInvoice="$emit('updateInvoice', $event), $router.push({ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query} })"
+		/>
 	</div>
 </template>
 <script>

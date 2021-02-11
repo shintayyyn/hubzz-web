@@ -1,6 +1,7 @@
 <template>
-  <div ref="modalContainer" class="modal-container shadow-lg">
-    <AppLoading :loading="initialLoading" spinner />
+  <div ref="modalContainer" class="">
+    <AppLoading :loading="initialLoading" spinner :message="'Loading Job'" />
+    <AppBreadcrumbs :links="links" />
 
     <SessionDetailModal
       v-if="job"
@@ -15,6 +16,7 @@
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 
 export default {
@@ -25,6 +27,7 @@ export default {
 
   components: {
     AppLoading,
+    AppBreadcrumbs,
     SessionDetailModal,
   },
 
@@ -33,6 +36,7 @@ export default {
       initialLoading: false,
       loadingJob: false,
       job: null,
+      links: []
     }
   },
 
@@ -57,6 +61,15 @@ export default {
     getJob () {
       return this.$axios.get(`/api/v1/practice/jobs/${this.$route.params.id}`).then((response) => {
         this.job = response.data.data.job
+        this.links = [
+          {
+            title: `${response.data.data.job.status} Sessions`,
+            url: `/sessions/?status=${response.data.data.job.status}`
+          },
+          {
+            title: response.data.data.job.title
+          }
+        ]
       }).catch((err) => {
         console.log('err', err.response || err)
 

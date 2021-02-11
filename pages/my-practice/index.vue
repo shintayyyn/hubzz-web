@@ -1,6 +1,6 @@
 <template>
-  <section class="my-practice-section">
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
+  <section  class="my-practice-section">
+    <div v-if="!$route.params.practiceId" class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
       <nuxt-link
         to="/my-practice/platform?status=Favorite"
         :event="$route.query.status && $route.query.status === 'Favorite' ? '' : 'click'"

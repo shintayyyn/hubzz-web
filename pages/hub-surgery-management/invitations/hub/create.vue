@@ -1,14 +1,7 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 w-full">
-      <svgicon
-        name="left-arrow"
-        height="32"
-        width="32"
-        class="mb-2 cursor-pointer"
-        @click="$router.push('/hub-surgery-management/invitations/hub')"
-      />
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke / Stand Alone</div>
+  <div class="">
+    <div class="p-2 w-full">
+      <div class="flex justify-start font-bold text-sm sm:text-xl">Invite Spoke / Stand Alone</div>
       <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
         <AppInput
           v-model="search_text"
@@ -72,7 +65,7 @@
       </div>
     </div>
 
-    <div class="spoke-shield" @click="toInvite = false" v-if="toInvite"></div>
+    <!-- <div class="spoke-shield" @click="toInvite = false" v-if="toInvite"></div> -->
     <transition name="slide" mode="out-in">
       <div class="spoke-permission-modal shadow-lg" v-if="toInvite">
         <InviteSpokePermissions @close="toInvite = false" :spoke="selectedSpoke" />
@@ -144,7 +137,6 @@ export default {
     }
   },
   async created() {
-    let practiceSpokeInvitations = [];
     await this.$axios
       .$get(`/api/v1/practice/me/practice-surgeries`)
       .then(res => {

@@ -1,10 +1,11 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <AppLoading :loading="initialLoading" spinner />
-
+  <div >
+    <AppLoading :loading="initialLoading" spinner :message="'Loading Job'"/>
+    <AppBreadcrumbs :links="links" />
     <JobDetailModalAppointment
       v-if="job && job.type === 'Private'"
       :job="job"
+      :isModal="false"
       @close="close"
       @appointmentUpdated="$emit('appointmentUpdated')"
     />
@@ -23,6 +24,7 @@
 
 <script>
 import AppLoading from "@/components/Base/AppLoading"
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 import LocumUserJobView from "@/components/Jobs/LocumUserJobView"
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment"
 
@@ -34,6 +36,7 @@ export default {
 
   components: {
     AppLoading,
+    AppBreadcrumbs,
     LocumUserJobView,
     JobDetailModalAppointment,
   },
@@ -43,6 +46,7 @@ export default {
       initialLoading: false,
       loadingJob: false,
       job: null,
+      links: []
     }
   },
   
@@ -67,6 +71,16 @@ export default {
     getLocumJob () {
       return this.$axios.get(`/api/v2/locum/locum-user-jobs/${this.$route.params.id}`).then((response) => {
         this.job = response.data.data.job
+        console.log("job", response.data.data.job)
+        this.links = [
+          {
+            title: `${response.data.data.job.locum_job_status} Job`,
+            url: `/jobs/?status=${response.data.data.job.locum_job_status}`
+          },
+          {
+            title: response.data.data.job.title
+          }
+        ]
       }).catch((err) => {
         console.log('err', err.response || err)
 

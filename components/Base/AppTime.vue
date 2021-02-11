@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="flex flex-col leading-normal"
-		:class="wrapperClass ? wrapperClass : 'py-2 mb-3 md:mb-6'"
+		:class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4'"
 		v-on-clickaway="toggledOff"
 	>
 		<div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">

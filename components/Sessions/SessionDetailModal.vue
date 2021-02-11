@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div class="px-2">
+    <!-- <div>
       <svgicon
         name="left-arrow"
         height="32"
@@ -8,14 +8,14 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
     <div class="flex flex-wrap justify-start items-center mt-4">
       <div class="leading-tight font-bold text-md sm:text-lg">
         {{ job.title }}
       </div>
 
-      <div class="mx-2 py-2 px-4 rounded font-semibold" :class="bgStatus(job.status)">
+      <div class="mx-2 py-1 px-4 rounded font-semibold" :class="bgStatus(job.status)">
         {{ status(job.status) }}
       </div>
 
@@ -29,7 +29,7 @@
               (job.status === 'Applied' && toEdit === false) ||
               (job.status === 'Live' && toEdit === false)
           "
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-4 py-1 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-1 focus:outline-none"
           @click.prevent="toEdit = true"
         >
           Edit this job
@@ -44,7 +44,7 @@
               (job.status === 'Applied' && toEdit === true) ||
               (job.status === 'Live' && toEdit === true)
           "
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-4 py-1 rounded-lg bg-yellow-500 ml-1 focus:outline-none"
           @click.prevent="toEdit = false"
         >
           Cancel Editing

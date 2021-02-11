@@ -1,7 +1,7 @@
 <template>
-  <div class="p-4 md:p-8">
+  <div class="px-2">
     <AppLoading :loading="loading" spinner />
-
+<!-- 
     <div>
       <svgicon
         name="left-arrow"
@@ -10,15 +10,15 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
     <div class="flex flex-row justify-start items-center mt-4">
-      <div class="leading-loose font-bold text-md sm:text-lg">
+      <div class="leading-loose font-bold text-md sm:text-lg mr-2">
         {{ job_part.title }}
       </div>
 
       <div
-        class="py-2 px-4 mx-1 rounded font-semibold"
+        class="py-1 px-4 mx-1 rounded font-semibold text-sm"
         :class="bgStatus(job_part.locum_job_part_status)"
         @click="['Approved','Cancelled'].includes(job_part.locum_job_part_status) ? toggle_invoice_modal = true : null"
       >
@@ -27,7 +27,7 @@
       
       <div
         v-if="job_part && job_part.terminated"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        class="py-1 px-4 mx-1 rounded font-semibold text-sm bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
         TERMINATED
@@ -35,7 +35,7 @@
       
       <div
         v-if="job_part && job_part.locum_invoiceable && job_part.locum_invoice_status && job_part.locum_job_part_status !== 'Approved'"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        class="py-1 px-4 mx-1 rounded font-semibold text-sm bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
         {{ job_part.locum_invoice_status.toUpperCase() }}
@@ -216,7 +216,7 @@
             <JobDetailModalUnassignForm
               v-if="!loadingJobPart && (job_part.locum_job_part_status === 'Ongoing' || job_part.locum_job_part_status === 'Allocated')"
               :ref="'unassignForm'"
-              :job="job_part.job"
+              :job="job"
               @unassign="$emit('close')"
             />
           </div>
@@ -295,6 +295,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    job_part_job: {
+      type: Object,
+      default: () => null,
+    }
   },
 
   data () {
@@ -309,6 +314,10 @@ export default {
 
   computed: {
     job () {
+      console.log("job_part_job", this.job_part_job)
+      if (this.job_part_job) {
+        return this.job_part_job
+      }
       return this.job_part && this.job_part.job
         ? this.job_part.job
         : null

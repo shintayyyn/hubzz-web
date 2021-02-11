@@ -1,6 +1,6 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-sunglow">
+    <div v-if="!$route.params.id" class="flex flex-row justify-start overflow-x-auto border-b border-sunglow">
       <nuxt-link
         v-if="authPermissions.includes('View Billings')"
         :to="{ path: '/practice-billing/invoices-from-locums' }"
@@ -151,6 +151,14 @@ export default {
     } catch (err) {
       console.log('err', err.response || err)
       error(err)
+    }
+  },
+
+  watch: {
+    "$route"(route) {
+      if (route.name === "practice-billing") {
+        this.$router.push("/practice-billing/invoices-from-locums")
+      }
     }
   },
 

@@ -1,14 +1,14 @@
 <template>
-  <div class="modal-container w-full">
-    <div class="m-6">
-      <div>
+  <div class="w-full">
+    <div class="py-2">
+      <!-- <div>
         <nuxt-link
           :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-banks`, query: { ...$route.query }}"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
-      </div>
+      </div> -->
 
       <AppLoading :loading="loading" spinner />
 

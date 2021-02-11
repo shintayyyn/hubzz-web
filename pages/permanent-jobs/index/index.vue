@@ -959,6 +959,7 @@ export default {
 
     searchSubmit: debounce(function (value) {
       this.params.search = value
+      this.current_page = 1
 
       if (this.$auth.user.domain === "Locum") {
         this.getPermanentJobsForLocum(this.params)
@@ -969,6 +970,7 @@ export default {
     }, 500),
 
     async getPermanentJobsForLocum (params) {
+      this.loading = true
       await this.$axios
         .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
         .then(res => {
@@ -1022,6 +1024,7 @@ export default {
               permanent_job.status = "Available"
             }
           }
+          this.loading = false
           return permanent_job
         }
       )
