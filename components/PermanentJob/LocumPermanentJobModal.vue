@@ -1,7 +1,7 @@
 <template>
 	<section :class="isPage ? '':'modal-container'">
 		<AppLoading :loading="loading" spinner :message="'Loading Job'" />
-		<AppBreadcrumbs :links="links" />
+		<!-- <AppBreadcrumbs :links="links" /> -->
 		<transition name="fade">
 		<div v-if="permanent_job || permanent_job_application" :class="isPage ? 'px-2' : 'relative p-4 md:p-8'">
 			<template v-if="!isPage">
