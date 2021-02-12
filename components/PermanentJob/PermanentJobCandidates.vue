@@ -41,9 +41,9 @@
 			</div>
 		</div>
 		<p
-			v-if="permanent_job_applications.length === 0"
+			v-if="permanent_job_applications.length === 0 && !loading"
 			class="text-gray-600 text-sm"
-		>There are no applicants for this job at the moment.</p>
+		>{{ ['Closed', 'Unfilled'].includes(permanent_job.job_posting_status) ? 'No applicants for this job.' : 'There are no applicants for this job at the moment.'}}</p>
 		<div v-if="total > 0" class="bottom-0 w-full">
 			<AppPagination
 				:total="total"
@@ -125,6 +125,7 @@ export default {
 	},
 	created() {
 		this.getApplicantsCount();
+		console.log("permanent_job",this.permanent_job)
 	},
 	methods: {
 		async getApplicantsCount() {
@@ -177,6 +178,13 @@ export default {
 			}
 		},
 		async show(id) {
+			if (!this.$route.name.includes('hub-surgery-management')) {
+				this.$router.push({path: `/permanent-jobs/${this.permanent_job.id}/${id}`, query: {...this.$route.query}})
+				return
+			}else {
+				this.$router.push({path: `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs/${this.$route.params.permJobId}/${id}`, query: {...this.$route.query}})
+				return
+			}
 			await this.$axios
 				.$get(`/api/v1/practice/permanent-job-applications/${id}`)
 				.then(res => {
