@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col w-full my-5">
+  <div class="relative flex flex-col w-full border rounded-lg p-4">
     <div class="text-md font-bold">
       Job Parts
     </div>
@@ -16,7 +16,7 @@
       :loading="loading"
       :routerLink="routerLink"
       minHeight="unset"
-      :customWidth="700"
+      :customWidth="650"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     >
@@ -159,11 +159,13 @@ export default {
           name: "Date Start",
           dataIndex: "date_start",
           class: "text-center",
+          width: 100
         },
         {
           name: "Date End",
           dataIndex: "date_end",
           class: "text-center",
+          width: 100
         },
         {
           name: "Status",
