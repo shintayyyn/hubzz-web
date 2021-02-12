@@ -1,8 +1,9 @@
 <template>
 	<section>
-		<div class="p-4 md:p-8">
+		<div :class="isPage ? 'py-2' : '-4 md:p-8'">
 			<div class="flex items-center">
 				<svgicon
+					v-if="!isPage"
 					name="left-arrow"
 					height="32"
 					width="32"
@@ -69,7 +70,7 @@
 					:label="'Invite This Locum'"
 			/>-->
 
-			<div class="flex flex-wrap items-center justify-between mt-4 md:mt-8">
+			<div class="flex flex-wrap items-center justify-between mt-4" :class="isPage ? '' : 'md:mt-8'">
 				<div class="flex flex-row flex-wrap md:flex-no-wrap justify-start items-center">
 					<div class="font-bold text-md sm:text-lg mr-2">{{ user.name }}</div>
 					<div
@@ -358,6 +359,10 @@ export default {
 		permanent_job_application: {
 			type: Object,
 			default: () => null
+		},
+		isPage : {
+			type: Boolean,
+			default: () => false
 		}
 	},
 	data() {

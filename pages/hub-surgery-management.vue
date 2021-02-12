@@ -108,6 +108,7 @@ export default {
           )
           break;
         case 'hub-surgery-management-id-surgery-permanent-jobs-index': 
+        case 'hub-surgery-management-id-surgery-permanent-jobs-index-permJobId-locumId': 
         case 'hub-surgery-management-id-surgery-permanent-jobs-index-permJobId': 
         links.push(
           {
@@ -164,7 +165,16 @@ export default {
           url: `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs/${this.$route.params.permJobId}${this.$route.query.status ? '?status='+this.$route.query.status : ''}`
         })
       }
-      if (this.$route.params.locumId) {
+      if (this.$route.params.permJobId && this.$route.params.locumId) {
+        links.push({
+          title: 'Applicants',
+          url: `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs/${this.$route.params.permJobId}${this.$route.query.status ? '?status='+this.$route.query.status : ''}`
+        },
+        {
+          title: this.$route.params.locumId,
+          url: `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs/${this.$route.params.permJobId}/${this.$route.params.locumId}${this.$route.query.status ? '?status='+this.$route.query.status : ''}`
+        })
+      }else if (this.$route.params.locumId) {
         links.push({
           title: this.$route.params.locumId,
           url: `/hub-surgery-management/${this.$route.params.id}/surgery-banks/${this.$route.params.locumId}`

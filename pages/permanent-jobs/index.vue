@@ -93,6 +93,16 @@ export default {
           url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
         })
       }
+      if (route.params.locumId) {
+        links.push({
+          title: 'Applicants',
+          url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+        },
+        {
+          title: route.params.locumId,
+          url: `/permanent-jobs/${route.params.id}/${route.params.locumId}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+        })
+      }
       console.log(links)
       return links
     }
