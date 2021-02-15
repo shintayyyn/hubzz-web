@@ -87,6 +87,18 @@ export default {
 							url: `/permanent-jobs${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
 						},
           ]
+      if (route.name === 'permanent-jobs-index-create') {
+        links = [
+          {
+            title: 'Permanent Jobs',
+            url: '/permanent-jobs'
+          },
+          {
+            title: 'Create Permanent Job',
+            url: '/permanent-jobs/create'
+          }
+        ]
+      }
       if (route.params.id) {
         links.push({
           title: route.params.id,

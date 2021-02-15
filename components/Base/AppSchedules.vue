@@ -328,7 +328,7 @@
                           ]"
                           class="w-2/12 flex items-center justify-center border-r"
                         >
-                          {{ shift.rate }}
+                          {{ shift.rate | currency }}
                         </div>
 
                         <!-- FIELDS -->
@@ -1125,7 +1125,7 @@
                 v-model="selectedShift.remarks"
                 :type="'textarea'"
                 :name="`remarks-${selectedShift.index}-${selectedShift.i}`"
-                :rows="3"
+                :rows="7"
                 :inStyle="'background-color: transparent'"
                 :resize="false"
                 :error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"

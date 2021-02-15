@@ -10,7 +10,7 @@
       />
     </div> -->
 
-    <div class="flex flex-wrap justify-start items-center mt-4">
+    <div class="flex flex-wrap justify-start items-center pb-4 pt-2">
       <div class="leading-tight font-bold text-md sm:text-lg">
         {{ job.title }}
       </div>
@@ -113,9 +113,9 @@
       </transition>
     </div>
 
-    <div class="flex flex-col mt-4">
+    <div class="flex flex-col">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-4 w-full md:w-55p">
           <div class="flex flex-col">
             <div class="flex flex-col">
               <div v-if="job.status === 'Rejected'" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
@@ -168,7 +168,7 @@
               @scrollToTop="$emit('scrollToTop')"
             />
 
-            <SessionDetailModalMap v-if="showMap" :job="job" />
+            <SessionDetailModalMap v-if="showMap && job.status !== 'Unfilled'" :job="job" />
 
             <SessionDetailModalCancelForm
               v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
@@ -178,7 +178,7 @@
           </div>
         </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+        <div class="w-full md:w-45p order-first md:order-none">
           <div class="flex flex-col">
             <SessionPartDetailModalParts :job_id="job.id" :disabled-link="true" />
 
@@ -193,6 +193,7 @@
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Withdrawn')"
               :job="job"
             />
+            <SessionDetailModalMap v-if="showMap && job.status === 'Unfilled'" :job="job" />
           </div>
         </div>
       </div>

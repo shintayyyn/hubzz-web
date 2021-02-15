@@ -4,12 +4,12 @@
       <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
     </nuxt-link> -->
 
-    <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">
+    <div class="flex justify-start font-bold text-sm sm:text-xl pt-3 mb-2">
       Availability
     </div>
 
     <div class="mt-4">
-      <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
+      <div class="relative bg-white rounded-lg border p-4">
         <AppLoading :loading="loading" spinner />
 
         <div v-if="false" class="font-bold text-sm sm:text-md mt-4">

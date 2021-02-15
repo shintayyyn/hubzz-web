@@ -425,7 +425,7 @@
     </span>
 
     <transition name="fade">
-      <div v-if="legendsModal" class="message-modal">
+      <div v-if="legendsModal" class="message-modal z-50">
         <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
           <p class="flex items-center justify-between flex-no-wrap font-bold">
             <span>Legend</span>
@@ -1411,6 +1411,10 @@ export default {
 	top: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 60;
+}
+
+.shield {
+  z-index: 55;
 }
 
 @media (min-width: 375px) {

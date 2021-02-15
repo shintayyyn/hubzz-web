@@ -186,7 +186,7 @@
         <div class="flex flex-row flex-wrap justify-start">
           <div class="w-full lg:w-1/3">
             <div
-              class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300"
+              class="h-full relative mx-1 my-1 statistics-card rounded-lg border p-4 bg-white hover:bg-gray-300"
             >
               <transition name="fade" mode="out-in">
                 <AppLoading :loading="initialLoading" spinner />
@@ -204,7 +204,7 @@
 
           <div class="w-full lg:w-1/3">
             <div
-              class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+              class="h-full relative mx-1 my-1 statistics-card rounded-lg border p-4 bg-white hover:bg-gray-300 cursor-pointer"
               @click="filterExpenseReport('week')"
             >
               <transition name="fade" mode="out-in">
@@ -223,7 +223,7 @@
 
           <div class="w-full lg:w-1/3">
             <div
-              class="h-full relative mx-1 my-1 statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300 cursor-pointer"
+              class="h-full relative mx-1 my-1 statistics-card rounded-lg border p-4 bg-white hover:bg-gray-300 cursor-pointer"
               @click="filterExpenseReport('month')"
             >
               <transition name="fade" mode="out-in">
@@ -254,6 +254,7 @@
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
+          noTextResize
         >
           <template v-slot:actions="slotProps">
             <div class="flex flex-col bg-white border rounded border-gray-500">

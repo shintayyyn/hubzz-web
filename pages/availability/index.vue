@@ -1,9 +1,9 @@
 <template>
   <section class="availability-section">
-    <div class="text-base md:text-lg font-bold">
+    <div class="text-base md:text-lg font-bold pt-3">
       I'm available for...
     </div>
-    <div class="availability-shift rounded-lg shadow-lg mt-5">
+    <div class="availability-shift rounded-lg border mt-4">
       <div class="relative w-full p-5">
         <AppLoading :loading="loading" spinner />
         <div class="flex flex-col">
@@ -36,7 +36,7 @@
               v-for="item in shifts"
               :key="item.id"
               class="relative border border-solid rounded-lg p-2 md:p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer transition-hover"
-              :class="[selectedShifts.includes(item.id) ? 'bg-yellow-500 hover:bg-yellow-400': 'hover:bg-yellow-500', shifts_error ? 'border-red-500' : '']"
+              :class="[selectedShifts.includes(item.id) ? 'bg-sunglow hover:bg-sunglow-dark': 'hover:bg-sunglow', shifts_error ? 'border-red-500' : '']"
               style="box-sizing:content-box;"
               @click="select(item.id)"
             >
@@ -68,12 +68,12 @@
         </div>
       </div>
       <div class="mt-4 mb-12">
-        <div class="availability-calendar relative rounded-lg shadow-lg p-5">
+        <div class="availability-calendar relative rounded-lg border p-5">
           <AvailabilityCalendar />
           <div class="absolute bottom-0 right-0 -my-2 -mx-1 md:-m-6">
             <nuxt-link :to="'/availability/create'">
               <div
-                class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
+                class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-sunglow font-semibold cursor-pointer shadow-md hover:text-white"
               >
                 +
               </div>

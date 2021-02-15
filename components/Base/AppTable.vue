@@ -206,6 +206,10 @@ export default {
     minHeight: {
       type: String,
     },
+    noTextResize: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -339,6 +343,7 @@ export default {
       return str
     },
     countLines(index, width, rowIndex) {
+      if (this.noTextResize) return
       let el = null
       if (this.$refs[`col${index}`]) {
         el = this.$refs[`col${index}`].find((item, ind) => ind === rowIndex)

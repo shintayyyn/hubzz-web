@@ -1,5 +1,5 @@
 <template>
-	<div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
+	<div class="relative bg-white rounded-lg border p-4 max-w-3xl">
 		<AppLoading :loading="loading" spinner />
 		<!-- <transition name="fade">
       <div class="flex items-center border border-green-400 rounded bg-green-200 text-sm px-4 py-1 text-green-800" v-if="updateSuccess">
@@ -44,7 +44,7 @@
 					required
 				/>
 			</div>
-			<div class="text-left mt-5">
+			<div class="flex justify-end mt-5">
 				<AppButton :label="'Update'" @click="update" :disabled="loading" />
 			</div>
 		</form>

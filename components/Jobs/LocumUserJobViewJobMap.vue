@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
+  <div class="bg-white rounded-lg border p-4">
     <template>
       <div class="font-bold text-xs sm:text-sm">
         Practice
@@ -10,7 +10,7 @@
       </div>
       
       <div class="flex items-center flex-wrap">
-        <div v-for="practiceType in practiceTypes" :key="practiceType.id" class="mr-2 bg-yellow-500 px-3 py-1 my-1 rounded-lg text-sm sm:text-md">
+        <div v-for="practiceType in practiceTypes" :key="practiceType.id" class="mr-2 bg-sunglow px-3 py-1 my-1 rounded-lg text-sm sm:text-md">
           {{ practiceType.name }}
         </div>
       </div>

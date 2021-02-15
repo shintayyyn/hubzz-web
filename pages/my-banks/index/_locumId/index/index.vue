@@ -317,7 +317,7 @@
                 class="flex flex-row flex-no-wrap mt-2"
               >
                 <div class="text-sm">
-                  {{ item.rate_type.name }}: £ {{ item.min }}
+                  {{ item.rate_type.name }}: £ {{ item.min | currency }}
                 </div>
               </div>
             </div>

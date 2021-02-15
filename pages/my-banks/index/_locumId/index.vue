@@ -1,5 +1,5 @@
 <template>
-  <div class="px-2 pt-2">
+  <div :class="!$route.params.jobId ? '':'px-2 pt-2'">
     <div class="flex flex-col items-start">
       <template v-if="!$route.params.jobId">
       <div class="flex">

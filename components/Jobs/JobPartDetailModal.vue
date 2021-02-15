@@ -10,13 +10,13 @@
       />
     </div>
 
-    <div class="flex flex-row justify-start items-center mt-4">
+    <div class="flex flex-row justify-start items-center">
       <div class="leading-loose font-bold text-md sm:text-lg">
         {{ job_part.job.title }}
       </div>
 
       <div
-        class="py-2 px-4 mx-1 rounded font-semibold"
+        class="py-2 px-4 mx-2 rounded font-semibold"
         :class="bgStatus(job_part.locum_status)"
         @click="['Approved','Cancelled'].includes(job_part.locum_status) ? toggle_invoice_modal = true : null"
       >
@@ -25,7 +25,7 @@
       
       <div
         v-if="job_part && job_part.terminated"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        class="py-2 px-4 mx-2 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
         TERMINATED
@@ -33,7 +33,7 @@
       
       <div
         v-if="job_part && job_part.locum_invoiceable && job_part.invoice_status && job_part.status !== 'Approved'"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        class="py-2 px-4 mx-2 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
         {{ job_part.invoice_status.toUpperCase() }}
@@ -63,7 +63,7 @@
     <div v-if="job && job.conflict" class="flex flex-col">
       <div class="flex flex-wrap justify-start">
         <div class="p-0 lg:pr-4 w-full lg:w-1/2">
-          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+          <div class="bg-white rounded-lg border p-4 mt-4">
             <div class="leading-tight">
               <p class="font-bold text-sm sm:text-md pb-2">
                 Job Conflicts
@@ -140,12 +140,12 @@
       </div>
     </template>
 
-    <div class="flex flex-col mt-4">
+    <div class="flex flex-col">
       <div class="flex flex-wrap justify-start">
         <div class="p-0 lg:pr-4 w-full lg:w-1/2">
           <div
             v-if="!loadingJobPart && (job_part.status === 'Declined' || job_part.status === 'Withdrawn')"
-            class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
+            class="bg-white rounded-lg border p-4 mt-4"
           >
             <div class="leading-tight pb-4">
               <p class="font-bold text-sm sm:text-md">

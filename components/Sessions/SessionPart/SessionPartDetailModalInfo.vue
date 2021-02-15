@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+  <div class="border rounded-lg p-4">
     <AppLoading :loading="loadingJobPart" spinner />
 
     <div class="w-full">
@@ -7,7 +7,7 @@
         Job part number
       </div>
 
-      <div class="text-xs sm:text-sm mb-8">
+      <div class="text-xs sm:text-sm mb-6">
         {{ job_part.job_part_number }}
       </div>
 
@@ -88,13 +88,13 @@
       </div>
     </div>
 
-    <div class="flex flex-row flex-wrap justify-between">
-      <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
+    <div class="flex flex-col md:flex-row justify-between">
+      <div class="flex flex-col w-full md:w-1/3">
         <div class="font-bold text-sm sm:text-md">
           Job description
         </div>
 
-        <div class="text-xs sm:text-sm mb-8 break-words">
+        <div class="text-xs sm:text-sm mb-6 break-words">
           {{ job_part.job && job_part.job.description ? job_part.job.description : '(none)' }}
         </div>
 
@@ -102,7 +102,7 @@
           Job Part Hubzz Fee
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           £ {{ job_part ? job_part.job_part_hubzz_fee_formatted : null }}
         </div>
 
@@ -110,7 +110,7 @@
           Job Hubzz Fee
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           £ {{ job ? job.job_hubzz_fee_formatted : null }}
         </div>
 
@@ -118,7 +118,7 @@
           Job Part Gross Rate
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           £ {{ job_part ? job_part.job_part_gross_rate_formatted : null }}
         </div>
 
@@ -126,7 +126,7 @@
           Job Gross Rate
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           £ {{ job ? job.job_gross_rate_formatted : null }}
         </div>
 
@@ -134,7 +134,7 @@
           Job Part Total Original Hours
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part ? job_part.job_part_total_original_hours_in_minutes_formatted : null }}
         </div>
 
@@ -143,7 +143,7 @@
             Job Part Total Final Hours
           </div>
 
-          <div class="text-xs sm:text-sm mb-8">
+          <div class="text-xs sm:text-sm mb-6">
             {{ job_part ? job_part.job_part_total_final_hours_in_minutes_formatted : null }}
           </div>
         </template>
@@ -152,7 +152,7 @@
           Job Total Original Hours
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job ? job.job_total_original_hours_in_minutes_formatted : null }}
         </div>
 
@@ -161,7 +161,7 @@
             Job Total Final Hours
           </div>
 
-          <div class="text-xs sm:text-sm mb-8">
+          <div class="text-xs sm:text-sm mb-6">
             {{ job ? job.job_total_final_hours_in_minutes_formatted : null }}
           </div>
         </template>
@@ -171,7 +171,7 @@
         </div>
 
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-6"
           v-text="job_part.job.platform_job.extra_information?job_part.job.platform_job.extra_information:`(none)`"
         />
 
@@ -179,7 +179,7 @@
           Report to
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.report_to }}
         </div>
 
@@ -188,7 +188,7 @@
         </div>
 
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-6"
           v-text="job_part.job.platform_job.practice.phone_number?job_part.job.platform_job.practice.phone_number:`(none)`"
         />
 
@@ -196,15 +196,17 @@
           Email address
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.email }}
         </div>
+      </div>
 
+      <div class="flex flex-col w-full md:w-1/3 md:px-2">
         <div class="font-bold text-sm sm:text-md">
           Is there another Dr on site?
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.is_another_doctor ? 'Yes' : 'No' }}
         </div>
 
@@ -212,7 +214,7 @@
           Is nurse support available?
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.is_nurse_available ? 'Yes' : 'No' }}
         </div>
 
@@ -220,7 +222,7 @@
           Number of patients to be seen during the session?
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.number_of_patients }}
         </div>
 
@@ -228,7 +230,7 @@
           Duration of eact appointment?
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.duration_for_each_appointment }}
         </div>
 
@@ -236,7 +238,7 @@
           Opportunity for catch up slots?
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
+        <div class="text-xs sm:text-sm mb-6">
           {{ job_part.job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}
         </div>
 
@@ -269,86 +271,48 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Update Remarks
+          Mandatory training
+        </div>
+        
+        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+          <div v-if="job_part.job.platform_job.mandatory_trainings.length === 0" class="mt-1">
+            (none)
+          </div>
+
+          <div
+            v-for="item in job_part.job.platform_job.mandatory_trainings"
+            v-else
+            :key="item.id"
+            class="rounded-lg bg-sunglow p-2 m-1"
+          >
+            {{ item.name }}
+          </div>
         </div>
 
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.job.update_remarks?job_part.job.update_remarks:`(none)` }}
+        <div class="font-bold text-sm sm:text-md">
+          Other Mandatory training
         </div>
-        <!--  -->
+
+        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+          <div
+            v-if="job_part.job.platform_job.other_mandatory_trainings.length === 0"
+            class="mt-1"
+          >
+            (none)
+          </div>
+
+          <div
+            v-for="item in job_part.job.platform_job.other_mandatory_trainings"
+            v-else
+            :key="item.id"
+            class="rounded-lg bg-sunglow p-2 m-1"
+          >
+            {{ item.name }}
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
-        <!-- <div class="font-bold text-sm sm:text-md">Duration</div>
-				<p>Days: {{ job_part.dates.length }}</p>
-				<div class="hidden lg:flex font-bold text-xs">
-					<p class="w-1/3">DATE</p>
-					<p class="w-1/3 text-center">SHIFT</p>
-					<p class="w-1/3 text-center">RATE</p>
-				</div>
-				<div class="overflow-y-auto" style="max-height: 205px;">
-					<div v-for="(sched, index) in job_part.schedules" :key="index" class="lg:flex pb-2 text-sm">
-						<p
-							class="lg:w-1/3"
-						>{{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}</p>
-						<p class="lg:w-1/3 lg:text-center">{{ sched.shift.name }}</p>
-						<p class="lg:w-1/3 lg:text-center">£{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}</p>
-					</div>
-				</div>-->
-        <!-- <div class="flex text-xs sm:text-sm mb-6">
-          <div class="px-1">
-            <p>From</p>
-            <p>To</p>
-            <p>Shift</p>
-          </div>
-          <div class="px-1">
-            <p>{{ $moment(job_part.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job_part.time_start }}</p>
-            <p>{{ $moment(job_part.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ job_part.time_end }}</p>
-            <p>{{ job_part.job.shift.name }}</p>
-          </div>
-				</div>-->
-        <!-- <div class="text-xs sm:text-sm mb-8">
-          <p
-            class="px-1"
-          >{{ $moment(job_part.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job_part.dates[job_part.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}</p>
-          <div class="flex">
-            <div class="px-1">
-              <p>Days:</p>
-              <p>Time:</p>
-              <p>Shift:</p>
-            </div>
-            <div class="px-1">
-              <p>{{ job_part.dates.length }}</p>
-              <p>{{ job_part.time_start }} - {{ job_part.time_end }}</p>
-              <p>{{ job_part.job.shift.name }}</p>
-            </div>
-          </div>
-          <div class="overflow-y-auto" style="max-height: 205px;">
-            <div
-              v-for="(date, index) in job_part.dates"
-              :key="index"
-              class="m-1"
-            >{{ $moment(date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}</div>
-          </div>
-				</div>-->
-
-        <!-- <div class="font-bold text-sm sm:text-md">
-          Include Saturday
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.job.include_saturday ? 'Yes' : 'No' }}
-        </div>
-        <div class="font-bold text-sm sm:text-md">
-          Include Sunday
-        </div>
-        <div class="text-xs sm:text-sm mb-8">
-          {{ job_part.job.include_sunday ? 'Yes' : 'No' }}
-				</div>-->
-        <!-- <div class="font-bold text-sm sm:text-md">Unpaid break</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-				>{{ job_part.job.platform_job.unpaid_breaks_in_minutes }}</div>-->
-
+      <div class="flex flex-col w-full md:w-1/3">
         <div class="text-xs sm:text-sm mb-6">
           <span>This job is</span>
           <span class="font-bold text-sm sm:text-md">{{ job_part.job.platform_job.ir35 ? 'INSIDE' : 'OUTSIDE' }}</span>
@@ -372,7 +336,7 @@
           <div
             v-for="item in job_part.job.platform_job.qualifications"
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow p-2 m-1"
           >
             {{ item.name }}
           </div>
@@ -386,7 +350,7 @@
           <div
             v-for="item in job_part.job.platform_job.clinical_systems"
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow p-2 m-1"
           >
             {{ item.name }}
           </div>
@@ -397,14 +361,14 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div class="rounded-lg bg-sunglow p-2 m-1">
             English
           </div>
 
           <div
             v-for="item in job_part.job.platform_job.spoken_languages"
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow p-2 m-1"
           >
             {{ item.name }}
           </div>
@@ -423,51 +387,18 @@
             v-for="item in job_part.job.platform_job.compliance_documents"
             v-else
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-1 m-1"
+            class="rounded-lg bg-sunglow p-1 m-1"
           >
             {{ item.name }}
           </div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Mandatory training
-        </div>
-        
-        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-if="job_part.job.platform_job.mandatory_trainings.length === 0" class="mt-1">
-            (none)
-          </div>
-
-          <div
-            v-for="item in job_part.job.platform_job.mandatory_trainings"
-            v-else
-            :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-          >
-            {{ item.name }}
-          </div>
+          Update Remarks
         </div>
 
-        <div class="font-bold text-sm sm:text-md">
-          Other Mandatory training
-        </div>
-
-        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div
-            v-if="job_part.job.platform_job.other_mandatory_trainings.length === 0"
-            class="mt-1"
-          >
-            (none)
-          </div>
-
-          <div
-            v-for="item in job_part.job.platform_job.other_mandatory_trainings"
-            v-else
-            :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-          >
-            {{ item.name }}
-          </div>
+        <div class="text-xs sm:text-sm mb-8">
+          {{ job_part.job.update_remarks?job_part.job.update_remarks:`(none)` }}
         </div>
 
         <template v-if="job_part.use_variation_terms">
@@ -482,7 +413,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -527,7 +458,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -573,7 +504,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -617,7 +548,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View

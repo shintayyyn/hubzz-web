@@ -488,7 +488,7 @@ input[type="checkbox"] + label::before {
 }
 
 input[type="checkbox"]:checked + label:before {
-	background: #e7bf2d;
+	background: #ffc72c;
 }
 
 input[type="checkbox"]:checked + label:after {
@@ -510,7 +510,7 @@ input[type="checkbox"]:disabled + label {
 }
 
 input[type="checkbox"]:disabled:checked + label::before {
-	background: #e7bf2d;
+	background: #ffc72c;
 }
 
 input[type="checkbox"]:disabled + label:after {
@@ -573,7 +573,7 @@ input::placeholder, textarea::placeholder {
     content: '';
     width: 12px;
     height: 12px;
-    background: #e7bf2d;
+    background: #ffc72c;
     position: absolute;
     top: 3px;
     left: 3px;

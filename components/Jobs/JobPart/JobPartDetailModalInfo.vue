@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+  <div class="bg-white rounded-lg border p-4 mt-4">
     <AppLoading :loading="loadingJobPart" spinner />
 
     <div class="relative flex flex-row flex-wrap justify-between">

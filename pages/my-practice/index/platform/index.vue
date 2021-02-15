@@ -14,16 +14,18 @@
                 class="w-full font-bold text-sm sm:text-lg leading-tight"
                 :to="{ path: `/my-practice/platform/${practice.id}`, query: {...$route.query}}"
               >
-                <div class="flex items-end justify-between z-50">
-                  {{ practice.surgery.name }}
-                  <svgicon
-                    v-model="practice.is_favorite"
-                    :name="practice.is_favorite ? 'on-star' : 'off-star'"
-                    height="28"
-                    width="28"
-                    class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                    @click.prevent.stop="favorite(practice.id)"
-                  />
+                <div class="flex items-start justify-between z-50">
+                  <span>{{ practice.surgery.name }}</span>
+                  <span>
+                    <svgicon
+                      v-model="practice.is_favorite"
+                      :name="practice.is_favorite ? 'on-star' : 'off-star'"
+                      height="28"
+                      width="28"
+                      class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                      @click.prevent.stop="favorite(practice.id)"
+                    />
+                  </span>
                 </div>
 
                 <div class="w-full font-bold text-gray-700 text-xs leading-tight pt-1">

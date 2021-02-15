@@ -3,7 +3,7 @@
     <AppBreadcrumbs :links="links" />
     <div class="px-2">
       <div class="flex flex-col mb-4 relative">
-        <div class="flex flex-col mb-3 md:mb-6 py-2">
+        <div class="flex flex-col mb-3 py-2">
           <div class="relative flex flex-wrap leading-none items-center">
             <label class="text-xs sm:text-sm py-1">
               <span>Type</span>
@@ -67,60 +67,61 @@
           </div>
         </div>
 
-        <AppInput
-          v-if="form.type === 'Platform'"
-          v-model="form.practice_id"
-          :label="'Practice'"
-          :type="'select'"
-          :name="'practice_id'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'practice_id')"
-          :items="practicesSelectionList"
-          :required="true"
-        />
+        <div class="max-w-3xl border p-4 rounded-lg">
+          <AppInput
+            v-if="form.type === 'Platform'"
+            v-model="form.practice_id"
+            :label="'Practice'"
+            :type="'select'"
+            :name="'practice_id'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'practice_id')"
+            :items="practicesSelectionList"
+            :required="true"
+          />
 
-        <AppInput
-          v-if="form.type === 'Private'"
-          v-model="form.private_practice_id"
-          :label="'Private Practice'"
-          :type="'select'"
-          :name="'private_practice_id'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'private_practice_id')"
-          :items="privatePracticesSelectionList"
-          :required="true"
-        />
+          <AppInput
+            v-if="form.type === 'Private'"
+            v-model="form.private_practice_id"
+            :label="'Private Practice'"
+            :type="'select'"
+            :name="'private_practice_id'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'private_practice_id')"
+            :items="privatePracticesSelectionList"
+            :required="true"
+          />
 
-        <AppInput
-          v-model="form.description"
-          :type="'textarea'"
-          :name="'description'"
-          :label="'Description'"
-          :error="formError.find(item => item.field === 'description')"
-          :resize="false"
-          :limit="225"
-          :required="true"
-        />
+          <AppInput
+            v-model="form.description"
+            :type="'textarea'"
+            :name="'description'"
+            :label="'Description'"
+            :error="formError.find(item => item.field === 'description')"
+            :resize="false"
+            :limit="225"
+            :required="true"
+          />
 
-        <AppInput
-          v-model="form.total"
-          :type="'number'"
-          :name="'total'"
-          :label="'Total'"
-          :error="formError.find(item => item.field === 'total')"
-          :inStyle="'text-align:right'"
-          :required="true"
-        />
+          <AppInput
+            v-model="form.total"
+            :type="'number'"
+            :name="'total'"
+            :label="'Total'"
+            :error="formError.find(item => item.field === 'total')"
+            :inStyle="'text-align:right'"
+            :required="true"
+          />
 
-        <AppDate
-          v-model="form.date"
-          :name="'date'"
-          :label="'Date'"
-          :isBefore="true"
-          :error="formError.find(item => item.field === 'date')"
-          :required="true"
-        />
-
+          <AppDate
+            v-model="form.date"
+            :name="'date'"
+            :label="'Date'"
+            :isBefore="true"
+            :error="formError.find(item => item.field === 'date')"
+            :required="true"
+          />
+        </div>
         <AppLoading :loading="loading" spinner :message="'Loading'"/>
       </div>
 
