@@ -12,7 +12,7 @@
         <div
           v-if="!viewPracticeJobs && !viewLocumJobs && !loading"
           key="'no-jobs'"
-          class="mt-4 text-white text-center"
+          class="mt-4  text-center"
         >
           No jobs to display.
         </div>

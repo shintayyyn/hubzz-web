@@ -1,6 +1,6 @@
 <template>
-	<section ref="modalContainer" :class="isPage ? '' : 'modal-container'">
-		<AppBreadcrumbs :links="links" />
+	<section ref="modalContainer" :class="isPage ? 'w-full' : 'modal-container'">
+		<!-- <AppBreadcrumbs :links="links" /> -->
 		<div :class="isPage ? 'px-2' : 'p-4 md:p-8'">
 			<svgicon
 				v-if="!isPage" 

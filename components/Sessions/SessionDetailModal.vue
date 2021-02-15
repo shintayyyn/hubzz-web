@@ -10,7 +10,7 @@
       />
     </div> -->
 
-    <div class="flex flex-wrap justify-start items-center py-4">
+    <div class="flex flex-wrap justify-start items-center pb-4 pt-2">
       <div class="leading-tight font-bold text-md sm:text-lg">
         {{ job.title }}
       </div>

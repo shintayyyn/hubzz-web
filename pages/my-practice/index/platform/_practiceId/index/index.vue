@@ -15,7 +15,7 @@
 
     <div class="flex flex-row flex-wrap justify-start">
       <div class="w-full md:w-1/3 p-2">
-        <div class="flex flex-col p-4 shadow-lg rounded-lg">
+        <div class="flex flex-col p-4 border rounded-lg">
           <div class="font-bold text-md md:text-lg">
             Contact Number
           </div>
@@ -35,7 +35,7 @@
             <div
               v-for="item in practice.practice_types"
               :key="item.id"
-              class="rounded-lg text-sm md:text-md bg-yellow-500 m-1 p-2"
+              class="rounded-lg text-sm md:text-md bg-sunglow m-1 p-2"
             >
               {{ item.name }}
             </div>
@@ -69,7 +69,7 @@
         </div>
       </div>
       <div class="w-full md:w-2/3 p-2">
-        <div class="flex flex-col p-4 shadow-lg rounded-lg">
+        <div class="flex flex-col p-4 border rounded-lg">
           <div class="font-bold text-md md:text-lg mb-2">
             Location
           </div>

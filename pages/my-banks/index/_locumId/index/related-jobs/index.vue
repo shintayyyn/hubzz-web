@@ -56,7 +56,7 @@
         :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >Approved</nuxt-link>
     </div>
-    <div class="mt-5">
+    <div class="">
       <nuxt-child :invoiceStatusList="invoiceStatusList" />
     </div>
     <AppConfirmationModal

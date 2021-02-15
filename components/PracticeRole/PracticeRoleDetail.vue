@@ -11,7 +11,7 @@
           @click="$emit('close')"
         />
       </div> -->
-      <div class="flex flex-col mt-4">
+      <div class="flex flex-col">
         <AppInput
           v-model="form.name"
           :type="'text'"
@@ -29,7 +29,7 @@
           :limit="255"
           :error="formError.find(item => item.field === 'description')"
         />
-        <div class="rounded-lg shadow-md px-2 py-4 md:px-4">
+        <div class="rounded-lg border px-2 pt-4 pb-2">
           <div
             v-if="formError.find(item => item.field === 'permission_id')"
             class="text-red-500 text-xs"
@@ -66,7 +66,7 @@
 								</div>
 							</div>
 						</div>-->
-            <div v-for="(role, index) in permissions" :key="index" class="w-full md:w-1/2 p-2">
+            <div v-for="(role, index) in permissions" :key="index" class="w-full md:w-1/2 lg:w-1/3 p-2">
               <div class="flex flex-col">
                 <div class="w-full flex flex-row items-center pb-1">
                   <!-- <input
@@ -122,7 +122,7 @@
           <AppButton
             v-if="authPermissions.includes('Delete Role')" 
             :label="'Delete'" 
-            :customTheme="'bg-red-500 hover:bg-red-600 mx-2 font-semibold'" 
+            :customTheme="'bg-red-600 hover:bg-red-700 text-white mx-2'" 
             @click="deleteRole" 
           />
         </div>

@@ -31,7 +31,7 @@
             </div>
           </div>
 
-          <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:max-w-sm p-2">
+          <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:max-w-sm p-2" v-if="!loading">
             <div
               class="relative h-full rounded-lg shadow-lg bg-yellow-300 p-4 hover:bg-yellow-400 flex justify-center items-center cursor-pointer"
             >
@@ -56,7 +56,7 @@
           />
         </div>
 
-        <div v-if="!practices.length" class="flex flex-row flex-wrap justify-center">
+        <div v-if="!practices.length && !loading" class="flex flex-row flex-wrap justify-center">
           <div>You do not have any Associated Job for any Practices</div>
         </div>
 

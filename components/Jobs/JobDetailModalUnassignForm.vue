@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
+  <div class="relative bg-white rounded-lg border p-4 mt-6">
     <div class="text-base font-bold mb-4">
       You can unassign from this job
     </div>

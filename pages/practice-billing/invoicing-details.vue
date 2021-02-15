@@ -1,7 +1,7 @@
 <template>
   <section>
-    <div class="rounded-lg bg-gray-300 p-4 mb-4 my-2">
-      <div class="flex flex-col py-2 mb-1 md:mb-2">
+    <div class="rounded-lg bg-gray-300 p-4 mb-4 my-2 flex ">
+      <div class="w-1/3 flex flex-col py-2 mb-1 md:mb-2">
         <div class="relative flex flex-wrap leading-none items-center">
           <label class="text-xs sm:text-sm py-1">Sage Reference</label>
         </div>
@@ -13,22 +13,26 @@
         </div>
       </div>
 
-      <div class="relative flex flex-wrap leading-none items-center">
-        <label class="text-xs sm:text-sm py-1">Rates</label>
-      </div>
+      <div class="w-2/3">
+        <div class="relative flex flex-wrap leading-none items-center">
+          <label class="text-xs sm:text-sm py-1">Rates</label>
+        </div>
 
-      <div v-for="practiceRate in practice.practice_rates" v-if="practice" :key="`practice_rate_${practiceRate.type}`"
-           class="pl-2"
-      >
-        <div class="flex flex-col py-2 mb-1 md:mb-2">
-          <div class="relative flex flex-wrap leading-none items-center">
-            <label class="text-xs sm:text-sm py-1">{{ practiceRate.type }}</label>
-          </div>
+        <div class="flex">
+          <div v-for="practiceRate in practice.practice_rates" v-if="practice" :key="`practice_rate_${practiceRate.type}`"
+            class="pl-2 w-1/2"
+          >
+            <div class="flex flex-col py-2 mb-1 md:mb-2">
+              <div class="relative flex flex-wrap leading-none items-center">
+                <label class="text-xs sm:text-sm py-1">{{ practiceRate.type }}</label>
+              </div>
 
-          <div class="flex flex-row justify-start mt-1">
-            <div class="flex flex-col w-full mt-1">
-              <span class="ml-6 text-md sm:text-lg font-bold">£
-                {{ practiceRate.rate ? practiceRate.rate.toFixed(2) : 'N/A' }}</span>
+              <div class="flex flex-row justify-start mt-1">
+                <div class="flex flex-col w-full mt-1">
+                  <span class="ml-6 text-md sm:text-lg font-bold">£
+                    {{ practiceRate.rate ? practiceRate.rate.toFixed(2) : 'N/A' }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -42,8 +46,9 @@
       :label="'Are you VAT registered?'"
     />
 
-    <template v-if="form.vat_registered">
+    <div class="flex flex-wrap items-end" v-if="form.vat_registered">
       <AppInput 
+        class="w-full md:w-1/2 md:px-2"
         v-model="form.vat_number" 
         :type="'text'" 
         :name="'vat_number'" 
@@ -51,54 +56,60 @@
         :error="formError.find(item => item.field === 'vat_number')"
       />
       <AppDate 
+        class="w-full md:w-1/2 md:px-2"
         v-model="form.tax_year_end_date" 
         :name="'tax_year_end_date'" 
         :label="'Tax Year End Date'"
         :error="formError.find(item => item.field === 'tax_year_end_date')"
       />
-    </template>
+    </div>
 
     <div class="font-bold text-sm my-4">
       Bank Details
     </div>
 
-    <AppInput 
-      v-model="form.account_name" 
-      :type="'text'" 
-      :name="'account_name'" 
-      :label="'Account name'"
-      :error="formError.find(item => item.field === 'account_name')" required
-    />
+    <div class="flex flex-wrap">
+      <AppInput 
+        class="w-full md:w-1/2 md:px-2"
+        v-model="form.account_name" 
+        :type="'text'" 
+        :name="'account_name'" 
+        :label="'Account name'"
+        :error="formError.find(item => item.field === 'account_name')" required
+      />
 
-    <AppInput 
-      v-model="form.bank_name" 
-      :type="'text'" 
-      :name="'bank_name'" 
-      :label="'Bank name'"
-      :error="formError.find(item => item.field === 'bank_name')" required
-    />
+      <AppInput 
+        class="w-full md:w-1/2 md:px-2"
+        v-model="form.bank_name" 
+        :type="'text'" 
+        :name="'bank_name'" 
+        :label="'Bank name'"
+        :error="formError.find(item => item.field === 'bank_name')" required
+      />
 
-    <AppInput
-      v-model="form.sort_code"
-      :type="'numberDash'"
-      :name="'sort_code'"
-      :label="'Sort code'"
-      :error="formError.find(item => item.field === 'sort_code')"
-      required
-      :limit="8"
-    />
+      <AppInput
+        class="w-full md:w-1/2 md:px-2"
+        v-model="form.sort_code"
+        :type="'numberDash'"
+        :name="'sort_code'"
+        :label="'Sort code'"
+        :error="formError.find(item => item.field === 'sort_code')"
+        required
+        :limit="8"
+      />
 
-    <AppInput
-      v-model="form.account_number"
-      :type="'text'"
-      :name="'account_number'"
-      :label="'Account number'"
-      :error="formError.find(item => item.field === 'account_number')"
-      :limit="8"
-      required
-      @keydown="inputNumberOnly($event)"
-    />
-
+      <AppInput
+        class="w-full md:w-1/2 md:px-2"
+        v-model="form.account_number"
+        :type="'text'"
+        :name="'account_number'"
+        :label="'Account number'"
+        :error="formError.find(item => item.field === 'account_number')"
+        :limit="8"
+        required
+        @keydown="inputNumberOnly($event)"
+      />
+    </div>
     <AppButton :label="'Save'" :inStyle="'padding:5px 14px;'" @click="save" />
   </section>
 </template>

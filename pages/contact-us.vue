@@ -1,6 +1,13 @@
 <template>
   <div class>
-    <div class="relative rounded-lg shadow-lg p-5">
+    <div class="flex flex-no-wrap justify-start border-b border-sunglow mb-4">
+      <div
+        class="px-3 py-2 text-sm font-bold border-b-4 border-sunglow"
+      >
+        Contact Us
+      </div>
+    </div>
+    <div class="relative rounded-lg border p-4">
       <div class="flex flex-col md:flex-row flex-wrap justify-between mb-4">
         <div class="w-full md:w-1/2">
           <div class="text-sm my-2">

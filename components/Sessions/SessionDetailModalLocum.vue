@@ -20,7 +20,7 @@
               <div class="font-bold text-sm lg:text-lg">
                 {{ user.personal_detail.name }}
               </div>
-              <div class="text-xs lg:text-sm">
+              <div class="text-xs lg:text-sm mb-6">
                 {{ user.locum_detail.profession.name }}
               </div>
             </div>
@@ -63,13 +63,13 @@
           <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
         </div>
         <div class="body-info flex flex-col md:flex-row">
-          <div class="w-full md:w-1/2">
+          <div class="w-full md:w-1/2 px-1">
             <div>
               <div class="font-bold text-sm sm:text-md">
                 Headline
               </div>
               <div
-                class="text-xs sm:text-sm mb-8"
+                class="text-xs sm:text-sm mb-6"
               >
                 {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
               </div>
@@ -80,7 +80,7 @@
                 Biography
               </div>
               <div
-                class="text-xs sm:text-sm mb-8"
+                class="text-xs sm:text-sm mb-6"
               >
                 {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
               </div>
@@ -95,7 +95,7 @@
                   {{ referenceLocumComplianceDocument.compliance_document_name }}
                 </div>
 
-                <div class="text-xs sm:text-sm mb-8">
+                <div class="text-xs sm:text-sm mb-6">
                   {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
                 </div>
               </div>
@@ -105,7 +105,7 @@
               <div class="font-bold text-sm sm:text-md">
                 NHS Smart Card ID Number
               </div>
-              <div class="text-xs sm:text-sm mb-8">
+              <div class="text-xs sm:text-sm mb-6">
                 {{ user.locum_detail.nhs_smart_card_id_number }}
               </div>
             </div>
@@ -114,7 +114,7 @@
               <div class="font-bold text-sm sm:text-md">
                 Special requirements
               </div>
-              <div class="text-xs sm:text-sm mb-8">
+              <div class="text-xs sm:text-sm mb-6">
                 {{ user.locum_detail.special_requirements ? user.locum_detail.special_requirements : '(none)' }}
               </div>
             </div>
@@ -130,7 +130,7 @@
                   class="flex flex-row flex-no-wrap mt-2"
                 >
                   <div class="text-xs sm:text-sm">
-                    {{ item.rate_type.name }}: £ {{ item.min }}
+                    {{ item.rate_type.name }}: £ {{ item.min | currency}}
                   </div>
                 </div>
               </div>
@@ -188,11 +188,11 @@
               </div>
             </div>
           </div>
-          <div class="w-full md:w-1/2">
+          <div class="w-full md:w-1/2 px-1">
             <div class="font-bold text-sm sm:text-md">
               Specialty
             </div>
-            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
                 v-for="item in user.locum_detail.qualifications"
                 :key="item.id"
@@ -204,7 +204,7 @@
             <div class="font-bold text-sm sm:text-md">
               Clinical systems
             </div>
-            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
                 v-for="item in user.locum_detail.clinical_systems"
                 :key="item.id"
@@ -216,7 +216,7 @@
             <div class="font-bold text-sm sm:text-md">
               Languages
             </div>
-            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div class="rounded-lg bg-sunglow p-2 m-1">
                 English
               </div>

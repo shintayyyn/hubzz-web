@@ -1,13 +1,13 @@
 <template>
-  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
+  <div class="relative w-full">
     <AppLoading :loading="loading" spinner />
 
     <AppFormError v-if="false && formError.length > 0" :formError="formError" />
 
     <!-- =========PRACTICE========= -->
     <template v-if="!loading && $auth.user.domain === 'Practice'">
-      <div class="flex flex-wrap ">
-        <div class="w-full">
+      <div class="flex flex-wrap max-w-3xl">
+        <div class="w-full border rounded-lg p-4">
           <AppInput
             v-model="practiceForm.username"
             :type="'text'"
@@ -129,11 +129,10 @@
             required
             :limit="6"
           />
-
-          <div class="text-left mt-5">
+        </div>
+        <div class="flex justify-end w-full mt-5">
             <AppButton :label="'Save changes'" @click="save('practice')" />
           </div>
-        </div>
         <!-- <div class="md:w-1/2 w-full">
             Your Account has the following Permissions
             <div
@@ -148,222 +147,230 @@
 
     <!-- ==========LOCUM=========== -->
     <template v-if="!loading && $auth.user.domain === 'Locum'">
-      <AppInput
-        v-model="locumForm.email"
-        :type="'email'"
-        :name="'email'"
-        :label="'Email address'"
-        :error="formError.find(item => item.field === 'email')"
-        required
-        @submit="save"
-        @blur="CheckEmptyField(locumForm.email, 'email')"
-      />
+      <div class="flex flex-col md:flex-row items-start">
+        <div class="w-full md:w-1/2 border rounded-lg p-4 md:mr-2">
+          <AppInput
+            v-model="locumForm.email"
+            :type="'email'"
+            :name="'email'"
+            :label="'Email address'"
+            :error="formError.find(item => item.field === 'email')"
+            required
+            @submit="save"
+            @blur="CheckEmptyField(locumForm.email, 'email')"
+          />
 
-      <div v-if="user && user.email === locumForm.email" class="-mt-4 mb-4">
-        <template v-if="user.email_verified">
-          <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_in_gb_formatted }}</span>
-        </template>
+          <div v-if="user && user.email === locumForm.email" class="-mt-4 mb-4">
+            <template v-if="user.email_verified">
+              <span class="text-xs">E-mail is Verified on {{ user.email_verified_at_in_gb_formatted }}</span>
+            </template>
 
-        <template v-if="!user.email_verified">
-          <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
-          
-          <span
-            class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
-            @click="resendEmailVerification()"
-          >Click here to re-send</span>
-        </template>
+            <template v-if="!user.email_verified">
+              <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
+              
+              <span
+                class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
+                @click="resendEmailVerification()"
+              >Click here to re-send</span>
+            </template>
+          </div>
+
+          <AppInput
+            v-model="locumForm.title"
+            :type="'text'"
+            :name="'title'"
+            :label="'Title'"
+            :error="formError.find(item => item.field === 'title')"
+            @submit="save"
+          />
+
+          <AppInput
+            v-model="locumForm.first_name"
+            :type="'text'"
+            :name="'first_name'"
+            :label="'First name'"
+            :error="formError.find(item => item.field === 'first_name')"
+            required
+            @submit="save"
+            @blur="CheckEmptyField(locumForm.first_name, 'first_name')"
+          />
+
+          <AppInput
+            v-model="locumForm.last_name"
+            :type="'text'"
+            :name="'last_name'"
+            :label="'Last name'"
+            :error="formError.find(item => item.field === 'last_name')"
+            required
+            @submit="save"
+            @blur="CheckEmptyField(locumForm.last_name, 'last_name')"
+          />
+
+          <AppInput
+            v-if="false"
+            v-model="locumForm.suffix"
+            :type="'text'"
+            :name="'suffix'"
+            :label="'Suffix'"
+            @submit="save"
+          />
+
+          <AppInput
+            v-model="genderSelected"
+            :type="'select'"
+            :name="'genderSelected'"
+            :label="'Gender'"
+            :error="formError.find(item => item.field === 'gender' && genderSelected !== 'Other')"
+            :items="[{ label: 'Select..', value: ''}, { label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }, { label: 'Other', value: 'Other' }]"
+            required
+          />
+
+          <AppInput
+            v-if="genderSelected === 'Other'"
+            v-model="locumForm.gender"
+            :type="'text'"
+            :name="'gender'"
+            :label="'Please specify'"
+            :error="formError.find(item => item.field === 'gender')"
+            required
+            @submit="save"
+          />
+
+          <AppDate
+            v-model="locumForm.date_of_birth"
+            :name="'date_of_birth'"
+            :label="'Date of Birth'"
+            :error="formError.find(item => item.field === 'date_of_birth')"
+            isBefore
+            :limitYear="100"
+            :maxYearBefore="10"
+            required
+            @blur="CheckEmptyField(locumForm.date_of_birth, 'date_of_birth')"
+          />
+
+          <AppInput
+            v-model="locumForm.mobile_number"
+            type="text"
+            name="mobile_number"
+            label="Mobile number"
+            :error="formError.find(item => item.field === 'mobile_number')"
+            :limit="11"
+            :showMobilePrefix="true"
+            required
+            @submit="save"
+            @keydown="inputNumberOnly($event)"
+            @blur="CheckEmptyField(locumForm.mobile_number, 'mobile_number')"
+          />
+
+          <AppInput
+            v-model="locumForm.home_number"
+            type="text"
+            name="home_number"
+            label="Home number"
+            :limit="11"
+            @keydown="inputTelephone($event)"
+            @submit="save"
+          />
+
+          <AppInput
+            v-model="locumForm.work_number"
+            type="text"
+            name="work_number"
+            label="Work number"
+            :limit="11"
+            @keydown="inputTelephone($event)"
+            @submit="save"
+          />
+        </div>
+
+        <div class="w-full md:w-1/2">
+          <div class="rounded-lg bg-gray-400 p-4 my-2 md:my-0">
+            <AppPostCode
+              v-model="locumForm.post_code"
+              :urlIndex="'/api/v1/postcode-coordinates'"
+              :name="'post_code'"
+              :label="'Post code'"
+              :error="formError.find(item => item.field === 'post_code')"
+              :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
+              required
+              @blur="CheckEmptyField(locumForm.post_code, 'post_code')"
+            />
+
+            <AppInput
+              v-model="locumForm.address_line_1"
+              :type="'text'"
+              :name="'address_line_1'"
+              :label="'Address line 1'"
+              :error="formError.find(item => item.field === 'address_line_1')"
+              :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
+              required
+              @submit="save"
+              @blur="CheckEmptyField(locumForm.address_line_1, 'address_line_1')"
+            />
+
+            <AppInput
+              v-model="locumForm.address_line_2"
+              :type="'text'"
+              :name="'address_line_2'"
+              :label="'Address line 2 (optional)'"
+              :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
+              @submit="save"
+            />
+
+            <AppInput
+              v-model="locumForm.address_line_3"
+              :type="'text'"
+              :name="'address_line_3'"
+              :label="'City / Town / District'"
+              :error="formError.find(item => item.field === 'address_line_3')"
+              :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
+              required
+              @submit="save"
+              @blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3', 'City / Town / District')"
+            />
+          </div>
+          <div class="border rounded-lg p-4 my-2">
+            <AppInput
+              v-model="locumForm.memorable_word_category_id"
+              type="select"
+              label="Memorable word category"
+              placeholder="Select..."
+              :error="formError.find(item => item.field === 'memorable_word_category_id')"
+              :items="memorableWordCategoriesSelectionList"
+              required
+            />
+
+            <AppInput
+              v-model="locumForm.memorable_word"
+              type="text"
+              label="Memorable word"
+              placeholder="Your memorable word"
+              :error="formError.find(error => error.field === 'memorable_word')"
+              required
+            />
+
+            <AppDate
+              v-model="locumForm.memorable_date"
+              label="Memorable date"
+              :error="formError.find(item => item.field === 'memorable_date')"
+              required
+            />
+
+            <AppInput
+              v-model="locumForm.memorable_number"
+              type="number"
+              label="Memorable 6 digit number"
+              placeholder="Your memorable number"
+              :error="formError.find(error => error.field === 'memorable_number')"
+              required
+              :limit="6"
+            />
+          </div>
+        </div>
       </div>
 
-      <AppInput
-        v-model="locumForm.title"
-        :type="'text'"
-        :name="'title'"
-        :label="'Title'"
-        :error="formError.find(item => item.field === 'title')"
-        @submit="save"
-      />
 
-      <AppInput
-        v-model="locumForm.first_name"
-        :type="'text'"
-        :name="'first_name'"
-        :label="'First name'"
-        :error="formError.find(item => item.field === 'first_name')"
-        required
-        @submit="save"
-        @blur="CheckEmptyField(locumForm.first_name, 'first_name')"
-      />
-
-      <AppInput
-        v-model="locumForm.last_name"
-        :type="'text'"
-        :name="'last_name'"
-        :label="'Last name'"
-        :error="formError.find(item => item.field === 'last_name')"
-        required
-        @submit="save"
-        @blur="CheckEmptyField(locumForm.last_name, 'last_name')"
-      />
-
-      <AppInput
-        v-if="false"
-        v-model="locumForm.suffix"
-        :type="'text'"
-        :name="'suffix'"
-        :label="'Suffix'"
-        @submit="save"
-      />
-
-      <AppInput
-        v-model="genderSelected"
-        :type="'select'"
-        :name="'genderSelected'"
-        :label="'Gender'"
-        :error="formError.find(item => item.field === 'gender' && genderSelected !== 'Other')"
-        :items="[{ label: 'Select..', value: ''}, { label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }, { label: 'Other', value: 'Other' }]"
-        required
-      />
-
-      <AppInput
-        v-if="genderSelected === 'Other'"
-        v-model="locumForm.gender"
-        :type="'text'"
-        :name="'gender'"
-        :label="'Please specify'"
-        :error="formError.find(item => item.field === 'gender')"
-        required
-        @submit="save"
-      />
-
-      <AppDate
-        v-model="locumForm.date_of_birth"
-        :name="'date_of_birth'"
-        :label="'Date of Birth'"
-        :error="formError.find(item => item.field === 'date_of_birth')"
-        isBefore
-        :limitYear="100"
-        :maxYearBefore="10"
-        required
-        @blur="CheckEmptyField(locumForm.date_of_birth, 'date_of_birth')"
-      />
-
-      <AppInput
-        v-model="locumForm.mobile_number"
-        type="text"
-        name="mobile_number"
-        label="Mobile number"
-        :error="formError.find(item => item.field === 'mobile_number')"
-        :limit="11"
-        :showMobilePrefix="true"
-        required
-        @submit="save"
-        @keydown="inputNumberOnly($event)"
-        @blur="CheckEmptyField(locumForm.mobile_number, 'mobile_number')"
-      />
-
-      <AppInput
-        v-model="locumForm.home_number"
-        type="text"
-        name="home_number"
-        label="Home number"
-        :limit="11"
-        @keydown="inputTelephone($event)"
-        @submit="save"
-      />
-
-      <AppInput
-        v-model="locumForm.work_number"
-        type="text"
-        name="work_number"
-        label="Work number"
-        :limit="11"
-        @keydown="inputTelephone($event)"
-        @submit="save"
-      />
-
-      <div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
-        <AppPostCode
-          v-model="locumForm.post_code"
-          :urlIndex="'/api/v1/postcode-coordinates'"
-          :name="'post_code'"
-          :label="'Post code'"
-          :error="formError.find(item => item.field === 'post_code')"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
-          required
-          @blur="CheckEmptyField(locumForm.post_code, 'post_code')"
-        />
-
-        <AppInput
-          v-model="locumForm.address_line_1"
-          :type="'text'"
-          :name="'address_line_1'"
-          :label="'Address line 1'"
-          :error="formError.find(item => item.field === 'address_line_1')"
-          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
-          required
-          @submit="save"
-          @blur="CheckEmptyField(locumForm.address_line_1, 'address_line_1')"
-        />
-
-        <AppInput
-          v-model="locumForm.address_line_2"
-          :type="'text'"
-          :name="'address_line_2'"
-          :label="'Address line 2 (optional)'"
-          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
-          @submit="save"
-        />
-
-        <AppInput
-          v-model="locumForm.address_line_3"
-          :type="'text'"
-          :name="'address_line_3'"
-          :label="'City / Town / District'"
-          :error="formError.find(item => item.field === 'address_line_3')"
-          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
-          required
-          @submit="save"
-          @blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3', 'City / Town / District')"
-        />
-      </div>
-
-      <AppInput
-        v-model="locumForm.memorable_word_category_id"
-        type="select"
-        label="Memorable word category"
-        placeholder="Select..."
-        :error="formError.find(item => item.field === 'memorable_word_category_id')"
-        :items="memorableWordCategoriesSelectionList"
-        required
-      />
-
-      <AppInput
-        v-model="locumForm.memorable_word"
-        type="text"
-        label="Memorable word"
-        placeholder="Your memorable word"
-        :error="formError.find(error => error.field === 'memorable_word')"
-        required
-      />
-
-      <AppDate
-        v-model="locumForm.memorable_date"
-        label="Memorable date"
-        :error="formError.find(item => item.field === 'memorable_date')"
-        required
-      />
-
-      <AppInput
-        v-model="locumForm.memorable_number"
-        type="number"
-        label="Memorable 6 digit number"
-        placeholder="Your memorable number"
-        :error="formError.find(error => error.field === 'memorable_number')"
-        required
-        :limit="6"
-      />
-
-      <div class="text-left mt-5">
+      <div class="flex justify-end mt-5">
         <AppButton :label="'Save changes'" @click="save('locum')" />
       </div>
     </template>

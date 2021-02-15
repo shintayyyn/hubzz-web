@@ -29,7 +29,7 @@
         <template v-if="type === 'multi-checkbox'">
           <div v-if="updatable" class="flex flex-row justify-start items-center mt-1">
             <div
-              class="mb-1 bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
+              class="mb-1 bg-sunglow text-sm px-2 py-1 rounded-lg cursor-pointer hover:bg-sunglow-dark"
               @click="add"
             >
               Add mandatory training
@@ -58,14 +58,14 @@
               </div>
 
               <div
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+                class="ml-2 bg-sunglow py-1 px-2 rounded-lg cursor-pointer text-sm hover:bg-sunglow-dark"
                 @click="save(null, 'add')"
               >
                 <span>Add</span>
               </div>
 
               <div
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+                class="ml-2 bg-red-500 py-1 px-2 rounded-lg cursor-pointer text-sm text-white hover:bg-red-600"
                 @click="cancel"
               >
                 <span>Cancel</span>
@@ -116,28 +116,28 @@
             <template v-if="updatable">
               <div
                 v-if="editId !== item.value"
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+                class="ml-2 bg-sunglow px-2 py-1 text-sm rounded-lg cursor-pointer hover:bg-sunglow-dark"
                 @click="edit(item)"
               >
                 Edit
               </div>
               <div
                 v-if="editId !== item.value"
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+                class="ml-2 bg-red-500 px-2 py-1 text-sm rounded-lg cursor-pointer text-white hover:bg-red-600"
                 @click="$emit('remove', item)"
               >
                 Remove
               </div>
               <div
                 v-if="editId === item.value"
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+                class="ml-2 bg-sunglow px-2 py-1 text-sm rounded-lg cursor-pointer hover:bg-sunglow-dark"
                 @click="save(item, 'update')"
               >
                 Save
               </div>
               <div
                 v-if="editId === item.value"
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+                class="ml-2 bg-red-500 px-2 py-1 text-sm rounded-lg cursor-pointer text-white hover:bg-red-600"
                 @click="cancel"
               >
                 Cancel

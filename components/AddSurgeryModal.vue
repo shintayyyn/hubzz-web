@@ -9,15 +9,15 @@
       @cancel="confirmation_add_modal = false"
     />
 
-    <div class="max-w-5xl" :class="page ? 'px-2' : 'p-4 md:p-8'">
+    <div class="max-w-5xl" :class="page ? '' : 'p-4 md:p-8'">
       <div v-if="!page" class="cursor-pointer" @click="$emit('close')">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <template v-if="!input_details">
-        <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">
+        <div class="flex justify-start font-bold text-sm sm:text-xl pt-2">
           Add Practice
         </div>
-        <div class="rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+        <div class="rounded-lg border px-4 py-4 mt-4">
           <AppInput v-model="search_text" :type="'text'" :name="'search'" />
           <AppButton :label="'Search Practice'" :inStyle="'padding:5px 14px;'" @click="search" />
           <AppButton
@@ -43,7 +43,7 @@
           class="rounded-lg shadow-lg overflow-auto mt-5"
         >
           <div
-            class="text-xs lg:text-base font-bold p-4"
+            class="text-xs lg:text-base font-bold px-4 py-2"
           >
             Select by clicking on the practice that you wish to add
           </div>
@@ -54,19 +54,19 @@
             :class="[selectedSurgeries.includes(item.id) ? 'bg-gray-200': selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400 cursor-pointer']"
             @click="select(item)"
           >
-            <div class="relative flex flex-col justify-start text-xs xl:text-base">
+            <div class="relative flex flex-col justify-start">
               <span v-if="selectedSurgeries.includes(item.id)" class="absolute right-0">
                 <svgicon name="success-checkmark" width="25" height="25" />
               </span>
-              <div class="font-bold">
+              <div class="font-bold text-xs xl:text-base">
                 {{ item.name }}
               </div>
               <div
-                class="mt-4"
+                class="mt-2 text-xs xl:text-sm"
               >
                 {{ item.address.line_1 }}, {{ item.address.line_2 }}, {{ item.address.line_3 }}, {{ item.address.post_code }}
               </div>
-              <div class="flex flex-row flex-no-wrap mt-1">
+              <div class="flex flex-row flex-no-wrap mt-1 text-xs xl:text-sm">
                 <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
                   CCG
                 </div>
@@ -74,7 +74,7 @@
                   {{ item.clinical_commissioning_group.name }}
                 </div>
               </div>
-              <div class="flex flex-row flex-no-wrap mt-1">
+              <div class="flex flex-row flex-no-wrap mt-1 text-xs xl:text-sm">
                 <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
                   Practice Code
                 </div>
@@ -97,10 +97,10 @@
         </div>
       </template>
       <template v-if="input_details">
-        <div ref="container" class="mt-2 flex flex-col items-center justify-center xl:mx-4 w-full">
-          <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
+        <div ref="container" class="mt-2 flex flex-col items-center justify-center w-full">
+          <!-- <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" /> -->
           <div class="flex w-full justify-center xl:justify-start">
-            <div class="flex flex-col w-full p-4 md:p-8 m-1 rounded-lg shadow-lg">
+            <div class="flex flex-col w-full p-4 my-4 rounded-lg border">
               <form class="w-full">
                 <AppInput v-model="form.name" :type="'text'" :name="'name'" :label="'Practice'" />
                 <AppInput

@@ -27,6 +27,7 @@
       <JobDetailModalAppointment
         :job="locum_appointment_job"
         @close="close"
+        :isModal="false"
       />
     </template>
 
@@ -35,6 +36,7 @@
         :job_part="locum_job_part"
         @setJobPart="newJobPart => locum_job_part = newJobPart"
         @close="close"
+        :isModal="false"
       />
     </template>
   </div>

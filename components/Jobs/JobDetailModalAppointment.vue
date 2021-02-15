@@ -19,11 +19,11 @@
         </nuxt-link>
       </template>
 
-      <div class="flex flex-row justify-start font-bold mt-8">
+      <div class="flex flex-row justify-start font-bold mt-2">
         Appointment
       </div>
 
-      <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
+      <div class="relative bg-white rounded-lg border p-4 mt-4 max-w-4xl">
         <AppLoading :loading="dataLoading" spinner />
 
         <template v-if="!dataLoading && !loading">
@@ -158,13 +158,13 @@
             />
           </div>
 
-          <div class="flex flex-no-wrap justify-start">
+          <div class="flex flex-no-wrap justify-end">
             <template v-if="!job">
               <AppButton :label="'Save'" :disabled="saving" @click="create" />
             </template>
 
             <template v-else>
-              <AppButton :label="'Delete'" :disabled="saving" @click="delete_modal = true" />
+              <AppButton :label="'Delete'" :customTheme="'bg-red-600 hover:bg-red-700 text-white'" :disabled="saving" @click="delete_modal = true" />
 
               <div class="mx-1" />
 

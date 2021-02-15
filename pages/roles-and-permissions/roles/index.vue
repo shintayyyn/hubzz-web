@@ -3,7 +3,7 @@
     <div class="flex overflow-x-auto whitespace-no-wrap">
       <button
         v-if="authPermissions.includes('Create Role')"
-        class="rounded-lg bg-yellow-500 p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
+        class="rounded-lg bg-sunglow hover:bg-sunglow-dark p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
         @click="$router.push('/roles-and-permissions/roles/create')"
       >
         Create Role
