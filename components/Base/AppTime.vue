@@ -5,7 +5,7 @@
 		v-on-clickaway="toggledOff"
 	>
 		<div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
-			<label :for="name" class="text-xs sm:text-sm py-1">
+			<label :for="name" class="text-xs sm:text-sm">
 				{{ label }}
 				<span v-if="required" class="text-red-500">*</span>
 			</label>
@@ -15,7 +15,7 @@
 				:value="value"
 				type="input"
 				placeholder="hh:mm"
-				class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
+				class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
 				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed text-gray-500' : '']"
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"

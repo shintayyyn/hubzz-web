@@ -5,8 +5,7 @@
       <div
         v-for="(item, index) in statistics"
         :key="index"
-        class="pr-3 my-1 w-full sm:w-1/2 lg:max-w-sm"
-        :class="$auth.user.domain === 'Locum' ? 'md:w-1/5' : 'md:w-1/5'"
+        class="px-1 my-1 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 lg:max-w-sm"
       >
         <nuxt-link
           :event="($auth.user.domain === 'Practice' && authPermissions.includes('View Sessions Job')) || $auth.user.domain === 'Locum' ? 'click' : disabled"

@@ -10,7 +10,7 @@
       />
     </div>
 
-    <div class="flex flex-row justify-start items-center">
+    <div class="flex flex-row justify-start items-center pb-2">
       <div class="leading-loose font-bold text-md sm:text-lg">
         {{ job_part.job.title }}
       </div>
@@ -142,7 +142,7 @@
 
     <div class="flex flex-col">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+        <div class="md:pr-2 w-full md:w-55p">
           <div
             v-if="!loadingJobPart && (job_part.status === 'Declined' || job_part.status === 'Withdrawn')"
             class="bg-white rounded-lg border p-4 mt-4"
@@ -173,20 +173,22 @@
               :job_part="job_part"
             />
 
+            
+          </div>
+        </div>
+
+        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
+          <div class="flex flex-col">
+            <JobPartDetailModalParts :job_id="job_part.job.id" />
+
+            <JobDetailModalMap :job="job_part.job" />
+
             <JobDetailModalUnassignForm
               v-if="!loadingJobPart && (job_part.locum_status === 'Ongoing' || job_part.locum_status === 'Allocated')"
               :ref="'unassignForm'"
               :job="job_part.job"
               @unassign="$emit('close')"
             />
-          </div>
-        </div>
-
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
-          <div class="flex flex-col">
-            <JobPartDetailModalParts :job_id="job_part.job.id" />
-
-            <JobDetailModalMap :job="job_part.job" />
           </div>
         </div>
       </div>

@@ -2,27 +2,40 @@
   <div class="border rounded-lg p-4">
     <div class="flex flex-row flex-wrap">
       <div class="flex flex-col w-full">
-        <div class="font-bold text-sm sm:text-md">
-          Job number
-        </div>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3">
+            <div class="font-bold text-sm sm:text-md">
+              Job number
+            </div>
 
-        <div class="text-xs sm:text-sm mb-6">
-          {{ job.job_number }}
-        </div>
+            <div class="text-xs sm:text-sm mb-6">
+              {{ job.job_number }}
+            </div>
 
-        <div class="font-bold text-sm sm:text-md">
-          Duration
-        </div>
+            <div class="font-bold text-sm sm:text-md">
+              Duration
+            </div>
 
-        <div class="text-xs sm:text-sm mb-4">
-          <p v-if="job.dates.length > 1" class="">
-            {{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}
-          </p>
+            <p v-if="job.dates.length > 1" class="">
+              {{ $moment(job.dates[0], 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(job.dates[job.dates.length-1], 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+            </p>
 
-          <div class="">
-            <p>Days: {{ job.dates.length }}</p>
+            <div class="mb-2">
+              <p>Days: {{ job.dates.length }}</p>
+            </div>
           </div>
 
+          <div class="md:w-2/3">
+            <div class="font-bold text-sm sm:text-md">
+              Job description
+            </div>
+
+            <div class="text-xs sm:text-sm mb-6 break-words">
+              {{ job && job.description ? job.description : '(none)' }}
+            </div>
+          </div>
+        </div>      
+        <div class="text-xs sm:text-sm mb-4">
           <div class="">
             <div class="flex justify-between items-end mb-2">
               <p class="font-bold text-sm sm:text-md">
@@ -68,13 +81,7 @@
       </div>
       
       <div class="flex flex-col w-full md:w-1/3">
-        <div class="font-bold text-sm sm:text-md">
-          Job description
-        </div>
-
-        <div class="text-xs sm:text-sm mb-6 break-words">
-          {{ job && job.description ? job.description : '(none)' }}
-        </div>
+       
 
         <div class="font-bold text-sm sm:text-md">
           Job Hubzz Fee
@@ -132,14 +139,25 @@
           {{ job.platform_job.email }}
         </div>
 
-
         <div class="font-bold text-sm sm:text-md">
-          Update Remarks
+          Compliance requirements
         </div>
 
-        <div class="text-xs sm:text-sm mb-6">
-          {{ job.update_remarks?job.update_remarks:`(none)` }}
+        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+          <div v-if="job.platform_job.compliance_documents.length === 0" class="mt-1">
+            (none)
+          </div>
+
+          <div
+            v-for="item in job.platform_job.compliance_documents"
+            v-else
+            :key="item.id"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
+          >
+            {{ item.name }}
+          </div>
         </div>
+        
 
       </div>
 
@@ -214,24 +232,7 @@
           {{ job.platform_job.session_structure_information ? job.platform_job.session_structure_information : '(none)' }}
         </div>
 
-        <div class="font-bold text-sm sm:text-md">
-          Compliance requirements
-        </div>
-
-        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-if="job.platform_job.compliance_documents.length === 0" class="mt-1">
-            (none)
-          </div>
-
-          <div
-            v-for="item in job.platform_job.compliance_documents"
-            v-else
-            :key="item.id"
-            class="rounded-lg bg-sunglow px-2 py-1 m-1"
-          >
-            {{ item.name }}
-          </div>
-        </div>
+        
       </div>
 
       <div class="flex flex-col w-full md:w-1/3">
@@ -367,6 +368,14 @@
           >
             {{ item.name }}
           </div>
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Update Remarks
+        </div>
+
+        <div class="text-xs sm:text-sm mb-6">
+          {{ job.update_remarks?job.update_remarks:`(none)` }}
         </div>
 
         <template v-if="job.use_variation_terms">

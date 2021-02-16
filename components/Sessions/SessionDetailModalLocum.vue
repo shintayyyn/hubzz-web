@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full">
+  <div class="flex flex-col w-full mt-2">
     <div class="text-xs sm:text-sm font-bold">
       Locum
     </div>
@@ -196,7 +196,7 @@
               <div
                 v-for="item in user.locum_detail.qualifications"
                 :key="item.id"
-                class="rounded-lg bg-sunglow p-2 m-1"
+                class="rounded-lg bg-sunglow py-1 px-2 m-1"
               >
                 {{ item.name }}
               </div>
@@ -208,7 +208,7 @@
               <div
                 v-for="item in user.locum_detail.clinical_systems"
                 :key="item.id"
-                class="rounded-lg bg-sunglow p-2 m-1"
+                class="rounded-lg bg-sunglow py-1 px-2 m-1"
               >
                 {{ item.name }}
               </div>
@@ -217,13 +217,13 @@
               Languages
             </div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div class="rounded-lg bg-sunglow p-2 m-1">
+              <div class="rounded-lg bg-sunglow py-1 px-2 m-1">
                 English
               </div>
               <div
                 v-for="item in user.locum_detail.spoken_languages"
                 :key="item.id"
-                class="rounded-lg bg-sunglow p-2 m-1"
+                class="rounded-lg bg-sunglow py-1 px-2 m-1"
               >
                 {{ item.name }}
               </div>

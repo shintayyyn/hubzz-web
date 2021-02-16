@@ -1,16 +1,39 @@
 <template>
   <section class="relative my-2">
-    <AppButton
-      v-if="!['pension-form-b'].includes($route.query.status)"
-      :label="'Filter'"
-      :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-      @click="filterModal = !filterModal"
-    />
-    <div
-      class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-      :class="filterModal ? 'flex' : 'hidden'"
-    >
+    <div class="flex items-center">
+      <button
+        v-if="!['pension-form-b'].includes($route.query.status)"
+        class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
+        @click="filterModal = !filterModal"
+      >
+        <p class="mx-2">Filter</p>
+        <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
+      </button>
+      <transition name="fade">
+      <div class="md:px-1 flex w-full" v-if="filterModal">
+        <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          :in-style="'padding:5px 14px;margin-bottom:0'"
+          @click="clearFilters"
+        />
+        <AppButton
+          class="mx-2"
+          :label="'Search'"
+          :in-style="'padding:5px 14px;margin-bottom:0'"
+          @click="filterInvoices"
+        />
+        <!-- <AppButton
+          class="mx-2 md:hidden"
+          :label="'Close'"
+          :in-style="'padding:5px 14px;margin-bottom:0'"
+          @click="filterModal = false"
+        /> -->
+      </div>
+      </transition>
+    </div>
+    <transition name="drop-down">
+    <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal">
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           v-model="params.invoice_number"
@@ -19,28 +42,9 @@
           :name="'invoice_number'"
           :label="'Invoice number'"
         />
-      </div>
-      <div class="md:px-1 flex w-full">
-        <AppButton
-          :disabled="disabledClearFilter"
-          :label="'Clear'"
-          :in-style="'padding:5px 14px;margin-bottom:5px'"
-          @click="clearFilters"
-        />
-        <AppButton
-          class="mx-2"
-          :label="'Search'"
-          :in-style="'padding:5px 14px;margin-bottom:5px'"
-          @click="filterInvoices"
-        />
-        <AppButton
-          class="mx-2 md:hidden"
-          :label="'Close'"
-          :in-style="'padding:5px 14px;margin-bottom:5px'"
-          @click="filterModal = false"
-        />
-      </div>
+      </div> 
     </div>
+    </transition>
 
     <AppTable
       v-if="invoices.length > 0"

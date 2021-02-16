@@ -12,7 +12,7 @@
 				<div
 					v-for="item in job.practice_types"
 					:key="item.id"
-					class="mr-2 bg-yellow-500 px-3 py-1 my-1 rounded-lg text-sm sm:text-md"
+					class="mr-2 bg-sunglow px-3 py-1 my-1 rounded-lg text-sm sm:text-md"
 				>{{ item.name }}</div>
 			</div>
 			<div

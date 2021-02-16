@@ -168,13 +168,13 @@
               @scrollToTop="$emit('scrollToTop')"
             />
 
-            <SessionDetailModalMap v-if="showMap && job.status !== 'Unfilled'" :job="job" />
-
-            <SessionDetailModalCancelForm
-              v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
+            <SessionDetailModalMap v-if="showMap && job.status === 'Allocated'" :job="job" />
+            <!-- <SessionDetailModalCancelForm
+              v-if="job.status === 'Allocated' && authPermissions.includes('Cancel Sessions Job')"
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
-            />
+            /> -->
+           
           </div>
         </div>
 
@@ -193,7 +193,13 @@
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Withdrawn')"
               :job="job"
             />
-            <SessionDetailModalMap v-if="showMap && job.status === 'Unfilled'" :job="job" />
+            <SessionDetailModalMap v-if="showMap && job.status !== 'Allocated'" :job="job" />
+
+             <SessionDetailModalCancelForm
+              v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
+              :job="job"
+              @cancelled="$emit('close'), $emit('cancelled', $event)"
+            />
           </div>
         </div>
       </div>

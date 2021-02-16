@@ -1,13 +1,12 @@
 <template>
   <section class="relative max-w-3xl">
-    <div class="flex flex-col md:flex-row justify-between">
+    <div class="flex flex-col md:flex-row justify-between py-1">
       <!-- save buttons -->
       <div class="flex flex-wrap items-center">
         <AppButton
           class="m-1"
           :label="'Generate Form B'"
           @click="save()"
-          :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading"
         />
       </div>
@@ -15,7 +14,7 @@
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
-          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
+          class="text-xs sm:text-sm mx-1 py-1 px-3 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow"
         >Private</div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 <template>
-	<div v-on-clickaway="toggledOff" class="flex flex-col mb-3 md:mb-4">
+	<div v-on-clickaway="toggledOff" class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4'">
 		<div class="relative flex flex-row flex-no-wrap justify-between">
-			<label :for="name" class="text-xs sm:text-sm py-1">
+			<label :for="name" class="text-xs sm:text-sm">
 				{{ label }}
 				<span v-if="required" class="text-red-500">*</span>
 			</label>
@@ -11,7 +11,7 @@
 				ref="search"
 				v-model="search"
 				type="text"
-				class="border-b-2 focus:border-yellow-400 focus:outline-none p-2 font-bold text-xs sm:text-sm w-full"
+				class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
 				:class="error? 'border-red-500':''"
 				:style="inStyle"
 				@focus="toggledOn"
@@ -64,7 +64,8 @@ export default {
 		required: {
 			type: Boolean,
 			default: false
-		}
+		},
+		wrapperClass: String
 	},
 	data() {
 		return {
