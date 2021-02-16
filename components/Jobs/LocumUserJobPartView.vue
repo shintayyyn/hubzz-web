@@ -122,7 +122,21 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 lg:pr-4 w-full md:w-55p">
+        <div class="md:pr-2 w-full md:w-55p">
+          <div v-if="job_part.conflict" class="flex flex-col mb-4">
+            <div class="bg-white rounded-lg border p-4 w-full">
+              <div class="leading-tight">
+                <p class="font-bold text-sm sm:text-md px-1 mb-1">
+                  Job Conflicts
+                </p>
+
+                <p v-for="conflictJob in job_part.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm m-1 bg-gray-300 px-2">
+                  {{ conflictJob.job_number }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
           <div v-if="!loadingJobPart && job_part.locum_job_part_status === 'Withdrawn'" class="bg-white rounded-lg border p-4 flex flex-col md:flex-row">
             <div class="leading-tight w-full md:w-1/2">
               <p class="font-bold text-sm sm:text-md">
@@ -197,22 +211,8 @@
           </div>
         </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-45p order-first md:order-none">
+        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
           <div class="flex flex-col">
-
-            <div v-if="job_part.conflict" class="flex flex-col mb-4">
-              <div class="bg-white rounded-lg border p-4 w-full">
-                <div class="leading-tight">
-                  <p class="font-bold text-sm sm:text-md px-1 mb-1">
-                    Job Conflicts
-                  </p>
-
-                  <p v-for="conflictJob in job_part.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm m-1 bg-gray-300 px-2">
-                    {{ conflictJob.job_number }}
-                  </p>
-                </div>
-              </div>
-            </div>
 
             <LocumUserJobViewJobParts :jobId="job_part.job_id" />
 

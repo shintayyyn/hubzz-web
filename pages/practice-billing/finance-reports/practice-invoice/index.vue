@@ -11,6 +11,7 @@
             label="Month"
             :items="yearMonths"
             required
+            :wrapperClass="'m-0'"
           />
         </div>
       </div>

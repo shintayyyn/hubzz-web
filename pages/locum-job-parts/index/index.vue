@@ -5,50 +5,71 @@
         <AppLoading :loading="initialLoading" spinner />
       </div>
 
-      <div v-if="!initialLoading">
-        <AppButton
-          :label="'Filter'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="filterModal = !filterModal"
-        />
+      <div  v-if="!initialLoading">
 
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="refreshJobs"
-        />
+        <div class="flex items-center">
+          <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
+            <p class="mx-2">Filter</p>
+            <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
+          </button>
 
-        <div
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <transition name="fade">
+          <div class="md:px-1 flex w-full" v-if="filterModal">
+            <AppButton
+              :label="'Clear'"
+              :in-style="'padding:5px 14px;margin-bottom:0'"
+              @click="clearFilters"
+            />
+            <AppButton
+              class="mx-2"
+              :label="'Search'"
+              :in-style="'padding:5px 14px;margin-bottom:0'"
+              @click="filterJob"
+            />
+            <!-- <AppButton
+              class="mx-2 md:hidden"
+              :label="'Close'"
+              :in-style="'padding:5px 14px;margin-bottom:0'"
+              @click="filterModal = false"
+            /> -->
+          </div>
+          </transition>
+
+          <AppButton
+            v-if="showRefresh"
+            :label="'Refresh'"
+            :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+            customTheme="border-2"
+            @click="refreshJobs"
+          />
+
+        </div>
+        <transition name="drop-down">
+        <div v-if="filterModal" class="flex flex-col md:flex-row items-start mt-2">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_part_number_includes"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'job_part_number_includes'"
               :label="'Job part number'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_title_includes"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'job_title_includes'"
               :label="'Job Title'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_shift_id"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'job_shift_id'"
               :label="'Shift'"
@@ -56,23 +77,22 @@
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_rate"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'job_rate'"
               :label="'Rate £'"
-              :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
               :limit="8"
               @keydown="isNumber($event)"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_rate_type_id"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'job_rate_type_id'"
               :label="'per'"
@@ -80,79 +100,59 @@
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppDate
               v-model="calendar_date_start"
               :name="'calendar_date_start'"
               :label="'From'"
               :format="'YYYY-MM-DD'"
+              :wrapperClass="'px-1'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" />
+          <div class="md:px-1 flex-1">
+            <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'"/>
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppDate
               v-model="calendar_date_end"
               :name="'calendar_date_end'"
               :label="'To'"
               :format="'YYYY-MM-DD'"
+              :wrapperClass="'px-1'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" />
+          <div class="md:px-1 flex-1">
+            <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'"/>
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppPostCode
               v-model="near_post_code"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :name="'near_post_code'"
               :label="'Post code'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput v-model="miles" class="px-1" :type="'number'" :name="'miles'" :label="'Miles'" />
+          <div class="md:px-1 flex-1">
+            <AppInput v-model="miles" :wrapperClass="'px-1'" :type="'number'" :name="'miles'" :label="'Miles'" />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="invoice_status"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'invoice_status'"
               :label="'Invoice Status'"
               :items="invoiceStatusList"
             />
           </div>
-
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJob"
-            />
-
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
         </div>
-
+        </transition>
         <AppTable
           v-if="jobs.length > 0"
           :total="total"

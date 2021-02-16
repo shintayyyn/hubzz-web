@@ -1,11 +1,10 @@
 <template>
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between items-center mb-2">
-      <div class="flex flex-wrap items-center">
+      <div class="flex flex-wrap items-center py-1">
         <AppButton
           class="mx-1"
           :label="propJobPart ? 'Save as final' : 'Save changes'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading || exportLoading"
           @click="save(true)"
         />
@@ -13,7 +12,6 @@
           v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
           class="mx-1"
           :label="'View as PDF'"
-          :inStyle="'padding:5px 14px;font-size:1em'"
           @click="viewAsPdf(propInvoice.id)"
         />
       </div>
@@ -22,7 +20,7 @@
       <div class="flex flex-row flex-wrap justify-start items-center">
         <label class="mx-1">Type:</label>
         <div
-          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
+          class="text-xs sm:text-sm mx-1 py-1 px-3 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow"
         >
           Private
         </div>

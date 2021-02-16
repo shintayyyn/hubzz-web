@@ -191,6 +191,20 @@
 
           <div class="flex flex-col">
             <LocumUserJobViewInfo :job="job" />
+          </div>
+        </div>
+
+        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+          <div class="flex flex-col">
+            <LocumUserJobViewJobParts :jobId="jobId" :disabled-link="true" />
+
+            <LocumUserJobViewJobMap
+              :practiceName="job.practice_name"
+              :practiceTypes="job.practice_types"
+              :practiceAddress="`${job.practice_address_line_1} ${job.practice_address_line_2} ${job.practice_address_line_3} ${job.practice_postcode}`"
+              :practiceCoordinateX="job.practice_coordinate_x"
+              :practiceCoordinateY="job.practice_coordinate_y"
+            />
 
             <JobDetailModalUnassignForm
               v-if="job.locum_job_status === 'Allocated'"
@@ -209,20 +223,6 @@
               v-if="job.locum_job_status === 'Applied'"
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
-            />
-          </div>
-        </div>
-
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
-          <div class="flex flex-col">
-            <LocumUserJobViewJobParts :jobId="jobId" :disabled-link="true" />
-
-            <LocumUserJobViewJobMap
-              :practiceName="job.practice_name"
-              :practiceTypes="job.practice_types"
-              :practiceAddress="`${job.practice_address_line_1} ${job.practice_address_line_2} ${job.practice_address_line_3} ${job.practice_postcode}`"
-              :practiceCoordinateX="job.practice_coordinate_x"
-              :practiceCoordinateY="job.practice_coordinate_y"
             />
           </div>
         </div>

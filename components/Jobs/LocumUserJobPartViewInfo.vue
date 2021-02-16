@@ -1,199 +1,42 @@
 <template>
   <div class="bg-white rounded-lg border p-4 mt-4">
     <AppLoading :loading="loadingJobPart" spinner />
+    <div>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3">
+            <div class="font-bold text-sm sm:text-md">
+              Job part number
+            </div>
 
-    <div class="relative flex flex-row flex-wrap justify-between">
-      <div class="flex flex-col w-full md:w-1/3 p-0 md:pr-2">
-        <div class="font-bold text-sm sm:text-md">
-          Job part number
-        </div>
+            <div class="text-xs sm:text-sm mb-8">
+              {{ jobPart.job_part_number }}
+            </div>
 
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.job_part_number }}
-        </div>
-        <div class="font-bold text-sm sm:text-md">
-          Job description
-        </div>
+            <div class="font-bold text-sm sm:text-md">
+              Duration
+            </div>
 
-        <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.description ? jobPart.description : '(none)' }}
-        </div>
+            <p v-if="jobPart.dates.length > 1" class="px-1">
+              {{ $moment(jobPart.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(jobPart.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+            </p>
 
-        <div class="font-bold text-sm sm:text-md">
-          Job Part Gross Rate
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          £ {{ jobPart ? jobPart.job_part_gross_rate_formatted : null }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Job Gross Rate
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          £ {{ jobPart ? jobPart.job_gross_rate_formatted : null }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Job Part Total Original Hours
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart ? jobPart.job_part_total_original_hours_in_minutes_formatted : null }}
-        </div>
-
-        <template v-if="jobPart && jobPart.locum_invoiceable">
-          <div class="font-bold text-sm sm:text-md">
-            Job Part Total Final Hours
+            <p class="text-xs sm:text-sm mb-2">
+              Days: {{ jobPart.dates.length }}
+            </p>
           </div>
 
-          <div class="text-xs sm:text-sm mb-8">
-            {{ jobPart ? jobPart.job_part_total_final_hours_in_minutes_formatted : null }}
-          </div>
-        </template>
+          <div class="md:w-2/3">
+            <div class="font-bold text-sm sm:text-md">
+              Job description
+            </div>
 
-        <div class="font-bold text-sm sm:text-md">
-          Job Total Original Hours
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart ? jobPart.job_total_original_hours_in_minutes_formatted : null }}
-        </div>
-
-        <template v-if="jobPart && jobPart.locum_invoiceable">
-          <div class="font-bold text-sm sm:text-md">
-            Job Total Final Hours
-          </div>
-
-          <div class="text-xs sm:text-sm mb-8">
-            {{ jobPart ? jobPart.job_total_final_hours_in_minutes_formatted : null }}
-          </div>
-        </template>
-
-        <div class="font-bold text-sm sm:text-md">
-          Extra information
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.extra_information ? jobPart.extra_information : '(none)' }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Report to
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.report_to }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Telephone number
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.practice_phone_number ? jobPart.practice_phone_number : '(none)' }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Email address
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.email }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Is there another Dr on site?
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.is_another_doctor ? 'Yes' : 'No' }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Is nurse support available?
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.is_nurse_available ? 'Yes' : 'No' }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Number of patients to be seen during the session?
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.number_of_patients }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Duration of eact appointment?
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.duration_for_each_appointment }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Opportunity for catch up slots?
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Session requirements:
-        </div>
-
-        <div v-if="!session_requirements.length">
-          (none)
-        </div>
-
-        <div
-          v-for="(item, index) in session_requirements"
-          :key="`${item}-${index}`"
-          class="flex flex-col"
-        >
-          <div class="text-xs sm:text-sm w-full">
-            {{ item }}
+            <div class="text-xs sm:text-sm mb-8 break-words">
+              {{ jobPart.description ? jobPart.description : '(none)' }}
+            </div>
           </div>
         </div>
 
-        <div class="text-xs sm:text-sm mb-8" />
-
-        <div class="font-bold text-sm sm:text-md">
-          Session structure information
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.session_structure_information ? jobPart.session_structure_information : '(none)' }}
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Update Remarks
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.update_remarks ? jobPart.update_remarks : '(none)' }}
-        </div>
-      </div>
-
-      <div class="flex flex-col w-full md:w-2/3 p-0 md:pl-2">
         <div class="mb-8">
-          <div class="font-bold text-sm sm:text-md">
-            Duration
-          </div>
-
-          <p v-if="jobPart.dates.length > 1" class="px-1">
-            {{ $moment(jobPart.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(jobPart.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
-          </p>
-
-          <p class="text-xs sm:text-sm">
-            Days: {{ jobPart.dates.length }}
-          </p>
-
           <p class="font-bold text-sm sm:text-md">
             Schedule
           </p>
@@ -312,6 +155,180 @@
             </div>
           </div>
         </div>
+    </div>
+    <div class="relative flex flex-row flex-wrap justify-between">
+      <div class="flex flex-col w-full md:w-1/3 md:pr-1">
+
+        <div class="font-bold text-sm sm:text-md">
+          Job Part Gross Rate
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          £ {{ jobPart ? jobPart.job_part_gross_rate_formatted : null }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Job Gross Rate
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          £ {{ jobPart ? jobPart.job_gross_rate_formatted : null }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Job Part Total Original Hours
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart ? jobPart.job_part_total_original_hours_in_minutes_formatted : null }}
+        </div>
+
+        <template v-if="jobPart && jobPart.locum_invoiceable">
+          <div class="font-bold text-sm sm:text-md">
+            Job Part Total Final Hours
+          </div>
+
+          <div class="text-xs sm:text-sm mb-8">
+            {{ jobPart ? jobPart.job_part_total_final_hours_in_minutes_formatted : null }}
+          </div>
+        </template>
+
+        <div class="font-bold text-sm sm:text-md">
+          Job Total Original Hours
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart ? jobPart.job_total_original_hours_in_minutes_formatted : null }}
+        </div>
+
+        <template v-if="jobPart && jobPart.locum_invoiceable">
+          <div class="font-bold text-sm sm:text-md">
+            Job Total Final Hours
+          </div>
+
+          <div class="text-xs sm:text-sm mb-8">
+            {{ jobPart ? jobPart.job_total_final_hours_in_minutes_formatted : null }}
+          </div>
+        </template>
+
+        <div class="font-bold text-sm sm:text-md">
+          Extra information
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8 break-words">
+          {{ jobPart.extra_information ? jobPart.extra_information : '(none)' }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Report to
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.report_to }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Telephone number
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.practice_phone_number ? jobPart.practice_phone_number : '(none)' }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Email address
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.email }}
+        </div>
+      </div>
+
+      <div class="flex flex-col w-full md:w-1/3 md:px-1">
+        <div class="font-bold text-sm sm:text-md">
+          Is there another Dr on site?
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.is_another_doctor ? 'Yes' : 'No' }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Is nurse support available?
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.is_nurse_available ? 'Yes' : 'No' }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Number of patients to be seen during the session?
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.number_of_patients }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Duration of eact appointment?
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.duration_for_each_appointment }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Opportunity for catch up slots?
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8">
+          {{ jobPart.opportunity_for_catch_up_slots ? 'Yes' : 'No' }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Session requirements:
+        </div>
+
+        <div v-if="!session_requirements.length">
+          (none)
+        </div>
+
+        <div
+          v-for="(item, index) in session_requirements"
+          :key="`${item}-${index}`"
+          class="flex flex-col"
+        >
+          <div class="text-xs sm:text-sm w-full">
+            {{ item }}
+          </div>
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8" />
+
+        <div class="font-bold text-sm sm:text-md">
+          Session structure information
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8 break-words">
+          {{ jobPart.session_structure_information ? jobPart.session_structure_information : '(none)' }}
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Compliance requirements
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div v-if="jobPart.compliance_documents.length === 0" class="mt-1">
+            (none)
+          </div>
+
+          <div v-for="complianceDocument in jobPart.compliance_documents" :key="complianceDocument.id" class="rounded-lg bg-sunglow py-1 px-1 m-1">
+            {{ complianceDocument.name }}
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col w-full md:w-1/3 md:pl-1">
         <div class="text-xs sm:text-sm mb-6">
           <span>This job is</span>
           <span class="font-bold text-sm sm:text-md">{{ jobPart.ir35 ? 'INSIDE' : 'OUTSIDE' }}</span>
@@ -362,20 +379,6 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Compliance requirements
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="jobPart.compliance_documents.length === 0" class="mt-1">
-            (none)
-          </div>
-
-          <div v-for="complianceDocument in jobPart.compliance_documents" :key="complianceDocument.id" class="rounded-lg bg-sunglow py-1 px-1 m-1">
-            {{ complianceDocument.name }}
-          </div>
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
           Mandatory training
         </div>
 
@@ -401,6 +404,14 @@
           <div v-for="otherMandatoryTraining in jobPart.other_mandatory_trainings" :key="otherMandatoryTraining.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ otherMandatoryTraining.name }}
           </div>
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Update Remarks
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8 break-words">
+          {{ jobPart.update_remarks ? jobPart.update_remarks : '(none)' }}
         </div>
 
         <template v-if="jobPart.use_variation_terms">

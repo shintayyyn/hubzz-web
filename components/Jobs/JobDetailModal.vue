@@ -122,16 +122,17 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-2 w-full md:w-55p">
           <div class="flex flex-col">
             <JobDetailModalInfo :job="job" />
+          </div>
+        </div>
 
-            <JobDetailModalUnassignForm
-              v-if="job.locum_status === 'Allocated'"
-              :ref="'unassignForm'"
-              :job="job"
-              @unassign="$emit('close'), $emit('unassign', $event)"
-            />
+        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
+          <div class="flex flex-col">
+            <JobPartDetailModalParts :job_id="job.id" :disabled-link="true" />
+
+            <JobDetailModalMap v-if="showMap" :job="job" />
 
             <JobDetailModalApplyForm
               v-if="job.locum_status === 'Available' || job.locum_status === 'Matched'"
@@ -144,14 +145,13 @@
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
             />
-          </div>
-        </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
-          <div class="flex flex-col">
-            <JobPartDetailModalParts :job_id="job.id" :disabled-link="true" />
-
-            <JobDetailModalMap v-if="showMap" :job="job" />
+            <JobDetailModalUnassignForm
+              v-if="job.locum_status === 'Allocated'"
+              :ref="'unassignForm'"
+              :job="job"
+              @unassign="$emit('close'), $emit('unassign', $event)"
+            />
           </div>
         </div>
       </div>

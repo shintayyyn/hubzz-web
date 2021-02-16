@@ -18,7 +18,7 @@
       v-if="$auth.user.domain === 'Practice'"
       class="w-full"
     >
-      <div class="flex justify-between">
+      <div class="flex items-center justify-between mt-2">
         <div class="flex">
           <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-full">
             <AppInputSmall
@@ -32,32 +32,45 @@
               @click="getPermanentJobsForPractice()"
             />
           </div>
-          <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="m-3">
+          <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="m-3 flex items-center">
             <button
-              class="px-6 py-1 border-2 border-gray-400 rounded-lg font-bold text-gray-600"
+              class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
               @click="filterModal = !filterModal"
             >
-              Filters
+              <p class="mx-2">Filter</p>
+              <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
             </button>
+            <transition name="fade">
+            <div class="w-full flex items-center" v-if="filterModal">
+              <AppButton
+                label="Reset"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="filterReset"
+              />
+
+              <AppButton
+                class="mx-2"
+                label="Submit"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="getJobs(params)"
+              />
+            </div>
+            </transition>
           </div>
         </div>
-        <div class="mt-3">
-          <button
-            v-if="$auth.user.domain === 'Practice'"
-            class="px-3 py-1 text-sm font-bold cursor-pointer justify-end"
-            :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
-            @click="$router.push('/permanent-jobs/create')"
-          >
-            + Create Salaried Role 
-          </button>
-        </div>
+        <button
+          v-if="$auth.user.domain === 'Practice'"
+          class="px-3 py-1 text-sm font-bold cursor-pointer justify-end"
+          :class="'border rounded-lg border-sunglow bg-sunglow'"
+          @click="$router.push('/permanent-jobs/create')"
+        >
+          + Create Salaried Role 
+        </button>
       </div>
 			
-      <div
-        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg my-2"
-        :class="filterModal ? 'flex' : 'hidden'"
-      >
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+      <transition name="drop-down">
+      <div v-if="filterModal" class="flex flex-col md:flex-row items-start mt-2">
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
           <AppInput
             v-model="params.job_type"
             :type="'select'"
@@ -65,10 +78,11 @@
             :label="'Job Type'"
             :placeholder="'Select...'"
             :items="job_types"
+            :wrapperClass="'px-1'"
           />
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
           <AppInput
             v-model="params.profession"
             :type="'select'"
@@ -76,9 +90,10 @@
             :label="'Profession'"
             :placeholder="'Select...'"
             :items="professions"
+            :wrapperClass="'px-1'"
           />
         </div>
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
           <AppInput
             v-model="params.job_posting_status"
             :type="'select'"
@@ -86,32 +101,19 @@
             :label="'Permanent Job Status'"
             :placeholder="'Select...'"
             :items="permanent_job_status"
+            :wrapperClass="'px-1'"
           />
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" />
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+          <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" :wrapperClass="'px-1'"/>
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" />
-        </div>
-
-        <div class="md:px-1 flex flex-wrap w-full justify-end">
-          <AppButton
-            label="Reset"
-            :in-style="'padding:5px 14px;margin-bottom:5px'"
-            @click="filterReset"
-          />
-
-          <AppButton
-            class="mx-2"
-            label="Submit"
-            :in-style="'padding:5px 14px;margin-bottom:5px'"
-            @click="getJobs(params)"
-          />
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+          <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'"/>
         </div>
       </div>
+      </transition>
     </div>
     <!-- Filters end here -->
 

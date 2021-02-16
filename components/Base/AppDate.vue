@@ -1,7 +1,7 @@
 <template>
-  <div v-on-clickaway="toggledOff" class="flex flex-col mb-3 md:mb-4 leading-normal">
-    <div class="relative flex flex-row flex-no-wrap justify-between">
-      <label :for="name" class="text-xs sm:text-sm py-1">
+  <div v-on-clickaway="toggledOff" class="flex flex-col leading-normal" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4 '">
+    <div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
+      <label :for="name" class="text-xs sm:text-sm">
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
@@ -18,7 +18,7 @@
           :value="placeholder"
           type="input"
           :placeholder="'DD/MM/YYYY'"
-          class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full text-center"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
           :class="{ inClass, 'border-red-500': error}"
           :style="inStyle"
           :format="format"
@@ -37,7 +37,7 @@
 
     <transition name="fade">
       <div v-if="modal" class="relative md:static z-10 flex">
-        <div class="absolute border rounded-b-lg calendar bg-white shadow-md">
+        <div class="absolute border rounded-b-lg calendar bg-white shadow-md" :class="floatRight ? 'right-0' : ''">
           <div class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500">
             <div class="m-1 w-1/2 flex flex-no-wrap">
               <select
@@ -311,6 +311,11 @@
         default: () => null,
       },
 
+      wrapperClass: {
+      type: String,
+      default: null,
+    },
+
       format: {
         type: String,
         default: 'YYYY-MM-DD',
@@ -327,6 +332,11 @@
       },
 
       required: {
+        type: Boolean,
+        default: false
+      },
+
+      floatRight : {
         type: Boolean,
         default: false
       },

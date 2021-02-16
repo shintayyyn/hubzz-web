@@ -9,8 +9,8 @@
 					<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 				</nuxt-link>
 			</template>
-			<div class="flex flex-row flex-wrap justify-start items-center mt-4 md:mt-8">
-				<h4 class="text-lg md:text-xl font-bold flex items-center my-1">
+			<div class="flex flex-row flex-wrap justify-start items-center pt-3 pb-4">
+				<h4 class="text-lg md:text-xl font-bold flex items-center">
 					<span>{{ permanent_job.title }}</span>
 				</h4>
 				<span
@@ -168,7 +168,7 @@
 					<div v-if="permanent_job_application && permanent_job_application.rejected_by_locum_at !== null" class="text-xs text-red-500">
 						* You have rejected an invitation for interview for this job on {{ permanent_job_application && permanent_job_application.rejected_by_locum_at_in_gb_formatted ? permanent_job_application.rejected_by_locum_at_in_gb_formatted : null }}
 					</div>
-					<div class="bg-white rounded-lg shadow-lg p-4 md:p-8 flex flex-col lg:flex-row">
+					<div class="bg-white rounded-lg border p-4 flex flex-col lg:flex-row">
 						<div class="w-full lg:w-1/2">
 							<p class="font-bold text-xs sm:text-sm">Practice</p>
 							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : null }}</p>
@@ -190,7 +190,7 @@
 							<div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2 ml-2 pb-3">
 								<div class="flex items-center">
 									<a
-										class="text-sm leading-tight"
+										class="text-sm leading-tight mr-1"
 										:href="permanent_job.description_file.url"
 										:download="permanent_job.description_file.filename"
 										target="_blank"
@@ -253,7 +253,7 @@
 						label="Share with a friend"
 						@click="toShowLink = !toShowLink"
 					/>
-					<div v-if="toShowLink" class="rounded-lg p-4 shadow-lg mb-2">
+					<div v-if="toShowLink" class="rounded-lg p-4 border mb-2">
 						<div class="text-sm md:text-base font-semibold flex flex-wrap items-center px-2">
 							<div
 								class
