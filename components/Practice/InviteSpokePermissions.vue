@@ -1,5 +1,5 @@
 <template>
-  <div class="py-4 px-4 md:px-8">
+  <div class="px-6 py-4">
     <!-- HEADER -->
     <div class="flex justify-between text-sm text-white">
       <div @click="$emit('close')" class="cursor-pointer px-2 py-3">
@@ -19,7 +19,7 @@
     <div class="m-2 text-sm font-semibold">
       <div>Surgery: {{spoke.surgery.name}}</div>
     </div>
-    <div class="rounded-lg shadow-lg p-2">
+    <div class="rounded-lg border p-4">
       <div class="flex flex-col flex-wrap justify-between">
         <div class="w-full p-1">
           <AppInput

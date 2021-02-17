@@ -2,7 +2,7 @@
   <div class="">
     <div class="p-2 w-full">
       <div class="flex justify-start font-bold text-sm sm:text-xl">Invite Spoke / Stand Alone</div>
-      <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
+      <div class="relative bg-white rounded-lg border p-4 mt-4 max-w-5xl">
         <AppInput
           v-model="search_text"
           :type="'text'"
@@ -17,7 +17,7 @@
         <div class="text-xs xl:text-base font-bold">{{ resultNotice }}</div>
       </div>
       <div
-        class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
+        class="rounded-lg border overflow-auto mt-5 bg-white max-w-5xl"
         v-if="showResult && filteredPracticeSpokes.length > 0"
       >
         <div
@@ -44,19 +44,19 @@
                 >Invited</span>
               </div>
             </div>
-            <div class="flex flex-row flex-no-wrap mt-1">
+            <div class="flex flex-row flex-no-wrap mt-1 text-sm">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
               <div
                 class="flex items-center"
               >{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
             </div>
-            <div class="flex flex-row flex-no-wrap mt-1">
+            <div class="flex flex-row flex-no-wrap mt-1 text-sm">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
               <div class="flex items-center">{{item.surgery.code}}</div>
             </div>
           </div>
         </div>
-        <div class="border-t-2 p-4 text-xs xl:text-base">
+        <div class="border-t-2 px-4 py-2 text-xs md:text-sm leading-tight">
           <p class="font-bold">These are just top 10 matches from your search term.</p>
           <p
             class="font-bold"
@@ -65,7 +65,7 @@
       </div>
     </div>
 
-    <!-- <div class="spoke-shield" @click="toInvite = false" v-if="toInvite"></div> -->
+    <div class="spoke-shield" @click="toInvite = false" v-if="toInvite"></div>
     <transition name="slide" mode="out-in">
       <div class="spoke-permission-modal shadow-lg" v-if="toInvite">
         <InviteSpokePermissions @close="toInvite = false" :spoke="selectedSpoke" />

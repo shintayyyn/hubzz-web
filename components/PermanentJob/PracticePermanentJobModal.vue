@@ -16,7 +16,7 @@
     	<AppLoading :loading="loading" spinner :message="'Loading Job'" class="w-full"/>
 			<template v-if="!loading">
 				<template v-if="!hideDetails"> 
-				<div class="flex justify-start items-center flex-wrap md:px-2">
+				<div class="flex justify-start items-center flex-wrap md:px-2 mb-4">
 					<h4 class="text-lg md:text-xl font-bold mr-2">
 						<span>{{ permanent_job.title }}</span>
 					</h4>
@@ -31,7 +31,7 @@
 					<!-- v-if="permanent_job.job_posting_status !== 'Unfilled'" -->
 					<AppButton :label="editJobLabel(edit)" class="my-2" @click="edit = !edit" />
 				</div>
-				<div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg my-2">
+				<div v-if="permanent_job.job_posting_status === 'Closed'" class="bg-red-300 p-4 rounded-lg mb-2">
 					<div>
 						Closed At: {{ permanent_job.closed_at_in_gb_formatted }}
 						<!-- Closed At: {{ $moment(permanent_job.closed_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} -->
@@ -46,8 +46,8 @@
 				</div>
 				</template>
 				<div class="flex flex-col md:flex-row">
-					<div v-if="!hideDetails" class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
-						<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
+					<div v-if="!hideDetails" class="md:mr-2 w-full md:w-3/5 lg:w-1/2">
+						<div class="bg-white rounded-lg border p-4 mb-4 flex flex-col items-start">
 							<!-- VIEW PERMANENT JOB DETAILS -->
 							<template v-if="edit === false">
 								<div class="w-full flex flex-col md:flex-row">
@@ -345,11 +345,11 @@
 						/>
 					</div>
 
-					<div v-if="permanent_job" class="md:mx-2 w-full " :class="hideDetails ? '' :'md:w-2/5 lg:w-1/2'">
+					<div v-if="permanent_job" class="md:ml-2 w-full " :class="hideDetails ? '' :'md:w-2/5 lg:w-1/2'">
 						<template v-if="permanent_job.appointed_to_locum_user_id && !hideDetails">
 							<PermanentJobLocum class="my-4" :user="assignedLocum" />
 						</template>
-						<PermanentJobCandidates :permanent_job="permanent_job"/>
+						<PermanentJobCandidates class="mb-4" :permanent_job="permanent_job"/>
 						<PermanentJobMap v-if="!hideDetails" :permanent_job="permanent_job" />
 
 						<AppButton

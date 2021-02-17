@@ -20,14 +20,14 @@
 
       <div v-if="!loading && user" class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
-          <div class="rounded-lg shadow-lg p-4">
+          <div class="rounded-lg border p-4">
             <div class="flex flex-col">
               <div class="flex flex-row flex-wrap justify-between items-center">
                 <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
                   <div class="font-bold text-sm sm:text-md">
                     Candidate
                   </div>
-                  <div class="text-sm mb-8">
+                  <div class="text-sm mb-6">
                     {{ user.locum_detail.profession.name }}
                   </div>
                 </div>
@@ -38,13 +38,13 @@
               <div class="font-bold text-sm sm:text-md">
                 Headline
               </div>
-              <div class="text-sm mb-8">
+              <div class="text-sm mb-6">
                 {{ user.locum_detail.headline }}
               </div>
               <div class="font-bold text-sm sm:text-md">
                 Biography
               </div>
-              <div class="text-sm mb-8">
+              <div class="text-sm mb-6">
                 {{ user.locum_detail.short_biography }}
               </div>
 
@@ -56,7 +56,7 @@
                   {{ referenceLocumComplianceDocument.compliance_document_name }}
                 </div>
 
-                <div class="text-sm mb-8">
+                <div class="text-sm mb-6">
                   {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
                 </div>
               </div>
@@ -64,9 +64,9 @@
               <div class="font-bold text-sm sm:text-md">
                 Specialty
               </div>
-              <div class="text-sm mb-8 flex flex-row flex-wrap">
+              <div class="text-sm mb-6 flex flex-row flex-wrap">
                 <div v-for="item in user.locum_detail.qualifications" :key="item.id"
-                     class="rounded-lg bg-yellow-500 p-2 m-1"
+                     class="rounded-lg bg-sunglow px-2 py-1 m-1"
                 >
                   {{ item.name }}
                 </div>
@@ -74,9 +74,9 @@
               <div class="font-bold text-sm sm:text-md">
                 Clinical systems
               </div>
-              <div class="text-sm mb-8 flex flex-row flex-wrap">
+              <div class="text-sm mb-6 flex flex-row flex-wrap">
                 <div v-for="item in user.locum_detail.clinical_systems" :key="item.id"
-                     class="rounded-lg bg-yellow-500 p-2 m-1"
+                     class="rounded-lg bg-sunglow px-2 py-1 m-1"
                 >
                   {{ item.name }}
                 </div>
@@ -84,12 +84,12 @@
               <div class="font-bold text-sm sm:text-md">
                 Languages
               </div>
-              <div class="text-sm mb-8 flex flex-row flex-wrap">
-                <div class="rounded-lg bg-yellow-500 p-2 m-1">
+              <div class="text-sm mb-6 flex flex-row flex-wrap">
+                <div class="rounded-lg bg-sunglow px-2 py-1 m-1">
                   English
                 </div>
                 <div v-for="item in user.locum_detail.spoken_languages" :key="item.id"
-                     class="rounded-lg bg-yellow-500 p-2 m-1"
+                     class="rounded-lg bg-sunglow px-2 py-1 m-1"
                 >
                   {{ item.name }}
                 </div>
@@ -98,7 +98,7 @@
           </div>
         </div>
         <div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
-          <div class="rounded-lg shadow-lg p-4 mb-4">
+          <div class="rounded-lg border p-4 mb-4">
             <div class="font-bold text-sm sm:text-md">
               Compliance documents
             </div>

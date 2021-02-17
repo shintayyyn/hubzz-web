@@ -40,6 +40,10 @@ export const mutations = {
   },
   SET_BREADCRUMBS(state, payload) {
     state.breadcrumbs = payload
+    if (typeof localStorage === 'object') {
+    localStorage.setItem('breadcrumbs', JSON.stringify(payload))
+      // window.localStorage.setItem('breadcrumbs', JSON.stringify(payload))
+    }
   },
   ADD_BREADCRUMB(state, payload) {
     state.breadcrumbs.push(payload)
@@ -145,4 +149,10 @@ export const getters = {
   permissions (state) {
     return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []
   },
+  getBreadcrumbs(state) {
+    if (typeof localStorage === 'object') {
+      return [...JSON.parse(localStorage.getItem('breadcrumbs'))]
+    }
+    return state.breadcrumbs
+  }
 }

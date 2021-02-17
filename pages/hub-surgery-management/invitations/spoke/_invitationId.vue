@@ -13,7 +13,7 @@
       <div>Surgery: {{spoke.surgery.name}}</div>
     </div>
 
-    <div class="rounded-lg shadow-lg p-2">
+    <div class="rounded-lg border p-4">
       <div class="flex flex-col flex-wrap justify-between">
         <div class="w-full p-1">
           <AppInput

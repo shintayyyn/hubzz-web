@@ -7,7 +7,7 @@
 			class="mb-2 cursor-pointer"
 			@click="$router.push('/hub-surgery-management/invitations/hub')"
 		/> -->
-		<div class="flex flex-wrap items-center mt-2">
+		<div class="flex flex-wrap items-center my-2">
 			<div class="flex items-center">
 				<div
 					class="font-bold leading-none text-md sm:text-lg mr-2"
@@ -27,8 +27,8 @@
 				>{{ checkStatus(practice_surgery) }}</div>
 			</div>
 		</div>
-		<div class="flex flex-col md:flex-row justify-start items-start w-full">
-			<div class="flex flex-col w-full md:w-1/2 shadow-lg p-4 md:p-8 my-2 md:my-0 md:mx-1 rounded-lg">
+		<div class="flex flex-col md:flex-row justify-start items-start w-full mt-2">
+			<div class="flex flex-col w-full md:w-1/2 border p-4 my-2 md:my-0 md:mx-1 rounded-lg">
 				<p class="font-semibold">CCG</p>
 				<p class="mx-2 leading-tight mb-2">
 					{{ practice_surgery && practice_surgery. child_practice_clinical_commissioning_group_name ?
@@ -66,19 +66,19 @@
 						<p
 							v-for="practiceType in practice_surgery.child_practice.practice_types"
 							:key="practiceType.id + '-name'"
-							class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-yellow-500"
+							class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-sunglow"
 						>{{ practiceType ? practiceType.name: null }}</p>
 					</template>
 					<p v-else class="mx-2 leading-tight mb-2">Not set</p>
 				</div>
 			</div>
-			<div class="flex flex-col w-full md:w-1/2 shadow-lg p-4 md:p-8 my-2 md:my-0 md:mx-1 rounded-lg">
+			<div class="flex flex-col w-full md:w-1/2 border p-4 my-2 md:my-0 md:mx-1 rounded-lg">
 				<!--------------PAY FOR SURGERY-------------->
 				<div class="flex items-center">
 					<div class="text-lg text-black font-semibold mr-4">Permissions</div>
 					<div
-						class="text-sm font-semibold text-black px-4 py-2 rounded-lg cursor-pointer"
-						:class="`${editPayForSurgery == false ? 'text-black bg-yellow-500 hover:bg-yellow-400' : 'text-white bg-red-500 hover:bg-red-600'}`"
+						class="text-sm font-semibold text-black px-4 py-1 rounded-lg cursor-pointer"
+						:class="`${editPayForSurgery == false ? 'text-black bg-sunglow hover:bg-sunglow-dark' : 'text-white bg-red-600 hover:bg-red-700'}`"
 						@click="togglePermissions()"
 					>{{ editPayForSurgery == false ? "Edit" : "Cancel Editing" }}</div>
 				</div>

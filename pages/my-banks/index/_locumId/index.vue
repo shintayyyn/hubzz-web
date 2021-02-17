@@ -2,7 +2,7 @@
   <div :class="!$route.params.jobId ? '':'px-2 pt-2'">
     <div class="flex flex-col items-start">
       <template v-if="!$route.params.jobId">
-      <div class="flex">
+      <div class="flex pt-4">
         <!-- <nuxt-link :to="{ path: `/my-banks`, query: { ...$route.query }}" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link> -->
