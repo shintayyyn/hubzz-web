@@ -1,8 +1,9 @@
 <template>
 	<section>
-		<div class="p-4 md:p-8">
+		<div :class="isPage ? 'py-2' : '-4 md:p-8'">
 			<div class="flex items-center">
 				<svgicon
+					v-if="!isPage"
 					name="left-arrow"
 					height="32"
 					width="32"
@@ -69,7 +70,7 @@
 					:label="'Invite This Locum'"
 			/>-->
 
-			<div class="flex flex-wrap items-center justify-between mt-4 md:mt-8">
+			<div class="flex flex-wrap items-center justify-between mt-4" :class="isPage ? '' : 'md:mt-8'">
 				<div class="flex flex-row flex-wrap md:flex-no-wrap justify-start items-center">
 					<div class="font-bold text-md sm:text-lg mr-2">{{ user.name }}</div>
 					<div
@@ -358,6 +359,10 @@ export default {
 		permanent_job_application: {
 			type: Object,
 			default: () => null
+		},
+		isPage : {
+			type: Boolean,
+			default: () => false
 		}
 	},
 	data() {
@@ -437,7 +442,7 @@ export default {
 				});
 		},
 
-		async inviteLocum() {
+		async inviteLocum () {
 			this.formError = [];
 			this.Validate(this.form);
 			if (!this.formError.length) {
@@ -516,6 +521,7 @@ export default {
 						status: "success",
 						text: ["Successfully Rejected Locum"]
 					});
+					this.$router.push("/permanent-jobs");
 				})
 				.catch(err => {
 					this.$store.commit("SET_NOTIFICATION", {
@@ -526,22 +532,23 @@ export default {
 				});
 		},
 
-		async appoint() {
+		async appoint () {
 			await this.$axios
 				.$put(
 					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/appoint-locum-to-job/${this.permanent_job_application.permanent_job_id}`
 				)
 				.then(() => {
+					this.$emit("close");
+					this.$emit("updateApplicants");
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
 						text: ["Assign locum successfully"]
 					});
-					$emit('close')
-					this.$route.push("/permanent-jobs");
+					this.$router.push("/permanent-jobs");
 				})
 				.catch(err => {
-					console.log("err", err.response | err);
+					console.log("err", err.response.data.message);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "danger",

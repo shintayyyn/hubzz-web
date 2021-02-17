@@ -1,398 +1,195 @@
 <template>
-  <div class="flex flex-row flex-wrap justify-start">
-    <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
-      <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
+  <div class="flex flex-col lg:flex-row justify-start">
+    <div class="w-full lg:pr-4 order-2 lg:order-1">
+      <div class="relative w-full">
         <AppLoading :loading="loading" spinner />
 
         <AppFormError v-if="formError.length > 0" :formError="formError" />
 
-        <form v-if="!loading && user" class="w-full">
-          <template v-if="user.profession && user.profession.name === 'GP'">
-            <div>Profession</div>
-            <div class="ml-2 font-bold my-2 mb-4">
-              {{ user.profession.name }}
-            </div>
-          </template>
+        <form v-if="!loading && user" class="w-full flex flex-col md:flex-row items-start">
+          <div class="w-full md:w-1/2 rounded-lg border p-4 mr-4">
+            <template v-if="user.profession && user.profession.name === 'GP'">
+              <div>Profession</div>
+              <div class="ml-2 font-bold my-2 mb-4">
+                {{ user.profession.name }}
+              </div>
+            </template>
 
-          <AppInput
-            v-if="false || (user.profession && user.profession.name !== 'GP')"
-            v-model="form.profession_id"
-            :type="'select'"
-            :name="'profession_id'"
-            :label="'Profession'"
-            :placeholder="'Select...'"
-            :items="professionsSelectionList"
-            required
-            :disabled="false"
-          />
-
-          <AppFilterSearch
-            v-if="selectedProfession && selectedProfession.sub_professionable"
-            v-model="selectedSubProfessionsSelectionList"
-            label="Sub Professions"
-            placeholder="Select..."
-            :error="formError.find(item => item.field === 'sub_profession_ids')"
-            info="Choose other professions if applicable"
-            :selectionLists="subProfessionsSelectionList"
-          />
-
-          <div
-            v-for="referenceLocumComplianceDocument in referenceLocumComplianceDocuments"
-            :key="referenceLocumComplianceDocument.compliance_document_id"
-          >
             <AppInput
-              v-model="referenceLocumComplianceDocument.reference"
-              type="text"
-              :name="referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()"
-              :label="referenceLocumComplianceDocument.compliance_document_name"
-              :error="formError.find(err => err.field === referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase())"
-              :info="'For compliance; to be verified by the hubzz team'"
-              :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
+              v-if="false || (user.profession && user.profession.name !== 'GP')"
+              v-model="form.profession_id"
+              :type="'select'"
+              :name="'profession_id'"
+              :label="'Profession'"
+              :placeholder="'Select...'"
+              :items="professionsSelectionList"
               required
-              @blur="checkReferenceLocumCompliance(referenceLocumComplianceDocument.compliance_document_name)"
-              @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? inputNumberOnly($event) : alphaNumeric($event)"
+              :disabled="false"
             />
-          </div>
 
-          <AppFilterSearch
-            v-model="form.qualification_id"
-            :name="'qualification_id'"
-            :label="'Specialty'"
-            :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'qualification_id')"
-            :info="'Choose at least one qualification'"
-            :url="'/api/v1/qualifications'"
-            :professionCategoryId="true ? null : professionCategoryId.toString()"
-            required
-            @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
-            @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-          />
+            <AppFilterSearch
+              v-if="selectedProfession && selectedProfession.sub_professionable"
+              v-model="selectedSubProfessionsSelectionList"
+              label="Sub Professions"
+              placeholder="Select..."
+              :error="formError.find(item => item.field === 'sub_profession_ids')"
+              info="Choose other professions if applicable"
+              :selectionLists="subProfessionsSelectionList"
+            />
 
-          <AppFilterSearch
-            v-model="form.clinical_system_id"
-            :name="'clinical_system_id'"
-            :label="'Clinical systems'"
-            :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'clinical_system_id')"
-            :info="'Choose at least one IT system'"
-            :url="'/api/v1/clinical-systems'"
-            required
-            @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-            @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-          />
+            <div
+              v-for="referenceLocumComplianceDocument in referenceLocumComplianceDocuments"
+              :key="referenceLocumComplianceDocument.compliance_document_id"
+            >
+              <AppInput
+                v-model="referenceLocumComplianceDocument.reference"
+                type="text"
+                :name="referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase()"
+                :label="referenceLocumComplianceDocument.compliance_document_name"
+                :error="formError.find(err => err.field === referenceLocumComplianceDocument.compliance_document_name.replace(/ /g, '_').toLowerCase())"
+                :info="'For compliance; to be verified by the hubzz team'"
+                :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
+                required
+                @blur="checkReferenceLocumCompliance(referenceLocumComplianceDocument.compliance_document_name)"
+                @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? inputNumberOnly($event) : alphaNumeric($event)"
+              />
+            </div>
 
-          <AppFilterSearch
-            v-model="form.spoken_language_id"
-            :name="'spoken_language_id'"
-            :label="'Spoken languages'"
-            :placeholder="'Select...'"
-            :info="'Choose other languages you can speak'"
-            :url="'/api/v1/spoken-languages'"
-            :defaultItem="'English'"
-          />
+            <AppFilterSearch
+              v-model="form.qualification_id"
+              :name="'qualification_id'"
+              :label="'Specialty'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'qualification_id')"
+              :info="'Choose at least one qualification'"
+              :url="'/api/v1/qualifications'"
+              :professionCategoryId="true ? null : professionCategoryId.toString()"
+              required
+              @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
+              @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            />
 
-          <AppInput
-            v-model="form.nhs_smart_card_id_number"
-            :type="'text'"
-            :name="'nhs_smart_card_id_number'"
-            :label="'Your NHS Smart Card ID number'"
-            :error="formError.find(item => item.field === 'nhs_smart_card_id_number')"
-            :limit="12"
-            @keydown="inputNumberOnly($event)"
-            @submit="updateLocumProfile"
-          />
+            <AppFilterSearch
+              v-model="form.clinical_system_id"
+              :name="'clinical_system_id'"
+              :label="'Clinical systems'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'clinical_system_id')"
+              :info="'Choose at least one IT system'"
+              :url="'/api/v1/clinical-systems'"
+              required
+              @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+              @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            />
 
-          <AppInput
-            v-model="form.headline"
-            :type="'text'"
-            :name="'headline'"
-            :label="'Headline'"
-            :info="'A short headline about yourself to show to Practices'"
-            @submit="updateLocumProfile"
-          />
-
-          <AppInput
-            v-model="form.short_biography"
-            :type="'textarea'"
-            :name="'short_biography'"
-            :label="'Short Biography'"
-            :info="'A little bit about yourself to inform to the Practices'"
-            :resize="false"
-            @submit="updateLocumProfile"
-          />
-
-          <AppInput
-            v-model="form.special_requirements"
-            :type="'textarea'"
-            :name="'special_requirements'"
-            :label="'Special requirements'"
-            :info="'Information for Practices for your own needs'"
-            :resize="false"
-            @submit="updateLocumProfile"
-          />
-
-          <div>Select which jobs to view:</div>
-
-          <AppInput
-            v-model="form.view_locum_jobs"
-            :type="'single-checkbox'"
-            :name="'view_locum_jobs'"
-            :label="'Hubzz Locum Jobs'"
-            :error="formError.find(item => item.field === 'view_locum_jobs')"
-          />
-
-          <AppInput
-            v-model="form.view_permanent_jobs"
-            :type="'single-checkbox'"
-            :name="'view_permanent_jobs'"
-            :label="'Permanent / Salaried Roles'"
-            :error="formError.find(item => item.field === 'view_permanent_jobs')"
-          />
-
-          <div v-if="form.view_permanent_jobs" class="px-4">
-            <div>Please Pick at least One(1) Salaried Role Work Hours</div>
-
-            <AppInput
-              v-model="form.view_permanent_jobs_full_time"
-              :type="'single-checkbox'"
-              :name="'view_permanent_jobs_full_time'"
-              :label="'Full Time'"
-              :error="formError.find(item => item.field === 'view_permanent_jobs_full_time')"
+            <AppFilterSearch
+              v-model="form.spoken_language_id"
+              :name="'spoken_language_id'"
+              :label="'Spoken languages'"
+              :placeholder="'Select...'"
+              :info="'Choose other languages you can speak'"
+              :url="'/api/v1/spoken-languages'"
+              :defaultItem="'English'"
             />
 
             <AppInput
-              v-model="form.view_permanent_jobs_part_time"
-              :type="'single-checkbox'"
-              :name="'view_permanent_jobs_part_time'"
-              :label="'Part Time'"
-              :error="formError.find(item => item.field === 'view_permanent_jobs_part_time')"
-            />
-          </div>
-
-          <div class="flex flex-col my-8">
-            <div class="relative flex flex-row flex-wrap justify-between">
-              <label for="rates" class="text-xs sm:text-sm py-1">
-                <span>Your preferred rates £</span>
-
-                <small>(minimum)</small>
-              </label>
-
-              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">
-                <span>To match available jobs with</span>
-              </div>
-            </div>
-
-            <div class="flex flex-row flex-wrap justify-between">
-              <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <div class="flex flex-row flex-no-wrap">
-                  <AppInput
-                    v-model="form.min_rate_per_hour"
-                    :type="'number'"
-                    :name="'min_rate_per_hour'"
-                    :label="'Per Hour £'"
-                    :error="formError.find(item => item.field === 'min_rate_per_hour')"
-                    required
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
-                  />
-
-                  <div class="mx-1" />
-                </div>
-              </div>
-
-              <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <div class="flex flex-row flex-no-wrap">
-                  <AppInput
-                    v-model="form.min_rate_per_half_day_session"
-                    :type="'number'"
-                    :name="'min_rate_per_half_day_session'"
-                    :label="'Per Half Day Session £'"
-                    :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
-                    required
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
-                  />
-
-                  <div class="mx-1" />
-                </div>
-              </div>
-
-              <div class="flex flex-col w-full sm:w-1/3 px-1">
-                <div class="flex flex-row flex-no-wrap">
-                  <AppInput
-                    v-model="form.min_rate_per_whole_day_session"
-                    :type="'number'"
-                    :name="'min_rate_per_whole_day_session'"
-                    :label="'Per Whole Day Session £'"
-                    :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
-                    required
-                    @submit="updateLocumProfile"
-                    @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
-                  />
-
-                  <div class="mx-1" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <AppInput
-            v-model="form.mandatory_training_id"
-            :type="'multi-checkbox'"
-            :name="'mandatory_training_id'"
-            :label="'Please select mandatory training courses completed.'"
-            :lists="mandatoryTrainings"
-            @checked="form.mandatory_training_id.push(parseInt($event))"
-            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
-            @uncheckAll="form.mandatory_training_id = []"
-          />
-
-          <AppInput
-            v-model="form.other_mandatory_training_id"
-            :type="'multi-checkbox'"
-            :name="'other_mandatory_training_id'"
-            :label="'Other mandatory training courses you completed'"
-            :lists="otherMandatoryTrainings"
-            updatable
-            @checked="form.other_mandatory_training_id.push(parseInt($event))"
-            @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
-            @uncheckAll="form.other_mandatory_training_id = []"
-            @addList="addList"
-            @updateList="updateList"
-            @remove="toggleRemoveMandatoryModal"
-          />
-
-          <AppInput
-            v-model="form.practice_type_id"
-            :type="'multi-checkbox'"
-            :name="'practice_type_id'"
-            :label="'What type of Practice(s) would you like to work for?'"
-            :error="formError.find(item => item.field === 'practice_type_id')"
-            :lists="practiceTypesSelectionList"
-            required
-            :showSelectAll="true"
-            @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-            @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-            @selectAll="form.practice_type_id = practiceTypesSelectionList.map(({ value }) => value), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-            @unselectAll="() => form.practice_type_id = []"
-          />
-
-          <AppInput
-            v-model="form.vat_registered"
-            :type="'single-checkbox'"
-            :name="'vat_registered'"
-            :label="'Are you VAT Registered?'"
-            :error="formError.find(item => item.field === 'vat_registered')"
-          />
-
-          <AppInput
-            v-if="form.vat_registered"
-            v-model="form.vat_number"
-            :type="'numberDash'"
-            :name="'vat_number'"
-            :label="'VAT Number'"
-            :error="formError.find(item => item.field === 'vat_number')"
-            :limit="11"
-            @submit="updateLocumProfile"
-          />
-
-          <section v-if="false && form.vat_registered">
-            <div class="flex flex-col mb-3 md:mb-6 py-2">
-              <div class="relative flex flex-wrap leading-none items-center">
-                <label class="text-xs sm:text-sm py-1">
-                  <span>VAT Number</span>
-
-                  <span class="text-red-500">*</span>
-                </label>
-              </div>
-
-              <div class="flex flex-row justify-start mt-1">
-                <div class="flex flex-col w-full">
-                  <div class="flex items-center justify-start">
-                    <input
-                      v-model="form.vat_number"
-                      class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-                      :class="[formError.find(item => item.field === 'vat_number') ? 'border-red-500' : '']"
-                    >
-                  </div>
-
-                  <transition name="drop-down">
-                    <div
-                      v-if="formError.find(item => item.field === 'vat_number')"
-                      class="text-red-500 py-1 text-xs text-white"
-                    >
-                      {{
-                        formError.find(item => item.field === 'vat_number').message.charAt(0).toUpperCase()
-                          + formError.find(item => item.field === 'vat_number').message.slice(1).replace(/_/g, " ")
-                      }}
-                    </div>
-                  </transition>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <div v-if="form.vat_registered === true" class="flex flex-col items-start mb-4">
-            <p class="text-sm">
-              VAT Certificate
-              <span class="text-red-500">*</span>
-            </p>
-            <div class="flex items-center">
-              <div
-                class="flex flex-row flex-no-wrap justify-center items-center px-4 py-1 my-2 text-sm rounded bg-yellow-500 cursor-pointer hover:underline"
-              >
-                <input
-                  id="file"
-                  type="file"
-                  class="inputfile hidden"
-                  accept="image/jpeg, .pdf., .docx, .msword"
-                  @input="onVATFileInput($event)"
-                  @click.stop
-                >
-
-                <svgicon name="cloud-upload" height="18" width="18" />
-
-                <label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
-              </div>
-              <p
-                v-if="form.vat_certificate && form.vat_certificate.name"
-                class="text-sm mx-2"
-              >
-                {{ form.vat_certificate.name }}
-              </p>
-            </div>
-            <transition name="drop-down">
-              <div
-                v-if="formError.find(item => item.field === 'vat_certificate')"
-                class="text-red-500 py-1 text-xs text-white"
-              >
-                {{ formError.find(item => item.field === 'vat_certificate').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'vat_certificate').message.slice(1).replace(/_/g, " ") }}
-              </div>
-            </transition>
-          </div>
-
-          <AppInput
-            v-model="form.employment_type"
-            :type="'select'"
-            :name="'employment_type'"
-            :label="'Are you...?'"
-            :items="employmentTypes"
-            required
-          />
-
-          <template v-if="form.employment_type === 'Limited Company'">
-            <AppInput
-              v-model="form.company_registration_number"
+              v-model="form.nhs_smart_card_id_number"
               :type="'text'"
-              :name="'company_registration_number'"
-              :label="'Company Registration Number'"
-              :error="formError.find(item => item.field === 'company_registration_number')"
-              :placeholder="'The number of your company from Companies House'"
-              required
+              :name="'nhs_smart_card_id_number'"
+              :label="'Your NHS Smart Card ID number'"
+              :error="formError.find(item => item.field === 'nhs_smart_card_id_number')"
+              :limit="12"
+              @keydown="inputNumberOnly($event)"
+              @submit="updateLocumProfile"
             />
-            <div class="flex flex-col items-start mb-4">
+
+            <AppInput
+              v-model="form.headline"
+              :type="'text'"
+              :name="'headline'"
+              :label="'Headline'"
+              :info="'A short headline about yourself to show to Practices'"
+              @submit="updateLocumProfile"
+            />
+
+            <AppInput
+              v-model="form.short_biography"
+              :type="'textarea'"
+              :name="'short_biography'"
+              :label="'Short Biography'"
+              :info="'A little bit about yourself to inform to the Practices'"
+              :resize="false"
+              @submit="updateLocumProfile"
+            />
+
+            <AppInput
+              v-model="form.special_requirements"
+              :type="'textarea'"
+              :name="'special_requirements'"
+              :label="'Special requirements'"
+              :info="'Information for Practices for your own needs'"
+              :resize="false"
+              @submit="updateLocumProfile"
+            />
+
+            <AppInput
+              v-model="form.vat_registered"
+              :type="'single-checkbox'"
+              :name="'vat_registered'"
+              :label="'Are you VAT Registered?'"
+              :error="formError.find(item => item.field === 'vat_registered')"
+            />
+
+            <AppInput
+              v-if="form.vat_registered"
+              v-model="form.vat_number"
+              :type="'numberDash'"
+              :name="'vat_number'"
+              :label="'VAT Number'"
+              :error="formError.find(item => item.field === 'vat_number')"
+              :limit="11"
+              @submit="updateLocumProfile"
+            />
+
+            <section v-if="false && form.vat_registered">
+              <div class="flex flex-col mb-3 md:mb-6 py-2">
+                <div class="relative flex flex-wrap leading-none items-center">
+                  <label class="text-xs sm:text-sm py-1">
+                    <span>VAT Number</span>
+
+                    <span class="text-red-500">*</span>
+                  </label>
+                </div>
+
+                <div class="flex flex-row justify-start mt-1">
+                  <div class="flex flex-col w-full">
+                    <div class="flex items-center justify-start">
+                      <input
+                        v-model="form.vat_number"
+                        class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
+                        :class="[formError.find(item => item.field === 'vat_number') ? 'border-red-500' : '']"
+                      >
+                    </div>
+
+                    <transition name="drop-down">
+                      <div
+                        v-if="formError.find(item => item.field === 'vat_number')"
+                        class="text-red-500 py-1 text-xs text-white"
+                      >
+                        {{
+                          formError.find(item => item.field === 'vat_number').message.charAt(0).toUpperCase()
+                            + formError.find(item => item.field === 'vat_number').message.slice(1).replace(/_/g, " ")
+                        }}
+                      </div>
+                    </transition>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div v-if="form.vat_registered === true" class="flex flex-col items-start mb-4">
               <p class="text-sm">
-                Certificate of Incorporation
+                VAT Certificate
                 <span class="text-red-500">*</span>
               </p>
               <div class="flex items-center">
@@ -400,382 +197,602 @@
                   class="flex flex-row flex-no-wrap justify-center items-center px-4 py-1 my-2 text-sm rounded bg-yellow-500 cursor-pointer hover:underline"
                 >
                   <input
-                    id="fileInc"
+                    id="file"
                     type="file"
                     class="inputfile hidden"
                     accept="image/jpeg, .pdf., .docx, .msword"
-                    @input="onIncFileInput($event)"
+                    @input="onVATFileInput($event)"
                     @click.stop
                   >
 
                   <svgicon name="cloud-upload" height="18" width="18" />
 
-                  <label for="fileInc" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  <label for="file" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
                 <p
-                  v-if="form.certificate_of_incorporation && form.certificate_of_incorporation.name"
+                  v-if="form.vat_certificate && form.vat_certificate.name"
                   class="text-sm mx-2"
                 >
-                  {{ form.certificate_of_incorporation.name }}
+                  <a
+                    :href="user.vat_cert_file_url"
+                    :download="user.vat_cert_file_filename"
+                    target="_blank"
+                    class="truncate"
+                    @click.stop.prevent="downloadItem(user.vat_cert_file_url, user.vat_cert_file_filename)"
+                  >
+                    <span class="underline">{{ user.vat_cert_file_filename }}</span>
+                  </a>
                 </p>
               </div>
               <transition name="drop-down">
                 <div
-                  v-if="formError.find(item => item.field === 'certificate_of_incorporation')"
+                  v-if="formError.find(item => item.field === 'vat_certificate')"
                   class="text-red-500 py-1 text-xs text-white"
                 >
-                  {{ formError.find(item => item.field === 'certificate_of_incorporation').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'certificate_of_incorporation').message.slice(1).replace(/_/g, " ") }}
+                  {{ formError.find(item => item.field === 'vat_certificate').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'vat_certificate').message.slice(1).replace(/_/g, " ") }}
                 </div>
               </transition>
             </div>
-          </template>
-
-          <template v-if="form.employment_type === 'Self-Employed'">
-            <AppInput
-              v-model="form.utr_number"
-              :type="'text'"
-              :name="'utr_number'"
-              :label="'UTR number'"
-              :error="formError.find(item => item.field === 'utr_number')"
-              :placeholder="'0000000000'"
-              :limit="10"
-              required
-              @keydown="alphaNumeric($event)"
-            />
-          </template>
-
-          <AppInput
-            v-model="form.paid_under_payroll"
-            :type="'select'"
-            :name="'paid_under_payroll'"
-            :label="'Are you paid under payroll?'"
-            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            required
-          />
-
-          <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
-            <div class="font-bold text-sm my-4">
-              Payroll Details
-            </div>
 
             <AppInput
-              v-model="form.payroll_account_name"
-              :type="'text'"
-              :name="'payroll_account_name'"
-              :label="'Payroll Company Name'"
-              :error="formError.find(item => item.field === 'payroll_account_name')"
+              v-model="form.employment_type"
+              :type="'select'"
+              :name="'employment_type'"
+              :label="'Are you...?'"
+              :items="employmentTypes"
               required
             />
 
-            <AppInput
-              v-model="form.payroll_bank_name"
-              :type="'text'"
-              :name="'payroll_bank_name'"
-              :label="'Bank Name'"
-              :error="formError.find(item => item.field === 'payroll_bank_name')"
-              required
-            />
-
-            <AppInput
-              v-model="form.payroll_sort_code"
-              :type="'numberDash'"
-              :name="'payroll_sort_code'"
-              :label="'Sort Code'"
-              :error="formError.find(item => item.field === 'payroll_sort_code')"
-              :limit="8"
-              required
-            />
-
-            <AppInput
-              v-model="form.payroll_account_number"
-              :type="'number'"
-              :name="'payroll_account_number'"
-              :label="'Payroll Bank Account Number'"
-              :error="formError.find(item => item.field === 'payroll_account_number')"
-              :limit="8"
-              required
-              @keydown="inputNumberOnly($event)"
-            />
-
-            <AppInput
-              v-model="form.payroll_reference_number"
-              :type="'number'"
-              :name="'payroll_reference_number'"
-              :label="'Payroll Reference Number'"
-              :error="formError.find(item => item.field === 'payroll_reference_number')"
-              required
-            />
-          </template>
-
-          <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
-            <div class="font-bold text-sm my-4">
-              Bank Details
-            </div>
-
-            <AppInput
-              v-model="form.account_name"
-              :type="'text'"
-              :name="'account_name'"
-              :label="'Account Name'"
-              :error="formError.find(item => item.field === 'account_name')"
-              required
-            />
-
-            <AppInput
-              v-model="form.bank_name"
-              :type="'text'"
-              :name="'bank_name'"
-              :label="'Bank Name'"
-              :error="formError.find(item => item.field === 'bank_name')"
-              required
-            />
-
-            <AppInput
-              v-model="form.sort_code"
-              :type="'numberDash'"
-              :name="'sort_code'"
-              :label="'Sort Code'"
-              :error="formError.find(item => item.field === 'sort_code')"
-              :limit="8"
-              required
-              @keydown="inputNumberOnly($event)"
-            />
-
-            <AppInput
-              v-model="form.account_number"
-              :type="'text'"
-              :name="'account_number'"
-              :label="'Account Number'"
-              :error="formError.find(item => item.field === 'account_number')"
-              :limit="8"
-              required
-              @keydown="inputNumberOnly($event)"
-            />
-          </template>
-
-          <template v-if="professionCategoryId === 1">
-            <AppInput
-              v-model="form.ir35"
-              :type="'single-checkbox'"
-              :name="'ir35'"
-              :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-            />
-          </template>
-
-          <template v-if="professionCategoryId === 1">
-            <AppInput
-              v-model="form.claim_nhs"
-              :type="'single-checkbox'"
-              :name="'claim_nhs'"
-              :label="'Are you willing to claim NHS Pension contributions?'"
-            />
-
-            <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+            <template v-if="form.employment_type === 'Limited Company'">
               <AppInput
-                v-model="form.epc_percentage_rate"
-                :type="'select'"
-                :name="'epc_percentage_rate'"
-                :label="'Employee pension contribution rate'"
-                :items="[
-                  { label: '5%', value: 5 },
-                  { label: '5.6%', value: 5.6 },
-                  { label: '7.1%', value: 7.1 },
-                  { label: '9.3%', value: 9.3 },
-                  { label: '12.5%', value: 12.5 },
-                  { label: '13.5%', value: 13.5 },
-                  { label: '14.5%', value: 14.5 },
-                ]"
+                v-model="form.company_registration_number"
+                :type="'text'"
+                :name="'company_registration_number'"
+                :label="'Company Registration Number'"
+                :error="formError.find(item => item.field === 'company_registration_number')"
+                :placeholder="'The number of your company from Companies House'"
                 required
               />
+              <div class="flex flex-col items-start mb-4">
+                <p class="text-sm">
+                  Certificate of Incorporation
+                  <span class="text-red-500">*</span>
+                </p>
+                <div class="flex items-center">
+                  <div
+                    class="flex flex-row flex-no-wrap justify-center items-center px-4 py-1 my-2 text-sm rounded bg-yellow-500 cursor-pointer hover:underline"
+                  >
+                    <input
+                      id="fileInc"
+                      type="file"
+                      class="inputfile hidden"
+                      accept="image/jpeg, .pdf., .docx, .msword"
+                      @input="onIncFileInput($event)"
+                      @click.stop
+                    >
 
-              <AppInput
-                v-model="form.section_scheme_year"
-                :type="'select'"
-                :name="'section_scheme_year'"
-                :label="'NHS Pension Scheme Year?'"
-                :items="schemeYearLists"
-                required
-              />
+                    <svgicon name="cloud-upload" height="18" width="18" />
 
+                    <label for="fileInc" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  </div>
+                  <p
+                    v-if="form.certificate_of_incorporation && form.certificate_of_incorporation.name"
+                    class="text-sm mx-2"
+                  >
+                    <a
+                      :href="user.cert_of_incorp_file_url"
+                      :download="user.cert_of_incorp_file_filename"
+                      target="_blank"
+                      class="truncate"
+                      @click.stop.prevent="downloadItem(user.cert_of_incorp_file_url, user.cert_of_incorp_file_filename)"
+                    >
+                      <span class="underline">{{ user.cert_of_incorp_file_filename }}</span>
+                    </a>
+                  </p>
+                </div>
+                <transition name="drop-down">
+                  <div
+                    v-if="formError.find(item => item.field === 'certificate_of_incorporation')"
+                    class="text-red-500 py-1 text-xs text-white"
+                  >
+                    {{ formError.find(item => item.field === 'certificate_of_incorporation').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'certificate_of_incorporation').message.slice(1).replace(/_/g, " ") }}
+                  </div>
+                </transition>
+              </div>
+            </template>
+
+            <template v-if="form.employment_type === 'Self-Employed'">
               <AppInput
-                v-model="form.nhs_number"
+                v-model="form.utr_number"
                 :type="'text'"
-                :name="'nhs_number'"
-                :label="'NHS Pension Scheme membership (SD) number'"
-                :error="formError.find(item => item.field === 'nhs_number')"
-                :limit="8"
+                :name="'utr_number'"
+                :label="'UTR number'"
+                :error="formError.find(item => item.field === 'utr_number')"
+                :placeholder="'0000000000'"
+                :limit="10"
                 required
-                @keypress="inputNumberOnly($event)"
-              />
-              <AppInput
-                v-model="form.ni_number"
-                :type="'text'"
-                :name="'ni_number'"
-                :label="'NI number'"
-                :error="formError.find(item => item.field === 'ni_number')"
-                :placeholder="'AA000000'"
-                :limit="8"
-                required
-              />
-              <AppInput
-                v-model="form.ay_percentage_rate"
-                :type="'number'"
-                :name="'ay_percentage_rate'"
-                :label="'Added Years % Rate'"
-                :error="formError.find(item => item.field === 'ay_percentage_rate')"
-              />
-              <AppInput
-                v-model="form.mpavc_percentage_rate"
-                :type="'number'"
-                :name="'mpavc_percentage_rate'"
-                :label="'Money Purchase AVC % Rate'"
-                :error="formError.find(item => item.field === 'mpavc_percentage_rate')"
-              />
-              <AppInput
-                v-model="form.apc_percentage_rate"
-                :type="'number'"
-                :name="'apc_percentage_rate'"
-                :label="'Additional Pension Contribution'"
-                :error="formError.find(item => item.field === 'apc_percentage_rate')"
-              />
-              <AppInput
-                v-model="form.errbo_percentage_rate"
-                :type="'number'"
-                :name="'errbo_percentage_rate'"
-                :label="'Early Retirement Reduction Buy Out % Rate'"
-                :error="formError.find(item => item.field === 'errbo_percentage_rate')"
-              />
-              <!-- <AppInput
-                v-model="form.pcse_or_lhb_ea_code"
-                :type="'text'"
-                :name="'pcse_or_lhb_ea_code'"
-                :label="'PCSE or LHB EA Code'"
-                :error="formError.find(item => item.field === 'pcse_or_lhb_ea_code')"
-              />-->
-              <AppInput
-                v-model="form.nhs_registration_number"
-                :type="'text'"
-                :name="'nhs_registration_number'"
-                :label="'Registration Number'"
-                :error="formError.find(item => item.field === 'nhs_registration_number')"
+                @keydown="alphaNumeric($event)"
               />
             </template>
-          </template>
 
-          <AppPostCode
-            v-model="form.post_code"
-            :urlIndex="'/api/v1/postcode-coordinates'"
-            :name="'post_code'"
-            :label="'The post code where I will be available at'"
-            :error="formError.find(item => item.field === 'post_code')"
-            required
-            @blur="CheckEmptyField(form.post_code, 'post_code')"
-          />
+            <AppInput
+              v-model="form.paid_under_payroll"
+              :type="'single-checkbox'"
+              :name="'paid_under_payroll'"
+              :label="'Are you paid under payroll?'"
+              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+              required
+            />
 
-          <AppInput
-            v-model="form.miles"
-            :type="'number'"
-            :name="'miles'"
-            :label="`I will travel up to ${form.miles ? form.miles : 0} miles from this postcode`"
-            :error="formError.find(item => item.field === 'miles')"
-            :limit="8"
-            required
-            @blur="CheckEmptyField(form.miles, 'miles')"
-          />
+            <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
+              <div class="font-bold text-sm my-4">
+                Payroll Details
+              </div>
 
-          <div class="text-xs sm:text-sm">
-            Referees
+              <AppInput
+                v-model="form.payroll_account_name"
+                :type="'text'"
+                :name="'payroll_account_name'"
+                :label="'Payroll Company Name'"
+                :error="formError.find(item => item.field === 'payroll_account_name')"
+                required
+              />
+
+              <AppInput
+                v-model="form.payroll_company_email"
+                :type="'text'"
+                :name="'payroll_company_email'"
+                :label="'Payroll Company Email Address'"
+                :error="formError.find(item => item.field === 'payroll_company_email')"
+                required
+              />
+
+              <AppInput
+                v-model="form.payroll_bank_name"
+                :type="'text'"
+                :name="'payroll_bank_name'"
+                :label="'Bank Name'"
+                :error="formError.find(item => item.field === 'payroll_bank_name')"
+                required
+              />
+
+              <AppInput
+                v-model="form.payroll_sort_code"
+                :type="'numberDash'"
+                :name="'payroll_sort_code'"
+                :label="'Sort Code'"
+                :error="formError.find(item => item.field === 'payroll_sort_code')"
+                :limit="8"
+                required
+              />
+
+              <AppInput
+                v-model="form.payroll_account_number"
+                :type="'number'"
+                :name="'payroll_account_number'"
+                :label="'Payroll Bank Account Number'"
+                :error="formError.find(item => item.field === 'payroll_account_number')"
+                :limit="8"
+                required
+                @keydown="inputNumberOnly($event)"
+              />
+
+              <AppInput
+                v-model="form.payroll_reference_number"
+                :type="'number'"
+                :name="'payroll_reference_number'"
+                :label="'Payroll Reference Number'"
+                :error="formError.find(item => item.field === 'payroll_reference_number')"
+                required
+              />
+            </template>
+
+            <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
+              <div class="font-bold text-sm my-4">
+                Bank Details
+              </div>
+
+              <AppInput
+                v-model="form.account_name"
+                :type="'text'"
+                :name="'account_name'"
+                :label="'Account Name'"
+                :error="formError.find(item => item.field === 'account_name')"
+                required
+              />
+
+              <AppInput
+                v-model="form.bank_name"
+                :type="'text'"
+                :name="'bank_name'"
+                :label="'Bank Name'"
+                :error="formError.find(item => item.field === 'bank_name')"
+                required
+              />
+
+              <AppInput
+                v-model="form.sort_code"
+                :type="'numberDash'"
+                :name="'sort_code'"
+                :label="'Sort Code'"
+                :error="formError.find(item => item.field === 'sort_code')"
+                :limit="8"
+                required
+                @keydown="inputNumberOnly($event)"
+              />
+
+              <AppInput
+                v-model="form.account_number"
+                :type="'text'"
+                :name="'account_number'"
+                :label="'Account Number'"
+                :error="formError.find(item => item.field === 'account_number')"
+                :limit="8"
+                required
+                @keydown="inputNumberOnly($event)"
+              />
+            </template>
+
+            <template v-if="professionCategoryId === 1">
+              <AppInput
+                v-model="form.ir35"
+                :type="'single-checkbox'"
+                :name="'ir35'"
+                :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+              />
+            </template>
+
+            <template v-if="professionCategoryId === 1">
+              <AppInput
+                v-model="form.claim_nhs"
+                :type="'single-checkbox'"
+                :name="'claim_nhs'"
+                :label="'Are you willing to claim NHS Pension contributions?'"
+              />
+
+              <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+                <AppInput
+                  v-model="form.epc_percentage_rate"
+                  :type="'select'"
+                  :name="'epc_percentage_rate'"
+                  :label="'Employee pension contribution rate'"
+                  :items="[
+                    { label: '5%', value: 5 },
+                    { label: '5.6%', value: 5.6 },
+                    { label: '7.1%', value: 7.1 },
+                    { label: '9.3%', value: 9.3 },
+                    { label: '12.5%', value: 12.5 },
+                    { label: '13.5%', value: 13.5 },
+                    { label: '14.5%', value: 14.5 },
+                  ]"
+                  required
+                />
+
+                <AppInput
+                  v-model="form.section_scheme_year"
+                  :type="'select'"
+                  :name="'section_scheme_year'"
+                  :label="'NHS Pension Scheme Year?'"
+                  :items="schemeYearLists"
+                  required
+                />
+
+                <AppInput
+                  v-model="form.nhs_number"
+                  :type="'text'"
+                  :name="'nhs_number'"
+                  :label="'NHS Pension Scheme membership (SD) number'"
+                  :error="formError.find(item => item.field === 'nhs_number')"
+                  :limit="8"
+                  required
+                  @keypress="inputNumberOnly($event)"
+                />
+                <AppInput
+                  v-model="form.ni_number"
+                  :type="'text'"
+                  :name="'ni_number'"
+                  :label="'NI number'"
+                  :error="formError.find(item => item.field === 'ni_number')"
+                  :placeholder="'AA000000'"
+                  :limit="8"
+                  required
+                />
+                <AppInput
+                  v-model="form.ay_percentage_rate"
+                  :type="'number'"
+                  :name="'ay_percentage_rate'"
+                  :label="'Added Years % Rate'"
+                  :error="formError.find(item => item.field === 'ay_percentage_rate')"
+                />
+                <AppInput
+                  v-model="form.mpavc_percentage_rate"
+                  :type="'number'"
+                  :name="'mpavc_percentage_rate'"
+                  :label="'Money Purchase AVC % Rate'"
+                  :error="formError.find(item => item.field === 'mpavc_percentage_rate')"
+                />
+                <AppInput
+                  v-model="form.apc_percentage_rate"
+                  :type="'number'"
+                  :name="'apc_percentage_rate'"
+                  :label="'Additional Pension Contribution'"
+                  :error="formError.find(item => item.field === 'apc_percentage_rate')"
+                />
+                <AppInput
+                  v-model="form.errbo_percentage_rate"
+                  :type="'number'"
+                  :name="'errbo_percentage_rate'"
+                  :label="'Early Retirement Reduction Buy Out % Rate'"
+                  :error="formError.find(item => item.field === 'errbo_percentage_rate')"
+                />
+                <!-- <AppInput
+                  v-model="form.pcse_or_lhb_ea_code"
+                  :type="'text'"
+                  :name="'pcse_or_lhb_ea_code'"
+                  :label="'PCSE or LHB EA Code'"
+                  :error="formError.find(item => item.field === 'pcse_or_lhb_ea_code')"
+                />-->
+                <AppInput
+                  v-model="form.nhs_registration_number"
+                  :type="'text'"
+                  :name="'nhs_registration_number'"
+                  :label="'Registration Number'"
+                  :error="formError.find(item => item.field === 'nhs_registration_number')"
+                />
+              </template>
+            </template>
+
+            <AppPostCode
+              v-model="form.post_code"
+              :urlIndex="'/api/v1/postcode-coordinates'"
+              :name="'post_code'"
+              :label="'The post code where I will be available at'"
+              :error="formError.find(item => item.field === 'post_code')"
+              required
+              @blur="CheckEmptyField(form.post_code, 'post_code')"
+            />
+
+            <AppInput
+              v-model="form.miles"
+              :type="'number'"
+              :name="'miles'"
+              :label="`I will travel up to ${form.miles ? form.miles : 0} miles from this postcode`"
+              :error="formError.find(item => item.field === 'miles')"
+              :limit="8"
+              required
+              @blur="CheckEmptyField(form.miles, 'miles')"
+            />
           </div>
+          <div class="w-full md:w-1/2">
+            <div class="rounded-lg border p-4 mb-4">
+              <div>Select which jobs to view:</div>
 
-          <div class="rounded-lg bg-gray-400 p-8 my-2">
-            <AppInput
-              v-model="form.referee_1_contact_name"
-              :type="'text'"
-              :name="'referee_1_contact_name'"
-              :label="'Contact name'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :error="formError.find(item => item.field === 'referee_1_contact_name')"
-            />
+              <AppInput
+                v-model="form.view_locum_jobs"
+                :type="'single-checkbox'"
+                :name="'view_locum_jobs'"
+                :label="'Hubzz Locum Jobs'"
+                :error="formError.find(item => item.field === 'view_locum_jobs')"
+              />
 
-            <AppInput
-              v-model="form.referee_1_position"
-              :type="'text'"
-              :name="'referee_1_position'"
-              :label="'Position'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :error="formError.find(item => item.field === 'referee_1_position')"
-            />
+              <AppInput
+                v-model="form.view_permanent_jobs"
+                :type="'single-checkbox'"
+                :name="'view_permanent_jobs'"
+                :label="'Permanent / Salaried Roles'"
+                :error="formError.find(item => item.field === 'view_permanent_jobs')"
+              />
 
-            <AppInput
-              v-model="form.referee_1_phone_number"
-              :type="'text'"
-              :name="'referee_1_phone_number'"
-              :error="formError.find(item => item.field === 'referee_1_phone_number')"
-              :label="'Telephone number'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :limit="11"
-              @keypress="inputTelephone($event)"
-            />
+              <div v-if="form.view_permanent_jobs" class="px-4">
+                <div>Please Pick at least One(1) Salaried Role Work Hours</div>
 
-            <AppInput
-              v-model="form.referee_1_email"
-              :type="'text'"
-              :name="'referee_1_email'"
-              :label="'Email address'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :error="formError.find(item => item.field === 'referee_1_email')"
-            />
-          </div>
+                <AppInput
+                  v-model="form.view_permanent_jobs_full_time"
+                  :type="'single-checkbox'"
+                  :name="'view_permanent_jobs_full_time'"
+                  :label="'Full Time'"
+                  :error="formError.find(item => item.field === 'view_permanent_jobs_full_time')"
+                />
 
-          <div class="rounded-lg bg-gray-400 p-8 my-2">
-            <AppInput
-              v-model="form.referee_2_contact_name"
-              :type="'text'"
-              :name="'referee_2_contact_name'"
-              :label="'Contact name'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :error="formError.find(item => item.field === 'referee_2_contact_name')"
-            />
+                <AppInput
+                  v-model="form.view_permanent_jobs_part_time"
+                  :type="'single-checkbox'"
+                  :name="'view_permanent_jobs_part_time'"
+                  :label="'Part Time'"
+                  :error="formError.find(item => item.field === 'view_permanent_jobs_part_time')"
+                />
+              </div>
 
-            <AppInput
-              v-model="form.referee_2_position"
-              :type="'text'"
-              :name="'referee_2_position'"
-              :label="'Position'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :error="formError.find(item => item.field === 'referee_2_position')"
-            />
+              <div class="flex flex-col my-6">
+                <div class="relative flex flex-row flex-wrap items-center justify-between">
+                  <label for="rates" class="text-xs sm:text-sm py-1">
+                    <span>Your preferred rates £</span>
 
-            <AppInput
-              v-model="form.referee_2_phone_number"
-              :type="'text'"
-              :name="'referee_2_phone_number'"
-              :error="formError.find(item => item.field === 'referee_2_phone_number')"
-              :label="'Telephone number'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :limit="11"
-              @keypress="inputTelephone($event)"
-            />
+                    <small>(minimum)</small>
+                  </label>
 
-            <AppInput
-              v-model="form.referee_2_email"
-              :type="'text'"
-              :name="'referee_2_email'"
-              :label="'Email address'"
-              :inStyle="'background-color:#dae1e7;border-color:white'"
-              :error="formError.find(item => item.field === 'referee_2_email')"
-            />
-          </div>
+                  <div class="rounded bg-gray-300 px-4 text-xs sm:text-sm">
+                    <span>To match available jobs with</span>
+                  </div>
+                </div>
 
-          <div class="text-left mt-5">
-            <AppButton :label="'Save changes'" @click="updateLocumProfile" />
+                <div class="flex flex-col md:flex-row justify-between">
+                  <div class="flex flex-col w-full md:w-1/3 md:pr-2">
+                      <AppInput
+                        v-model="form.min_rate_per_hour"
+                        :type="'number'"
+                        :name="'min_rate_per_hour'"
+                        :label="'Per Hour £'"
+                        :error="formError.find(item => item.field === 'min_rate_per_hour')"
+                        required
+                        @submit="updateLocumProfile"
+                        @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                      />
+                  </div>
+
+                  <div class="flex flex-col w-full md:w-1/3 md:px-2">
+                      <AppInput
+                        v-model="form.min_rate_per_half_day_session"
+                        :type="'number'"
+                        :name="'min_rate_per_half_day_session'"
+                        :label="'Per Half Day Session £'"
+                        :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
+                        required
+                        @submit="updateLocumProfile"
+                        @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+                      />
+                  </div>
+
+                  <div class="flex flex-col w-full md:w-1/3 md:pl-2">
+                      <AppInput
+                        v-model="form.min_rate_per_whole_day_session"
+                        :type="'number'"
+                        :name="'min_rate_per_whole_day_session'"
+                        :label="'Per Whole Day Session £'"
+                        :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
+                        required
+                        @submit="updateLocumProfile"
+                        @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+                      />
+                  </div>
+                </div>
+              </div>
+
+              <AppInput
+                v-model="form.mandatory_training_id"
+                :type="'multi-checkbox'"
+                :name="'mandatory_training_id'"
+                :label="'Please select mandatory training courses completed.'"
+                :lists="mandatoryTrainings"
+                @checked="form.mandatory_training_id.push(parseInt($event))"
+                @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
+                @uncheckAll="form.mandatory_training_id = []"
+              />
+
+              <AppInput
+                v-model="form.other_mandatory_training_id"
+                :type="'multi-checkbox'"
+                :name="'other_mandatory_training_id'"
+                :label="'Other mandatory training courses you completed'"
+                :lists="otherMandatoryTrainings"
+                updatable
+                @checked="form.other_mandatory_training_id.push(parseInt($event))"
+                @unchecked="form.other_mandatory_training_id = form.other_mandatory_training_id.filter(id => id !== parseInt($event))"
+                @uncheckAll="form.other_mandatory_training_id = []"
+                @addList="addList"
+                @updateList="updateList"
+                @remove="toggleRemoveMandatoryModal"
+              />
+
+              <AppInput
+                v-model="form.practice_type_id"
+                :type="'multi-checkbox'"
+                :name="'practice_type_id'"
+                :label="'What type of Practice(s) would you like to work for?'"
+                :error="formError.find(item => item.field === 'practice_type_id')"
+                :lists="practiceTypesSelectionList"
+                required
+                :showSelectAll="true"
+                @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+                @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+                @selectAll="form.practice_type_id = practiceTypesSelectionList.map(({ value }) => value), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+                @unselectAll="() => form.practice_type_id = []"
+              />
+            </div>
+
+            <div class="text-xs sm:text-sm">
+              Referees
+            </div>
+
+            <div class="rounded-lg bg-gray-400 p-4 my-4">
+              <AppInput
+                v-model="form.referee_1_contact_name"
+                :type="'text'"
+                :name="'referee_1_contact_name'"
+                :label="'Contact name'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :error="formError.find(item => item.field === 'referee_1_contact_name')"
+              />
+
+              <AppInput
+                v-model="form.referee_1_position"
+                :type="'text'"
+                :name="'referee_1_position'"
+                :label="'Position'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :error="formError.find(item => item.field === 'referee_1_position')"
+              />
+
+              <AppInput
+                v-model="form.referee_1_phone_number"
+                :type="'text'"
+                :name="'referee_1_phone_number'"
+                :error="formError.find(item => item.field === 'referee_1_phone_number')"
+                :label="'Telephone number'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :limit="11"
+                @keydown="inputNumberOnly($event)"
+              />
+
+              <AppInput
+                v-model="form.referee_1_email"
+                :type="'text'"
+                :name="'referee_1_email'"
+                :label="'Email address'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :error="formError.find(item => item.field === 'referee_1_email')"
+              />
+            </div>
+
+            <div class="rounded-lg bg-gray-400 p-4 my-4">
+              <AppInput
+                v-model="form.referee_2_contact_name"
+                :type="'text'"
+                :name="'referee_2_contact_name'"
+                :label="'Contact name'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :error="formError.find(item => item.field === 'referee_2_contact_name')"
+              />
+
+              <AppInput
+                v-model="form.referee_2_position"
+                :type="'text'"
+                :name="'referee_2_position'"
+                :label="'Position'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :error="formError.find(item => item.field === 'referee_2_position')"
+              />
+
+              <AppInput
+                v-model="form.referee_2_phone_number"
+                :type="'text'"
+                :name="'referee_2_phone_number'"
+                :error="formError.find(item => item.field === 'referee_2_phone_number')"
+                :label="'Telephone number'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :limit="11"
+                @keydown="inputNumberOnly($event)"
+              />
+
+              <AppInput
+                v-model="form.referee_2_email"
+                :type="'text'"
+                :name="'referee_2_email'"
+                :label="'Email address'"
+                :inStyle="'background-color:#dae1e7;border-color:white'"
+                :error="formError.find(item => item.field === 'referee_2_email')"
+              />
+            </div>
+            <div class="flex justify-end mt-5">
+              <AppButton :label="'Save changes'" @click="updateLocumProfile" />
+            </div>
           </div>
         </form>
       </div>
     </div>
 
     <div class="w-full lg:w-auto mb-4 lg:mb-0 p-0 lg:pr-4 order-1 lg:order-2">
-      <div class="rounded-lg shadow-lg w-full py-8 px-12">
+      <div class="rounded-lg border py-4 px-12">
         <AppAvatar
           class="m-auto"
           :type="'update'"
@@ -791,6 +808,8 @@
         </div>
       </div>
     </div>
+
+    
 
     <AppConfirmationModal
       :label="'Proceed to remove this mandatory traning?'"
@@ -893,6 +912,7 @@ export default {
         utr_number: "",
         paid_under_payroll: false,
         payroll_account_name: "",
+        payroll_company_email: "",
         payroll_bank_name: "",
         payroll_sort_code: "",
         payroll_account_number: "",
@@ -1469,6 +1489,7 @@ export default {
       this.form.paid_under_payroll = this.user.paid_under_payroll
 
       this.form.payroll_account_name = this.user.payroll_account_name
+      this.form.payroll_company_email = this.user.payroll_company_email
       this.form.payroll_account_number = this.user.payroll_account_number
       this.form.payroll_reference_number = this.user.payroll_reference_number
       this.form.payroll_sort_code = this.user.payroll_sort_code
@@ -1874,12 +1895,14 @@ export default {
 
       if (["false", false,].includes(this.form.paid_under_payroll)) {
         // this.form.payroll_account_name = ""
+        // this.form.payroll_company_email = ""
         // this.form.payroll_account_number = ""
         // this.form.payroll_reference_number = ""
         // this.form.payroll_sort_code = ""
         // this.form.payroll_bank_name = ""
         notRequired.push(
           "payroll_account_name",
+          "payroll_company_email",
           "payroll_bank_name",
           "payroll_sort_code",
           "payroll_account_number",
@@ -2230,6 +2253,24 @@ export default {
       this.new_certificate_of_incorporation = true
 
       console.log("cert file", this.form.certificate_of_incorporation)
+    },
+
+    downloadItem (fileUrl, fileName) {
+      const axios = require("axios")
+
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob", // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data,]))
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
     },
   },
 }

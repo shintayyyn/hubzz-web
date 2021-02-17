@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
+  <div class="relative bg-white rounded-lg border p-4 mt-4">
     <template v-if="true || isReadyToApply">
       <div class="text-sm sm:text-base mb-4">
         This job is still open
@@ -14,7 +14,7 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal && job.variation_terms_file" class="modal-container shadow-lg">
+              <div v-if="modal && job.variation_terms_file" class="modal-container shadow-lg py-4">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Variation Terms
@@ -47,7 +47,7 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg">
+              <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg py-4">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Standard Terms
@@ -83,7 +83,7 @@
           </div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <transition name="slide" mode="out-in">
-              <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg">
+              <div v-if="modal && job.standard_terms_file" class="modal-container shadow-lg py-4">
                 <AppLoading :loading="loading" spinner />
                 <div class="h-full w-full px-6">
                   Standard Terms

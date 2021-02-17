@@ -1,26 +1,23 @@
 <template>
-  <div class="info-section h-full rounded-b-lg lg:rounded-b-none lg:rounded-r-lg pb-4">
-    <div class="text-center leading-relaxed py-4">
-      <p class="text-gray-900 quick-view text-sm">
-        QUICK VIEW
-      </p>
-
-      <p class="text-white uppercase text-lg font-bold">
+  <div class="info-section h-full rounded border py-4">
+    <div class="leading-relaxed px-2">
+      <p class="text-gray-600 font-bold text-sm">Quick View</p>
+<!--  <p class="uppercase text-lg font-bold">
         {{ $moment(dateInfo).format('DD / MM / YYYY') }}
-      </p>
+      </p> -->
     </div>
 
-    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-2 mx-2 h-full info-card">
+    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-2 h-full info-card">
       <transition name="slide" mode="out-in">
         <div
           v-if="!viewPracticeJobs && !viewLocumJobs && !loading"
           key="'no-jobs'"
-          class="mt-4 text-white text-center"
+          class="mt-4  text-center"
         >
           No jobs to display.
         </div>
 
-        <div v-if="viewPracticeJobs && !loading">
+        <div v-if="viewPracticeJobs && !loading" class="py-2">
           <div v-for="job in foundPracticeJobs" :key="`${job.id}-${job.status}`">
             <PracticeJobCard
               :propJob="job"
@@ -464,10 +461,10 @@ export default {
 <style scoped>
 .info-section {
 	/* background-image: url("/images/hubzz-bg.png"); */
-	background-image: linear-gradient(#60686a, #363d40);
+	/* background-image: linear-gradient(#60686a, #363d40); */
 }
 .quick-view {
-	text-shadow: 0 2px #7d888a;
+	/* text-shadow: 0 2px #7d888a; */
 	letter-spacing: 4px;
 }
 .info-card {

@@ -1,33 +1,37 @@
 <template>
   <section>
-    <div v-on-clickaway="toggledOff" class="relative flex flex-col py-2 mb-3 md:mb-6">
-      <div class="relative flex flex-row flex-wrap justify-between">
-        <label :for="name" class="text-xs sm:text-sm py-1">
+    <div v-on-clickaway="toggledOff" class="relative flex flex-col mb-3 md:mb-4">
+       <div
+          v-if="label || info"
+          class="relative flex flex-wrap leading-none mb-1"
+          :class="info ? 'flex-wrap justify-between' : 'items-center'"
+        >
+        <label v-if="label" :for="name" class="text-xs sm:text-sm py-1">
           {{ label }}
           <span v-if="required" class="text-red-500">*</span>
         </label>
 
-        <div v-if="info" class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm">
+        <div v-if="info" class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm">
           {{ info }}
         </div>
       </div>
 
-      <div class="relative flex flex-row flex-wrap justify-start">
-        <div v-if="defaultItem" class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm">
+      <div class="relative flex flex-row flex-wrap items-center justify-start">
+        <div v-if="defaultItem" class="rounded-lg bg-sunglow py-1 px-3 m-1 text-xs sm:text-sm flex items-center justify-between">
           {{ defaultItem }}
         </div>
 
         <div
           v-for="(item, index) in value"
           :key="`${item.value}-${index}`"
-          class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm flex items-center justify-between"
+          class="rounded-lg bg-sunglow py-1 px-3 m-1 text-xs sm:text-sm flex items-center justify-between"
         >
           {{ item.label }}
-          <span
+          <!-- <span
             v-if="!disabled"
             class="font-bold cursor-pointer text-base pl-3"
             @click="remove(index)"
-          >x</span>
+          >x</span> -->
         </div>
 
         <div v-if="!disabled">
@@ -36,13 +40,14 @@
             ref="input"
             v-model="search"
             type="text"
-            placeholder="Select.."
-            class="border-b-2 focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+            :placeholder="placeholder"
+            class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm"
             :class="error ? 'border-red-500' : ''"
             @focus="toggled = true"
             @keydown="handleKeyDownEvent"
             @change="$emit('change')"
           >
+          <span v-if="required && !label" class="text-red-500">*</span>
           <transition name="drop-down">
             <div
               v-if="error"

@@ -1,67 +1,65 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8">
-      <div class="flex flex-row flex-no-wrap items-center text-lg">
-        <div class="cursor-pointer" @click="$router.push('/compliance')">
-          <svgicon name="left-arrow" height="32" />
-        </div>
-        <a
-          class="text-black no-underline flex items-center w-auto hover:bg-yellow-500 rounded-lg cursor-pointer p-2 mx-4"
-          @click.prevent="downloadItem(mandatory_training.file.url,mandatory_training.file.filename)"
-        >
-          <svgicon
-            name="cloud-download"
-            width="21"
-            height="21"
-            color="black"
-            hover="transparent black"
-            class="inline"
-          />
-          <span class="mx-1" />
-          <span>Download</span>
-        </a>
-      </div>
-      <div class="flex flex-col md:p-4">
-        <div class="shadow-lg rounded-lg bg-gray-300 mt-5 max-w-5xl">
-          <div class="flex flex-row flex-wrap justify-start p-4 md:p-8">
-            <div class="flex flex-col w-full lg:w-1/4 pr-4">
-              <p class="font-bold text-lg">
-                Title
-              </p>
+  <div class="p-2">
+    <div class="flex flex-row flex-no-wrap items-center">
+      <!-- <div class="cursor-pointer" @click="$router.push('/compliance')">
+        <svgicon name="left-arrow" height="32" />
+      </div> -->
+      <a
+        class="text-black no-underline flex items-center w-auto text-sm transition-hover hover:bg-yellow-500 rounded-lg cursor-pointer py-2 px-4 border"
+        @click.prevent="downloadItem(mandatory_training.file.url,mandatory_training.file.filename)"
+      >
+        <svgicon
+          name="cloud-download"
+          width="21"
+          height="21"
+          color="black"
+          hover="transparent black"
+          class="inline"
+        />
+        <span class="mx-1" />
+        <span>Download</span>
+      </a>
+    </div>
+    <div class="flex flex-col">
+      <div class="shadow-lg rounded-lg bg-gray-300 mt-4 max-w-5xl">
+        <div class="flex flex-row flex-wrap justify-start p-4 md:p-8">
+          <div class="flex flex-col w-full lg:w-1/4 pr-4">
+            <p class="font-bold text-lg">
+              Title
+            </p>
 
-              <p class="mt-2 text-sm md:text-base">
-                {{ mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name: null }}
-              </p>
+            <p class="mt-2 text-sm md:text-base">
+              {{ mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name: null }}
+            </p>
 
-              <p class="mt-5 font-bold text-lg">
-                File last uploaded
-              </p>
+            <p class="mt-5 font-bold text-lg">
+              File last uploaded
+            </p>
 
-              <p class="mt-2 text-sm md:text-base">
-                {{ mandatory_training.uploaded_at_in_gb_formatted }}
-              </p>
+            <p class="mt-2 text-sm md:text-base">
+              {{ mandatory_training.uploaded_at_in_gb_formatted }}
+            </p>
 
-              <p class="mt-5 font-bold text-lg">
-                Expiry date
-              </p>
+            <p class="mt-5 font-bold text-lg">
+              Expiry date
+            </p>
 
-              <AppDate
-                v-model="expiry_date"
-                :name="'expiry_date'"
-                isAfter
-                :error="formError.find(item => item.field === 'expiry_date')"
-              />
+            <AppDate
+              v-model="expiry_date"
+              :name="'expiry_date'"
+              isAfter
+              :error="formError.find(item => item.field === 'expiry_date')"
+            />
 
-              <AppButton :label="'Save'" :inStyle="'padding:5px 20px'" @click="update" />
-            </div>
+            <AppButton :label="'Save'" :inStyle="'padding:5px 20px'" @click="update" />
+          </div>
 
-            <div v-if="mandatory_training.file" class="mt-5 lg:mt-0 w-full lg:w-3/4">
-              <embed
-                class="object-contain object-top w-full"
-                :class="mandatory_training.file.type == 'image' ? 'image' : 'document h-full'"
-                :src="mandatory_training.file.type !== 'image' || mandatory_training.file.subtype === 'tiff' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
-              >
-            </div>
+          <div v-if="mandatory_training.file" class="mt-5 lg:mt-0 w-full lg:w-3/4">
+            <embed
+              class="object-contain object-top w-full"
+              :class="mandatory_training.file.type == 'image' ? 'image' : 'document h-full'"
+              :src="mandatory_training.file.type !== 'image' || mandatory_training.file.subtype === 'tiff' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
+            >
           </div>
         </div>
       </div>

@@ -1,14 +1,15 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 h-screen">
-      <div class="flex flex-row flex-wrap justify-start pb-4">
+  <div class="">
+    <div class="px-2">
+      <!-- <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link
           :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
-      </div>
+      </div> -->
+			<AppBreadcrumbs :links="links" />
       <LocumPlatformBillingInvoiceForm
         :propInvoiceDetail="invoice_detail"
         :propInvoice="null"
@@ -20,9 +21,11 @@
   </div>
 </template>
 <script>
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm"
 export default {
   components: {
+    AppBreadcrumbs,
     LocumPlatformBillingInvoiceForm,
   },
   async asyncData ({ app, params, error, }) {
@@ -53,10 +56,28 @@ export default {
 
       const job_part
         = response.data && response.data.job_part ? response.data.job_part : null
+
+        console.log("job_part", job_part)
+
+      const links = [
+        {
+          title: 'Billing',
+          url: '/locum-billing/invoices'
+        },
+        {
+          title: 'Invoices',
+          url: '/locum-billing/invoices'
+        },
+        {
+          title: `Generate Invoince for ${job_part.job_part_number}`
+        }
+      ]
+
       return {
         invoice_detail,
         job_part,
         claimNhs,
+        links
       }
     } catch (err) {
       console.log("err", err.response || err)

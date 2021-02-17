@@ -1,7 +1,6 @@
 <template>
   <section class="jobs-section">
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
-        <!--  -->
+    <div v-if="!$route.params.jobId" class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           :to="`/my-practice/platform/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Allocated`"

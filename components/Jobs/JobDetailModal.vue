@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div class="px-2">
+    <!-- <div v-if="isModal">
       <svgicon
         name="left-arrow"
         height="32"
@@ -8,7 +8,7 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">
@@ -43,7 +43,7 @@
     <div v-if="job && job.conflict" class="flex flex-col">
       <div class="flex flex-wrap justify-start">
         <div class="p-0 lg:pr-4 w-full lg:w-1/2">
-          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+          <div class="bg-white rounded-lg border p-4 mt-4">
             <div class="leading-tight">
               <p class="font-bold text-sm sm:text-md pb-2">
                 Job Conflicts
@@ -122,16 +122,17 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-2 w-full md:w-55p">
           <div class="flex flex-col">
             <JobDetailModalInfo :job="job" />
+          </div>
+        </div>
 
-            <JobDetailModalUnassignForm
-              v-if="job.locum_status === 'Allocated'"
-              :ref="'unassignForm'"
-              :job="job"
-              @unassign="$emit('close'), $emit('unassign', $event)"
-            />
+        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
+          <div class="flex flex-col">
+            <JobPartDetailModalParts :job_id="job.id" :disabled-link="true" />
+
+            <JobDetailModalMap v-if="showMap" :job="job" />
 
             <JobDetailModalApplyForm
               v-if="job.locum_status === 'Available' || job.locum_status === 'Matched'"
@@ -144,14 +145,13 @@
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
             />
-          </div>
-        </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
-          <div class="flex flex-col">
-            <JobPartDetailModalParts :job_id="job.id" :disabled-link="true" />
-
-            <JobDetailModalMap v-if="showMap" :job="job" />
+            <JobDetailModalUnassignForm
+              v-if="job.locum_status === 'Allocated'"
+              :ref="'unassignForm'"
+              :job="job"
+              @unassign="$emit('close'), $emit('unassign', $event)"
+            />
           </div>
         </div>
       </div>

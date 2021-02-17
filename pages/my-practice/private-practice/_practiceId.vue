@@ -1,12 +1,13 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="flex flex-col p-4 md:p-8">
-      <nuxt-link
+  <div class="">
+    <AppBreadcrumbs :links="links" />
+    <div class="flex flex-col px-2">
+      <!-- <nuxt-link
         :to="{ name: 'my-practice-private-practice', query: { ...$route.query }}"
         class="cursor-pointer"
       >
         <svgicon name="left-arrow" height="32" width="32" />
-      </nuxt-link>
+      </nuxt-link> -->
 
       <div class="flex flex-row p-2 flex-no-wrap justify-start items-center">
         <span class="font-bold text-md sm:text-lg">{{practice.surgery.name}}</span>
@@ -14,7 +15,7 @@
 
       <div class="flex flex-row flex-wrap justify-start">
         <div class="w-full md:w-1/3 p-2">
-          <div class="flex flex-col p-4 shadow-lg rounded-lg">
+          <div class="flex flex-col p-4 border rounded-lg">
             <div class="font-bold text-md md:text-lg">Contact Number</div>
             <div class="text-sm md:text-md m-2">{{practice.phone_number}}</div>
             <div class="font-bold text-md md:text-lg">Practice Code</div>
@@ -36,7 +37,7 @@
           </div>
         </div>
         <div class="w-full md:w-2/3 p-2">
-          <div class="flex flex-col p-4 shadow-lg rounded-lg">
+          <div class="flex flex-col p-4 border rounded-lg">
             <div class="font-bold text-md md:text-lg mb-2">Location</div>
             <div>
               <GmapMap
@@ -65,13 +66,15 @@
 <script>
 import { gmapApi } from "vue2-google-maps";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 export default {
   components: {
-    AppConfirmationModal
+    AppConfirmationModal,
+    AppBreadcrumbs
   },
   data() {
     return {
-      delete_modal: false
+      delete_modal: false,
     };
   },
   computed: {
@@ -105,8 +108,24 @@ export default {
         };
       }
 
+      const links = [
+        {
+          title: 'My Practice',
+          url: '/my-practice'
+        },
+        {
+          title: 'Private Practice',
+          url: '/my-practice/private-practice'
+        },
+        {
+          title: practice.name,
+          url: `/my-practice/private-practice/${practice.id}`
+        }
+      ]
+
       return {
-        practice
+        practice,
+        links
       };
     } catch (err) {
       throw err;

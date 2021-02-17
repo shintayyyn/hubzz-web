@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col w-full my-5">
+  <div class="relative flex flex-col w-full mb-4">
     <div class="text-md font-bold">
       Job Parts
     </div>

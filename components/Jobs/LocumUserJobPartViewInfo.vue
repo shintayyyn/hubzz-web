@@ -1,61 +1,73 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+  <div class="bg-white rounded-lg border p-4 mt-4">
     <AppLoading :loading="loadingJobPart" spinner />
+    <div>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3">
+            <div class="font-bold text-sm sm:text-md">
+              Job part number
+            </div>
 
-    <div class="relative flex flex-row flex-wrap justify-between">
-      <div class="w-full">
-        <div class="font-bold text-sm sm:text-md">
-          Job part number
-        </div>
+            <div class="text-xs sm:text-sm mb-8">
+              {{ jobPart.job_part_number }}
+            </div>
 
-        <div class="text-xs sm:text-sm mb-8">
-          {{ jobPart.job_part_number }}
+            <div class="font-bold text-sm sm:text-md">
+              Duration
+            </div>
+
+            <p v-if="jobPart.dates.length > 1" class="px-1">
+              {{ $moment(jobPart.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(jobPart.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+            </p>
+
+            <p class="text-xs sm:text-sm mb-2">
+              Days: {{ jobPart.dates.length }}
+            </p>
+          </div>
+
+          <div class="md:w-2/3">
+            <div class="font-bold text-sm sm:text-md">
+              Job description
+            </div>
+
+            <div class="text-xs sm:text-sm mb-8 break-words">
+              {{ jobPart.description ? jobPart.description : '(none)' }}
+            </div>
+          </div>
         </div>
 
         <div class="mb-8">
-          <div class="font-bold text-sm sm:text-md">
-            Duration
-          </div>
-
-          <p v-if="jobPart.dates.length > 1" class="px-1">
-            {{ $moment(jobPart.date_start, 'YYYY-MM-DD').format('DD/MM/YYYY') }} - {{ $moment(jobPart.date_end, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
-          </p>
-
-          <p class="text-xs sm:text-sm">
-            Days: {{ jobPart.dates.length }}
-          </p>
-
           <p class="font-bold text-sm sm:text-md">
             Schedule
           </p>
 
-          <div class="text-xs sm:text-sm overflow-y-auto" style="max-height:205px;">
-            <div style="position:sticky;top:0" class="flex">
+          <div class="text-xs sm:text-sm overflow-y-auto flex flex-col items-center" style="max-height:205px;">
+            <div style="position:sticky;top:0" class="flex justify-between w-full">
               <p
-                class="bg-gray-400 p-1 font-bold text-xs"
-                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
+                class="bg-white p-1 font-bold text-xs"
+                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:190px;max-width:190px'"
               >
                 DATE
               </p>
 
               <p
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                class="text-center bg-white p-1 font-bold text-xs"
+                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
               >
                 SHIFT
               </p>
 
               <p
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                class="text-center bg-white p-1 font-bold text-xs"
+                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
               >
                 RATE
               </p>
 
               <p
                 v-if="jobPart.locum_invoiceable"
-                class="text-center bg-gray-400 p-1 font-bold text-xs"
-                style="min-width:100px;max-width:100px"
+                class="text-center bg-white p-1 font-bold text-xs"
+                style="min-width:120px;max-width:120px"
               >
                 {{ 
                   jobPart.locum_job_part_status === 'Approved'
@@ -70,38 +82,38 @@
 
               <template v-if="jobPart && jobPart.locum_invoiceable">
                 <p
-                  class="text-center bg-gray-400 p-1 font-bold text-xs"
-                  style="min-width:100px;max-width:100px"
+                  class="text-center bg-white p-1 font-bold text-xs"
+                  style="min-width:120px;max-width:120px"
                 >
                   REMARKS
                 </p>
 
                 <p
-                  class="text-center bg-gray-400 p-1 font-bold text-xs"
-                  style="min-width:100px;max-width:100px"
+                  class="text-center bg-white p-1 font-bold text-xs"
+                  style="min-width:120px;max-width:120px"
                 >
                   REASON
                 </p>
               </template>
             </div>
 
-            <div v-for="(sched, index) in jobPart.schedules" :key="index" class="flex pb-2">
+            <div v-for="(sched, index) in jobPart.schedules" :key="index" class="flex justify-between w-full pb-2">
               <p
-                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:190px;max-width:190px'"
+                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:190px;max-width:190px'"
               >
                 {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
               </p>
 
               <p
                 class="text-center"
-                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
               >
                 {{ sched.shift_name }}
               </p>
 
               <p
                 class="text-center"
-                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:100px;max-width:100px' : 'min-width:180px;max-width:180px'"
+                :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
               >
                 £{{ sched.rate | currency }} {{ sched.rate_type_name !== 'Hourly' ? 'per' : '' }} {{ sched.rate_type_name }}
               </p>
@@ -109,7 +121,7 @@
               <p
                 v-if="jobPart.locum_invoiceable"
                 class="text-center"
-                style="min-width:100px;max-width:100px"
+                style="min-width:120px;max-width:120px"
               >
                 {{
                   jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
@@ -121,7 +133,7 @@
               <template v-if="jobPart && jobPart.locum_invoiceable">
                 <p
                   class="text-center"
-                  style="min-width:100px;max-width:100px"
+                  style="min-width:120px;max-width:120px"
                 >
                   {{
                     jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
@@ -131,7 +143,7 @@
                 </p>
                 <p
                   class="text-center"
-                  style="min-width:100px;max-width:100px"
+                  style="min-width:120px;max-width:120px"
                 >
                   {{
                     jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
@@ -143,16 +155,9 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">
-          Job description
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.description ? jobPart.description : '(none)' }}
-        </div>
+    </div>
+    <div class="relative flex flex-row flex-wrap justify-between">
+      <div class="flex flex-col w-full md:w-1/3 md:pr-1">
 
         <div class="font-bold text-sm sm:text-md">
           Job Part Gross Rate
@@ -237,7 +242,9 @@
         <div class="text-xs sm:text-sm mb-8">
           {{ jobPart.email }}
         </div>
+      </div>
 
+      <div class="flex flex-col w-full md:w-1/3 md:px-1">
         <div class="font-bold text-sm sm:text-md">
           Is there another Dr on site?
         </div>
@@ -307,15 +314,21 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Update Remarks
+          Compliance requirements
         </div>
 
-        <div class="text-xs sm:text-sm mb-8 break-words">
-          {{ jobPart.update_remarks ? jobPart.update_remarks : '(none)' }}
+        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div v-if="jobPart.compliance_documents.length === 0" class="mt-1">
+            (none)
+          </div>
+
+          <div v-for="complianceDocument in jobPart.compliance_documents" :key="complianceDocument.id" class="rounded-lg bg-sunglow py-1 px-1 m-1">
+            {{ complianceDocument.name }}
+          </div>
         </div>
       </div>
 
-      <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
+      <div class="flex flex-col w-full md:w-1/3 md:pl-1">
         <div class="text-xs sm:text-sm mb-6">
           <span>This job is</span>
           <span class="font-bold text-sm sm:text-md">{{ jobPart.ir35 ? 'INSIDE' : 'OUTSIDE' }}</span>
@@ -336,7 +349,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-for="qualification in jobPart.qualifications" :key="qualification.id" class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div v-for="qualification in jobPart.qualifications" :key="qualification.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ qualification.name }}
           </div>
         </div>
@@ -346,7 +359,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-for="clinicalSystem in jobPart.clinical_systems" :key="clinicalSystem.id" class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div v-for="clinicalSystem in jobPart.clinical_systems" :key="clinicalSystem.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ clinicalSystem.name }}
           </div>
         </div>
@@ -356,26 +369,12 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div class="rounded-lg bg-sunglow py-1 px-2 m-1">
             English
           </div>
 
-          <div v-for="spokenLanguage in jobPart.spoken_languages" :key="spokenLanguage.id" class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div v-for="spokenLanguage in jobPart.spoken_languages" :key="spokenLanguage.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ spokenLanguage.name }}
-          </div>
-        </div>
-
-        <div class="font-bold text-sm sm:text-md">
-          Compliance requirements
-        </div>
-
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div v-if="jobPart.compliance_documents.length === 0" class="mt-1">
-            (none)
-          </div>
-
-          <div v-for="complianceDocument in jobPart.compliance_documents" :key="complianceDocument.id" class="rounded-lg bg-yellow-500 p-1 m-1">
-            {{ complianceDocument.name }}
           </div>
         </div>
 
@@ -388,7 +387,7 @@
             (none)
           </div>
 
-          <div v-for="mandatoryTraining in jobPart.mandatory_trainings" :key="mandatoryTraining.id" class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div v-for="mandatoryTraining in jobPart.mandatory_trainings" :key="mandatoryTraining.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ mandatoryTraining.name }}
           </div>
         </div>
@@ -402,9 +401,17 @@
             (none)
           </div>
 
-          <div v-for="otherMandatoryTraining in jobPart.other_mandatory_trainings" :key="otherMandatoryTraining.id" class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div v-for="otherMandatoryTraining in jobPart.other_mandatory_trainings" :key="otherMandatoryTraining.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ otherMandatoryTraining.name }}
           </div>
+        </div>
+
+        <div class="font-bold text-sm sm:text-md">
+          Update Remarks
+        </div>
+
+        <div class="text-xs sm:text-sm mb-8 break-words">
+          {{ jobPart.update_remarks ? jobPart.update_remarks : '(none)' }}
         </div>
 
         <template v-if="jobPart.use_variation_terms">
@@ -419,7 +426,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -464,7 +471,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -511,7 +518,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -556,7 +563,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View

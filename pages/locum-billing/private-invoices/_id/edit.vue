@@ -1,14 +1,15 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 max-w-5xl h-screen">
-      <div class="flex flex-row flex-wrap justify-start pb-4">
+  <div class="">
+    <div class="px-2">
+      <!-- <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link
           :to="{ name: 'locum-billing-private-invoices', query: {...$route.query}}"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
-      </div>
+      </div> -->
+			<AppBreadcrumbs :links="links" />
       <LocumPrivateBillingInvoiceForm
         :propInvoiceDetail="invoice_detail"
         :propInvoice="invoice"
@@ -21,12 +22,14 @@
   </div>
 </template>
 <script>
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 import LocumPrivateBillingInvoiceForm from "@/components/Billing/LocumPrivateBillingInvoiceForm";
 export default {
   components: {
+    AppBreadcrumbs,
     LocumPrivateBillingInvoiceForm
   },
-  async asyncData({ app, params, error }) {
+  async asyncData({ app, params, error, route }) {
     try {
       const responseMe = await app.$axios.$get(`/api/v1/me`);
 
@@ -54,11 +57,26 @@ export default {
       const tax_rates = 
         response.data && response.data.tax_rates ? response.data.tax_rates : null
 
+      const links = [
+        {
+          title: 'Billing',
+          url: '/locum-billing/private-invoices'
+        },
+        {
+          title: `${invoice.status} Invoices`,
+          url: `/locum-billing/private-invoices?status=${route.query.status}`
+        },
+        {
+          title: invoice.invoice_number
+        }
+      ]
+
       return {
         invoice_detail,
         vat_registered,
         invoice,
         tax_rates,
+        links
       };
     } catch (err) {
       console.log("err", err.response || err);

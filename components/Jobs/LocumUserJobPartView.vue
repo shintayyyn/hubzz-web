@@ -1,7 +1,7 @@
 <template>
-  <div class="p-4 md:p-8">
+  <div class="px-2">
     <AppLoading :loading="loading" spinner />
-
+<!-- 
     <div>
       <svgicon
         name="left-arrow"
@@ -10,15 +10,15 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
-    <div class="flex flex-row justify-start items-center mt-4">
-      <div class="leading-loose font-bold text-md sm:text-lg">
+    <div class="flex flex-row justify-start items-center pt-4">
+      <div class="leading-loose font-bold text-md sm:text-lg mr-2">
         {{ job_part.title }}
       </div>
 
       <div
-        class="py-2 px-4 mx-1 rounded font-semibold"
+        class="py-1 px-4 mx-1 rounded font-semibold text-sm"
         :class="bgStatus(job_part.locum_job_part_status)"
         @click="['Approved','Cancelled'].includes(job_part.locum_job_part_status) ? toggle_invoice_modal = true : null"
       >
@@ -27,7 +27,7 @@
       
       <div
         v-if="job_part && job_part.terminated"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        class="py-1 px-4 mx-1 rounded font-semibold text-sm bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
         TERMINATED
@@ -35,7 +35,7 @@
       
       <div
         v-if="job_part && job_part.locum_invoiceable && job_part.locum_invoice_status && job_part.locum_job_part_status !== 'Approved'"
-        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
+        class="py-1 px-4 mx-1 rounded font-semibold text-sm bg-gray-300 cursor-pointer hover:bg-gray-600 hover:text-white"
         @click="toggle_invoice_modal = true"
       >
         {{ job_part.locum_invoice_status.toUpperCase() }}
@@ -120,29 +120,25 @@
       </div>
     </template>
 
-    <div v-if="job_part.conflict" class="flex flex-col">
-      <div class="flex flex-wrap justify-start">
-        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
-          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
-            <div class="leading-tight">
-              <p class="font-bold text-sm sm:text-md pb-2">
-                Job Conflicts
-              </p>
-
-              <p v-for="conflictJob in job_part.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm">
-                {{ conflictJob.job_number }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
-          <div v-if="!loadingJobPart && job_part.locum_job_part_status === 'Withdrawn'" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
-            <div class="leading-tight pb-4">
+        <div class="md:pr-2 w-full md:w-55p">
+          <div v-if="job_part.conflict" class="flex flex-col mb-4">
+            <div class="bg-white rounded-lg border p-4 w-full">
+              <div class="leading-tight">
+                <p class="font-bold text-sm sm:text-md px-1 mb-1">
+                  Job Conflicts
+                </p>
+
+                <p v-for="conflictJob in job_part.conflict_jobs" :key="conflictJob.id" class="text-xs sm:text-sm m-1 bg-gray-300 px-2">
+                  {{ conflictJob.job_number }}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="!loadingJobPart && job_part.locum_job_part_status === 'Withdrawn'" class="bg-white rounded-lg border p-4 flex flex-col md:flex-row">
+            <div class="leading-tight w-full md:w-1/2">
               <p class="font-bold text-sm sm:text-md">
                 Reason for Withdrawal
               </p>
@@ -152,7 +148,7 @@
               </p>
             </div>
 
-            <div class="leading-tight">
+            <div class="leading-tight w-full md:w-1/2">
               <p class="font-bold text-sm sm:text-md">
                 Date of Withdrawal
               </p>
@@ -163,7 +159,7 @@
             </div>
           </div>
 
-          <div v-if="job_part.locum_job_part_status === 'Cancelled' && job_part.terminated" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+          <div v-if="job_part.locum_job_part_status === 'Cancelled' && job_part.terminated" class="bg-white rounded-lg border p-4">
             <div class="leading-tight pb-4">
               <p class="font-bold text-sm sm:text-md">
                 Terminated At
@@ -185,7 +181,7 @@
             </div>
           </div>
 
-          <div v-if="job_part.locum_job_part_status === 'Cancelled' && !job_part.terminated" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+          <div v-if="job_part.locum_job_part_status === 'Cancelled' && !job_part.terminated" class="bg-white rounded-lg border p-4">
             <div class="leading-tight pb-4">
               <p class="font-bold text-sm sm:text-md">
                 Cancelled At
@@ -212,18 +208,12 @@
               :loadingJobPart="loadingJobPart"
               :jobPart="job_part"
             />
-
-            <JobDetailModalUnassignForm
-              v-if="!loadingJobPart && (job_part.locum_job_part_status === 'Ongoing' || job_part.locum_job_part_status === 'Allocated')"
-              :ref="'unassignForm'"
-              :job="job_part.job"
-              @unassign="$emit('close')"
-            />
           </div>
         </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
           <div class="flex flex-col">
+
             <LocumUserJobViewJobParts :jobId="job_part.job_id" />
 
             <LocumUserJobViewJobMap
@@ -232,6 +222,13 @@
               :practiceAddress="`${job_part.practice_address_line_1} ${job_part.practice_address_line_2} ${job_part.practice_address_line_3} ${job_part.practice_postcode}`"
               :practiceCoordinateX="job_part.practice_coordinate_x"
               :practiceCoordinateY="job_part.practice_coordinate_y"
+            />
+
+            <JobDetailModalUnassignForm
+              v-if="!loadingJobPart && (job_part.locum_job_part_status === 'Ongoing' || job_part.locum_job_part_status === 'Allocated')"
+              :ref="'unassignForm'"
+              :job="job"
+              @unassign="$emit('close')"
             />
           </div>
         </div>
@@ -295,6 +292,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
+    job_part_job: {
+      type: Object,
+      default: () => null,
+    }
   },
 
   data () {
@@ -309,6 +311,10 @@ export default {
 
   computed: {
     job () {
+      console.log("job_part_job", this.job_part_job)
+      if (this.job_part_job) {
+        return this.job_part_job
+      }
       return this.job_part && this.job_part.job
         ? this.job_part.job
         : null

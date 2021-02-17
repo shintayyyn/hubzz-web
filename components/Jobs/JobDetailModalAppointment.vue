@@ -9,19 +9,21 @@
       @cancel="delete_modal = false"
     />
 
-    <div class="flex flex-col items-start p-4 md:p-8 w-full">
-      <nuxt-link
-        :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ? '' : {...$route.query}}"
-        class="cursor-pointer"
-      >
-        <svgicon name="left-arrow" height="32" width="32" />
-      </nuxt-link>
+    <div class="flex flex-col items-start w-full" :class="isModal ? 'p-4 md:p-8 ' : 'px-2'">
+      <template v-if="isModal">
+        <nuxt-link
+          :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name) ? '/dashboard' : '/jobs', query: ['dashboard-create','dashboard-id'].includes($route.name) ? '' : {...$route.query}}"
+          class="cursor-pointer"
+        >
+          <svgicon name="left-arrow" height="32" width="32" />
+        </nuxt-link>
+      </template>
 
-      <div class="flex flex-row justify-start font-bold mt-8">
+      <div class="flex flex-row justify-start font-bold mt-2">
         Appointment
       </div>
 
-      <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
+      <div class="relative bg-white rounded-lg border p-4 mt-4 max-w-4xl">
         <AppLoading :loading="dataLoading" spinner />
 
         <template v-if="!dataLoading && !loading">
@@ -35,8 +37,9 @@
             :error="formError.find(item => item.field === 'private_practice_id')"
           />
 
-          <div class="-mt-6 md:-mt-10 pt-4">
-            <AppButton :label="'Add'" :in-style="'padding:8px 16px;'" @click="surgery_modal = true" />
+          <div class="-mt-6 md:-mt-4 pt-4">
+            <AppButton :label="'Add'" :in-style="'font-size:12px;'"
+              :inClass="'text-xs py-1 px-4 rounded'" @click="surgery_modal = true" />
           </div>
 
           <div class="flex flex-row flex-wrap justify-start mt-8">
@@ -59,7 +62,7 @@
               isAfter
             />
 						</div>-->
-            <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+            <div class="px-1 py-3 w-full sm:w-1/2 md:w-1/4">
               <AppTime
                 v-model="form.time_start"
                 :name="'time_start'"
@@ -77,7 +80,7 @@
               isAfter
             />
 						</div>-->
-            <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+            <div class="px-1 py-3 w-full sm:w-1/2 md:w-1/4">
               <AppTime
                 v-model="form.time_end"
                 :name="'time_end'"
@@ -100,7 +103,7 @@
               />
             </div>
 
-            <div class="px-1 w-full sm:w-1/2 md:w-1/3">
+            <div class="px-1 py-2 w-full sm:w-1/2 md:w-1/3">
               <AppInput
                 v-model="form.rate"
                 :type="'text'"
@@ -155,13 +158,13 @@
             />
           </div>
 
-          <div class="flex flex-no-wrap justify-start">
+          <div class="flex flex-no-wrap justify-end">
             <template v-if="!job">
               <AppButton :label="'Save'" :disabled="saving" @click="create" />
             </template>
 
             <template v-else>
-              <AppButton :label="'Delete'" :disabled="saving" @click="delete_modal = true" />
+              <AppButton :label="'Delete'" :customTheme="'bg-red-600 hover:bg-red-700 text-white'" :disabled="saving" @click="delete_modal = true" />
 
               <div class="mx-1" />
 
@@ -211,6 +214,10 @@ export default {
       type: Object,
       default: () => null,
     },
+    isModal: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data () {

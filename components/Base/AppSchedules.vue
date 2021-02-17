@@ -19,7 +19,7 @@
 
     <div class="flex">
       <div v-if="type === 'create'" class="pl-0 p-4">
-        <div class="border rounded-lg w-full h-full">
+        <div class="border rounded-lg w-full h-full" v-if="!hideDates">
           <p class="text-gray-700 text-center text-lg font-bold pt-6">
             <span>DATES</span>
           </p>
@@ -82,15 +82,15 @@
       <div class="w-full py-4">
         <div
           class="w-full h-full pb-6 flex flex-col justify-between"
-          :class="['complete', 'terminate', 'invoice'].includes(type) ? '' : 'border rounded-lg '"
+          :class="hideDates ? '' : ['complete', 'terminate', 'invoice'].includes(type) ? '' : 'border rounded-lg'"
         >
           <div>
-            <p v-if="type === 'create'" class="text-gray-700 text-center text-lg font-bold py-6">
+            <p v-if="type === 'create'" class="font-bold" :class="hideDates ? 'text-left' : 'text-gray-700 text-lg text-center py-6'">
               <span>SHIFTS &amp; RATES</span>
             </p>
 
             <template v-if="schedules && schedules.length">
-              <div v-if="type === 'create'" class="flex items-center w-2/5 mx-auto mb-6 text-gray-600">
+              <div v-if="type === 'create'" class="flex items-center mb-6 text-gray-600" :class="hideDates ? 'px-2 w-3/5' :'mx-auto w-2/5'">
                 <p class="text-sm whitespace-no-wrap mr-2 font-bold">
                   <span>Job Part</span>
                 </p>
@@ -328,7 +328,7 @@
                           ]"
                           class="w-2/12 flex items-center justify-center border-r"
                         >
-                          {{ shift.rate }}
+                          {{ shift.rate | currency }}
                         </div>
 
                         <!-- FIELDS -->
@@ -465,7 +465,7 @@
                   <template v-else-if="type === 'invoice'">
                     <div
                       class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
-                      :class="[index % 2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-3' : 'pb-4 pt-6']"
+                      :class="[index % 2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
                     >
                       {{ item.date }}
                     </div>
@@ -474,7 +474,7 @@
                       class="w-11/12 py-2 rounded-r-lg border-r border-t border-b"
                       :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                     >
-                      <div v-for="(shift, i) in item.shifts" :key="i" class="flex w-full">
+                      <div v-for="(shift, i) in item.shifts" :key="i" class="flex items-center w-full">
                         <div class="flex items-center justify-center text-center w-2/12">
                           {{ shift.shift.name }}
                         </div>
@@ -717,7 +717,7 @@
                         <div class="flex items-end w-full">
                           <div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
                             <div
-                              class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-2 py-1 text-sm rounded cursor-pointer"
+                              class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-1 py-1 text-xs rounded cursor-pointer"
                               :class="shiftColor(shift.shift_id)"
                             >
                               <div class="flex justify-between items-center font-bold">
@@ -728,12 +728,12 @@
                                 }}
                               </div>
 
-                              <svgicon name="down" width="12" height="12" class="fill-current" />
+                              <svgicon name="caret-down" width="10" height="10" class="fill-current" />
                             </div>
 
                             <select
                               v-model="shift.shift_id"
-                              class="custom-select -mt-8 py-1 text-sm px-2"
+                              class="custom-select -mt-8 py-1 text-sm px-1"
                               @change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
                             >
                               <option
@@ -957,8 +957,8 @@
             :class="type === 'create' ? 'w-10/12' : 'w-full px-4'"
           >
             <div
-              class="flex flex-col text-lg text-gray-600 font-bold text-right"
-              :class="type === 'create' ? ' w-2/4' : 'w-2/5'"
+              class="flex flex-col text-gray-600 font-bold text-right"
+              :class="hideDates ? 'w-3/4' : type === 'create' ? ' w-2/4' : 'w-2/5'"
             >
               <div v-if="['create'].includes(type)" class="flex justify-between">
                 <p class="w-2/3">
@@ -1125,7 +1125,7 @@
                 v-model="selectedShift.remarks"
                 :type="'textarea'"
                 :name="`remarks-${selectedShift.index}-${selectedShift.i}`"
-                :rows="3"
+                :rows="7"
                 :inStyle="'background-color: transparent'"
                 :resize="false"
                 :error="formError.find(err => err.field === `remarks-${selectedShift.index}-${selectedShift.i}`)"
@@ -1251,6 +1251,21 @@ export default {
     toDisplay: {
       type: Boolean,
       default: false,
+    },
+
+    hideDates: {
+      type: Boolean,
+      default: false,
+    },
+
+    importedSchedule: {
+      type: Array,
+      default: () => null,
+    },
+
+    importedDateRange: {
+      type: Object,
+      default: () => null,
     },
 
     invoiceDetails: {
@@ -1457,6 +1472,9 @@ export default {
         })
       })
 
+      if (this.hideDates) {
+        this.$emit('getJobParts', jobParts)
+      }
       return jobParts
     },
 
@@ -1564,6 +1582,11 @@ export default {
   },
 
   watch: {
+    importedSchedule(value) {
+      if (this.hideDates) {
+        this.scheduleDates = value
+      }
+    },
     scheduleDates (value) {
       if (!this.schedules.length) {
         value.forEach(date => {
@@ -1592,7 +1615,6 @@ export default {
           })
         }
       }
-
       this.schedules.sort(
         (a, b) =>
           this.$moment(a.date, "DD/MM/YYYY")
@@ -1633,6 +1655,12 @@ export default {
     schedules () {
       this.emitSchedule()
     },
+
+    importedDateRange({ start_date, end_date}) {
+      this.start_date = start_date
+      this.end_date = end_date
+      this.$emit('exportSched', this.scheduleDates)
+    }
   },
 
   created () {

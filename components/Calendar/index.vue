@@ -1,10 +1,9 @@
 <template>
   <section>
-    <div class="relative calendar bg-white border border-solid shadow-md my-4 rounded-lg lg:max-w-6xl">
+    <div class="relative calendar bg-white mt-4 lg:max-w-6xl">
       <div class="relative flex flex-row flex-wrap w-full h-full">
         <div
-          class="relative w-full lg:w-2/3 px-2 md:px-5 pb-4"
-          :class="authPermissions.includes('Create Sessions Job') ? 'pt-5' : 'pt-2'"
+          class="relative w-full lg:w-2/3 px-2 pb-4 border rounded pt-2"
         >
           <PerMonth
             v-if="$store.state.calendar.view_type === 'per_month'"
@@ -19,7 +18,7 @@
           />
         </div>
 
-        <div class="w-full lg:w-1/3">
+        <div class="w-full lg:w-1/3 pl-4">
           <Info
             :locumUnavailabilities="locumUnavailabilities"
           />

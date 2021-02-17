@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="relative bg-white rounded-lg shadow-lg my-2 p-4 md:p-8 max-w-3xl">
+    <div class="relative bg-white rounded-lg border my-2 p-4 max-w-md">
       <AppLoading :loading="loading" spinner />
       <AppFormError v-if="false && formError.length > 0" :formError="formError" />
       <div class="flex flex-wrap ">
@@ -11,6 +11,7 @@
             label="Month"
             :items="yearMonths"
             required
+            :wrapperClass="'m-0'"
           />
         </div>
       </div>

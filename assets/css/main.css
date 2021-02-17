@@ -488,7 +488,7 @@ input[type="checkbox"] + label::before {
 }
 
 input[type="checkbox"]:checked + label:before {
-	background: #e7bf2d;
+	background: #ffc72c;
 }
 
 input[type="checkbox"]:checked + label:after {
@@ -510,7 +510,7 @@ input[type="checkbox"]:disabled + label {
 }
 
 input[type="checkbox"]:disabled:checked + label::before {
-	background: #e7bf2d;
+	background: #ffc72c;
 }
 
 input[type="checkbox"]:disabled + label:after {
@@ -523,17 +523,21 @@ input::placeholder, textarea::placeholder {
 	color: #8896a9;
 }
 
+.required-placeholder {
+	content: attr('placeholder', 'value', '*');
+}
+
 /* Customized Select Dropdown */
 .customized-select {
 	position: relative;
-	padding: 21.5px 0;
+	padding: 12px 0;
+	margin-top: 8px;
 }
 
 .customized-select select {
 	appearance: none;
-	padding: 10px 15px;
+	padding: 8px 12px 8px 0;
 	background: transparent;
-	padding-right: 40px;
 	z-index: 1;
 }
 
@@ -569,7 +573,7 @@ input::placeholder, textarea::placeholder {
     content: '';
     width: 12px;
     height: 12px;
-    background: #e7bf2d;
+    background: #ffc72c;
     position: absolute;
     top: 3px;
     left: 3px;

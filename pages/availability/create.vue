@@ -1,102 +1,100 @@
 <template>
-  <div ref="modalContainer" class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 max-w-3xl">
-      <nuxt-link :to="'/availability'">
-        <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
-      </nuxt-link>
+  <div ref="modalContainer"  class="px-2 max-w-3xl">
+    <!-- <nuxt-link :to="'/availability'">
+      <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
+    </nuxt-link> -->
 
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">
-        Availability
-      </div>
+    <div class="flex justify-start font-bold text-sm sm:text-xl pt-3 mb-2">
+      Availability
+    </div>
 
-      <div class="mt-4">
-        <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
-          <AppLoading :loading="loading" spinner />
+    <div class="mt-4">
+      <div class="relative bg-white rounded-lg border p-4">
+        <AppLoading :loading="loading" spinner />
 
-          <div v-if="false" class="font-bold text-sm sm:text-md mt-4">
-            I won't be available
+        <div v-if="false" class="font-bold text-sm sm:text-md mt-4">
+          I won't be available
+        </div>
+
+        <AppInput
+          v-if="true"
+          v-model="availabilityType"
+          type="select"
+          :items="[{ label: 'I won\'t be available', value: 'unavailable' }, { label: 'I will be available', value: 'available' }]"
+        />
+
+        <div v-if="availabilityType === 'unavailable'" class="text-gray-600 font-bold italic text-sm sm:text-md mt-4">
+          *Please take note that being unavailable on AM / PM Shifts would also mean that you will not be available for Whole Day Sessions.
+        </div>
+
+        <div class="flex flex-row flex-wrap justify-between">
+          <div class="w-full p-0 sm:w-1/2 pr-2">
+            <AppDate
+              v-model="date_start"
+              :name="'date_start'"
+              :label="'From'"
+              isAfter
+              :error="formError.find(item => item.field === 'date_start')"
+              required
+            />
           </div>
 
-          <AppInput
-            v-if="true"
-            v-model="availabilityType"
-            type="select"
-            :items="[{ label: 'I won\'t be available', value: 'unavailable' }, { label: 'I will be available', value: 'available' }]"
-          />
-
-          <div v-if="availabilityType === 'unavailable'" class="text-gray-600 font-bold italic text-sm sm:text-md mt-4">
-            *Please take note that being unavailable on AM / PM Shifts would also mean that you will not be available for Whole Day Sessions.
+          <div class="w-full p-0 sm:w-1/2 pl-2">
+            <AppDate
+              v-model="date_end"
+              :name="'date_end'"
+              :label="'To'"
+              isAfter
+              :error="formError.find(item => item.field === 'date_end')"
+              required
+            />
           </div>
+        </div>
 
-          <div class="flex flex-row flex-wrap justify-between">
-            <div class="w-full p-0 sm:w-1/2 pr-2">
-              <AppDate
-                v-model="date_start"
-                :name="'date_start'"
-                :label="'From'"
-                isAfter
-                :error="formError.find(item => item.field === 'date_start')"
-                required
-              />
-            </div>
-
-            <div class="w-full p-0 sm:w-1/2 pl-2">
-              <AppDate
-                v-model="date_end"
-                :name="'date_end'"
-                :label="'To'"
-                isAfter
-                :error="formError.find(item => item.field === 'date_end')"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-row flex-wrap items-center justify-between mt-4 relative">
-            <div class="flex items-center">
-              <div class="text-sm sm:text-md leading-loose mr-4">
-                On theses shifts
-                <span class="text-red-500">*</span>
-              </div>
-
-              <div
-                v-if="formError.find(formError => formError.field === 'shift_id') && formError.find(formError => formError.field === 'shift_id').message"
-                class="text-red-500 text-xs text-white"
-              >
-                {{ formError.find(formError => formError.field === 'shift_id').message.charAt(0).toUpperCase() + formError.find(formError => formError.field === 'shift_id').message.slice(1).replace(/_/g, " ") }}
-              </div>
+        <div class="flex flex-row flex-wrap items-center justify-between mt-4 relative">
+          <div class="flex items-center">
+            <div class="text-sm sm:text-md leading-loose mr-4">
+              On theses shifts
+              <span class="text-red-500">*</span>
             </div>
 
             <div
-              class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
+              v-if="formError.find(formError => formError.field === 'shift_id') && formError.find(formError => formError.field === 'shift_id').message"
+              class="text-red-500 text-xs text-white"
             >
-              Select all that apply.
+              {{ formError.find(formError => formError.field === 'shift_id').message.charAt(0).toUpperCase() + formError.find(formError => formError.field === 'shift_id').message.slice(1).replace(/_/g, " ") }}
             </div>
           </div>
-          
-          <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
-            <button
-              v-for="shift in shifts"
-              :key="shift.id"
-              class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6 transition-hover"
-              :class="{
-                'bg-gray-300 cursor-not-allowed': false,
-                'border-red-500': formError.find(formError => formError.field === 'shift_id'),
-                'bg-yellow-500': selectedShifts.some(({ id }) => id === shift.id), 
-                'hover:bg-yellow-400': !selectedShifts.some(({ id }) => id === shift.id) && !false,
-              }"
-              style="box-sizing:content-box;"
-              @click="toggleShift(shift)"
-            >
-              {{ shift.name }}
-            </button>
+
+          <div
+            class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
+          >
+            Select all that apply.
           </div>
         </div>
+        
+        <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
+          <button
+            v-for="shift in shifts"
+            :key="shift.id"
+            class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6 transition-hover"
+            :class="{
+              'bg-gray-300 cursor-not-allowed': false,
+              'border-red-500': formError.find(formError => formError.field === 'shift_id'),
+              'bg-yellow-500': selectedShifts.some(({ id }) => id === shift.id), 
+              'hover:bg-yellow-400': !selectedShifts.some(({ id }) => id === shift.id) && !false,
+            }"
+            style="box-sizing:content-box;"
+            @click="toggleShift(shift)"
+          >
+            {{ shift.name }}
+          </button>
+        </div>
       </div>
+    </div>
 
-      <div class="mt-4">
-        <AppButton label="Save" :disabled="loading" @click="updateUnavailabilities" />
-      </div>
+    <div class="mt-4">
+      <AppButton label="Save" :disabled="loading" @click="updateUnavailabilities" />
     </div>
   </div>
 </template>

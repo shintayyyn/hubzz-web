@@ -1,16 +1,47 @@
 <template>
-  <section class="relative flex flex-col justify-between h-full">
+  <section class="relative flex flex-col justify-between h-full pt-3">
     <div>
-      <div v-if="showRefresh" class="flex flex-row flex-wrap justify-between mx-1">
-        <AppButton
-          :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          @click="refreshJobs"
-        />
-      </div>
-
       <div class="flex flex-row flex-wrap justify-between mx-1">
-        <div class="w-2/3 py-1 sm:w-1/3">
+        <div class="w-1/2 flex items-center justify-between">
+          <span class="cursor-pointer mr-2" @click="adjustMonth('previous')">
+            <svgicon name="caret-down" class="fill-current" height="16" width="16" style="transform: rotate(180deg)" />
+          </span>
+          <div
+            class="font-bold text-gray-800"
+          >
+            {{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}
+          </div>
+           
+
+          <span class="cursor-pointer mx-2" @click="adjustMonth('next')">
+            <svgicon name="caret-down" class="fill-current" height="16" width="16" />
+          </span>
+        </div>
+        <div class="w-1/2 flex items-center" :class="showRefresh ? 'justify-between' : 'justify-end'">
+          <div v-if="showRefresh" class="ml-2">
+            <AppButton
+              :label="'Refresh'"
+              :in-style="'font-size:12px;'"
+              :inClass="'text-xs py-1 px-4 rounded'"
+              @click="refreshJobs"
+            />
+          </div>
+          <div class="flex items-center">
+            <span
+              class="text-xs py-1 px-4 rounded transition-hover"
+              :class="$store.state.calendar.view_type === 'per_month' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
+              @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
+            >Month</span>
+
+            <span
+              class="text-xs py-1 px-4 rounded transition-hover ml-2"
+              :class="$store.state.calendar.view_type === 'per_week' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
+              @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
+            >Week</span>
+         </div>
+        </div>
+      </div>
+      <!--  <div class="w-2/3 py-1 sm:w-1/3">
           <div
             class="font-bold text-gray-800"
           >
@@ -26,9 +57,9 @@
           <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('next')">
             <svgicon name="down" class="fill-current" height="16" width="16" />
           </span>
-        </div>
+        </div> -->
 
-        <div class="w-full text-right py-1 sm:w-1/3">
+        <!-- <div class="w-full text-right py-1 sm:w-1/3">
           <span
             class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
             :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
@@ -40,8 +71,7 @@
             :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
             @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
           >Week</span>
-        </div>
-      </div>
+        </div> -->
 
       <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
         <div class="w-full text-center text-gray-500 font-bold">
@@ -384,17 +414,18 @@
     </div>
 
     <span class="mt-4">
-      <svgicon
+      <!-- <svgicon
         name="info"
         width="16"
         height="16"
         class="fill-current cursor-pointer hover:text-gray-700"
         @click="legendsModal=true"
-      />
+      /> -->
+      <span class="bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white" @click="legendsModal=true">i</span>
     </span>
 
     <transition name="fade">
-      <div v-if="legendsModal" class="message-modal">
+      <div v-if="legendsModal" class="message-modal z-50">
         <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
           <p class="flex items-center justify-between flex-no-wrap font-bold">
             <span>Legend</span>
@@ -1380,6 +1411,10 @@ export default {
 	top: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 60;
+}
+
+.shield {
+  z-index: 55;
 }
 
 @media (min-width: 375px) {

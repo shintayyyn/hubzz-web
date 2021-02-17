@@ -1,12 +1,16 @@
 <template>
-	<section class="modal-container">
-		<div class="relative p-4 md:p-8">
-			<nuxt-link :to="{ path: `/permanent-jobs`, query:$route.query}">
-				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
-			</nuxt-link>
-
-			<div class="flex flex-row flex-wrap justify-start items-center mt-4 md:mt-8">
-				<h4 class="text-lg md:text-xl font-bold flex items-center my-1">
+	<section :class="isPage ? '':'modal-container'">
+		<AppLoading :loading="loading" spinner :message="'Loading Job'" />
+		<!-- <AppBreadcrumbs :links="links" /> -->
+		<transition name="fade">
+		<div v-if="permanent_job || permanent_job_application" :class="isPage ? 'px-2' : 'relative p-4 md:p-8'">
+			<template v-if="!isPage">
+				<nuxt-link :to="{ path: `/permanent-jobs`, query:$route.query}">
+					<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
+				</nuxt-link>
+			</template>
+			<div class="flex flex-row flex-wrap justify-start items-center pt-3 pb-4">
+				<h4 class="text-lg md:text-xl font-bold flex items-center">
 					<span>{{ permanent_job.title }}</span>
 				</h4>
 				<span
@@ -16,18 +20,18 @@
 				>{{ permanent_job_application.application_status === 'Rejected' ? null :permanent_job.job_posting_status }}</span>
 
 				<span
-					class="mx-2 py-2 px-4 rounded my-1 font-semibold"
+					class="mx-2 py-1 px-4 rounded my-1 font-semibold"
 					:class="statusStyle(permanent_job.status)"
 				>{{ permanent_job_application && permanent_job_application.application_status_formatted ? permanent_job_application.application_status_formatted : permanent_job.status }}</span>
 
 				<span
 					v-if="(permanent_job.job_posting_status === 'Closed' && !permanent_job_application) 
             || (permanent_job.job_posting_status === 'Closed' && permanent_job_application && permanent_job_application.application_status !== 'Rejected')"
-					class="mr-2 py-2 px-4 rounded font-semibold bg-yellow-500"
+					class="mr-2 py-1 px-4 rounded font-semibold bg-yellow-500"
 				>{{ jobClosingTag(permanent_job) }}</span>
 
 				<AppButton
-					v-if="permanent_job.status == 'Available'"
+					v-if="permanent_job.status == 'Available' || (permanent_job_application && permanent_job_application.rejected_by_locum_at !== null)"
 					class="mx-2"
 					:label="toApply ? 'Cancel':'Apply'"
 					@click="toApply = !toApply"
@@ -42,7 +46,7 @@
 
 			<div
 				v-if="toApply === true"
-				class="w-full md:w-1/2 p-2 pb-4 absolute shadow bg-white rounded-lg z-50 left-0 md:left-auto"
+				class="w-full md:w-2/5 p-2 pb-4 absolute shadow bg-white rounded-lg z-50 left-0 md:left-auto"
 			>
 				<div class="mx-4 mt-4">
 					<div class="w-full">
@@ -75,7 +79,7 @@
 							</p>
 						</div>
 					</div>
-					<div class="flex flex-col md:flex-row justify-between w-full">
+					<div class="flex flex-col md:flex-row justify-between items-center w-full">
 						<AppButton
 							class="my-1"
 							:label="'Send Application'"
@@ -83,7 +87,7 @@
 							@click="apply()"
 						/>
 						<label
-							class="my-1 leading-loose cursor-pointer text-black flex items-center justify-center py-1 md:py-2 rounded-lg transition-hover border border-yellow-500 text-sm md:text-base px-4"
+							class="my-1 leading-loose cursor-pointer text-black flex items-center justify-center rounded-lg transition-hover border border-yellow-500 text-sm px-4"
 							:class="uploadedFile ? '' : 'hover:bg-yellow-500 '"
 						>
 							<input
@@ -94,7 +98,7 @@
 								accept="image/jpeg, .pdf, .doc, .docx, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 								@input="uploadFile($event)"
 							/>
-							<svgicon name="cloud-upload" height="24" width="24" class="mr-2" />
+							<svgicon name="cloud-upload" height="18" width="18" class="mr-2" />
 							{{ uploadedFile ? "Update File" : 'Upload File' }}
 						</label>
 					</div>
@@ -161,93 +165,101 @@
 
 			<div class="flex flex-col md:flex-row">
 				<div class="w-full md:w-3/5 lg:w-2/3 pr-2">
-					<div class="bg-white rounded-lg shadow-lg p-4">
-						<p class="font-bold">Practice</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : null }}</p>
-						<p class="font-bold">Description</p>
-						<!-- <div class="my-4">
-              <span v-html="permanent_job ? permanent_job.description : null"></span>
-						</div>-->
-						<div v-if="permanent_job.description">
-							<no-ssr>
-								<quill-editor
-									class="border-none"
-									:options="options"
-									:content="permanent_job.description"
-									disabled
-								/>
-							</no-ssr>
-						</div>
-						<div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2 ml-2 pb-3">
-							<div class="flex items-center">
-								<a
-									class="text-sm leading-tight"
-									:href="permanent_job.description_file.url"
-									:download="permanent_job.description_file.filename"
-									target="_blank"
-									@click.prevent="downloadItem(permanent_job.description_file.url, permanent_job.description_file.filename)"
-								>
-									<span>
-										<svgicon name="cloud-download" height="24" width="24" />
-									</span>
-								</a>
-								<span
-									v-if="permanent_job.description_file.subtype === 'jpeg' || permanent_job.description_file.subtype === 'pdf'"
-									class="mx-2 hover:text-gray-800 cursor-pointer"
-									@click="viewFile={file: permanent_job.description_file}"
-								>
-									<svgicon name="eye" class="fill-current" height="20" width="20" />
-								</span>
+					<div v-if="permanent_job_application && permanent_job_application.rejected_by_locum_at !== null" class="text-xs text-red-500">
+						* You have rejected an invitation for interview for this job on {{ permanent_job_application && permanent_job_application.rejected_by_locum_at_in_gb_formatted ? permanent_job_application.rejected_by_locum_at_in_gb_formatted : null }}
+					</div>
+					<div class="bg-white rounded-lg border p-4 flex flex-col lg:flex-row">
+						<div class="w-full lg:w-1/2">
+							<p class="font-bold text-xs sm:text-sm">Practice</p>
+							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.practice_name : null }}</p>
+							<p class="font-bold text-xs sm:text-sm">Description</p>
+							<!-- <div class="my-4">
+								<span v-html="permanent_job ? permanent_job.description : null"></span>
+							</div>-->
+							<p class="mb-3 ml-2" v-if="!permanent_job.description && !permanent_job.description_file">(none)</p>
+							<div v-if="permanent_job.description">
+								<no-ssr>
+									<quill-editor
+										class="border-none pl-2"
+										:options="options"
+										:content="permanent_job.description"
+										disabled
+									/>
+								</no-ssr>
 							</div>
+							<div v-if="permanent_job.description_file" class="flex flex-row items-start mt-2 ml-2 pb-3">
+								<div class="flex items-center">
+									<a
+										class="text-sm leading-tight mr-1"
+										:href="permanent_job.description_file.url"
+										:download="permanent_job.description_file.filename"
+										target="_blank"
+										@click.prevent="downloadItem(permanent_job.description_file.url, permanent_job.description_file.filename)"
+									>
+										<span>
+											<svgicon name="cloud-download" height="24" width="24" />
+										</span>
+									</a>
+									<span
+										v-if="permanent_job.description_file.subtype === 'jpeg' || permanent_job.description_file.subtype === 'pdf'"
+										class="mx-2 hover:text-gray-800 cursor-pointer"
+										@click="viewFile={file: permanent_job.description_file}"
+									>
+										<svgicon name="eye" class="fill-current" height="20" width="20" />
+									</span>
+								</div>
 
-							<p>{{ permanent_job.description_file.filename }}</p>
+								<p>{{ permanent_job.description_file.filename }}</p>
+							</div>
+							<p class="font-bold text-xs sm:text-sm">Salary</p>
+							<p
+								v-if="permanent_job && permanent_job.salary_amount !== 0"
+								class="ml-2 mb-3"
+							>£ {{ permanent_job.salary_amount | currency }}</p>
+							<p v-else class="pl-2 pb-3">N/A</p>
+							<p class="font-bold text-xs sm:text-sm">Salary Description</p>
+							<p
+								class="pl-2 pb-3"
+							>{{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}</p>
+							<p class="font-bold text-xs sm:text-sm">Posted</p>
+							<p
+								class="pl-2 pb-3"
+							>{{ permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : null }}</p>
+							<p class="font-bold text-xs sm:text-sm">Closes</p>
+							<p
+								class="pl-2 pb-3"
+							>{{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : null }}</p>
 						</div>
-						<p class="font-bold">Salary</p>
-						<p
-							v-if="permanent_job && permanent_job.salary_amount !== 0"
-							class="ml-2 mb-3"
-						>£ {{ permanent_job.salary_amount | currency }}</p>
-						<p v-else class="pl-2 pb-3">N/A</p>
-						<p class="font-bold">Salary Description</p>
-						<p
-							class="pl-2 pb-3"
-						>{{ permanent_job && permanent_job.salary_description_2 ? permanent_job.salary_description_2 : 'N/A' }}</p>
-						<p class="font-bold">Posted</p>
-						<p
-							class="pl-2 pb-3"
-						>{{ permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : null }}</p>
-						<p class="font-bold">Closes</p>
-						<p
-							class="pl-2 pb-3"
-						>{{ permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : null }}</p>
-						<p class="font-bold">Report to</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : null }}</p>
-						<p class="font-bold">Email</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.email : null }}</p>
-						<p class="font-bold">Role</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.profession_name : null }}</p>
-						<p class="font-bold">Job Type</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : null }}</p>
+						<div class="w-full lg:w-1/2">
+							<p class="font-bold text-xs sm:text-sm">Report to</p>
+							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.report_to : null }}</p>
+							<p class="font-bold text-xs sm:text-sm">Email</p>
+							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.email : null }}</p>
+							<p class="font-bold text-xs sm:text-sm">Role</p>
+							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.profession_name : null }}</p>
+							<p class="font-bold text-xs sm:text-sm">Job Type</p>
+							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : null }}</p>
 
-						<p class="font-bold">Industry</p>
-						<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : null }}</p>
+							<p class="font-bold text-xs sm:text-sm">Industry</p>
+							<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : null }}</p>
+						</div>
 					</div>
 					<AppButton
 						v-if="(permanent_job.job_posting_status === 'Available' && !permanent_job_application )
               || (permanent_job.job_posting_status === 'Available' 
               && permanent_job_application 
               && permanent_job_application.application_status !== 'Rejected')"
-						class="my-2"
+						class="my-2 mt-4"
 						label="Share with a friend"
 						@click="toShowLink = !toShowLink"
 					/>
-					<div v-if="toShowLink" class="rounded-lg p-4 shadow-lg mb-2">
+					<div v-if="toShowLink" class="rounded-lg p-4 border mb-2">
 						<div class="text-sm md:text-base font-semibold flex flex-wrap items-center px-2">
 							<div
 								class
 							>{{ `${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}` }}</div>
 							<AppButton
-								class
+								class="ml-4"
 								:label="'Copy Link'"
 								@click="copyToClipboard(`${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}`)"
 							/>
@@ -265,17 +277,28 @@
 			</transition>
 			<div v-if="viewFile" class="shield file" @click="viewFile=null" />
 		</div>
+		</transition>
 	</section>
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
 import FileModal from "@/components/FileModal";
 export default {
 	components: {
 		AppButton,
+		AppLoading,
 		PermanentJobMap,
-		FileModal
+		FileModal,
+		AppBreadcrumbs
+	},
+	props: {
+		isPage: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data() {
 		return {
@@ -284,6 +307,7 @@ export default {
 			toApply: false,
 			toShowLink: false,
 			site: "",
+			loading: false,
 			job_application: {
 				locum_user_id: "",
 				job_application_pitch: "",
@@ -327,7 +351,9 @@ export default {
 						["link"]
 					]
 				}
-			}
+			},
+
+			links: [],
 		};
 	},
 
@@ -347,6 +373,7 @@ export default {
 	},
 
 	async beforeMount() {
+		this.loading = true
 		// this.site = await window && window.location.origin ? window.location.origin :"https://locum.halcyondigitalhost.com/"
 		this.site = await window.location.origin;
 	},
@@ -380,6 +407,20 @@ export default {
 				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
 				.then(res => {
 					permanent_job = res.data.permanent_job;
+					let status = permanent_job.job_posting_status !== 'Available' ? 
+						['Unfilled', 'Closed'].includes(permanent_job.job_posting_status) ? 'Closed' : permanent_job.job_posting_status
+						: 'Available'
+
+					this.links = [
+						{
+							title: 'Salaried Roles',
+							url: `/permanent-jobs${status !== 'Available' ? '/?status='+status : ''}`
+						},
+						{
+							title: permanent_job.title
+						}
+					]
+				this.loading = false
 				});
 
 			await this.$axios
@@ -387,6 +428,8 @@ export default {
 				.then(res => {
 					permanent_job_applications = res.data.permanent_job_applications;
 				});
+
+				
 
 			permanent_job_application = permanent_job_applications.find(
 				item => item.permanent_job_id === permanent_job.id
@@ -406,6 +449,8 @@ export default {
 			} else if (permanent_job.job_posting_status === "Available") {
 				permanent_job.status = "Available";
 				this.permanent_job = permanent_job;
+			}
+			if (permanent_job && permanent_job_applications) {
 			}
 		},
 
@@ -549,6 +594,7 @@ export default {
 				case "Closed":
 					return "px-4 bg-gray-700 text-white";
 				case "Unsuccessful":
+				case "Unfilled":
 					return "px-4 bg-gray-400";
 				default:
 					return;

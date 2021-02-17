@@ -1,11 +1,12 @@
 <template>
-  <div class="report-modal p-4 md:p-8 shadow-lg">
+  <div class="px-2">
+    <AppBreadcrumbs :links="links" />
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm">
+      <!-- <div class="flex justify-between text-sm">
         <nuxt-link :to="{ name: 'my-banks-reports'}" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
-      </div>
+      </div> -->
 
       <div class="text-lg md:text-2xl ">
         Locums Not Successful
@@ -95,10 +96,12 @@
 <script>
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
+import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
 export default {
   components: {
     ReportTable,
     ReportPagination,
+    AppBreadcrumbs
   },
 
   data () {
@@ -134,6 +137,20 @@ export default {
       ],
       
       activePage: 1,
+      links: [
+        {
+          title: 'My Banks',
+          url: '/my-banks'
+        },
+        {
+          title: 'Reports',
+          url: '/my-banks-reports'
+        },
+        {
+          title: 'Rep-006',
+          url: this.$route.path
+        }
+      ]
     }
   },
 

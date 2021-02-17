@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+	<div class="border rounded-lg p-4 mt-4">
 		<div class="relative flex w-full" v-if="!coordinates && loading" style="min-height:80px">
 			<AppLoading :loading="loading" spinner />
 		</div>
@@ -12,7 +12,7 @@
 				<div
 					v-for="item in job.practice_types"
 					:key="item.id"
-					class="mr-2 bg-yellow-500 px-3 py-1 my-1 rounded-lg text-sm sm:text-md"
+					class="mr-2 bg-sunglow px-3 py-1 my-1 rounded-lg text-sm sm:text-md"
 				>{{ item.name }}</div>
 			</div>
 			<div

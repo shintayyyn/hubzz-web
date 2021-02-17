@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col w-full my-5">
+  <div class="relative flex flex-col w-full border rounded-lg p-4">
     <div class="text-md font-bold">
       Job Parts
     </div>
@@ -16,7 +16,7 @@
       :loading="loading"
       :routerLink="routerLink"
       minHeight="unset"
-      :customWidth="700"
+      :customWidth="650"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     >
@@ -25,7 +25,7 @@
           v-if="slotProps.item.status === 'Ongoing'"
           class="text-white px-3 py-1 rounded-lg text-xs transition-hover focus:outline-none"
           :class="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? 'bg-green-500 hover:bg-green-600 ' : 'cursor-not-allowed bg-gray-400'"
-          @click="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? [completeJobPart=true, job_part = slotProps.item] : ''"
+          @click.prevent="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Complete Sessions Job')) ? actionJob(slotProps.item, 'complete') : ''"
         >
           Complete
         </button>
@@ -35,7 +35,7 @@
           v-if="slotProps.item.status === 'Ongoing' "
           class="text-white px-3 py-1 rounded-lg text-xs transition-hover focus:outline-none"
           :class="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Cancel Sessions Job')) ? 'bg-red-500 hover:bg-red-600 ' : 'cursor-not-allowed bg-gray-400'"
-          @click="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Cancel Sessions Job')) ? [terminateJobPart=true, job_part = slotProps.item] : ''"
+          @click.prevent="slotProps.item.status === 'Ongoing' && ($route.name.includes('hub-surgery-management') ? authPermissions.includes('Update Surgery Sessions') : authPermissions.includes('Cancel Sessions Job')) ? actionJob(slotProps.item, 'terminate') : ''"
         >
           Terminate
         </button>
@@ -159,11 +159,13 @@ export default {
           name: "Date Start",
           dataIndex: "date_start",
           class: "text-center",
+          width: 100
         },
         {
           name: "Date End",
           dataIndex: "date_end",
           class: "text-center",
+          width: 100
         },
         {
           name: "Status",
@@ -324,6 +326,14 @@ export default {
           ...this.$route.query,
         },
       }
+    },
+
+    actionJob(job, action) {
+      console.log("job", job.job_part_number)
+      let jobType = job.job_part_number ? 'job-parts' : 'sessions'
+      let jobId = job.id
+
+      this.$router.push(`/${jobType}/${jobId}/${action}`)
     },
 
     getJobParts (params) {

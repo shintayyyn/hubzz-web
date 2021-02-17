@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div class="">
     <SessionDetailModal :job="job" @close="close" />
   </div>
 </template>

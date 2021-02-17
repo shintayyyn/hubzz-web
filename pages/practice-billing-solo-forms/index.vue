@@ -62,68 +62,17 @@
 
     <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
-        <AppButton
-          :label="'Filter'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="filterModal = !filterModal"
-        />
+        <div class="flex items-center">
+          <button
+            class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
+            @click="filterModal = !filterModal"
+          >
+            <p class="mx-2">Filter</p>
+            <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
+          </button>
 
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="refreshInvoices"
-        />
-
-        <div
-          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg px-3 py-2 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="ir35"
-              class="px-1"
-              :type="'select'"
-              :name="'ir35'"
-              :label="'Inside ir35'"
-              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-            />
-          </div>
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="invoice_number"
-              class="px-1"
-              :type="'text'"
-              :name="'invoice_number'"
-              :label="'Invoice number'"
-            />
-          </div>
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="jobPartNumberIncludes"
-              class="px-1"
-              :type="'text'"
-              :name="'jobPartNumberIncludes'"
-              :label="'Job Part number'"
-            />
-          </div>
-
-          <div v-if="false" class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              v-model="paid"
-              class="px-1"
-              :type="'select'"
-              :name="'paid'"
-              :label="'Paid'"
-              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-            />
-          </div>
-
-          <div class="md:px-1 flex w-full">
+          <transition name="fade">
+          <div class="md:px-1 flex w-full" v-if="filterModal">
             <AppButton
               :disabled="disabledClearFilter"
               :label="'Clear'"
@@ -138,14 +87,71 @@
               @click="filterJobParts"
             />
 
-            <AppButton
+            <!-- <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
               :in-style="'padding:5px 14px;margin-bottom:5px'"
               @click="filterModal = false"
+            /> -->
+          </div>
+          </transition>
+
+          <AppButton
+            v-if="showRefresh"
+            :label="'Refresh'"
+            :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+            customTheme="border-2"
+            @click="refreshInvoices"
+          />
+        </div>
+
+        <transition name="drop-down">
+        <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal">
+          <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+            <AppInput
+              v-model="ir35"
+              :wrapperClass="'px-1'"
+              :type="'select'"
+              :name="'ir35'"
+              :label="'Inside ir35'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
           </div>
+
+          <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+            <AppInput
+              v-model="invoice_number"
+              :wrapperClass="'px-1'"
+              :type="'text'"
+              :name="'invoice_number'"
+              :label="'Invoice number'"
+            />
+          </div>
+
+          <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+            <AppInput
+              v-model="jobPartNumberIncludes"
+              :wrapperClass="'px-1'"
+              :type="'text'"
+              :name="'jobPartNumberIncludes'"
+              :label="'Job Part number'"
+            />
+          </div>
+
+          <div v-if="false" class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+            <AppInput
+              v-model="paid"
+              :wrapperClass="'px-1'"
+              :type="'select'"
+              :name="'paid'"
+              :label="'Paid'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+            />
+          </div>
+
+          
         </div>
+        </transition>
 
         <AppTable
           v-if="locumSoloForms.length > 0"
@@ -217,13 +223,13 @@
           >
             <AppLoading :loading="practiceESigningLocumSoloForm" spinner />
 
-            <div class="px-1">
+            <div :wrapperClass="'px-1'">
               <small class="italic">Please type in or upload your signature.</small>
             </div>
 
             <AppInput
               v-model="locumESignText"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :label="'Signature'"
               :error="formErrors.find(formError => formError.field === 'text')"

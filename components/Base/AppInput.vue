@@ -3,7 +3,7 @@
     <template
       v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number', 'numberDash'].includes(type)"
     >
-      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-6 py-2'">
+      <div class="flex flex-col" :class="wrapperClass ? wrapperClass : type === 'single-checkbox' ? '' : 'mb-3 md:mb-4'">
         <div
           v-if="label || info"
           class="relative flex flex-wrap leading-none"
@@ -29,7 +29,7 @@
         <template v-if="type === 'multi-checkbox'">
           <div v-if="updatable" class="flex flex-row justify-start items-center mt-1">
             <div
-              class="mb-1 bg-yellow-500 text-sm p-1 shadow-lg rounded-lg cursor-pointer hover:text-white"
+              class="mb-1 bg-sunglow text-sm px-2 py-1 rounded-lg cursor-pointer hover:bg-sunglow-dark"
               @click="add"
             >
               Add mandatory training
@@ -58,14 +58,14 @@
               </div>
 
               <div
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+                class="ml-2 bg-sunglow py-1 px-2 rounded-lg cursor-pointer text-sm hover:bg-sunglow-dark"
                 @click="save(null, 'add')"
               >
                 <span>Add</span>
               </div>
 
               <div
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+                class="ml-2 bg-red-500 py-1 px-2 rounded-lg cursor-pointer text-sm text-white hover:bg-red-600"
                 @click="cancel"
               >
                 <span>Cancel</span>
@@ -116,28 +116,28 @@
             <template v-if="updatable">
               <div
                 v-if="editId !== item.value"
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+                class="ml-2 bg-sunglow px-2 py-1 text-sm rounded-lg cursor-pointer hover:bg-sunglow-dark"
                 @click="edit(item)"
               >
                 Edit
               </div>
               <div
                 v-if="editId !== item.value"
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+                class="ml-2 bg-red-500 px-2 py-1 text-sm rounded-lg cursor-pointer text-white hover:bg-red-600"
                 @click="$emit('remove', item)"
               >
                 Remove
               </div>
               <div
                 v-if="editId === item.value"
-                class="ml-2 bg-yellow-500 p-1 rounded-lg shadow-lg cursor-pointer hover:text-white hover:bg-yellow-600"
+                class="ml-2 bg-sunglow px-2 py-1 text-sm rounded-lg cursor-pointer hover:bg-sunglow-dark"
                 @click="save(item, 'update')"
               >
                 Save
               </div>
               <div
                 v-if="editId === item.value"
-                class="ml-2 bg-red-500 p-1 rounded-lg shadow-lg cursor-pointer text-white hover:text-black hover:bg-red-400"
+                class="ml-2 bg-red-500 px-2 py-1 text-sm rounded-lg cursor-pointer text-white hover:bg-red-600"
                 @click="cancel"
               >
                 Cancel
@@ -147,23 +147,23 @@
         </template>
 
         <template v-else>
-          <div class="flex flex-row justify-start mt-1">
+          <div class="flex flex-row justify-start ">
             <template v-if="['text','time','email', 'number', 'numberDash'].includes(type)">
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">
                   <p
                     v-if="showMobilePrefix"
-                    class="text-xs sm:text-sm font-bold py-2 pr-1 border-b-2 border-transparent"
+                    class="text-xs sm:text-sm font-bold py-1 pr-1 border-b-2 border-transparent"
                   >
                     <span>+44</span>
                   </p>
 
                   <input
-                    :value="value"
+                    :value="value "
                     :type="type"
-                    :placeholder="placeholder"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full shadow-none"
-                    :class="[error ? 'border-red-500' : '', inClass]"
+                    :placeholder="placeholder ? required && !label ? `${placeholder} *` : placeholder : placeholder"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
+                    :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '']"
                     :style="inStyle"
                     :checked="value"
                     :readonly="disabled"
@@ -195,7 +195,7 @@
               <div class="relative w-full mb-4">
                 <div class="relative">
                   <input
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
                     :value="value"
                     :type="togglePassword()"
                     :placeholder="placeholder"
@@ -232,15 +232,17 @@
             </template>
 
             <template v-if="type === 'select'">
-              <div :class="['w-full relative', inClass]">
+              <div :class="['w-full relative ', inClass]">
                 <div class="w-full customized-select flex items-center">
                   <select
                     ref="inputSelect"
                     :value="value"
-                    class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                    class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm w-full pr-2"
+                    
                     :class="[
                       (error && !disabled) ? 'border-red-500' : inClass,
                       disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
+                      !value && placeholder && 'text-gray-500 focus:text-black' 
                     ]"
                     :style="inStyle"
                     :disabled="disabled"
@@ -250,7 +252,7 @@
                     @focus="$emit('focus')"
                   >
                     <option v-if="placeholder" value disabled selected>
-                      {{ placeholder }}
+                      {{ placeholder ? required && !label ? `${placeholder} *` : placeholder : placeholder }}
                     </option>
                     <option
                       v-for="(item, index) in items"
@@ -264,12 +266,13 @@
                   </select>
                   <span
                     class="absolute right-0 h-full flex items-center"
-                    :class="[disabled ? 'text-gray-500' : '', wrapperClass ? '' : '-mt-1']"
+                    :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '-mt-1']"
                   >
                     <svgicon
-                      name="arrow-up"
-                      class="h-full w-10 p-2 mt-2 fill-current"
-                      style="transform: rotate(180deg)"
+                      name="caret-down"
+                      width="10" 
+                      height="10"
+                      class="h-full -mt-4 fill-current"
                     />
                   </span>
                 </div>
@@ -293,7 +296,7 @@
                   :rows="rows"
                   :value="value"
                   :placeholder="placeholder"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full"
                   :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
                   :limit="limit"
                   :style="inStyle"
@@ -338,7 +341,7 @@
 
     <!-- single checkbox -->
     <template v-if="type === 'single-checkbox'">
-      <div class="flex flex-col py-2 mb-2">
+      <div class="flex flex-col py-2 mb-1">
         <div class="flex justify-end">
           <!-- <div
             class="rounded-lg bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"

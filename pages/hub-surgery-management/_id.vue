@@ -1,7 +1,6 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 w-full">
-      <div>
+    <div class="w-full">
+      <!-- <div>
         <svgicon
           name="left-arrow"
           height="32"
@@ -9,9 +8,12 @@
           class="mb-2 cursor-pointer"
           @click="$router.push('/hub-surgery-management')"
         />
-      </div>
+      </div> -->
 
-      <div class="flex overflow-x-auto border-b border-sunglow">
+      <div 
+        v-if="!$route.params.permJobId && !$route.params.invoiceId && !$route.params.locumId && !$route.params.jobId && !$route.params.sessionId && !$route.params.jobPartId" 
+        class="flex overflow-x-auto border-b border-sunglow"
+      >
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Management')"
           :to="{ path: `/hub-surgery-management/${$route.params.id}`}"
@@ -50,7 +52,7 @@
 
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && authPermissions.includes('View Surgery Permanent Jobs')"
-          :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`, query: {...$route.query}}"
+          :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`}"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border-b-4 border-sunglow'	: 'text-gray-600'"
         >
@@ -72,7 +74,6 @@
         @updateSurgery="updateSurgeryHandler"
       />
     </div>
-  </div>
 </template>
 
 <script>

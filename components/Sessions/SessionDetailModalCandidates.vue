@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full">
+  <div class="flex flex-col w-full mt-4">
     <div class="text-xs sm:text-sm font-bold">Candidates</div>
     <div
       class="relative flex w-full"
@@ -11,7 +11,7 @@
 
     <template v-if="applicants.length > 0">
       <div
-        class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 pl-3 md:pl-5 md:pr-2"
+        class="bg-white rounded-lg border m-0 my-4 py-3 pl-3 md:pl-5 md:pr-2"
         v-for="user in applicants"
         :key="user.id"
       >

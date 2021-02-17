@@ -1,6 +1,46 @@
 <template>
-  <section>
-    <div class="flex flex-row flex-wrap mx-1">
+  <section class="pt-3">
+    <div class="flex flex-row flex-wrap justify-between mx-1">
+        <div class="w-1/2 flex items-center justify-between">
+          <span class="cursor-pointer mx-2" @click="adjustWeek('previous')">
+            <svgicon name="caret-down" class="fill-current" height="16" width="16" style="transform: rotate(180deg)" />
+          </span>
+          <div
+            class="font-bold text-gray-800"
+          >
+            {{ $moment(daysInWeek[0].date).format('MMM') }} {{ $moment(daysInWeek[0].date).format('YYYY') }} - {{ $moment(daysInWeek[6].date).format('MMM') }} {{ $moment(daysInWeek[6].date).format('YYYY') }}
+          </div>
+           
+
+          <span class="cursor-pointer mx-2" @click="adjustWeek('next')">
+            <svgicon name="caret-down" class="fill-current" height="16" width="16" />
+          </span>
+        </div>
+        <div class="w-1/2 flex items-center" :class="showRefresh ? 'justify-between' : 'justify-end'">
+          <div v-if="showRefresh" class="ml-2">
+            <AppButton
+              :label="'Refresh'"
+              :in-style="'font-size:12px;'"
+              :inClass="'text-xs py-1 px-4 rounded'"
+              @click="refreshJobs"
+            />
+          </div>
+          <div class="flex items-center">
+            <span
+            class="text-xs py-1 px-4 rounded"
+            :class="$store.state.calendar.view_type === 'per_month' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
+            @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
+            >Month</span>
+
+            <span
+              class="text-xs py-1 px-4 rounded ml-2"
+              :class="$store.state.calendar.view_type === 'per_week' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
+              @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
+            >Week</span>
+          </div>
+        </div>
+      </div>
+    <!-- <div class="flex flex-row flex-wrap mx-1">
       <div class="w-2/3 py-1 sm:w-1/3">
         <div class="flex flex-col">
           <div v-if="showRefresh" class="flex flex-row flex-wrap justify-between mt-1">
@@ -44,7 +84,7 @@
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
         >Week</span>
       </div>
-    </div>
+    </div> -->
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
       <div class="w-full text-center text-gray-500 font-bold" style="min-width: 60px" />

@@ -1,146 +1,144 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 w-full">
-      <svgicon
-        name="left-arrow"
-        height="32"
-        width="32"
-        class="mb-2 cursor-pointer"
-        @click="$router.push('/hub-surgery-management/invitations/spoke')"
-      />
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Accept Spoke</div>
+  <div class="px-2 w-full">
+    <!-- <svgicon
+      name="left-arrow"
+      height="32"
+      width="32"
+      class="mb-2 cursor-pointer"
+      @click="$router.push('/hub-surgery-management/invitations/spoke')"
+    /> -->
+    <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Accept Spoke</div>
 
-      <div class="m-2 text-sm font-semibold">
-        <div>Surgery: {{spoke.surgery.name}}</div>
+    <div class="m-2 text-sm font-semibold">
+      <div>Surgery: {{spoke.surgery.name}}</div>
+    </div>
+
+    <div class="rounded-lg border p-4">
+      <div class="flex flex-col flex-wrap justify-between">
+        <div class="w-full p-1">
+          <AppInput
+            v-model="form.allow_surgery_create_sessions"
+            :type="'select'"
+            :name="'allow_surgery_create_sessions'"
+            :label="'Allow Spoke to Create Jobs/Sessions?'"
+            :error="formError.find(item => item.field === 'allow_surgery_create_sessions')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
+        <div
+          class="p-2 mx-2 bg-gray-300 rounded-lg"
+          v-if="[true, 'true'].includes(surgeryCreateSessions)"
+        >
+          <div class="w-full p-1">
+            <AppInput
+              v-model="form.max_hourly_rate_limit"
+              :type="'number'"
+              :name="'max_hourly_rate_limit'"
+              :label="'Set max hourly rate limit for Spoke'"
+              :error="formError.find(item => item.field === 'max_hourly_rate_limit')"
+              :inStyle="'text-align:right'"
+            />
+          </div>
+          <div class="w-full p-1">
+            <AppInput
+              v-model="form.max_halfday_rate_limit"
+              :type="'number'"
+              :name="'max_halfday_rate_limit'"
+              :label="'Set max half day rate limit for Spoke'"
+              :error="formError.find(item => item.field === 'max_halfday_rate_limit')"
+              :inStyle="'text-align:right'"
+            />
+          </div>
+          <div class="w-full p-1">
+            <AppInput
+              v-model="form.max_wholeday_rate_limit"
+              :type="'number'"
+              :name="'max_wholeday_rate_limit'"
+              :label="'Set max whole day rate limit for Spoke'"
+              :error="formError.find(item => item.field === 'max_wholeday_rate_limit')"
+              :inStyle="'text-align:right'"
+            />
+          </div>
+          <div class="w-full p-1">
+            <AppInput
+              v-model="form.max_ooh_rate_limit"
+              :type="'number'"
+              :name="'max_ooh_rate_limit'"
+              :label="'Set max out-of-hours rate limit for Spoke'"
+              :error="formError.find(item => item.field === 'max_ooh_rate_limit')"
+              :inStyle="'text-align:right'"
+            />
+          </div>
+          <div class="w-full p-1">
+            <AppInput
+              v-model="form.max_excess_hours"
+              :type="'number'"
+              :name="'max_excess_hours'"
+              :label="'Set max excess hours rate limit for Spoke'"
+              :error="formError.find(item => item.field === 'max_excess_hours')"
+              :inStyle="'text-align:right'"
+            />
+          </div>
+        </div>
+        <div class="w-full p-1">
+          <AppInput
+            v-model="form.allow_surgery_create_permanent_jobs"
+            :type="'select'"
+            :name="'allow_surgery_create_permanent_jobs'"
+            :label="'Allow Surgery to Create Permanent Jobs'"
+            :error="formError.find(item => item.field === 'allow_surgery_create_permanent_jobs')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
+        <div class="w-full p-1">
+          <AppInput
+            v-model="form.allow_surgery_bill_locum"
+            :type="'select'"
+            :name="'allow_surgery_bill_locum'"
+            :label="'Allow Spoke to handle its own billing for Locum?'"
+            :error="formError.find(item => item.field === 'allow_surgery_bill_locum')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
+        <div class="w-full p-1">
+          <AppInput
+            v-model="form.allow_surgery_bill_hubzz"
+            :type="'select'"
+            :name="'allow_surgery_bill_hubzz'"
+            :label="'Allow Spoke to handle its own billing for HUBZZ?'"
+            :error="formError.find(item => item.field === 'allow_surgery_bill_hubzz')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
+        <div class="w-full p-1">
+          <AppInput
+            v-model="form.share_banks_to_other_surgeries"
+            :type="'select'"
+            :name="'share_banks_to_other_surgeries'"
+            :label="'Share Banks to Other Surgeries'"
+            :error="formError.find(item => item.field === 'share_banks_to_other_surgeries')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
+        <div class="w-full p-1">
+          <AppInput
+            v-model="form.share_my_banks"
+            :type="'select'"
+            :name="'share_my_banks'"
+            :label="'Allow Spoke to see My Banks'"
+            :error="formError.find(item => item.field === 'share_my_banks')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
       </div>
-
-      <div class="rounded-lg shadow-lg p-2">
-        <div class="flex flex-col flex-wrap justify-between">
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.allow_surgery_create_sessions"
-              :type="'select'"
-              :name="'allow_surgery_create_sessions'"
-              :label="'Allow Spoke to Create Jobs/Sessions?'"
-              :error="formError.find(item => item.field === 'allow_surgery_create_sessions')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-          <div
-            class="p-2 mx-2 bg-gray-300 rounded-lg"
-            v-if="[true, 'true'].includes(surgeryCreateSessions)"
-          >
-            <div class="w-full p-1">
-              <AppInput
-                v-model="form.max_hourly_rate_limit"
-                :type="'number'"
-                :name="'max_hourly_rate_limit'"
-                :label="'Set max hourly rate limit for Spoke'"
-                :error="formError.find(item => item.field === 'max_hourly_rate_limit')"
-                :inStyle="'text-align:right'"
-              />
-            </div>
-            <div class="w-full p-1">
-              <AppInput
-                v-model="form.max_halfday_rate_limit"
-                :type="'number'"
-                :name="'max_halfday_rate_limit'"
-                :label="'Set max half day rate limit for Spoke'"
-                :error="formError.find(item => item.field === 'max_halfday_rate_limit')"
-                :inStyle="'text-align:right'"
-              />
-            </div>
-            <div class="w-full p-1">
-              <AppInput
-                v-model="form.max_wholeday_rate_limit"
-                :type="'number'"
-                :name="'max_wholeday_rate_limit'"
-                :label="'Set max whole day rate limit for Spoke'"
-                :error="formError.find(item => item.field === 'max_wholeday_rate_limit')"
-                :inStyle="'text-align:right'"
-              />
-            </div>
-            <div class="w-full p-1">
-              <AppInput
-                v-model="form.max_ooh_rate_limit"
-                :type="'number'"
-                :name="'max_ooh_rate_limit'"
-                :label="'Set max out-of-hours rate limit for Spoke'"
-                :error="formError.find(item => item.field === 'max_ooh_rate_limit')"
-                :inStyle="'text-align:right'"
-              />
-            </div>
-            <div class="w-full p-1">
-              <AppInput
-                v-model="form.max_excess_hours"
-                :type="'number'"
-                :name="'max_excess_hours'"
-                :label="'Set max excess hours rate limit for Spoke'"
-                :error="formError.find(item => item.field === 'max_excess_hours')"
-                :inStyle="'text-align:right'"
-              />
-            </div>
-          </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.allow_surgery_create_permanent_jobs"
-              :type="'select'"
-              :name="'allow_surgery_create_permanent_jobs'"
-              :label="'Allow Surgery to Create Permanent Jobs'"
-              :error="formError.find(item => item.field === 'allow_surgery_create_permanent_jobs')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.allow_surgery_bill_locum"
-              :type="'select'"
-              :name="'allow_surgery_bill_locum'"
-              :label="'Allow Spoke to handle its own billing for Locum?'"
-              :error="formError.find(item => item.field === 'allow_surgery_bill_locum')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.allow_surgery_bill_hubzz"
-              :type="'select'"
-              :name="'allow_surgery_bill_hubzz'"
-              :label="'Allow Spoke to handle its own billing for HUBZZ?'"
-              :error="formError.find(item => item.field === 'allow_surgery_bill_hubzz')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.share_banks_to_other_surgeries"
-              :type="'select'"
-              :name="'share_banks_to_other_surgeries'"
-              :label="'Share Banks to Other Surgeries'"
-              :error="formError.find(item => item.field === 'share_banks_to_other_surgeries')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.share_my_banks"
-              :type="'select'"
-              :name="'share_my_banks'"
-              :label="'Allow Spoke to see My Banks'"
-              :error="formError.find(item => item.field === 'share_my_banks')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-        </div>
-        <div class="flex flex-row justify-start">
-          <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
-        </div>
+      <div class="flex flex-row justify-start">
+        <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
       </div>
     </div>
   </div>

@@ -1,8 +1,8 @@
 <template>
   <div ref="container" class="flex flex-col items-center justify-center xl:mx-4 w-full">
-    <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
+    <!-- <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" /> -->
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex flex-col w-full p-4 md:p-8 m-1 rounded-lg shadow-lg">
+      <div class="flex flex-col w-full p-4 m-1 rounded-lg border">
         <form class="w-full">
           <AppInput
             v-model="form.name"
@@ -19,11 +19,10 @@
             :name="'phone_number'"
             label="Phone number"
             :limit="11"
-            :placeholder="'Phone number'"
             :error="formError.find(item => item.field === 'phone_number')"
             required
             @blur="CheckEmptyField(form.phone_number,'phone_number')"
-            @keypress="inputNumberOnly($event)"
+            @keydown="inputNumberOnly($event)"
           />
           <AppPostCode
             v-model="form.clinical_commissioning_group_name"
@@ -103,7 +102,7 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="this.$emit('nextTab', 'PracticeDetails')" />
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')" />
       <div class="mx-2" />
       <AppButton :label="'Next'" @click="signUp" />
     </div>

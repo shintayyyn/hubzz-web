@@ -1,11 +1,11 @@
 <template>
-  <div class="modal-container bg-white shadow-lg">
-    <div class="flex flex-col items-start p-4 md:p-8 max-w-3xl">
-      <nuxt-link :to="'/profile/users'" class="cursor-pointer">
+  <div class="">
+    <div class="flex flex-col items-start">
+      <!-- <nuxt-link :to="'/profile/users'" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
-      </nuxt-link>
+      </nuxt-link> -->
 
-      <div class="w-full flex justify-start overflow-x-auto my-3 mt-4 border-b border-sunglow">
+      <div class="w-full flex justify-start overflow-x-auto mb-3 border-b border-sunglow">
           <nuxt-link
             :to="`/profile/users/${$route.params.id}`"
             class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -24,7 +24,7 @@
         </template>
       </div>
 
-      <div class="w-full mt-5">
+      <div class="w-full mt-5 max-w-3xl">
         <nuxt-child :user="practiceUser" @updateUser="$emit('updateUser', $event)" />
       </div>
     </div>

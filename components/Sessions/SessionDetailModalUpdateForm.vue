@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full">
     <AppFormError v-if="formError.length > 0" :formError="formError" />
-    <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+    <div class="relative bg-white rounded-lg border p-4 mt-4">
       <AppLoading :loading="dataLoading" spinner />
       <div v-if="!dataLoading" class="flex flex-row flex-wrap">
         <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
@@ -64,22 +64,7 @@
             :error="formError.find(item => item.field === 'phone_number')"
             required
           />
-          <AppInput
-            v-model="form.is_another_doctor"
-            :type="'select'"
-            :name="'is_another_doctor'"
-            :label="'Is there another Dr on site?'"
-            :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
-            :error="formError.find(item => item.field === 'is_another_doctor')"
-          />
-          <AppInput
-            v-model="form.is_nurse_available"
-            :type="'select'"
-            :name="'is_nurse_available'"
-            :label="'Is nurse support available?'"
-            :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
-            :error="formError.find(item => item.field === 'is_nurse_available')"
-          />
+
           <AppInput
             v-model="form.number_of_patients"
             :type="'number'"
@@ -101,8 +86,25 @@
           />
 
           <AppInput
+            v-model="form.is_another_doctor"
+            :type="'single-checkbox'"
+            :name="'is_another_doctor'"
+            :label="'Is there another Dr on site?'"
+            :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+            :error="formError.find(item => item.field === 'is_another_doctor')"
+          />
+          <AppInput
+            v-model="form.is_nurse_available"
+            :type="'single-checkbox'"
+            :name="'is_nurse_available'"
+            :label="'Is nurse support available?'"
+            :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
+            :error="formError.find(item => item.field === 'is_nurse_available')"
+          />
+
+          <AppInput
             v-model="form.opportunity_for_catch_up_slots"
-            :type="'select'"
+            :type="'single-checkbox'"
             :name="'opportunity_for_catch_up_slots'"
             :label="'Opportunity for catch up slots?'"
             :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
@@ -188,10 +190,9 @@
           <p class="mb-2">
             {{ form.dates.length }} Day{{ form.dates.length > 1 ? 's' : '' }}
           </p>
-          <div class="flex">
+          <div class="flex mb-2">
             <AppButton
               :label="'Edit Schedule'"
-              :inStyle="'padding:8px 16px; font-size: 14px;'"
               @click="editSchedule=true"
             />
           </div>
@@ -373,7 +374,7 @@
 
           <AppInput
             v-model="auto_assign_job"
-            :type="'select'"
+            :type="'single-checkbox'"
             :name="'auto_assign_job'"
             :label="'Use AUTO-MATCH on this Job?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
@@ -384,7 +385,7 @@
           <template v-if="['false', false].includes(auto_assign_job)">
             <AppInput
               v-model="selection_notification"
-              :type="'select'"
+              :type="'single-checkbox'"
               :name="'selection_notification'"
               :label="'Add a selection date?'"
               :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"

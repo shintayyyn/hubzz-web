@@ -2421,6 +2421,9 @@ export default {
 .message-modal.job-notification {
 	min-width: 50vw;
 }
+.shield {
+  z-index: 55;
+}
 .wrapper {
 	position: relative;
 	width: 100%;

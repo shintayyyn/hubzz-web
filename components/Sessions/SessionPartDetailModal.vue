@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div class="px-2">
+    <!-- <div>
       <svgicon
         name="left-arrow"
         height="32"
@@ -8,15 +8,15 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
-    <div class="flex flex-row justify-start items-center mt-4">
+    <div class="flex flex-row justify-start items-center pb-4 pt-2">
       <div class="leading-tight font-bold text-md sm:text-lg mr-2">
         {{ jobPart.job.title }}
       </div>
 
       <div
-        class="py-2 px-4 mx-1 rounded font-semibold"
+        class="py-1 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(jobPart.status)"
         @click="['Approved','Cancelled'].includes(jobPart.status) ? toggle_invoice_modal = true : null"
       >
@@ -92,16 +92,16 @@
       </div>
     </template>
 
-    <div class="flex flex-col mt-4">
-      <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+    <div class="flex flex-col">
+      <div class="flex flex-col md:flex-row justify-start">
+        <div class="md:pr-4 w-full md:w-55p">
           <div class="flex flex-col">
             <div
               v-if="!loadingJobPart && (jobPart.status === 'Declined' || jobPart.status === 'Withdrawn' || jobPart.status === 'Cancelled')"
-              class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
+              class="border rounded-lg flex justify-between p-4 mb-4"
             >
               <template v-if="jobPart.status === 'Declined' || jobPart.status === 'Withdrawn'">
-                <div class="leading-tight pb-4">
+                <div class="w-full md:w-1/3 leading-tight">
                   <p class="font-bold text-sm sm:text-md">
                     Reason for Withdrawal
                   </p>
@@ -111,7 +111,7 @@
                     {{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}
                   </p>
                 </div>
-                <div class="leading-tight pb-4">
+                <div class="w-full md:w-1/3 px-2 leading-tight">
                   <p class="font-bold text-sm sm:text-md">
                     Date of Withdrawal
                   </p>
@@ -121,7 +121,7 @@
                     {{ jobPart.declined_at_in_gb_formatted }}
                   </p>
                 </div>
-                <div class="leading-tight pb-4">
+                <div class="w-full md:w-1/3 leading-tight">
                   <p class="font-bold text-sm sm:text-md">
                     Withdrawn by
                   </p>
@@ -132,7 +132,7 @@
               </template>
 
               <template v-if="jobPart.status === 'Cancelled'">
-                <div class="leading-tight pb-4">
+                <div class="w-full md:w-1/3 leading-tight">
                   <p
                     class="font-bold text-sm sm:text-md"
                   >
@@ -146,7 +146,7 @@
                   </p>
                 </div>
 
-                <div class="leading-tight">
+                <div class="w-full md:w-1/3 px-2 leading-tight">
                   <p
                     class="font-bold text-sm sm:text-md"
                   >
@@ -158,7 +158,7 @@
                   </p>
                 </div>
 
-                <div class="leading-tight mt-4">
+                <div class="w-full md:w-1/3 leading-tight">
                   <p
                     class="font-bold text-sm sm:text-md"
                   >
@@ -233,7 +233,7 @@
           </div>
         </div>
 
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-4 w-full md:w-45p">
           <div class="flex flex-col">
             <SessionPartDetailModalParts
               :job_id="jobPart.job.id"
@@ -249,6 +249,7 @@
             </div>
 
             <SessionDetailModalLocum
+            class="mt-2"
               v-if="(
                 jobPart.status === 'Allocated'
                   || jobPart.status === 'Ongoing'
@@ -424,7 +425,8 @@ export default {
             dates: this.jobPart.dates,
           })
           
-          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
+          this.$router.push('/create-job')
+          // this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
       }, 500)
     },

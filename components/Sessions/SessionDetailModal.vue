@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4 md:p-8">
-    <div>
+  <div class="px-2">
+    <!-- <div>
       <svgicon
         name="left-arrow"
         height="32"
@@ -8,14 +8,14 @@
         class="cursor-pointer"
         @click="$emit('close')"
       />
-    </div>
+    </div> -->
 
-    <div class="flex flex-wrap justify-start items-center mt-4">
+    <div class="flex flex-wrap justify-start items-center pb-4 pt-2">
       <div class="leading-tight font-bold text-md sm:text-lg">
         {{ job.title }}
       </div>
 
-      <div class="mx-2 py-2 px-4 rounded font-semibold" :class="bgStatus(job.status)">
+      <div class="mx-2 py-1 px-4 rounded font-semibold" :class="bgStatus(job.status)">
         {{ status(job.status) }}
       </div>
 
@@ -29,7 +29,7 @@
               (job.status === 'Applied' && toEdit === false) ||
               (job.status === 'Live' && toEdit === false)
           "
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-4 py-1 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-1 focus:outline-none"
           @click.prevent="toEdit = true"
         >
           Edit this job
@@ -44,7 +44,7 @@
               (job.status === 'Applied' && toEdit === true) ||
               (job.status === 'Live' && toEdit === true)
           "
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-4 py-1 rounded-lg bg-yellow-500 ml-1 focus:outline-none"
           @click.prevent="toEdit = false"
         >
           Cancel Editing
@@ -113,9 +113,9 @@
       </transition>
     </div>
 
-    <div class="flex flex-col mt-4">
+    <div class="flex flex-col">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-4 w-full md:w-55p">
           <div class="flex flex-col">
             <div class="flex flex-col">
               <div v-if="job.status === 'Rejected'" class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
@@ -168,17 +168,17 @@
               @scrollToTop="$emit('scrollToTop')"
             />
 
-            <SessionDetailModalMap v-if="showMap" :job="job" />
-
-            <SessionDetailModalCancelForm
-              v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
+            <SessionDetailModalMap v-if="showMap && job.status === 'Allocated'" :job="job" />
+            <!-- <SessionDetailModalCancelForm
+              v-if="job.status === 'Allocated' && authPermissions.includes('Cancel Sessions Job')"
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
-            />
+            /> -->
+           
           </div>
         </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+        <div class="w-full md:w-45p order-first md:order-none">
           <div class="flex flex-col">
             <SessionPartDetailModalParts :job_id="job.id" :disabled-link="true" />
 
@@ -192,6 +192,13 @@
             <SessionDetailModalLocum
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Withdrawn')"
               :job="job"
+            />
+            <SessionDetailModalMap v-if="showMap && job.status !== 'Allocated'" :job="job" />
+
+             <SessionDetailModalCancelForm
+              v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
+              :job="job"
+              @cancelled="$emit('close'), $emit('cancelled', $event)"
             />
           </div>
         </div>
@@ -385,7 +392,8 @@ export default {
         ) {
           this.$store.commit("calendar/SET_REPOST_JOB", this.job)
           
-          this.$store.commit("calendar/CREATE_JOB_MODAL", true)
+          this.$router.push('/create-job')
+          // this.$store.commit("calendar/CREATE_JOB_MODAL", true)
         }
       }, 500)
     },

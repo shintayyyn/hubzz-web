@@ -1,6 +1,6 @@
 <template>
 	<section>
-		<div class="rounded-lg shadow-lg p-8 mt-4">
+		<div class="rounded-lg border p-4 mt-4">
 			<div
 				class="font-bold text-md sm:text-lg"
 			>{{ job.status === 'Ongoing' ? 'Terminate':'Cancel' }} this job</div>
@@ -265,7 +265,11 @@ const reasons = [
 	{
 		label: "Locum did not show up",
 		value: "Locum did not show up"
-	}
+	},
+	{
+		label: "Locums compliance documents have expired",
+		value: "Locums compliance documents have expired",
+	},
 ];
 export default {
 	components: {

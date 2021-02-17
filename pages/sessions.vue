@@ -1,6 +1,6 @@
 <template>
   <section class="sessions-section">
-    <div v-if="false" class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
+    <!-- <div v-if="false" class="relative flex-col w-full lg:w-1/8 sm:w-1/4">
       <AppLoading :loading="loading" spinner />
 
       <div class="flex flex-row justify-start overflow-x-auto">
@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden">
+    <div v-if="$router.name='sessions-index'" class="flex flex-row justify-start my-3 border-b border-sunglow overflow-x-auto lg:overflow-y-hidden">
       <template v-for="tab in tabs">
         <nuxt-link
           :key="tab.title"
@@ -45,7 +45,12 @@
           {{ tab.title }}
         </nuxt-link>
       </template>
+    </div> 
+
+    <div class="mt-5">
+      <nuxt-child :invoiceStatusList="invoiceStatusList" />
     </div>
+    -->
 
     <div class="mt-5">
       <nuxt-child :invoiceStatusList="invoiceStatusList" />
@@ -322,6 +327,11 @@ export default {
         this.confirmation_modal = true
       }
     },
+    "$route"(route) {
+      if (route.path === "/sessions") {
+        this.$router.push("/job-parts/?status=Allocated")
+      }
+    }
   },
 
   async asyncData ({ app, error, store, }) {

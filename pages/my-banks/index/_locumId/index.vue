@@ -1,10 +1,11 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="flex flex-col items-start p-4 md:p-8">
-      <div class="flex">
-        <nuxt-link :to="{ path: `/my-banks`, query: { ...$route.query }}" class="cursor-pointer">
+  <div :class="!$route.params.jobId ? '':'px-2 pt-2'">
+    <div class="flex flex-col items-start">
+      <template v-if="!$route.params.jobId">
+      <div class="flex pt-4">
+        <!-- <nuxt-link :to="{ path: `/my-banks`, query: { ...$route.query }}" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
-        </nuxt-link>
+        </nuxt-link> -->
         
         <button
           class="ml-4 focus:outline-none"
@@ -14,7 +15,7 @@
         </button>
       </div>
 
-      <div class="w-full flex flex-row justify-start overflow-x-auto mt-4 border-b border-sunglow">
+      <div  class="w-full flex flex-row justify-start overflow-x-auto mt-2 border-b border-sunglow">
         <nuxt-link
           :to="{ path: `/my-banks/${$route.params.locumId}`, query: { ...$route.query }}"
           :event="$route.name === 'my-banks-index-locumId-index' ? '':'click'"
@@ -33,6 +34,7 @@
           Related Jobs
         </nuxt-link>
       </div>
+      </template>
 
       <transition name="fade" mode="out-in">
         <div v-if="sendMessageModal" class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3">

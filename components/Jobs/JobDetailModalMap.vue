@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
+  <div class="bg-white rounded-lg border p-4">
     <template v-if="job">
       <div class="font-bold text-xs sm:text-sm">
         Practice

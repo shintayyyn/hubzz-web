@@ -1,13 +1,14 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="flex flex-col items-start p-4 md:p-8">
-      <nuxt-link
+  <div class="">
+    <div class="flex flex-col items-start px-2">
+      <!-- <nuxt-link
         :to="{ path: `/my-practice/platform`, query: { ...$route.query }}"
         class="cursor-pointer"
       >
         <svgicon name="left-arrow" height="32" width="32" />
-      </nuxt-link>
-      <div class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow w-full">
+      </nuxt-link> -->
+      <AppBreadcrumbs :links="links" />
+      <div v-if="!$route.params.jobId && !$route.params.userId" class="flex flex-row justify-start overflow-x-auto mb-2 border-b border-sunglow w-full">
         <nuxt-link
           :to="{ path: `/my-practice/platform/${$route.params.practiceId}`, query: { ...$route.query}}"
           :event="$route.name === 'my-practice-index-platform-practiceId-index'? '' : 'click'"
@@ -45,7 +46,67 @@
   </div>
 </template>
 <script>
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 export default {
+  components: {
+    AppBreadcrumbs
+  },
+  computed: {
+    links() {
+      let links = [
+        {
+          title: 'My Practice',
+          url: '/my-practice/platform'
+        },
+        {
+          title: 'Platform',
+          url: `/my-practice/platform${this.$route.query.status ? '?status='+this.$route.query.status : ''}`
+        },
+        {
+          title: this.practice.name,
+          url: `/my-practice/platform/${this.practice.id}`
+        }
+      ]
+
+      if (this.$route.name === 'my-practice-index-platform-practiceId-index-users') {
+        links.push({
+          title: 'Users',
+          url: `/my-practice/platform/${this.practice.id}/users?status=${this.$route.query.status}`
+        })
+      }else if (this.$route.name.includes('my-practice-index-platform-practiceId-index-surgeries')) {
+        links.push({
+          title: 'Surgeries',
+          url: `/my-practice/platform/${this.practice.id}/surgeries?status=${this.$route.query.status}`
+        })
+      }else if (this.$route.name.includes('my-practice-index-platform-practiceId-index-related-jobs')) {
+        links.push({
+          title: 'Related Jobs',
+          url: `/my-practice/platform/${this.practice.id}/related-jobs?status=${this.$route.query.status}`
+        },{
+          title: `${this.$route.query.jobStatus ? this.$route.query.jobStatus : 'Allocated'} Jobs`,
+          url: `/my-practice/platform/${this.practice.id}/related-jobs?status=${this.$route.query.status}&jobStatus=${this.$route.query.jobStatus}`
+        })
+      }
+
+      if (this.$route.params.jobId) {
+        links.push({
+          title: this.$route.params.jobId,
+          url: `/my-practice/platform/${this.practice.id}/related-jobs/${this.$route.params.jobId}?status=${this.$route.query.status}`
+        })
+      }
+
+      if (this.$route.params.userId) {
+        links.push({
+          title: 'Users',
+          url: `/my-practice/platform/${this.practice.id}/users`
+        },{
+          title: this.$route.params.userId,
+          url: `/my-practice/platform/${this.practice.id}/users/${this.$route.params.userId}`
+        })
+      }
+      return links
+    }
+  },
   async asyncData({ app, params, error }) {
     try {
       const response = await app.$axios.$get(

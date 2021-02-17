@@ -18,7 +18,7 @@
       v-if="$auth.user.domain === 'Practice'"
       class="w-full"
     >
-      <div class="flex justify-between">
+      <div class="flex items-center justify-between mt-2">
         <div class="flex">
           <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-full">
             <AppInputSmall
@@ -32,32 +32,45 @@
               @click="getPermanentJobsForPractice()"
             />
           </div>
-          <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="m-3">
+          <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="m-3 flex items-center">
             <button
-              class="px-6 py-1 border-2 border-gray-400 rounded-lg font-bold text-gray-600"
+              class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
               @click="filterModal = !filterModal"
             >
-              Filters
+              <p class="mx-2">Filter</p>
+              <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
             </button>
+            <transition name="fade">
+            <div class="w-full flex items-center" v-if="filterModal">
+              <AppButton
+                label="Reset"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="filterReset"
+              />
+
+              <AppButton
+                class="mx-2"
+                label="Submit"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="getJobs(params)"
+              />
+            </div>
+            </transition>
           </div>
         </div>
-        <div class="mt-3">
-          <button
-            v-if="$auth.user.domain === 'Practice'"
-            class="px-3 py-1 text-sm font-bold cursor-pointer justify-end"
-            :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
-            @click="$router.push('/permanent-jobs/create')"
-          >
-            + Create Salaried Role 
-          </button>
-        </div>
+        <button
+          v-if="$auth.user.domain === 'Practice'"
+          class="px-3 py-1 text-sm font-bold cursor-pointer justify-end"
+          :class="'border rounded-lg border-sunglow bg-sunglow'"
+          @click="$router.push('/permanent-jobs/create')"
+        >
+          + Create Salaried Role 
+        </button>
       </div>
 			
-      <div
-        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg my-2"
-        :class="filterModal ? 'flex' : 'hidden'"
-      >
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+      <transition name="drop-down">
+      <div v-if="filterModal" class="flex flex-col md:flex-row items-start mt-2">
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
           <AppInput
             v-model="params.job_type"
             :type="'select'"
@@ -65,10 +78,11 @@
             :label="'Job Type'"
             :placeholder="'Select...'"
             :items="job_types"
+            :wrapperClass="'px-1'"
           />
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
           <AppInput
             v-model="params.profession"
             :type="'select'"
@@ -76,9 +90,10 @@
             :label="'Profession'"
             :placeholder="'Select...'"
             :items="professions"
+            :wrapperClass="'px-1'"
           />
         </div>
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
           <AppInput
             v-model="params.job_posting_status"
             :type="'select'"
@@ -86,32 +101,19 @@
             :label="'Permanent Job Status'"
             :placeholder="'Select...'"
             :items="permanent_job_status"
+            :wrapperClass="'px-1'"
           />
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" />
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+          <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" :wrapperClass="'px-1'"/>
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" />
-        </div>
-
-        <div class="md:px-1 flex flex-wrap w-full justify-end">
-          <AppButton
-            label="Reset"
-            :in-style="'padding:5px 14px;margin-bottom:5px'"
-            @click="filterReset"
-          />
-
-          <AppButton
-            class="mx-2"
-            label="Submit"
-            :in-style="'padding:5px 14px;margin-bottom:5px'"
-            @click="getJobs(params)"
-          />
+        <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+          <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'"/>
         </div>
       </div>
+      </transition>
     </div>
     <!-- Filters end here -->
 
@@ -159,13 +161,13 @@
 
           <template v-slot:status_slot="slotProps">
             <div v-if="slotProps.item.status" class="flex items-center justify-center">
-                {{ slotProps.item.status }}
+              {{ slotProps.item.status }}
             </div>
           </template>
 
           <template v-if="$route.query.status === 'Closed'" v-slot:closing_tag="slotProps">
             <div class="flex items-center justify-center">
-                {{ jobClosingTag(slotProps.item) }}
+              {{ jobClosingTag(slotProps.item) }}
             </div>
           </template>
         </AppTable>
@@ -261,11 +263,8 @@ export default {
   },
 
   middleware ({ query, error, }) {
-    if (
-      query.status
-			&& !["available", "closed", "unfilled", "pending",].includes(
-			  query.status.toLowerCase()
-			)
+    if (query.status && !["available", "closed", "unfilled", "pending",]
+      .includes(query.status.toLowerCase())
     ) {
       return error({
         status: 404,
@@ -301,7 +300,7 @@ export default {
         {
           name: "ID",
           dataIndex: "id",
-          width: 70
+          width: 70,
         },
         {
           name: "Title",
@@ -318,27 +317,27 @@ export default {
           slotName: "salary_slot",
           dataIndex: "",
           class: "text-center",
-          width: 80
+          width: 80,
         },
         {
           name: "Posted",
           dataIndex: "",
           slotName: "date_posted",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Closes",
           dataIndex: "",
           slotName: "date_closing",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Work Hours",
           dataIndex: "work_hours",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Profession",
@@ -349,7 +348,7 @@ export default {
           name: "Industry",
           dataIndex: "industry_type",
           class: "text-center",
-          width: 80
+          width: 80,
         },
       ],
 
@@ -427,7 +426,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -439,7 +438,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
               ]
             }
@@ -451,7 +450,7 @@ export default {
                   name: "Closed At",
                   dataIndex: "closed_at_in_gb_formatted",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
                 {
                   name: "Status",
@@ -459,7 +458,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
                 {
                   name: "Closing tag",
@@ -467,7 +466,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -477,7 +476,7 @@ export default {
                   name: "Closed At",
                   dataIndex: "closed_at_in_gb_formatted",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
                 {
                   name: "Status",
@@ -485,7 +484,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120
+                  width: 120,
                 },
                 {
                   name: "Closing tag",
@@ -493,7 +492,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
-                  width: 150
+                  width: 150,
                 },
               ]
             }
@@ -516,14 +515,12 @@ export default {
             let practice_type = this.$auth.user.practice_detail.practice.type
             this.params = {
               job_posting_status: newStatus ? newStatus : "Available",
-              practice_id:
-								practice_type === "Hub" && newStatus === "Pending"
-								  ? null
-								  : this.$auth.user.practice_id,
-              parent_practice_id:
-								practice_type === "Hub" && newStatus === "Pending"
-								  ? this.$auth.user.practice_id
-								  : null,
+              practice_id: practice_type === "Hub" && newStatus === "Pending"
+                ? null
+                : this.$auth.user.practice_id,
+              parent_practice_id: practice_type === "Hub" && newStatus === "Pending"
+                ? this.$auth.user.practice_id
+                : null,
               limit: 15,
             }
             setTimeout(async () => {
@@ -612,10 +609,9 @@ export default {
           params,
         })
 
-        permanent_jobs_for_locum
-					= response.data && response.data.permanent_jobs
-					  ? response.data.permanent_jobs
-					  : null
+        permanent_jobs_for_locum = response.data && response.data.permanent_jobs
+          ? response.data.permanent_jobs
+          : null
 
         response = await app.$axios.$get(
           `/api/v1/locum/permanent-job-applications/count`
@@ -632,10 +628,9 @@ export default {
           `/api/v1/locum/permanent-job-applications`
         )
 
-        permanent_job_applications
-					= response.data && response.data.permanent_job_applications
-					  ? response.data.permanent_job_applications
-					  : null
+        permanent_job_applications = response.data && response.data.permanent_job_applications
+          ? response.data.permanent_job_applications
+          : null
 
         permanent_jobs_for_locum = permanent_jobs_for_locum.map(
           permanent_job => {
@@ -674,14 +669,12 @@ export default {
           job_posting_status: route.query.status
             ? route.query.status
             : "Available",
-          practice_id:
-						practice_type === "Hub" && route.query.status === "Pending"
-						  ? null
-						  : app.$auth.user.practice_id,
-          parent_practice_id:
-						practice_type === "Hub" && route.query.status === "Pending"
-						  ? app.$auth.user.practice_id
-						  : null,
+          practice_id: practice_type === "Hub" && route.query.status === "Pending"
+            ? null
+            : app.$auth.user.practice_id,
+          parent_practice_id: practice_type === "Hub" && route.query.status === "Pending"
+            ? app.$auth.user.practice_id
+            : null,
           limit: 15,
         }
         let response = await app.$axios.$get(
@@ -700,10 +693,9 @@ export default {
           params,
         })
 
-        permanent_jobs_for_practice
-					= response.data && response.data.permanent_jobs
-					  ? response.data.permanent_jobs
-					  : null
+        permanent_jobs_for_practice = response.data && response.data.permanent_jobs
+          ? response.data.permanent_jobs
+          : null
 
         permanent_job_applications_count
 					= response.data && response.data.count ? response.data.count : null
@@ -717,28 +709,27 @@ export default {
           `/api/v1/practice/permanent-job-applications`
         )
 
-        permanent_job_applications
-					= response.data && response.data.permanent_job_applications
-					  ? response.data.permanent_job_applications
-					  : null
+        permanent_job_applications = response.data && response.data.permanent_job_applications
+          ? response.data.permanent_job_applications
+          : null
 
         await store.commit(
           "permanentjobs/SET_PERMANENT_JOB_APPLICATIONS",
-          permanent_job_applications_count
+          permanent_job_applications
         )
 
         permanent_jobs_for_practice = permanent_jobs_for_practice.map(
           permanent_job => {
-            const permanent_job_app_found = permanent_job_applications.find(
-              permanent_job_application =>
-                permanent_job_application.permanent_job_id === permanent_job.id
-            )
-            if (permanent_job_app_found) {
-              // DIFFERENT STATUSES ONLY IF IN AVAILABLE TAB
+            if (permanent_job.permanent_job_applications.length > 0) {
+              console.log(permanent_job.permanent_job_applications.filter(permJobApp => permJobApp.application_status === 'Rejected'))
               if (route.query.status === permanent_job.job_posting_status) {
                 permanent_job.status = permanent_job.job_posting_status
               } else {
-                permanent_job.status = "Applied"
+                if ( permanent_job.permanent_job_applications.filter(permJobApp => permJobApp.application_status === 'Rejected').length > 0) {
+                  permanent_job.status = permanent_job.job_posting_status
+                } else {
+                  permanent_job.status = "Applied"
+                }
               }
             } else {
               permanent_job.status = permanent_job.job_posting_status
@@ -791,7 +782,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
-          width: 100
+          width: 100,
         },
       ]
 
@@ -802,7 +793,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
-            width: 140
+            width: 140,
           },
           {
             name: "Status",
@@ -810,7 +801,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
-          width: 100
+            width: 100,
           },
           {
             name: "Closing Tag",
@@ -818,7 +809,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
-            width: 130
+            width: 130,
           },
         ]
       }
@@ -831,7 +822,7 @@ export default {
           slotName: "status_slot",
           dataIndex: "",
           class: "text-center",
-          width: 100
+          width: 100,
         },
       ]
       if (this.$route.query.status) {
@@ -841,7 +832,7 @@ export default {
             name: "Closed At",
             dataIndex: "closed_at",
             class: "text-center localDate",
-            width: 140
+            width: 140,
           },
           {
             name: "Status",
@@ -849,7 +840,7 @@ export default {
             slotName: "status_slot",
             dataIndex: "",
             class: "text-center",
-            width: 100
+            width: 100,
           },
           {
             name: "Closing Tag",
@@ -857,7 +848,7 @@ export default {
             slotName: "closing_tag",
             dataIndex: "",
             class: "text-center",
-            width: 130
+            width: 130,
           },
         ]
       }
@@ -895,10 +886,9 @@ export default {
       this.params.profession = ""
       this.params.date_posted_start = ""
       this.params.date_posted_end = ""
-      this.params.permanent_job_status
-				= !this.$route.query.status || this.$route.query.status === "Available"
-				  ? "Available"
-				  : "Closed"
+      this.params.permanent_job_status = this.$route.query.status === null || this.$route.query.status === "Available"
+        ? "Available"
+        : "Closed"
 
       this.getJobs(this.params)
     },
@@ -938,9 +928,9 @@ export default {
         )
         if (permJobApp && permJobApp.application_status === "Rejected") {
           closingTag = "Rejected"
-        } else {
-          closingTag = item.hired_through
-        }
+        } else if (permJobApp && permJobApp.rejected_by_locum_at) {
+          closingTag = "Interview Declined"
+        } 
       } else {
         closingTag = item.hired_through
       }
@@ -954,6 +944,8 @@ export default {
         return "Rejected"
       case "Unfilled":
         return "Unfilled"
+      case "Interview Declined":
+        return "Interview Declined"
       default:
         return "Closed By Practice"
       }
@@ -969,6 +961,7 @@ export default {
 
     searchSubmit: debounce(function (value) {
       this.params.search = value
+      this.current_page = 1
 
       if (this.$auth.user.domain === "Locum") {
         this.getPermanentJobsForLocum(this.params)
@@ -979,6 +972,7 @@ export default {
     }, 500),
 
     async getPermanentJobsForLocum (params) {
+      this.loading = true
       await this.$axios
         .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
         .then(res => {
@@ -989,10 +983,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/locum/permanent-jobs`, { params, })
         .then(res => {
-          this.permanent_jobs_for_locum
-						= res.data && res.data.permanent_jobs
-						  ? res.data.permanent_jobs
-						  : null
+          this.permanent_jobs_for_locum = res.data && res.data.permanent_jobs
+            ? res.data.permanent_jobs
+            : null
         })
 
       await this.$axios
@@ -1005,10 +998,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/locum/permanent-job-applications`)
         .then(res => {
-          this.permanent_job_applications
-						= res.data && res.data.permanent_job_applications
-						  ? res.data.permanent_job_applications
-						  : null
+          this.permanent_job_applications = res.data && res.data.permanent_job_applications
+            ? res.data.permanent_job_applications
+            : null
         })
 
       this.permanent_jobs_for_locum = await this.permanent_jobs_for_locum.map(
@@ -1034,6 +1026,7 @@ export default {
               permanent_job.status = "Available"
             }
           }
+          this.loading = false
           return permanent_job
         }
       )
@@ -1054,10 +1047,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/practice/permanent-jobs`, { params, })
         .then(res => {
-          this.permanent_jobs_for_practice
-						= res.data && res.data.permanent_jobs
-						  ? res.data.permanent_jobs
-						  : null
+          this.permanent_jobs_for_practice = res.data && res.data.permanent_jobs
+            ? res.data.permanent_jobs
+            : null
         })
 
       await this.$axios
@@ -1070,10 +1062,9 @@ export default {
       await this.$axios
         .$get(`/api/v1/practice/permanent-job-applications`)
         .then(res => {
-          this.permanent_job_applications
-						= res.data && res.data.permanent_job_applications
-						  ? res.data.permanent_job_applications
-						  : null
+          this.permanent_job_applications = res.data && res.data.permanent_job_applications
+            ? res.data.permanent_job_applications
+            : null
         })
 
       this.permanent_jobs_for_practice = await this.permanent_jobs_for_practice.map(

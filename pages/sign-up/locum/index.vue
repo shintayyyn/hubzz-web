@@ -1,8 +1,8 @@
 <template>
   <div ref="signUpContainer" class="w-full">
-    <div class="w-full xl:max-w-3xl p-4 md:p-6">
+    <div class="w-full xl:max-w-3xl p-4">
       <div class="flex w-full justify-center xl:justify-start">
-        <div class="flex flex-col items-start mb-6 mt-1 md:mx-4" style="flex: 0 1 600px;">
+        <div class="flex flex-col items-start mb-2 mt-2 md:mx-4" style="flex: 0 1 600px;">
           <nuxt-link to="/sign-up" class="text-black focus:outline-none">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
@@ -23,7 +23,7 @@
           </div>
 
           <div class="flex w-full justify-center xl:justify-start">
-            <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+            <div class="md:mx-4 flex flex-col p-4 m-1 rounded-lg border" style="flex: 0 1 600px;">
               <form class="w-full">
                 <div class="flex justify-between text-sm">
                   <div>Select which jobs to view:</div>
@@ -33,39 +33,48 @@
                   </div>
                 </div>
 
-                <AppInput
-                  v-model="viewLocumJobs"
-                  type="single-checkbox"
-                  name="view_locum_jobs"
-                  label="Hubzz Locum Jobs"
-                  :error="formErrors.find(({ field }) => field === 'view_locum_jobs')"
-                />
+                <div class="flex flex-col md:flex-row items-center">
+                  <AppInput
+                    v-model="viewLocumJobs"
+                    type="single-checkbox"
+                    name="view_locum_jobs"
+                    label="Hubzz Locum Jobs"
+                    :error="formErrors.find(({ field }) => field === 'view_locum_jobs')"
+                    class="w-full md:w-1/2"
+                  />
 
-                <AppInput
-                  v-model="viewPermanentJobs"
-                  type="single-checkbox"
-                  name="view_permanent_jobs"
-                  label="Permanent / Salaried Roles"
-                  :error="formErrors.find(({ field }) => field === 'view_permanent_jobs')"
-                />
+                  <AppInput
+                    v-model="viewPermanentJobs"
+                    type="single-checkbox"
+                    name="view_permanent_jobs"
+                    label="Permanent / Salaried Roles"
+                    :error="formErrors.find(({ field }) => field === 'view_permanent_jobs')"
+                    class="w-full md:w-1/2"
+                  />
+                </div>
 
-                <div v-if="viewPermanentJobs" class="px-4">
+
+                <div v-if="viewPermanentJobs" class="px-4 text-sm">
                   <div>Please Pick at least One(1) Salaried Role Work Hours</div>
-                  <AppInput
-                    v-model="viewPermanentJobsFullTime"
-                    :type="'single-checkbox'"
-                    :name="'view_permanent_jobs_full_time'"
-                    :label="'Full Time'"
-                    :error="formErrors.find(({ field }) => field === 'view_permanent_jobs_full_time')"
-                  />
+                  <div class="flex flex-col md:flex-row items-center">
+                    <AppInput
+                      v-model="viewPermanentJobsFullTime"
+                      :type="'single-checkbox'"
+                      :name="'view_permanent_jobs_full_time'"
+                      :label="'Full Time'"
+                      :error="formErrors.find(({ field }) => field === 'view_permanent_jobs_full_time')"
+                      class="w-full md:w-1/2"
+                    />
 
-                  <AppInput
-                    v-model="viewPermanentJobsPartTime"
-                    :type="'single-checkbox'"
-                    :name="'view_permanent_jobs_part_time'"
-                    :label="'Part Time'"
-                    :error="formErrors.find(({ field }) => field === 'view_permanent_jobs_part_time')"
-                  />
+                    <AppInput
+                      v-model="viewPermanentJobsPartTime"
+                      :type="'single-checkbox'"
+                      :name="'view_permanent_jobs_part_time'"
+                      :label="'Part Time'"
+                      :error="formErrors.find(({ field }) => field === 'view_permanent_jobs_part_time')"
+                      class="w-full md:w-1/2"
+                    />
+                  </div>
                 </div>
 
                 <AppInput
@@ -165,7 +174,7 @@
                   required
                 />
 
-                <div class="flex flex-col py-2 mb-6">
+                <div class="flex flex-col py-2">
                   <div class="flex flex-row flex-no-wrap justify-between">
                     <input
                       id="privacy_policy"
@@ -176,7 +185,7 @@
 
                     <label for="privacy_policy" class="text-xs sm:text-sm py-1">
                       I agree with the
-                      <span class="cursor-pointer underline" @click="modal = true">Terms and Conditions and Privacy Policy</span>
+                      <span class="cursor-pointer underline" @click.prevent="modal = true">Terms and Conditions and Privacy Policy</span>
                       of Hubzz
                       <span class="text-red-500">*</span>
                     </label>
@@ -192,8 +201,10 @@
             </div>
           </div>
 
-          <div class="flex justify-center mt-4">
-            <AppButton :label="!signingUp ? 'Sign Up' : 'Signing Up...'" :inStyle="'padding:6px 16px;'" :disabled="loading" @click="signUp" />
+          <div class="flex w-full justify-center xl:justify-start mt-2">
+            <div class="md:mx-4 flex justify-center" style="flex: 0 1 600px;">
+              <AppButton :label="!signingUp ? 'Sign Up' : 'Signing Up...'" :inStyle="'padding:6px 16px;'" :disabled="loading" @click="signUp" />
+            </div>
           </div>
         </div>
       </div>
@@ -202,8 +213,8 @@
     <div v-if="modal" class="shield" @click="modal = false" />
     
     <transition name="slide" mode="out-in">
-      <div v-if="modal" class="py-8 modal-container">
-        <div class="px-4 lg:px-10 pb-4">
+      <div v-if="modal" class="px-6 py-4 modal-container">
+        <div class="">
           <svgicon
             name="left-arrow"
             height="32"

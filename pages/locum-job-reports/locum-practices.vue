@@ -1,11 +1,12 @@
 <template>
-  <div class="report-modal p-4 md:p-8 shadow-lg">
-    <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm ">
+  <div class="">
+    <AppBreadcrumbs :links="links" />
+    <div class="px-2 flex-1 flex flex-col self-end">
+      <!-- <div class="flex justify-between text-sm ">
         <nuxt-link to="/locum-job-reports" class=" hover:text-sunglow p-1">
           <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
         </nuxt-link>
-      </div>
+      </div> -->
 
       <div class="text-lg md:text-2xl ">
         Practices Worked
@@ -19,30 +20,32 @@
         class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo  my-2"
       >
         <div class="md:px-1 w-full">
-          <label class="text-md md:text-lg text-bold">Filters</label>
+          <label class="text-bold">Filters</label>
         </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="practiceNameIncludes"
-            placeholder="Search Practice Name"
-            type="text"
-            label="Practice Name"
-          />
-        </div>
+        <div class="w-full flex flex-wrap items-center">
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3 h-full pt-2">
+            <AppInput
+              v-model="practiceNameIncludes"
+              placeholder="Search Practice Name"
+              type="text"
+              label="Practice Name"
+            />
+          </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate
-            v-model="dateStart"
-            label="Date Start"
-          />
-        </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3 h-full">
+            <AppDate
+              v-model="dateStart"
+              label="Date Start"
+            />
+          </div>
 
-        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-          <AppDate
-            v-model="dateEnd"
-            label="Date End"
-          />
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3 h-full">
+            <AppDate
+              v-model="dateEnd"
+              label="Date End"
+            />
+          </div>
         </div>
 
         <div class="md:px-1 flex flex-wrap w-full justify-end">
@@ -136,6 +139,7 @@ import AppInput from '@/components/Base/AppInput'
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppDate from '@/components/Base/AppDate'
+import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
 export default {
   components: {
     AppButton,
@@ -143,6 +147,7 @@ export default {
     ReportTable,
     ReportPagination,
     AppDate,
+    AppBreadcrumbs
   },
 
   data () {
@@ -182,6 +187,8 @@ export default {
       practiceNameIncludes: '',
       dateStart: '',
       dateEnd: '',
+      
+      links: []
     }
   },
 
@@ -326,6 +333,16 @@ export default {
     this.activePage = page ? Number.parseInt(page) : 1
 
     this.getLocumPractices()
+
+    this.links = [
+      {
+        title: 'Job Reports',
+        url: '/locum-job-reports'
+      },
+      {
+        title: 'Rep-013'
+      }
+    ]
   },
 
   methods: {

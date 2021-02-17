@@ -1,10 +1,11 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div class="">
     <template v-if="job && !job_part">
       <JobDetailModalAppointment
         v-if="!activeJobTypePlatform"
         :job="job"
         @close="close"
+        :isModal="false"
       />
 
       <JobDetailModal
@@ -19,6 +20,7 @@
         v-if="!activeJobTypePlatform"
         :job="job_part.job"
         @close="close"
+        :isModal="false"
       />
 
       <JobPartDetailModal
@@ -26,6 +28,7 @@
         :job_part="job_part"
         @setJobPart="newJobPart => job_part = newJobPart"
         @close="close"
+        :isModal="false"
       />
     </template>
   </div>
@@ -110,7 +113,7 @@ export default {
     close () {
       this.$router.push({
         path: `/my-practice/platform/${this.$route.params.practiceId}/related-jobs`,
-        query: { ...this.$route.query, },
+        query: { ...this.$route.query },
       })
     },
   },

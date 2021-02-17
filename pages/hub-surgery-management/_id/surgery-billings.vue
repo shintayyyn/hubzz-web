@@ -1,6 +1,6 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
+    <div v-if="!$route.params.invoiceId" class="flex flex-row justify-start overflow-x-auto border-b border-gray-500">
       <nuxt-link
         :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums` }"
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"

@@ -1,55 +1,7 @@
 <template>
   <section class="jobs-section">
-    <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
-      <div class="flex overflow-x-auto items-center">
-        <template v-for="tab in tabs" >
-          <nuxt-link
-            :key="tab.title"
-            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-            :to="tab.route"
-            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-            :class="tab.active ? 'border-b-4 border-sunglow' : 'text-gray-600'"
-          >
-            {{ tab.title }}
-          </nuxt-link>
-        </template>
-      </div>
-    </div>
-
     <div class="mt-5">
-      <div class="flex-1 flex flex-col py-2 px-4 md:px-6">
-        <!-- <div class="text-xl md:text-4xl">
-          Reports
-        </div>
-
-        <div class="text-sm md:text-xl">
-          Locum Reports
-        </div> -->
-
-        <div class="flex flex-col">
-          <nuxt-link
-            v-for="locumJobReport in locumJobReports"
-            :key="`locumJobReports-${locumJobReport.title}`"
-            :to="locumJobReport.url"
-            class="inline-flex no-underline w-full py-2 md:p-3 rounded-lg shadow-lg hover:bg-gray-300 transition-hover my-2"
-          >
-            <div class="flex flex-no-wrap items-center text-sm w-full">
-              <span class="px-2 whitespace-no-wrap font-semibold">{{ locumJobReport.title }}</span>
-              <span class="px-2 w-full leading-tight flex items-center">{{ locumJobReport.subtitle }}</span>
-              <div class="flex items-center px-1 md:px-0">
-                <svgicon name="arrow-right" width="21" height="21" color="black" />
-              </div>
-            </div>
-          </nuxt-link>
-        </div>
-
-        <nuxt-link
-          v-if="$route.name !== 'locum-job-reports'"
-          class="shield z-511 fixed inset-0 opacity-50"
-          to="/locum-job-reports"
-        /> 
         <nuxt-child />
-      </div>
     </div>
   </section>
 </template>

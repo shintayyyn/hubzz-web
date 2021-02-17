@@ -1,6 +1,7 @@
 <template>
   <section class="profile-section">
-    <div class="flex items-center overflow-x-auto whitespace-no-wrap border-b border-sunglow">
+    <AppBreadcrumbs :links="links" />
+    <div v-if="!$route.params.id" class="flex items-center overflow-x-auto whitespace-no-wrap border-b border-sunglow">
       <nuxt-link
         v-if="authPermissions.includes('View Profile Practice')"
         to="/profile"
@@ -33,9 +34,11 @@
 </template>
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 export default {
   components: {
-    AppConfirmationModal
+    AppConfirmationModal,
+    AppBreadcrumbs
   },
   data() {
     return {
@@ -47,6 +50,58 @@ export default {
   computed: {
     authPermissions () {
       return this.$store.getters["permissions"];
+    },
+    links() {
+      let route = this.$route
+      let links = [
+        {
+          title: 'Profile',
+          url: '/profile'
+        }
+      ]
+
+      switch (route.name) {
+        case 'profile':
+        case "profile-users":
+        case "profile-practice-documents":
+          return []
+        case "profile-users-id":
+        case "profile-users-id-change-password":
+          links.push({
+            title: 'Users',
+            url: '/profile/users'
+          })
+          break;
+        case "profile-practice-documents-id":
+          links.push({
+            title: 'Practice Documents',
+            url: '/profile/practice-documents'
+          })
+          break
+        default:
+          break;
+      }
+
+      if (route.params.id) {
+        let tab = ['profile-users-id-change-password','profile-users-id'].includes(route.name) ? 'users' : 'profile-practice-documents-id'
+        links.push({
+          title: route.params.id,
+          url: `/profile/${tab}/${route.params.id}`
+        })
+      }
+
+      if (route.name === 'profile-users-id-change-password'){
+        links.push({
+          title: 'Change Password',
+          url: `/profile/users/${route.params.id}/change-password`
+        })
+      }
+
+
+      console.log("route", route)
+      console.log("links", links)
+
+      return links
     }
   },
   async asyncData ({ store, error, }) {

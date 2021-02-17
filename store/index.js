@@ -18,6 +18,7 @@ export const state = () => ({
   view_locum_jobs: false,
   view_permanent_jobs: false,
   session_expiring: false,
+  breadcrumbs: []
 })
 
 export const mutations = {
@@ -36,6 +37,16 @@ export const mutations = {
   },
   TOGGLE_SIDEBAR (state, payload) {
     state.toggled_sidebar = payload
+  },
+  SET_BREADCRUMBS(state, payload) {
+    state.breadcrumbs = payload
+    if (typeof localStorage === 'object') {
+    localStorage.setItem('breadcrumbs', JSON.stringify(payload))
+      // window.localStorage.setItem('breadcrumbs', JSON.stringify(payload))
+    }
+  },
+  ADD_BREADCRUMB(state, payload) {
+    state.breadcrumbs.push(payload)
   },
   SET_LOCUM_PRIVATE_PRACTICES (state, payload) {
     state.locum_private_practices = payload
@@ -138,4 +149,10 @@ export const getters = {
   permissions (state) {
     return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []
   },
+  getBreadcrumbs(state) {
+    if (typeof localStorage === 'object') {
+      return [...JSON.parse(localStorage.getItem('breadcrumbs'))]
+    }
+    return state.breadcrumbs
+  }
 }

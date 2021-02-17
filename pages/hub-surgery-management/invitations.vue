@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-row justify-start items-center overflow-x-auto mb-3 border-b border-gray-500">
+    <div v-if="!['hub-surgery-management-invitations-hub-create'].includes($route.name)" class="flex flex-row justify-start items-center overflow-x-auto mb-3 border-b border-gray-500">
       <nuxt-link
         :to="'/hub-surgery-management/invitations/spoke'"
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
