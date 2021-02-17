@@ -1,8 +1,8 @@
 <template>
 	<div ref="container" class="flex flex-col items-center justify-center xl:mx-4 w-full">
-		<AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
+		<!-- <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" /> -->
 		<div class="flex w-full justify-center xl:justify-start">
-			<div class="flex flex-col w-full p-4 md:p-8 m-1 rounded-lg shadow-lg">
+			<div class="flex flex-col w-full p-4 m-1 rounded-lg border">
 				<form class="w-full">
 					<AppInput
 						v-model="form.type"
@@ -26,14 +26,14 @@
 						:items="hub_types"
 						required
 					/>
-					<div v-if="form.type === 'Hub'" class="m-2 bg-gray-300 rounded-lg">
-						<div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
-							<p class="font-semibold text-lg">Hub</p>
-							<p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
+					<div v-if="form.type === 'Hub'" class="bg-gray-300 rounded-lg mx-4 mb-4">
+						<div v-if="form.hub_type === 'Type 1'" class="px-4 py-2">
+							<p class="font-semibold ">Hub</p>
+							<p class="text-sm">Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
 						</div>
-						<div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
-							<p class="font-semibold text-lg">Hub - Healthboard</p>
-							<p>Healthboard Hubs can only create jobs for its spokes but not for itself.</p>
+						<div v-if="form.hub_type === 'Type 2'" class="px-4 py-2 my-2">
+							<p class="font-semibold ">Hub - Healthboard</p>
+							<p class="text-sm">Healthboard Hubs can only create jobs for its spokes but not for itself.</p>
 						</div>
 					</div>
 
@@ -221,29 +221,31 @@
 									<div>Name:</div>
 									<div class="ml-2">{{ displayPracticeHub.name }}</div>
 								</div>
-								<div class="flex justify-start">
+								<div class="flex justify-start text-sm">
 									<div>CCG:</div>
 									<div class="ml-2">{{ displayPracticeHub.clinical_commissioning_group_name }}</div>
 								</div>
-								<div class="flex justify-start">
+								<div class="flex justify-start text-sm">
 									<div>Code:</div>
 									<div class="ml-2">{{ displayPracticeHub.code }}</div>
 								</div>
-								<div class="flex justify-start">
+								<div class="flex justify-start text-sm">
 									<div>Type:</div>
 									<div class="ml-2">{{ displayPracticeHub.type }}</div>
 								</div>
 							</div>
-							<div
-								class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
-								@click="removePracticeHub"
-								v-text="`Change ${form.type === 'Hub' ? 'Spoke' : 'Hub'}`"
-							/>
-							<div
-								class="my-2 text-sm cursor-pointer bg-yellow-500 w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
-								@click="cancelInvitation"
-								v-text="`Cancel Invitation`"
-							/>
+							<div class="flex flex-col md:flex-row items-center">
+								<div
+									class="my-2 md:mr-2 text-sm cursor-pointer bg-sunglow hover:bg-sunglow-dark w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
+									@click="removePracticeHub"
+									v-text="`Change ${form.type === 'Hub' ? 'Spoke' : 'Hub'}`"
+								/>
+								<div
+									class="my-2 text-sm cursor-pointer bg-red-600 hover:bg-red-700 text-white w-1/4 flex justify-center px-2 py-1 rounded-lg shadow-lg font-bold"
+									@click="cancelInvitation"
+									v-text="`Cancel Invitation`"
+								/>
+							</div>
 						</template>
 						<template v-if="!displayPracticeHub">
 							<AppInput
@@ -254,7 +256,7 @@
 								:error="formError.find(item => item.field === 'hub_practice_id')"
 								@submit="search"
 							/>
-							<AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" @click="search" />
+							<AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="search" />
 
 							<div v-if="showResult && practiceLists.length === 0" class="mt-5">
 								<div
@@ -263,7 +265,7 @@
 							</div>
 							<div
 								v-if="showResult && practiceLists.length > 0"
-								class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
+								class="rounded-lg border overflow-auto bg-white mb-4"
 							>
 								<div
 									class="text-xs lg:text-base font-bold p-4"
@@ -275,7 +277,7 @@
 									class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
 									@click="select(item)"
 								>
-									<div class="flex flex-col justify-start text-xs xl:text-base">
+									<div class="flex flex-col justify-start">
 										<div class="flex flex-col font-bold">
 											<div>
 												<span>{{ item.surgery.name }}</span>
@@ -289,19 +291,19 @@
 												>Invited</span>
 											</div>
 										</div>
-										<div class="flex flex-row flex-no-wrap mt-1">
+										<div class="flex flex-row flex-no-wrap mt-1 text-sm text-xs md:text-sm">
 											<div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
 											<div
 												class="flex items-center"
 											>{{ item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A' }}</div>
 										</div>
-										<div class="flex flex-row flex-no-wrap mt-1">
+										<div class="flex flex-row flex-no-wrap mt-1 text-sm text-xs md:text-sm">
 											<div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
 											<div class="flex items-center">{{ item.surgery.code }}</div>
 										</div>
 									</div>
 								</div>
-								<div class="border-t-2 p-4 text-xs xl:text-base">
+								<div class="border-t-2 px-4 py-2 text-xs xl:text-sm">
 									<p class="font-bold">These are just top 10 matches from your search term.</p>
 									<p
 										class="font-bold"
@@ -324,14 +326,14 @@
 									<div class="ml-2">{{ spoke.name }}</div>
 								</div>
 								<div class="flex justify-end">
-									<div
-										class="px-2 py-1 rounded-lg shadow-lg font-bold bg-yellow-500 cursor-pointer"
+									<button
+										class="px-4 text-sm py-1 rounded-lg font-bold bg-sunglow hover:bg-sunglow-dark cursor-pointer"
 										@click="editSpoke(spoke)"
-									>Edit</div>
-									<div
-										class="ml-2 px-2 py-1 rounded-lg shadow-lg font-bold bg-red-400 text-white cursor-pointer"
+									>Edit</button>
+									<button
+										class="ml-2 px-4 text-sm py-1 rounded-lg font-bold bg-red-600 hover:bg-red-700 text-white cursor-pointer"
 										@click="removeSpoke(spoke)"
-									>Remove</div>
+									>Remove</button>
 								</div>
 							</div>
 						</template>
@@ -343,7 +345,7 @@
 							:error="formError.find(item => item.field === 'hub_practice_id')"
 							@submit="search"
 						/>
-						<AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" @click="search" />
+						<AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="search" />
 
 						<div v-if="showResult && practiceLists.length === 0" class="mt-5">
 							<div
@@ -352,7 +354,7 @@
 						</div>
 						<div
 							v-if="showResult && practiceLists.length > 0"
-							class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
+							class="rounded-lg border overflow-auto bg-white mb-4"
 						>
 							<div
 								class="text-xs lg:text-base font-bold p-4"
@@ -378,19 +380,19 @@
 											>Invited</span>
 										</div>
 									</div>
-									<div class="flex flex-row flex-no-wrap mt-1">
+									<div class="flex flex-row flex-no-wrap mt-1 text-sm">
 										<div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
 										<div
 											class="flex items-center"
 										>{{ item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A' }}</div>
 									</div>
-									<div class="flex flex-row flex-no-wrap mt-1">
+									<div class="flex flex-row flex-no-wrap mt-1 text-sm">
 										<div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
 										<div class="flex items-center">{{ item.surgery.code }}</div>
 									</div>
 								</div>
 							</div>
-							<div class="border-t-2 p-4 text-xs xl:text-base">
+							<div class="border-t-2 px-4 py-2 text-xs xl:text-sm">
 								<p class="font-bold">These are just top 10 matches from your search term.</p>
 								<p
 									class="font-bold"
@@ -533,8 +535,8 @@
 
 		<div v-if="modal" class="shield" @click="modal=false" />
 		<transition name="slide" mode="out-in">
-			<div v-if="modal" class="py-8 modal-container">
-				<div class="px-4 lg:px-10 pb-4">
+			<div v-if="modal" class="px-6 py-4 modal-container">
+				<div class="">
 					<svgicon
 						name="left-arrow"
 						height="32"

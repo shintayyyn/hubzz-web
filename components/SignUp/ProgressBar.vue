@@ -19,6 +19,6 @@
   .__progress_bar {
     transition: .75s;
     height: 10px;
-    background-color: #FFDA3A;
+    background-color: #ffc72c;
   }
 </style>
