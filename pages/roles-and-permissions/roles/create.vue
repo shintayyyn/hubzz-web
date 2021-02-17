@@ -79,14 +79,14 @@
             <div class="flex flex-col">
               <div class="w-full flex flex-row items-center pb-1">
                 <input
-                  :id="role.permissions"
+                  :id="role.category"
                   type="checkbox"
                   :checked="isChecked(role.permissions)"
                   @change="checkAll(index, $event.target.checked)"
                 >
                 <label
                   class="font-bold md:text-xl pl-1 leading-none flex items-center"
-                  :for="role.permissions"
+                  :for="role.category"
                 >{{ role.category }} Management</label>
               </div>
 
@@ -257,6 +257,8 @@ export default {
       return !permissions.map(item => item.done).includes(false)
     },
     checkAll (index, checked) {
+      console.log("index", index)
+      console.log(this.permissions)
       this.permissions[index].permissions.forEach(item => {
         item.done = checked
       })

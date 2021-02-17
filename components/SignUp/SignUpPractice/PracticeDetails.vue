@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg w-full">
+      <div class="md:mx-4 flex flex-col p-4 m-1 rounded-lg border w-full">
         <div class="w-full">
           <AppInput
             v-model="search_text"
@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <div v-if="showResult && surgeries.length === 0" class="flex flex-col mt-5 md:mx-4">
+    <div v-if="showResult && surgeries.length === 0" class="flex flex-col items-center mt-5 md:mx-4">
       <div
         class="text-xs xl:text-base font-bold"
       >No practice matched that name. Try again with whole words, practice code or CCG.</div>
@@ -38,7 +38,7 @@
 
     <div class="flex w-full justify-center xl:justify-start">
       <div
-        class="rounded-lg shadow-md mt-5 md:mx-4 m-1 w-full"
+        class="rounded-lg border mt-4 md:mx-4 m-1 w-full"
         v-if="showResult && surgeries.length > 0"
       >
         <div
@@ -46,7 +46,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgeryId === item.id ? 'bg-yellow-500':'hover:bg-gray-200'"
+          :class="selectedSurgeryId === item.id ? 'bg-sunglow':'hover:bg-gray-200'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="selectedSurgeryId = item.id"
@@ -55,13 +55,13 @@
           <div class="flex flex-col justify-start text-xs xl:text-base">
             <div class="font-bold">{{item.name}}</div>
             <div
-              class="mt-4"
+              class="mt-2 text-sm"
             >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
-            <div class="flex flex-row flex-no-wrap mt-1">
-              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
-              <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
+            <div class="flex flex-row flex-no-wrap mt-1 text-sm">
+              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1 text-sm">CCG</div>
+              <div class="flex items-center text-sm">{{item.clinical_commissioning_group.name}}</div>
             </div>
-            <div class="flex flex-row flex-no-wrap mt-1">
+            <div class="flex flex-row flex-no-wrap mt-1 text-sm">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
               <div class="flex items-center">{{item.code}}</div>
             </div>

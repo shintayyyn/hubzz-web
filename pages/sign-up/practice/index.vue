@@ -1,13 +1,13 @@
 <template>
   <div class="w-full">
     <ProgressBar :percentage="percentage" />
-    <div class="relative w-full xl:max-w-3xl p-4 md:p-6 md:px-32 xl:p-6">
+    <div class="relative w-full xl:max-w-3xl p-4">
       <div class="flex w-full xl:justify-start">
-        <div class="flex flex-col items-start mb-6 mt-1 md:mx-4">
+        <div class="flex flex-col items-start mb-2 mt-2 md:mx-4">
           <nuxt-link to="/sign-up" class="focus:outline-none text-black">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
-          <div class="mt-1 text-xl font-bold">
+          <div class="mt-2 text-xl font-bold">
             Sign up for a Practice
           </div>
         </div>

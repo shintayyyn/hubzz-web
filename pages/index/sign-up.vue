@@ -7,7 +7,7 @@
     </div>
     <div class="mt-5 flex justify-center">
       <nuxt-link
-        class="w-full sm:w-3/4 flex justify-center rounded-lg border-4 border-yellow-500 bg-yellow-500 shadow-md py-8 no-underline text-black font-bold text-sm sm:text-xl focus:outline-none hover:text-white"
+        class="w-full sm:w-3/4 flex justify-center rounded-lg border-4 border-sunglow bg-sunglow shadow-md py-8 no-underline text-black font-bold text-sm sm:text-xl focus:outline-none hover:text-white"
         to="/sign-up/locum"
       >
         I'm looking for work
@@ -15,7 +15,7 @@
     </div>
     <div class="mt-5 flex justify-center">
       <nuxt-link
-        class="w-full sm:w-3/4 flex justify-center rounded-lg border-4 border-yellow-500 shadow-md py-8 no-underline text-black font-bold text-sm sm:text-xl focus:outline-none hover:text-white hover:bg-yellow-500"
+        class="w-full sm:w-3/4 flex justify-center rounded-lg border-4 border-sunglow shadow-md py-8 no-underline text-black font-bold text-sm sm:text-xl focus:outline-none hover:text-white hover:bg-sunglow"
         to="/sign-up/practice"
       >
         I'm looking for locums

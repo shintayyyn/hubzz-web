@@ -164,6 +164,7 @@
                   required
                   @submit="save"
                   @blur="CheckEmptyField(form.phone_number, 'phone_number')"
+                  @keydown="inputNumberOnly($event)"
                 />
 
                 <AppInput

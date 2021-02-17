@@ -6,7 +6,7 @@
           :to="'/'"
           :event="$route.name === 'index' ? '' : 'click'"
           class="px-8 md:px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
-          :class="$route.name === 'index' ? 'rounded-full bg-yellow-500 text-black' : 'text-gray-600'"
+          :class="$route.name === 'index' ? 'rounded-full bg-sunglow text-black' : 'text-gray-600'"
         >
           Sign In
         </nuxt-link>
@@ -15,7 +15,7 @@
           :to="'/sign-up'"
           :event="$route.name === 'index-sign-up' ? '' : 'click'"
           class="px-8 md:px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
-          :class="$route.name === 'index-sign-up' ? 'rounded-full bg-yellow-500 text-black' : 'text-gray-600'"
+          :class="$route.name === 'index-sign-up' ? 'rounded-full bg-sunglow text-black' : 'text-gray-600'"
         >
           Sign Up
         </nuxt-link>

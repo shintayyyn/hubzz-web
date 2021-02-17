@@ -112,6 +112,7 @@
                   :placeholder="'Phone number'"
                   :error="formError.find(item => item.field === 'phone_number')"
                   @blur="CheckEmptyField(form.phone_number,'phone_number')"
+                  @keydown="inputNumberOnly($event)"
                 />
                 <AppPostCode
                   v-model="form.clinical_commissioning_group_name"

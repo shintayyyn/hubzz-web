@@ -731,7 +731,7 @@
                 :label="'Telephone number'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :limit="11"
-                @keypress="inputTelephone($event)"
+                @keydown="inputNumberOnly($event)"
               />
 
               <AppInput
@@ -771,7 +771,7 @@
                 :label="'Telephone number'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :limit="11"
-                @keypress="inputTelephone($event)"
+                @keydown="inputNumberOnly($event)"
               />
 
               <AppInput
