@@ -1,7 +1,7 @@
 <template>
   <section class="profile-section">
     <AppBreadcrumbs :links="links" />
-    <div v-if="!$route.params.id" class="flex items-center overflow-x-auto whitespace-no-wrap border-b border-sunglow">
+    <div v-if="!$route.params.id && $route.name !== 'profile-users-create'" class="flex items-center overflow-x-auto whitespace-no-wrap border-b border-sunglow">
       <nuxt-link
         v-if="authPermissions.includes('View Profile Practice')"
         to="/profile"
@@ -67,6 +67,7 @@ export default {
           return []
         case "profile-users-id":
         case "profile-users-id-change-password":
+        case "profile-users-create":
           links.push({
             title: 'Users',
             url: '/profile/users'
@@ -97,9 +98,12 @@ export default {
         })
       }
 
-
-      console.log("route", route)
-      console.log("links", links)
+      if (route.name === 'profile-users-create'){
+        links.push({
+          title: 'Create',
+          url: '/profile/users/create'
+        })
+      }
 
       return links
     }

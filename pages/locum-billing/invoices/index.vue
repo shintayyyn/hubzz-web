@@ -89,30 +89,45 @@
       </div>
 
       <div v-if="!initialLoading">
-        <AppButton
-          v-if="!['pension-form-b'].includes($route.query.status)"
-          :label="'Filter'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="filterModal = !filterModal"
-        />
+        <div class="flex items-center">
+          <button  v-if="!['pension-form-b'].includes($route.query.status)" @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
+            <p class="mx-2">Filter</p>
+            <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
+          </button>
+          
+          <transition name="fade">
+          <div v-if="filterModal" class="md:px-1 flex w-full">
+            <AppButton
+              :disabled="disabledClearFilter"
+              :label="'Clear'"
+              :in-style="'padding:5px 14px;margin-bottom:0'"
+              @click="clearFilters"
+            />
+
+            <AppButton
+              class="mx-2"
+              :label="'Search'"
+              :in-style="'padding:5px 14px;margin-bottom:0'"
+              @click="filterJobParts"
+            />
+          </div>
+          </transition>
+        </div>
 
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
           customTheme="border-2"
           @click="refreshInvoices"
         />
 
-        <div
-          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <transition name="drop-down">
+        <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal" >
+          <div class="md:px-1 w-full md:w-1/4">
             <AppInput
               v-model="job_ir35"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'job_ir35'"
               :label="'Inside ir35'"
@@ -122,21 +137,21 @@
 
           <div
             v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            class="md:px-1 w-full md:w-1/4"
           >
             <AppInput
               v-model="invoice_number"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'invoice_number'"
               :label="'Invoice number'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 w-full md:w-1/4">
             <AppInput
               v-model="job_part_number_includes"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'job_part_number_includes'"
               :label="'Job Part number'"
@@ -145,41 +160,19 @@
 
           <div
             v-if="$route.query.status && ['approved'].includes($route.query.status.toLowerCase())"
-            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            class="md:px-1 w-full md:w-1/4"
           >
             <AppInput
               v-model="is_paid"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'is_paid'"
               :label="'Paid'"
               :items="[{ label: 'All', value: null}, { label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
-          
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :disabled="disabledClearFilter"
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJobParts"
-            />
-            
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
         </div>
+        </transition>
 
         <template
           v-if="(!$route.query.status || ($route.query.status && $route.query.status !== 'pension-form-b'))"
