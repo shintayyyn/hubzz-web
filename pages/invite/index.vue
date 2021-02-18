@@ -1,7 +1,7 @@
 <template>
   <section>
     <div v-if="success">
-      <div class="rounded-lg shadow-lg pt-10 px-4 md:px-8 pb-8 max-w-sm">
+      <div class="rounded-lg BORDER pt-10 P-4 max-w-sm">
         <div class="flex flex-col text-center">
           <div class="flex justify-center">
             <svgicon name="success-checkmark" height="180" width="180" />
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div v-else class="relative rounded-lg shadow-lg md:pt-10 p-4 md:px-8 md:pb-8">
+    <div v-else class="relative rounded-lg border p-4">
       <AppInput v-model="form.email" :type="'multiemail'" :name="'email'" :label="`Email addresses to locums`"
                 :placeholder="''" :info="'Seperate with commas'" :error="formError.find(error => error.field === 'email')"
       />

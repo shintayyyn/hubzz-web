@@ -31,6 +31,7 @@
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
           </button>
+          <transition name="fade">
           <div class="md:px-1 flex w-full" v-if="filterModal">
             <AppButton
               :label="'Clear'"
@@ -43,13 +44,14 @@
               :inStyle="'padding:5px 14px;margin-bottom:0'"
               @click="filterJob"
             />
-            <AppButton
+            <!-- <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
               :inStyle="'padding:5px 14px;margin-bottom:0'"
               @click="filterModal = false"
-            />
+            /> -->
           </div>
+          </transition>
           <AppButton
             v-if="showRefresh"
             :label="'Refresh'"
@@ -58,6 +60,7 @@
             @click="refreshJobs"
           />
         </div>
+        <transition name="drop-down">
         <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal && !isJobPart" >
           <!-- <div class="md:px-1 flex-1">
             <AppInput
@@ -300,6 +303,7 @@
             />
           </div>
         </div>
+        </transition>
         <AppTable
           v-if="jobs.length > 0"
           :total="total"

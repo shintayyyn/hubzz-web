@@ -1,16 +1,16 @@
 <template>
-  <div ref="modalContainer" class="modal-container bg-white shadow-lg">
-    <div class="flex flex-col items-start p-4 md:p-8 max-w-3xl">
-      <nuxt-link :to="'/profile/users'">
+  <div ref="modalContainer" class="">
+    <div class="flex flex-col items-start p-4 max-w-3xl">
+      <!-- <nuxt-link :to="'/profile/users'">
         <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
-      </nuxt-link>
-      <div class="font-bold text-lg mt-4">
+      </nuxt-link> -->
+      <div class="font-bold text-lg">
         Create User
       </div>
       <div class="text-sm">
         Surgery: {{ $auth.user.practice_detail.practice.surgery.name }}
       </div>
-      <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8 my-2">
+      <div class="relative rounded-lg border w-full p-4 my-2">
         <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
         <AppLoading :loading="loading" spinner />
         <AppInput
