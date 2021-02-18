@@ -39,13 +39,13 @@
                 Headline
               </div>
               <div class="text-sm mb-6">
-                {{ user.locum_detail.headline }}
+                {{ user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
               </div>
               <div class="font-bold text-sm sm:text-md">
                 Biography
               </div>
               <div class="text-sm mb-6">
-                {{ user.locum_detail.short_biography }}
+                {{ user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
               </div>
 
               <div

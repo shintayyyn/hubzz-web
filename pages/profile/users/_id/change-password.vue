@@ -1,5 +1,5 @@
 <template>
-  <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
+  <div class="relative rounded-lg border w-full p-4">
     <form class="relative w-full">
       <AppLoading :loading="loading" spinner />
       <AppInput
