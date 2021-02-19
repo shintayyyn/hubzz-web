@@ -15,25 +15,22 @@
       @sorted="sorted"
     >
       <template v-slot:status_slot="slotProps">
-        <div class="flex items-center justify-center">
-          <div
-            class="rounded-full px-6 py-1"
-            :class="statusStyle(slotProps.item)"
-          >{{ getStatus(slotProps.item) }}</div>
+        <div class="text-sm">
+         {{ getStatus(slotProps.item) }}
         </div>
       </template>
 
       <template v-slot:actions="slotProps">
-        <div class="flex flex-wrap justify-center">
+        <div class="flex justify-center">
           <AppButton
             :label="'View'"
-            class="m-1"
+            class="mx-1"
             @click="$router.push({ path: `/hub-surgery-management/invitations/hub/${slotProps.item.id}`})"
           />
           <AppButton
             v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'"
             :label="getStatus(slotProps.item) === 'Invited' ? 'Cancel Invitation' : 'Remove'"
-            class="m-1"
+            class="mx-1"
             :customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
             @click="toCancelInvitation(slotProps.item.id)"
           />

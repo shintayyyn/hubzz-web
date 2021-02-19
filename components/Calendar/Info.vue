@@ -26,7 +26,7 @@
           </div>
         </div>
 
-        <div v-if="viewLocumJobs && !loading">
+        <div v-if="viewLocumJobs && !loading" class="py-2">
           <div v-for="job in foundLocumJobs" :key="`${job.id}-${job.locum_status}`">
             <LocumJobCard
               :propJob="job"

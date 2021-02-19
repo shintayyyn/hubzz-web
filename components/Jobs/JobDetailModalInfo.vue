@@ -143,7 +143,7 @@
             (none)
           </div>
 
-          <div v-for="item in job.compliance_documents" :key="item.id" class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div v-for="item in job.compliance_documents" :key="item.id" class="rounded-lg bg-sunglow px-2 py-1 m-1">
             {{ item.name }}
           </div>
         </div>
@@ -251,7 +251,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-for="item in job.qualifications" :key="item.id" class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div v-for="item in job.qualifications" :key="item.id" class="rounded-lg bg-sunglow px-2 py-1 m-1">
             {{ item.name }}
           </div>
         </div>
@@ -261,7 +261,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div v-for="item in job.clinical_systems" :key="item.id" class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div v-for="item in job.clinical_systems" :key="item.id" class="rounded-lg bg-sunglow px-2 py-1 m-1">
             {{ item.name }}
           </div>
         </div>
@@ -271,11 +271,11 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div class="rounded-lg bg-sunglow px-2 py-1 m-1">
             English
           </div>
 
-          <div v-for="item in job.spoken_languages" :key="item.id" class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div v-for="item in job.spoken_languages" :key="item.id" class="rounded-lg bg-sunglow px-2 py-1 m-1">
             {{ item.name }}
           </div>
         </div>
@@ -289,7 +289,7 @@
             (none)
           </div>
 
-          <div v-for="item in job.mandatory_trainings" :key="item.id" class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div v-for="item in job.mandatory_trainings" :key="item.id" class="rounded-lg bg-sunglow px-2 py-1 m-1">
             {{ item.name }}
           </div>
         </div>
@@ -303,7 +303,7 @@
             (none)
           </div>
 
-          <div v-for="item in job.other_mandatory_trainings" :key="item.id" class="rounded-lg bg-yellow-500 p-1 m-1">
+          <div v-for="item in job.other_mandatory_trainings" :key="item.id" class="rounded-lg bg-sunglow px-2 py-1 m-1">
             {{ item.name }}
           </div>
         </div>

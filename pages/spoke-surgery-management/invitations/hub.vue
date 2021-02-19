@@ -14,13 +14,8 @@
       @limitchanged="limitchanged"
     >
       <template v-slot:status_slot="slotProps">
-        <div class="flex items-center justify-center">
-          <div
-            class="rounded-full px-6 py-1"
-            :class="statusStyle(slotProps.item)"
-          >
-            {{ getStatus(slotProps.item) }}
-          </div>
+        <div class="text-sm">
+          {{ getStatus(slotProps.item) }}
         </div>
       </template>
       <template v-slot:actions="slotProps">
