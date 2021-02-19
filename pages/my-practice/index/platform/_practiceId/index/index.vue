@@ -3,12 +3,12 @@
     <div class="flex flex-row p-2 flex-no-wrap justify-start items-center">
       <span class="font-bold text-md sm:text-lg">{{ practice.surgery.name }}</span>
       <span
-        class="font-bold text-md sm:text-lg ml-4 mr-2 px-4 py-2 rounded"
+        class="font-bold text-md sm:text-lg ml-4 mr-2 px-2 py-1 rounded"
         :class="typeStyle(practice.type)"
       >{{ practice.type }}</span>
       <span
         v-if="practice.type === 'Hub'"
-        class="font-bold text-md sm:text-lg px-4 py-2 rounded"
+        class="font-bold text-md sm:text-lg px-2 py-1 rounded"
         :class="hubTypeStyle(practice.hub_type)"
       >{{ practice.hub_type }}</span>
     </div>
@@ -35,7 +35,7 @@
             <div
               v-for="item in practice.practice_types"
               :key="item.id"
-              class="rounded-lg text-sm md:text-md bg-sunglow m-1 p-2"
+              class="rounded-lg text-sm md:text-md bg-sunglow m-1 px-2 py-1"
             >
               {{ item.name }}
             </div>
