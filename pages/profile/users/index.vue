@@ -98,17 +98,6 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
-      <template v-slot:status_slot="slotProps">
-        <div class="flex items-center justify-center">
-          <div
-            class="rounded-full px-6 py-1"
-            :class="statusStyle(slotProps.item.status)"
-          >
-            {{ slotProps.item.status }}
-          </div>
-        </div>
-      </template>
-
       <template v-slot:actions="slotProps">
         <div class="flex items-center justify-center">
           <AppButton
@@ -240,9 +229,7 @@ export default {
         },
         {
           name: "Status",
-          slot: true,
-          slotName: "status_slot",
-          dataIndex: "",
+          dataIndex: "status",
           class: "text-center",
         },
         {

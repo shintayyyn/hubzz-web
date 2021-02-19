@@ -395,7 +395,7 @@
           <div
             v-for="item in job_part.job.platform_job.qualifications"
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -409,7 +409,7 @@
           <div
             v-for="item in job_part.job.platform_job.clinical_systems"
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -420,13 +420,13 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-500 p-2 m-1">
+          <div class="rounded-lg bg-sunglow px-2 py-1 m-1">
             English
           </div>
           <div
             v-for="item in job_part.job.platform_job.spoken_languages"
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -444,7 +444,7 @@
             v-for="item in job_part.job.platform_job.mandatory_trainings"
             v-else
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -463,7 +463,7 @@
             v-for="item in job_part.job.platform_job.other_mandatory_trainings"
             v-else
             :key="item.id"
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -489,7 +489,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -534,7 +534,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -581,7 +581,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
@@ -626,7 +626,7 @@
 
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                class="mt-1 cursor-pointer bg-sunglow hover:bg-sunglow-dark rounded-lg px-4 py-1 transition-hover"
                 @click="modal = true"
               >
                 View
