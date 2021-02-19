@@ -57,6 +57,15 @@
                 £ {{ hubzz_fee | currency }}
               </p>
             </div>
+            <div class="flex justify-between pb-2 text-red-600">
+              <p>
+                Hubzz Fee with VAT*
+                <span class="font-normal text-sm">(+{{ tax_rates_for_preview && tax_rate_for_preview ? tax_rates_for_preview.practice_tax_rate : 0 }}%)</span>:
+              </p>
+              <p class="pl-1">
+                £ {{ hubzz_fee_taxed | currency }}
+              </p>
+            </div>
           </div>
           <div class="flex justify-end items-center text-black mt-3">
             <AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toPublish=false" />
@@ -383,7 +392,7 @@
                         <AppButton :label="'Add Compliance Document (Profile Page)'" class="w-full mt-1" :customTheme="'bg-white shadow border hover:bg-gray-100'" @click="goToProfile" />
                       </div>
                     </template>
-                      <template v-else-if="!form.practice_id">
+                    <template v-else-if="!form.practice_id">
                       <div class="mb-2">
                         Compliance Documents
                       </div>
@@ -391,9 +400,8 @@
                         Please select a Practice first
                       </div>
                     </template>
-                
                   </template>
-                  </div>
+                </div>
               </div>
 
               <div class="border rounded-lg w-full h-full my-4">
@@ -869,6 +877,17 @@ export default {
           return scheduleTotal + shiftTotal
         }, 0)
         .toFixed(2)
+    },
+    hubzz_fee_taxed () {
+      console.log('this.tax_rates_for_preview', this.tax_rates_for_preview)
+      const taxed_hubzz_fee 
+        = parseFloat(this.hubzz_fee) 
+          + (parseFloat(this.hubzz_fee) 
+          * (this.tax_rates_for_preview 
+            && this.tax_rates_for_preview.practice_tax_rate_formatted 
+            ? parseFloat(this.tax_rates_for_preview.practice_tax_rate_formatted) 
+            : 0))
+      return taxed_hubzz_fee
     },
   },
 
