@@ -28,13 +28,6 @@
       </div>
       <div v-if="!initialLoading">
         <div class="flex">
-          <!-- <AppButton
-            class="mr-2"
-            :label="'Filter'"
-            :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-            customTheme="border-2"
-            @click="filterModal = !filterModal"
-          /> -->
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>

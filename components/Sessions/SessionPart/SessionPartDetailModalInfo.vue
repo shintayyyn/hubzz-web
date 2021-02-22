@@ -283,7 +283,7 @@
             v-for="item in job_part.job.platform_job.mandatory_trainings"
             v-else
             :key="item.id"
-            class="rounded-lg bg-sunglow p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -305,7 +305,7 @@
             v-for="item in job_part.job.platform_job.other_mandatory_trainings"
             v-else
             :key="item.id"
-            class="rounded-lg bg-sunglow p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -336,7 +336,7 @@
           <div
             v-for="item in job_part.job.platform_job.qualifications"
             :key="item.id"
-            class="rounded-lg bg-sunglow p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -350,7 +350,7 @@
           <div
             v-for="item in job_part.job.platform_job.clinical_systems"
             :key="item.id"
-            class="rounded-lg bg-sunglow p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>
@@ -361,14 +361,14 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-sunglow p-2 m-1">
+          <div class="rounded-lg bg-sunglow px-2 py-1 m-1">
             English
           </div>
 
           <div
             v-for="item in job_part.job.platform_job.spoken_languages"
             :key="item.id"
-            class="rounded-lg bg-sunglow p-2 m-1"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
           </div>

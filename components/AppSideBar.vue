@@ -1,6 +1,6 @@
 <template>
-  <section>
-    <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
+  <section >
+    <div class="sidebar relative" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-10">
         <div class="flex flex-row justify-center pb-4">
           <div class="font-extrabold text-white text-2xl">
@@ -8,10 +8,10 @@
           </div>
           
           <button
-            class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
+            class="absolute top-0 right-0 my-2 mx-3 close-button cursor-pointer focus:outline-none text-2xl font-bold text-sunglow hover:text-sunglow-dark transition-hover"
             @click="close"
           >
-            X
+            <svgicon name="times-solid" class="fill-current" width="18" />
           </button>
         </div>
         

@@ -4,9 +4,8 @@
       :permanent_job_application="permanent_job_application"
       :permanent_job="permanent_job"
       :user="user"
-      @close="$router.push({path: `/permanent-jobs/${$route.params.id}`, query: {...$route.query}})"
-      @updateApplicants="getApplicantsCount()"
       isPage
+      @close="$router.push({path: `/permanent-jobs/${$route.params.id}`, query: {...$route.query}})"
     />
   </div>
 </template>

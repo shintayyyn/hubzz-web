@@ -119,7 +119,7 @@
         <nuxt-link
           to="/invite"
           class="md:mr-5 px-3 py-1 text-sm font-bold cursor-pointer"
-          :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
+          :class="'rounded-lg bg-sunglow hover:bg-sunglow-dark'"
         >
           Invite Locum
         </nuxt-link>

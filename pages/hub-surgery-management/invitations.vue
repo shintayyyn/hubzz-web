@@ -19,7 +19,7 @@
         <nuxt-link
           v-if="$route.name.includes('hub-surgery-management-invitations-hub')"
           :to="'/hub-surgery-management/invitations/hub/create'"
-          class="md:mr-5 px-4 py-1 text-sm font-bold cursor-pointer rounded-lg bg-yellow-500 hover:bg-yellow-600"
+          class="md:mr-5 px-4 py-1 text-sm font-bold cursor-pointer rounded-lg bg-sunglow hover:bg-sunglow-dark"
         >
           Invite
         </nuxt-link>

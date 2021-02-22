@@ -1085,6 +1085,18 @@
                   £ {{ hubzz_fee | currency }}
                 </p>
               </div>
+              <div
+                v-if="['complete', 'terminate'].includes(type)" 
+                class="flex justify-between pb-2 text-gray-500"
+              >
+                <p class="w-2/3">
+                  Hubzz Fee with VAT*
+                  <span class="font-normal text-sm">(+{{ tax_rates && tax_rates.practice_tax_rate ? tax_rates.practice_tax_rate : 0 }}%)</span>:
+                </p>
+                <p class="w-1/3">
+                  £ {{ hubzz_fee_taxed | currency }}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -1574,6 +1586,17 @@ export default {
           return scheduleTotal + shiftTotal
         }, 0)
         .toFixed(2)
+    },
+    hubzz_fee_taxed () {
+      console.log('this.tax_rates_for_preview', this.tax_rates)
+      const taxed_hubzz_fee 
+        = parseFloat(this.hubzz_fee) 
+          + (parseFloat(this.hubzz_fee) 
+          * (this.tax_rates 
+            && this.tax_rates.practice_tax_rate_formatted 
+            ? parseFloat(this.tax_rates.practice_tax_rate_formatted) 
+            : 0))
+      return taxed_hubzz_fee
     },
 
     errors () {

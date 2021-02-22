@@ -221,7 +221,7 @@ export default {
 }
 </script>
 
-<style>
+<style scope>
   .content {
     /* box-sizing: content-box; */
     padding: 10px 20px;

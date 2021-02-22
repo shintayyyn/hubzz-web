@@ -72,8 +72,7 @@
 						>
 							<div
 								v-if="item && item.status"
-								class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-								:class="status(item.status)"
+								class="text-xs sm:text-sm"
 							>{{ item.status }}</div>
 						</div>
 					</div>
@@ -97,14 +96,15 @@
 				</template>
 
 				<div class="table">
-					<div class="flex flex-no-wrap justify-start font-bold leading-none text-sm">
+					<div class="flex flex-no-wrap justify-start font-bold leading-none text-sm px-3">
 						<div class="item w-1/6 p-2">Type</div>
 						<div class="item w-1/6 p-2">File</div>
 						<div class="item w-1/6 p-2">Date uploaded</div>
 						<div class="item w-1/6 p-2">Expiry date</div>
 						<div class="item w-1/6 p-2">Status</div>
-						<div class="w-1/6 p-2">Note</div>
-						<div class="item w-1/6 p-2" />
+						<div class="item w-1/6 p-2">Note</div>
+						<div class="item w-1/6 p-2" 
+									style="position:sticky;right:0" />
 					</div>
 
 					<div v-for="item in mandatoryComplianceDocuments" :key="item.compliance_document_id">
@@ -125,7 +125,7 @@
 						>
 							<div
 								class="flex flex-col"
-								:class="item.compliance_document_type_name !== 'Safeguarding' ? 'w-1/6' : 'mr-8'"
+								:class="item.compliance_document_type_name !== 'Safeguarding' ? 'w-1/6 px-2' : 'w-4/6 text-black'"
 							>
 								<template v-if="item.compliance_document_type_name !== 'Safeguarding'">
 									{{ item.compliance_document_name | StringMaxLength(55) }}
@@ -146,16 +146,17 @@
 											<svgicon name="cloud-download" height="24" width="24" />
 										</span>
 
-										<div class="mx-2">
+										<div class="pl-2">
 											<a
 												:href="item.file.url"
 												:download="item.file.filename"
 												target="_blank"
-												class="truncate"
+												class="truncate w-full"
 												@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
 											>
 												<span class="block md:hidden">{{ item.file.filename | StringMaxLength(15) }}</span>
-												<span class="hidden xl:block">{{ item.file.filename | StringMaxLength(12) }}</span>
+												<span class="hidden xl:block xxl:hidden">{{ item.file.filename | StringMaxLength(12) }}</span>
+												<span class="hidden xxl:block">{{ item.file.filename | StringMaxLength(20) }}</span>
 												<span class="hidden md:block xl:hidden">{{ item.file.filename | StringMaxLength(10) }}</span>
 											</a>
 										</div>
@@ -167,35 +168,42 @@
 									>{{ item.reference }}</div>
 								</div>
 
-								<div v-if="!(item.file || item.reference)" class="item w-1/6 py-2" />
+								<div v-if="!(item.file || item.reference)" class="item w-1/6" />
 
-								<div
+								<div class="item w-1/6 px-2">
+									<template v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'">
+										{{ item.uploaded_at_in_gb_formatted }}
+									</template>
+								</div>
+
+								<!-- <div
 									v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
-									class="item w-1/6"
+									class="item w-1/6 border border-red-600"
 								>{{ item.uploaded_at_in_gb_formatted }}</div>
 
 								<div
 									v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')"
-									class="item w-1/6 py-2"
-								/>
+									class="item w-1/6 border border-blue-600 py-2"
+								/> -->
 
-								<div class="item w-1/6">{{ item.expired_at_in_gb_formatted }}</div>
+								<div class="item w-1/6 px-2">{{ item.expired_at_in_gb_formatted }}</div>
 							</template>
 
-							<div v-if="item && item.status" class="w-1/6">
-								<div class="flex justify-start max-w-xs">
-									<div
-										class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-										:class="status(item.status)"
-									>{{ item.status }}</div>
-								</div>
+							<div v-if="item && item.status" class="w-1/6 px-2">
+								<div
+									class="text-xs sm:text-sm text-black"
+								>{{ item.status }}</div>
 							</div>
 
 							<div v-if="!(item && item.status)" class="w-1/6" />
+							<template v-if="item.compliance_document_type_name === 'Safeguarding'">
+								<div class="w-1/6"></div>
+								<div class="w-1/6"></div>
+							</template>
 
 							<template v-if="item.compliance_document_type_name !== 'Safeguarding'">
-								<div v-if="(item && item.note)" class="w-1/6">{{ item.note | StringMaxLength(15) }}</div>
-								<div v-if="!(item && item.note)" class="w-1/6" />
+								<div v-if="(item && item.note)" class="w-1/6 px-2">{{ item.note | StringMaxLength(15) }}</div>
+								<div v-if="!(item && item.note)" class="w-1/6 px-2" />
 
 								<div
 									v-if="item.compliance_document_type_name !== 'Safeguarding'"
@@ -272,26 +280,23 @@
 										>{{ childItem.reference }}</div>
 									</div>
 
-									<div v-else class="item w-1/6" />
+									<div v-else class="item w-1/6 px-2" />
 
-									<div class="item w-1/6">{{ childItem.uploaded_at_in_gb_formatted }}</div>
+									<div class="item w-1/6 px-2">{{ childItem.uploaded_at_in_gb_formatted }}</div>
 
-									<div class="item w-1/6">{{ childItem.expired_at_in_gb_formatted }}</div>
+									<div class="item w-1/6 px-2">{{ childItem.expired_at_in_gb_formatted }}</div>
 
-									<div v-if="childItem && childItem.status" class="item w-1/6">
-										<div class="flex justify-start max-w-xs">
-											<div
-												class="text-xs sm:text-sm text-center font-bold rounded-full px-4 py-1"
-												:class="status(childItem.status)"
-											>{{ childItem.status }}</div>
-										</div>
+									<div v-if="childItem && childItem.status" class="item w-1/6 px-2">
+										<div
+											class="text-xs sm:text-sm"
+										>{{ childItem.status }}</div>
 									</div>
 
-									<div v-if="!(childItem && childItem.status)" class="item w-1/6" />
+									<div v-if="!(childItem && childItem.status)" class="item w-1/6 px-2" />
 
 									<div
 										v-if="childItem && childItem.note"
-										class="item w-1/6"
+										class="item w-1/6 px-2"
 									>{{ childItem.note | StringMaxLength(15) }}</div>
 
 									<div v-if="!(childItem && childItem.note)" class="item w-1/6" />
@@ -335,10 +340,10 @@
 				</template>
 
 				<div class="table">
-					<div class="flex flex-no-wrap justify-between font-bold leading-none text-sm">
+					<div class="flex flex-no-wrap justify-between font-bold leading-none text-sm px-3">
 						<div class="w-1/3 p-2">Type</div>
 						<div class="w-1/3 p-2">File</div>
-						<div class="w-1/6 p-2" />
+						<div class="w-1/3 p-2" />
 					</div>
 
 					<div v-for="item in optionalComplianceDocuments" :key="item.compliance_document_id">
@@ -367,32 +372,31 @@
 								>{{ item.compliance_document_name | StringMaxLength(55) }}</template>
 							</div>
 
-							<div v-if="(item.file || item.reference)" class="item w-1/3">
-								<div v-if="item.file" class="flex flex-row flex-no-wrap items-center">
-									<svgicon name="cloud-download" height="24" width="24" />
+							<div class="item w-1/3">
+								<template  v-if="(item.file || item.reference)">
+									<div v-if="item.file" class="flex flex-row flex-no-wrap items-center">
+										<svgicon name="cloud-download" height="24" width="24" />
 
-									<div class="mx-2">
-										<a
-											:href="item.file.url"
-											:download="item.file.filename"
-											target="_blank"
-											class="whitespace-no-wrap"
-											@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-										>{{ item.file.filename | StringMaxLength(15) }}</a>
+										<div class="mx-2">
+											<a
+												:href="item.file.url"
+												:download="item.file.filename"
+												target="_blank"
+												class="whitespace-no-wrap"
+												@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+											>{{ item.file.filename | StringMaxLength(15) }}</a>
+										</div>
 									</div>
-								</div>
-
-								<div
-									v-if="item.reference && item.reference !== 'null'"
-									class="flex flex-row flex-no-wrap items-center"
-								>{{ item.reference }}</div>
+									<div
+										v-if="item.reference && item.reference !== 'null'"
+										class="flex flex-row flex-no-wrap items-center"
+									>{{ item.reference }}</div>
+									</template>
 							</div>
-
-							<div v-if="!(item.reference && item.reference !== 'null')" class="item w-1/3" />
 
 							<div
 								v-if="item.compliance_document_type_name !== 'Safeguarding'"
-								class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center"
+								class="md:w-1/3 flex flex-row flex-no-wrap justify-end items-center"
 								style="position:sticky;right:0"
 							>
 								<div

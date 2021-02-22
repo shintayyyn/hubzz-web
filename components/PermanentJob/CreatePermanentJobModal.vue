@@ -10,11 +10,11 @@
 				class="cursor-pointer"
 				@click="$router.go(-1)"
 			/>
-			<div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a Permanent Job</div>
+			<div class="flex justify-start font-bold text-sm sm:text-xl mt-4">Create a Permanent Job</div>
 			<div class="flex flex-col md:flex-row pb-4">
 				<div class="md:w-1/2 px-2">
 					<h4 class="font-bold pt-4">Practice</h4>
-					<div class="bg-white rounded-lg shadow-lg px-4 py-4">
+					<div class="bg-white rounded-lg  border p-4">
 						<AppInput
 							v-model="form.practice_id"
 							:type="'select'"
@@ -26,7 +26,7 @@
 						/>
 					</div>
 					<h4 class="font-bold pt-4">Criteria</h4>
-					<div class="bg-white rounded-lg shadow-lg px-4 py-4">
+					<div class="bg-white rounded-lg  border p-4">
 						<AppInput
 							v-model="form.profession_id"
 							:type="'select'"
@@ -38,7 +38,7 @@
 							@blur="CheckEmptyField(form.profession_id, 'profession_id')"
 						/>
 					</div>
-					<div class="bg-white rounded-lg shadow-lg px-4 py-4 mt-4">
+					<div class="bg-white rounded-lg  border p-4 mt-4">
 						<!-- <AppInput
 							v-model="form.parent_practice_id"
 							:type="'select'"
@@ -79,7 +79,7 @@
 				</div>
 				<div class="md:w-1/2 px-2">
 					<h4 class="font-bold pt-4">Overview</h4>
-					<div class="bg-white rounded-lg shadow-lg px-4 py-4">
+					<div class="bg-white rounded-lg  border p-4">
 						<!-- <AppInput
 							v-model="form.parent_practice_id"
 							:type="'select'"
@@ -118,7 +118,7 @@
 						>or upload the job specification</p>-->
 						<div class="flex items-center">
 							<div
-								class="flex flex-row flex-no-wrap justify-center items-center px-4 py-1 my-2 text-sm rounded bg-yellow-500 cursor-pointer hover:underline"
+								class="flex flex-row flex-no-wrap justify-center items-center px-4 py-1 my-2 text-sm rounded bg-sunglow cursor-pointer hover:underline"
 							>
 								<input
 									id="fileInc"

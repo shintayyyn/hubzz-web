@@ -1,94 +1,89 @@
 <template>
   <section class="relative">
-    <div class="flex overflow-x-auto whitespace-no-wrap mt-4">
+    <div class="flex overflow-x-auto whitespace-no-wrap mt-4 items-center">
       <AppButton
         v-if="authPermissions.includes('Create Profile Users')"
         :label="'Add User'"
-        :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
-        customTheme="border-2"
+        customTheme="border mr-2"
         @click="$router.push('/profile/users/create')"
       />
 
-      <AppButton
+      <!-- <AppButton
         class="mx-2"
         :label="'Filter'"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
         customTheme="border-2"
         @click="filterModal = !filterModal"
-      />
+      /> -->
 
-      <!-- <AppButton
-        v-if="showRefresh"
-        :label="'Refresh'"
-        :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-        @click="refreshUsers"
-      />-->
-    </div>
+      <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
+        <p class="mx-2">Filter</p>
+        <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
+      </button>
 
-    <div
-      class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
-      :class="filterModal ? 'flex' : 'hidden'"
-    >
-      <div class="flex flex-col md:flex-row h-full w-full items-end">
-        <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="search"
-            class="px-1"
-            :type="'text'"
-            :placeholder="'Search name, email, username'"
-            :name="'search'"
-            :label="'Search'"
-            :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
-          />
-        </div>
-
-        <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="practiceRole"
-            class="px-1"
-            :type="'select'"
-            :name="'practice_role'"
-            :label="'Practice Role'"
-            :items="practiceRoles"
-            :disabled="loading"
-          />
-        </div>
-
-        <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-          <AppInput
-            v-model="practiceUserRoleId"
-            class="px-1"
-            :type="'select'"
-            :name="'role_id'"
-            :label="'User Role'"
-            :items="practiceUserRoles"
-            :disabled="loading"
-          />
-        </div>
-      </div>
-
-      <div class="md:px-1 h-full flex w-full">
+      <transition name="fade">
+      <div v-if="filterModal" class="md:px-1 h-full flex w-full">
         <AppButton
           :label="'Clear'"
-          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          :inStyle="'padding:5px 14px;margin-bottom:0'"
           @click="clearFilters"
         />
 
         <AppButton
           class="mx-2"
           :label="'Search'"
-          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          :inStyle="'padding:5px 14px;margin-bottom:0'"
           @click="filterUsers"
         />
+      </div>
+      </transition>
 
-        <AppButton
-          class="mx-2 md:hidden"
-          :label="'Close'"
-          :inStyle="'padding:5px 14px;margin-bottom:5px'"
-          @click="filterModal = false"
+      <!-- <AppButton
+        v-if="showRefresh"
+        :label="'Refresh'"
+        :inStyle="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+        @click="refreshUsers"
+      />-->
+    </div>
+
+    <transition name="drop-down">
+    <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal" >
+      <div class="md:px-1 md:w-1/4">
+        <AppInput
+          v-model="search"
+          :wrapperClass="'px-1'"
+          :type="'text'"
+          :placeholder="'Search name, email, username'"
+          :name="'search'"
+          :label="'Search'"
+        />
+      </div>
+
+      <div class="md:px-1 md:w-1/4">
+        <AppInput
+          v-model="practiceRole"
+          :wrapperClass="'px-1'"
+          :type="'select'"
+          :name="'practice_role'"
+          :label="'Practice Role'"
+          :items="practiceRoles"
+          :disabled="loading"
+        />
+      </div>
+
+      <div class="md:px-1 md:w-1/4">
+        <AppInput
+          v-model="practiceUserRoleId"
+          :wrapperClass="'px-1'"
+          :type="'select'"
+          :name="'role_id'"
+          :label="'User Role'"
+          :items="practiceUserRoles"
+          :disabled="loading"
         />
       </div>
     </div>
+    </transition>
 
     <AppTable
       v-if="users.length > 0"
@@ -103,17 +98,6 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
-      <template v-slot:status_slot="slotProps">
-        <div class="flex items-center justify-center">
-          <div
-            class="rounded-full px-6 py-1"
-            :class="statusStyle(slotProps.item.status)"
-          >
-            {{ slotProps.item.status }}
-          </div>
-        </div>
-      </template>
-
       <template v-slot:actions="slotProps">
         <div class="flex items-center justify-center">
           <AppButton
@@ -245,9 +229,7 @@ export default {
         },
         {
           name: "Status",
-          slot: true,
-          slotName: "status_slot",
-          dataIndex: "",
+          dataIndex: "status",
           class: "text-center",
         },
         {

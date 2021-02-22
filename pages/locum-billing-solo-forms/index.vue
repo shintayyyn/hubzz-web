@@ -69,29 +69,45 @@
 
     <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
-        <AppButton
-          :label="'Filter'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="filterModal = !filterModal"
-        />
+        <div class="flex items-center">
+          <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
+            <p class="mx-2">Filter</p>
+            <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
+          </button>
 
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-          customTheme="border-2"
-          @click="refreshInvoices"
-        />
+          <transition name="fade">
+            <div v-if="filterModal" class="md:px-1 flex w-full">
+              <AppButton
+                :disabled="disabledClearFilter"
+                :label="'Clear'"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="clearFilters"
+              />
 
-        <div
-          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterModal ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppButton
+                class="mx-2"
+                :label="'Search'"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="filterJobParts"
+              />
+            </div>
+            </transition>
+
+          <AppButton
+            v-if="showRefresh"
+            :label="'Refresh'"
+            :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+            customTheme="border-2"
+            @click="refreshInvoices"
+          />
+        </div>
+
+       <transition name="drop-down">
+        <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal" >
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="ir35"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'ir35'"
               :label="'Inside ir35'"
@@ -99,60 +115,38 @@
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="invoiceNumberIncludes"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'invoiceNumberIncludes'"
               :label="'Invoice number'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="jobPartNumberIncludes"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'text'"
               :name="'jobPartNumberIncludes'"
               :label="'Job Part number'"
             />
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div class="md:px-1 flex-1">
             <AppInput
               v-model="paid"
-              class="px-1"
+              :wrapperClass="'px-1'"
               :type="'select'"
               :name="'paid'"
               :label="'Paid'"
               :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
             />
           </div>
-          
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :disabled="disabledClearFilter"
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="clearFilters"
-            />
-
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterJobParts"
-            />
-
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:5px'"
-              @click="filterModal = false"
-            />
-          </div>
         </div>
+       </transition>
 
         <AppTable
           v-if="locumSoloForms.length > 0"
@@ -195,7 +189,7 @@
           </template>
         </AppTable>
 
-        <div v-if="!locumSoloForms.length && !isFiltered" class="flex justify-center">
+        <div v-if="!locumSoloForms.length && !isFiltered" class="flex justify-center py-4">
           You do not have any solo forms.
         </div>
 
@@ -247,13 +241,13 @@
       <div class="relative rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
         <AppLoading :loading="locumESigningLocumSoloForm" spinner />
 
-        <div class="px-1">
+        <div :wrapperClass="'px-1'">
           <small class="italic">Please type in or upload your signature.</small>
         </div>
 
         <AppInput
           v-model="locumESignText"
-          class="px-1"
+          :wrapperClass="'px-1'"
           :type="'text'"
           :label="'Signature'"
           :error="formErrors.find(formError => formError.field === 'text')"
