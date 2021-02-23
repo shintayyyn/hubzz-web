@@ -15,7 +15,7 @@
 				:value="value"
 				type="input"
 				placeholder="hh:mm"
-				class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
+				class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none text-center"
 				:class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed text-gray-500' : '']"
 				@click="modal = true"
 				@input="$emit('input', $event.target.value)"
