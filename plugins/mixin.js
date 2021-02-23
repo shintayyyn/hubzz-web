@@ -70,15 +70,16 @@ Vue.mixin({
         displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
       }
 
-      if (!this.formError || this.formError.find(err => err.field === fieldName)) {
-        return
-      }
-
       let index = this.formError.findIndex(item => item.field === fieldName)
 
       if (index >= 0) {
         this.formError.splice(index, 1)
       }
+
+      if (!this.formError || this.formError.find(err => err.field === fieldName)) {
+        return
+      }
+      
 
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
