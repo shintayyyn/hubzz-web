@@ -1,20 +1,23 @@
 <template>
   <div>
-    <AppBreadcrumbs v-if="repostJob" :links="links" />
-    <div class="flex justify-between items-center font-bold text-sm sm:text-xl ">
-      <div class="flex flex-col">
-        <div>CREATE JOB</div>
-        <div
-          v-if="$auth.user.domain === 'Practice' &&
-            $auth.user.status === 'Active' &&
-            ($auth.user.practice_detail.practice.status === 'Active' 
-            || $auth.user.practice_detail.practice.status === 'Dormant') &&
-            ($auth.user.practice_detail.practice.type === 'Spoke' &&
-            $auth.user.practice_detail.practice.parent_practice_id) &&
-            $auth.user.practice_detail.practice.allow_surgery_create_sessions === false"
-          class="hidden md:block text-gray-600 italic text-sm"
-        >
-          *Session status is Pending once created. No permission to create a job, thus required approval from your Hub.
+    <AppLoading :loading="dataLoading" spinner />
+    <div v-if="practice_hubzz_fee_rate.gp_rate > 0 && practice_hubzz_fee_rate.others_rate > 0">
+      <AppBreadcrumbs v-if="repostJob" :links="links" />
+      <div class="flex justify-between items-center font-bold text-sm sm:text-xl ">
+        <div class="flex flex-col">
+          <div>CREATE JOB</div>
+          <div
+            v-if="$auth.user.domain === 'Practice' &&
+              $auth.user.status === 'Active' &&
+              ($auth.user.practice_detail.practice.status === 'Active' 
+              || $auth.user.practice_detail.practice.status === 'Dormant') &&
+              ($auth.user.practice_detail.practice.type === 'Spoke' &&
+              $auth.user.practice_detail.practice.parent_practice_id) &&
+              $auth.user.practice_detail.practice.allow_surgery_create_sessions === false"
+            class="hidden md:block text-gray-600 italic text-sm"
+          >
+            *Session status is Pending once created. No permission to create a job, thus required approval from your Hub.
+          </div>
         </div>
       </div>
     </div>
@@ -67,13 +70,14 @@
             </p>
           </div>
         </div>
-        <div class="flex justify-end items-center text-black mt-3">
-          <AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toPublish=false" />
-          <AppButton :label="'Confirm & Publish'" :disabled="loading" @click="createJob" />
-        </div>
+        
       </div>
     </transition>
-    <div v-if="toPublish" class="shield" />
+
+    <div 
+      v-if="toPublish" 
+      class="shield"
+    />
 
     <transition name="slide">
       <div class="flex items-start flex-col md:flex-row">
@@ -536,6 +540,22 @@
         </template>
       </div>
     </transition>
+    
+    <div v-if="!(practice_hubzz_fee_rate.gp_rate > 0 && practice_hubzz_fee_rate.others_rate > 0)" class="disabled-modal flex flex-col justify-center">
+      <div class="flex">
+        <div class="mx-2">
+          <svgicon name="exclamation-mark" height="40" width="40" color="red" />
+        </div>
+        <div>
+          Job Creation is currently disabled. No Practice Rate Assigned. Please contact HUBZZ support.
+        </div>
+      </div>
+      <div class="m-8">
+        <nuxt-link to="/">
+          Go Back
+        </nuxt-link>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -571,6 +591,10 @@ export default {
 
   data () {
     return {
+      practice_hubzz_fee_rate:{
+        gp_rate: 0,
+        others_rate: 0,
+      },
       banksCount: 0,
       loading: false,
       dataLoading: false,
@@ -878,6 +902,7 @@ export default {
         }, 0)
         .toFixed(2)
     },
+
     hubzz_fee_taxed () {
       console.log('this.tax_rates_for_preview', this.tax_rates_for_preview)
       const taxed_hubzz_fee 
@@ -1281,9 +1306,15 @@ export default {
           }
         }
 
-        console.log('taxRatexxxxxxs', taxRates)
-
         this.tax_rates_for_preview = taxRates
+
+        this.$auth.user.practice_detail.practice.rates.forEach(item => {
+          if (item.type === 'GP') {
+            this.practice_hubzz_fee_rate.gp_rate = item.rate
+          }else if (item.type === 'Others') {
+            this.practice_hubzz_fee_rate.others_rate = item.rate
+          }
+        })
       })
       .finally(() => {
         this.dataLoading = false
@@ -1413,7 +1444,7 @@ export default {
         this.tabActive = "schedule"
       } else {
         this.$nextTick(() => {
-          this.$refs.modalContainer.scrollTop = 0
+          //this.$refs.modalContainer.scrollTop = 0
         })
       }
     },
@@ -1777,7 +1808,9 @@ export default {
           .catch(err => {
             console.log("err", err.response || err)
 
-            this.$refs.modalContainer.scrollTop = 0
+            this.loading = false
+
+            //this.$refs.modalContainer.scrollTop = 0
 
             this.form.clinical_system = this.selectedClinicalSystem
 
@@ -1875,12 +1908,13 @@ export default {
               //   )
               // }
             } else if (err.request) {
-              message = "Something weng wrong!"
+              message = "Something went wrong!"
             } else {
               message = err.message
             }
 
             if (message) {
+              console.log('umabot ba dito', message)
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "danger",
@@ -2223,7 +2257,7 @@ export default {
           .catch(err => {
             console.log("err", err.response || err)
 
-            this.$refs.modalContainer.scrollTop = 0
+            //this.$refs.modalContainer.scrollTop = 0
 
             this.form.clinical_system = this.selectedClinicalSystem
 
@@ -2308,7 +2342,7 @@ export default {
         this.toPublish = false
 
         this.$nextTick(() => {
-          this.$refs.modalContainer.scrollTop = 0
+          //this.$refs.modalContainer.scrollTop = 0
         })
       }
     },
@@ -2317,6 +2351,19 @@ export default {
 </script>
 
 <style scoped>
+.disabled-modal {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+  width: 500px;
+	max-width: 95%;
+	max-height: 70%;
+	overflow: auto;
+	transition: all 0.3s ease-in-out;
+	background-color: white;
+	z-index: 512;
+}
 .message-modal.job-notification {
   min-width: 50vw;
 }

@@ -132,7 +132,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -176,7 +176,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -219,7 +219,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -263,7 +263,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -307,7 +307,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -351,7 +351,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -395,7 +395,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -481,7 +481,7 @@
 
               <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
                 <span>
-                  <svgicon name="pushpin" width="17" height="17" class="fill-current text-blue-500" />
+                  <svgicon name="pushpin" width="17" height="17" class="fill-current text-blue-500 -mt-3" />
                 </span>
 
                 <p class="ml-2">
@@ -982,6 +982,7 @@ export default {
             })
           }
 
+
           if (this.getLocumPermanentJobs.length > 0) {
             this.getLocumPermanentJobs.forEach(item => {
               if (
@@ -1052,6 +1053,8 @@ export default {
           }
         })
       }
+
+      console.log("jobsInMonth", jobsInMonth)
 
       return jobsInMonth
     },
