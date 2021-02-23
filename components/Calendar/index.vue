@@ -128,7 +128,7 @@ export default {
           this.$auth.user.view_permanent_jobs
             ? this.$axios.get('/api/v1/locum/permanent-job-applications', {
               params: {
-                application_status: ['For Interview', 'Accepted'],
+                application_status: ['For Interview', 'Accepted',],
                 calendar_date_start: `${calendarDateStart}:gte`,
                 calendar_date_end: `${calendarDateEnd}:lte`,
                 limit: 100000000,

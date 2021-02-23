@@ -38,7 +38,7 @@
               :class="$store.state.calendar.view_type === 'per_week' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
               @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
             >Week</span>
-         </div>
+          </div>
         </div>
       </div>
       <!--  <div class="w-2/3 py-1 sm:w-1/3">
@@ -59,7 +59,7 @@
           </span>
         </div> -->
 
-        <!-- <div class="w-full text-right py-1 sm:w-1/3">
+      <!-- <div class="w-full text-right py-1 sm:w-1/3">
           <span
             class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
             :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
