@@ -146,11 +146,11 @@
                       Shift
                     </p>
 
-                    <p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Start
                     </p>
 
-                    <p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       End
                     </p>
 

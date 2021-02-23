@@ -103,6 +103,9 @@ export default {
       if (this.$auth.loggedIn && this.$auth.user.domain === 'Locum') {
         this.$store.commit('calendar/TOGGLE_LOADING', true)
 
+        console.log("${calendarDateStart}:gt`", `${calendarDateStart}:gte`)
+        console.log("${calendarDateEnd}:lte", `${calendarDateEnd}:lte`)
+
         Promise.all([
           this.$axios.get('/api/v1/locum/job-parts', {
             params: {
@@ -122,11 +125,10 @@ export default {
               limit: 100000000,
             },
           }).then(response => response.data.data.jobs),
-            
           this.$auth.user.view_permanent_jobs
             ? this.$axios.get('/api/v1/locum/permanent-job-applications', {
               params: {
-                application_status: 'For Interview',
+                application_status: ['For Interview', 'Accepted'],
                 calendar_date_start: `${calendarDateStart}:gte`,
                 calendar_date_end: `${calendarDateEnd}:lte`,
                 limit: 100000000,
