@@ -1,83 +1,83 @@
 <template>
-    <div>
-      <AppBreadcrumbs v-if="repostJob" :links="links" />
-      <div class="flex justify-between items-center font-bold text-sm sm:text-xl ">
-        <div class="flex flex-col">
-          <div>CREATE JOB</div>
-          <div
-            v-if="$auth.user.domain === 'Practice' &&
-              $auth.user.status === 'Active' &&
-              ($auth.user.practice_detail.practice.status === 'Active' 
-              || $auth.user.practice_detail.practice.status === 'Dormant') &&
-              ($auth.user.practice_detail.practice.type === 'Spoke' &&
-              $auth.user.practice_detail.practice.parent_practice_id) &&
-              $auth.user.practice_detail.practice.allow_surgery_create_sessions === false"
-            class="hidden md:block text-gray-600 italic text-sm"
-          >
-            *Session status is Pending once created. No permission to create a job, thus required approval from your Hub.
-          </div>
+  <div>
+    <AppBreadcrumbs v-if="repostJob" :links="links" />
+    <div class="flex justify-between items-center font-bold text-sm sm:text-xl ">
+      <div class="flex flex-col">
+        <div>CREATE JOB</div>
+        <div
+          v-if="$auth.user.domain === 'Practice' &&
+            $auth.user.status === 'Active' &&
+            ($auth.user.practice_detail.practice.status === 'Active' 
+            || $auth.user.practice_detail.practice.status === 'Dormant') &&
+            ($auth.user.practice_detail.practice.type === 'Spoke' &&
+            $auth.user.practice_detail.practice.parent_practice_id) &&
+            $auth.user.practice_detail.practice.allow_surgery_create_sessions === false"
+          class="hidden md:block text-gray-600 italic text-sm"
+        >
+          *Session status is Pending once created. No permission to create a job, thus required approval from your Hub.
         </div>
       </div>
+    </div>
 
-      <transition name="fade">
-        <div
-          v-if="toPublish"
-          class="message-modal job-notification bg-white p-4 rounded font-bold text-gray-700"
+    <transition name="fade">
+      <div
+        v-if="toPublish"
+        class="message-modal job-notification bg-white p-4 rounded font-bold text-gray-700"
+      >
+        <p
+          class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg font-bold"
         >
-          <p
-            class="text-center pb-2 mb-4 border-b-2 border-gray-600 text-lg font-bold"
-          >
-            JOB NOTIFICATION SUMMARY
-          </p>
-          <div class="px-4">
-            <div class="flex justify-between pb-2">
-              <p>Total Working Hours:</p>
-              <p class="pl-1">
-                {{ total_working_hours | hoursMinutes }}
-              </p>
-            </div>
-            <div class="flex justify-between pb-2">
-              <p>Total Gross Locum Wages:</p>
-              <p class="pl-1">
-                £ {{ total_gross_locum_wages | currency }}
-              </p>
-            </div>
-            <div class="flex justify-between pb-2 text-red-600">
-              <p>Total Gross Locum Wages (If VAT Registered):</p>
-              <p class="pl-1">
-                £ {{ taxed_total_gross_locum_wages_preview | currency }}
-              </p>
-            </div>
-            <div class="flex justify-between pb-2">
-              <p>
-                Hubzz Fee*
-                <span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
-              </p>
-              <p class="pl-1">
-                £ {{ hubzz_fee | currency }}
-              </p>
-            </div>
-            <div class="flex justify-between pb-2 text-red-600">
-              <p>
-                Hubzz Fee with VAT*
-                <span class="font-normal text-sm">(+{{ tax_rates_for_preview && tax_rate_for_preview ? tax_rates_for_preview.practice_tax_rate : 0 }}%)</span>:
-              </p>
-              <p class="pl-1">
-                £ {{ hubzz_fee_taxed | currency }}
-              </p>
-            </div>
+          JOB NOTIFICATION SUMMARY
+        </p>
+        <div class="px-4">
+          <div class="flex justify-between pb-2">
+            <p>Total Working Hours:</p>
+            <p class="pl-1">
+              {{ total_working_hours | hoursMinutes }}
+            </p>
           </div>
-          <div class="flex justify-end items-center text-black mt-3">
-            <AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toPublish=false" />
-            <AppButton :label="'Confirm & Publish'" :disabled="loading" @click="createJob" />
+          <div class="flex justify-between pb-2">
+            <p>Total Gross Locum Wages:</p>
+            <p class="pl-1">
+              £ {{ total_gross_locum_wages | currency }}
+            </p>
+          </div>
+          <div class="flex justify-between pb-2 text-red-600">
+            <p>Total Gross Locum Wages (If VAT Registered):</p>
+            <p class="pl-1">
+              £ {{ taxed_total_gross_locum_wages_preview | currency }}
+            </p>
+          </div>
+          <div class="flex justify-between pb-2">
+            <p>
+              Hubzz Fee*
+              <span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
+            </p>
+            <p class="pl-1">
+              £ {{ hubzz_fee | currency }}
+            </p>
+          </div>
+          <div class="flex justify-between pb-2 text-red-600">
+            <p>
+              Hubzz Fee with VAT*
+              <span class="font-normal text-sm">(+{{ tax_rates_for_preview && tax_rate_for_preview ? tax_rates_for_preview.practice_tax_rate : 0 }}%)</span>:
+            </p>
+            <p class="pl-1">
+              £ {{ hubzz_fee_taxed | currency }}
+            </p>
           </div>
         </div>
-      </transition>
-      <div v-if="toPublish" class="shield" />
+        <div class="flex justify-end items-center text-black mt-3">
+          <AppButton :label="'Cancel'" class="mr-1" :disabled="loading" @click="toPublish=false" />
+          <AppButton :label="'Confirm & Publish'" :disabled="loading" @click="createJob" />
+        </div>
+      </div>
+    </transition>
+    <div v-if="toPublish" class="shield" />
 
-      <transition name="slide">
-        <div class="flex items-start flex-col md:flex-row">
-          <template v-if="!dataLoading">
+    <transition name="slide">
+      <div class="flex items-start flex-col md:flex-row">
+        <template v-if="!dataLoading">
           <AppLoading :loading="dataLoading" spinner />
           <div class="w-full md:w-1/3 lg:w-1/2 flex flex-col xl:flex-row">
             <div class="w-full xl:w-5/12 xl:pr-2 mt-4">
@@ -86,16 +86,16 @@
                   <h4 class="text-gray-500 mb-1">
                     Practice
                   </h4>
-                    <AppInput
-                      v-model="form.practice_id"
-                      :type="'select'"
-                      :name="'practice_id'"
-                      :placeholder="'Choose a Spoke'"
-                      :error="formError.find(item => item.field === 'practice_id')"
-                      :items="practice_lists"
-                      @blur="CheckEmptyField(form.practice_id, 'practice_id')"
-                      class="px-2"
-                    />
+                  <AppInput
+                    v-model="form.practice_id"
+                    :type="'select'"
+                    :name="'practice_id'"
+                    :placeholder="'Choose a Spoke'"
+                    :error="formError.find(item => item.field === 'practice_id')"
+                    :items="practice_lists"
+                    class="px-2"
+                    @blur="CheckEmptyField(form.practice_id, 'practice_id')"
+                  />
                 </div>
 
                 <div class="flex flex-col border rounded-lg px-2 pt-3 mt-4">
@@ -517,11 +517,11 @@
               :shiftErrors="shiftErrors"
               :type="'create'"
               :tax_rates_for_preview="tax_rates_for_preview"
-              @getSchedule="getSchedule"
               hideDates
               :importedSchedule="scheduleDates"
-              @getJobParts="getJobParts"
               :importedDateRange="{start_date: start_date, end_date: end_date}"
+              @getSchedule="getSchedule"
+              @getJobParts="getJobParts"
               @exportSched="value=> scheduleDates = value"
             />
             <div class="pt-4 pb-8 w-full flex justify-end">
@@ -533,10 +533,10 @@
               />
             </div>
           </div>
-            </template>
-        </div>
-      </transition>
-    </div>
+        </template>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script>
@@ -566,7 +566,7 @@ export default {
     AppTime,
     AppLoading,
     AppMultipleDates,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -714,7 +714,7 @@ export default {
       const professionComplianceCategory = this.professionComplianceCategories.find(
         professionComplianceCategory =>
           professionComplianceCategory.id
-					=== profession.profession_compliance_category_id
+          === profession.profession_compliance_category_id
       )
 
       return professionComplianceCategory || null
@@ -754,7 +754,7 @@ export default {
 
           if (
             professionComplianceCategory.id
-						=== this.selectedProfessionComplianceCategory.id
+            === this.selectedProfessionComplianceCategory.id
           ) {
             [
               referenceComplianceDocuments,
@@ -806,8 +806,8 @@ export default {
 
           return (
             professionComplianceCategoryId
-							=== this.selectedProfessionComplianceCategory.id
-						&& complianceDocumentIds.includes(complianceDocumentId)
+              === this.selectedProfessionComplianceCategory.id
+            && complianceDocumentIds.includes(complianceDocumentId)
           )
         })
         .map(practiceProfessionComplianceCategoryComplianceDocument => {
@@ -829,11 +829,11 @@ export default {
       )
 
       const practiceRates
-				= this.$auth.user
-				&& this.$auth.user.practice_detail
-				&& this.$auth.user.practice_detail.practice
-				  ? this.$auth.user.practice_detail.practice.practice_rates
-				  : []
+        = this.$auth.user
+        && this.$auth.user.practice_detail
+        && this.$auth.user.practice_detail.practice
+          ? this.$auth.user.practice_detail.practice.practice_rates
+          : []
 
       const practiceRate = practiceRates.find(
         item => item.type === profession.profession_category_name
@@ -861,13 +861,13 @@ export default {
 
               if (!isNaN(num)) {
                 shiftTotal
-									= shiftTotal
-									+ Math.round(
-									  (Math.round((num / 60) * 100) / 100)
-											* this.practice_rate
-											* 100
-									)
-										/ 100
+                  = shiftTotal
+                  + Math.round(
+                    (Math.round((num / 60) * 100) / 100)
+                      * this.practice_rate
+                      * 100
+                  )
+                    / 100
               }
             }
 
@@ -898,7 +898,7 @@ export default {
           .filter(
             practiceProfessionComplianceCategoryComplianceDocument =>
               practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-							=== this.selectedProfessionComplianceCategory.id
+              === this.selectedProfessionComplianceCategory.id
           )
           .map(
             practiceProfessionComplianceCategoryComplianceDocument =>
@@ -946,7 +946,7 @@ export default {
       // let fullDateStart = this.form.date_start
       // }
     },
-    scheduleDates(value) {
+    scheduleDates (value) {
       console.log("dates", value)
     },
     schedule (value) {
@@ -1000,7 +1000,7 @@ export default {
         )
 
         this.practiceProfessionComplianceCategoryComplianceDocuments
-					= foundPractice.practice_profession_compliance_category_compliance_documents
+          = foundPractice.practice_profession_compliance_category_compliance_documents
       }
     },
   },
@@ -1104,22 +1104,22 @@ export default {
               profession.id === this.repostJob.platform_job.profession.id
           )
 
-        this.links = [
-          {
-            title: 'Dashboard',
-            url: '/dashboard'
-          },
-          {
-            title: this.repostJob.title,
-            url: `/dashboard/${this.repostJob.id}`
-          },
-          {
-            title: 'Repost Job'
-          }
-        ]
+          this.links = [
+            {
+              title: 'Dashboard',
+              url: '/dashboard',
+            },
+            {
+              title: this.repostJob.title,
+              url: `/dashboard/${this.repostJob.id}`,
+            },
+            {
+              title: 'Repost Job',
+            },
+          ]
 
           const selectedProfessionCategoryId
-						= selectedProfession.profession_category.id
+            = selectedProfession.profession_category.id
           this.form.practice_id = this.repostJob.platform_job.practice.id
           this.form.title = this.repostJob.title
           this.form.description = this.repostJob.description
@@ -1180,7 +1180,7 @@ export default {
             .filter(
               practiceProfessionComplianceCategoryComplianceDocument =>
                 practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-								=== selectedProfessionCategoryId
+                === selectedProfessionCategoryId
             )
             .map(
               ({ compliance_document_id: complianceDocumentId, }) =>
@@ -1250,14 +1250,14 @@ export default {
             )
               ? this.$moment(this.repostJob.platform_job.selection_date).format(
                 "YYYY-MM-DD"
-							  )
+              )
               : null
             this.selection_date.time = this.$moment().isBefore(
               this.repostJob.platform_job.selection_date
             )
               ? this.$moment(this.repostJob.platform_job.selection_date).format(
                 "HH:mm"
-							  )
+              )
               : null
           }
 
@@ -1299,7 +1299,7 @@ export default {
         : 0
     },
 
-    getJobParts(job_parts) {
+    getJobParts (job_parts) {
       this.job_parts_sched = job_parts
     },
 
@@ -1318,14 +1318,17 @@ export default {
         })
       })
     },
+
     getInitialSchedule (payload) {
       this.form.schedules = []
+
       if (payload.schedule) {
         payload.schedule.forEach(sched => {
           sched.shift_id.forEach(id => {
             let shift = payload.shift_schedule.find(
               shift => shift.value === id
             )
+
             this.form.schedules.push({
               date: sched.date,
               shift_id: shift.shift_id,
@@ -1339,6 +1342,7 @@ export default {
         })
       }
     },
+
     // revised app schedule
     next () {
       this.formError = []
@@ -1383,8 +1387,8 @@ export default {
         notRequired.push("selection_date")
       } else if (
         ["true", true,].includes(this.selection_notification)
-				&& this.selection_date.date
-				&& this.selection_date.time
+        && this.selection_date.date
+        && this.selection_date.time
       ) {
         notRequired.push("selection_date")
       }
@@ -1397,8 +1401,8 @@ export default {
         notRequired.push("favorite_only_until")
       } else if (
         ["true", true,].includes(this.bank_first)
-				&& this.favorite_only_until.date
-				&& this.favorite_only_until.time
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
       ) {
         notRequired.push("favorite_only_until")
       }
@@ -1427,7 +1431,7 @@ export default {
 
       this.schedules = schedule
 
-      schedule.forEach((sched, index) => {
+      schedule.forEach((sched, scheduleIndex) => {
         if (sched.shifts && sched.shifts.length) {
           let dateErrIndex = this.shiftErrors.findIndex(
             err => err.field === `shift-${sched.date}`
@@ -1437,7 +1441,7 @@ export default {
             this.shiftErrors.splice(dateErrIndex, 1)
           }
 
-          sched.shifts.forEach((shift, i) => {
+          sched.shifts.forEach((shift, shiftIndex) => {
             this.form.schedules.push({
               date: this.$moment(sched.date, "DD/MM/YYYY").format("YYYY-MM-DD"),
               shift_id: shift.shift_id,
@@ -1445,58 +1449,81 @@ export default {
               time_end: shift.time_end,
               locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
               rate: shift.rate,
+              posted_break_in_minutes: shift.posted_break_in_minutes,
+              posted_break_payable: shift.posted_break_payable,
             })
 
             if (shift.time_start) {
-              let startIndex = this.shiftErrors.findIndex(
-                err => err.field === `time_start-s${index}-${i}`
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `time_start-s${scheduleIndex}-${shiftIndex}`
               )
 
-              if (startIndex > -1) {
-                this.shiftErrors.splice(startIndex, 1)
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
               }
             }
 
             if (shift.time_end) {
-              let endIndex = this.shiftErrors.findIndex(
-                err => err.field === `time_end-s${index}-${i}`
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `time_end-s${scheduleIndex}-${shiftIndex}`
               )
 
-              if (endIndex > -1) {
-                this.shiftErrors.splice(endIndex, 1)
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
               }
             }
 
             if (
               shift.locum_detail_rate_type_id !== 0
-							&& shift.locum_detail_rate_type_id !== ""
+              && shift.locum_detail_rate_type_id !== ""
             ) {
-              let rateTypeIndex = this.shiftErrors.findIndex(
-                err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `locum_detail_rate_type_id-s${scheduleIndex}-${shiftIndex}`
               )
 
-              if (rateTypeIndex > -1) {
-                this.shiftErrors.splice(rateTypeIndex, 1)
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
               }
             }
 
             if (shift.shift_id !== 0 && shift.shift_id !== "") {
-              let shiftIdIndex = this.shiftErrors.findIndex(
-                err => err.field === `shift_id-s${index}-${i}`
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `shift_id-s${scheduleIndex}-${shiftIndex}`
               )
 
-              if (shiftIdIndex > -1) {
-                this.shiftErrors.splice(shiftIdIndex, 1)
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
               }
             }
 
             if (shift.rate !== 0 && shift.rate !== "") {
-              let rateIndex = this.shiftErrors.findIndex(
-                err => err.field === `rate-s${index}-${i}`
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `rate-s${scheduleIndex}-${shiftIndex}`
               )
 
-              if (rateIndex > -1) {
-                this.shiftErrors.splice(rateIndex, 1)
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
+              }
+            }
+
+            if (
+              shift.posted_break_in_minutes
+              && shift.time_start
+              && shift.time_end
+              && sched.date
+              && parseInt(shift.posted_break_in_minutes) > this.totalHours(shift.time_start, shift.time_end, sched.date)
+            ) {
+              this.shiftErrors.push({
+                field: `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                message: "Invalid break in minutes.",
+              })
+            } else {
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
+              )
+
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
               }
             }
           })
@@ -1522,7 +1549,9 @@ export default {
 
     canPublish () {
       this.shiftErrors = []
+
       this.formError = []
+
       let notRequired = [
         "title",
         "description",
@@ -1549,7 +1578,9 @@ export default {
         "schedules",
         "unpaid_breaks_in_minutes",
       ]
+      
       let has_conflict = false
+
       if (!this.hasBanks) {
         this.form.favorite_only = false
         this.bank_first = false
@@ -1565,8 +1596,8 @@ export default {
         notRequired.push("selection_date")
       } else if (
         ["true", true,].includes(this.selection_notification)
-				&& this.selection_date.date
-				&& this.selection_date.time
+        && this.selection_date.date
+        && this.selection_date.time
       ) {
         notRequired.push("selection_date")
       }
@@ -1579,65 +1610,92 @@ export default {
         notRequired.push("favorite_only_until")
       } else if (
         ["true", true,].includes(this.bank_first)
-				&& this.favorite_only_until.date
-				&& this.favorite_only_until.time
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
       ) {
         notRequired.push("favorite_only_until")
       }
+
       this.Validate(this.form, notRequired)
-      this.schedules.forEach((sched, index) => {
+
+      this.schedules.forEach((sched, scheduleIndex) => {
         if (!sched.shifts.length) {
           this.shiftErrors.push({
             field: `shift-${sched.date}`,
             message: "Schedule is required. Add Shift to create schedule.",
           })
         } else {
-          sched.shifts.forEach((shift, i) => {
+          sched.shifts.forEach((shift, shiftIndex) => {
             if (!shift.time_start) {
               this.shiftErrors.push({
-                field: `time_start-s${index}-${i}`,
+                field: `time_start-s${scheduleIndex}-${shiftIndex}`,
                 message: "Start is required.",
               })
             }
+
             if (!shift.time_end) {
               this.shiftErrors.push({
-                field: `time_end-s${index}-${i}`,
+                field: `time_end-s${scheduleIndex}-${shiftIndex}`,
                 message: "End is required.",
               })
             }
+
             if (shift.locum_detail_rate_type_id === 0) {
               this.shiftErrors.push({
-                field: `locum_detail_rate_type_id-s${index}-${i}`,
+                field: `locum_detail_rate_type_id-s${scheduleIndex}-${shiftIndex}`,
                 message: "Rate type is required.",
               })
             }
+
             if (shift.shift_id === 0) {
               this.shiftErrors.push({
-                field: `shift_id-s${index}-${i}`,
+                field: `shift_id-s${scheduleIndex}-${shiftIndex}`,
                 message: "Shift is required.",
               })
             }
+
             if (shift.rate === 0) {
               this.shiftErrors.push({
-                field: `rate-s${index}-${i}`,
+                field: `rate-s${scheduleIndex}-${shiftIndex}`,
                 message: "Rate is required.",
+              })
+            }
+
+            if (
+              shift.posted_break_in_minutes
+              && shift.time_start
+              && shift.time_end
+              && sched.date
+              && parseInt(shift.posted_break_in_minutes) > this.totalHours(shift.time_start, shift.time_end, sched.date)
+            ) {
+              this.shiftErrors.push({
+                field: `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                message: "Invalid break in minutes.",
               })
             }
           })
         }
       })
+
       if (!this.shiftErrors.length) {
         this.form.profession_id = this.form.role
+
         this.form.shift_id = this.form.shift
+
         this.selectedClinicalSystem = [...this.form.clinical_system,]
+
         this.form.clinical_system_id = this.form.clinical_system.map(
           item => item.value
         )
+
         this.selectedQualification = [...this.form.specialty,]
+
         this.form.qualification_id = this.form.specialty.map(
           item => item.value
         )
+
         this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         )
@@ -1653,11 +1711,13 @@ export default {
         }
 
         this.form.auto_assign_at = null
+
         if (["true", true,].includes(this.auto_assign_job)) {
           this.form.auto_assign_at = "1970-01-01 00:00"
         }
 
         this.form.selection_date = null
+
         if (["false", false,].includes(this.auto_assign_job)) {
           if (["true", true,].includes(this.selection_notification)) {
             this.form.selection_date = `${this.$moment(
@@ -1668,6 +1728,7 @@ export default {
         }
 
         this.form.favorite_only_until = null
+
         if (["true", true,].includes(this.bank_first)) {
           this.form.favorite_only_until = `${this.$moment(
             this.favorite_only_until.date,
@@ -1678,18 +1739,20 @@ export default {
         if (["15", 15, "30", 30, "60", 60,].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
         }
+
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
         }
+
         if (["false", false,].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = ""
         }
 
         this.form.ir35
-					= this.selectedProfession
-					&& this.selectedProfession.profession_category.name === "GP"
-					  ? this.form.ir35
-					  : false
+          = this.selectedProfession
+          && this.selectedProfession.profession_category.name === "GP"
+            ? this.form.ir35
+            : false
 
         this.loading = true
 
@@ -1697,20 +1760,19 @@ export default {
           .$post(`/api/v1/practice/jobs/check`, {
             ...this.form,
             old_job_id:
-							this.repostJob && !["Cancelled",].includes(this.repostJob.status)
-							  ? this.repostJob.id
-							  : null,
+              this.repostJob && !["Cancelled",].includes(this.repostJob.status)
+                ? this.repostJob.id
+                : null,
           })
           .then(() => {
             if (
               !this.shiftErrors.length
-							&& !this.hasShiftError
-							&& !this.formError.length
-							&& !has_conflict
+              && !this.hasShiftError
+              && !this.formError.length
+              && !has_conflict
             ) {
               this.toPublish = true
             }
-            this.loading = false
           })
           .catch(err => {
             console.log("err", err.response || err)
@@ -1732,7 +1794,7 @@ export default {
             if (err.response) {
               if (
                 err.response.data.error_messages
-								&& err.response.data.error_messages.length > 0
+                && err.response.data.error_messages.length > 0
               ) {
                 this.shiftErrors = err.response.data.error_messages
                 // let detailsError = [
@@ -1755,7 +1817,7 @@ export default {
                         "YYYY-MM-DD"
                       ).format("DD/MM/YYYY")}-${item.index}`,
                       message:
-												"This schedule has a conflict with another schedule.",
+                        "This schedule has a conflict with another schedule.",
                     })
                   })
                   let conflictDates = sched_has_conflict.conflictSchedules
@@ -1825,6 +1887,7 @@ export default {
                 text: [`${message}`,],
               })
             }
+          }).finally(() => {
             this.loading = false
           })
       }
@@ -1889,7 +1952,7 @@ export default {
       ]
       if (
         this.form[formField].length >= limit
-				&& !acceptedKeys.includes(e.key)
+        && !acceptedKeys.includes(e.key)
       ) {
         e.preventDefault()
       }
@@ -1939,13 +2002,13 @@ export default {
 
     validateNumber (value, fieldName) {
       let displayFieldName
-				= fieldName.charAt(0).toUpperCase()
-				+ fieldName.slice(1).replace(/_/g, " ")
+        = fieldName.charAt(0).toUpperCase()
+        + fieldName.slice(1).replace(/_/g, " ")
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (
         parseInt(value) < 1
-				|| value.toString().includes("e")
-				|| value === ""
+        || value.toString().includes("e")
+        || value === ""
       ) {
         this.formError.push({
           field: fieldName,
@@ -1958,6 +2021,7 @@ export default {
 
     createJob () {
       this.formError = []
+
       let notRequired = [
         "title",
         "description",
@@ -1983,6 +2047,7 @@ export default {
         "schedule_templates",
         "unpaid_breaks_in_minutes",
       ]
+
       if (!this.hasBanks) {
         this.form.favorite_only = false
         this.bank_first = false
@@ -1998,8 +2063,8 @@ export default {
         notRequired.push("selection_date")
       } else if (
         ["true", true,].includes(this.selection_notification)
-				&& this.selection_date.date
-				&& this.selection_date.time
+        && this.selection_date.date
+        && this.selection_date.time
       ) {
         notRequired.push("selection_date")
       }
@@ -2012,8 +2077,8 @@ export default {
         notRequired.push("favorite_only_until")
       } else if (
         ["true", true,].includes(this.bank_first)
-				&& this.favorite_only_until.date
-				&& this.favorite_only_until.time
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
       ) {
         notRequired.push("favorite_only_until")
       }
@@ -2022,23 +2087,32 @@ export default {
 
       if (!this.formError.length) {
         this.form.profession_id = this.form.role
+
         this.form.shift_id = this.form.shift
+
         this.selectedClinicalSystem = [...this.form.clinical_system,]
+
         this.form.clinical_system_id = this.form.clinical_system.map(
           item => item.value
         )
+
         this.selectedQualification = [...this.form.specialty,]
+
         this.form.qualification_id = this.form.specialty.map(
           item => item.value
         )
+
         this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         )
+
         // this.form.date_start = this.$moment(
         //   this.form.date_start,
         //   "YYYY-MM-DD"
         // ).format("YYYY-MM-DD")
+
         // this.form.date_end = this.$moment(
         //   this.form.date_end,
         //   "YYYY-MM-DD"
@@ -2055,11 +2129,13 @@ export default {
         }
 
         this.form.auto_assign_at = null
+
         if (["true", true,].includes(this.auto_assign_job)) {
           this.form.auto_assign_at = "1970-01-01 00:00"
         }
 
         this.form.selection_date = null
+
         if (["false", false,].includes(this.auto_assign_job)) {
           if (["true", true,].includes(this.selection_notification)) {
             this.form.selection_date = `${this.$moment(
@@ -2070,6 +2146,7 @@ export default {
         }
 
         this.form.favorite_only_until = null
+
         if (["true", true,].includes(this.bank_first)) {
           this.form.favorite_only_until = `${this.$moment(
             this.favorite_only_until.date,
@@ -2080,18 +2157,20 @@ export default {
         if (["15", 15, "30", 30, "60", 60,].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
         }
+
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
         }
+
         if (["false", false,].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = ""
         }
 
         this.form.ir35
-					= this.selectedProfession
-					&& this.selectedProfession.profession_category.name === "GP"
-					  ? this.form.ir35
-					  : false
+          = this.selectedProfession
+          && this.selectedProfession.profession_category.name === "GP"
+            ? this.form.ir35
+            : false
 
         this.loading = true
 
@@ -2099,9 +2178,9 @@ export default {
           .$post(`/api/v1/practice/jobs`, {
             ...this.form,
             old_job_id:
-							this.repostJob && !["Cancelled",].includes(this.repostJob.status)
-							  ? this.repostJob.id
-							  : null,
+              this.repostJob && !["Cancelled",].includes(this.repostJob.status)
+                ? this.repostJob.id
+                : null,
           })
           .then(res => {
             if (this.$route.name === "dashboard-create") {
@@ -2161,7 +2240,7 @@ export default {
             if (err.response) {
               if (
                 err.response.data.error_messages
-								&& err.response.data.error_messages.length > 0
+                && err.response.data.error_messages.length > 0
               ) {
                 this.formError = err.response.data.error_messages
                 let detailsError = [
@@ -2215,14 +2294,19 @@ export default {
           "specialty",
           "clinical_system",
         ]
+
         let hasDetailsError = this.formError
           .map(err => detailsError.includes(err.field))
           .includes(true)
+
         if (hasDetailsError) {
           this.tabActive = "details"
         }
+
         console.log("errors", this.formError)
+
         this.toPublish = false
+
         this.$nextTick(() => {
           this.$refs.modalContainer.scrollTop = 0
         })
@@ -2234,22 +2318,22 @@ export default {
 
 <style scoped>
 .message-modal.job-notification {
-	min-width: 50vw;
+  min-width: 50vw;
 }
 .wrapper {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden auto;
-	transition: all 0.3s ease-in-out;
-	scroll-behavior: smooth;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden auto;
+  transition: all 0.3s ease-in-out;
+  scroll-behavior: smooth;
 }
 .err-shield {
-	background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 @media (min-width: 768px) {
-	.message-modal.job-notification {
-		min-width: 25vw;
-	}
+  .message-modal.job-notification {
+    min-width: 25vw;
+  }
 }
 </style>

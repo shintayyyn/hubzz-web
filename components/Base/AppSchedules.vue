@@ -19,7 +19,7 @@
 
     <div class="flex">
       <div v-if="type === 'create'" class="pl-0 p-4">
-        <div class="border rounded-lg w-full h-full" v-if="!hideDates">
+        <div v-if="!hideDates" class="border rounded-lg w-full h-full">
           <p class="text-gray-700 text-center text-lg font-bold pt-6">
             <span>DATES</span>
           </p>
@@ -734,7 +734,7 @@
                             <select
                               v-model="shift.shift_id"
                               class="custom-select -mt-8 py-1 text-sm px-1"
-                              @change="changeShiftId(shift.shift_id, item.shifts, i, shift)"
+                              @change="changeShiftId(shift.shift_id, item.shifts, i, shift), checkScheduleShiftShiftId(shift, index, i)"
                             >
                               <option
                                 v-for="option in shifts_option"
@@ -888,6 +888,47 @@
                             />
                           </div>
                         </div>
+
+                        <!-- BREAK -->
+                        <div class="flex items-end w-full">
+                          <div class="w-6/12 pl-1 pr-3">
+                            <AppInput
+                              v-model="shift.posted_break_in_minutes"
+                              label="Break in minutes:"
+                              :name="`posted_break_in_minutes-s${index}-${i}`"
+                              class="w-full"
+                              :type="'text'"
+                              :min="1"
+                              :in-style="'text-align:right;background-color: transparent'"
+                              :wrapperClass="'mb-1 py-1'"
+                              :limit="4"
+                              :error="
+                                formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                  ? formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                  : shiftErrors
+                                    ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                    : null
+                              "
+                              @keydown="isNumber($event)"
+                              @change="emitSchedule()"
+                              @input="checkScheduleShiftPostedBreakInMinutes(shift, index, i)"
+                            />
+                          </div>
+
+                          <div class="w-6/12 px-1">
+                            <AppInput
+                              v-model="shift.posted_break_payable"
+                              label="Break payable:"
+                              :name="`posted_break_payable-s${index}-${i}`"
+                              :type="'select'"
+                              :items="[{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }]"
+                              :wrapperClass="'mb-1 py-1'"
+                              :inStyle="'font-size: 13px; padding-left: 8px;'"
+                              @change="emitSchedule()"
+                            />
+                          </div>
+                        </div>
+                        <!-- BREAK -->
 
                         <div
                           v-if="shiftErrors.find(err=>err.field === `conflict-${item.date}-${i}`)"
@@ -1605,7 +1646,7 @@ export default {
   },
 
   watch: {
-    importedSchedule(value) {
+    importedSchedule (value) {
       if (this.hideDates) {
         this.scheduleDates = value
       }
@@ -1679,11 +1720,11 @@ export default {
       this.emitSchedule()
     },
 
-    importedDateRange({ start_date, end_date}) {
+    importedDateRange ({ start_date, end_date,}) {
       this.start_date = start_date
       this.end_date = end_date
       this.$emit('exportSched', this.scheduleDates)
-    }
+    },
   },
 
   created () {
@@ -2687,6 +2728,20 @@ export default {
             : ""
           : shift.locum_detail_rate_type_name
 
+      const unpaidBreakInMinutes = this.type === "create"
+        ? (shift.posted_break_payable === 'false' || !shift.posted_break_payable) && shift.posted_break_in_minutes
+          ? parseFloat(shift.posted_break_in_minutes)
+          : 0
+        : 0
+
+      const totalHoursInMinutes = this.totalHours(startTime, endTime, date)
+
+      const totalPaidHoursInMinutes = totalHoursInMinutes - unpaidBreakInMinutes
+
+      const totalPaidHours = Math.round((totalPaidHoursInMinutes / 60) * 100) / 100
+
+      const minusUnpaidBreakInPerSession = true
+
       let total_hours
         = Math.round((this.totalHours(startTime, endTime, date) / 60) * 100)
         / 100
@@ -2725,26 +2780,26 @@ export default {
       case "Hourly":
         return type !== "deduction"
           ? !shift.has_absences && startTime && endTime && total_hours !== 0
-            ? Math.round(shift.rate * total_hours * 100) / 100
+            ? Math.round((shift.rate * totalPaidHours) * 100) / 100
             : 0
-          : Math.round(shift.rate * total_hours * 100) / 100
+          : Math.round((shift.rate * totalPaidHours) * 100) / 100
 
       case "Half Day":
       case "Whole Day":
         return type !== "deduction"
           ? !shift.has_absences && startTime && endTime && total_hours !== 0
-            ? this.type === "create"
+            ? this.type === "create" && !minusUnpaidBreakInPerSession
               ? shift.rate
               : calculatePerSessionAmount(
                 shift.rate,
                 orig_total_hours,
-                total_hours
+                (minusUnpaidBreakInPerSession ? totalPaidHours : total_hours)
               )
             : 0
           : calculatePerSessionAmount(
             shift.rate,
             orig_total_hours,
-            total_hours
+            (minusUnpaidBreakInPerSession ? totalPaidHours : total_hours)
           )
       default:
         return 0
@@ -2800,9 +2855,9 @@ export default {
           rate += Number(num)
         }
 
-        const qwe = rate.toFixed(2)
+        const formattedRate = rate.toFixed(2)
 
-        return qwe
+        return formattedRate
       } else {
         return 0
       }
@@ -3009,92 +3064,140 @@ export default {
       }
     },
 
-    addShift (shifts, index) {
-      let rowError = []
+    checkScheduleShiftShiftId (shift, scheduleIndex, shiftIndex) {
+      if (!shift) {
+        return
+      }
 
-      if (shifts.length) {
-        let last_shift = shifts[shifts.length - 1]
-        let i = shifts.length - 1
-        let errIndex
+      if (!shift.shift_id) {
+        this.formError.push({
+          field: `shift_id-s${scheduleIndex}-${shiftIndex}`,
+          message: "Shift is required.",
+        })
+      } else {
+        const errIndex = this.formError.findIndex(
+          err => err.field === `shift_id-s${scheduleIndex}-${shiftIndex}`
+        )
 
-        if (!last_shift.shift_id) {
-          rowError.push({
-            field: `shift_id-s${index}-${i}`,
-            message: "Shift is required.",
-          })
-        } else {
-          errIndex = rowError.findIndex(
-            err => err.field === `shift_id-s${index}-${i}`
-          )
-          if (errIndex > -1) {
-            rowError.splice(errIndex, 1)
-          }
+        if (errIndex > -1) {
+          this.formError.splice(errIndex, 1)
         }
+      }
+    },
+
+    checkScheduleShiftPostedBreakInMinutes (shift, scheduleIndex, shiftIndex) {
+      if (!shift) {
+        return
+      }
+
+      if (
+        shift.posted_break_in_minutes
+        && shift.time_start
+        && shift.time_end
+        && this.schedules[scheduleIndex].date
+        && parseInt(shift.posted_break_in_minutes) > this.totalHours(shift.time_start, shift.time_end, this.schedules[scheduleIndex].date)
+      ) {
+        this.formError.push({
+          field: `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+          message: "Invalid break in minutes.",
+        })
+      } else {
+        const formErrorIndex = this.formError.findIndex(
+          err => err.field === `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
+        )
+
+        if (formErrorIndex > -1) {
+          this.formError.splice(formErrorIndex, 1)
+        }
+      }
+    },
+
+    addShift (shifts, index) {
+      let last_shift = shifts[shifts.length - 1] || null
+      let i = shifts.length - 1
+
+      if (last_shift) {
+        this.checkScheduleShiftShiftId(last_shift, index, i)
+
         if (!last_shift.time_start) {
-          rowError.push({
+          this.formError.push({
             field: `time_start-s${index}-${i}`,
             message: "Start Time is required.",
           })
         } else {
-          errIndex = rowError.findIndex(
+          const errIndex = this.formError.findIndex(
             err => err.field === `time_start-s${index}-${i}`
           )
+
           if (errIndex > -1) {
-            rowError.splice(errIndex, 1)
+            this.formError.splice(errIndex, 1)
           }
         }
 
         if (!last_shift.time_end) {
-          rowError.push({
+          this.formError.push({
             field: `time_end-s${index}-${i}`,
             message: "End Time is required.",
           })
         } else {
-          errIndex = rowError.findIndex(
+          const errIndex = this.formError.findIndex(
             err => err.field === `time_end-s${index}-${i}`
           )
+
           if (errIndex > -1) {
-            rowError.splice(errIndex, 1)
+            this.formError.splice(errIndex, 1)
           }
         }
 
         if (!last_shift.locum_detail_rate_type_id) {
-          rowError.push({
+          this.formError.push({
             field: `locum_detail_rate_type_id-s${index}-${i}`,
             message: "Rate type is required.",
           })
         } else {
-          errIndex = rowError.findIndex(
+          const errIndex = this.formError.findIndex(
             err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
           )
+
           if (errIndex > -1) {
-            rowError.splice(errIndex, 1)
+            this.formError.splice(errIndex, 1)
           }
         }
 
         if (!last_shift.rate) {
-          rowError.push({
+          this.formError.push({
             field: `rate-s${index}-${i}`,
             message: "Rate is required.",
           })
         } else {
-          errIndex = rowError.findIndex(
+          const errIndex = this.formError.findIndex(
             err => err.field === `rate-s${index}-${i}`
           )
+
           if (errIndex > -1) {
-            rowError.splice(errIndex, 1)
+            this.formError.splice(errIndex, 1)
           }
         }
+
+        this.checkScheduleShiftPostedBreakInMinutes(last_shift, index, i)
       }
 
-      this.formError = [...this.formError, ...rowError,]
-      if (!rowError.length) {
+      if (!this.formError.some(err => ([
+        `shift_id-s${index}-${i}`,
+        `time_start-s${index}-${i}`,
+        `time_end-s${index}-${i}`,
+        `locum_detail_rate_type_id-s${index}-${i}`,
+        `rate-s${index}-${i}`,
+        `posted_break_in_minutes-s${index}-${i}`,
+      ].includes(err.field)))) {
         shifts.push({
           shift_id: 0,
           time_start: "",
           time_end: "",
           locum_detail_rate_type_id: 0,
           rate: 0,
+          posted_break_in_minutes: '0',
+          posted_break_payable: 'false',
         })
       }
     },
