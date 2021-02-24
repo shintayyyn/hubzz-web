@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex overflow-x-auto border-b-4 border-sunglow">
+    <div class="flex overflow-x-auto border-b border-sunglow">
       <template v-if="!isStandAloneWithoutHubOrSpoke">
         <nuxt-link
           :to="`/spoke-surgery-management`"
