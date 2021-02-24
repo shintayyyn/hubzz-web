@@ -59,7 +59,7 @@
                 RATE
               </p>
 
-              <p class="w-3/12 text-center">
+              <p v-if="false" class="w-3/12 text-center">
                 BREAK
               </p>
             </div>
@@ -82,7 +82,7 @@
                   £{{ sched.rate }} {{ sched.rate_type_name }}
                 </p>
 
-                <p class="lg:w-3/12 lg:text-center">
+                <p v-if="false" class="lg:w-3/12 lg:text-center">
                   {{ sched.posted_break_formatted }}
                 </p>
               </div>
