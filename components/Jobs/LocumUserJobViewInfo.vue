@@ -83,7 +83,7 @@
                 </p>
 
                 <p class="lg:w-3/12 lg:text-center">
-                  {{ sched.posted_break_in_minutes ? `${sched.posted_break_in_minutes}m (${sched.posted_break_payable ? 'Paid' : 'Unpaid'})` : '(none)' }}
+                  {{ sched.posted_break_formatted }}
                 </p>
               </div>
             </div>

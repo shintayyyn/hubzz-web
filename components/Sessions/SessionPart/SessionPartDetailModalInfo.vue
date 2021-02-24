@@ -29,29 +29,47 @@
         </p>
 
         <div class="flex text-xs bg-gray-400 py-1 font-bold pl-1" :class="job_part.schedules.length > 7 ? 'pr-2' : ''">
-          <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+          <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
             DATE
           </div>
 
-          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-            {{ job_part.status === 'Approved' ? 'FINAL TIME' : 'COMPLETED TIME' }}
-          </div>
-
-          <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+          <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
             SHIFT
           </div>
 
-          <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+          <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
             RATE
           </div>
 
-          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6 text-center">
-            REMARKS
+          <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
+            POSTED BREAK
           </div>
 
-          <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-            REASON
-          </div>
+          <template v-if="job_part && job_part.locum_invoiceable">
+            <div class="w-2/12">
+              {{ job_part.status === 'Approved' ? 'FINAL TIME' : 'COMPLETED TIME' }}
+            </div>
+
+            <div class="w-2/12">
+              {{ 
+                job_part.status === 'Approved'
+                  ? 'APPROVED BREAK'
+                  : job_part.invoice_status === 'Disputed'
+                    ? 'DISPUTED BREAK'
+                    : job_part.invoice_status === 'Invoiced'
+                      ? 'INVOICED BREAK'
+                      : 'COMPLETED BREAK'
+              }}
+            </div>
+  
+            <div class="w-2/12 text-center">
+              REMARKS
+            </div>
+  
+            <div class="w-2/12">
+              REASON
+            </div>
+          </template>
         </div>
 
         <div
@@ -60,29 +78,39 @@
           :class="job_part.schedules.length > 7 ? 'overflow-x-hidden overflow-y-auto' : ''"
         >
           <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex py-1 border-b">
-            <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+            <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
               {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
             </div>
 
-            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-              {{ job_part.status === 'Approved' ? `${sched.approved_time_start} - ${sched.approved_time_end}` : `${sched.final_time_start} - ${sched.final_time_end}` }}
-            </div>
-
-            <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+            <div class="text-center" :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
               {{ sched.shift.name }}
             </div>
 
-            <div :class="job_part && job_part.locum_invoiceable ? 'w-1/6' : 'w-1/3'">
+            <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
               £{{ sched.rate |currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}
             </div>
 
-            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6 text-center">
-              {{ job_part.status === 'Approved' ? sched.approved_remarks : sched.completed_remarks }}
+            <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
+              {{ sched.posted_break_formatted }}
             </div>
-            
-            <div v-if="job_part && job_part.locum_invoiceable" class="w-1/6">
-              {{ job_part.status === 'Approved' ? sched.approved_reason ? sched.approved_reason : sched.completed_reason : sched.completed_reason }}
-            </div>
+
+            <template v-if="job_part && job_part.locum_invoiceable">
+              <div class="w-2/12">
+                {{ job_part.status === 'Approved' ? `${sched.approved_time_start} - ${sched.approved_time_end}` : `${sched.final_time_start} - ${sched.final_time_end}` }}
+              </div>
+
+              <div class="w-2/12">
+                {{ sched.completed_break_formatted }}
+              </div>
+
+              <div class="w-2/12 text-center">
+                {{ job_part.status === 'Approved' ? sched.approved_remarks : sched.completed_remarks }}
+              </div>
+              
+              <div class="w-2/12">
+                {{ job_part.status === 'Approved' ? sched.approved_reason ? sched.approved_reason : sched.completed_reason : sched.completed_reason }}
+              </div>
+            </template>
           </div>
         </div>
       </div>
