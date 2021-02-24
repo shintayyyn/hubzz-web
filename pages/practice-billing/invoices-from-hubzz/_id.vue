@@ -1,39 +1,36 @@
 <template>
-  <div class=" py-4 max-w-5xl h-screen">
-    <div class="flex flex-row flex-wrap justify-start">
-      <!-- <div @click="$router.go(-1)" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
-      </div>-->
+  <div class="max-w-5xl h-screen">
+    <!-- <div class="flex flex-row flex-wrap justify-start">
       <nuxt-link 
         :to="{ name: 'practice-billing-invoices-from-hubzz' }"
       >
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
-    </div>
+    </div> -->
     
     <!-- billing -->
-    <section>
-      <div class="flex flex-row flex-wrap justify-start items-center my-4">
+    <section class="pt-2">
+      <div class="flex flex-row flex-wrap justify-start items-center my-2">
         <label class="mx-1 py-2 px-3">Type:</label>
-        <div class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500">
+        <div class="text-xs sm:text-sm mx-1 py-1 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow border-sunglow">
           Platform
         </div>
       </div>
       <div
         v-if="practiceInvoice.paid_at_in_gb_formatted" 
-        class="mx-4 my-2 font-semibold text-lg"
+        class="mx-4 font-semibold"
       >
         {{ '* This invoice has been marked as paid on ' + practiceInvoice.paid_at_in_gb_formatted }}
       </div>
       <div
         v-if="practiceInvoice.unpaid_at_in_gb_formatted" 
-        class="mx-4 my-2 font-semibold text-lg"
+        class="mx-4 font-semibold"
       >
         <div>{{ `* This invoice has been marked Invalid on ${practiceInvoice.unpaid_at_in_gb_formatted}` }}</div>
         <div v-if="practiceInvoice.unpaid_reason">{{ `For the reason: ${practiceInvoice.unpaid_reason}` }}</div>
       </div>
 
-      <div class="m-4">
+      <div class="mx-4 my-2">
         <HubzzBillingForm 
           :forViewing="true"
           :practice="practice"
