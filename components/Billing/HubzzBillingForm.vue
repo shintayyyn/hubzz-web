@@ -1,7 +1,7 @@
 <template>
   <div class="text-black">
     <!-- HEADER -->
-    <div class="flex flex-wrap overflow-hidden md:mx-1 md:pl-3 mb-1 pb-1 text-sm">
+    <div class="flex flex-wrap overflow-hidden mb-1 pb-1 text-sm">
       <AppButton
         v-if="forViewing == true"
         class="mr-2"
@@ -24,7 +24,7 @@
     <AppLoading :loading="loading" spinner :message="'Exporting to PDF'" />
     <div
       id="toPrint"
-      class="invoice shadow-lg border-gray-500 md:mx-4 max-w-xl h-full flex flex-col justify-between bg-white"
+      class="invoice border max-w-xl h-full flex flex-col justify-between bg-white"
       :class="!doNotShow && 'display'"
     >
       <div>

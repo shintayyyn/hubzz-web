@@ -38,7 +38,7 @@
               :class="$store.state.calendar.view_type === 'per_week' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
               @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
             >Week</span>
-         </div>
+          </div>
         </div>
       </div>
       <!--  <div class="w-2/3 py-1 sm:w-1/3">
@@ -59,7 +59,7 @@
           </span>
         </div> -->
 
-        <!-- <div class="w-full text-right py-1 sm:w-1/3">
+      <!-- <div class="w-full text-right py-1 sm:w-1/3">
           <span
             class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
             :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
@@ -132,7 +132,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -176,7 +176,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -219,7 +219,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -263,7 +263,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -307,7 +307,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -351,7 +351,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -395,7 +395,7 @@
                   name="pushpin"
                   width="14"
                   height="14"
-                  class="fill-current text-blue-500"
+                  class="fill-current text-blue-500 -mt-3"
                 />
               </template>
 
@@ -481,7 +481,7 @@
 
               <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
                 <span>
-                  <svgicon name="pushpin" width="17" height="17" class="fill-current text-blue-500" />
+                  <svgicon name="pushpin" width="17" height="17" class="fill-current text-blue-500 -mt-3" />
                 </span>
 
                 <p class="ml-2">
@@ -982,6 +982,7 @@ export default {
             })
           }
 
+
           if (this.getLocumPermanentJobs.length > 0) {
             this.getLocumPermanentJobs.forEach(item => {
               if (
@@ -1052,6 +1053,8 @@ export default {
           }
         })
       }
+
+      console.log("jobsInMonth", jobsInMonth)
 
       return jobsInMonth
     },

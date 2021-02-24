@@ -44,16 +44,20 @@
             </div>
 
             <div class="hidden lg:flex font-bold text-xs bg-gray-400 py-1 pl-1" :class="job.schedules.length > 7 ? 'pr-2' : ''">
-              <p class="w-1/3">
+              <p class="w-5/12">
                 DATE
               </p>
 
-              <p class="w-1/3 text-center">
+              <p class="w-3/12 text-center">
                 SHIFT
               </p>
 
-              <p class="w-1/3">
+              <p class="w-4/12">
                 RATE
+              </p>
+
+              <p v-if="false" class="w-4/12">
+                BREAK
               </p>
             </div>
             
@@ -63,16 +67,20 @@
               :class="job.schedules.length > 7 ? 'overflow-x-hidden overflow-y-auto' : ''"
             >
               <div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex py-1 border-b">
-                <p class="lg:w-1/3">
+                <p class="lg:w-5/12">
                   {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
                 </p>
 
-                <p class="lg:w-1/3 lg:text-center">
+                <p class="lg:w-3/12 lg:text-center">
                   {{ sched.shift.name }}
                 </p>
 
-                <p class="lg:w-1/3">
+                <p class="lg:w-4/12">
                   £{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}
+                </p>
+
+                <p v-if="false" class="lg:w-4/12">
+                  {{ sched.posted_break_formatted }}
                 </p>
               </div>
             </div>
@@ -81,8 +89,6 @@
       </div>
       
       <div class="flex flex-col w-full md:w-1/3">
-       
-
         <div class="font-bold text-sm sm:text-md">
           Job Hubzz Fee
         </div>
@@ -157,8 +163,6 @@
             {{ item.name }}
           </div>
         </div>
-        
-
       </div>
 
       <div class="flex flex-col w-full md:w-1/3 md:px-2">
@@ -231,8 +235,6 @@
         <div class="text-xs sm:text-sm mb-6 break-words">
           {{ job.platform_job.session_structure_information ? job.platform_job.session_structure_information : '(none)' }}
         </div>
-
-        
       </div>
 
       <div class="flex flex-col w-full md:w-1/3">
