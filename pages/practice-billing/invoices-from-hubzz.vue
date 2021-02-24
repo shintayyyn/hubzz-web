@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-300 mb-4 pt-1">
+    <AppBreadcrumbs :links="links"/>
+    <div v-if="!$route.params.id" class="flex flex-row justify-start overflow-x-auto border-b border-gray-300 mb-4 pt-1">
       <nuxt-link
         :to="{ path: '/practice-billing/invoices-from-hubzz'}"
         class="md:mr-5 px-3 py-2 text-xs font-bold cursor-pointer whitespace-no-wrap"
@@ -21,22 +22,50 @@
       >
         HUBZZ Billing Reports
       </nuxt-link> -->
-      <transition name="fade" mode="out-in">
+      <!-- <transition name="fade" mode="out-in">
         <div
           v-if="['practice-billing-invoices-from-hubzz-id'].includes($route.name)"
           class="shield"
         />
-      </transition>
+      </transition> -->
     </div>
     <nuxt-child />
   </div>
 </template>
 
 <script>
+import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs";
 export default {
+  components: {
+		AppBreadcrumbs,
+	},
   data () {
     return {
       practice: null,
+    }
+  },
+  computed: {
+    links() {
+      let crumbs = []
+      let route = this.$route
+
+      if (route.params.id) {
+        crumbs.push(
+          {
+            title: 'Practice Billing',
+            url: '/practice-billing'
+          },
+          {
+            title: 'Invoices from Hubzz',
+            url: '/practice-billing/invoices-from-hubzz/'
+          },
+          {
+            title: route.params.id,
+            url: `/practice-billing/invoices-from-hubzz/${route.params.id}`
+          }
+        )
+      }
+      return crumbs
     }
   },
   async asyncData ({ app, error, }) {
