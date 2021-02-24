@@ -85,7 +85,7 @@
         <div class="flex items-start flex-col md:flex-row">
           <template v-if="!dataLoading">
             <AppLoading :loading="dataLoading" spinner />
-            <div class="w-full md:w-1/3 lg:w-1/2 flex flex-col xl:flex-row">
+            <div class="w-full md:w-1/3 lg:w-45p flex flex-col xl:flex-row">
               <div class="w-full xl:w-5/12 xl:pr-2 mt-4">
                 <div class="flex flex-col">
                   <div class="border rounded-lg px-2 py-3">
@@ -514,7 +514,7 @@
               </div>
             </div>
 
-            <div class="w-full md:w-2/3 lg:w-1/2">
+            <div class="w-full md:w-2/3 lg:w-55p">
               <AppSchedules
                 :shifts="shifts"
                 :rate_lists="rate_lists"
