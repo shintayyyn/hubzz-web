@@ -52,9 +52,9 @@
         </div>
       </div> -->
 
-      <div class="flex items-center">
-        <!-- <div class="pagination-item m-1">
-          <button
+      <div class="flex items-center text-gray-700">
+        <div class="pagination-item m-1">
+          <!-- <button
             type="button"
             class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
@@ -67,8 +67,16 @@
                 <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z" />
               </svg>
             </span>
+          </button> -->
+          <button 
+            type="button"
+            :disabled="loading || isInFirstPage"
+            :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
+            @click="onClickFirstPage"
+          >
+            <svgicon name="first-track" width="12" height="12" class="fill-current" />
           </button>
-        </div> -->
+        </div>
 
         <div class="pagination-item m-1">
           <button 
@@ -140,9 +148,9 @@
             </span>
           </button> -->
         </div>
-        <!-- 
+        
         <div class="pagination-item m-1">
-          <button
+          <!-- <button
             type="button"
             class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             :class="{ 'text-gray-500 cursor-not-allowed': isInLastPage }"
@@ -155,8 +163,16 @@
                 <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z" />
               </svg>
             </span>
+          </button> -->
+          <button 
+            type="button"
+            :disabled="loading || isInLastPage"
+            :class="{ 'text-gray-500 cursor-not-allowed': isInLastPage }"
+            @click="onClickLastPage"
+          >
+            <svgicon name="last-track" width="12" height="12" class="fill-current" />
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
