@@ -59,7 +59,7 @@
                 RATE
               </p>
 
-              <p class="w-3/12 text-center">
+              <p v-if="false" class="w-3/12 text-center">
                 BREAK
               </p>
             </div>
@@ -82,8 +82,8 @@
                   £{{ sched.rate }} {{ sched.rate_type_name }}
                 </p>
 
-                <p class="lg:w-3/12 lg:text-center">
-                  {{ sched.posted_break_in_minutes ? `${sched.posted_break_in_minutes}m (${sched.posted_break_payable ? 'Paid' : 'Unpaid'})` : '(none)' }}
+                <p v-if="false" class="lg:w-3/12 lg:text-center">
+                  {{ sched.posted_break_formatted }}
                 </p>
               </div>
             </div>

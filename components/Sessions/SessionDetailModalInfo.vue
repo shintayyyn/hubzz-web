@@ -56,7 +56,7 @@
                 RATE
               </p>
 
-              <p class="w-4/12">
+              <p v-if="false" class="w-4/12">
                 BREAK
               </p>
             </div>
@@ -79,8 +79,8 @@
                   £{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}
                 </p>
 
-                <p class="lg:w-4/12">
-                  {{ sched.posted_break_in_minutes ? `${sched.posted_break_in_minutes}m (${sched.posted_break_payable ? 'Paid' : 'Unpaid'})` : '(none)' }}
+                <p v-if="false" class="lg:w-4/12">
+                  {{ sched.posted_break_formatted }}
                 </p>
               </div>
             </div>

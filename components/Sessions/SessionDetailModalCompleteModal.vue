@@ -38,11 +38,13 @@
       <div class="flex px-4">
         <AppButton :label="'Complete'" class="ml-auto" @click="canComplete" />
       </div>
+
       <AppConfirmationModal
         :label="'Mark this week as Completed?'"
         :confirmLabel="'Yes'"
         :cancelLabel="'Cancel'"
         :modal="confirmation_modal"
+        :loading="completingJobPart"
         @confirm="completeJob"
         @cancel="confirmation_modal = false"
       />
@@ -66,9 +68,10 @@ export default {
     },
     modal: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
+
   data () {
     return {
       shifts: [],
@@ -89,8 +92,10 @@ export default {
       confirmation_modal: false,
 
       tax_rates: {},
+      completingJobPart: false,
     }
   },
+
   computed: {
     practice_rate () {
       if (this.job_part.practice_rate) {
@@ -112,6 +117,7 @@ export default {
       // return rate
     },
   },
+
   created () {
     this.form.schedules = this.job_part.schedules
     this.dataLoading = true
@@ -143,6 +149,14 @@ export default {
       })
   },
   methods: {
+    totalHours (start, end, date) {
+      let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
+      let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
+      return start && end
+        ? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
+        : 0
+    },
+
     getSchedule (
       schedule,
       total_gross_locum_wages,
@@ -154,29 +168,37 @@ export default {
       hasError,
     ) {
       this.schedule = schedule
+
       this.form.schedules = []
-      schedule.forEach((sched, index) => {
+
+      schedule.forEach((sched, scheduleIndex) => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach((shift, i) => {
-            let timeStart = shift.has_absences
+          sched.shifts.forEach((shift, shiftIndex) => {
+            const timeStart = shift.has_absences
               ? shift.time_start
               : shift.final_time_start
-            let timeEnd = shift.has_absences
+
+            const timeEnd = shift.has_absences
               ? shift.time_start
               : shift.final_time_end
+
             this.form.schedules.push({
               id: shift.id,
               final_time_start: timeStart,
               final_time_end: timeEnd,
               late_hours_reason: shift.late_hours_reason,
               absent_reason: shift.absent_reason,
+              completed_break_in_minutes: shift.completed_break_in_minutes,
+              completed_break_payable: shift.completed_break_payable,
             })
 
             if (shift.has_absences && shift.absent_reason) {
               let rowError = this.shiftErrors.filter(err =>
-                err.field.includes(`s${index}-${i}`)
+                err.field.includes(`s${scheduleIndex}-${shiftIndex}`)
               )
+
               let errNames = rowError.map(err => err.field)
+
               this.shiftErrors.forEach((err, ind) => {
                 if (errNames.includes(err.field)) {
                   this.shiftErrors.splice(ind, errNames.length)
@@ -184,31 +206,61 @@ export default {
               })
             } else {
               if (shift.final_time_start) {
-                let startIndex = this.shiftErrors.findIndex(
-                  err => err.field === `final_time_start-s${index}-${i}`
+                const index = this.shiftErrors.findIndex(
+                  err => err.field === `final_time_start-s${scheduleIndex}-${shiftIndex}`
                 )
-                if (startIndex > -1) {
-                  this.shiftErrors.splice(startIndex, 1)
+
+                if (index > -1) {
+                  this.shiftErrors.splice(index, 1)
                 }
               }
+
               if (shift.final_time_end) {
-                let endIndex = this.shiftErrors.findIndex(
-                  err => err.field === `final_time_end-s${index}-${i}`
+                const index = this.shiftErrors.findIndex(
+                  err => err.field === `final_time_end-s${scheduleIndex}-${shiftIndex}`
                 )
-                if (endIndex > -1) {
-                  this.shiftErrors.splice(endIndex, 1)
+
+                if (index > -1) {
+                  this.shiftErrors.splice(index, 1)
                 }
+              }
+            }
+
+            if (
+              shift.completed_break_in_minutes
+              && shift.final_time_start
+              && shift.final_time_end
+              && sched.date
+              && parseInt(shift.completed_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
+            ) {
+              this.shiftErrors.push({
+                field: `completed_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                message: "Invalid break in minutes.",
+              })
+            } else {
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `completed_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
+              )
+
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
               }
             }
           })
         }
       })
+
       this.total_working_hours = total_working_hours
+
       this.total_gross_locum_wages = total_gross_locum_wages
+
       this.locum_tax_rate = locum_tax_rate
+
       this.taxed_total_gross_locum_wages = taxed_total_gross_locum_wages
+
       this.hasShiftError = hasError
     },
+
     bgStatus (status) {
       let str
       switch (status) {
@@ -222,24 +274,41 @@ export default {
       }
       return str
     },
+
     canComplete () {
       this.shiftErrors = []
-      this.schedule.forEach((sched, index) => {
-        sched.shifts.forEach((shift, i) => {
+
+      this.schedule.forEach((sched, scheduleIndex) => {
+        sched.shifts.forEach((shift, shiftIndex) => {
           if (!shift.final_time_start && !shift.has_absences) {
             this.shiftErrors.push({
-              field: `final_time_start-s${index}-${i}`,
+              field: `final_time_start-s${scheduleIndex}-${shiftIndex}`,
               message: "Final Start is required.",
             })
           }
+
           if (!shift.final_time_end && !shift.has_absences) {
             this.shiftErrors.push({
-              field: `final_time_end-s${index}-${i}`,
+              field: `final_time_end-s${scheduleIndex}-${shiftIndex}`,
               message: "Final End is required.",
+            })
+          }
+
+          if (
+            shift.completed_break_in_minutes
+            && shift.final_time_start
+            && shift.final_time_end
+            && sched.date
+            && parseInt(shift.completed_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
+          ) {
+            this.shiftErrors.push({
+              field: `completed_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+              message: "Invalid break in minutes.",
             })
           }
         })
       })
+
       if (
         !this.shiftErrors.length
 				&& !this.hasShiftError
@@ -248,12 +317,14 @@ export default {
         this.confirmation_modal = true
       }
     },
+
     completeJob () {
       if (
         !this.shiftErrors.length
 				&& !this.hasShiftError
 				&& !this.formError.length
       ) {
+        this.completingJobPart = true
         this.$axios
           .$put(
             `/api/v1/practice/job-parts/${this.job_part.id}/complete`,
@@ -279,15 +350,32 @@ export default {
             })
           })
           .catch(err => {
-            if (!err.response.data.error_messages) {
-              this.formError.push({ message: err.response.data.message, })
+            console.log('err', err.response || err)
+
+            let message = null
+
+            if (err.response) {
+              if (err.response.status === 400 && err.response.data.error_messages) {
+                this.formError = err.response.data.error_messages
+              } else {
+                message = err.response.data.message
+              }
+            } else if (err.request) {
+              message = 'Something went wrong!'
             } else {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error)
+              message = err.message
+            }
+
+            if (message) {
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [`${message}`,],
               })
             }
           })
           .finally(() => {
+            this.completingJobPart = false
             this.confirmation_modal = false
           })
       }

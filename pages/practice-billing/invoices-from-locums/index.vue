@@ -67,30 +67,32 @@
             class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
             @click="filterModal = !filterModal"
           >
-            <p class="mx-2">Filter</p>
+            <p class="mx-2">
+              Filter
+            </p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
           </button>
           <transition name="fade">
-          <div class="md:px-1 flex w-full" v-if="filterModal">
-            <AppButton
-              :disabled="disabledClearFilter"
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:0'"
-              @click="clearFilters"
-            />
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:0'"
-              @click="filterJobParts"
-            />
+            <div v-if="filterModal" class="md:px-1 flex w-full">
+              <AppButton
+                :disabled="disabledClearFilter"
+                :label="'Clear'"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="clearFilters"
+              />
+              <AppButton
+                class="mx-2"
+                :label="'Search'"
+                :in-style="'padding:5px 14px;margin-bottom:0'"
+                @click="filterJobParts"
+              />
             <!-- <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
               :in-style="'padding:5px 14px;margin-bottom:0'"
               @click="filterModal = false"
             /> -->
-          </div>
+            </div>
           </transition>
           <AppButton
             v-if="showRefresh"
@@ -101,52 +103,52 @@
           />
         </div>
         <transition name="drop-down">
-        <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal">
-          <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
-            <AppInput
-              v-model="job_ir35"
-              :wrapperClass="'px-1'"
-              :type="'select'"
-              :name="'job_ir35'"
-              :label="'Inside ir35'"
-              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-            />
+          <div v-if="filterModal" class="flex flex-col md:flex-row items-start mt-2">
+            <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+              <AppInput
+                v-model="job_ir35"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'job_ir35'"
+                :label="'Inside ir35'"
+                :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+              />
+            </div>
+            <div
+              v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
+              class="my-1 md:my-0 md:px-1 w-full md:flex-1"
+            >
+              <AppInput
+                v-model="invoice_number"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'invoice_number'"
+                :label="'Invoice number'"
+              />
+            </div>
+            <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
+              <AppInput
+                v-model="job_part_number_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_part_number_includes'"
+                :label="'Job Part number'"
+              />
+            </div>
+            <div
+              v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
+              class="my-1 md:my-0 md:px-1 w-full md:flex-1"
+            >
+              <AppInput
+                v-model="is_paid"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'is_paid'"
+                :label="'Paid'"
+                :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+              />
+            </div>
           </div>
-          <div
-            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
-            class="my-1 md:my-0 md:px-1 w-full md:flex-1"
-          >
-            <AppInput
-              v-model="invoice_number"
-              :wrapperClass="'px-1'"
-              :type="'text'"
-              :name="'invoice_number'"
-              :label="'Invoice number'"
-            />
-          </div>
-          <div class="my-1 md:my-0 md:px-1 w-full md:flex-1">
-            <AppInput
-              v-model="job_part_number_includes"
-              :wrapperClass="'px-1'"
-              :type="'text'"
-              :name="'job_part_number_includes'"
-              :label="'Job Part number'"
-            />
-          </div>
-          <div
-            v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())"
-            class="my-1 md:my-0 md:px-1 w-full md:flex-1"
-          >
-            <AppInput
-              v-model="is_paid"
-              :wrapperClass="'px-1'"
-              :type="'select'"
-              :name="'is_paid'"
-              :label="'Paid'"
-              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
-            />
-          </div>
-        </div>
         </transition>
         <AppTable
           v-if="job_parts.length > 0"
@@ -157,10 +159,10 @@
           :per-page="limit"
           :columns="columns"
           :order-by="order_by"
+          :customWidth="1400"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
-          :customWidth="1400"
         >
           <template v-slot:actions="slotProps">
             <div
@@ -692,7 +694,7 @@ export default {
         locum_invoice_paid: this.is_paid,
         locum_invoice_number_includes: this.invoice_number,
         job_part_number_includes: this.job_part_number_includes,
-        practice_id: this.$auth.user.practice_id,
+        // practice_id: this.$auth.user.practice_id,
       }
 
       this.initialLoading = true 
@@ -769,7 +771,7 @@ export default {
         locum_invoice_paid: this.is_paid,
         locum_invoice_number_includes: this.invoice_number,
         job_part_number_includes: this.job_part_number_includes,
-        practice_id: this.$auth.user.practice_id,
+        // practice_id: this.$auth.user.practice_id,
       }
 
       return this.$axios
