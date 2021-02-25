@@ -134,7 +134,7 @@
 
               <div class="px-4">
                 <div class="flex items-end text-sm pb-2 font-bold text-gray-700">
-                  <p class="px-2" :class="type === 'create' ? 'w-2/12' : 'w-1/12'">
+                  <p class="px-2" :class="type === 'create' ? 'w-24' : 'w-1/12'">
                     Date
                   </p>
 
@@ -142,15 +142,15 @@
                     class="flex items-end text-center"
                     :class="type === 'create' ? 'w-9/12 ' : 'w-11/12 pr-2'"
                   >
-                    <p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Shift
                     </p>
 
-                    <p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Start
                     </p>
 
-                    <p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       End
                     </p>
 
@@ -158,7 +158,7 @@
                       Hours
                     </p>
 
-                    <p :class="type === 'create' ? 'w-3/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Rate Type
                     </p>
 
@@ -785,7 +785,7 @@
                   <!-- Create / Edit Job -->
                   <template v-else>
                     <div
-                      class="w-2/12 pl-3 pr-1 pt-4 pb-8 rounded-l-lg border-l border-t border-b"
+                      class="w-24 pl-3 pr-1 pt-4 pb-8 rounded-l-lg border-l border-t border-b"
                       :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                     >
                       {{ item.date }}
@@ -797,7 +797,7 @@
                     >
                       <div v-for="(shift, i) in item.shifts" :key="i" class="w-full flex flex-col">
                         <div class="flex items-end w-full">
-                          <div class="flex flex-col w-3/12 px-1 mb-2 pt-2">
+                          <div class="flex flex-col w-2/12 px-1 mb-2 pt-2">
                             <div
                               class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-1 py-1 text-xs rounded cursor-pointer"
                               :class="shiftColor(shift.shift_id)"
@@ -844,7 +844,7 @@
                             </div>
                           </div>
 
-                          <div class="w-3/12 px-1">
+                          <div class="w-2/12 px-1">
                             <AppTime
                               v-model="shift.time_start"
                               :name="`time_start-s${index}-${i}`"
@@ -874,7 +874,7 @@
                             />
                           </div>
 
-                          <div class="w-3/12 px-1">
+                          <div class="w-2/12 px-1">
                             <AppTime
                               v-model="shift.time_end"
                               :name="`time_end-s${index}-${i}`"
@@ -902,10 +902,9 @@
                             />
                           </div>
 
-                          <div class="w-2/12 px-2 py-4 text-center">
+                          <div class="w-2/12 py-4 text-center text-xs">
                             <template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
-                              <p>{{ totalHours(shift.time_start, shift.time_end, item.date) | hours }}</p>
-                              <p>{{ totalHours(shift.time_start, shift.time_end, item.date) | minutes }}</p>
+                              <p>{{ totalHours(shift.time_start, shift.time_end, item.date) | hours }} {{ totalHours(shift.time_start, shift.time_end, item.date) | minutes }}</p>
                             </template>
 
                             <template
@@ -924,7 +923,7 @@
                             </template>
                           </div>
 
-                          <div class="w-3/12 px-1">
+                          <div class="w-2/12 px-1">
                             <AppInput
                               v-model="shift.locum_detail_rate_type_id"
                               :name="`locum_detail_rate_type_id-s${index}-${i}`"
@@ -963,7 +962,7 @@
                                     ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`)
                                     : null
                               "
-                              @blur="shift.rate === '' ? shift.rate = 0 : shift.rate"
+                              @blur="[shift.rate === '' ? shift.rate = 0 : shift.rate, CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)]"
                               @focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
                               @keydown="isNumber($event)"
                               @change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
@@ -972,8 +971,8 @@
                         </div>
 
                         <!-- BREAK -->
-                        <div v-if="false" class="flex items-end w-full">
-                          <div class="w-6/12 pl-1 pr-3">
+                        <div class="flex items-end w-full">
+                          <div class="w-6/12 pl-1 pr-2">
                             <AppInput
                               v-model="shift.posted_break_in_minutes"
                               label="Break in minutes:"
@@ -997,7 +996,7 @@
                             />
                           </div>
 
-                          <div class="w-6/12 px-1">
+                          <div class="w-6/12 px-2">
                             <AppInput
                               v-model="shift.posted_break_payable"
                               label="Break payable:"
@@ -1046,7 +1045,7 @@
                     </div>
                   </template>
 
-                  <div v-if="type === 'create'" class="w-2/12 flex flex-col items-center p-2">
+                  <div v-if="type === 'create'" class="w-2/12 flex flex-col items-center p-2 text-xs">
                     <template v-if="item.shifts && item.shifts.length">
                       <button
                         class="w-full border border-gray-500 hover:bg-gray-200 leading-tight px-2 py-1 mb-2 rounded-lg"
