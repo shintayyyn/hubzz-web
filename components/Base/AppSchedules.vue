@@ -916,9 +916,8 @@
                                   )
                               "
                             >
-                              <span class="text-red-500 leading-none text-sm">
-                                Invalid
-                                <br>End Time
+                              <span class="text-red-500 leading-none text-xs">
+                                Invalid End Time
                               </span>
                             </template>
                           </div>
@@ -990,8 +989,9 @@
                                     ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
                                     : null
                               "
+                              @blur="CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
                               @keydown="isNumber($event)"
-                              @change="emitSchedule()"
+                              @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
                               @input="checkScheduleShiftPostedBreakInMinutes(shift, index, i)"
                             />
                           </div>
@@ -2220,7 +2220,14 @@ export default {
       }
     },
 
-    CheckIfEmptyFormError (field, name) {
+    CheckIfEmptyFormError (field, name, checkError) {
+      if (checkError) {
+        let errIndex = this.formError.findIndex(err => err.field === name)
+        if (errIndex > -1) {
+          return true
+        }
+        return false
+      }
       if (field) {
         let errIndex = this.formError.findIndex(err => err.field === name)
         if (errIndex > -1) {

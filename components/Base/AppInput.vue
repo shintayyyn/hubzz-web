@@ -5,18 +5,18 @@
     >
       <div class="flex flex-col" :class="wrapperClass ? wrapperClass : type === 'single-checkbox' ? '' : 'mb-3 md:mb-4'">
         <div
-          v-if="label || info"
-          class="relative flex flex-wrap leading-none"
+          v-if="((label || info) && ['multi-checkbox'].includes(type)) || (!nolabel && label || info)"
+          class="relative flex flex-wrap leading-none py-1"
           :class="info ? 'flex-wrap justify-between' : 'items-center'"
         >
-          <label :for="name" class="text-xs sm:text-sm py-1">
+          <label :for="name" class="text-xs">
             <span>{{ label }}</span>
 
             <span v-if="required" class="text-red-500">*</span>
           </label>
 
           <div v-if="info || error" class="flex">
-            <div v-if="info" class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm">
+            <div v-if="info" class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs">
               <span>{{ info }}</span>
             </div>
 
@@ -39,7 +39,7 @@
           <div v-if="!required" class="flex flex-row justify-start items-center mt-1">
             <input :id="name" v-model="na" type="checkbox" :disabled="value.length === 0">
 
-            <label :for="name" class="text-xs sm:text-sm flex items-center">N/A</label>
+            <label :for="name" class="text-xs flex items-center">N/A</label>
           </div>
 
           <template v-if="toAdd">
@@ -47,7 +47,7 @@
               <div class="flex flex-col w-full">
                 <input
                   v-model="listLabel"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm shadow-none"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs shadow-none"
                   placeholder="Type Training Title Here"
                   type="text"
                 >
@@ -153,7 +153,7 @@
                 <div class="flex items-center justify-start">
                   <p
                     v-if="showMobilePrefix"
-                    class="text-xs sm:text-sm font-bold py-1 pr-1 border-b-2 border-transparent"
+                    class="text-xs font-bold py-1 pr-1 border-b-2 border-transparent"
                   >
                     <span>+44</span>
                   </p>
@@ -161,9 +161,9 @@
                   <input
                     :value="value "
                     :type="type"
-                    :placeholder="placeholder ? required && !label ? `${placeholder} *` : placeholder : placeholder"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
-                    :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '']"
+                    :placeholder="label && nolabel ? label : placeholder"
+                    class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+                    :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
                     :style="inStyle"
                     :checked="value"
                     :readonly="disabled"
@@ -192,14 +192,14 @@
             </template>
 
             <template v-if=" type === 'password' ">
-              <div class="relative w-full mb-4">
+              <div class="relative w-full">
                 <div class="relative">
                   <input
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
+                    class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+                    :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
                     :value="value"
                     :type="togglePassword()"
-                    :placeholder="placeholder"
-                    :class="error ? 'border-red-500' : ''"
+                    :placeholder="label && nolabel ? label : placeholder"
                     :style="inStyle"
                     @input="$emit('input', $event.target.value)"
                     @keypress.enter="$emit('submit')"
@@ -213,9 +213,9 @@
                   >
                     <svgicon
                       :name="togglePassword() === 'password' ? 'eye' : 'hide-eye'"
-                      width="20"
-                      height="20"
-                      class="text-gray-500 hover:text-gray-600 fill-current"
+                      width="18"
+                      height="18"
+                      class="text-gray-500 hover:text-gray-600 fill-current mr-2"
                     />
                   </span>
                 </div>
@@ -232,17 +232,17 @@
             </template>
 
             <template v-if="type === 'select'">
-              <div :class="['w-full relative ', inClass]">
+              <div :class="['w-full relative', inClass]">
                 <div class="w-full customized-select flex items-center">
                   <select
                     ref="inputSelect"
                     :value="value"
-                    class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm w-full pr-2"
-                    
+                    class="absolute bottom-0 focus:border-yellow-400 focus:outline-none font-bold text-xs w-full pr-3"
                     :class="[
                       (error && !disabled) ? 'border-red-500' : inClass,
                       disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
-                      !value && placeholder && 'text-gray-500 focus:text-black' 
+                      !value && placeholder && 'text-gray-500 focus:text-black' ,
+                      border ? 'border-2 rounded' : 'border-b-2'
                     ]"
                     :style="inStyle"
                     :disabled="disabled"
@@ -251,8 +251,8 @@
                     @blur="$emit('blur')"
                     @focus="$emit('focus')"
                   >
-                    <option v-if="placeholder" value disabled selected>
-                      {{ placeholder ? required && !label ? `${placeholder} *` : placeholder : placeholder }}
+                    <option v-if="label || placeholder" value disabled selected>
+                      {{ label && nolabel ? label : placeholder }}
                     </option>
                     <option
                       v-for="(item, index) in items"
@@ -265,14 +265,14 @@
                     </option>
                   </select>
                   <span
-                    class="absolute right-0 h-full flex items-center"
-                    :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '-mt-1']"
+                    class="absolute right-0 h-full flex items-center mr-2 top-0 bg-white"
+                    :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '']"
                   >
                     <svgicon
                       name="caret-down"
                       width="10" 
                       height="10"
-                      class="h-full -mt-4 fill-current"
+                      class="h-full fill-current"
                     />
                   </span>
                 </div>
@@ -295,9 +295,9 @@
                   :cols="cols"
                   :rows="rows"
                   :value="value"
-                  :placeholder="placeholder"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full"
-                  :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
+                  :placeholder="label && nolabel ? label : placeholder"
+                    class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+                  :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none', border ? 'border-2 rounded px-2' : 'border-b-2']"
                   :limit="limit"
                   :style="inStyle"
                   :readonly="disabled"
@@ -344,7 +344,7 @@
       <div class="flex flex-col py-2 mb-1">
         <div class="flex justify-end">
           <!-- <div
-            class="rounded-lg bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
+            class="rounded-lg bg-red-500 px-2 py-1 text-xs text-white"
             v-if="error"
 					>{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>-->
         </div>
@@ -371,32 +371,40 @@
 
     <!-- multiemail -->
     <template v-if="type === 'multiemail'">
-      <div class="flex flex-col py-2 mb-3 md:mb-6">
+      <div class="flex flex-col py-2" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4'">
         <div class="relative flex flex-row flex-wrap justify-between">
           <div class="flex flex-wrap justify-start">
-            <label :for="name" class="text-xs sm:text-sm py-1">{{ label }}</label>
+            <label :for="name" class="text-xs py-1">{{ label }}</label>
             <span class="ml-2 bg-gray-300 rounded px-4 py-1 text-xs">Seperate with commas</span>
           </div>
-          <transition name="fade">
+          <!-- <transition name="fade">
             <div
               v-if="error"
-              class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
+              class="absolute right-0 bg-red-500 py-1 px-2 text-xs text-white"
             >
               {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
             </div>
-          </transition>
+          </transition> -->
         </div>
 
         <div class="flex flex-row justify-start mt-1">
           <input
             :value="value"
             type="email"
-            :placeholder="placeholder"
-            class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-            :class="error ? 'border-red-500':''"
+            :placeholder="label && nolabel ? label : placeholder"
+            class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+            :class="[error ? 'border-red-500':'', border ? 'border-2 rounded px-2' : 'border-b-2']"
             @input="$emit('input', $event.target.value)"
           >
         </div>
+        <transition name="drop-down">
+            <div
+              v-if="error"
+              class="text-red-500 py-1 text-xs text-white"
+            >
+              {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+            </div>
+          </transition>
       </div>
     </template>
 
@@ -404,19 +412,19 @@
     <template v-if="type === 'search'">
       <div v-if="type === 'search'" class="flex flex-col">
         <div v-if="label" class="relative flex flex-row flex-wrap justify-between">
-          <label :for="name" class="text-xs sm:text-sm py-1">{{ label }}</label>
+          <label :for="name" class="text-xs py-1">{{ label }}</label>
           <div class="flex">
-            <div v-if="info" class="bg-gray-300 rounded px-4 py-1 text-xs sm:text-sm">
+            <div v-if="info" class="bg-gray-300 rounded px-4 py-1 text-xs">
               {{ info }}
             </div>
-            <transition name="fade">
+            <!-- <transition name="fade">
               <div
                 v-if="error"
-                class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
+                class="absolute right-0 bg-red-500 py-1 px-2 text-xs text-white"
               >
                 {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
               </div>
-            </transition>
+            </transition> -->
           </div>
         </div>
         <div
@@ -426,7 +434,7 @@
             :value="value"
             :type="type"
             :placeholder="placeholder"
-            class="focus:outline-none pl-4 pr-6 py-3 font-bold text-xs sm:text-sm w-full rounded-lg"
+            class="focus:outline-none pl-4 pr-6 py-3 font-bold text-xs w-full rounded-lg"
             :class="error? 'border-red-500':''"
             :style="inStyle"
             :checked="value"
@@ -438,6 +446,14 @@
             <svgicon name="search" height="21" width="21" class="text-gray-500 fill-current" />
           </span>
         </div>
+        <transition name="drop-down">
+          <div
+            v-if="error"
+            class="text-red-500 py-1 text-xs text-white"
+          >
+            {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+          </div>
+        </transition>
       </div>
     </template>
   </section>
@@ -449,6 +465,16 @@ export default {
     updatable: {
       type: Boolean,
       default: false,
+    },
+
+    nolabel: {
+      type: Boolean,
+      default: false
+    },
+
+    border: {
+      type: Boolean,
+      default: false
     },
 
     value: {

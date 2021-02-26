@@ -3,8 +3,8 @@
     <AppLoading :loading="dataLoading" spinner />
     <div v-if="practice_hubzz_fee_rate.gp_rate > 0 && practice_hubzz_fee_rate.others_rate > 0">
       <AppBreadcrumbs v-if="repostJob" :links="links" />
-      <div class="flex justify-between items-center font-bold text-sm sm:text-xl ">
-        <div class="flex flex-col">
+      <div class="flex justify-between items-center font-bold text-sm sm:text-xl">
+        <div class="flex flex-col pt-2">
           <div>CREATE JOB</div>
           <div
             v-if="$auth.user.domain === 'Practice' &&
@@ -86,7 +86,7 @@
           <template v-if="!dataLoading">
             <AppLoading :loading="dataLoading" spinner />
             <div class="w-full md:w-1/3 lg:w-45p flex flex-col xl:flex-row">
-              <div class="w-full xl:w-5/12 xl:pr-2 mt-4">
+              <div class="w-full xl:w-5/12 xl:pr-2 mt-2">
                 <div class="flex flex-col">
                   <div class="border rounded-lg px-2 py-3">
                     <h4 class="text-gray-500 mb-1">
@@ -326,7 +326,7 @@
                   </div>
                 </div>
               </div>
-              <div class="w-full xl:w-7/12 xl:pl-2 mt-4 flex flex-col">
+              <div class="w-full xl:w-7/12 xl:pl-2 mt-2 flex flex-col">
                 <div class="flex flex-col border rounded-lg px-2" :class="form.role ? 'pt-3' : 'py-3'">
                   <h4 class="text-gray-500 mb-1">
                     Matching Criteria
@@ -1556,7 +1556,8 @@ export default {
               )
 
               if (index > -1) {
-                this.shiftErrors.splice(index, 1)
+                // this.shiftErrors.splice(index, 1)
+                this.shiftErrors = this.shiftErrors.filter(item => item.field !== `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`)
               }
             }
           })

@@ -7,8 +7,234 @@
     </transition>
 
     <transition name="fade" mode="out-in">
-      <div>
-        <div class="flex items-center">
+      <div v-if="!initialLoading">
+        <AppFilter searchLabel="Job Search" @onTabChange="onTabChange">
+          <template v-slot:extraButton>
+             <AppButton
+              v-if="showRefresh"
+              :label="'Refresh'"
+              :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+              customTheme="border-2"
+              @click="refreshJobs"
+            />
+          </template>
+          <template v-slot:search>
+            <div class="w-32">
+              <AppInput
+                v-model="profession_id"
+                :type="'select'"
+                :wrapperClass="'px-1'"
+                :name="'profession_id'"
+                :label="'Roles'"
+                :placeholder="'Select...'"
+                :items="professions"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppInput
+                v-model="job_rate"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_rate'"
+                :label="'Rate £'"
+                :limit="8"
+                @keydown="isNumber($event)"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32">
+              <AppInput
+                v-model="job_rate_type_id"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'job_rate_type_id'"
+                :label="'Rate Type'"
+                :items="rates"
+                nolabel
+                border
+              />
+            </div>
+            
+            <div class="w-32">
+              <AppInput
+                v-model="job_shift_id"
+                :type="'select'"
+                :wrapperClass="'px-1'"
+                :name="'job_shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppDate
+                v-model="calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppDate
+                v-model="calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                floatRight
+                nolabel
+                border
+              />
+            </div>
+            <AppButton
+              class="mr-1"
+              :label="'Search'"
+              @click="filterJob"
+            />
+          </template>
+
+          <template v-slot:filter>
+            <div class="">
+              <AppInput
+                v-model="job_part_number_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_part_number'"
+                :label="'Job part number'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppInput
+                v-model="job_title_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_title'"
+                :label="'Job Title'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32">
+              <AppInput
+                v-model="profession_id"
+                :type="'select'"
+                :wrapperClass="'px-1'"
+                :name="'profession_id'"
+                :label="'Roles'"
+                :placeholder="'Select...'"
+                :items="professions"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppInput
+                v-model="job_rate"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_rate'"
+                :label="'Rate £'"
+                :limit="8"
+                @keydown="isNumber($event)"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32">
+              <AppInput
+                v-model="job_rate_type_id"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'job_rate_type_id'"
+                :label="'Rate Type'"
+                :items="rates"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32">
+              <AppInput
+                v-model="job_shift_id"
+                :type="'select'"
+                :wrapperClass="'px-1'"
+                :name="'job_shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppDate
+                v-model="calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="">
+              <AppDate
+                v-model="calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                floatRight
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32" v-if="$route.query.status && $route.query.status === 'Ongoing'">
+              <AppInput
+                v-model="ended"
+                :type="'select'"
+                :name="'ended'"
+                :label="'Status'"
+                :items="[{label: 'All', value: null}, {label: 'For Completion', value: true}, {label: 'Ongoing', value: false}]"
+                :wrapperClass="'px-1'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32" v-if="$route.query.status && $route.query.status !== 'Ongoing'">
+              <AppInput
+                v-model="invoice_status"
+                :type="'select'"
+                :name="'invoice_status'"
+                :label="'Invoice Status'"
+                :items="invoiceStatusList"
+                :wrapperClass="'px-1'"
+                nolabel
+                border
+              />
+            </div>
+            <AppButton
+              class="mr-1"
+              :label="'Apply'"
+              @click="filterJob"
+            />
+
+            <AppButton
+              :label="'Clear'"
+              customTheme="border hover:bg-gray-200"
+              @click="clearFilters"
+            />
+          </template>
+        </AppFilter>
+        
+        <!-- <div class="flex items-center">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
@@ -26,12 +252,6 @@
               :in-style="'padding:5px 14px;margin-bottom:0;'"
               @click="filterJob"
             />
-            <!-- <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:0;'"
-              @click="filterModal = false"
-            /> -->
           </div>
           </transition>
 
@@ -43,7 +263,6 @@
             @click="refreshJobs"
           />
         </div>
-        
         <transition name="drop-down">
         <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal">
           <div class="md:px-1 flex-1">
@@ -53,6 +272,8 @@
               :type="'text'"
               :name="'job_part_number'"
               :label="'Job part number'"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -62,6 +283,8 @@
               :type="'text'"
               :name="'job_title'"
               :label="'Job Title'"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -73,6 +296,8 @@
               :label="'Rate £'"
               :limit="8"
               @keydown="isNumber($event)"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -83,6 +308,8 @@
               :name="'job_rate_type_id'"
               :label="'per'"
               :items="rates"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -94,6 +321,8 @@
               :label="'Roles'"
               :placeholder="'Select...'"
               :items="professions"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -104,6 +333,8 @@
               :name="'job_shift_id'"
               :label="'Shift'"
               :items="shifts"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -113,6 +344,8 @@
               :label="'From'"
               :format="'YYYY-MM-DD'"
               :wrapperClass="'px-1'"
+              nolabel
+              border
             />
           </div>
           <div class="md:px-1 flex-1">
@@ -123,6 +356,8 @@
               :format="'YYYY-MM-DD'"
               :wrapperClass="'px-1'"
               floatRight
+              nolabel
+              border
             />
           </div>
 
@@ -134,6 +369,8 @@
               :label="'Status'"
               :items="[{label: 'All', value: null}, {label: 'For Completion', value: true}, {label: 'Ongoing', value: false}]"
               :wrapperClass="'px-1'"
+              nolabel
+              border
             />
           </div>
 
@@ -145,10 +382,12 @@
               :label="'Invoice Status'"
               :items="invoiceStatusList"
               :wrapperClass="'px-1'"
+              nolabel
+              border
             />
           </div>
         </div>
-        </transition>
+        </transition> -->
 
         <AppTable
           v-if="jobs.length > 0 && !initialLoading"
@@ -220,6 +459,7 @@ import AppInput from "@/components/Base/AppInput"
 import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
+import AppFilter from "@/components/Base/AppFilter"
 
 export default {
   components: {
@@ -228,6 +468,7 @@ export default {
     AppDate,
     AppButton,
     AppLoading,
+    AppFilter
   },
 
   props: {
@@ -261,6 +502,7 @@ export default {
 
   data () {
     return {
+      filterTab: null,
       showShield: false,
       total: 0,
       jobs: [],
@@ -713,6 +955,15 @@ export default {
   },
 
   methods: {
+    onTabChange(tab) {
+      if (tab && this.filterTab !== tab) {
+        this.clearFilters()
+        this.filterTab = tab
+      }else if (!tab && !this.filterTab) {
+        this.filterTab = tab
+      }
+    },
+
     routerLink (jobOrJobPart) {
       return {
         name: "job-parts-index-jobPartId",

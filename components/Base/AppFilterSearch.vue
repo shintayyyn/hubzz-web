@@ -17,21 +17,21 @@
       </div>
 
       <div class="relative flex flex-row flex-wrap items-center justify-start">
-        <div v-if="defaultItem" class="rounded-lg bg-sunglow py-1 px-3 m-1 text-xs sm:text-sm flex items-center justify-between">
+        <div v-if="defaultItem" class="rounded-lg bg-sunglow border-2 border-sunglow px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between">
           {{ defaultItem }}
         </div>
 
         <div
           v-for="(item, index) in value"
           :key="`${item.value}-${index}`"
-          class="rounded-lg bg-sunglow py-1 px-3 m-1 text-xs sm:text-sm flex items-center justify-between"
+          class="rounded-lg bg-sunglow border-2 border-sunglow px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between"
         >
           {{ item.label }}
-          <!-- <span
+          <span
             v-if="!disabled"
-            class="font-bold cursor-pointer text-base pl-3"
+            class="font-bold cursor-pointer text-base pl-2"
             @click="remove(index)"
-          >x</span> -->
+          ><svgicon name="times-solid" width="8" class="fill-current opacity-50 hover:opacity-100" /></span>
         </div>
 
         <div v-if="!disabled">
@@ -41,13 +41,12 @@
             v-model="search"
             type="text"
             :placeholder="placeholder"
-            class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm"
+            class="focus:outline-none rounded-lg border-2 py-1 px-2 m-1 text-xs sm:text-sm flex items-center justify-between "
             :class="error ? 'border-red-500' : ''"
             @focus="toggled = true"
             @keydown="handleKeyDownEvent"
             @change="$emit('change')"
           >
-          <span v-if="required && !label" class="text-red-500">*</span>
           <transition name="drop-down">
             <div
               v-if="error"

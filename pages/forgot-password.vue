@@ -49,7 +49,7 @@
                 >{{ formError.find(item => item.field === "email").message.charAt(0).toUpperCase() + formError.find(item => item.field === "email").message.slice(1) }}</span>
               </section>
               <button
-                class="rounded-lg bg-yellow-500 shadow-md py-2 px-4 mt-3 font-bold md:text-xl focus:outline-none hover:text-white transition-hover"
+                class="rounded-lg bg-sunglow shadow-md py-1 px-6 mt-3 font-bold focus:outline-none hover:text-white transition-hover"
                 @click="send"
               >
                 Send
