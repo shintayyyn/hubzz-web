@@ -4,14 +4,23 @@
       <AppInput
         v-model="email"
         type="text"
-        name="email"
         label="Email address or Username"
-        :inClass="'pt-2'"
+        name="email"
         :error="formErrors.find(formError => formError.field === 'email')"
         @submit="login"
       />
 
-      <div class="flex flex-col">
+      <AppInput
+        v-model="password"
+        label="Password"
+        type="password"
+        name="password"
+        :error="formErrors.find(formError => formError.field === 'password')"
+        @submit="login"
+        @keyup.enter="login"
+      />
+
+      <!-- <div class="flex flex-col">
         <label class="text-xs md:text-sm">Password</label>
         <div class="w-full relative pt-1">
           <input
@@ -41,10 +50,10 @@
             {{ formErrors.find(formError => formError.field === 'password').message }}
           </div>
         </transition>
-      </div>
+      </div> -->
     </div>
 
-    <div class="flex flex-col items-end justify-end mt-2 mb-8">
+    <div class="flex flex-col items-end justify-end mb-8">
       <nuxt-link to="/forgot-password">
         <span class="hover:underline text-sm cursor-pointer">Forgot password?</span>
       </nuxt-link>
