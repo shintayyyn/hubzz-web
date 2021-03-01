@@ -462,7 +462,7 @@
                         </div>
 
                         <!-- BREAK -->
-                        <div v-if="false" class="flex items-end w-full">
+                        <div class="flex items-end w-full">
                           <div class="w-2/12 pl-1 pr-3">
                             <AppInput
                               v-model="shift.posted_break_in_minutes"
