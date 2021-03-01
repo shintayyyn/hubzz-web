@@ -358,6 +358,17 @@ table thead th {
 	opacity: 0;
 }
 
+.leftslide-enter-active,
+.leftslide-leave-active {
+	transition: all 0.5s;
+}
+
+.leftslide-enter,
+.leftslide-leave-active {
+	transform: translateX(-50px);
+	opacity: 0;
+}
+
 /* confirmation */
 .drop-enter-active,
 .drop-leave-active {
@@ -539,13 +550,12 @@ input::placeholder, textarea::placeholder {
 /* Customized Select Dropdown */
 .customized-select {
 	position: relative;
-	padding: 12px 0;
-	margin-top: 8px;
+	padding: 18px 0 12px;
 }
 
 .customized-select select {
 	appearance: none;
-	padding: 8px 12px 8px 0;
+	padding: 4px 20px 4px 8px;
 	background: transparent;
 	z-index: 1;
 }

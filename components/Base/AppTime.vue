@@ -4,8 +4,8 @@
     class="flex flex-col leading-normal"
     :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4'"
   >
-    <div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
-      <label :for="name" class="text-xs sm:text-sm">
+    <div v-if="!nolabel && label" class="relative flex flex-row flex-no-wrap justify-between">
+      <label :for="name" class="text-xs">
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
@@ -14,9 +14,9 @@
       <input
         :value="value"
         type="input"
-        placeholder="hh:mm"
-        class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none text-center"
-        :class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed text-gray-500' : '']"
+        :placeholder="label && nolabel ? label : 'hh:mm'"
+          class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none text-center"
+        :class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed text-gray-500' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
         :style="inStyle"
         readonly
         :disabled="disabled"
@@ -168,6 +168,15 @@ export default {
     wrapperClass: String,
     disabled: Boolean,
     hourType: String,
+    nolabel: {
+      type: Boolean,
+      default: false
+    },
+
+    border: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {

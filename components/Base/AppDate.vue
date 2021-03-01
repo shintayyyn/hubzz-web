@@ -1,14 +1,14 @@
 <template>
   <div v-on-clickaway="toggledOff" class="flex flex-col leading-normal" :class="wrapperClass ? wrapperClass : 'mb-3 md:mb-4 '">
-    <div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
-      <label :for="name" class="text-xs sm:text-sm">
+    <div v-if="!nolabel && label" class="relative flex flex-row flex-no-wrap justify-between">
+      <label :for="name" class="text-xs">
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
       <!-- <div
         class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded"
         v-if="error"
-      >{{error.message}}</div>-->
+      >{{error.message}}</div> -->
     </div>
 
     <div class="flex flex-row justify-start">
@@ -17,9 +17,9 @@
           :name="name"
           :value="placeholder"
           type="input"
-          :placeholder="'DD/MM/YYYY'"
-          class="border-b-2 focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs sm:text-sm w-full shadow-none"
-          :class="{ inClass, 'border-red-500': error}"
+          :placeholder="label && nolabel ? `${label ? label : placeholder} DD/MM/YYYY` : placeholder ? placeholder : 'DD/MM/YYYY'"
+          class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+          :class="[border ? 'border-2 rounded px-2' : 'border-b-2', inClass, error && 'border-red-500']"
           :style="inStyle"
           :format="format"
           :disabled="disabled"
@@ -312,9 +312,19 @@
       },
 
       wrapperClass: {
-      type: String,
-      default: null,
-    },
+        type: String,
+        default: null,
+      },
+
+      nolabel: {
+        type: Boolean,
+        default: false
+      },
+
+      border: {
+        type: Boolean,
+        default: false
+      },
 
       format: {
         type: String,

@@ -7,7 +7,25 @@
         Contact Us
       </div>
     </div>
+
     <div class="relative rounded-lg border p-4">
+      <div class="border rounded-lg px-2 py-3 w-1/3">
+        <h4 class="text-gray-500 mb-1">
+          Receiver
+        </h4>
+
+        <AppInput
+          v-model="form.receiver_email"
+          :type="'select'"
+          :name="'receiver_email'"
+          :placeholder="'Choose a Receiver'"
+          :error="formError.find(item => item.field === 'receiver_email')"
+          :items="contactUsEmailReceiverSelections"
+          class="px-2"
+          @blur="CheckEmptyField(form.receiver_email, 'receiver_email')"
+        />
+      </div>
+
       <div class="flex flex-col md:flex-row flex-wrap justify-between mb-4">
         <div class="w-full md:w-1/2">
           <div class="text-sm my-2">
@@ -17,6 +35,7 @@
             {{ user.email }}
           </div>
         </div>
+
         <div class="w-full md:w-1/2">
           <div class="text-sm my-2">
             Role
@@ -25,6 +44,7 @@
             {{ role }}
           </div>
         </div>
+
         <div class="w-full md:w-1/2">
           <div class="text-sm my-2">
             Sender
@@ -34,6 +54,7 @@
           </div>
         </div>
       </div>
+
       <!-- <AppInput
         v-model="form.message"
         :type="'textarea'"
@@ -72,16 +93,27 @@ export default {
     AppLoading,
     AppInput,
   },
+
   data () {
     return {
       loading: false,
       form: {
+        receiver_email: "",
         message: "",
       },
       formError: [],
+      contactUsEmailReceivers: [],
     }
   },
+
   computed: {
+    contactUsEmailReceiverSelections () {
+      return this.contactUsEmailReceivers.map(contactUsEmailReceiver => ({
+        label: contactUsEmailReceiver.email,
+        value: contactUsEmailReceiver.email,
+      }))
+    },
+
     fullname () {
       return `${
         this.user.personal_detail.title ? this.user.personal_detail.title : ""
@@ -89,15 +121,19 @@ export default {
         this.user.personal_detail.last_name
       }`
     },
+
     role () {
       if (this.user.domain === "Locum") {
         return `${this.user.locum_detail.profession.name}`
       } else if (this.user.domain === "Practice") {
         return `${this.user.practice_detail.practice_role}`
       }
+
+      return ''
     },
   },
-  async asyncData ({ app, error, }) {
+
+  async asyncData ({ app, }) {
     const response = await app.$axios.$get(`/api/v1/me`)
     const user
       = response.data && response.data.user ? response.data.user : null
@@ -106,10 +142,41 @@ export default {
       user,
     }
   },
+
+  mounted () {
+    this.loading = true
+    this.$axios.get('/api/v1/contact-us/receivers').then((response) => {
+      this.contactUsEmailReceivers = response.data.data.contact_us_email_receivers
+    }).catch((err) => {
+      console.log('err', err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        message = err.response.data.message
+      } else if (err.request) {
+        message = 'Something went wrong!'
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'danger',
+          text: [`${message}`,],
+        })
+      }
+    }).finally(() => {
+      this.loading = false
+    })
+  },
+
   methods: {
     newline () {
       this.form.message = `${this.form.message}`
     },
+
     send () {
       this.formError = []
       this.Validate(this.form)
