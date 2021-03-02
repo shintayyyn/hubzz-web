@@ -188,8 +188,8 @@ export default {
               final_time_end: timeEnd,
               late_hours_reason: shift.late_hours_reason,
               absent_reason: shift.absent_reason,
-              completed_break_in_minutes: shift.completed_break_in_minutes,
-              completed_break_payable: shift.completed_break_payable,
+              completed_break_in_minutes: shift.has_absences ? '0' : shift.completed_break_in_minutes,
+              completed_break_payable: shift.has_absences ? 'false' : shift.completed_break_payable,
             })
 
             if (shift.has_absences && shift.absent_reason) {

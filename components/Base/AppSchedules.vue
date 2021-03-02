@@ -501,43 +501,45 @@
                               @change="emitSchedule()"
                             />
                           </div>
-
-                          <div class="w-2/12 pl-1 pr-3">
-                            <AppInput
-                              v-model="shift.completed_break_in_minutes"
-                              label="Completed break in minutes:"
-                              :name="`completed_break_in_minutes-s${index}-${i}`"
-                              class="w-full"
-                              :type="'text'"
-                              :min="1"
-                              :in-style="'text-align:right;background-color: transparent'"
-                              :wrapperClass="'mb-1 py-1'"
-                              :limit="4"
-                              :error="
-                                formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
-                                  ? formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
-                                  : shiftErrors
-                                    ? shiftErrors.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
-                                    : null
-                              "
-                              @keydown="isNumber($event)"
-                              @change="emitSchedule()"
-                              @input="checkScheduleShiftCompletedBreakInMinutes(shift, index, i)"
-                            />
-                          </div>
-
-                          <div class="w-2/12 px-1">
-                            <AppInput
-                              v-model="shift.completed_break_payable"
-                              label="Completed break payable:"
-                              :name="`completed_break_payable-s${index}-${i}`"
-                              :type="'select'"
-                              :items="[{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }]"
-                              :wrapperClass="'mb-1 py-1'"
-                              :inStyle="'font-size: 13px; padding-left: 8px;'"
-                              @change="emitSchedule()"
-                            />
-                          </div>
+                          
+                          <template v-if="!shift.has_absences">
+                            <div class="w-2/12 pl-1 pr-3">
+                              <AppInput
+                                v-model="shift.completed_break_in_minutes"
+                                label="Completed break in minutes:"
+                                :name="`completed_break_in_minutes-s${index}-${i}`"
+                                class="w-full"
+                                :type="'text'"
+                                :min="1"
+                                :in-style="'text-align:right;background-color: transparent'"
+                                :wrapperClass="'mb-1 py-1'"
+                                :limit="4"
+                                :error="
+                                  formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
+                                    ? formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
+                                    : shiftErrors
+                                      ? shiftErrors.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
+                                      : null
+                                "
+                                @keydown="isNumber($event)"
+                                @change="emitSchedule()"
+                                @input="checkScheduleShiftCompletedBreakInMinutes(shift, index, i)"
+                              />
+                            </div>
+  
+                            <div class="w-2/12 px-1">
+                              <AppInput
+                                v-model="shift.completed_break_payable"
+                                label="Completed break payable:"
+                                :name="`completed_break_payable-s${index}-${i}`"
+                                :type="'select'"
+                                :items="[{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }]"
+                                :wrapperClass="'mb-1 py-1'"
+                                :inStyle="'font-size: 13px; padding-left: 8px;'"
+                                @change="emitSchedule()"
+                              />
+                            </div>
+                          </template>
                         </div>
                         <!-- BREAK -->
                       </div>
@@ -1867,6 +1869,10 @@ export default {
             late_hours_reason: "",
             has_absences: false,
             absent_reason: "",
+            posted_break_in_minutes: sched.posted_break_in_minutes || '0',
+            posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
+            completed_break_in_minutes: sched.posted_break_in_minutes || '0',
+            completed_break_payable: sched.posted_break_payable ? 'true' : 'false',
           })
         } else if (this.type === "invoice") {
           let isAbsent = !this.invoiceDetails
@@ -2484,7 +2490,7 @@ export default {
         ? (shift.posted_break_payable === 'false' || !shift.posted_break_payable) && shift.posted_break_in_minutes
           ? parseFloat(shift.posted_break_in_minutes)
           : 0
-        : this.type === "complete"
+        : this.type === "complete" || this.type === "terminate"
           ? (shift.completed_break_payable === 'false' || !shift.completed_break_payable) && shift.completed_break_in_minutes
             ? parseFloat(shift.completed_break_in_minutes)
             : 0
