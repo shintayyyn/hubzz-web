@@ -133,28 +133,28 @@
               </div>
 
               <div class="px-4">
-                <div class="flex items-end text-sm pb-2 font-bold text-gray-700">
-                  <p class="px-2" :class="type === 'create' ? 'w-24' : 'w-1/12'">
+                <div class="flex items-end text-sm pb-2 text-gray-700">
+                  <p class="px-2 text-center" :class="type === 'create' ? 'w-24' : 'w-1/12'">
                     Date
                   </p>
 
                   <div
-                    class="flex items-end text-center"
+                    class="flex items-end justify-between text-center"
                     :class="type === 'create' ? 'w-9/12 ' : 'w-11/12 pr-2'"
                   >
                     <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Shift
                     </p>
 
-                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-16' : 'w-2/12'">
                       Start
                     </p>
 
-                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-16' : 'w-2/12'">
                       End
                     </p>
 
-                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-16' : 'w-2/12'">
                       Hours
                     </p>
 
@@ -162,8 +162,16 @@
                       Rate Type
                     </p>
 
-                    <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
+                    <p :class="type === 'create' ? 'w-18' : 'w-2/12'">
                       Rate £
+                    </p>
+
+                    <p :class="type === 'create' ? 'w-18' : 'w-2/12'">
+                      Break
+                    </p>
+
+                    <p :class="type === 'create' ? 'w-18 pr-3' : 'w-2/12'">
+                      Paid Break
                     </p>
 
                     <!-- FOR COMPLETING JOB -->
@@ -206,7 +214,7 @@
                     <p v-if="type === 'invoice'" class="w-2/12" />
                   </div>
 
-                  <p v-if="type === 'create'" class="w-2/12 text-center">
+                  <p v-if="type === 'create'" class="w-32 text-center">
                     Other Options
                   </p>
                 </div>
@@ -923,7 +931,7 @@
                       :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                     >
                       <div v-for="(shift, i) in item.shifts" :key="i" class="w-full flex flex-col">
-                        <div class="flex items-end w-full">
+                        <div class="flex items-end w-full justify-between">
                           <div class="flex flex-col w-2/12 px-1 mb-2 pt-2">
                             <div
                               class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-1 py-1 text-xs rounded cursor-pointer"
@@ -971,7 +979,7 @@
                             </div>
                           </div>
 
-                          <div class="w-2/12 px-1">
+                          <div class="w-16 px-1">
                             <AppTime
                               v-model="shift.time_start"
                               :name="`time_start-s${index}-${i}`"
@@ -1001,7 +1009,7 @@
                             />
                           </div>
 
-                          <div class="w-2/12 px-1">
+                          <div class="w-16 px-1">
                             <AppTime
                               v-model="shift.time_end"
                               :name="`time_end-s${index}-${i}`"
@@ -1029,7 +1037,7 @@
                             />
                           </div>
 
-                          <div class="w-2/12 py-4 text-center text-xs">
+                          <div class="w-16 py-4 text-center text-xs">
                             <template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
                               <p>{{ totalHours(shift.time_start, shift.time_end, item.date) | hours }} {{ totalHours(shift.time_start, shift.time_end, item.date) | minutes }}</p>
                             </template>
@@ -1071,7 +1079,7 @@
                             />
                           </div>
 
-                          <div class="w-2/12 pl-1 pr-3">
+                          <div class="w-18 px-1">
                             <AppInput
                               v-model="shift.rate"
                               :name="`rate-s${index}-${i}`"
@@ -1094,10 +1102,48 @@
                               @change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
                             />
                           </div>
+
+                          <!-- BREAK -->
+                          <div class="w-18 px-1">
+                            <AppInput
+                              v-model="shift.posted_break_in_minutes"
+                              :name="`posted_break_in_minutes-s${index}-${i}`"
+                              class="w-full"
+                              :type="'text'"
+                              :min="1"
+                              :in-style="'text-align:right;background-color: transparent'"
+                              :wrapperClass="'mb-1 py-1'"
+                              :limit="4"
+                              :error="
+                                formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                  ? formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                  : shiftErrors
+                                    ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                    : null
+                              "
+                              @focus="[0, '0'].includes(shift.posted_break_in_minutes) ? shift.posted_break_in_minutes = '' : shift.posted_break_in_minutes"
+                              @blur="[shift.posted_break_in_minutes === '' ? shift.posted_break_in_minutes = 0 : shift.posted_break_in_minutes, CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)]"
+                              @keydown="isNumber($event)"
+                              @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
+                              @input="checkScheduleShiftPostedBreakInMinutes(shift, index, i)"
+                              postLabel="m"
+                            />
+                          </div>
+                          <div class="w-18 pl-1 pr-3">
+                            <AppInput
+                              v-model="shift.posted_break_payable"
+                              :name="`posted_break_payable-s${index}-${i}`"
+                              :type="'select'"
+                              :items="[{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }]"
+                              :wrapperClass="'mb-1 py-1'"
+                              :inStyle="'font-size: 13px; padding-left: 8px;'"
+                              @change="emitSchedule()"
+                            />
+                          </div>
                         </div>
 
                         <!-- BREAK -->
-                        <div class="flex items-end w-full">
+                        <!-- <div class="flex items-end w-full">
                           <div class="w-6/12 pl-1 pr-2">
                             <AppInput
                               v-model="shift.posted_break_in_minutes"
@@ -1135,7 +1181,7 @@
                               @change="emitSchedule()"
                             />
                           </div>
-                        </div>
+                        </div> -->
                         <!-- BREAK -->
 
                         <div
@@ -1172,17 +1218,17 @@
                     </div>
                   </template>
 
-                  <div v-if="type === 'create'" class="w-2/12 flex flex-col items-center p-2 text-xs">
+                  <div v-if="type === 'create'" class="w-32 flex flex-col items-center py-2 pl-2 text-xs">
                     <template v-if="item.shifts && item.shifts.length">
                       <button
-                        class="w-full border border-gray-500 hover:bg-gray-200 leading-tight px-2 py-1 mb-2 rounded-lg"
+                        class="w-full border border-gray-500 hover:bg-gray-200 leading-tight p-1 mb-2 rounded-lg"
                         @click="confirmApply={type: 'job_part', data: item}"
                       >
                         Apply to Job Part
                       </button>
 
                       <button
-                        class="w-full border border-gray-500 hover:bg-gray-200 leading-tight px-2 py-1 rounded-lg"
+                        class="w-full border border-gray-500 hover:bg-gray-200 leading-tight p-1 rounded-lg"
                         @click="confirmApply={type: 'dates', data: item}"
                       >
                         Apply to All Dates
@@ -2412,6 +2458,8 @@ export default {
                     time_end: shift.time_end,
                     locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
                     rate: shift.rate,
+                    posted_break_in_minutes: shift.posted_break_in_minutes,
+                    posted_break_payable: shift.posted_break_payable
                   })
                 })
               } else {
@@ -2445,6 +2493,8 @@ export default {
                 time_end: shift.time_end,
                 locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
                 rate: shift.rate,
+                posted_break_in_minutes: shift.posted_break_in_minutes,
+                posted_break_payable: shift.posted_break_payable
               })
             })
           }

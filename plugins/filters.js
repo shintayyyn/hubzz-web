@@ -51,11 +51,13 @@ Vue.filter('fileSize', function (fileSize, sizeType) {
 })
 
 Vue.filter('minutes', function (min) {
-  return min % 60 ? min % 60 + `min${min % 60 > 1 ? 's' : ''}` : ''
+  return min % 60 ? min % 60 + 'm' : ''
+  // return min % 60 ? min % 60 + `min${min % 60 > 1 ? 's' : ''}` : ''
 })
 
 Vue.filter('hours', function (min) {
-  return Math.floor(min / 60) ? Math.floor(min / 60) + `hr${Math.floor(min / 60) > 1 ? 's' : ''}` : ''
+  return Math.floor(min / 60) ? Math.floor(min / 60) + 'h' : ''
+  // return Math.floor(min / 60) ? Math.floor(min / 60) + `hr${Math.floor(min / 60) > 1 ? 's' : ''}` : ''
 })
 
 Vue.filter('hoursMinutes', function (num) {

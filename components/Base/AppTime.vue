@@ -35,13 +35,13 @@
     </div>
     <transition name="fade">
       <div v-if="modal" class="relative z-10 flex justify-center">
-        <div class="w-full absolute border bg-white rounded-b-lg shadow-md">
+        <div class="w-full absolute border bg-white rounded-b-lg shadow-md" style="min-width: 70px">
           <div class="flex flex-row justify-center">
             <div class="input-container flex flex-col overflow-y-auto w-full">
               <div
                 v-for="(hour, index) in hours"
                 :key="index"
-                class="flex flex-row justify-center cursor-pointer"
+                class="flex flex-row justify-center cursor-pointer text-sm"
                 :class="{ 'bg-gray-600 text-white': selectedHour === hour }"
                 @click="selectTime(hour, 'hour')"
               >
@@ -52,7 +52,7 @@
               <div
                 v-for="(minute, index) in computedMinutes"
                 :key="index"
-                class="flex flex-row justify-center cursor-pointer"
+                class="flex flex-row justify-center cursor-pointer text-sm"
                 :class="{ 'bg-gray-600 text-white': selectedMinute === minute }"
                 @click="selectTime(minute, 'minute')"
               >
