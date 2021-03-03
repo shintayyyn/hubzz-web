@@ -62,6 +62,7 @@
         :confirmLabel="'Yes'"
         :cancelLabel="'Cancel'"
         :modal="confirmation_modal"
+        :loading="terminatingJobPart"
         @confirm="terminate"
         @cancel="confirmation_modal = false"
       />
@@ -89,8 +90,8 @@ export default {
     },
     modal: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data () {
@@ -150,6 +151,8 @@ export default {
       ],
 
       tax_rates: {},
+
+      terminatingJobPart: false,
     }
   },
   computed: {
@@ -213,6 +216,14 @@ export default {
       })
   },
   methods: {
+    totalHours (start, end, date) {
+      let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
+      let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
+      return start && end
+        ? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
+        : 0
+    },
+
     getSchedule (
       schedule,
       total_gross_locum_wages,
@@ -224,28 +235,37 @@ export default {
       hasError
     ) {
       this.schedule = schedule
+
       this.form.schedules = []
-      schedule.forEach((sched, index) => {
+
+      schedule.forEach((sched, scheduleIndex) => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach((shift, i) => {
-            let timeStart = shift.has_absences
+          sched.shifts.forEach((shift, shiftIndex) => {
+            const timeStart = shift.has_absences
               ? shift.time_start
               : shift.final_time_start
-            let timeEnd = shift.has_absences
+
+            const timeEnd = shift.has_absences
               ? shift.time_start
               : shift.final_time_end
+
             this.form.schedules.push({
               id: shift.id,
               final_time_start: timeStart,
               final_time_end: timeEnd,
               late_hours_reason: shift.late_hours_reason,
               absent_reason: shift.absent_reason,
+              completed_break_in_minutes: shift.has_absences ? '0' : shift.completed_break_in_minutes,
+              completed_break_payable: shift.has_absences ? 'false' : shift.completed_break_payable,
             })
+
             if (shift.has_absences && shift.absent_reason) {
               let rowError = this.shiftErrors.filter(err =>
-                err.field.includes(`s${index}-${i}`)
+                err.field.includes(`s${scheduleIndex}-${shiftIndex}`)
               )
+
               let errNames = rowError.map(err => err.field)
+
               this.shiftErrors.forEach((err, ind) => {
                 if (errNames.includes(err.field)) {
                   this.shiftErrors.splice(ind, errNames.length)
@@ -254,30 +274,60 @@ export default {
             } else {
               if (shift.final_time_start) {
                 let startIndex = this.shiftErrors.findIndex(
-                  err => err.field === `final_time_start-s${index}-${i}`
+                  err => err.field === `final_time_start-s${scheduleIndex}-${shiftIndex}`
                 )
+
                 if (startIndex > -1) {
                   this.shiftErrors.splice(startIndex, 1)
                 }
               }
+
               if (shift.final_time_end) {
                 let endIndex = this.shiftErrors.findIndex(
-                  err => err.field === `final_time_end-s${index}-${i}`
+                  err => err.field === `final_time_end-s${scheduleIndex}-${shiftIndex}`
                 )
+
                 if (endIndex > -1) {
                   this.shiftErrors.splice(endIndex, 1)
                 }
               }
             }
+
+            if (
+              shift.completed_break_in_minutes
+              && shift.final_time_start
+              && shift.final_time_end
+              && sched.date
+              && parseInt(shift.completed_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
+            ) {
+              this.shiftErrors.push({
+                field: `completed_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                message: "Invalid break in minutes.",
+              })
+            } else {
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `completed_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
+              )
+
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
+              }
+            }
           })
         }
       })
+
       this.total_working_hours = total_working_hours
+
       this.total_gross_locum_wages = total_gross_locum_wages
+
       this.locum_tax_rate = locum_tax_rate
+
       this.taxed_total_gross_locum_wages = taxed_total_gross_locum_wages
+
       this.hasShiftError = hasError
     },
+
     bgStatus (status) {
       let str
       switch (status) {
@@ -291,26 +341,45 @@ export default {
       }
       return str
     },
+
     canTerminate () {
       this.formError = []
+
       this.shiftErrors = []
+
       this.Validate(this.form, ["schedules",])
-      this.schedule.forEach((sched, index) => {
-        sched.shifts.forEach((shift, i) => {
+
+      this.schedule.forEach((sched, scheduleIndex) => {
+        sched.shifts.forEach((shift, shiftIndex) => {
           if (!shift.final_time_start && !shift.has_absences) {
             this.shiftErrors.push({
-              field: `final_time_start-s${index}-${i}`,
+              field: `final_time_start-s${scheduleIndex}-${shiftIndex}`,
               message: "Final Start is required.",
             })
           }
+
           if (!shift.final_time_end && !shift.has_absences) {
             this.shiftErrors.push({
-              field: `final_time_end-s${index}-${i}`,
+              field: `final_time_end-s${scheduleIndex}-${shiftIndex}`,
               message: "Final End is required.",
+            })
+          }
+
+          if (
+            shift.completed_break_in_minutes
+            && shift.final_time_start
+            && shift.final_time_end
+            && sched.date
+            && parseInt(shift.completed_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
+          ) {
+            this.shiftErrors.push({
+              field: `completed_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+              message: "Invalid break in minutes.",
             })
           }
         })
       })
+
       if (
         !this.shiftErrors.length
 				&& !this.hasShiftError
@@ -319,8 +388,10 @@ export default {
         this.confirmation_modal = true
       }
     },
+
     terminate () {
       const jobId = this.job_part.job_id
+      this.terminatingJobPart = true
       this.$axios
         .$put(
           `/api/v1/practice/job-parts/${this.job_part.id}/terminate`,
@@ -353,15 +424,18 @@ export default {
         })
         .finally(() => {
           this.confirmation_modal = false
+          this.terminatingJobPart = false
         })
     },
   },
 }
 </script>
+
 <style scoped>
 .modal-container {
 	z-index: 511;
 }
+
 @media screen and (min-width: 1200px) {
 	.modal-container {
 		width: 80%;

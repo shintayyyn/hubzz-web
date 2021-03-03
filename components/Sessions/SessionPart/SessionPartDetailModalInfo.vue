@@ -41,7 +41,7 @@
             RATE
           </div>
 
-          <div v-if="false" :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
+          <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
             POSTED BREAK
           </div>
 
@@ -50,7 +50,7 @@
               {{ job_part.status === 'Approved' ? 'FINAL TIME' : 'COMPLETED TIME' }}
             </div>
 
-            <div v-if="false" class="w-2/12">
+            <div class="w-2/12">
               {{ 
                 job_part.status === 'Approved'
                   ? 'APPROVED BREAK'
@@ -90,7 +90,7 @@
               £{{ sched.rate |currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}
             </div>
 
-            <div v-if="false" :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
+            <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
               {{ sched.posted_break_formatted }}
             </div>
 
@@ -99,8 +99,12 @@
                 {{ job_part.status === 'Approved' ? `${sched.approved_time_start} - ${sched.approved_time_end}` : `${sched.final_time_start} - ${sched.final_time_end}` }}
               </div>
 
-              <div v-if="false" class="w-2/12">
-                {{ sched.completed_break_formatted }}
+              <div class="w-2/12">
+                {{
+                  job_part.status === 'Approved' || job_part.invoice_status === 'Disputed' || job_part.invoice_status === 'Invoiced'
+                    ? sched.invoiced_break_formatted
+                    : sched.completed_break_formatted
+                }}
               </div>
 
               <div class="w-2/12 text-center">

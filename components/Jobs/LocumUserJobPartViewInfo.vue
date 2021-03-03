@@ -65,7 +65,6 @@
             </p>
 
             <p
-              v-if="false"
               class="text-center bg-white p-1 font-bold text-xs"
               :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
             >
@@ -89,7 +88,6 @@
               </p>
 
               <p
-                v-if="false"
                 class="text-center bg-white p-1 font-bold text-xs"
                 style="min-width:130px;max-width:130px"
               >
@@ -142,7 +140,6 @@
             </p>
 
             <p
-              v-if="false"
               class="text-center"
               :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
             >
@@ -162,11 +159,14 @@
               </p>
 
               <p
-                v-if="false"
                 class="text-center"
                 style="min-width:130px;max-width:130px"
               >
-                {{ sched.completed_break_formatted }}
+                {{
+                  jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
+                    ? sched.invoiced_break_formatted
+                    : sched.completed_break_formatted
+                }}
               </p>
 
               <p

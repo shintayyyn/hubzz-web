@@ -150,7 +150,7 @@
             :shiftErrors="shiftErrors"
             toInvoice
             :invoiceDetails="propInvoice"
-            :toDisplay="propInvoice && propInvoice.issued && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum')"
+            :toDisplay="propInvoice && propInvoice.issued && (propInvoice.approved || propInvoice.last_disputed_by === 'Locum' || !propInvoice.disputed_items_count)"
             :type="'invoice'"
             :invoiceStatus="$route.query.status"
             :tax_rates="tax_rates"
@@ -409,7 +409,7 @@
           class="m-1"
           :label="`${propJobPart && !propInvoice ? 'Save as draft' : !propJobPart && propInvoice ? 'Save changes' : ''}`"
           :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || !sched_has_changes"
+          :disabled="saveLoading || !sched_has_changes || shiftErrors.length > 0"
           @click="save(false)"
         />
 
@@ -418,7 +418,7 @@
           class="m-1"
           :label="'Save as final'"
           :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading"
+          :disabled="saveLoading || shiftErrors.length > 0"
           @click="save(true)"
         />
 
@@ -893,6 +893,14 @@ export default {
       })
     },
 
+    totalHours (start, end, date) {
+      let startDate = this.$moment(date + " " + start, "DD/MM/YYYY HH:mm")
+      let endDate = this.$moment(date + " " + end, "DD/MM/YYYY HH:mm")
+      return start && end
+        ? this.$moment(endDate, "DD/MM/YYYY HH:mm").diff(startDate, "minutes")
+        : 0
+    },
+
     getSchedule (
       schedule,
       total_gross_locum_wages, //getJobGrossRate
@@ -905,17 +913,22 @@ export default {
       hasChanges
     ) {
       this.schedule = schedule
+
       this.form.job_part_schedule_items = []
+
       let absentCount = 0
-      schedule.forEach(sched => {
+
+      schedule.forEach((sched, scheduleIndex) => {
         if (sched.shifts && sched.shifts.length) {
-          sched.shifts.forEach(shift => {
-            let timeStart = shift.final_time_start
+          sched.shifts.forEach((shift, shiftIndex) => {
+            const timeStart = shift.final_time_start
               ? shift.final_time_start
               : shift.time_start
-            let timeEnd = shift.final_time_end
+
+            const timeEnd = shift.final_time_end
               ? shift.final_time_end
               : shift.time_start
+
             this.form.job_part_schedule_items.push({
               id: shift.id,
               time_start: timeStart,
@@ -925,32 +938,64 @@ export default {
               remarks: shift.remarks,
               late_hours_reason: "",
               description: "",
+              invoiced_break_in_minutes: shift.has_absences ? '0' : shift.invoiced_break_in_minutes,
+              invoiced_break_payable: shift.has_absences ? 'false' : shift.invoiced_break_payable,
             })
+
             shift.has_absences ? (absentCount += 1) : ""
 
             // if (shift.final_time_start !== "") {
             // 	let startIndex = this.shiftErrors.findIndex(
-            // 		err => err.field === `final_time_start-s${index}-${i}`
+            // 		err => err.field === `final_time_start-s${scheduleIndex}-${shiftIndex}`
             // 	);
+
             // 	if (startIndex > -1) {
             // 		this.shiftErrors.splice(startIndex, 1);
             // 	}
             // }
+
             // if (shift.final_time_end !== "") {
             // 	let endIndex = this.shiftErrors.findIndex(
-            // 		err => err.field === `final_time_end-s${index}-${i}`
+            // 		err => err.field === `final_time_end-s${scheduleIndex}-${shiftIndex}`
             // 	);
+
             // 	if (endIndex > -1) {
             // 		this.shiftErrors.splice(endIndex, 1);
             // 	}
             // }
+
+            if (
+              shift.invoiced_break_in_minutes
+              && shift.final_time_start
+              && shift.final_time_end
+              && sched.date
+              && parseInt(shift.invoiced_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
+            ) {
+              this.shiftErrors.push({
+                field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                message: "Invalid break in minutes.",
+              })
+            } else {
+              const index = this.shiftErrors.findIndex(
+                err => err.field === `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`
+              )
+
+              if (index > -1) {
+                this.shiftErrors.splice(index, 1)
+              }
+            }
           })
         }
       })
+
       this.total_late_hours = total_lates
+
       this.total_absences = absentCount
+
       this.total_deductions = deductions
+
       this.total_working_hours = total_working_hours
+
       this.total_gross_locum_wages = total_gross_locum_wages
       // this.form.total_amount = this.propInvoice && this.propInvoice.locum_user_vat_registered 
       //   ? this.$auth.user.vat_registered === true
@@ -959,10 +1004,14 @@ export default {
       //   : total_gross_locum_wages
 
       this.tax_amount = this.propInvoice && this.propInvoice.approved ? this.propInvoice.tax_amount : tax_amount
+
       this.taxed_gross_rate = taxed_gross_rate
+
       this.hasShiftError = hasError
+
       this.sched_has_changes = hasChanges
     },
+
     setInitialState () {
       if (this.propJobPart && !this.propInvoice) {
         this.form.type = this.propJobPart.job.type
@@ -1106,21 +1155,35 @@ export default {
       this.shiftErrors = []
 
       if (this.schedule.length) {
-        this.schedule.forEach((sched, index) => {
-          sched.shifts.forEach((shift, i) => {
+        this.schedule.forEach((sched, scheduleIndex) => {
+          sched.shifts.forEach((shift, shiftIndex) => {
             if (!shift.has_absences) {
               if (!shift.final_time_start) {
                 this.shiftErrors.push({
-                  field: `final_time_start-s${index}-${i}`,
+                  field: `final_time_start-s${scheduleIndex}-${shiftIndex}`,
                   message: "Final Start is required",
                 })
               }
+
               if (!shift.final_time_end) {
                 this.shiftErrors.push({
-                  field: `final_time_end-s${index}-${i}`,
+                  field: `final_time_end-s${scheduleIndex}-${shiftIndex}`,
                   message: "Final End is required",
                 })
               }
+            }
+
+            if (
+              shift.invoiced_break_in_minutes
+              && shift.final_time_start
+              && shift.final_time_end
+              && sched.date
+              && parseInt(shift.invoiced_break_in_minutes) > this.totalHours(shift.final_time_start, shift.final_time_end, sched.date)
+            ) {
+              this.shiftErrors.push({
+                field: `invoiced_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
+                message: "Invalid break in minutes.",
+              })
             }
           })
         })
