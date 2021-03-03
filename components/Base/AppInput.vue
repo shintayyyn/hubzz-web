@@ -159,7 +159,7 @@
                   </p>
 
                   <input
-                    :value="value "
+                    :value="value"
                     :type="type"
                     :placeholder="label && nolabel ? label : placeholder"
                     class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
@@ -178,6 +178,13 @@
                     @keypress="type === 'number' ? isNumber($event) : type === 'numberDash' ? isNumberDash($event) : $emit('keypress')"
                     @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
                   >
+
+                  <p
+                    v-if="postLabel"
+                    class="text-xs font-bold py-1 pl-1 border-b-2 border-transparent"
+                  >
+                    <span>{{postLabel}}</span>
+                  </p>
                 </div>
 
                 <transition name="drop-down">
@@ -265,7 +272,7 @@
                     </option>
                   </select>
                   <span
-                    class="absolute right-0 h-full flex items-center mr-2 top-0 bg-white"
+                    class="absolute right-0 h-full flex items-center mr-2 top-0"
                     :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '']"
                   >
                     <svgicon
@@ -508,6 +515,11 @@ export default {
     },
 
     info: {
+      type: String,
+      default: null,
+    },
+
+    postLabel: {
       type: String,
       default: null,
     },
