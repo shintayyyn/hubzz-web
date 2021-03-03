@@ -162,7 +162,11 @@
                 class="text-center"
                 style="min-width:130px;max-width:130px"
               >
-                {{ sched.completed_break_formatted }}
+                {{
+                  jobPart.locum_job_part_status === 'Approved' || jobPart.locum_invoice_status === 'Disputed' || jobPart.locum_invoice_status === 'Invoiced'
+                    ? sched.invoiced_break_formatted
+                    : sched.completed_break_formatted
+                }}
               </p>
 
               <p

@@ -100,7 +100,11 @@
               </div>
 
               <div class="w-2/12">
-                {{ sched.completed_break_formatted }}
+                {{
+                  job_part.status === 'Approved' || job_part.invoice_status === 'Disputed' || job_part.invoice_status === 'Invoiced'
+                    ? sched.invoiced_break_formatted
+                    : sched.completed_break_formatted
+                }}
               </div>
 
               <div class="w-2/12 text-center">
