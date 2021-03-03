@@ -2644,8 +2644,6 @@ export default {
 
       const totalPaidHours = Math.round((totalPaidHoursInMinutes / 60) * 100) / 100
 
-      const minusUnpaidBreakInPerSession = true
-
       let total_hours
         = Math.round((this.totalHours(startTime, endTime, date) / 60) * 100)
         / 100
@@ -2692,19 +2690,9 @@ export default {
       case "Whole Day":
         return type !== "deduction"
           ? !shift.has_absences && startTime && endTime && total_hours !== 0
-            ? this.type === "create" && !minusUnpaidBreakInPerSession
-              ? shift.rate
-              : calculatePerSessionAmount(
-                shift.rate,
-                orig_total_hours,
-                (minusUnpaidBreakInPerSession ? totalPaidHours : total_hours)
-              )
+            ? calculatePerSessionAmount(shift.rate, orig_total_hours, totalPaidHours)
             : 0
-          : calculatePerSessionAmount(
-            shift.rate,
-            orig_total_hours,
-            (minusUnpaidBreakInPerSession ? totalHours : total_hours)
-          )
+          : calculatePerSessionAmount(shift.rate, orig_total_hours, totalHours)
       default:
         return 0
       }

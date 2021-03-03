@@ -33,11 +33,29 @@
           </p>
           <div class="px-4">
             <div class="flex justify-between pb-2">
-              <p>Total Working Hours:</p>
+              <p>Working Hours:</p>
+
               <p class="pl-1">
-                {{ total_working_hours | hoursMinutes }}
+                {{ totalHoursInMinutes | hoursMinutes }}
               </p>
             </div>
+
+            <div class="flex justify-between pb-2">
+              <p>Unpaid Break:</p>
+
+              <p class="pl-1">
+                {{ totalUnpaidBreakInMinutes | hoursMinutes }}
+              </p>
+            </div>
+
+            <div class="flex justify-between pb-2">
+              <p>Total Working Hours:</p>
+
+              <p class="pl-1">
+                {{ totalHoursInMinutes - totalUnpaidBreakInMinutes | hoursMinutes }}
+              </p>
+            </div>
+
             <div class="flex justify-between pb-2">
               <p>Total Gross Locum Wages:</p>
               <p class="pl-1">
@@ -646,7 +664,7 @@ export default {
       // SPLIT JOBS
       tabActive: "details",
       hasShiftError: false,
-      total_working_hours: 0,
+      totalHoursInMinutes: 0,
       total_gross_locum_wages: 0,
       tax_rate_preview: 0,
       taxed_total_gross_locum_wages_preview: 0,
@@ -872,32 +890,23 @@ export default {
       return this.schedules
         .reduce((scheduleTotal, sched) => {
           const shiftTotal = sched.shifts.reduce((shiftTotal, shift) => {
-            const time_start = shift.time_start
+            const timeStart = shift.time_start
 
-            const time_end = shift.time_end
+            const timeEnd = shift.time_end
 
-            const total_hours = this.totalHours(
-              time_start,
-              time_end,
-              sched.date
-            )
+            const unpaidBreakInMinutes = (shift.posted_break_payable === 'false' || !shift.posted_break_payable) && shift.posted_break_in_minutes
+              ? parseFloat(shift.posted_break_in_minutes)
+              : 0
 
-            if (total_hours > 0) {
-              const num = parseInt(total_hours)
+            const totalHoursInMinutes = this.totalHours(timeStart, timeEnd, sched.date)
 
-              if (!isNaN(num)) {
-                shiftTotal
-                  = shiftTotal
-                  + Math.round(
-                    (Math.round((num / 60) * 100) / 100)
-                      * this.practice_rate
-                      * 100
-                  )
-                    / 100
-              }
-            }
+            const totalPaidHoursInMinutes = totalHoursInMinutes - unpaidBreakInMinutes
 
-            return shiftTotal
+            const totalPaidHours = Math.round((totalPaidHoursInMinutes / 60) * 100) / 100
+
+            const scheduleShiftHubzzFee = Math.round(totalPaidHours * this.practice_rate * 100) / 100
+
+            return shiftTotal + scheduleShiftHubzzFee
           }, 0)
 
           return scheduleTotal + shiftTotal
@@ -915,6 +924,16 @@ export default {
             ? parseFloat(this.tax_rates_for_preview.practice_tax_rate_formatted) 
             : 0))
       return taxed_hubzz_fee
+    },
+
+    totalUnpaidBreakInMinutes () {
+      return this.form.schedules.reduce((totalUnpaidBreakInMinutes, schedule) => {
+        const unpaidBreakInMinutes = (schedule.posted_break_payable === 'false' || !schedule.posted_break_payable) && schedule.posted_break_in_minutes
+          ? parseFloat(schedule.posted_break_in_minutes)
+          : 0
+
+        return totalUnpaidBreakInMinutes + unpaidBreakInMinutes
+      }, 0)
     },
   },
 
@@ -1454,7 +1473,7 @@ export default {
     getSchedule (
       schedule,
       total_gross_locum_wages,
-      total_working_hours,
+      totalHoursInMinutes,
       deductions,
       total_lates,
       hasError,
@@ -1564,7 +1583,7 @@ export default {
         }
       })
 
-      this.total_working_hours = total_working_hours
+      this.totalHoursInMinutes = totalHoursInMinutes
 
       this.total_gross_locum_wages = total_gross_locum_wages
       
