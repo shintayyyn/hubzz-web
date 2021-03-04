@@ -83,6 +83,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
@@ -111,6 +112,7 @@ export default {
       return this.contactUsEmailReceivers.map(contactUsEmailReceiver => ({
         label: contactUsEmailReceiver.email,
         value: contactUsEmailReceiver.email,
+        description: contactUsEmailReceiver.description,
       }))
     },
 
@@ -144,6 +146,21 @@ export default {
   },
 
   mounted () {
+    // this.contactUsEmailReceivers = [
+    //   {
+    //     email: 'accounts@hubzz.co.uk',
+    //     description: 'for queries about Hubzz to Practice invoices and fees etc.',
+    //   },
+    //   {
+    //     email: 'support@hubzz.co.uk',
+    //     description: 'for any Locum and Practice questions outside billing',
+    //   },
+    //   {
+    //     email: 'compliance@hubzz.co.uk',
+    //     description: 'for compliance queries',
+    //   },
+    // ]
+
     this.loading = true
     this.$axios.get('/api/v1/contact-us/receivers').then((response) => {
       this.contactUsEmailReceivers = response.data.data.contact_us_email_receivers
@@ -213,9 +230,10 @@ export default {
   },
 }
 </script>
+
 <style scoped>
-button:active {
-  transform: translate(2px, 2px);
-}
+  button:active {
+    transform: translate(2px, 2px);
+  }
 </style>
 

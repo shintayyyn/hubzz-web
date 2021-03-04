@@ -17,7 +17,7 @@
         </template>
       </div>
       <nuxt-link to="/" class="__logo">
-        <img src="~/assets/images/hubzz-logo.png">
+        <img src="~/assets/images/hubzz_logo.png">
       </nuxt-link>
     </div>
 
@@ -117,7 +117,8 @@
   }
 
   .__logo {
-    zoom: 0.75;
+    /* zoom: 0.75; */
+    max-width: 28vw;
   }
 
   @media (min-width: 1200px) {
@@ -132,7 +133,8 @@
     }
 
     .__logo {
-      zoom: 1.25;
+    max-width: 20vw;
+      /* zoom: 0.25; */
     }
   }
 

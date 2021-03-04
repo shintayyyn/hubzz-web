@@ -134,13 +134,12 @@
 
               <div class="px-4">
                 <div class="flex items-end text-sm pb-2 text-gray-700">
-                  <p class="px-2 text-center" :class="type === 'create' ? 'w-24' : 'w-1/12'">
+                  <p class="px-2 text-center w-24">
                     Date
                   </p>
 
-                  <div
-                    class="flex items-end justify-between text-center"
-                    :class="type === 'create' ? 'w-9/12 ' : 'w-11/12 pr-2'"
+                  <div class="flex items-end justify-between text-center"
+                    :class="type === 'create' ? 'w-9/12 ' : 'w-full'"
                   >
                     <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Shift
@@ -166,11 +165,11 @@
                       Rate £
                     </p>
 
-                    <p :class="type === 'create' ? 'w-18' : 'w-2/12'">
+                    <p v-if="type==='create'" :class="type === 'create' ? 'w-18' : 'w-2/12'">
                       Break
                     </p>
 
-                    <p :class="type === 'create' ? 'w-18 pr-3' : 'w-2/12'">
+                    <p v-if="type==='create'" :class="type === 'create' ? 'w-18 pr-3' : 'w-2/12'">
                       Paid Break
                     </p>
 
@@ -219,33 +218,19 @@
                   </p>
                 </div>
 
-                <div v-for="(item, index) in filteredSchedule" :key="index" class="flex text-sm mb-2">
+                <div v-for="(item, index) in filteredSchedule" :key="index" class="flex text-sm mb-2" :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'}` : ''">
                   <template v-if="['complete', 'terminate'].includes(type)">
                     <div
-                      class="w-1/12 rounded-l-lg p-2 border-l border-t border-b pt-4"
-                      :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
-                    >
+                      class="w-24 p-2 pt-4">
                       {{ item.date }}
                     </div>
 
-                    <div class="w-11/12 pr-2">
+                    <div class="w-full">
                       <div v-for="(shift, i) in item.shifts" :key="i" class="flex flex-col w-full">
-                        <div class="flex items-end w-full">
-                          <div
-                            class="w-2/12 flex items-center justify-center px-2"
-                            :class="[
-                              index % 2 ? 'bg-lighter-gray' : 'bg-light-gray',
-                              item.shifts.length !== 1 ?
-                                i === 0
-                                  ? 'border-t'
-                                  : i === item.shifts.length - 1
-                                    ? 'border-b pb-2'
-                                    : ''
-                                : 'border-t border-b'
-                            ]"
-                          >
+                        <div class="flex items-end justify-between w-full">
+                          <div class="w-2/12 flex items-center justify-center">
                             <p
-                              class="rounded px-2 w-full text-center py-1 font-bold"
+                              class="rounded px-2 w-24 text-sm text-center py-1 font-bold"
                               :class="shiftColor(shift.shift_id)"
                             >
                               {{
@@ -256,67 +241,19 @@
                             </p>
                           </div>
 
-                          <div
-                            :class="[
-                              index % 2 ? 'bg-lighter-gray' : 'bg-light-gray',
-                              item.shifts.length !== 1
-                                ? i === 0
-                                  ? 'border-t'
-                                  : i === item.shifts.length - 1
-                                    ? 'border-b pb-2'
-                                    : ''
-                                : 'border-t border-b'
-                            ]"
-                            class="w-2/12 flex items-center justify-center"
-                          >
+                          <div class="w-2/12 flex items-center justify-center">
                             {{ shift.time_start }}
                           </div>
 
-                          <div
-                            :class="[
-                              index % 2 ? 'bg-lighter-gray' : 'bg-light-gray',
-                              item.shifts.length !== 1
-                                ? i === 0
-                                  ? 'border-t'
-                                  : i === item.shifts.length - 1
-                                    ? 'border-b pb-2'
-                                    : ''
-                                : 'border-t border-b'
-                            ]"
-                            class="w-2/12 flex items-center justify-center"
-                          >
+                          <div class="w-2/12 flex items-center justify-center">
                             {{ shift.time_end }}
                           </div>
 
-                          <div
-                            :class="[
-                              index % 2 ? 'bg-lighter-gray' : 'bg-light-gray',
-                              item.shifts.length !== 1
-                                ? i === 0
-                                  ? 'border-t'
-                                  : i === item.shifts.length - 1
-                                    ? 'border-b pb-2'
-                                    : ''
-                                : 'border-t border-b'
-                            ]"
-                            class="w-2/12 flex items-center justify-center text-center"
-                          >
+                          <div class="w-2/12 flex items-center justify-center text-center">
                             {{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes }}
                           </div>
 
-                          <div
-                            :class="[
-                              index % 2 ? 'bg-lighter-gray' : 'bg-light-gray',
-                              item.shifts.length !== 1
-                                ? i === 0
-                                  ? 'border-t'
-                                  : i === item.shifts.length - 1
-                                    ? 'border-b pb-2'
-                                    : ''
-                                : 'border-t border-b'
-                            ]"
-                            class="w-2/12 flex items-center justify-center text-center"
-                          >
+                          <div class="w-2/12 flex items-center justify-center text-center">
                             {{
                               rate_lists.find(item => item.value === shift.locum_detail_rate_type_id)
                                 ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label
@@ -324,24 +261,13 @@
                             }}
                           </div>
 
-                          <div
-                            :class="[
-                              index % 2 ? 'bg-lighter-gray' : 'bg-light-gray',
-                              item.shifts.length !== 1
-                                ? i === 0
-                                  ? 'border-t'
-                                  : i === item.shifts.length - 1
-                                    ? 'border-b pb-2'
-                                    : ''
-                                : 'border-t border-b'
-                            ]"
-                            class="w-2/12 flex items-center justify-center border-r"
-                          >
+                          <div class="w-2/12 flex items-center justify-center">
                             {{ shift.rate | currency }}
                           </div>
 
                           <!-- FIELDS -->
-                          <div class="px-2 w-2/12">
+                              
+                          <div class="w-2/12">
                             <AppTime
                               v-model="shift.final_time_start"
                               :name="`final_time_start-s${index}-${i}`"
@@ -403,9 +329,9 @@
                             />
                           </div>
 
-                          <div class="px-2 w-2/12 flex items-center px-1">
+                          <div class="w-2/12 flex items-center justify-center">
                             <button
-                              class="px-2 py-1 text-white focus:outline-none rounded uppercase w-full"
+                              class="px-2 py-1 text-white focus:outline-none rounded uppercase w-24"
                               :disabled="[true, 'true'].includes(shift.has_absences)"
                               :class="
                                 ![true, 'true'].includes(shift.has_absences)
@@ -431,19 +357,19 @@
                             </button>
                           </div>
 
-                          <div class="w-2/12 flex items-center px-1">
+                          <div class="w-2/12 flex items-center justify-center">
                             <button
                               v-if="[true, 'true'].includes(shift.has_late) && shift.late_hours_reason"
-                              class="px-2 py-1 text-gray-700 border-2 border-orange-500 cursor-pointer focus:outline-none rounded w-full"
+                              class="px-2 py-1 text-gray-700 border-2 border-orange-500 cursor-pointer focus:outline-none rounded w-24"
                               @click="lateChange(shift, index, i, 'late')"
                             >
                               Reason
                             </button>
                           </div>
 
-                          <div class="px-2 w-2/12 flex items-center px-1">
+                          <div class="w-2/12 flex items-center justify-center">
                             <button
-                              class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full"
+                              class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-24"
                               :class="shift.has_absences ? 'bg-orange-500' : 'bg-gray-600'"
                               @click="
                                 [
@@ -458,10 +384,10 @@
                             </button>
                           </div>
 
-                          <div class="w-2/12 flex items-center px-1">
+                          <div class="w-2/12 flex items-center justify-center">
                             <button
                               v-if="[true, 'true'].includes(shift.has_absences) && shift.absent_reason"
-                              class="px-2 py-1 text-gray-700 border-2 border-orange-500 cursor-pointer focus:outline-none rounded w-full"
+                              class="px-2 py-1 text-gray-700 border-2 border-orange-500 cursor-pointer focus:outline-none rounded w-24"
                               @click="lateChange(shift, index, i, 'absent')"
                             >
                               Reason
@@ -556,18 +482,17 @@
 
                   <template v-else-if="type === 'invoice'">
                     <div
-                      class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
-                      :class="[index % 2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
+                      class="w-24 px-2"
+                      :class="[toDisplay ? 'pt-2' : 'pb-4 pt-6']"
                     >
                       {{ item.date }}
                     </div>
 
                     <div
-                      class="w-11/12 py-2 rounded-r-lg border-r border-t border-b"
-                      :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
+                      class="w-full py-2"
                     >
                       <div v-for="(shift, i) in item.shifts" :key="i">
-                        <div class="flex items-center w-full">
+                        <div class="flex items-center justify-between w-full">
                           <div class="flex items-center justify-center text-center w-2/12">
                             {{ shift.shift.name }}
                           </div>
