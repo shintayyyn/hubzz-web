@@ -134,13 +134,13 @@
 
               <div class="px-4">
                 <div class="flex items-end text-sm pb-2 text-gray-700">
-                  <p class="px-2 text-center" :class="type === 'create' ? 'w-24' : 'w-1/12'">
+                  <p class="px-2 text-center w-24">
                     Date
                   </p>
 
                   <div
                     class="flex items-end justify-between text-center"
-                    :class="type === 'create' ? 'w-9/12 ' : 'w-11/12 pr-2'"
+                    :class="type === 'create' ? 'w-9/12 ' : 'w-11/12'"
                   >
                     <p :class="type === 'create' ? 'w-2/12' : 'w-2/12'">
                       Shift
@@ -166,11 +166,11 @@
                       Rate £
                     </p>
 
-                    <p :class="type === 'create' ? 'w-18' : 'w-2/12'">
+                    <p v-if="type==='create'" :class="type === 'create' ? 'w-18' : 'w-2/12'">
                       Break
                     </p>
 
-                    <p :class="type === 'create' ? 'w-18 pr-3' : 'w-2/12'">
+                    <p v-if="type==='create'" :class="type === 'create' ? 'w-18 pr-3' : 'w-2/12'">
                       Paid Break
                     </p>
 
@@ -222,7 +222,7 @@
                 <div v-for="(item, index) in filteredSchedule" :key="index" class="flex text-sm mb-2">
                   <template v-if="['complete', 'terminate'].includes(type)">
                     <div
-                      class="w-1/12 rounded-l-lg p-2 border-l border-t border-b pt-4"
+                      class="w-24 rounded-l-lg p-2 border-l border-t border-b pt-4"
                       :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                     >
                       {{ item.date }}
@@ -556,7 +556,7 @@
 
                   <template v-else-if="type === 'invoice'">
                     <div
-                      class="w-1/12 px-2 rounded-l-lg border-l border-t border-b"
+                      class="w-24 px-2 rounded-l-lg border-l border-t border-b"
                       :class="[index % 2 ? 'bg-lighter-gray' : 'bg-light-gray', toDisplay ? 'pt-2' : 'pb-4 pt-6']"
                     >
                       {{ item.date }}
