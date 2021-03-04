@@ -183,7 +183,7 @@
                     v-if="postLabel"
                     class="text-xs font-bold py-1 pl-1 border-b-2 border-transparent"
                   >
-                    <span>{{postLabel}}</span>
+                    <span>{{ postLabel }}</span>
                   </p>
                 </div>
 
@@ -268,7 +268,8 @@
                       :selected="value === item.value"
                       :disabled="item.disabled"
                     >
-                      {{ item.label }}
+                      <span>{{ item.label }}</span>
+                      <i v-if="item.description">({{ item.description }})</i>
                     </option>
                   </select>
                   <span
@@ -303,7 +304,7 @@
                   :rows="rows"
                   :value="value"
                   :placeholder="label && nolabel ? label : placeholder"
-                    class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+                  class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
                   :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none', border ? 'border-2 rounded px-2' : 'border-b-2']"
                   :limit="limit"
                   :style="inStyle"
@@ -405,13 +406,13 @@
           >
         </div>
         <transition name="drop-down">
-            <div
-              v-if="error"
-              class="text-red-500 py-1 text-xs text-white"
-            >
-              {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
-            </div>
-          </transition>
+          <div
+            v-if="error"
+            class="text-red-500 py-1 text-xs text-white"
+          >
+            {{ error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ") }}
+          </div>
+        </transition>
       </div>
     </template>
 
@@ -476,12 +477,12 @@ export default {
 
     nolabel: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     border: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     value: {
