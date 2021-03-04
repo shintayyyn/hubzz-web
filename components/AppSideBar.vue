@@ -3,8 +3,8 @@
     <div class="sidebar relative" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-10">
         <div class="flex flex-row justify-center pb-4">
-          <div class="font-extrabold text-white text-2xl">
-            HUBZZ
+          <div class="flex justify-center">
+            <img src="~/assets/images/hubzz_logo.png" class="w-3/5"/>
           </div>
           
           <button
