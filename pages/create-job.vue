@@ -114,7 +114,7 @@
                       v-model="form.practice_id"
                       :type="'select'"
                       :name="'practice_id'"
-                      :placeholder="'Choose a Spoke'"
+                      :placeholder="'Choose a Surgery'"
                       :error="formError.find(item => item.field === 'practice_id')"
                       :items="practice_lists"
                       class="px-2"
