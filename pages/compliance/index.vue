@@ -760,7 +760,7 @@
 									v-model="form.reference"
 									:type="'textarea'"
 									:name="'reference'"
-									:label="'Reference'"
+									:label="selectedComplianceTypeName === 'DBS' ? 'DBS Reference' : 'Reference'"
 									:error="formError.find(item => item.field === 'reference')"
 									:limit="255"
 									:resize="false"
