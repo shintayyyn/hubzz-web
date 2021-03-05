@@ -349,8 +349,10 @@
 						<template v-if="permanent_job.appointed_to_locum_user_id && !hideDetails">
 							<PermanentJobLocum class="my-4" :user="assignedLocum" />
 						</template>
-						<PermanentJobCandidates class="mb-4" :permanent_job="permanent_job"/>
-						<PermanentJobMap v-if="!hideDetails" :permanent_job="permanent_job" />
+						<template v-else>
+							<PermanentJobCandidates class="mb-4" :permanent_job="permanent_job"/>
+							<PermanentJobMap v-if="!hideDetails" :permanent_job="permanent_job" />
+						</template>
 
 						<AppButton
 							v-if="permanent_job.job_posting_status !== 'Closed' && permanent_job.job_posting_status !== 'Unfilled' && !hideDetails"
