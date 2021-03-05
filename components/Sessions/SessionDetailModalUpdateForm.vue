@@ -215,7 +215,7 @@
             >
               JOB NOTIFICATION SUMMARY
             </p>
-            <div class="px-4">
+            <!-- <div class="px-4">
               <div class="flex justify-between pb-2">
                 <p>Total Working Hours:</p>
                 <p>{{ total_working_hours | hoursMinutes }}</p>
@@ -230,6 +230,63 @@
                   <span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
                 </p>
                 <p>£ {{ hubzz_fee | currency }}</p>
+              </div>
+            </div> -->
+            <!-- new -->
+            <div class="px-4">
+              <div class="flex justify-between pb-2">
+                <p>Working Hours:</p>
+
+                <p class="pl-1">
+                  {{ totalHoursInMinutes | hoursMinutes }}
+                </p>
+              </div>
+
+              <div class="flex justify-between pb-2">
+                <p>Unpaid Break:</p>
+
+                <p class="pl-1">
+                  {{ totalUnpaidBreakInMinutes | hoursMinutes }}
+                </p>
+              </div>
+
+              <div class="flex justify-between pb-2">
+                <p>Total Working Hours:</p>
+
+                <p class="pl-1">
+                  {{ totalHoursInMinutes - totalUnpaidBreakInMinutes | hoursMinutes }}
+                </p>
+              </div>
+
+              <div class="flex justify-between pb-2">
+                <p>Total Gross Locum Wages:</p>
+                <p class="pl-1">
+                  £ {{ total_gross_locum_wages | currency }}
+                </p>
+              </div>
+              <div class="flex justify-between pb-2 text-red-600">
+                <p>Total Gross Locum Wages (If VAT Registered):</p>
+                <p class="pl-1">
+                  £ {{ taxed_total_gross_locum_wages_preview | currency }}
+                </p>
+              </div>
+              <div class="flex justify-between pb-2">
+                <p>
+                  Hubzz Fee*
+                  <span class="font-normal text-sm">(£{{ practice_rate.toFixed(2) }} per hour)</span>:
+                </p>
+                <p class="pl-1">
+                  £ {{ hubzz_fee | currency }}
+                </p>
+              </div>
+              <div class="flex justify-between pb-2 text-red-600">
+                <p>
+                  Hubzz Fee with VAT*
+                  <span class="font-normal text-sm">(+{{ tax_rates_for_preview && tax_rate_for_preview ? tax_rates_for_preview.practice_tax_rate : 0 }}%)</span>:
+                </p>
+                <p class="pl-1">
+                  £ {{ hubzz_fee_taxed | currency }}
+                </p>
               </div>
             </div>
             <div class="flex justify-end items-center text-black mt-3">
@@ -732,6 +789,10 @@ export default {
       total_gross_locum_wages: 0,
       shiftErrors: [],
       schedules: [],
+      
+      totalHoursInMinutes: 0,
+      taxed_total_gross_locum_wages_preview: 0,
+      tax_rates_for_preview: {},
 
       form: {
         practice_id: "",
@@ -960,25 +1021,83 @@ export default {
 
     practice_rate () {
       let rate = 0
-      let practice_rates = this.$auth.user.practice_detail.practice
-        .practice_rates
-      let practice_rate = practice_rates.find(
-        item => item.id.toString() === this.form.profession_id.toString()
+      const practiceRates
+        = this.$auth.user
+        && this.$auth.user.practice_detail
+        && this.$auth.user.practice_detail.practice
+          ? this.$auth.user.practice_detail.practice.practice_rates
+          : []
+      console.log("selectedProfession", this.selectedProfession)
+      let practice_rate = practiceRates.find(
+        item => item.type === this.selectedProfession.name
       )
+      console.log("this.form.profession_id", this.form.profession_id)
       if (practice_rate) {
         rate = practice_rate.rate
       } else {
-        rate = practice_rates[practice_rates.length - 1].rate
+        rate = practiceRates[practiceRates.length - 1].rate
       }
       return rate
     },
 
     hubzz_fee () {
-      if (this.form.profession_id) {
-        let hours = this.total_working_hours / 60
-        return (hours * this.practice_rate).toFixed(2)
-      }
-      return 0
+      return this.schedules
+        .reduce((scheduleTotal, sched) => {
+          const shiftTotal = sched.shifts.reduce((shiftTotal, shift) => {
+            const timeStart = shift.time_start
+
+            const timeEnd = shift.time_end
+
+            const unpaidBreakInMinutes = (shift.posted_break_payable === 'false' || !shift.posted_break_payable) && shift.posted_break_in_minutes
+              ? parseFloat(shift.posted_break_in_minutes)
+              : 0
+
+            const totalHoursInMinutes = this.totalHours(timeStart, timeEnd, sched.date)
+
+            const totalPaidHoursInMinutes = totalHoursInMinutes - unpaidBreakInMinutes
+
+            const totalPaidHours = Math.round((totalPaidHoursInMinutes / 60) * 100) / 100
+
+            const scheduleShiftHubzzFee = Math.round(totalPaidHours * this.practice_rate * 100) / 100
+
+            return shiftTotal + scheduleShiftHubzzFee
+          }, 0)
+
+          return scheduleTotal + shiftTotal
+        }, 0)
+        .toFixed(2)
+    },
+
+    totalUnpaidBreakInMinutes () {
+      return this.form.schedules.reduce((totalUnpaidBreakInMinutes, schedule) => {
+        const unpaidBreakInMinutes = (schedule.posted_break_payable === 'false' || !schedule.posted_break_payable) && schedule.posted_break_in_minutes
+          ? parseFloat(schedule.posted_break_in_minutes)
+          : 0
+
+        return totalUnpaidBreakInMinutes + unpaidBreakInMinutes
+      }, 0)
+    },
+
+    hubzz_fee_taxed () {
+      console.log('this.tax_rates_for_preview', this.tax_rates_for_preview)
+      const taxed_hubzz_fee 
+        = parseFloat(this.hubzz_fee) 
+          + (parseFloat(this.hubzz_fee) 
+          * (this.tax_rates_for_preview 
+            && this.tax_rates_for_preview.practice_tax_rate_formatted 
+            ? parseFloat(this.tax_rates_for_preview.practice_tax_rate_formatted) 
+            : 0))
+      return taxed_hubzz_fee
+    },
+
+    totalUnpaidBreakInMinutes () {
+      return this.form.schedules.reduce((totalUnpaidBreakInMinutes, schedule) => {
+        const unpaidBreakInMinutes = (schedule.posted_break_payable === 'false' || !schedule.posted_break_payable) && schedule.posted_break_in_minutes
+          ? parseFloat(schedule.posted_break_in_minutes)
+          : 0
+
+        return totalUnpaidBreakInMinutes + unpaidBreakInMinutes
+      }, 0)
     },
   },
 
@@ -1078,6 +1197,10 @@ export default {
         .then(response => {
           return response.data.data.profession_compliance_categories
         }),
+      this.$axios.get("/api/v1/tax-rates")
+        .then(response => 
+          response.data.data.tax_rates
+        ),
     ])
       .then(responses => {
         const [
@@ -1087,7 +1210,10 @@ export default {
           professions,
           profileProfile,
           professionComplianceCategories,
+          taxRates,
         ] = responses
+        this.tax_rates_for_preview = taxRates
+
         this.form.dates = this.job.dates
         this.practices = responsePractices.data.data.practices
         this.practice_lists = responsePractices.data.data.practices.map(
@@ -1308,10 +1434,11 @@ export default {
     getSchedule (
       schedule,
       total_gross_locum_wages,
-      total_working_hours,
+      totalHoursInMinutes,
       deductions,
       total_lates,
-      hasError
+      hasError,
+      job_parts
     ) {
       this.editedSchedule = []
       this.schedules = schedule
@@ -1413,8 +1540,28 @@ export default {
           })
         }
       })
-      this.total_working_hours = total_working_hours
+  
+      this.totalHoursInMinutes = totalHoursInMinutes
+
       this.total_gross_locum_wages = total_gross_locum_wages
+      
+      const tax_rate_for_preview = parseFloat(total_gross_locum_wages) * parseFloat(this.tax_rates_for_preview.locum_tax_rate_formatted)
+
+      const taxed_total_gross_locum_wages_preview = parseFloat(total_gross_locum_wages) + parseFloat(tax_rate_for_preview)
+      
+      this.tax_rate_for_preview = tax_rate_for_preview
+
+      this.taxed_total_gross_locum_wages_preview = taxed_total_gross_locum_wages_preview
+
+      // console.log("test get sched", {
+      //   total_gross_locum_wages: this.total_gross_locum_wages,
+      //   tax_rate_for_preview: this.tax_rate_for_preview,
+      //   taxed_total_gross_locum_wages_preview: this.taxed_total_gross_locum_wages_preview,
+      //   totalHoursInMinutes: this.totalHoursInMinutes
+
+      // })
+
+      // this.total_working_hours = total_working_hours
       this.hasShiftError = hasError
     },
 
@@ -1622,6 +1769,7 @@ export default {
         "hours",
         "minutes",
         "favorite_only",
+        "unpaid_breaks_in_minutes",
       ]
 
       if (!this.hasBanks) {
@@ -1664,6 +1812,7 @@ export default {
       }
 
       this.Validate(this.form, notRequired)
+
       // !this.form.hours ? (this.form.hours = 0) : this.form.hours;
 
       // if (
@@ -1739,17 +1888,17 @@ export default {
           ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
         }
 
-        if (["15", 15, "30", 30, "60", 60,].includes(this.unpaid_breaks)) {
-          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
-        }
+        // if (["15", 15, "30", 30, "60", 60,].includes(this.unpaid_breaks)) {
+        //   this.form.unpaid_breaks_in_minutes = this.unpaid_breaks
+        // }
 
-        if (this.unpaid_breaks === "other") {
-          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
-        }
+        // if (this.unpaid_breaks === "other") {
+        //   this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
+        // }
 
-        if (["false", false,].includes(this.unpaid_breaks)) {
-          this.form.unpaid_breaks_in_minutes = ""
-        }
+        // if (["false", false,].includes(this.unpaid_breaks)) {
+        //   this.form.unpaid_breaks_in_minutes = ""
+        // }
 
         this.form.ir35
           = this.selectedProfession

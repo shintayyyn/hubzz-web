@@ -1073,23 +1073,19 @@ export default {
           value: shift.id,
         }))
       ),
-      this.$axios
-        .get("/api/v1/professions")
+      this.$axios.get("/api/v1/professions")
         .then(response => response.data.data.professions),
-      this.$axios
-        .get("/api/v1/practice/me/practice-profile")
+      this.$axios.get("/api/v1/practice/me/practice-profile")
         .then(response => response.data.data.practice),
-      this.$axios
-        .get("/api/v1/profession-compliance-categories")
+      this.$axios.get("/api/v1/profession-compliance-categories")
         .then(response => {
           return response.data.data.profession_compliance_categories
         }),
-      this.$axios
-        .get("/api/v1/tax-rates")
+      this.$axios.get("/api/v1/tax-rates")
         .then(response => 
           response.data.data.tax_rates
         ),
-    ])
+      ])
       .then(responses => {
         const [
           responsePractices,
@@ -1482,6 +1478,16 @@ export default {
       this.form.schedules = []
 
       this.schedules = schedule
+
+      console.log({
+        schedule,
+        total_gross_locum_wages,
+        totalHoursInMinutes,
+        deductions,
+        total_lates,
+        hasError,
+        job_parts
+      })
 
       schedule.forEach((sched, scheduleIndex) => {
         if (sched.shifts && sched.shifts.length) {
