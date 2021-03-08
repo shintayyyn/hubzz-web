@@ -112,7 +112,7 @@ export default {
         case 'hub-surgery-management-id-surgery-permanent-jobs-index-permJobId': 
         links.push(
           {
-            title: 'Surgery Permanent Jobs',
+            title: 'Surgery Salaried Roles',
             url: `/hub-surgery-management/${this.$route.params.id}/surgery-permanent-jobs`
           },
           {
