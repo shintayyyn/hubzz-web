@@ -1,6 +1,41 @@
 <template>
   <section class="relative my-2">
-    <div class="flex items-center">
+    <AppFilter :enableSearch="false" class="mt-4">
+      <template v-slot:extraButton>
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          customTheme="border"
+          @click="refreshInvoices"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="">
+          <AppInput
+            v-model="params.invoice_number"
+            wrapperClass="mb-0"
+            :type="'text'"
+            :name="'invoice_number'"
+            :label="'Invoice number'"
+            nolabel
+            border
+          />
+        </div> 
+        <AppButton
+          :label="'Apply'"
+          class="mx-1"
+          @click="filterInvoices"
+        />
+
+         <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          customTheme="border hover:bg-gray-200"
+          @click="clearFilters"
+        />
+      </template>
+    </AppFilter>
+    <!-- <div class="flex items-center">
       <button
         v-if="!['pension-form-b'].includes($route.query.status)"
         class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
@@ -23,12 +58,6 @@
           :in-style="'padding:5px 14px;margin-bottom:0'"
           @click="filterInvoices"
         />
-        <!-- <AppButton
-          class="mx-2 md:hidden"
-          :label="'Close'"
-          :in-style="'padding:5px 14px;margin-bottom:0'"
-          @click="filterModal = false"
-        /> -->
       </div>
       </transition>
     </div>
@@ -44,7 +73,7 @@
         />
       </div> 
     </div>
-    </transition>
+    </transition> -->
 
     <AppTable
       v-if="invoices.length > 0"
@@ -110,11 +139,13 @@
 import AppTable from "@/components/Base/AppTable"
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
+import AppFilter from "@/components/Base/AppFilter"
 export default {
   components: {
     AppTable,
     AppInput,
     AppButton,
+    AppFilter
   },
   transition: {
     name: "fade",

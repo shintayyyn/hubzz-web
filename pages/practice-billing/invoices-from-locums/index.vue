@@ -53,6 +53,77 @@
         NHS Pension Form A
       </nuxt-link>
     </div>
+    <AppFilter :enableSearch="false" class="mt-4">
+      <template v-slot:extraButton >
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+          customTheme="border"
+          @click="refreshInvoices"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="w-32">
+          <AppInput
+            v-model="job_ir35"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'job_ir35'"
+            :placeholder="'Inside ir35'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+            nolabel
+            border
+          />
+        </div>
+        <div v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'">
+          <AppInput
+            v-model="invoice_number"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'invoice_number'"
+            :label="'Invoice number'"
+              nolabel
+            border
+          />
+        </div>
+        <div class="">
+          <AppInput
+            v-model="job_part_number_includes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'job_part_number_includes'"
+            :label="'Job Part number'"
+            nolabel
+            border
+          />
+        </div>
+        <div class="w-32" v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())">
+          <AppInput
+            v-model="is_paid"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'is_paid'"
+            :placeholder="'Paid'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+            nolabel
+            border
+          />
+        </div>
+        <AppButton
+          :label="'Apply'"
+          class="mx-1"
+          @click="filterJobParts"
+        />
+          <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          @click="clearFilters"
+          customTheme="border hover:bg-gray-200"
+        />
+        
+      </template>
+    </AppFilter>
 
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
@@ -62,7 +133,7 @@
 
     <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
-        <div class="flex items-center mt-4">
+        <!-- <div class="flex items-center mt-4">
           <button
             class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
             @click="filterModal = !filterModal"
@@ -86,12 +157,6 @@
                 :in-style="'padding:5px 14px;margin-bottom:0'"
                 @click="filterJobParts"
               />
-            <!-- <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:0'"
-              @click="filterModal = false"
-            /> -->
             </div>
           </transition>
           <AppButton
@@ -149,7 +214,7 @@
               />
             </div>
           </div>
-        </transition>
+        </transition> -->
         <AppTable
           v-if="job_parts.length > 0"
           :total="jobPartCount"
@@ -322,6 +387,7 @@ import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
+import AppFilter from "@/components/Base/AppFilter"
 
 export default {
   transition: {
@@ -336,6 +402,7 @@ export default {
     AppButton,
     AppLoading,
     AppInput,
+    AppFilter
   },
 
   data () {

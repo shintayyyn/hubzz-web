@@ -44,6 +44,7 @@
               <p>Unpaid Break:</p>
 
               <p class="pl-1">
+                <template v-if="!totalUnpaidBreakInMinutes">0</template>
                 {{ totalUnpaidBreakInMinutes | hoursMinutes }}
               </p>
             </div>
@@ -77,6 +78,16 @@
                 £ {{ hubzz_fee | currency }}
               </p>
             </div>
+
+            <div class="flex justify-between pb-2">
+              <p>
+                Hubzz Fee VAT
+              </p>
+              <p class="pl-1">
+                £ {{ hubzz_fee_taxed - hubzz_fee | currency }}
+              </p>
+            </div>
+
             <div class="flex justify-between pb-2 text-red-600">
               <p>
                 Hubzz Fee with VAT*
