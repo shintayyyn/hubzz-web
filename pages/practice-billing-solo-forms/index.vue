@@ -113,6 +113,18 @@
             border
           />
         </div>
+        
+        <div class="">
+          <AppInput
+            v-model="locum_user_name_includes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'locum_user_name_includes'"
+            :label="'Locum Name'"
+            nolabel
+            border
+          />
+        </div>
 
         <AppButton
           :label="'Apply'"
@@ -419,6 +431,7 @@ export default {
       ir35: null,
       invoice_number: null,
       jobPartNumberIncludes: null,
+      locum_user_name_includes: null,
       paid: null,
 
       payment_modal: false,
@@ -526,11 +539,14 @@ export default {
       let jobPartNumberIncludes
         = this.jobPartNumberIncludes === "" ? null : this.jobPartNumberIncludes
 
+      let locumName = this.locum_user_name_includes === "" ? null : this.locum_user_name_includes 
+
       if (
         isPaid === null
         && jobIr35 === null
         && invoiceNumber === null
         && jobPartNumberIncludes === null
+        && locumName === null
       ) {
         return true
       }
@@ -628,6 +644,7 @@ export default {
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
             practice_id: this.$auth.user.practice_id,
+            locum_user_name_includes: this.locum_user_name_includes
           },
         }),
         this.$axios.get("/api/v1/practice/locum-solo-forms", {
@@ -638,6 +655,7 @@ export default {
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
             practice_id: this.$auth.user.practice_id,
+            locum_user_name_includes: this.locum_user_name_includes,
             offset: 0,
             limit: 15,
           },
@@ -676,6 +694,7 @@ export default {
             paid: this.paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
+            locum_user_name_includes: this.locum_user_name_includes,
             practice_id: this.$auth.user.practice_id,
             offset: this.offset,
             limit: this.limit,
@@ -885,6 +904,7 @@ export default {
       this.paid = null
       this.invoice_number = null
       this.jobPartNumberIncludes = null
+      this.locum_user_name_includes = null
       this.filterJobParts()
     },
   },
