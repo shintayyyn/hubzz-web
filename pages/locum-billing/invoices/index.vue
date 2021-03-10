@@ -83,13 +83,86 @@
       </nuxt-link>
     </div>
 
+    <AppFilter :enableSearch="false" v-if="(!job_parts.length && isFiltered) || (!initialLoading && job_parts.length > 0) || (initialLoading && isFiltered)">
+      <template v-slot:extraButton>
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          customTheme="border"
+          @click="refreshInvoices"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="w-32">
+          <AppInput
+            v-model="job_ir35"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'job_ir35'"
+            :placeholder="'Inside ir35'"
+            :items="[{ label: 'All', value: '' }, { label: 'Yes', value: true }, { label: 'No', value: false }]"
+            nolabel
+            border
+          />
+        </div>
+
+        <div v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'" class="">
+          <AppInput
+            v-model="invoice_number"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'invoice_number'"
+            :label="'Invoice number'"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="">
+          <AppInput
+            v-model="job_part_number_includes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'job_part_number_includes'"
+            :label="'Job Part Number'"
+            nolabel
+            border
+          />
+        </div>
+
+        <div v-if="$route.query.status && ['approved'].includes($route.query.status.toLowerCase())" class="w-32">
+          <AppInput
+            v-model="is_paid"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'is_paid'"
+            :placeholder="'Paid'"
+            :items="[{ label: 'All', value: ''}, { label: 'Yes', value: true }, { label: 'No', value: false }]"
+            nolabel
+            border
+          />
+        </div>
+        <AppButton
+          class="mx-1"
+          :label="'Apply'"
+          @click="filterJobParts"
+        />
+        <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          customTheme="border hover:bg-gray-200"
+          @click="clearFilters"
+        />
+      </template>
+    </AppFilter>
+
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
 
       <div v-if="!initialLoading">
-        <div class="flex items-center">
+        <!-- <div class="flex items-center">
           <button  v-if="!['pension-form-b'].includes($route.query.status)" @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
@@ -172,7 +245,7 @@
             />
           </div>
         </div>
-        </transition>
+        </transition> -->
 
         <template
           v-if="(!$route.query.status || ($route.query.status && $route.query.status !== 'pension-form-b'))"
@@ -317,6 +390,7 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
+import AppFilter from "@/components/Base/AppFilter"
 export default {
   transition: {
     name: "fade",
@@ -329,6 +403,7 @@ export default {
     AppButton,
     AppConfirmationModal,
     AppTable,
+    AppFilter
   },
 
   data () {

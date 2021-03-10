@@ -60,6 +60,80 @@
         NHS Pensions Form B
       </nuxt-link>
     </div>
+    <template></template>
+
+    <AppFilter v-if="(!locumSoloForms.length && isFiltered) || (!initialLoading && locumSoloForms.length > 0) || (initialLoading && isFiltered)" :enableSearch="false">
+      <template v-slot:extraButton>
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          customTheme="border"
+          @click="refreshInvoices"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="w-32">
+          <AppInput
+            v-model="ir35"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'ir35'"
+            :placeholder="'Inside ir35'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="">
+          <AppInput
+            v-model="invoiceNumberIncludes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'invoiceNumberIncludes'"
+            :label="'Invoice number'"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="">
+          <AppInput
+            v-model="jobPartNumberIncludes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'jobPartNumberIncludes'"
+            :label="'Job Part number'"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="w-32">
+          <AppInput
+            v-model="paid"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'paid'"
+            :placeholder="'Paid'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+            nolabel
+            border
+          />
+        </div>
+        <AppButton
+          class="mx-1"
+          :label="'Apply'"
+          @click="filterJobParts"
+        />
+        <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          customTheme="border hover:bg-gray-200"
+          @click="clearFilters"
+        />
+      </template>
+    </AppFilter>
 
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
@@ -69,7 +143,7 @@
 
     <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
-        <div class="flex items-center">
+        <!-- <div class="flex items-center">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
@@ -146,7 +220,7 @@
             />
           </div>
         </div>
-       </transition>
+       </transition> -->
 
         <AppTable
           v-if="locumSoloForms.length > 0"
@@ -321,6 +395,7 @@ import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
 import AppDate from "@/components/Base/AppDate"
 import AppLoading from "@/components/Base/AppLoading"
+import AppFilter from "@/components/Base/AppFilter"
 
 export default {
   transition: {
@@ -334,6 +409,7 @@ export default {
     AppLoading,
     AppButton,
     AppTable,
+    AppFilter
   },
 
   data () {
