@@ -37,7 +37,7 @@
         </div>
 
         <div class="text-xs sm:text-sm mb-6">
-         <div class="px-1">
+          <div class="px-1">
             <div class="flex justify-between items-end mb-2">
               <p class="font-bold text-sm sm:text-md">
                 Schedule
@@ -45,39 +45,47 @@
             </div>
 
             <div class="hidden lg:flex font-bold text-xs">
-              <p class="w-1/6">
+              <p class="w-2/12">
                 DATE
               </p>
 
-              <p class="w-2/6 text-center">
+              <p class="w-3/12 text-center">
                 TIME
               </p>
 
-              <p class="w-1/6 text-center">
+              <p class="w-2/12 text-center">
                 SHIFT
               </p>
 
-              <p class="w-2/6 text-center">
+              <p class="w-3/12 text-center">
                 RATE
+              </p>
+
+              <p class="w-2/12 text-center">
+                BREAK
               </p>
             </div>
 
             <div class="overflow-y-auto" style="max-height: 205px;">
               <div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex pb-2">
-                <p class="lg:w-1/6">
+                <p class="lg:w-2/12">
                   {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
                 </p>
 
-                <p class="lg:w-2/6 lg:text-center">
+                <p class="lg:w-3/12 lg:text-center">
                   {{ sched.time_start }}-{{ sched.time_end }}
                 </p>
 
-                <p class="lg:w-1/6 lg:text-center">
+                <p class="lg:w-2/12 lg:text-center">
                   {{ sched.shift.name }}
                 </p>
 
-                <p class="lg:w-2/6 lg:text-center">
+                <p class="lg:w-3/12 lg:text-center">
                   £{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}
+                </p>
+
+                <p class="lg:w-2/12 lg:text-center">
+                  {{ sched.posted_break_formatted }}
                 </p>
               </div>
             </div>
