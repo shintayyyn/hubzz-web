@@ -110,6 +110,17 @@
             border
           />
         </div>
+        <div class="">
+          <AppInput
+            v-model="appointed_to_locum_user_name_includes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'appointed_to_locum_user_name_includes'"
+            :label="'Locum Name'"
+            nolabel
+            border
+          />
+        </div>
         <AppButton
           :label="'Apply'"
           class="mx-1"
@@ -426,6 +437,7 @@ export default {
       job_ir35: null,
       invoice_number: null,
       job_part_number_includes: null,
+      appointed_to_locum_user_name_includes: null,
       is_paid: null,
 
       payment_modal: false,
@@ -613,12 +625,17 @@ export default {
         = this.job_part_number_includes === ""
           ? null
           : this.job_part_number_includes
+      let locumName
+        = this.appointed_to_locum_user_name_includes === ""
+          ? null
+          : this.appointed_to_locum_user_name_includes
 
       if (
         isPaid === null
         && jobIr35 === null
         && invoiceNumber === null
         && jobPartNumberIncludes === null
+        && locumName === null
       ) {
         return true
       }
@@ -761,6 +778,7 @@ export default {
         locum_invoice_paid: this.is_paid,
         locum_invoice_number_includes: this.invoice_number,
         job_part_number_includes: this.job_part_number_includes,
+        appointed_to_locum_user_name_includes: this.appointed_to_locum_user_name_includes
         // practice_id: this.$auth.user.practice_id,
       }
 
@@ -838,6 +856,7 @@ export default {
         locum_invoice_paid: this.is_paid,
         locum_invoice_number_includes: this.invoice_number,
         job_part_number_includes: this.job_part_number_includes,
+        appointed_to_locum_user_name_includes: this.appointed_to_locum_user_name_includes
         // practice_id: this.$auth.user.practice_id,
       }
 
@@ -1073,6 +1092,7 @@ export default {
       this.is_paid = null
       this.invoice_number = null
       this.job_part_number_includes = null
+      this.appointed_to_locum_user_name_includes = null
       this.filterJobParts()
     },
   },
