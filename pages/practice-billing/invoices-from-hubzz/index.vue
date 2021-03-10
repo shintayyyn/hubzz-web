@@ -13,17 +13,28 @@
         <div class="">
           <AppInput
             v-model="params.invoice_number"
-            wrapperClass="mb-0"
+            wrapperClass="pr-1"
             :type="'text'"
             :name="'invoice_number'"
             :label="'Invoice number'"
             nolabel
             border
           />
+        </div>
+         <div class="">
+          <AppInput
+            v-model="params.job_part_number_includes"
+            wrapperClass="pr-1"
+            :type="'text'"
+            :name="'job_part_number_includes'"
+            :label="'Job Part Number'"
+            nolabel
+            border
+          />
         </div> 
         <AppButton
           :label="'Apply'"
-          class="mx-1"
+          class="mr-1"
           @click="filterInvoices"
         />
 
@@ -172,9 +183,10 @@ export default {
       // app table params
       params: {
         offset: 0,
-        limit: 5,
+        limit: 15,
         order_by: [],
         invoice_number: null,
+        job_part_number_includes: null
       },
       // app table column
       columns: [
@@ -190,6 +202,12 @@ export default {
           class: "text-left",
           sortable: true,
         },
+        // {
+        //   name: "Job Part Numbers",
+        //   dataIndex: "job_part_numbers",
+        //   class: "left",
+        //   sortable: true,
+        // },
         {
           name: "Issued",
           dataIndex: "date_created_in_gb_formatted",
@@ -223,7 +241,7 @@ export default {
       let invoiceNumber
         = this.params.invoice_number === "" ? null : this.params.invoice_number
 
-      if (invoiceNumber === null) {
+      if (invoiceNumber === null && [null, ''].includes(this.params.job_part_number_includes)) {
         return true
       }
       return false
@@ -233,7 +251,7 @@ export default {
     try {
       const params = {
         offset: 0,
-        limit: 5,
+        limit: 15,
       }
 
       const responseCount = await app.$axios.get(
@@ -284,7 +302,7 @@ export default {
     async filterInvoices () {
       this.current_page = 1
       this.params.offset = 0
-      this.params.limit = 5
+      this.params.limit = 15
       //   this.initialLoading = true
       //   this.isFiltered = true
       await this.getInvoicesCount(this.params)
@@ -293,9 +311,10 @@ export default {
     },
     clearFilters () {
       this.params.offset = 0
-      this.params.limit = 5
+      this.params.limit = 15
       this.params.order_by = []
       this.params.invoice_number = null
+      this.params.job_part_number_includes = null
       this.filterInvoices()
     },
     getPracticeInvoiceRealTime ({ id, }) {
