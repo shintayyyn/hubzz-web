@@ -1,6 +1,52 @@
 <template>
   <section class="relative my-2">
-    <div class="flex items-center">
+    <AppFilter :enableSearch="false" class="mt-4">
+      <template v-slot:extraButton>
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          customTheme="border"
+          @click="refreshInvoices"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="">
+          <AppInput
+            v-model="params.invoice_number"
+            wrapperClass="pr-1"
+            :type="'text'"
+            :name="'invoice_number'"
+            :label="'Invoice number'"
+            nolabel
+            border
+          />
+        </div>
+         <div class="">
+          <AppInput
+            v-model="params.job_part_number_includes"
+            wrapperClass="pr-1"
+            :type="'text'"
+            :name="'job_part_number_includes'"
+            :label="'Job Part Number'"
+            nolabel
+            border
+          />
+        </div> 
+        <AppButton
+          :label="'Apply'"
+          class="mr-1"
+          @click="filterInvoices"
+        />
+
+         <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          customTheme="border hover:bg-gray-200"
+          @click="clearFilters"
+        />
+      </template>
+    </AppFilter>
+    <!-- <div class="flex items-center">
       <button
         v-if="!['pension-form-b'].includes($route.query.status)"
         class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
@@ -23,12 +69,6 @@
           :in-style="'padding:5px 14px;margin-bottom:0'"
           @click="filterInvoices"
         />
-        <!-- <AppButton
-          class="mx-2 md:hidden"
-          :label="'Close'"
-          :in-style="'padding:5px 14px;margin-bottom:0'"
-          @click="filterModal = false"
-        /> -->
       </div>
       </transition>
     </div>
@@ -44,7 +84,7 @@
         />
       </div> 
     </div>
-    </transition>
+    </transition> -->
 
     <AppTable
       v-if="invoices.length > 0"
@@ -110,11 +150,13 @@
 import AppTable from "@/components/Base/AppTable"
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
+import AppFilter from "@/components/Base/AppFilter"
 export default {
   components: {
     AppTable,
     AppInput,
     AppButton,
+    AppFilter
   },
   transition: {
     name: "fade",
@@ -141,9 +183,10 @@ export default {
       // app table params
       params: {
         offset: 0,
-        limit: 5,
+        limit: 15,
         order_by: [],
         invoice_number: null,
+        job_part_number_includes: null
       },
       // app table column
       columns: [
@@ -152,11 +195,19 @@ export default {
           dataIndex: "practice.name",
           class: "text-left",
           sortable: true,
+          width: 250
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left",
+          sortable: true,
+          width: 150
+        },
+        {
+          name: "Job Part Numbers",
+          dataIndex: "job_part_numbers",
+          class: "left",
           sortable: true,
         },
         {
@@ -164,17 +215,20 @@ export default {
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         },
         {
           name: "Due Date",
           dataIndex: "due_date_in_gb_formatted",
           class: "text-center",
+          width: 150
         },
         {
           name: "£ Amount",
           dataIndex: "total_amount",
           class: "text-center currency",
           sortable: true,
+          width: 100
         },
         {
           name: "Payment Status",
@@ -183,6 +237,7 @@ export default {
           sortable: true,
           slot: true,
           slotName:"payment_status",
+          width: 150
         },
       ],
     }
@@ -192,7 +247,7 @@ export default {
       let invoiceNumber
         = this.params.invoice_number === "" ? null : this.params.invoice_number
 
-      if (invoiceNumber === null) {
+      if (invoiceNumber === null && [null, ''].includes(this.params.job_part_number_includes)) {
         return true
       }
       return false
@@ -202,7 +257,7 @@ export default {
     try {
       const params = {
         offset: 0,
-        limit: 5,
+        limit: 15,
       }
 
       const responseCount = await app.$axios.get(
@@ -253,7 +308,7 @@ export default {
     async filterInvoices () {
       this.current_page = 1
       this.params.offset = 0
-      this.params.limit = 5
+      this.params.limit = 15
       //   this.initialLoading = true
       //   this.isFiltered = true
       await this.getInvoicesCount(this.params)
@@ -262,9 +317,10 @@ export default {
     },
     clearFilters () {
       this.params.offset = 0
-      this.params.limit = 5
+      this.params.limit = 15
       this.params.order_by = []
       this.params.invoice_number = null
+      this.params.job_part_number_includes = null
       this.filterInvoices()
     },
     getPracticeInvoiceRealTime ({ id, }) {

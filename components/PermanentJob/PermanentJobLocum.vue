@@ -4,7 +4,7 @@
 		<div v-if="!user && loading" class="relative flex w-full" style="min-height:80px">
 			<AppLoading :loading="loading" spinner />
 		</div>
-		<div v-if="user && !loading" class="relative rounded-lg shadow-lg bg-white p-4 md:p-8 mt-4">
+		<div v-if="user && !loading" class="relative rounded-lg border bg-white p-4 mt-4">
 			<div class="flex flex-col">
 				<div class="flex flex-row justify-between">
 					<div class="flex flex-col w-full">
@@ -52,122 +52,139 @@
 					</transition>
 					<div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
 				</div>
-				<div class="body-info my-4">
-					<div class="font-bold text-sm sm:text-md">Headline</div>
-					<div
-						class="text-xs sm:text-sm mb-8"
-					>{{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}</div>
-					<div class="font-bold text-sm sm:text-md">Biography</div>
-					<div
-						class="text-xs sm:text-sm mb-8"
-					>{{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}</div>
-					<div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-					<div
-						class="text-xs sm:text-sm mb-8"
-					>{{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}</div>
-					<div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-					<div
-						class="text-xs sm:text-sm mb-8"
-					>{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>
-					<div class="font-bold text-sm sm:text-md">NHS Smart Card ID Number</div>
-					<div class="text-xs sm:text-sm mb-8">{{ user.locum_detail.nhs_smart_card_id_number }}</div>
-					<div class="font-bold text-sm sm:text-md">Special requirements</div>
-					<div class="text-xs sm:text-sm mb-8">{{ user.locum_detail.special_requirements }}</div>
-					<div class="font-bold text-sm sm:text-md">Preferred rates</div>
-					<div class="flex flex-col mb-8">
-						<div
-							v-for="item in user.locum_detail.rates"
-							:key="item.id"
-							class="flex flex-row flex-no-wrap mt-2"
-						>
-							<div class="text-xs sm:text-sm">{{ item.rate_type.name }}: £ {{ item.min }}</div>
-						</div>
-					</div>
-					<div class="font-bold text-sm sm:text-md">Specialty</div>
-					<div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-						<div
-							v-for="item in user.locum_detail.qualifications"
-							:key="item.id"
-							class="rounded-lg bg-yellow-500 p-2 m-1"
-						>{{ item.name }}</div>
-					</div>
-					<div class="font-bold text-sm sm:text-md">Clinical systems</div>
-					<div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-						<div
-							v-for="item in user.locum_detail.clinical_systems"
-							:key="item.id"
-							class="rounded-lg bg-yellow-500 p-2 m-1"
-						>{{ item.name }}</div>
-					</div>
-					<div class="font-bold text-sm sm:text-md">Languages</div>
-					<div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-						<div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
-						<div
-							v-for="item in user.locum_detail.spoken_languages"
-							:key="item.id"
-							class="rounded-lg bg-yellow-500 p-2 m-1"
-						>{{ item.name }}</div>
-					</div>
-					<div class="font-bold text-sm sm:text-md">Compliance documents</div>
-					<div class="flex flex-col mb-8">
-						<div
-							v-for="item in mandatory"
-							:key="item.id"
-							class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
-						>
-							<div class="w-5 h-5">
-								<svgicon name="cloud-download" height="24" width="24" />
+				<div class="body-info flex my-4">
+					<div class="w-1/2 pr-1">
+						<div class="font-bold text-sm sm:text-md">Headline</div>
+						<div class="text-xs sm:text-sm mb-6"
+						>{{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}</div>
+						<div class="font-bold text-sm sm:text-md">Biography</div>
+						<div class="text-xs sm:text-sm mb-6"
+						>{{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}</div>
+						<!-- <div class="flex">
+							<div class="w-2/3 flex flex-wrap">
+								<div class="w-1/2"> -->
+									<div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
+									<div
+										class="text-xs sm:text-sm mb-6"
+									>{{ user && user.locum_detail && user.locum_detail.gmc_or_nmc_number ? user.locum_detail.gmc_or_nmc_number.number : 'N/A' }}</div>
+								<!-- </div>
+								<div class="w-1/2"> -->
+								<div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
+								<div
+									class="text-xs sm:text-sm mb-6"
+								>{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>
+								<!-- </div>
+								<div class="w-1/2"> -->
+									<div class="font-bold text-sm sm:text-md">NHS Smart Card ID Number</div>
+									<div class="text-xs sm:text-sm mb-6">{{ user.locum_detail.nhs_smart_card_id_number }}</div>
+								<!-- </div>
+								<div class="w-1/2"> -->
+									<div class="font-bold text-sm sm:text-md">Special requirements</div>
+									<div class="text-xs sm:text-sm mb-6">{{ user.locum_detail.special_requirements }}</div>
+									<!--	</div>
 							</div>
-							<a
-								:href="item.file.url"
-								:download="item.file.filename"
-								class="whitespace-no-wrap leading-loose mx-2 text-xs"
-								@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-							>{{ item.compliance_document.name }}</a>
-							<!-- <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div> -->
-						</div>
-						<template v-if="mandatory && !mandatory.length">
-							<span class="text-sm">(none)</span>
-						</template>
+							<div class="w-1/3"> -->
+								<div class="font-bold text-sm sm:text-md">Preferred rates</div>
+								<div class="flex flex-col mb-6">
+									<div
+										v-for="item in user.locum_detail.rates"
+										:key="item.id"
+										class="flex flex-row flex-no-wrap mt-2"
+									>
+										<div class="text-xs sm:text-sm">{{ item.rate_type.name }}: £ {{ item.min }}</div>
+									</div>
+								</div>
+							<!-- </div>
+						</div> -->
 					</div>
-					<div class="font-bold text-sm sm:text-md">Other documents</div>
-					<div class="flex flex-col mb-8">
-						<div
-							v-for="item in optional"
-							:key="item.id"
-							class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
-						>
-							<div class="w-5 h-5">
-								<svgicon name="cloud-download" height="24" width="24" />
+					<!-- RIGHT -->
+					<div class="w-1/2 pl-1">
+						<div class="font-bold text-sm sm:text-md">Specialty</div>
+						<div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+							<div
+								v-for="item in user.locum_detail.qualifications"
+								:key="item.id"
+								class="rounded-lg bg-sunglow px-2 py-1 m-1"
+							>{{ item.name }}</div>
+						</div>
+						<div class="font-bold text-sm sm:text-md">Clinical systems</div>
+						<div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+							<div
+								v-for="item in user.locum_detail.clinical_systems"
+								:key="item.id"
+								class="rounded-lg bg-sunglow px-2 py-1 m-1"
+							>{{ item.name }}</div>
+						</div>
+						<div class="font-bold text-sm sm:text-md">Languages</div>
+						<div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+							<div class="rounded-lg bg-sunglow px-2 py-1 m-1">English</div>
+							<div
+								v-for="item in user.locum_detail.spoken_languages"
+								:key="item.id"
+								class="rounded-lg bg-sunglow px-2 py-1 m-1"
+							>{{ item.name }}</div>
+						</div>
+						<div class="font-bold text-sm sm:text-md">Compliance documents</div>
+						<div class="flex flex-col mb-6">
+							<div
+								v-for="item in mandatory"
+								:key="item.id"
+								class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
+							>
+								<div class="w-5 h-5">
+									<svgicon name="cloud-download" height="24" width="24" />
+								</div>
+								<a
+									:href="item.file.url"
+									:download="item.file.filename"
+									class="whitespace-no-wrap leading-loose mx-2 text-xs"
+									@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+								>{{ item.compliance_document.name }}</a>
+								<!-- <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div> -->
 							</div>
-							<a
-								:href="item.file.url"
-								:download="item.file.filename"
-								class="whitespace-no-wrap leading-loose mx-2 text-xs"
-								@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-							>{{ item.compliance_document.name }}</a>
-							<!-- <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div> -->
+							<template v-if="mandatory && !mandatory.length">
+								<span class="text-sm">(none)</span>
+							</template>
 						</div>
-						<template v-if="optional && !optional.length">
-							<span class="text-sm">(none)</span>
-						</template>
-					</div>
-					<div class="font-bold text-sm sm:text-md">Referees</div>
-					<div v-if="user.locum_detail.referees.length > 0">
+						<div class="font-bold text-sm sm:text-md">Other documents</div>
+						<div class="flex flex-col mb-6">
+							<div
+								v-for="item in optional"
+								:key="item.id"
+								class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
+							>
+								<div class="w-5 h-5">
+									<svgicon name="cloud-download" height="24" width="24" />
+								</div>
+								<a
+									:href="item.file.url"
+									:download="item.file.filename"
+									class="whitespace-no-wrap leading-loose mx-2 text-xs"
+									@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+								>{{ item.compliance_document.name }}</a>
+								<!-- <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div> -->
+							</div>
+							<template v-if="optional && !optional.length">
+								<span class="text-sm">(none)</span>
+							</template>
+						</div>
+						<div class="font-bold text-sm sm:text-md">Referees</div>
+						<div v-if="user.locum_detail.referees.length > 0">
+							<div
+								v-for="item in user.locum_detail.referees"
+								:key="item.id"
+								:class="item && item.name ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
+							>
+								<div class="text-xs sm:text-sm">{{ item ? item.name:null }}</div>
+								<div class="text-xs sm:text-sm">{{ item ? item.phone_number:null }}</div>
+								<div class="text-xs sm:text-sm">{{ item ? item.email:null }}</div>
+							</div>
+						</div>
 						<div
-							v-for="item in user.locum_detail.referees"
-							:key="item.id"
-							:class="item && item.name ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
-						>
-							<div class="text-xs sm:text-sm">{{ item ? item.name:null }}</div>
-							<div class="text-xs sm:text-sm">{{ item ? item.phone_number:null }}</div>
-							<div class="text-xs sm:text-sm">{{ item ? item.email:null }}</div>
-						</div>
+							v-if="!user.locum_detail.referees.map(item => item.name !== null).includes(true)"
+							class="text-xs md:text-sm"
+						>(none)</div>
 					</div>
-					<div
-						v-if="!user.locum_detail.referees.map(item => item.name !== null).includes(true)"
-						class="text-xs md:text-sm"
-					>(none)</div>
 				</div>
 			</div>
 		</div>

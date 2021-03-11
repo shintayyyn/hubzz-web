@@ -69,7 +69,6 @@
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
           @click="refreshInvoices"
         />
 

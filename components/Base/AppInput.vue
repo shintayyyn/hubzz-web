@@ -162,7 +162,7 @@
                     :value="value"
                     :type="type"
                     :placeholder="label && nolabel ? label : placeholder"
-                    class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+                    class="focus:border-yellow-400 focus:outline-none p-1 font-bold text-xs w-full shadow-none"
                     :class="[error ? 'border-red-500' : '', inClass, required && !label ? 'required-placeholder' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
                     :style="inStyle"
                     :checked="value"

@@ -54,6 +54,93 @@
       </nuxt-link>
     </div>
 
+    <AppFilter :enableSearch="false" class="mt-4">
+      <template v-slot:extraButton>
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          customTheme="border"
+          @click="refreshInvoices"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="w-32">
+            <AppInput
+              v-model="ir35"
+              :wrapperClass="'px-1'"
+              :type="'select'"
+              :name="'ir35'"
+              :placeholder="'Inside ir35'"
+              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+              nolabel
+              border
+            />
+        </div>
+
+        <div class="">
+          <AppInput
+            v-model="invoice_number"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'invoice_number'"
+            :label="'Invoice number'"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="">
+          <AppInput
+            v-model="jobPartNumberIncludes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'jobPartNumberIncludes'"
+            :label="'Job Part number'"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="w-32">
+          <AppInput
+            v-model="paid"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'paid'"
+            :placeholder="'Paid'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+            nolabel
+            border
+          />
+        </div>
+
+        <div class="">
+          <AppInput
+            v-model="locum_user_name_includes"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :name="'locum_user_name_includes'"
+            :label="'Locum Name'"
+            nolabel
+            border
+          />
+        </div>
+       
+        <AppButton
+          :label="'Apply'"
+          class="mx-1"
+          @click="filterJobParts"
+        />
+
+         <AppButton
+          :disabled="disabledClearFilter"
+          :label="'Clear'"
+          customTheme="border hover:bg-gray-200"
+          @click="clearFilters"
+        />
+      </template>
+    </AppFilter>
+
     <transition name="fade" mode="out-in">
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -62,7 +149,7 @@
 
     <transition name="fade" mode="out-in">
       <div v-if="!initialLoading">
-        <div class="flex items-center">
+        <!-- <div class="flex items-center">
           <button
             class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
             @click="filterModal = !filterModal"
@@ -86,13 +173,6 @@
               :in-style="'padding:5px 14px;margin-bottom:0'"
               @click="filterJobParts"
             />
-
-            <!-- <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :in-style="'padding:5px 14px;margin-bottom:0'"
-              @click="filterModal = false"
-            /> -->
           </div>
           </transition>
 
@@ -149,7 +229,7 @@
             />
           </div>
         </div>
-        </transition>
+        </transition> -->
 
         <AppTable
           v-if="locumFormAs.length > 0"
@@ -331,6 +411,7 @@ import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
+import AppFilter from "@/components/Base/AppFilter"
 
 export default {
   transition: {
@@ -344,6 +425,7 @@ export default {
     AppButton,
     AppLoading,
     AppInput,
+    AppFilter
   },
 
   data () {
@@ -367,6 +449,7 @@ export default {
       ir35: null,
       invoice_number: null,
       jobPartNumberIncludes: null,
+      locum_user_name_includes: null,
       paid: null,
 
       payment_modal: false,
@@ -483,11 +566,14 @@ export default {
       let jobPartNumberIncludes
         = this.jobPartNumberIncludes === "" ? null : this.jobPartNumberIncludes
 
+      let locumName = this.locum_user_name_includes === "" ? null : this.locum_user_name_includes
+
       if (
         isPaid === null
         && jobIr35 === null
         && invoiceNumber === null
         && jobPartNumberIncludes === null
+        && locumName === null
       ) {
         return true
       }
@@ -598,6 +684,7 @@ export default {
             paid: this.paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
+            locum_user_name_includes: this.locum_user_name_includes,
             practice_id: this.$auth.user.practice_id,
           },
         }),
@@ -608,6 +695,7 @@ export default {
             paid: this.paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
+            locum_user_name_includes: this.locum_user_name_includes,
             practice_id: this.$auth.user.practice_id,
             offset: 0,
             limit: 15,
@@ -647,6 +735,7 @@ export default {
             paid: this.paid,
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
+            locum_user_name_includes: this.locum_user_name_includes,
             practice_id: this.$auth.user.practice_id,
             offset: this.offset,
             limit: this.limit,
@@ -887,6 +976,7 @@ export default {
       this.paid = null
       this.invoice_number = null
       this.jobPartNumberIncludes = null
+      this.locum_user_name_includes = null
       this.filterJobParts()
     },
   },

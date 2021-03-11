@@ -56,7 +56,7 @@
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border-b-4 border-sunglow'	: 'text-gray-600'"
         >
-          Surgery Permanent Jobs
+          Surgery Salaried Roles
         </nuxt-link>
 
         <nuxt-link

@@ -151,7 +151,7 @@ export default {
     AppButton,
     AppDate,
     AppInput,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -196,16 +196,16 @@ export default {
       links: [
         {
           title: 'Billing',
-          url: '/practice-billing'
+          url: '/practice-billing',
         }, 
         {
           title: 'Reports',
-          url: '/practice-billing-reports'
+          url: '/practice-billing-reports',
         },
         {
-          title: 'Rep-010'
-        }
-      ]
+          title: 'Rep-010',
+        },
+      ],
     }
   },
 
@@ -421,12 +421,12 @@ export default {
         date_end: this.dateEnd ? this.dateEnd : undefined,
       }
       Promise.all([
-        this.$axios.get('/api/v1/admin/reports/practice-invoices/count', {
+        this.$axios.get('/api/v1/practice/reports/practice-invoices/count', {
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
-        this.$axios.get('/api/v1/admin/reports/practice-invoices', {
+        this.$axios.get('/api/v1/practice/reports/practice-invoices', {
           params: {
             ...params,
             order_by: this.orderBy,
@@ -464,7 +464,7 @@ export default {
         offset: 0,
       }
 
-      this.$axios.post('/api/v1/admin/reports/practice-invoices/generate-key', {
+      this.$axios.post('/api/v1/practice/reports/practice-invoices/generate-key', {
         filename: `practiceInvoices.csv`,
       }, {
         params: {
@@ -474,7 +474,7 @@ export default {
       }).then((responses) => {
         const token = responses.data.data.token
 
-        window.open(`${process.env.API_URL}/api/v1/admin/reports/practice-invoices/csv?token=${token}`)
+        window.open(`${process.env.API_URL}/api/v1/practice/reports/practice-invoices/csv?token=${token}`)
       }).catch((err) => {
         console.log('err', err)
         this.$nuxt.error(err.response ? err.response.data : err)
