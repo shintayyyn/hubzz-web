@@ -195,35 +195,40 @@ export default {
           dataIndex: "practice.name",
           class: "text-left",
           sortable: true,
+          width: 250
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left",
           sortable: true,
+          width: 150
         },
-        // {
-        //   name: "Job Part Numbers",
-        //   dataIndex: "job_part_numbers",
-        //   class: "left",
-        //   sortable: true,
-        // },
+        {
+          name: "Job Part Numbers",
+          dataIndex: "job_part_numbers",
+          class: "left",
+          sortable: true,
+        },
         {
           name: "Issued",
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
           sortable: true,
+          width: 150
         },
         {
           name: "Due Date",
           dataIndex: "due_date_in_gb_formatted",
           class: "text-center",
+          width: 150
         },
         {
           name: "£ Amount",
           dataIndex: "total_amount",
           class: "text-center currency",
           sortable: true,
+          width: 100
         },
         {
           name: "Payment Status",
@@ -232,6 +237,7 @@ export default {
           sortable: true,
           slot: true,
           slotName:"payment_status",
+          width: 150
         },
       ],
     }

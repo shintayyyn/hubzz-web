@@ -171,6 +171,8 @@ export default {
 
       this.form.schedules = []
 
+      console.log("schedule", schedule)
+
       schedule.forEach((sched, scheduleIndex) => {
         if (sched.shifts && sched.shifts.length) {
           sched.shifts.forEach((shift, shiftIndex) => {
