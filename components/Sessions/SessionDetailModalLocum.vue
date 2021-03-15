@@ -62,30 +62,29 @@
           </transition>
           <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
         </div>
-        <div class="body-info flex flex-col md:flex-row">
+        <div class="body-info flex flex-wrap">
+          <div class="w-full px-1">
+            <div class="font-bold text-sm sm:text-md">
+              Headline
+            </div>
+            <div
+              class="text-xs sm:text-sm mb-6"
+            >
+              {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
+            </div>
+          </div>
+
+          <div class="w-full px-1">
+            <div class="font-bold text-sm sm:text-md">
+              Biography
+            </div>
+            <div
+              class="text-xs sm:text-sm mb-6"
+            >
+              {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
+            </div>
+          </div>
           <div class="w-full md:w-1/2 px-1">
-            <div>
-              <div class="font-bold text-sm sm:text-md">
-                Headline
-              </div>
-              <div
-                class="text-xs sm:text-sm mb-6"
-              >
-                {{ user.locum_detail && user.locum_detail.headline ? user.locum_detail.headline : '(none)' }}
-              </div>
-            </div>
-
-            <div>
-              <div class="font-bold text-sm sm:text-md">
-                Biography
-              </div>
-              <div
-                class="text-xs sm:text-sm mb-6"
-              >
-                {{ user.locum_detail && user.locum_detail.short_biography ? user.locum_detail.short_biography : '(none)' }}
-              </div>
-            </div>
-
             <div>
               <div
                 v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
