@@ -66,7 +66,7 @@
 							>{{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}</div>
 						</div>
 
-						<div class="font-bold text-sm sm:text-md">Specialty</div>
+						<div class="font-bold text-sm sm:text-md">Speciality</div>
 
 						<div class="text-xs sm:text-sm mb-4 flex flex-row flex-wrap">
 							<div

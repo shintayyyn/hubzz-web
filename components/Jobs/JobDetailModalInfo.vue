@@ -255,7 +255,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Specialty
+          Speciality
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">

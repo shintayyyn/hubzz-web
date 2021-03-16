@@ -301,12 +301,12 @@ export default {
 
   methods: {
     favorite () {
-      this.confirmationText = "Add this Practice to Favorites?"
+      this.confirmationText = "Add this Practice to Favourites?"
       this.confirmationModal = true
     },
 
     unfavorite () {
-      this.confirmationText = "Remove this Practice to Favorites?"
+      this.confirmationText = "Remove this Practice to Favourites?"
       this.confirmationModal = true
     },
 

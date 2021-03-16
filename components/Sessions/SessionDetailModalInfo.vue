@@ -258,7 +258,7 @@
 
         <template v-if="job.favorite_first && job.favorite_only">
           <div class="font-bold text-sm sm:text-md">
-            Only Favorite Locum will be notified until this date
+            Only Favourite Locum will be notified until this date
           </div>
 
           <div v-if="job.favorite_first && job.favorite_only" class="text-xs sm:text-sm mb-6">
@@ -269,7 +269,7 @@
 
         <template v-if="!job.favorite_first && job.favorite_only">
           <div class="font-bold text-sm sm:text-md mb-8">
-            This Job is available for Favorite Locum only
+            This Job is available for Favourite Locum only
           </div>
         </template>
 
@@ -289,7 +289,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Specialty
+          Speciality
         </div>
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">

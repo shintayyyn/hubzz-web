@@ -189,7 +189,7 @@
           </div>
           <div class="w-full md:w-1/2 px-1">
             <div class="font-bold text-sm sm:text-md">
-              Specialty
+              Speciality
             </div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
               <div

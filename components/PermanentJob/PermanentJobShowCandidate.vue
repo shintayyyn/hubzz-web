@@ -129,7 +129,7 @@
             <div
               class="text-xs sm:text-sm mb-4 md:mb-8"
 						>{{ user && user.locum_detail && user.locum_detail.mpl_or_npl_number ? user.locum_detail.mpl_or_npl_number.number : 'N/A' }}</div>-->
-						<div class="font-bold text-sm sm:text-md">Specialty</div>
+						<div class="font-bold text-sm sm:text-md">Speciality</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div
 								v-for="item in user.locum_detail.qualifications"

@@ -41,37 +41,6 @@
           </div>
         </div>
       </div>
-      <!--  <div class="w-2/3 py-1 sm:w-1/3">
-          <div
-            class="font-bold text-gray-800"
-          >
-            {{ $store.state.calendar.months[selectedMonth] }} {{ selectedYear }}
-          </div>
-        </div>
-
-        <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
-          <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('previous')">
-            <svgicon name="arrow-up" class="fill-current" height="29" width="29" />
-          </span>
-
-          <span class="cursor-pointer mx-2 text-gray-500" @click="adjustMonth('next')">
-            <svgicon name="down" class="fill-current" height="16" width="16" />
-          </span>
-        </div> -->
-
-      <!-- <div class="w-full text-right py-1 sm:w-1/3">
-          <span
-            class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-            :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
-            @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
-          >Month</span>
-
-          <span
-            class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-            :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
-            @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
-          >Week</span>
-        </div> -->
 
       <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
         <div class="w-full text-center text-gray-500 font-bold">
@@ -414,13 +383,6 @@
     </div>
 
     <span class="mt-4">
-      <!-- <svgicon
-        name="info"
-        width="16"
-        height="16"
-        class="fill-current cursor-pointer hover:text-gray-700"
-        @click="legendsModal=true"
-      /> -->
       <span class="bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white" @click="legendsModal=true">i</span>
     </span>
 

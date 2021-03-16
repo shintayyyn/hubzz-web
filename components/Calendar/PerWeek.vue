@@ -39,52 +39,7 @@
             >Week</span>
           </div>
         </div>
-      </div>
-    <!-- <div class="flex flex-row flex-wrap mx-1">
-      <div class="w-2/3 py-1 sm:w-1/3">
-        <div class="flex flex-col">
-          <div v-if="showRefresh" class="flex flex-row flex-wrap justify-between mt-1">
-            <AppButton
-              :label="'Refresh'"
-              :in-style="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-              @click="refreshJobs"
-            />
-          </div>
-
-          <div
-            class="text-xs sm:text-sm"
-          >
-            {{ $moment(daysInWeek[0].date).format('MMM') }} {{ $moment(daysInWeek[0].date).format('YYYY') }} - {{ $moment(daysInWeek[6].date).format('MMM') }} {{ $moment(daysInWeek[6].date).format('YYYY') }}
-          </div>
-        </div>
-      </div>
-
-      <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
-        <span class="cursor-pointer" @click="adjustWeek('previous')">
-          <svgicon name="arrow-left" height="12" width="12" />
-        </span>
-
-        <span class="mx-4" />
-
-        <span class="cursor-pointer" @click="adjustWeek('next')">
-          <svgicon name="arrow-right" height="12" width="12" />
-        </span>
-      </div>
-
-      <div class="w-full py-1 text-right sm:w-1/3">
-        <span
-          class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-          :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
-          @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
-        >Month</span>
-
-        <span
-          class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-          :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
-          @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
-        >Week</span>
-      </div>
-    </div> -->
+    </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
       <div class="w-full text-center text-gray-500 font-bold" style="min-width: 60px" />
@@ -603,6 +558,88 @@
       </div>
     </template>
 
+     <span class="mt-4">
+      <span class="bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white" @click="legendsModal=true">i</span>
+    </span>
+
+    <transition name="fade">
+      <div v-if="legendsModal" class="message-modal z-50">
+        <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
+          <p class="flex items-center justify-between flex-no-wrap font-bold">
+            <span>Legend</span>
+
+            <span class="cursor-pointer hover:text-gray-600" @click="legendsModal=false">
+              <svgicon name="cancel" width="12" height="12" class="fill-current" />
+            </span>
+          </p>
+
+          <div class="mt-2">
+            <p>Job Status</p>
+
+            <div class="flex items-center">
+              <span class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+              <p class="ml-2">
+                Allocated Jobs
+              </p>
+            </div>
+
+            <div class="flex items-center">
+              <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+              <p class="ml-2">
+                Applied Jobs
+              </p>
+            </div>
+
+            <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
+              <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+              <p class="ml-2">
+                Unfilled Jobs, Withdrawn Jobs
+              </p>
+            </div>
+
+            <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
+              <span class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+              <p class="ml-2">
+                Live Jobs
+              </p>
+            </div>
+
+            <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+              <span class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+              <p class="ml-2">
+                Ongoing Private Jobs
+              </p>
+            </div>
+
+            <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+              <span>
+                <svgicon name="pushpin" width="17" height="17" class="fill-current text-blue-500 -mt-3" />
+              </span>
+
+              <p class="ml-2">
+                For Interview Permanent Jobs
+              </p>
+            </div>
+
+            <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+              <span class="bg-red-400 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+              <p class="ml-2">
+                Not Availabile
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <div v-if="legendsModal" class="shield" @click="legendsModal=false" />
+
     <AppLoading :loading="$store.state.calendar.loading" />
   </section>
 </template>
@@ -620,6 +657,7 @@ export default {
   data () {
     return {
       showRefresh: false,
+      legendsModal: false,
       firstDayOfTheWeek: null,
       lastDayOfTheWeek: null,
     }
@@ -1268,3 +1306,19 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.message-modal {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 60;
+}
+
+@media (min-width: 768px) {
+	.message-modal {
+		min-width: 550px;
+	}
+}
+</style>

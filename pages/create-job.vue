@@ -253,6 +253,7 @@
                         :placeholder="'Report to'"
                         :error="formError.find(item => item.field === 'report_to')"
                         required
+                        nolabel
                         @blur="CheckEmptyField(form.report_to,'report_to')"
                       />
 
@@ -263,6 +264,7 @@
                         :placeholder="'Email'"
                         :error="formError.find(item => item.field === 'email')"
                         required
+                        nolabel
                         @blur="CheckEmptyField(form.email,'email')"
                       />
 
@@ -273,6 +275,7 @@
                         :placeholder="'Number of session patients'"
                         :error="formError.find(item => item.field === 'number_of_patients')"
                         required
+                        nolabel
                         :limit="4"
                         @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
                       />
@@ -284,6 +287,7 @@
                         :placeholder="'Duration per patient (Hourly)'"
                         :error="formError.find(item => item.field === 'duration_for_each_appointment')"
                         required
+                        nolabel
                         :limit="4"
                         @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
                       />
@@ -376,7 +380,7 @@
                       <AppFilterSearch
                         v-model="form.specialty"
                         :name="'specialty'"
-                        :placeholder="'Choose Specialty'"
+                        :placeholder="'Choose Speciality'"
                         :url="'/api/v1/qualifications'"
                         :professionCategoryId="selectedProfession && selectedProfession.profession_category
                           ? selectedProfession.profession_category.id.toString()
@@ -2031,29 +2035,6 @@ export default {
       }
     },
 
-    // getListofDays (days) {
-    //   // if (days.includes(6) && days.length > 1) {
-    //   //   this.show_saturday = true
-    //   //   this.form.include_saturday = true
-    //   // } else if (days.includes(6) && days.length === 1) {
-    //   //   this.show_saturday = false
-    //   //   this.form.include_saturday = true
-    //   // } else if (!days.includes(6)) {
-    //   //   this.show_saturday = false
-    //   //   this.form.include_saturday = false
-    //   // }
-    //   // if (days.includes(0) && days.length > 1) {
-    //   //   this.show_sunday = true
-    //   //   this.form.include_sunday = true
-    //   // } else if (days.includes(0) && days.length === 1) {
-    //   //   this.show_sunday = false
-    //   //   this.form.include_sunday = true
-    //   // } else if (!days.includes(0)) {
-    //   //   this.show_sunday = false
-    //   //   this.form.include_sunday = false
-    //   // }
-    // },
-
     close () {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
       this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false)
@@ -2379,10 +2360,6 @@ export default {
         console.log("errors", this.formError)
 
         this.toPublish = false
-
-        this.$nextTick(() => {
-          //this.$refs.modalContainer.scrollTop = 0
-        })
       }
     },
   },

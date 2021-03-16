@@ -19,7 +19,7 @@
 
     <div v-else class="relative rounded-lg border p-4">
       <AppInput v-model="form.email" :type="'multiemail'" :name="'email'" :label="`Email addresses to practices`"
-                :placeholder="''" :info="'Seperate with commas'" :error="formError.find(error => error.field === 'emails')"
+                :placeholder="''" :info="'Separate with commas'" :error="formError.find(error => error.field === 'emails')"
       />
       <div class="flex justify-start mt-8">
         <div class="text-xs sm:text-sm">
