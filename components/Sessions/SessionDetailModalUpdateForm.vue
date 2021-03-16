@@ -552,7 +552,7 @@
           <AppFilterSearch
             v-model="form.qualification_id"
             :name="'qualification_id'"
-            :label="'Specialty'"
+            :label="'Speciality'"
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'qualification_id')"
             :info="'Choose at least one qualification'"

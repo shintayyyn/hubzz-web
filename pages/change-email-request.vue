@@ -31,7 +31,7 @@
         </div>
 
         <div class="flex w-full justify-center xl:justify-start">
-          <div class="md:mx-4 flex flex-col p-2 md:p-4 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+          <div class="md:mx-4 flex flex-col p-2 md:p-4 m-1 rounded-lg border" style="flex: 0 1 600px;">
             <form class="w-full">
               <AppInput
                 v-model="memorableWordCategoryId"
@@ -106,19 +106,26 @@
           </div>
         </div>
 
-        <button
+        <div class="flex w-full justify-center xl:justify-start mt-3">
+          <div class="flex md:mx-4 justify-center" style="flex: 0 1 600px;">
+            <AppButton label="Submit" @click="submit" />
+          </div>
+        </div>
+        <!-- <button
           class="rounded-lg bg-yellow-500 shadow-md py-2 px-4 mt-3 font-bold md:text-xl focus:outline-none hover:text-white transition-hover"
           @click="submit"
         >
           Submit
-        </button>
+        </button> -->
       </div>
+     
     </div>
   </section>
 </template>
 
 <script>
 import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
 import AppDate from "@/components/Base/AppDate"
 
 export default {
@@ -126,6 +133,7 @@ export default {
   components: {
     AppInput,
     AppDate,
+    AppButton
   },
 
   layout: 'auth',

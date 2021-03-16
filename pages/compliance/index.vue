@@ -84,7 +84,7 @@
 				<div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ</div>
 				<div
 					class="text-sm font-hairline italic"
-				>(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)</div>
+				>(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are accepted)</div>
 			</div>
 
 			<div class="mt-4 overflow-x-auto">
@@ -328,7 +328,7 @@
 
 				<div
 					class="text-sm font-hairline italic"
-				>(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)</div>
+				>(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are accepted)</div>
 			</div>
 
 			<div class="mt-4 overflow-x-auto">

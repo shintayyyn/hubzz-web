@@ -99,7 +99,7 @@
 					</div>
 					<!-- RIGHT -->
 					<div class="w-1/2 pl-1">
-						<div class="font-bold text-sm sm:text-md">Specialty</div>
+						<div class="font-bold text-sm sm:text-md">Speciality</div>
 						<div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
 							<div
 								v-for="item in user.locum_detail.qualifications"

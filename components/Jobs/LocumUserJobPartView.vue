@@ -323,12 +323,12 @@ export default {
 
   methods: {
     favorite () {
-      this.confirmation_text = "Add this Practice to Favorites?"
+      this.confirmation_text = "Add this Practice to Favourites?"
       this.confirmation_modal = true
     },
 
     unfavorite () {
-      this.confirmation_text = "Remove this Practice to Favorites?"
+      this.confirmation_text = "Remove this Practice to Favourites?"
       this.confirmation_modal = true
     },
 

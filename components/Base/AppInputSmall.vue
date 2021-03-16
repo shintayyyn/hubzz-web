@@ -379,7 +379,7 @@
         <div class="relative flex flex-row flex-wrap justify-between">
           <div class="flex flex-wrap justify-start">
             <label :for="name" class="text-xs sm:text-sm py-1">{{ label }}</label>
-            <span class="ml-2 bg-gray-300 rounded px-4 py-1 text-xs">Seperate with commas</span>
+            <span class="ml-2 bg-gray-300 rounded px-4 py-1 text-xs">Separate with commas</span>
           </div>
           <transition name="fade">
             <div

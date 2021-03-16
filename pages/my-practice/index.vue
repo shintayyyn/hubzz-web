@@ -7,7 +7,7 @@
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
         :class="(!$route.query.status && $route.name.includes('my-practice-index-platform')) || ($route.query.status && $route.query.status.toLowerCase() === 'favorite') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
       >
-        Favorites
+        Favourites
       </nuxt-link>
       
       <nuxt-link
