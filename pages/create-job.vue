@@ -129,6 +129,7 @@
                       :error="formError.find(item => item.field === 'practice_id')"
                       :items="practice_lists"
                       class="px-2"
+                      required
                       @blur="CheckEmptyField(form.practice_id, 'practice_id')"
                     />
                   </div>
@@ -253,7 +254,6 @@
                         :placeholder="'Report to'"
                         :error="formError.find(item => item.field === 'report_to')"
                         required
-                        nolabel
                         @blur="CheckEmptyField(form.report_to,'report_to')"
                       />
 
@@ -264,7 +264,6 @@
                         :placeholder="'Email'"
                         :error="formError.find(item => item.field === 'email')"
                         required
-                        nolabel
                         @blur="CheckEmptyField(form.email,'email')"
                       />
 
@@ -275,7 +274,6 @@
                         :placeholder="'Number of session patients'"
                         :error="formError.find(item => item.field === 'number_of_patients')"
                         required
-                        nolabel
                         :limit="4"
                         @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
                       />
@@ -287,7 +285,6 @@
                         :placeholder="'Duration per patient (Hourly)'"
                         :error="formError.find(item => item.field === 'duration_for_each_appointment')"
                         required
-                        nolabel
                         :limit="4"
                         @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
                       />

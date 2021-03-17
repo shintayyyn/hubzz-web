@@ -23,6 +23,7 @@
 							:error="formError.find(item => item.field === 'practice_id')"
 							:items="practice_lists"
 							@blur="CheckEmptyField(form.practice_id, 'practice_id')"
+							required
 						/>
 					</div>
 					<h4 class="font-bold pt-4">Criteria</h4>
@@ -36,6 +37,7 @@
 							:error="formError.find(item => item.field === 'profession_id')"
 							:items="professions"
 							@blur="CheckEmptyField(form.profession_id, 'profession_id')"
+							required
 						/>
 					</div>
 					<div class="bg-white rounded-lg  border p-4 mt-4">
@@ -74,6 +76,7 @@
 							:start-date="$moment(form.date_posted).add(1, 'days').format('YYYY-MM-DD')"
 							:error="formError.find(item => item.field === 'date_closing')"
 							@blur="CheckEmptyField(form.date_closing, 'date_closing')"
+							required
 						/>
 					</div>
 				</div>
@@ -97,8 +100,9 @@
 							:label="'Title'"
 							:error="formError.find(item => item.field === 'title')"
 							@blur="CheckEmptyField(form.title, 'title')"
+							required
 						/>
-						<p class="text-sm">Description</p>
+						<p class="text-xs">Description<span class="text-red-500">*</span></p>
 						<div class="mb-3 md:mb-6" v-if="!form.description_file">
 							<no-ssr placeholder="Loading..." class>
 								<quill-editor
@@ -155,6 +159,7 @@
 							:label="'Report to'"
 							:error="formError.find(item => item.field === 'report_to')"
 							@blur="CheckEmptyField(form.report_to, 'report_to')"
+							required
 						/>
 						<AppInput
 							v-model="form.email"
@@ -163,6 +168,7 @@
 							:label="'Email'"
 							:error="formError.find(item => item.field === 'email')"
 							@blur="CheckEmptyField(form.email, 'email')"
+							required
 						/>
 						<AppInput
 							v-model="form.industry_type"
@@ -173,6 +179,7 @@
 							:error="formError.find(item => item.field === 'industry_type')"
 							:items="industry_types"
 							@blur="CheckEmptyField(form.industry_type, 'industry_type')"
+							required
 						/>
 						<AppInput
 							v-model="form.work_hours"
@@ -183,6 +190,7 @@
 							:error="formError.find(item => item.field === 'work_hours')"
 							:items="work_hours_type"
 							@blur="CheckEmptyField(form.work_hours, 'work_hours')"
+							required
 						/>
 						<AppInput
 							v-model="form.salary_amount"

@@ -1,12 +1,75 @@
 <template>
   <section class="relative">
-    <div class="flex overflow-x-auto whitespace-no-wrap mt-4 items-center">
-      <AppButton
+    <AppFilter :enableSearch="false" class="w-full pt-2">
+      <template v-slot:extraButtonFirst v-if="authPermissions.includes('Create Profile Users')">
+        <AppButton
+          :label="'Add User'"
+          customTheme="border mr-2"
+          @click="$router.push('/profile/users/create')"
+        />
+      </template>
+      <template v-slot:filter>
+        <div class="w-1/5">
+          <AppInput
+            v-model="search"
+            :wrapperClass="'px-1'"
+            :type="'text'"
+            :placeholder="'Search name, email, username'"
+            :name="'search'"
+            border
+          />
+        </div>
+
+        <div class="w-32">
+          <AppInput
+            v-model="practiceRole"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'practice_role'"
+            :placeholder="'Practice Role'"
+            :items="practiceRoles"
+            :disabled="loading"
+            border
+            nolabel
+          />
+        </div>
+
+        <div class="w-32">
+          <AppInput
+            v-model="practiceUserRoleId"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'role_id'"
+            :placeholder="'User Role'"
+            :items="practiceUserRoles"
+            :disabled="loading"
+            border
+            nolabel
+          />
+        </div>
+
+        <AppButton
+          class="mx-2"
+          :label="'Apply'"
+          @click="filterUsers"
+        />
+
+        <AppButton
+          :label="'Clear'"
+          @click="clearFilters"
+          customTheme="border hover:bg-gray-200"
+        />
+      </template>
+
+
+    </AppFilter>
+    <!-- <div class="flex overflow-x-auto whitespace-no-wrap mt-4 items-center"> -->
+      <!-- <AppButton
         v-if="authPermissions.includes('Create Profile Users')"
         :label="'Add User'"
         customTheme="border mr-2"
         @click="$router.push('/profile/users/create')"
-      />
+      /> -->
 
       <!-- <AppButton
         class="mx-2"
@@ -16,7 +79,9 @@
         @click="filterModal = !filterModal"
       /> -->
 
-      <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
+      
+
+      <!-- <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
         <p class="mx-2">Filter</p>
         <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
       </button>
@@ -36,7 +101,7 @@
           @click="filterUsers"
         />
       </div>
-      </transition>
+      </transition> -->
 
       <!-- <AppButton
         v-if="showRefresh"
@@ -44,9 +109,9 @@
         :inStyle="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
         @click="refreshUsers"
       />-->
-    </div>
+    <!-- </div> -->
 
-    <transition name="drop-down">
+    <!-- <transition name="drop-down">
     <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal" >
       <div class="md:px-1 md:w-1/4">
         <AppInput
@@ -83,7 +148,7 @@
         />
       </div>
     </div>
-    </transition>
+    </transition> -->
 
     <AppTable
       v-if="users.length > 0"
@@ -134,6 +199,7 @@
 import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
+import AppFilter from "@/components/Base/AppFilter"
 
 export default {
   transition: {
@@ -145,6 +211,7 @@ export default {
     AppTable,
     AppInput,
     AppButton,
+    AppFilter
   },
 
   data () {
@@ -159,7 +226,7 @@ export default {
       practiceRoles: [
         {
           label: 'All',
-          value: null,
+          value: '',
         },
         {
           label: 'Practice Staff',
@@ -330,7 +397,7 @@ export default {
 
       this.practiceUserRoles.push({
         label: 'All',
-        value: null,
+        value: '',
       })
 
       practiceUserRoles.forEach((practiceUserRole) => {
@@ -343,7 +410,6 @@ export default {
   },
 
   methods: {
-
     getUsersPromiseAll () {
       const params = {
         search: this.search,
