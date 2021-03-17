@@ -103,7 +103,7 @@
               />
             </div>
 
-            <div class="px-1 py-2 w-full sm:w-1/2 md:w-1/3">
+            <div class="px-1 w-full sm:w-1/2 md:w-1/3">
               <AppInput
                 v-model="form.rate"
                 :type="'text'"
@@ -122,7 +122,7 @@
                 v-model="form.locum_detail_rate_type_id"
                 :type="'select'"
                 :name="'locum_detail_rate_type_id'"
-                :label="'per'"
+                :label="'Rate Type'"
                 :placeholder="'Select...'"
                 :items="rate_types"
                 :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"

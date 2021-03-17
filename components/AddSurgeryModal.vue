@@ -109,7 +109,6 @@
                   :name="'phone_number'"
                   label="Phone number"
                   :limit="11"
-                  :placeholder="'Phone number'"
                   :error="formError.find(item => item.field === 'phone_number')"
                   @blur="CheckEmptyField(form.phone_number,'phone_number')"
                   @keydown="inputNumberOnly($event)"

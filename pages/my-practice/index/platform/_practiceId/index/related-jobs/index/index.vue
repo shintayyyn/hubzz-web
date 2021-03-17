@@ -26,7 +26,264 @@
         <AppLoading :loading="initialLoading" spinner />
       </div>
       <div v-if="!initialLoading">
-        <div class="flex items-center">
+        <AppFilter :enableSearch="false">
+          <template v-slot:extraButton>
+            <AppButton
+              v-if="showRefresh"
+              :label="'Refresh'"
+              :inStyle="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
+              customTheme="border-2"
+              @click="refreshJobs"
+            />
+          </template>
+
+          <template v-slot:filter>
+          <template v-if="!isJobPart" >
+            <div class="flex-1">
+              <AppInput
+                v-model="job_number_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_number_includes'"
+                :label="'Job number'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="title_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'title_includes'"
+                :label="'Job Title'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32">
+              <AppInput
+                v-model="shift_id"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+                nolabel
+                border
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="rate"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'rate'"
+                :label="'Rate £'"
+                :limit="8"
+                @keydown="isNumber($event)"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-32">
+              <AppInput
+                v-model="rate_type_id"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'rate_type_id'"
+                :label="'Rate Type'"
+                :items="rates"
+                nolabel
+                border
+              />
+            </div>
+            <div class="flex-1">
+              <AppDate
+                v-model="calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-24">
+              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" nolabel border :wrapperClass="'px-1'"/>
+            </div>
+            <div class="flex-1">
+              <AppDate
+                v-model="calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="w-24">
+              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" nolabel border :wrapperClass="'px-1'"/>
+            </div>
+            <div class="flex-1">
+              <AppPostCode
+                v-model="near_post_code"
+                :wrapperClass="'px-1'"
+                :name="'near_post_code'"
+                :label="'Post code'"
+                nolabel
+                border
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="miles"
+                :wrapperClass="'px-1'"
+                :type="'number'"
+                :name="'miles'"
+                :label="'Miles'"
+                nolabel
+                border
+              />
+            </div>
+          </template>
+          <template v-if="isJobPart" >
+            <div class="flex-1">
+              <AppInput
+                v-model="job_part_number_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_part_number_includes'"
+                :label="'Job part number'"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="job_title_includes"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_title_includes'"
+                :label="'Job Title'"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="job_shift_id"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'job_shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="job_rate"
+                :wrapperClass="'px-1'"
+                :type="'text'"
+                :name="'job_rate'"
+                :label="'Rate £'"
+                :limit="8"
+                @keydown="isNumber($event)"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="job_rate_type_id"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'job_rate_type_id'"
+                :label="'Rate Type'"
+                :items="rates"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppDate
+                v-model="calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" border nolabel/>
+            </div>
+            <div class="flex-1">
+              <AppDate
+                v-model="calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+                :wrapperClass="'px-1'"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" border nolabel/>
+            </div>
+            <div class="flex-1">
+              <AppPostCode
+                v-model="near_post_code"
+                :wrapperClass="'px-1'"
+                :name="'near_post_code'"
+                :label="'Post code'"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="miles"
+                :wrapperClass="'px-1'"
+                :type="'number'"
+                :name="'miles'"
+                :label="'Miles'"
+                border
+                nolabel
+              />
+            </div>
+            <div class="flex-1">
+              <AppInput
+                v-model="invoice_status"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'invoice_status'"
+                :label="'Invoice Status'"
+                :items="invoiceStatusList"
+                border
+                nolabel
+              />
+            </div>
+          </template>
+          <AppButton
+            class="mx-2"
+            :label="'Search'"
+            @click="filterJob"
+          />
+          <AppButton
+            :label="'Clear'"
+            @click="clearFilters"
+            customTheme="border"
+          />
+        </template>
+
+        </AppFilter>
+        <!-- <div class="flex items-center">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
@@ -44,12 +301,6 @@
               :inStyle="'padding:5px 14px;margin-bottom:0'"
               @click="filterJob"
             />
-            <!-- <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              :inStyle="'padding:5px 14px;margin-bottom:0'"
-              @click="filterModal = false"
-            /> -->
           </div>
           </transition>
           <AppButton
@@ -59,19 +310,9 @@
             customTheme="border-2"
             @click="refreshJobs"
           />
-        </div>
-        <transition name="drop-down">
+        </div> -->
+        <!-- <transition name="drop-down">
         <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal && !isJobPart" >
-          <!-- <div class="md:px-1 flex-1">
-            <AppInput
-              :wrapperClass="'px-1'"
-              v-model="type"
-              :type="'select'"
-              :name="'type'"
-              :label="'Type'"
-              :items="practiceTypeList"
-            />
-          </div>-->
           <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_number_includes"
@@ -81,32 +322,6 @@
               :label="'Job number'"
             />
           </div>
-          <!-- <div
-            class="md:px-1 flex-1"
-            v-if="!$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() !== 'private')"
-          >
-            <AppInput
-              v-model="practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>-->
-          <!-- <div
-            class="md:px-1 flex-1"
-            v-if="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'private'"
-          >
-            <AppInput
-              v-model="private_practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>-->
           <div class="md:px-1 flex-1">
             <AppInput
               v-model="title_includes"
@@ -197,20 +412,6 @@
               :label="'Job part number'"
             />
           </div>
-          <!-- <div
-            class="md:px-1 flex-1"
-            v-if="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'private'"
-          >
-            <AppInput
-              v-model="job_private_practice_id"
-              :type="'select'"
-              :name="'practice_id'"
-              :placeholder="'Select...'"
-              :label="'Surgery'"
-              :items="practiceLists"
-            />
-          </div>-->
-
           <div class="md:px-1 flex-1">
             <AppInput
               v-model="job_title_includes"
@@ -303,7 +504,7 @@
             />
           </div>
         </div>
-        </transition>
+        </transition> -->
         <AppTable
           v-if="jobs.length > 0"
           :total="total"
@@ -375,6 +576,7 @@ import AppTime from "@/components/Base/AppTime"
 import AppPostCode from "@/components/Base/AppPostCode"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
+import AppFilter from "@/components/Base/AppFilter"
 export default {
   components: {
     AppTable,
@@ -384,6 +586,7 @@ export default {
     AppPostCode,
     AppButton,
     AppLoading,
+    AppFilter
   },
 
   props: {

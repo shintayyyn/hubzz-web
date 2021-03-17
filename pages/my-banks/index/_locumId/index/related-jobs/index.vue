@@ -72,11 +72,11 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 const invoiceStatusList = [
   {
     label: "All",
-    value: ""
+    value: null
   },
   {
-    label: "To Be Invoice",
-    value: "To Be Invoice"
+    label: "To Be Invoiced",
+    value: "To Be Invoiced"
   },
   {
     label: "Disputed",
