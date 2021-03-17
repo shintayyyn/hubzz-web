@@ -147,7 +147,7 @@
         </template>
 
         <template v-else>
-          <div class="flex flex-row justify-start mt-1">
+          <div class="flex flex-row justify-start" :class="!label ? '':'mt-1'">
             <template v-if="['text','time','email', 'number', 'numberDash'].includes(type)">
               <div class="flex flex-col w-full">
                 <div class="flex items-center justify-start">

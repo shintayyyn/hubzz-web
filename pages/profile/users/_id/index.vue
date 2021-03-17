@@ -64,6 +64,7 @@
           :error="formError.find(item => item.field === 'username')"
           @submit="save"
           @blur="CheckEmptyField(form.username, 'username')"
+          required
         />
   
         <AppInput
@@ -74,6 +75,7 @@
           :error="formError.find(item => item.field === 'email')"
           @submit="save"
           @blur="CheckEmptyField(form.email, 'email')"
+          required
         />
   
         <AppInput
@@ -92,6 +94,7 @@
           :error="formError.find(item => item.field === 'first_name')"
           @submit="save"
           @blur="CheckEmptyField(form.first_name, 'first_name')"
+          required
         />
   
         <AppInput
@@ -102,6 +105,7 @@
           :error="formError.find(item => item.field === 'last_name')"
           @submit="save"
           @blur="CheckEmptyField(form.last_name, 'last_name')"
+          required
         />
   
         <AppInput
@@ -119,6 +123,7 @@
           :label="'Role'"
           :placeholder="'Select...'"
           :items="practice_roles"
+          required
         />
   
         <AppInput
@@ -130,6 +135,7 @@
           :placeholder="'Select...'"
           :items="roles"
           :disabled="!roles.length"
+          required
         />
   
         <AppInput
@@ -140,6 +146,7 @@
           :error="formError.find(item => item.field === 'status')"
           :items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
           :disabled="!Boolean(verifiedEmail)"
+          required
         />
   
         <div

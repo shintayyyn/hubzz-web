@@ -185,7 +185,7 @@
                   >
                     <span>{{ postLabel }}</span>
                   </p>
-                  <!-- <p v-if="nolabel && required" class="text-red-600">*</p> -->
+                <p v-if="(!label || nolabel) && required" class="text-red-600">*</p>
                 </div>
 
                 <transition name="drop-down">
@@ -241,49 +241,52 @@
 
             <template v-if="type === 'select'">
               <div :class="['w-full relative', inClass]">
-                <div class="w-full customized-select flex items-center">
-                  <select
-                    ref="inputSelect"
-                    :value="value"
-                    class="absolute bottom-0 focus:border-yellow-400 focus:outline-none font-bold text-xs w-full pr-3"
-                    :class="[
-                      (error && !disabled) ? 'border-red-500' : inClass,
-                      disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
-                      !value && placeholder && 'text-gray-500 focus:text-black' ,
-                      border ? 'border-2 rounded' : 'border-b-2'
-                    ]"
-                    :style="inStyle"
-                    :disabled="disabled"
-                    @input="$emit('input', $event.target.value)"
-                    @change="$emit('change', $event.target.value)"
-                    @blur="$emit('blur')"
-                    @focus="$emit('focus')"
-                  >
-                    <option v-if="label || placeholder" value disabled selected>
-                      {{ label && nolabel ? label : placeholder }}
-                    </option>
-                    <option
-                      v-for="(item, index) in items"
-                      :key="index"
-                      :value="item.value"
-                      :selected="value === item.value"
-                      :disabled="item.disabled"
+                <div class="flex">
+                  <div class="w-full customized-select flex items-center">
+                    <select
+                      ref="inputSelect"
+                      :value="value"
+                      class="absolute bottom-0 focus:border-yellow-400 focus:outline-none font-bold text-xs w-full pr-3"
+                      :class="[
+                        (error && !disabled) ? 'border-red-500' : inClass,
+                        disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer',
+                        !value && placeholder && 'text-gray-500 focus:text-black' ,
+                        border ? 'border-2 rounded' : 'border-b-2'
+                      ]"
+                      :style="inStyle"
+                      :disabled="disabled"
+                      @input="$emit('input', $event.target.value)"
+                      @change="$emit('change', $event.target.value)"
+                      @blur="$emit('blur')"
+                      @focus="$emit('focus')"
                     >
-                      <span>{{ item.label }}</span>
-                      <i v-if="item.description">({{ item.description }})</i>
-                    </option>
-                  </select>
-                  <span
-                    class="absolute right-0 h-full flex items-center mr-2 top-0"
-                    :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '']"
-                  >
-                    <svgicon
-                      name="caret-down"
-                      width="10" 
-                      height="10"
-                      class="h-full fill-current"
-                    />
-                  </span>
+                      <option v-if="label || placeholder" value disabled selected>
+                        {{ label && nolabel ? label : placeholder }}
+                      </option>
+                      <option
+                        v-for="(item, index) in items"
+                        :key="index"
+                        :value="item.value"
+                        :selected="value === item.value"
+                        :disabled="item.disabled"
+                      >
+                        <span>{{ item.label }}</span>
+                        <i v-if="item.description">({{ item.description }})</i>
+                      </option>
+                    </select>
+                    <span
+                      class="absolute right-0 h-full flex items-center mr-2 top-0"
+                      :class="[disabled ? 'text-gray-500' : 'text-gray-800', wrapperClass ? '' : '']"
+                    >
+                      <svgicon
+                        name="caret-down"
+                        width="10" 
+                        height="10"
+                        class="h-full fill-current"
+                      />
+                    </span>
+                  </div>
+                  <p v-if="(!label || nolabel) && required" class="text-red-600">*</p>
                 </div>
                 <transition name="drop-down">
                   <div
@@ -298,6 +301,7 @@
 
             <template v-if="type === 'textarea'">
               <div class="flex flex-col w-full">
+                <div class="flex items-start">
                 <textarea
                   id
                   :ref="'textarea'"
@@ -314,6 +318,8 @@
                   @blur="$emit('blur', $event)"
                   @keydown="limit ? ($emit('keydown'), limitInput($event, trimmedMessage(value))) : $emit('keydown')"
                 />
+                <p v-if="(!label || nolabel) && required" class="text-red-600">*</p>
+                </div>
                 <div class="flex items-center justify-between">
                   <transition name="drop-down">
                     <div

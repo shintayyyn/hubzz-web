@@ -35,6 +35,7 @@
         </div>
 
         <div v-if="!disabled">
+          <div class="flex items-start">
           <input
             v-show="show"
             ref="input"
@@ -47,6 +48,8 @@
             @keydown="handleKeyDownEvent"
             @change="$emit('change')"
           >
+          <span v-if="!label && required" class="text-red-500">*</span>
+          </div>
           <transition name="drop-down">
             <div
               v-if="error"
