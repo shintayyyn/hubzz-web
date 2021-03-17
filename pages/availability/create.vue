@@ -27,7 +27,7 @@
           *Please take note that being unavailable on AM / PM Shifts would also mean that you will not be available for Whole Day Sessions.
         </div>
 
-        <div class="flex flex-row flex-wrap justify-between">
+        <div class="flex flex-row flex-wrap justify-between mt-4">
           <div class="w-full p-0 sm:w-1/2 pr-2">
             <AppDate
               v-model="date_start"

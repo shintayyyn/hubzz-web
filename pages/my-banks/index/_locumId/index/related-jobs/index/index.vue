@@ -27,7 +27,212 @@
         <AppLoading :loading="initialLoading" spinner />
       </div>
       <div v-if="!initialLoading">
-        <div class="flex">
+        <AppFilter :enableSearch="false">
+          <template v-slot:extraButton>
+            <AppButton
+              v-if="showRefresh"
+              :label="'Refresh'"
+              customTheme="border"
+              @click="refreshJobs"
+            />
+          </template>
+          <template v-slot:filter>
+            <template v-if="!isJobPart">
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_number_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_number'"
+                  :label="'Job number'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="title_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'title'"
+                  :label="'Job Title'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="rate"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'rate'"
+                  :label="'Rate £'"
+                  :limit="8"
+                  @keydown="isNumber($event)"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="rate_type_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'rate_type_id'"
+                  :label="'Rate Type'"
+                  :items="rates"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="shift_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'shift_id'"
+                  :label="'Shift'"
+                  :items="shifts"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_start"
+                  :name="'calendar_date_start'"
+                  :label="'From'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_end"
+                  :name="'calendar_date_end'"
+                  :label="'To'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  nolabel
+                  border
+                />
+              </div>
+            </template>
+            <template v-if="isJobPart">
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_part_number_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_part_number'"
+                  :label="'Job part number'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_title_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_title'"
+                  :label="'Job Title'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_rate"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_rate'"
+                  :label="'Rate £'"
+                  :limit="8"
+                  @keydown="isNumber($event)"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_rate_type_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'job_rate_type_id'"
+                  :label="'Rate Type'"
+                  :items="rates"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_shift_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'job_shift_id'"
+                  :label="'Shift'"
+                  :items="shifts"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_start"
+                  :name="'calendar_date_start'"
+                  :label="'From'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_end"
+                  :name="'calendar_date_end'"
+                  :label="'To'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div
+                v-if="$route.query.jobStatus && $route.query.jobStatus !== 'Ongoing'"
+                class="md:px-1 flex-1"
+              >
+                <AppInput
+                  v-model="invoice_status"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'invoice_status'"
+                  :label="'Invoice Status'"
+                  :items="invoiceStatusList"
+                  nolabel
+                  border
+                />
+              </div>
+            </template>
+            <AppButton
+              class="mx-2"
+              :label="'Apply'"
+              @click="filterJob"
+            />
+            <AppButton
+              :label="'Clear'"
+              @click="clearFilters"
+              :customTheme="'border'"
+            />
+          </template>
+
+
+        </AppFilter>
+        <!-- <div class="flex">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
             <p class="mx-2">Filter</p>
             <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
@@ -45,12 +250,6 @@
                 :inStyle="'padding:5px 14px;margin-bottom:0'"
                 @click="filterJob"
               />
-              <!-- <AppButton
-                class="mx-2 md:hidden"
-                :label="'Close'"
-                :inStyle="'padding:5px 14px;margin-bottom:0'"
-                @click="filterModal = false"
-              /> -->
             </div>
           </transition>
           <AppButton
@@ -214,7 +413,7 @@
             />
           </div>
         </div>
-        </transition>
+        </transition> -->
         <AppTable
           v-if="jobs.length > 0"
           :total="total"
@@ -263,6 +462,7 @@ import AppDate from "@/components/Base/AppDate"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
 import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import AppFilter from "@/components/Base/AppFilter"
 export default {
   components: {
     AppTable,
@@ -270,7 +470,8 @@ export default {
     AppDate,
     AppButton,
     AppLoading,
-    AppBreadcrumbs
+    AppBreadcrumbs,
+    AppFilter
   },
 
   props: {
@@ -663,7 +864,7 @@ export default {
       const [shifts, rates, total, jobs,] = await Promise.all([
         app.$axios.$get(`/api/v1/shifts`).then(res => {
           const shifts = []
-          shifts.push({ label: "All", value: "", })
+          shifts.push({ label: "All", value: null, })
           res.data.shifts.forEach(item => {
             shifts.push({ label: item.name, value: item.id, })
           })
@@ -671,7 +872,7 @@ export default {
         }),
         app.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
           const rates = []
-          rates.push({ label: "All", value: "", })
+          rates.push({ label: "All", value: null, })
           res.data.locum_detail_rate_types.forEach(item => {
             rates.push({ label: item.name, value: item.id, })
           })
