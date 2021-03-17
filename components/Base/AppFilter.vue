@@ -5,7 +5,7 @@
       <div class="mr-2">
         <slot name="extraButtonFirst" />
       </div>
-      <button @click="filterTab && filterTab==='default' ? filterTab=null : filterTab = 'default'" class="flex items-center justify-between text-sm p-1 border rounded mr-2 transition-hover" :class="filterTab==='default' ? 'bg-sunglow border-sunglow' : ''">
+      <button v-if="enableFilter" @click="filterTab && filterTab==='default' ? filterTab=null : filterTab = 'default'" class="flex items-center justify-between text-sm p-1 border rounded mr-2 transition-hover" :class="filterTab==='default' ? 'bg-sunglow border-sunglow' : ''">
         <p class="mx-2">{{ filterLabel }}</p>
         <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterTab==='default' ? 'transform: rotate(180deg)' : ''" /></span>
       </button>
@@ -51,6 +51,11 @@ export default {
     },
 
     enableSearch: {
+      type: Boolean,
+      default: true
+    },
+
+    enableFilter: {
       type: Boolean,
       default: true
     }

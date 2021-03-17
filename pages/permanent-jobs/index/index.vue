@@ -18,8 +18,8 @@
       v-if="$auth.user.domain === 'Practice'"
       class="w-full"
     >
-    <AppFilter :enableSearch="false" v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
-      <template v-slot:extraButtonFirst>
+    <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
+      <template v-slot:extraButtonFirst v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
         <AppInputSmall
           v-model="search"
           :type="'text'"
@@ -28,10 +28,11 @@
           :buttonLabel="'Search'"
           :placeholder="'Title / Practice Name'"
           :disabled="loading"
+          :inStyle="'margin:0'"
           @click="getPermanentJobsForPractice()"
         />
       </template>
-       <template v-slot:filter>
+       <template v-slot:filter v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
           <div class="w-full md:w-32">
             <AppInput
               v-model="params.job_type"
@@ -92,10 +93,9 @@
             @click="filterReset"
           />
       </template>
-      <template v-slot:extraFarRight>
+      <template v-slot:extraFarRight v-if="$auth.user.domain === 'Practice'">
         <button
-          v-if="$auth.user.domain === 'Practice'"
-          class="px-3 py-1 text-sm font-bold cursor-pointer justify-end"
+          class="px-3 py-1 text-sm font-bold cursor-pointer justify-end my-2"
           :class="'border rounded-lg border-sunglow bg-sunglow'"
           @click="$router.push('/permanent-jobs/create')"
         >
@@ -103,6 +103,14 @@
         </button>
       </template>
     </AppFilter>
+     <!-- <button
+        v-if="$auth.user.domain === 'Practice'"
+        class="px-3 py-1 text-sm font-bold cursor-pointer justify-end whitespace-no-wrap ml-auto mt-2"
+        :class="'border rounded-lg border-sunglow bg-sunglow'"
+        @click="$router.push('/permanent-jobs/create')"
+      >
+        + Create Salaried Role 
+      </button> -->
       <!-- <div class="flex items-center justify-between mt-2">
         <div class="flex">
           <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-full">
