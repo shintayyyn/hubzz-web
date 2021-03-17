@@ -128,7 +128,7 @@
                       <AppFilterSearch
                         v-model="form.specialty"
                         :name="'specialty'"
-                        :label="'Specialty'"
+                        :label="'Speciality'"
                         :placeholder="'Select...'"
                         :info="'Choose at least one qualification'"
                         :url="'/api/v1/qualifications'"

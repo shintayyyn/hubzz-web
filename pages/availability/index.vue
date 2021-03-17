@@ -4,38 +4,38 @@
       I'm available for...
     </div>
     <div class="availability-shift rounded-lg border mt-4">
-      <div class="relative w-full p-5">
+      <div class="relative w-full p-4">
         <AppLoading :loading="loading" spinner />
         <div class="flex flex-col">
-          <div class="flex flex-row flex-wrap items-center justify-between">
+          <div class="flex flex-row flex-wrap items-center justify-between mx-1">
             <div class="flex flex-col leading-none">
-              <div class="text-base md:text-lg mr-2">
+              <div class="text-base  mr-2">
                 The shifts I am available for
                 <span class="text-red-500">*</span>
               </div>
               <transition name="fade">
                 <div
                   v-if="shifts_error"
-                  class="text-red-500 text-sm md:text-base text-white md:py-0"
+                  class="text-red-500 text-sm text-white md:py-0"
                 >
                   Select at least one shift
                 </div>
               </transition>
             </div>
             <div
-              class="py-2 px-3 my-1 md:my-0 rounded-lg text-base md:text-lg bg-gray-300 leading-tight"
+              class="py-2 px-3 my-1 md:my-0 rounded-lg text-sm bg-gray-300 leading-tight"
             >
               Select all that apply
             </div>
           </div>
           <div
-            class="flex flex-row justify-around md:justify-between flex-wrap mt-5 rounded-lg"
+            class="flex flex-row justify-around md:justify-between flex-wrap mt-3 rounded-lg"
             :class="shifts_error && 'error'"
           >
             <div
               v-for="item in shifts"
               :key="item.id"
-              class="relative border border-solid rounded-lg p-2 md:p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer transition-hover"
+              class="relative border border-solid rounded-lg p-2 md:p-5 m-1 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer transition-hover"
               :class="[selectedShifts.includes(item.id) ? 'bg-sunglow hover:bg-sunglow-dark': 'hover:bg-sunglow', shifts_error ? 'border-red-500' : '']"
               style="box-sizing:content-box;"
               @click="select(item.id)"
@@ -45,7 +45,7 @@
           </div>
         </div>
 
-        <div class="mx-2 mt-4">
+        <div class="mx-1 mt-3">
           <AppButton
             :label="'Update'"
             :disabled="loading"

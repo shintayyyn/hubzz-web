@@ -12,7 +12,7 @@
                 : 'text-gray-600'
             "
           >
-            Favorites
+            Favourites
           </nuxt-link>
 
           <nuxt-link

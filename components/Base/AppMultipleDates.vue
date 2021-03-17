@@ -1,7 +1,7 @@
 <template>
   <div v-on-clickaway="toggledOff" class="flex flex-col py-2 mb-4 md:mb-6 leading-normal">
     <div class="relative flex flex-row flex-no-wrap justify-between">
-      <label :for="name" class="text-xs sm:text-sm py-1">
+      <label :for="name" class="text-xs">
         {{ label }}
         <span v-if="required" class="text-red-500">*</span>
       </label>
@@ -16,7 +16,7 @@
           :value="placeholder"
           type="text"
           :placeholder="'DD/MM/YYYY'"
-          class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none p-1 font-bold text-xs w-full shadow-none text-center"
           :class="{ inClass, 'border-red-500': error}"
           :style="inStyle"
           :format="format"

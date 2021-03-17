@@ -18,7 +18,100 @@
       v-if="$auth.user.domain === 'Practice'"
       class="w-full"
     >
-      <div class="flex items-center justify-between mt-2">
+    <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
+      <template v-slot:extraButtonFirst v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
+        <AppInputSmall
+          v-model="search"
+          :type="'text'"
+          :name="'search'"
+          :button="true"
+          :buttonLabel="'Search'"
+          :placeholder="'Title / Practice Name'"
+          :disabled="loading"
+          :inStyle="'margin:0'"
+          @click="getPermanentJobsForPractice()"
+        />
+      </template>
+       <template v-slot:filter v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
+          <div class="w-full md:w-32">
+            <AppInput
+              v-model="params.job_type"
+              :type="'select'"
+              :name="'job_type'"
+              :label="'Job Type'"
+              :placeholder="'Select...'"
+              :items="job_types"
+              :wrapperClass="'px-1'"
+              nolabel
+              border
+            />
+          </div>
+
+          <div class="w-full md:w-1/6">
+            <AppInput
+              v-model="params.profession"
+              :type="'select'"
+              :name="'profession'"
+              :label="'Profession'"
+              :placeholder="'Select...'"
+              :items="professions"
+              :wrapperClass="'px-1'"
+              nolabel
+              border
+            />
+          </div>
+          <div class="w-full md:w-1/6">
+            <AppInput
+              v-model="params.job_posting_status"
+              :type="'select'"
+              :name="'Permanent Job Status'"
+              :label="'Permanent Job Status'"
+              :placeholder="'Select...'"
+              :items="permanent_job_status"
+              :wrapperClass="'px-1'"
+              nolabel
+              border
+            />
+          </div>
+
+          <div class="w-full md:w-auto">
+            <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" :wrapperClass="'px-1'" nolabel border/>
+          </div>
+
+          <div class="w-full md:w-auto">
+            <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'" nolabel border/>
+          </div>
+
+          <AppButton
+            label="Apply"
+            @click="getJobs(params)"
+            customTheme="border hover:bg-gray-200"
+            class="mx-2"
+          />
+          <AppButton
+            label="Clear"
+            @click="filterReset"
+          />
+      </template>
+      <template v-slot:extraFarRight v-if="$auth.user.domain === 'Practice'">
+        <button
+          class="px-3 py-1 text-sm font-bold cursor-pointer justify-end my-2"
+          :class="'border rounded-lg border-sunglow bg-sunglow'"
+          @click="$router.push('/permanent-jobs/create')"
+        >
+          + Create Salaried Role 
+        </button>
+      </template>
+    </AppFilter>
+     <!-- <button
+        v-if="$auth.user.domain === 'Practice'"
+        class="px-3 py-1 text-sm font-bold cursor-pointer justify-end whitespace-no-wrap ml-auto mt-2"
+        :class="'border rounded-lg border-sunglow bg-sunglow'"
+        @click="$router.push('/permanent-jobs/create')"
+      >
+        + Create Salaried Role 
+      </button> -->
+      <!-- <div class="flex items-center justify-between mt-2">
         <div class="flex">
           <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="w-full">
             <AppInputSmall
@@ -32,6 +125,7 @@
               @click="getPermanentJobsForPractice()"
             />
           </div>
+          
           <div v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" class="m-3 flex items-center">
             <button
               class="flex items-center justify-between text-sm p-1 border border-gray-500 rounded mr-2"
@@ -113,7 +207,7 @@
           <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'"/>
         </div>
       </div>
-      </transition>
+      </transition> -->
     </div>
     <!-- Filters end here -->
 
@@ -251,6 +345,7 @@ import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
 import AppButton from "@/components/Base/AppButton"
 import AppDate from "@/components/Base/AppDate"
+import AppFilter from "@/components/Base/AppFilter"
 import AppInputSmall from "@/components/Base/AppInputSmall"
 export default {
   components: {
@@ -259,6 +354,7 @@ export default {
     AppInput,
     AppButton,
     AppDate,
+    AppFilter,
     AppInputSmall,
   },
 

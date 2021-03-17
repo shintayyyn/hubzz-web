@@ -129,6 +129,7 @@
                       :error="formError.find(item => item.field === 'practice_id')"
                       :items="practice_lists"
                       class="px-2"
+                      required
                       @blur="CheckEmptyField(form.practice_id, 'practice_id')"
                     />
                   </div>
@@ -376,7 +377,7 @@
                       <AppFilterSearch
                         v-model="form.specialty"
                         :name="'specialty'"
-                        :placeholder="'Choose Specialty'"
+                        :placeholder="'Choose Speciality'"
                         :url="'/api/v1/qualifications'"
                         :professionCategoryId="selectedProfession && selectedProfession.profession_category
                           ? selectedProfession.profession_category.id.toString()
@@ -2031,29 +2032,6 @@ export default {
       }
     },
 
-    // getListofDays (days) {
-    //   // if (days.includes(6) && days.length > 1) {
-    //   //   this.show_saturday = true
-    //   //   this.form.include_saturday = true
-    //   // } else if (days.includes(6) && days.length === 1) {
-    //   //   this.show_saturday = false
-    //   //   this.form.include_saturday = true
-    //   // } else if (!days.includes(6)) {
-    //   //   this.show_saturday = false
-    //   //   this.form.include_saturday = false
-    //   // }
-    //   // if (days.includes(0) && days.length > 1) {
-    //   //   this.show_sunday = true
-    //   //   this.form.include_sunday = true
-    //   // } else if (days.includes(0) && days.length === 1) {
-    //   //   this.show_sunday = false
-    //   //   this.form.include_sunday = true
-    //   // } else if (!days.includes(0)) {
-    //   //   this.show_sunday = false
-    //   //   this.form.include_sunday = false
-    //   // }
-    // },
-
     close () {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false)
       this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false)
@@ -2379,10 +2357,6 @@ export default {
         console.log("errors", this.formError)
 
         this.toPublish = false
-
-        this.$nextTick(() => {
-          //this.$refs.modalContainer.scrollTop = 0
-        })
       }
     },
   },

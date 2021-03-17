@@ -66,7 +66,7 @@
               </div>
               
               <div class="font-bold text-sm sm:text-md">
-                Specialty
+                Speciality
               </div>
               <div class="text-sm mb-8 flex flex-row flex-wrap">
                 <div

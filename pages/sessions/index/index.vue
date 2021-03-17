@@ -200,7 +200,7 @@
                 v-model="favorite_only"
                 :type="'select'"
                 :name="'favorite_only'"
-                :label="'Favorite Only'"
+                :label="'Favourite Only'"
                 :placeholder="'Select...'"
                 :items="[{label: 'All', value: ''}, {label: 'Yes', value: true}, {label: 'No', value: false}]"
                 :wrapperClass="'px-1'"
@@ -615,7 +615,7 @@ export default {
 
       if (queryStatus === "live") {
         columns.push({
-          name: "Favorite only",
+          name: "Favourite only",
           dataIndex: "favorite_only_formatted",
           class: "text-center",
           sortable: true,

@@ -62,7 +62,7 @@
               </div>
 
               <div class="font-bold text-sm sm:text-md">
-                Specialty
+                Speciality
               </div>
               <div class="text-sm mb-6 flex flex-row flex-wrap">
                 <div v-for="item in user.locum_detail.qualifications" :key="item.id"
