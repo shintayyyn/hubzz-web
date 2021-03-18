@@ -35,7 +35,7 @@
     </div>
     <transition name="fade">
       <div v-if="modal" class="relative z-10 flex justify-center">
-        <div class="w-full absolute border bg-white rounded-b-lg shadow-md" style="min-width: 70px">
+        <div class="w-full absolute border bg-white rounded-b-lg shadow-md" style="min-width: 80px">
           <div class="flex flex-row justify-center">
             <div class="input-container flex flex-col overflow-y-auto w-full">
               <div
