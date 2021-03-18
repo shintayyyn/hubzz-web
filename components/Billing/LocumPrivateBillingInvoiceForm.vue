@@ -62,6 +62,10 @@
             }}
           </div>
           <div>{{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}</div>
+          <div v-if="propInvoice">
+            <span>Invoice Number: </span>
+            <span>{{ propInvoice.invoice_number }}</span>
+          </div>
         </div>
         <div v-if="propInvoice" class="flex flex-wrap justify-between my-2">
           <div

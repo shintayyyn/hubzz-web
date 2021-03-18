@@ -930,7 +930,7 @@ export default {
 </script>
 <style scoped>
 .calendar {
-  min-width: 230px;
+  /* min-width: 230px; */
   height: auto;
 }
 .hover-details {
@@ -981,7 +981,7 @@ export default {
 }
 @media screen and (min-width: 468px) {
   .calendar {
-    width: 330px;
+    /* width: 330px; */
   }
 }
 @media screen and (min-width: 468px) {

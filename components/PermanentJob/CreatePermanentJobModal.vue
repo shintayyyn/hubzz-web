@@ -198,7 +198,6 @@
 							:name="'salary_amount'"
 							:label="'Salary Amount (Optional)'"
 							:min="0"
-							:in-style="'text-align:right'"
 							:limit="8"
 						/>
 						<AppInput
