@@ -38,7 +38,10 @@
           <div>{{ propInvoice.utr_number && propInvoice.employment_type === 'Self Employed' ? `UTR ${propInvoice.utr_number}` : '' }}</div>
           <div>{{ propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company' ? `Company Registration Number ${propInvoice.company_registration_number}` : '' }}</div>
           <div>{{ propInvoice.locum_user_vat_number ? `VAT Number: ${propInvoice.locum_user_vat_number}` : '' }}</div>
-          <div>{{ propInvoice.invoice_number }}</div>
+          <div>
+            <span>Invoice Number:</span>
+            <span>{{ propInvoice.invoice_number }}</span>
+          </div>
         </div>
       </div>
 
