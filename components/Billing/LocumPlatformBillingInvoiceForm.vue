@@ -206,10 +206,7 @@
               </p>
             </div>
 
-            <div
-              v-if="form.generate_form || (propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)))"
-              class="flex flex-wrap justify-between"
-            >
+            <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
                 Form Type:
               </p>
@@ -230,7 +227,6 @@
             </div>
 
             <div
-              v-if="propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -238,7 +234,7 @@
               </p>
 
               <p class="font-bold w-1/2 text-right">
-                {{ propInvoice && (propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
+                {{ (propInvoice && (propInvoice.ooh || propInvoice.generate_form)) || form.generate_form ? 'Yes' : 'No' }}
               </p>
             </div>
           </div>
@@ -255,15 +251,7 @@
             </div>
 
             <div 
-              v-if="propInvoice 
-                ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
-                  ? true 
-                  : false 
-                : propJobPart 
-                  ? locum_vat_registered 
-                    ? true
-                    : false 
-                  : false" 
+              v-if="(propInvoice && propInvoice.job_part_total_rate !== propInvoice.job_part_taxed_total_rate) || locum_vat_registered"
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -276,15 +264,7 @@
             </div>
 
             <div 
-              v-if="propInvoice 
-                ? propInvoice.untaxed_total_amount !== propInvoice.total_amount 
-                  ? true 
-                  : false 
-                : propJobPart 
-                  ? locum_vat_registered 
-                    ? true
-                    : false  
-                  : false" 
+              v-if="(propInvoice && propInvoice.job_part_total_rate !== propInvoice.job_part_taxed_total_rate) || locum_vat_registered"
               class="flex flex-wrap justify-between"
             >
               <p class="text-sm w-1/2">
@@ -320,21 +300,7 @@
             </template>
 
             <div
-              v-if="
-                propInvoice && propInvoice.approved && form.generate_form
-                  || (
-                    propInvoice
-                  && propInvoice.approved
-                  && (
-                    (!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh)
-                  )
-                  )
-                  || (
-                    !propInvoice
-                  && propJobPart
-                  && form.generate_form
-                  )
-              "
+              v-if="(propInvoice && (propInvoice.ooh || propInvoice.generate_form)) || form.generate_form"
               class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
             >
               <p class="text-sm w-1/2">
@@ -553,7 +519,8 @@ export default {
       ) {
         if (this.propInvoice.approved) {
           if (this.propInvoice.locum_form_a_id) {
-            return this.propInvoice.locum_form_a_pension_amount
+            return this.propInvoice.pension_amount
+            // return this.propInvoice.locum_form_a_pension_amount
           }
 
           if (this.propInvoice.locum_solo_form_id) {
