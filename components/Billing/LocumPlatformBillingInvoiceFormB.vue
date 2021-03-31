@@ -15,6 +15,7 @@
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+
       <div v-if="!initialLoading">
         <div class="font-bold">
           Select Form A's to be generated to Form B
@@ -50,6 +51,7 @@
         </div>
       </div>
     </transition>
+
     <div>
       <AppInput
         v-model="pcseOrLhbEaCode"
@@ -58,6 +60,7 @@
         :type="'text'"
         required
       />
+
       <AppButton
         class="m-1"
         :label="'Generate Form B'"
@@ -66,6 +69,7 @@
         @click="generate_form_b_modal = true"
       />
     </div>
+
     <AppConfirmationModal
       :label="'Generate Form B?'"
       :confirmLabel="'Yes'"
@@ -84,6 +88,7 @@ import AppTable from "@/components/Base/AppTable"
 import AppLoading from "@/components/Base/AppLoading"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import { mixin as clickaway, } from "vue-clickaway"
+
 export default {
   components: {
     AppButton,
@@ -92,13 +97,16 @@ export default {
     AppConfirmationModal,
     AppLoading,
   },
+
   mixins: [clickaway,],
+
   props: {
     type: {
       type: String,
       default: () => null,
     },
   },
+
   data () {
     return {
       generate_form_b_modal: false,
@@ -127,6 +135,7 @@ export default {
       order_by: [],
     }
   },
+
   computed: {
     columns () {
       let columns = []
@@ -182,11 +191,13 @@ export default {
       return columns
     },
   },
+
   async created () {
     this.initialLoading = true
     await this.getJobPartsPromiseAll()
     this.initialLoading = false
   },
+
   methods: {
     checkItem (invoiceId) {
       let index = this.selectedItems.findIndex(item => item === invoiceId)
@@ -198,6 +209,7 @@ export default {
         this.selectedItems.push(invoiceId)
       }
     },
+
     getJobPartsPromiseAll () {
       return Promise.all([
         this.$axios.$get(`/api/v1/locum/job-parts/count`, {
@@ -246,6 +258,7 @@ export default {
           throw err
         })
     },
+    
     getJobParts () {
       return this.$axios
         .$get(`/api/v1/locum/job-parts`, {
@@ -276,6 +289,7 @@ export default {
           console.log("err", err.response || err)
         })
     },
+
     async sorted (order_by) {
       this.current_page = 1
       this.offset = 0
@@ -284,6 +298,7 @@ export default {
       await this.getJobParts()
       this.loading = false
     },
+
     async pagechanged (page) {
       this.current_page = page
       this.offset = this.limit * (page - 1)
@@ -291,6 +306,7 @@ export default {
       await this.getJobParts()
       this.loading = false
     },
+
     async limitchanged (limit) {
       this.current_page = 1
       this.offset = 0
@@ -299,6 +315,7 @@ export default {
       await this.getJobParts()
       this.loading = false
     },
+
     save () {
       this.saveLoading = true
       if (this.pcseOrLhbEaCode !== null ) {
@@ -341,6 +358,7 @@ export default {
       }
       
     },
+
   },
 }
 </script>
