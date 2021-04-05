@@ -1,7 +1,9 @@
 <template>
-  <div >
-    <AppLoading :loading="initialLoading" spinner :message="'Loading Job'"/>
+  <div>
+    <AppLoading :loading="initialLoading" spinner :message="'Loading Job'" />
+
     <AppBreadcrumbs :links="links" />
+
     <JobDetailModalAppointment
       v-if="job && job.type === 'Private'"
       :job="job"
@@ -46,7 +48,7 @@ export default {
       initialLoading: false,
       loadingJob: false,
       job: null,
-      links: []
+      links: [],
     }
   },
   
@@ -71,16 +73,28 @@ export default {
     getLocumJob () {
       return this.$axios.get(`/api/v2/locum/locum-user-jobs/${this.$route.params.id}`).then((response) => {
         this.job = response.data.data.job
-        console.log("job", response.data.data.job)
-        this.links = [
-          {
-            title: `${response.data.data.job.locum_job_status} Job`,
-            url: `/jobs/?status=${response.data.data.job.locum_job_status}`
-          },
-          {
-            title: response.data.data.job.title
-          }
-        ]
+
+        if (this.job.type === 'Private') {
+          this.links = [
+            {
+              title: `Private Job`,
+              url: `/jobs/?status=Private`,
+            },
+            {
+              title: this.job.title,
+            },
+          ]
+        } else {
+          this.links = [
+            {
+              title: `${this.job.locum_job_status} Job`,
+              url: `/jobs/?status=${this.job.locum_job_status}`,
+            },
+            {
+              title: this.job.title,
+            },
+          ]
+        }
       }).catch((err) => {
         console.log('err', err.response || err)
 
