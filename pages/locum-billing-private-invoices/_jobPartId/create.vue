@@ -45,11 +45,11 @@ export default {
       const links = [
         {
           title: 'Billing',
-          url: '/locum-billing/private-invoices',
+          url: '/locum-billing-private-to-be-invoiced',
         },
         {
           title: 'Private Invoices',
-          url: '/locum-billing/private-invoices',
+          url: '/locum-billing-private-to-be-invoiced',
         },
       ]
 
@@ -66,7 +66,7 @@ export default {
   mounted () {
     this.loading = true
     Promise.all([
-      this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.id}`)
+      this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.jobPartId}`)
         .then(response => response.data.data.job_part),
       this.$axios.get('/api/v1/tax-rates')
         .then(response => response.data.data.tax_rates),

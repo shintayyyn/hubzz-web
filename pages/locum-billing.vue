@@ -1,46 +1,6 @@
 <template>
   <section class="billing-section">
-    <div 
-      v-if="!$route.params.id && !['locum-billing-private-invoices-form-b-create', 'locum-billing-invoices-form-b-create'].includes($route.name)" 
-      class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
-      <div class="flex overflow-x-auto items-center">
-        <nuxt-link
-          to="/locum-billing/invoices"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-invoices')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Invoices
-        </nuxt-link>
-
-        <nuxt-link
-          :to="{ name: 'locum-billing-private-invoices'}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-private-invoices')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Private Invoices
-        </nuxt-link>
-
-        <nuxt-link
-          :to="{ name: 'locum-billing-reports'}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-reports')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Reports
-        </nuxt-link>
-      </div>
-    </div>
+    <LocumBillingNavigationTabs />
 
     <div>
       <nuxt-child />
@@ -49,7 +9,13 @@
 </template>
 
 <script>
+import LocumBillingNavigationTabs from "@/components/LocumBilling/LocumBillingNavigationTabs"
+
 export default {
+  components: {
+    LocumBillingNavigationTabs,
+  },
+
   middleware: "isVerified",
 
   transition: (to, from) => {
@@ -72,14 +38,6 @@ export default {
     return {
       name: 'page',
       mode: 'out-in',
-    }
-  },
-
-  watch: {
-    "$route"(route) {
-      console.log("watch route", route)
-      console.log("watch route params.id", route.name)
-      console.log("see", !route.params.id && route.name !== 'locum-billing-private-invoices-form-b-create')
     }
   },
 

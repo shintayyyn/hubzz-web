@@ -1,55 +1,9 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-col md:flex-row lg:items-center justify-between border-b-2 border-sunglow">
-      <div class="flex flex-row justify-start overflow-x-auto">
-        <nuxt-link
-          to="/locum-billing/invoices"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-invoices')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Invoices
-        </nuxt-link>
-
-        <nuxt-link
-          :to="{ name: 'locum-billing-private-invoices'}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-private-invoices')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Private Invoices
-        </nuxt-link>
-
-        <nuxt-link
-          :to="{ name: 'locum-billing-reports'}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-reports')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Reports
-        </nuxt-link>
-      </div>
-    </div>
+    <LocumBillingNavigationTabs />
 
     <div>
       <div class="flex-1 flex flex-col py-2 px-4 md:px-6">
-        <!-- <div class="text-xl md:text-4xl">
-          Reports
-        </div>
-
-        <div class="text-sm md:text-xl">
-          Locum Reports
-        </div> -->
-
         <div class="flex flex-col">
           <nuxt-link
             v-for="locumBillingReport in locumBillingReports"
@@ -79,7 +33,13 @@
 </template>
 
 <script>
+import LocumBillingNavigationTabs from "@/components/LocumBilling/LocumBillingNavigationTabs"
+  
 export default {
+  components: {
+    LocumBillingNavigationTabs,
+  },
+
   middleware: "isVerified",
 
   transition: (to, from) => {

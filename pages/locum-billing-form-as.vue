@@ -1,44 +1,6 @@
 <template>
   <section class="billing-section">
-    <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
-      <div class="flex overflow-x-auto items-center">
-        <nuxt-link
-          to="/locum-billing/invoices"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-invoices') || $route.name === 'locum-billing-form-as'
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Invoices
-        </nuxt-link>
-
-        <nuxt-link
-          :to="{ name: 'locum-billing-private-invoices'}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-private-invoices')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Private Invoices
-        </nuxt-link>
-
-        <nuxt-link
-          :to="{ name: 'locum-billing-reports'}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="
-            $route.name.includes('locum-billing-reports')
-              ? 'border-b-4 border-sunglow'
-              : 'text-gray-600'
-          "
-        >
-          Reports
-        </nuxt-link>
-      </div>
-    </div>
+    <LocumBillingNavigationTabs />
 
     <div>
       <nuxt-child />
@@ -47,7 +9,13 @@
 </template>
 
 <script>
+import LocumBillingNavigationTabs from "@/components/LocumBilling/LocumBillingNavigationTabs"
+  
 export default {
+  components: {
+    LocumBillingNavigationTabs,
+  },
+
   middleware: "isVerified",
 
   transition: (to, from) => {
