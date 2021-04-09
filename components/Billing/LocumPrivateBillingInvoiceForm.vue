@@ -388,6 +388,16 @@ export default {
     },
   },
 
+  watch: {
+    vatAmount () {
+      this.form.tax_amount = this.vatAmount
+    },
+
+    totalAmount () {
+      this.form.total_amount = this.totalAmount
+    },
+  },
+
   mounted () {
     if (this.propJobPart && !this.propInvoice) {
       this.form.type = this.propJobPart.job.type
