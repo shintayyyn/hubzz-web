@@ -6,28 +6,28 @@
       <AppLoading :loading="loading" spinner />
 
       <LocumPrivateBillingInvoiceForm
-        v-if="!loading"
+        v-if="invoice"
         :propInvoiceDetail="invoice_detail"
-        :propInvoice="null"
-        :propJobPart="job_part"
+        :propInvoice="invoice"
+        :propJobPart="null"
         :taxRates="tax_rates"
         :vatRegistered="vat_registered"
-        @createInvoice="$emit('createInvoice', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'locum-billing-private-invoiced' })"
       />
     </div>
   </div>
 </template>
 
 <script>
-import LocumPrivateBillingInvoiceForm from "@/components/Billing/LocumPrivateBillingInvoiceForm"
-import AppLoading from "@/components/Base/AppLoading"
 import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import AppLoading from "@/components/Base/AppLoading"
+import LocumPrivateBillingInvoiceForm from "@/components/Billing/LocumPrivateBillingInvoiceForm"
 
 export default {
   components: {
-    LocumPrivateBillingInvoiceForm,
-    AppLoading,
     AppBreadcrumbs,
+    AppLoading,
+    LocumPrivateBillingInvoiceForm,
   },
 
   data () {
@@ -35,7 +35,7 @@ export default {
       loading: true,
       invoice_detail: null,
       vat_registered: null,
-      job_part: null,
+      invoice: null,
       tax_rates: [],
     }
   },
@@ -45,17 +45,18 @@ export default {
       const links = [
         {
           title: 'Billing',
-          url: '/locum-billing/private-invoices',
-        },
-        {
-          title: 'Private Invoices',
-          url: '/locum-billing/private-invoices',
+          url: `/locum-billing-private-to-be-invoiced`,
         },
       ]
 
-      if (this.job_part) {
+      if (this.invoice) {
         links.push({
-          title: `Generate Invoince for ${this.job_part.job_part_number}`,
+          title: `${this.invoice.status} Invoices`,
+          url: `/locum-billing-private-invoiced`,
+        })
+        
+        links.push({
+          title: this.invoice.invoice_number,
         })
       }
 
@@ -66,18 +67,18 @@ export default {
   mounted () {
     this.loading = true
     Promise.all([
-      this.$axios.get(`/api/v1/locum/job-parts/${this.$route.params.id}`)
-        .then(response => response.data.data.job_part),
+      this.$axios.get(`/api/v1/locum/locum-invoices/${this.$route.params.locumInvoiceId}`)
+        .then(response => response.data.data.locum_invoice),
       this.$axios.get('/api/v1/tax-rates')
         .then(response => response.data.data.tax_rates),
       this.$auth.fetchUser(),
-    ]).then(([jobPart, taxRates,]) => {
+    ]).then(([locumInvoice, taxRates,]) => {
       const user = this.$auth.user
 
       this.invoice_detail = user && user.locum_detail && user.locum_detail.invoice_detail
       this.vat_registered = user.vat_registered
 
-      this.job_part = jobPart
+      this.invoice = locumInvoice
       this.tax_rates = taxRates
     }).catch((err) => {
       console.log('err', err.response || err)

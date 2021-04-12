@@ -5,9 +5,10 @@
         <AppButton
           class="mx-1"
           :label="propJobPart ? 'Save as final' : 'Save changes'"
-          :disabled="saveLoading || exportLoading"
+          :disabled="saveLoading"
           @click="save(true)"
         />
+
         <AppButton
           v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
           class="mx-1"
@@ -16,25 +17,29 @@
         />
       </div>
 
-      <!-- INVOICE TYPE -->
       <div class="flex flex-row flex-wrap justify-start items-center">
         <label class="mx-1">Type:</label>
-        <div
-          class="text-xs sm:text-sm mx-1 py-1 px-3 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow"
-        >
-          Private
+
+        <div v-if="propJobPart" class="text-xs sm:text-sm mx-1 py-1 px-3 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow">
+          {{ propJobPart.job.type }}
+        </div>
+
+        <div v-if="propInvoice" class="text-xs sm:text-sm mx-1 py-1 px-3 rounded-lg font-bold flex items-center focus:outline-none bg-sunglow">
+          {{ propInvoice.type }}
         </div>
       </div>
     </div>
 
     <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
-      <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
       <AppLoading :loading="saveLoading" spinner />
-      <div :ref="'pdf-header'" class="flex flex-col">
-        <!-- LOCUM INFO -->
+
+      <div class="flex flex-col">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{ $auth.user.personal_detail.name }}</div>
           <div>{{ $auth.user.address_detail.address.line_1 }}</div>
+          <div v-if="$auth.user.address_detail.address.line_2">
+            {{ $auth.user.address_detail.address.line_2 }}
+          </div>
           <div>{{ $auth.user.address_detail.address.line_3 }}</div>
           <div>{{ $auth.user.address_detail.address.post_code }}</div>
           <div v-if="$auth.user.contact_detail.mobile_number">
@@ -45,8 +50,7 @@
             {{ 
               $auth.user.locum_detail.invoice_detail 
                 && $auth.user.locum_detail.invoice_detail.utr_number 
-                && $auth.user.locum_detail.invoice_detail.employment_type 
-                  === 'Self Employed' 
+                && $auth.user.locum_detail.invoice_detail.employment_type === 'Self Employed' 
                 ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
                 : null 
             }}
@@ -55,8 +59,7 @@
             {{ 
               $auth.user.locum_detail.invoice_detail 
                 && $auth.user.locum_detail.invoice_detail.company_registration_number 
-                && $auth.user.locum_detail.invoice_detail.employment_type 
-                  === 'Limited Company' 
+                && $auth.user.locum_detail.invoice_detail.employment_type === 'Limited Company' 
                 ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
                 : null 
             }}
@@ -67,6 +70,7 @@
             <span>{{ propInvoice.invoice_number }}</span>
           </div>
         </div>
+
         <div v-if="propInvoice" class="flex flex-wrap justify-between my-2">
           <div
             class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
@@ -89,6 +93,7 @@
             </div>
           </div>
         </div>
+
         <div v-if="propJobPart" class="flex flex-wrap justify-between my-2">
           <div
             class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
@@ -116,23 +121,20 @@
       <div class="overflow-auto">
         <div class="items-table">
           <!-- ITEMS HEADER -->
-          <div :ref="'items-header'" class="flex justify-start">
-            <div
-              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-            >
+          <div class="flex justify-start">
+            <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white">
               Description
             </div>
-            <div
-              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
-            >
+
+            <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">
               Total
             </div>
           </div>
+
           <!-- items / selected invoice -->
           <div
             v-if="form.items && form.items.length > 0"
             :id="`invoice-item`"
-            :ref="'invoice-item'"
             class="flex flex-col pb-2"
           >
             <!-- item description / total / dispute checkbox -->
@@ -145,6 +147,7 @@
                   rows="4"
                 />
               </div>
+
               <div class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2">
                 <input
                   v-model="form.items[0].total"
@@ -161,7 +164,7 @@
       <!-- TOTALS  -->
       <div class="flex flex-col">
         <!-- UNTAXED TOTAL -->
-        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+        <div v-if="vatRegistered" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Untaxed Total</span>
           <div class="w-1/4 flex justify-between">
             <div class="w-full text-right">
@@ -172,8 +175,9 @@
             </div>
           </div>
         </div>
+
         <!-- VAT TOTAL -->
-        <div v-if="vatRegistered" :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+        <div v-if="vatRegistered" class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">VAT Amount</span>
           <div class="w-1/4 flex justify-between">
             <div class="w-full text-right">
@@ -184,36 +188,45 @@
             </div>
           </div>
         </div>
+
         <!-- SUB TOTAL -->
         <template v-if="propInvoice && propInvoice.paid">
-          <div :ref="'items-sub-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <div class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 font-bold">Subtotal</span>
+
             <div class="w-1/4 flex justify-between">
               <div class="w-full text-right">
                 £
               </div>
+
               <div class="w-full text-right">
                 {{ subTotal | currency }}
               </div>
             </div>
           </div>
-          <div :ref="'items-ni-total'" class="flex justify-between md:m-2 text-lg px-3">
+
+          <div class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 pl-2 text-sm">NI amount</span>
+
             <div class="w-1/4 flex justify-between">
               <div class="w-full text-right">
                 £
               </div>
+
               <div class="w-full text-right">
                 {{ propInvoice.ni_amount | currency }}
               </div>
             </div>
           </div>
-          <div :ref="'items-paye-total'" class="flex justify-between md:m-2 text-lg px-3">
+
+          <div class="flex justify-between md:m-2 text-lg px-3">
             <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
+
             <div class="w-1/4 flex justify-between">
               <div class="w-full text-right">
                 £
               </div>
+
               <div class="w-full text-right">
                 {{ propInvoice.paye_amount | currency }}
               </div>
@@ -221,14 +234,15 @@
           </div>
         </template>
         
-        
         <!-- ITEMS TOTAL -->
-        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+        <div class="flex justify-between md:m-2 text-lg px-3">
           <span class="w-3/4 font-bold">Total</span>
+
           <div class="w-1/4 flex justify-between">
             <div class="w-full text-right">
               £
             </div>
+
             <div class="w-full text-right">
               {{ totalAmount | currency }}
             </div>
@@ -237,7 +251,7 @@
       </div>
 
       <!-- ITEMS DAYS WORKED -->
-      <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
+      <div class="flex flex-row flex-wrap justify-between px-2">
         <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
           <div class="w-full md:w-1/2 md:pr-1">
             <AppDate
@@ -248,6 +262,7 @@
               @input="CheckEmptyField(form.date_start, 'date_start')"
             />
           </div>
+
           <div class="w-full md:w-1/2 md:pl-1">
             <AppDate
               v-model="form.date_end"
@@ -260,7 +275,7 @@
         </div>
       </div>
 
-      <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
+      <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div
           v-if="propInvoiceDetail.paid_under_payroll && propInvoiceDetail.payroll_detail"
           class="flex flex-col text-xs sm:text-sm"
@@ -305,18 +320,22 @@ export default {
       type: Object,
       default: () => null,
     },
+
     propInvoice: {
       type: Object,
       default: () => null,
     },
+
     propJobPart: {
       type: Object,
       default: () => null,
     },
+
     taxRates: {
       type: Object,
       default: () => null,
     },
+
     vatRegistered: {
       type: Boolean,
       default: false,
@@ -325,7 +344,6 @@ export default {
 
   data () {
     return {
-      exportLoading: false,
       saveLoading: false,
       form: {
         date_start: null,
@@ -341,36 +359,19 @@ export default {
   },
 
   computed: {
-    // description () {
-    //   if (this.propJobPart && !this.propInvoice) {
-    //     return `Job number ${this.propJobPart.job_part_number} ${
-    //       this.propJobPart.job.type
-    //     }
-    //       Job at £${this.propJobPart.job.rate} ${
-    //       this.propJobPart.job.locum_detail_rate_type.name
-    //     }
-    //       from ${this.propJobPart.date_start} to ${this.propJobPart.date_end}
-    //       / ${this.propJobPart.job.shift.name} / Total hours of ${
-    //       this.form.items.length > 0 ? this.form.items[0].final_hours : 0
-    //     }`
-    //   }
-    // },
-
     untaxedAmount () {
-      let total = 0
-      if (this.form.items && this.form.items.length > 0) {
-        total = this.form.items[0].total
-        return total
+      if (this.form.items && this.form.items.length > 0 && this.form.items[0].total) {
+        return this.form.items[0].total
       }
+
       return 0
     },
 
     vatAmount () {
-      if (this.vatRegistered === true) {
-        const untaxedAmount = this.untaxedAmount
-        const vatAmount = parseFloat(untaxedAmount) * parseFloat(this.taxRates.locum_tax_rate_formatted)
-        return vatAmount
+      if (this.vatRegistered) {
+        return parseFloat(this.untaxedAmount) * parseFloat(this.taxRates.locum_tax_rate_formatted)
       }
+
       return 0
     },
 
@@ -387,6 +388,16 @@ export default {
     },
   },
 
+  watch: {
+    vatAmount () {
+      this.form.tax_amount = this.vatAmount
+    },
+
+    totalAmount () {
+      this.form.total_amount = this.totalAmount
+    },
+  },
+
   mounted () {
     if (this.propJobPart && !this.propInvoice) {
       this.form.type = this.propJobPart.job.type
@@ -394,26 +405,17 @@ export default {
       this.form.date_start = this.propJobPart.date_start
       this.form.date_end = this.propJobPart.date_end
 
-      let total
-        = this.propJobPart.job.locum_detail_rate_type.name === "Hourly"
-          ? this.propJobPart.job.rate.toFixed(2) * this.propJobPart.final_hours.toFixed(2)
-          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours).toFixed(2)
-            * this.propJobPart.final_hours.toFixed(2)
+      const total = this.propJobPart.job.locum_detail_rate_type.name === "Hourly"
+        ? this.propJobPart.job.rate.toFixed(2) * this.propJobPart.final_hours.toFixed(2)
+        : this.propJobPart.job.rate * this.propJobPart.days
         
-
       const jobPartNumber = this.propJobPart.job_part_number
       const jobType = this.propJobPart.job.type
       const jobRate = this.propJobPart.job.rate
       const jobRateTypeName = this.propJobPart.job.locum_detail_rate_type.name
-      const formattedDateStart = this.$moment(
-        this.propJobPart.date_start
-      ).format("DD/MM/YYYY")
-      const formattedDateEnd = this.$moment(this.propJobPart.date_end).format(
-        "DD/MM/YYYY"
-      )
-
+      const formattedDateStart = this.$moment(this.propJobPart.date_start).format("DD/MM/YYYY")
+      const formattedDateEnd = this.$moment(this.propJobPart.date_end).format("DD/MM/YYYY")
       const shiftName = this.propJobPart.job.shift.name
-
       const totalHoursOf = this.propJobPart.final_hours.toFixed(2)
 
       const description
@@ -459,8 +461,8 @@ export default {
           remarks: this.propInvoice.items[0].remarks,
         },
       ]
-      this.form.total_amount
-        = this.propInvoice.total_amount
+
+      this.form.total_amount = this.propInvoice.total_amount
         - this.propInvoice.ni_amount
         - this.propInvoice.paye_amount
 
@@ -472,13 +474,20 @@ export default {
 
   methods: {
     save (final) {
+      console.log('save', final)
+
       this.formError = []
+
       this.Validate(this.form, ["final", "ir35", "total_amount", "tax_amount",])
+
       console.log('form', this.form)
+
       if (!this.formError.length) {
         this.saveLoading = true
+
         if (this.propJobPart && !this.propInvoice) {
           this.form.final = final
+
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -511,9 +520,10 @@ export default {
             })
         } else if (this.propInvoice && !this.propJobPart) {
           this.form.final = final
+
           this.$axios
             .$put(
-              `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
+              `/api/v1/locum/locum-invoices/${this.$route.params.id || this.$route.params.locumInvoiceId}`,
               this.form
             )
             .then(res => {
@@ -549,219 +559,14 @@ export default {
     },
 
     viewAsPdf (invoiceId) {
-      window.open(
-        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      )
-    },
-
-    async exportToPdf () {
-      this.exportLoading = true
-      if (process.client) {
-        document.body.style.cursor = "wait"
-      }
-
-      let doc = this.$jspdf("p", "mm")
-      let pageHeight = 1020
-      let yPosition = 0
-
-      // PDF HEADER
-      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"])
-      const imgWidthPdfHeader = 210
-      const imgHeightPdfHeader
-        = (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width
-      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png")
-
-      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight
-
-      doc.addImage(
-        imgDataPdfHeader,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthPdfHeader,
-        imgHeightPdfHeader
-      )
-
-      yPosition = yPosition + imgHeightPdfHeader
-
-      // ITEMS HEADER
-      const canvasItemsHeader = await this.$html2canvas(
-        this.$refs["items-header"]
-      )
-      const imgWidthItemsHeader = 210
-      const imgHeightItemsHeader
-        = (canvasItemsHeader.height * imgWidthItemsHeader)
-        / canvasItemsHeader.width
-      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png")
-
-      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight
-
-      doc.addImage(
-        imgDataItemsHeader,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthItemsHeader,
-        imgHeightItemsHeader
-      )
-
-      yPosition = yPosition + imgHeightItemsHeader
-
-      // ITEMS
-      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"])
-
-      const imgWidthItems = 210
-      const imgHeightItems
-        = (canvasItems.height * imgWidthItems) / canvasItems.width
-      const imgDataItems = canvasItems.toDataURL("image/png")
-
-      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight
-
-      doc.addImage(
-        imgDataItems,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthItems,
-        imgHeightItems
-      )
-
-      yPosition = yPosition + imgHeightItems
-
-      // let totalSelectedJobParts = this.selectedJobParts.length;
-
-      // for (let i = 0; i < totalSelectedJobParts; i++) {
-      //   // minus the current item invoice height to the pageHeight
-      //   pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
-      //   // if all pageHeight is used, add page
-      //   if (pageHeight < 0) {
-      //     pageHeight = 1020;
-      //     yPosition = 0;
-      //     doc.addPage();
-      //     // add header to every new page, also subtract its height to page height
-      //     doc.addImage(
-      //       imgDataItemsHeader,
-      //       "PNG",
-      //       0,
-      //       yPosition,
-      //       imgWidthItemsHeader,
-      //       imgHeightItemsHeader
-      //     );
-
-      //     yPosition = yPosition + imgHeightItemsHeader;
-
-      //     pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
-      //     pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
-      //   }
-
-      //   // draw canvas
-      //   let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
-      //   let imgWidthItem = 210;
-      //   let imgHeightItem =
-      //     (canvasItem.height * imgWidthItem) / canvasItem.width;
-      //   let imgDataItem = canvasItem.toDataURL("image/png");
-
-      //   // add image
-      //   doc.addImage(
-      //     imgDataItem,
-      //     "PNG",
-      //     0,
-      //     yPosition,
-      //     imgWidthItem,
-      //     imgHeightItem
-      //   );
-
-      //   yPosition = yPosition + imgHeightItem;
-      // }
-
-      // sum up their offsetHeight
-      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight
-      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight
-      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight
-
-      let totalOffsetHeight
-        = daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight
-
-      pageHeight = pageHeight - totalOffsetHeight
-
-      // DAYS WORKED
-      const canvasDaysWorked = await this.$html2canvas(
-        this.$refs["days-worked"]
-      )
-      const imgWidthDaysWorked = 210
-      const imgHeightDaysWorked
-        = (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width
-      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png")
-
-      // ITEMS TOTAL
-      const canvasItemsTotal = await this.$html2canvas(
-        this.$refs["items-total"]
-      )
-      const imgWidthItemsTotal = 210
-      const imgHeightItemsTotal
-        = (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width
-      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png")
-
-      // PDF FOOTER
-      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"])
-      const imgWidthPdfFooter = 210
-      const imgHeightPdfFooter
-        = (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width
-      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png")
-
-      if (pageHeight < 0) {
-        pageHeight = 1020
-        doc.addPage()
-      }
-
-      yPosition
-        = 295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter)
-
-      doc.addImage(
-        imgDataDaysWorked,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthDaysWorked,
-        imgHeightDaysWorked
-      )
-
-      yPosition = yPosition + imgHeightDaysWorked
-
-      doc.addImage(
-        imgDataItemsTotal,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthItemsTotal,
-        imgHeightItemsTotal
-      )
-
-      yPosition = yPosition + imgHeightItemsTotal
-
-      doc.addImage(
-        imgDataPdfFooter,
-        "PNG",
-        0,
-        yPosition,
-        imgWidthPdfFooter,
-        imgHeightPdfFooter
-      )
-
-      yPosition = yPosition + imgHeightPdfFooter
-
-      doc.save("test.pdf")
-      this.exportLoading = false
-      if (process.client) {
-        document.body.style.cursor = "auto"
-      }
+      window.open(`${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`)
     },
   },
 }
 </script>
 
 <style scoped>
-.items-table {
-  min-width: 733px;
-}
+  .items-table {
+    min-width: 733px;
+  }
 </style>

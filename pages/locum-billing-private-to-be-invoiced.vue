@@ -1,5 +1,5 @@
 <template>
-  <section class="billing-section w-full">
+  <section class="billing-section">
     <LocumBillingNavigationTabs />
 
     <div>
@@ -10,7 +10,7 @@
 
 <script>
 import LocumBillingNavigationTabs from "@/components/LocumBilling/LocumBillingNavigationTabs"
-  
+
 export default {
   components: {
     LocumBillingNavigationTabs,
@@ -28,6 +28,19 @@ export default {
       || (to && to.name === 'locum-billing-form-as')
       || (from && from.name === 'locum-billing-solo-forms')
       || (to && to.name === 'locum-billing-solo-forms')
+
+      || (from && from.name === 'locum-billing-private-to-be-invoiced')
+      || (to && to.name === 'locum-billing-private-to-be-invoiced')
+      || (from && from.name === 'locum-billing-private-invoiced')
+      || (to && to.name === 'locum-billing-private-invoiced')
+      || (from && from.name === 'locum-billing-private-invoices')
+      || (to && to.name === 'locum-billing-private-invoices')
+      || (from && from.name === 'locum-billing-private-form-as')
+      || (to && to.name === 'locum-billing-private-form-as')
+      || (from && from.name === 'locum-billing-private-form-bs')
+      || (to && to.name === 'locum-billing-private-form-bs')
+      || (from && from.name === 'locum-billing-private-solo-forms')
+      || (to && to.name === 'locum-billing-private-solo-forms')
     ) {
       return {
         name: '',

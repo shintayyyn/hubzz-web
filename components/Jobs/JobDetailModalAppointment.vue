@@ -39,7 +39,8 @@
 
           <div class="-mt-6 md:-mt-4 pt-4">
             <AppButton :label="'Add'" :in-style="'font-size:12px;'"
-              :inClass="'text-xs py-1 px-4 rounded'" @click="surgery_modal = true" />
+                       :inClass="'text-xs py-1 px-4 rounded'" @click="surgery_modal = true"
+            />
           </div>
 
           <div class="flex flex-row flex-wrap justify-start mt-8">
@@ -49,7 +50,6 @@
                 :name="'dates'"
                 :label="'Job Dates'"
                 :error="formError.find(item => item.field === 'dates')"
-                is-after
                 multipleSelection
               />
             </div>
@@ -214,10 +214,11 @@ export default {
       type: Object,
       default: () => null,
     },
+
     isModal: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data () {
@@ -245,12 +246,14 @@ export default {
       formError: [],
     }
   },
+
   computed: {
     practices () {
       return this.$store.getters["getLocumPrivatePractices"]
     },
     // filteredShifts () {}
   },
+
   watch: {
     // "form.private_practice_id" (value) {
     //   this.formError = this.formError.filter(
@@ -296,6 +299,7 @@ export default {
         }
       }
     },
+
     "form.date_end" (value) {
       let a_year = this.$moment(this.form.date_start).get("year")
       let a_month = this.$moment(this.form.date_start).get("month")
@@ -341,6 +345,7 @@ export default {
         }
       }
     },
+
     "form.time_start" (value) {
       let hour = value.split(":")[0]
       let amShift = this.shifts.find(item => item.label === "AM")
@@ -395,20 +400,20 @@ export default {
     //   )
     // }
   },
-  async created () {
+
+  mounted () {
     this.loading = true
+
     Promise.all([
       this.$axios.$get("/api/v1/locum/private-practices"),
       this.$axios.$get("/api/v1/shifts"),
       this.$axios.$get("/api/v1/locum-detail-rate-types"),
     ])
       .then(([responsePrivatePractices, responseShifts, responseRateTypes, ]) => {
-        this.$store.commit(
-          "SET_LOCUM_PRIVATE_PRACTICES",
-          responsePrivatePractices.data.private_practices
-        )
+        this.$store.commit("SET_LOCUM_PRIVATE_PRACTICES", responsePrivatePractices.data.private_practices)
 
         this.shifts = []
+
         responseShifts.data.shifts.forEach(item => {
           this.shifts.push({
             label: item.name,
@@ -418,6 +423,7 @@ export default {
         })
 
         this.rate_types = []
+        
         responseRateTypes.data.locum_detail_rate_types.forEach(item => {
           this.rate_types.push({ label: item.name, value: item.id, })
         })
@@ -425,31 +431,30 @@ export default {
       .finally(() => {
         this.loading = false
       })
-  },
-  mounted () {
+
     if (this.job) {
-      // ! get private practice id
-      this.dataLoading = true
       this.form.private_practice_id = this.job.private_practice_id
       this.form.date_start = this.job.date_start
       this.form.time_start = this.job.time_start
       this.form.date_end = this.job.date_end
       this.form.time_end = this.job.time_end
       this.form.shift_id = this.job.shift_id
-      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type_id
-      this.form.rate = this.job.rate
-      // this.form.total_hours = this.job && this.job.total_hours ? this.job.total_hours.toFixed(2) : 0
+      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type_id || (this.job.locum_detail_rate_type && this.job.locum_detail_rate_type.id)
+      this.form.rate = this.job.rate || (this.job.rates && this.job.rates[0])
       this.form.description = this.job.description
+
       if (this.job.dates) {
         this.job.dates.forEach(date => this.form.dates.push(date))
       }
-      this.dataLoading = false
     }
   },
+
   methods: {
+
     getJobParts (jobId) {
       return this.$axios.$get(`/api/v1/locum/job-parts?job_id=${jobId}`)
     },
+
     async create () {
       this.formError = []
 
@@ -586,6 +591,7 @@ export default {
         })
       }
     },
+
     edit () {
       this.formError = []
       this.saving = true
@@ -741,6 +747,7 @@ export default {
   .modal-container {
     z-index: 512;
   }
+
   @media screen and (min-width: 1200px) {
     .modal-container {
       width: 70%;

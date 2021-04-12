@@ -1,49 +1,6 @@
 <template>
   <section class="relative">
-    <div class="flex flex-row justify-start overflow-x-auto border-b border-gray-500 mb-4 pt-1">
-      <nuxt-link
-        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-private-invoices') && (!$route.query.status || $route.query.status === 'to-be-invoiced') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
-      >
-        To be invoiced
-      </nuxt-link>
-
-      <nuxt-link
-        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'issued' } }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-private-invoices') && $route.query.status === 'issued' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
-      >
-        Invoiced
-      </nuxt-link>
-
-      <nuxt-link
-        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
-        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'solo-form' } }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-private-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'solo-form') ? 'border-b-4 border-gray-500' : 'text-gray-600'"
-      >
-        Solo Forms
-      </nuxt-link>
-
-      <nuxt-link
-        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
-        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'pension-form-a' } }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-private-invoices') && $route.query.status === 'pension-form-a' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
-      >
-        NHS Pensions Form A
-      </nuxt-link>
-
-      <nuxt-link
-        v-if="$auth.user.locum_detail.profession.profession_category.name === 'GP'"
-        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'pension-form-b' } }"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-private-invoices') && $route.query.status === 'pension-form-b' ? 'border-b-4 border-gray-500' : 'text-gray-600'"
-      >
-        NHS Pensions Form B
-      </nuxt-link>
-    </div>
+    <LocumBillingPrivateInvoicesTabs />
 
     <div
       v-if="
@@ -65,6 +22,7 @@
       <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
       </div>
+
       <div v-if="!initialLoading">
         <AppButton
           v-if="showRefresh"
@@ -424,6 +382,7 @@
 </template>
 
 <script>
+import LocumBillingPrivateInvoicesTabs from "@/components/LocumBilling/LocumBillingPrivateInvoicesTabs"
 import AppDate from "@/components/Base/AppDate"
 import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
@@ -438,6 +397,7 @@ export default {
   },
 
   components: {
+    LocumBillingPrivateInvoicesTabs,
     AppDate,
     AppInput,
     AppButton,
@@ -483,8 +443,7 @@ export default {
 
   computed: {
     form_bs_columns () {
-      let columns = []
-      columns.push(
+      return [
         {
           name: "Practices / Surgeries",
           dataIndex: "practices.name",
@@ -499,61 +458,109 @@ export default {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
-        }
-      )
-      return columns
+        },
+      ]
     },
 
     columns () {
-      let columns = []
-      let queryStatus = this.$route.query.status
-        ? this.$route.query.status.toLowerCase()
-        : "to-be-invoiced"
-      columns.push(
+      let columns = [
         {
           name: "Practice / Surgery",
           dataIndex: "practice_name",
           class: "text-center",
-        },
-        {
-          name: "Issued",
-          dataIndex: "issued_at_in_gb_formatted",
-          class: "text-center",
           sortable: true,
         },
-        {
-          name: "Invoice Number",
-          dataIndex: "invoice_number",
-          width: 130
-        },
-        {
-          name: "Job Number",
-          dataIndex: "job_part_number",
-          width: 130
-        },
-        {
-          name: "£ Amount",
-          dataIndex: "job_part_gross_rate_formatted",
+      ]
+
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "to-be-invoiced"
+
+      if (queryStatus !== 'to-be-invoiced') {
+        columns.push(
+          {
+            name: "Issued",
+            dataIndex: "issued_at_in_gb_formatted",
+            class: "text-center",
+            sortable: true,
+          },
+          {
+            name: "Invoice Number",
+            dataIndex: "invoice_number",
+            width: 130,
+          },
+        )
+      }
+
+      columns.push({
+        name: "Job Part Number",
+        dataIndex: "job_part_number",
+        sortable: true,
+        width: 130,
+      })
+
+      if (queryStatus === 'to-be-invoiced') {
+        columns.push({
+          name: "£ Rate",
+          dataIndex: "job_part_rate_ranged_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
-        }
-      )
+          width: 130,
+        })
+
+        columns.push({
+          name: "Rate Type",
+          dataIndex: "job_part_rate_type_names_formatted",
+          sortable: true,
+          class: "text-center",
+          width: 170,
+        })
+      }
+
+      columns.push({
+        name: "£ Amount",
+        dataIndex: "job_part_gross_rate_formatted",
+        class: "text-center",
+        sortable: true,
+        width: 130,
+      })
+
+      if (queryStatus === 'to-be-invoiced') {
+        columns.push(
+          {
+            name: "Dates",
+            dataIndex: "dates_formatted",
+            class: "text-center",
+            sortable: true,
+            width: 220,
+          },
+          {
+            name: "Time",
+            dataIndex: "time_formatted",
+            class: "text-center",
+            sortable: true,
+            width: 150,
+          },
+        )
+      }
+
       if (["issued", "pension-form-a",].includes(queryStatus)) {
         columns.push({
           name: "Paid",
           dataIndex: "paid",
           class: "text-center",
-          width: 100
+          width: 100,
         })
       }
+
       columns.push({
         name: "Actions",
         dataIndex: "actions",
-        class: ['issued', 'pension-form-a', 'solo-form'].includes(queryStatus) ? 'dropdown' : "text-center",
+        class: ['issued', 'pension-form-a', 'solo-form',].includes(queryStatus) ? 'dropdown' : "text-center",
         initialDropdown: queryStatus === 'pension-form-a' ? 'View Form A' : queryStatus === 'solo-form' ? 'View Solo Form' : 'Edit',
-        width: queryStatus === 'solo-form' ? 140 : 120
+        width: queryStatus === 'solo-form' ? 140 : 120,
       })
+
       return columns
     },
 
@@ -617,156 +624,25 @@ export default {
     },
   },
 
-  async asyncData ({ app, query, error, }) {
-    try {
-      let url = `/api/v1/locum/job-parts`
-      let locum_status = []
-      let nhs_claimable
-      let ooh
-      let queryStatus = query.status
-
-      switch (queryStatus && queryStatus.toLowerCase()) {
-      case "to-be-invoiced":
-        locum_status = ["Completed", "Private",]
-        break
-      case "issued":
-        locum_status = ["Approved",]
-        break
-      case "solo-form":
-        locum_status = ["Approved",]
-        ooh = true
-        break
-      case "pension-form-a":
-        locum_status = ["Approved",]
-        nhs_claimable = true
-        ooh = false
-        break
-      case "pension-form-b":
-        url = `/api/v1/locum/locum-invoices-form-b`
-        break
-      default:
-        locum_status = ["Completed", "Private",]
-      }
-
-      let locum_form_bs = []
-      let [total, job_parts,] = await Promise.all([
-        app.$axios
-          .$get(`${url}/count`, {
-            params: {
-              locum_status,
-              nhs_claimable,
-              ooh,
-              job_type: "Private",
-              type: "Private",
-            },
-          })
-          .then(res => {
-            const total = res.data.count
-            return total
-          }),
-        app.$axios
-          .$get(`${url}`, {
-            params: {
-              locum_status,
-              nhs_claimable,
-              ooh,
-              job_type: "Private",
-              type: "Private",
-              offset: 0,
-              limit: 15,
-            },
-          })
-          .then(res => {
-            if (res.data && res.data.job_parts) {
-              return res.data.job_parts
-            } else if (res.data && res.data.locum_form_bs) {
-              return res.data.locum_form_bs
-            }
-          }),
-      ])
-
-      if (url === `/api/v1/locum/job-parts`) {
-        job_parts = job_parts.map(jobPart => {
-          let total = jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.total
-            : jobPart.job.locum_detail_rate_type.name === "Hourly"
-              ? jobPart.job.rate * jobPart.final_hours
-              : (jobPart.job.rate / jobPart.job.total_hours)
-              * jobPart.final_hours
-
-          total
-            = jobPart.locum_invoice_item
-            && jobPart.locum_invoice_item.locum_invoice
-            && jobPart.locum_invoice_item.locum_invoice.paid_at
-              ? total
-                - jobPart.locum_invoice_item.locum_invoice.ni_amount
-                - jobPart.locum_invoice_item.locum_invoice.paye_amount
-              : total
-
-          return {
-            ...jobPart,
-            practice_name:
-              jobPart.job.type === "Platform"
-                ? jobPart.job.platform_job.practice.name
-                : jobPart.job.private_job.private_practice.name,
-            issued_at: jobPart.locum_invoice_id
-              ? jobPart.locum_invoice_item.locum_invoice.issued_at
-              : null,
-            invoice_number: jobPart.locum_invoice_id
-              ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-              : null,
-            total_amount: total,
-            paid:
-              jobPart.locum_status === "Approved"
-              && jobPart.locum_invoice_item.locum_invoice.paid_at
-                ? "Yes"
-                : "No",
-          }
-        })
-      } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
-        job_parts.forEach(item => {
-          locum_form_bs.push({
-            ...item,
-            practices: item.forms.map(form => {
-              return {
-                name: form.practice_name,
-              }
-            }),
-          })
-        })
-      }
-
-      return {
-        total,
-        job_parts,
-        locum_form_bs,
-      }
-    } catch (err) {
-      console.log("err", err.response || err)
-      error({
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!",
-      })
-    }
-  },
-
   mounted () {
-    this.$socket.on(
-      "Locum Notification Locum Invoice Created",
-      this.getLocumInvoiceRealTime
-    )
-    this.$socket.on(
-      "Locum Notification Locum Invoice Paid",
-      this.getLocumInvoiceRealTime
-    )
-    this.$socket.on(
-      "Locum Notification Locum Invoice Updated",
-      this.getLocumInvoiceRealTime
-    )
+    this.$socket.on("Locum Notification Locum Invoice Created", this.getLocumInvoiceRealTime)
+    this.$socket.on("Locum Notification Locum Invoice Paid", this.getLocumInvoiceRealTime)
+    this.$socket.on("Locum Notification Locum Invoice Updated", this.getLocumInvoiceRealTime)
+
+    this.current_page = 1
+    this.showRefresh = false
+    this.total = 0
+    this.job_parts = []
+    this.initialLoading = true
+    this.getJobPartsPromiseAll().finally(() => {
+      this.initialLoading = false
+    })
   },
 
   destroyed () {
-    this.removeListener()
+    this.$socket.removeListener("Locum Notification Locum Invoice Created", this.getLocumInvoiceRealTime)
+    this.$socket.removeListener("Locum Notification Locum Invoice Paid", this.getLocumInvoiceRealTime)
+    this.$socket.removeListener("Locum Notification Locum Invoice Updated", this.getLocumInvoiceRealTime)
   },
 
   methods: {
@@ -1115,21 +991,6 @@ export default {
       this.showRefresh = true
     },
 
-    removeListener () {
-      this.$socket.removeListener(
-        "Locum Notification Locum Invoice Create",
-        this.getLocumInvoiceRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Locum Invoice Paid",
-        this.getLocumInvoiceRealTime
-      )
-      this.$socket.removeListener(
-        "Locum Notification Locum Invoice Updated",
-        this.getLocumInvoiceRealTime
-      )
-    },
-
     select_invoice (id, type) {
       this.invoice_id = id
       if (type === "deleteInvoice") {
@@ -1354,15 +1215,16 @@ export default {
 </script>
 
 <style scoped>
-.shield {
-  z-index: 511;
-}
-.payment-modal {
-  position: fixed;
-  background-color: white;
-  z-index: 512;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+  .shield {
+    z-index: 511;
+  }
+
+  .payment-modal {
+    position: fixed;
+    background-color: white;
+    z-index: 512;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>

@@ -1,10 +1,10 @@
 <template>
-  <section >
+  <section>
     <div class="sidebar relative" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-10">
         <div class="flex flex-row justify-center pb-4">
           <div class="flex justify-center">
-            <img src="~/assets/images/hubzz_logo.png" class="w-3/5"/>
+            <img src="~/assets/images/hubzz_logo.png" class="w-3/5">
           </div>
           
           <button
@@ -148,7 +148,7 @@ export default {
           locumTabList.push({
             navigationTabTitle: "Jobs",
             route: "/locum-job-parts",
-            active:['/jobs','/locum-job-parts' ,'/locum-job-reports'].includes(`/${this.$route.path.split('/')[1]}`),
+            active:['/jobs','/locum-job-parts' ,'/locum-job-reports',].includes(`/${this.$route.path.split('/')[1]}`),
           })
         }
 
@@ -173,6 +173,14 @@ export default {
             active: `/${this.$route.path.split('/')[1]}` === '/locum-billing'
               || this.$route.name === 'locum-billing-form-as'
               || this.$route.name === 'locum-billing-solo-forms'
+
+              || this.$route.name.includes('locum-billing-private-to-be-invoiced')
+              || this.$route.name.includes('locum-billing-private-invoiced')
+              || this.$route.name.includes('locum-billing-private-invoices')
+              || this.$route.name.includes('locum-billing-private-solo-forms')
+              || this.$route.name.includes('locum-billing-private-form-as')
+              || this.$route.name.includes('locum-billing-private-form-bs')
+
               || `/${this.$route.path.split('/')[1]}` === '/locum-billing-reports',
           })
         }
@@ -320,7 +328,7 @@ export default {
           practiceTabList.push({
             navigationTabTitle: "My Banks",
             route: "/my-banks",
-            active: ['/my-banks', '/my-banks-reports'].includes(`/${this.$route.path.split('/')[1]}`),
+            active: ['/my-banks', '/my-banks-reports',].includes(`/${this.$route.path.split('/')[1]}`),
           })
         }
 
@@ -356,7 +364,7 @@ export default {
           practiceTabList.push({
             navigationTabTitle: "Sessions",
             route: "/job-parts",
-            active: ['/sessions', '/job-parts', '/practice-job-reports'].includes(`/${this.$route.path.split('/')[1]}`) ,
+            active: ['/sessions', '/job-parts', '/practice-job-reports',].includes(`/${this.$route.path.split('/')[1]}`) ,
           })
         }
         if (

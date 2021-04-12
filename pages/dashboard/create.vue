@@ -1,6 +1,7 @@
 <template>
   <div ref="modalContainer" class="">
     <AppBreadcrumbs :links="links" />
+    
     <JobDetailModalAppointment
       v-if="locumUser && !practiceUser"
       :isModal="false"
@@ -28,7 +29,7 @@ export default {
   components: {
     JobDetailModalAppointment,
     CreateJobModal,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -38,12 +39,12 @@ export default {
       links: [
         {
           title: 'Dashboard',
-          url: '/dashboard'
+          url: '/dashboard',
         },
         {
-          title: 'Create Appointment'
-        }
-      ]
+          title: 'Create Appointment',
+        },
+      ],
     }
   },
 
