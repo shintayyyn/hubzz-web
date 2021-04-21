@@ -286,9 +286,27 @@ export default {
         value: profession.id,
       }))
     },
+
+    selectedProfession () {
+      if (!this.professionId) {
+        return null
+      }
+
+      return this.professions.find(profession => profession.id.toString() === this.professionId.toString())
+    },
   },
 
   watch: {
+    selectedProfession () {
+      if (this.selectedProfession && this.selectedProfession.name === 'GP' && !this.title) {
+        this.title = 'Dr.'
+      }
+
+      if (this.selectedProfession && this.selectedProfession.name !== 'GP' && this.title === 'Dr.') {
+        this.title = ''
+      }
+    },
+
     agreePrivacyPolicy () {
       this.showPrivacyPolicyError = !this.agreePrivacyPolicy
     },

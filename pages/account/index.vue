@@ -131,8 +131,8 @@
           />
         </div>
         <div class="flex justify-end w-full mt-5">
-            <AppButton :label="'Save changes'" @click="save('practice')" />
-          </div>
+          <AppButton :label="'Save changes'" @click="save('practice')" />
+        </div>
         <!-- <div class="md:w-1/2 w-full">
             Your Account has the following Permissions
             <div
@@ -546,7 +546,7 @@ export default {
         let locumForm = {}
 
         locumForm.email = user.email
-        locumForm.title = user.title
+        locumForm.title = user.title || (user.profession_name === 'GP' ? 'Dr.' : '')
         locumForm.first_name = user.first_name
         locumForm.last_name = user.last_name
         locumForm.suffix = user.suffix
