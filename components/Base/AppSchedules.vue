@@ -139,7 +139,7 @@
                   </p>
 
                   <div class="flex items-end justify-between text-center"
-                    :class="type === 'create' ? 'w-9/12 ' : 'w-full'"
+                       :class="type === 'create' ? 'w-9/12 ' : 'w-full'"
                   >
                     <p :class="type === 'create' ? 'w-2/12' : type === 'invoice' ? 'w-40' : 'w-2/12'">
                       Shift
@@ -175,26 +175,42 @@
 
                     <!-- FOR COMPLETING & INVOICING JOB -->
                     <template v-if="['complete', 'terminate', 'invoice'].includes(type)">
-                      <p class="w-2/12">Final Break</p>
-                      <p :class="type === 'invoice' ? 'w-40' : 'w-2/12'">Final Start</p>
-                      <p :class="type === 'invoice' ? 'w-40' : 'w-2/12'">Final End</p>
-                      <p class="w-2/12">Deducted Hours</p>
+                      <p class="w-2/12">
+                        Final Break
+                      </p>
+                      <p :class="type === 'invoice' ? 'w-40' : 'w-2/12'">
+                        Final Start
+                      </p>
+                      <p :class="type === 'invoice' ? 'w-40' : 'w-2/12'">
+                        Final End
+                      </p>
+                      <p class="w-2/12">
+                        Deducted Hours
+                      </p>
                     </template>
 
                     <!-- FOR COMPLETING JOB -->
                     <p v-if="['complete', 'terminate'].includes(type)" class="w-2/12" />
 
-                    <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="w-2/12">Any Absences?</p>
+                    <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="w-2/12">
+                      Any Absences?
+                    </p>
 
                     <p v-if="['complete', 'terminate'].includes(type)" class="w-2/12" />
 
                     <!-- FOR INVOICING -->
                     <template v-if="type === 'invoice'">
-                      <p class="w-2/12">Final Hours</p>
+                      <p class="w-2/12">
+                        Final Hours
+                      </p>
 
-                      <p class="w-2/12">Final Rate</p>
+                      <p class="w-2/12">
+                        Final Rate
+                      </p>
 
-                      <p class="w-40">Dispute?</p>
+                      <p class="w-40">
+                        Dispute?
+                      </p>
 
                       <p class="w-40" />
                     </template>
@@ -207,7 +223,9 @@
 
                 <div v-for="(item, index) in filteredSchedule" :key="index" class="flex text-sm mb-2" :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'}` : ''">
                   <template v-if="['complete', 'terminate'].includes(type)">
-                    <div class="w-24 px-2 py-3">{{ item.date }}</div>
+                    <div class="w-24 px-2 py-3">
+                      {{ item.date }}
+                    </div>
 
                     <div class="w-full py-1">
                       <div v-for="(shift, i) in item.shifts" :key="i" class="flex flex-col w-full">
@@ -251,7 +269,9 @@
 
                           <!-- BREAK -->
                           <div class="w-1/12 flex items-center justify-center">
-                          <template v-if="[0, '0'].includes(shift.posted_break_in_minutes)">(none)</template>
+                            <template v-if="[0, '0'].includes(shift.posted_break_in_minutes)">
+                              (none)
+                            </template>
                             {{ shift.posted_break_in_minutes | minutes }}
                           </div>
 
@@ -274,32 +294,34 @@
                           </div>
 
                           <div class="w-2/12 flex items-center justify-center">
-                             <AppInput
-                                v-if="!shift.has_absences"
-                                v-model="shift.completed_break_in_minutes"
-                                label="Completed break in minutes:"
-                                :name="`completed_break_in_minutes-s${index}-${i}`"
-                                class="w-full px-2"
-                                :type="'text'"
-                                :min="1"
-                                inClass="text-center"
-                                :in-style="'text-align:right;background-color: transparent'"
-                                :wrapperClass="'mb-1 py-1'"
-                                :limit="4"
-                                postLabel="m"
-                                :error="
-                                  formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
-                                    : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
-                                      : null
-                                "
-                                @keydown="isNumber($event)"
-                                @change="emitSchedule()"
-                                @input="checkScheduleShiftCompletedBreakInMinutes(shift, index, i)"
-                                nolabel
-                              />
-                              <template v-else>0</template>
+                            <AppInput
+                              v-if="!shift.has_absences"
+                              v-model="shift.completed_break_in_minutes"
+                              label="Completed break in minutes:"
+                              :name="`completed_break_in_minutes-s${index}-${i}`"
+                              class="w-full px-2"
+                              :type="'text'"
+                              :min="1"
+                              inClass="text-center"
+                              :in-style="'text-align:right;background-color: transparent'"
+                              :wrapperClass="'mb-1 py-1'"
+                              :limit="4"
+                              postLabel="m"
+                              :error="
+                                formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
+                                  ? formError.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
+                                  : shiftErrors
+                                    ? shiftErrors.find(err => err.field === `completed_break_in_minutes-s${index}-${i}`)
+                                    : null
+                              "
+                              nolabel
+                              @keydown="isNumber($event)"
+                              @change="emitSchedule()"
+                              @input="checkScheduleShiftCompletedBreakInMinutes(shift, index, i)"
+                            />
+                            <template v-else>
+                              0
+                            </template>
                           </div>
 
                           <!-- FIELDS -->
@@ -518,7 +540,9 @@
                   </template>
 
                   <template v-else-if="type === 'invoice'">
-                    <div class="w-24 px-2 pt-3">{{ item.date }}</div>
+                    <div class="w-24 px-2 pt-3">
+                      {{ item.date }}
+                    </div>
 
                     <div class="w-full py-2">
                       <div v-for="(shift, i) in item.shifts" :key="i" :class="i !== item.shifts.length-1 ? 'mb-2' : ''">
@@ -573,7 +597,9 @@
 
                           <!-- BREAK -->
                           <div class="flex items-center justify-center text-center w-1/12">
-                          <template v-if="[0, '0'].includes(shift.posted_break_in_minutes)">(none)</template>
+                            <template v-if="[0, '0'].includes(shift.posted_break_in_minutes)">
+                              (none)
+                            </template>
                             {{ shift.posted_break_in_minutes | minutes }}
                           </div>
                           <div class="w-1/12 flex items-center justify-center">
@@ -613,11 +639,11 @@
                                     : null
                               "
                               :disabled="toDisplay || [true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute)"
+                              nolabel
+                              postLabel="m"
                               @keydown="isNumber($event)"
                               @change="emitSchedule()"
                               @input="checkScheduleShiftInvoicedBreakInMinutes(shift, index, i)"
-                              nolabel
-                              postLabel="m"
                             />
                           </div>
                         
@@ -1119,12 +1145,12 @@
                                     ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
                                     : null
                               "
+                              postLabel="m"
                               @focus="[0, '0'].includes(shift.posted_break_in_minutes) ? shift.posted_break_in_minutes = '' : shift.posted_break_in_minutes"
                               @blur="[shift.posted_break_in_minutes === '' ? shift.posted_break_in_minutes = 0 : shift.posted_break_in_minutes, CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)]"
                               @keydown="isNumber($event)"
                               @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
                               @input="checkScheduleShiftPostedBreakInMinutes(shift, index, i)"
-                              postLabel="m"
                             />
                           </div>
                           <div class="w-18 pl-1 pr-3">
@@ -1486,7 +1512,6 @@ import AppTime from "@/components/Base/AppTime"
 import AppButton from "@/components/Base/AppButton"
 import AppMultipleDates from "@/components/Base/AppMultipleDates"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppTable from "@/components/Base/AppTable"
 
 export default {
   components: {
@@ -1681,7 +1706,7 @@ export default {
 
         if (newStartDate.isAfter(oldStartDate)) {
           this.scheduleDates = this.scheduleDates.filter(
-            date => !newStartDate.isAfter(this.$moment(date, "DD/MM/YYYY"))
+            date => !this.$moment(date, "DD/MM/YYYY").isSameOrBefore(newStartDate)
           )
 
           this.scheduleDates.push(
@@ -1881,6 +1906,7 @@ export default {
         }, 0)
         .toFixed(2)
     },
+
     hubzz_fee_taxed () {
       console.log('this.tax_rates_for_preview', this.tax_rates)
       const taxed_hubzz_fee 
@@ -1899,6 +1925,20 @@ export default {
   },
 
   watch: {
+    start_date () {
+      this.$emit('exportDateRange', {
+        start_date: this.start_date,
+        end_date: this.end_date,
+      })
+    },
+
+    end_date () {
+      this.$emit('exportDateRange', {
+        start_date: this.start_date,
+        end_date: this.end_date,
+      })
+    },
+
     importedSchedule (value) {
       if (this.hideDates) {
         this.scheduleDates = value
@@ -2458,7 +2498,7 @@ export default {
                     locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
                     rate: shift.rate,
                     posted_break_in_minutes: shift.posted_break_in_minutes,
-                    posted_break_payable: shift.posted_break_payable
+                    posted_break_payable: shift.posted_break_payable,
                   })
                 })
               } else {
@@ -2493,7 +2533,7 @@ export default {
                 locum_detail_rate_type_id: shift.locum_detail_rate_type_id,
                 rate: shift.rate,
                 posted_break_in_minutes: shift.posted_break_in_minutes,
-                posted_break_payable: shift.posted_break_payable
+                posted_break_payable: shift.posted_break_payable,
               })
             })
           }

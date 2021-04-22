@@ -44,7 +44,9 @@
               <p>Unpaid Break:</p>
 
               <p class="pl-1">
-                <template v-if="!totalUnpaidBreakInMinutes">0</template>
+                <template v-if="!totalUnpaidBreakInMinutes">
+                  0
+                </template>
                 {{ totalUnpaidBreakInMinutes | hoursMinutes }}
               </p>
             </div>
@@ -114,6 +116,7 @@
         <div class="flex items-start flex-col md:flex-row">
           <template v-if="!dataLoading">
             <AppLoading :loading="dataLoading" spinner />
+
             <div class="w-full md:w-1/3 lg:w-45p flex flex-col xl:flex-row">
               <div class="w-full xl:w-5/12 xl:pr-2 mt-2">
                 <div class="flex flex-col">
@@ -356,6 +359,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="w-full xl:w-7/12 xl:pl-2 mt-2 flex flex-col">
                 <div class="flex flex-col border rounded-lg px-2" :class="form.role ? 'pt-3' : 'py-3'">
                   <h4 class="text-gray-500 mb-1">
@@ -559,7 +563,9 @@
                 @getSchedule="getSchedule"
                 @getJobParts="getJobParts"
                 @exportSched="value=> scheduleDates = value"
+                @exportDateRange="({ start_date: startDateValue, end_date: endDateValue }) => { start_date = startDateValue, end_date = endDateValue }"
               />
+
               <div class="pt-4 pb-8 w-full flex justify-end">
                 <AppButton
                   v-if="authPermissions.includes('Create Sessions Job')"
@@ -1097,7 +1103,7 @@ export default {
         .then(response => 
           response.data.data.tax_rates
         ),
-      ])
+    ])
       .then(responses => {
         const [
           responsePractices,
@@ -1498,7 +1504,7 @@ export default {
         deductions,
         total_lates,
         hasError,
-        job_parts
+        job_parts,
       })
 
       schedule.forEach((sched, scheduleIndex) => {
