@@ -424,113 +424,113 @@
                       :key="`${profession_compliance_category.id}-${profession_compliance_category.name}`"
                       class="flex flex-col w-full md:w-1/4 p-2 text-sm"
                     >
-                        <div>For {{ profession_compliance_category.name }}</div>
-                        <div class="ml-4">
+                      <div>For {{ profession_compliance_category.name }}</div>
+                      <div class="ml-4">
+                        <input
+                          :id="`${profession_compliance_category.id}-${profession_compliance_category.name}`"
+                          v-model="empty_profession_compliance_category_ids"
+                          type="checkbox"
+                          :value="profession_compliance_category.id"
+                          :disabled="empty_profession_compliance_category_ids.includes(profession_compliance_category.id)"
+                        >
+                        <label
+                          :for="`${profession_compliance_category.id}-${profession_compliance_category.name}`"
+                        >N/A</label>
+                      </div>
+                      <div class="ml-2">
+                        Reference
+                      </div>
+                      <template
+                        v-for="compliance_document in profession_compliance_category.reference_compliance_documents"
+                      >
+                        <div
+                          :key="`${compliance_document.id}-${compliance_document.name}`"
+                          class="ml-4 flex flex-row justify-start items-center"
+                        >
                           <input
-                            :id="`${profession_compliance_category.id}-${profession_compliance_category.name}`"
-                            v-model="empty_profession_compliance_category_ids"
+                            :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                            v-model="form.practice_profession_compliance_category_compliance_documents"
                             type="checkbox"
-                            :value="profession_compliance_category.id"
-                            :disabled="empty_profession_compliance_category_ids.includes(profession_compliance_category.id)"
+                            :value="{
+                              profession_compliance_category_id: profession_compliance_category.id,
+                              compliance_document_id: compliance_document.id
+                            }"
                           >
                           <label
-                            :for="`${profession_compliance_category.id}-${profession_compliance_category.name}`"
-                          >N/A</label>
+                            :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                          >{{ compliance_document.name }}</label>
                         </div>
-                        <div class="ml-2">
-                          Reference
-                        </div>
-                        <template
-                          v-for="compliance_document in profession_compliance_category.reference_compliance_documents"
+                      </template>
+                      <div class="ml-2">
+                        Mandatory
+                      </div>
+                      <template
+                        v-for="compliance_document in profession_compliance_category.mandatory_compliance_documents"
+                      >
+                        <div
+                          v-if="compliance_document.compliance_document_type_name !== 'Safeguarding'"
+                          :key="`${compliance_document.id}-${compliance_document.name}`"
+                          class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <div
-                            :key="`${compliance_document.id}-${compliance_document.name}`"
-                            class="ml-4 flex flex-row justify-start items-center"
+                          <input
+                            :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                            v-model="form.practice_profession_compliance_category_compliance_documents"
+                            type="checkbox"
+                            :value="{
+                              profession_compliance_category_id: profession_compliance_category.id,
+                              compliance_document_id: compliance_document.id
+                            }"
                           >
-                            <input
-                              :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
-                              v-model="form.practice_profession_compliance_category_compliance_documents"
-                              type="checkbox"
-                              :value="{
-                                profession_compliance_category_id: profession_compliance_category.id,
-                                compliance_document_id: compliance_document.id
-                              }"
-                            >
-                            <label
-                              :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
-                            >{{ compliance_document.name }}</label>
-                          </div>
-                        </template>
-                        <div class="ml-2">
-                          Mandatory
+                          <label
+                            :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                          >{{ compliance_document.name }}</label>
                         </div>
-                        <template
-                          v-for="compliance_document in profession_compliance_category.mandatory_compliance_documents"
+                        <div
+                          v-for="
+                            child_compliance_document in compliance_document.child_compliance_documents
+                              .filter(child_compliance_document => compliance_document.compliance_document_type_name === 'Safeguarding')
+                          "
+                          :key="`${child_compliance_document.id}-${child_compliance_document.name}`"
+                          class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <div
-                            v-if="compliance_document.compliance_document_type_name !== 'Safeguarding'"
-                            :key="`${compliance_document.id}-${compliance_document.name}`"
-                            class="ml-4 flex flex-row justify-start items-center"
+                          <input
+                            :id="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
+                            v-model="form.practice_profession_compliance_category_compliance_documents"
+                            type="checkbox"
+                            :value="{
+                              profession_compliance_category_id: profession_compliance_category.id,
+                              compliance_document_id: child_compliance_document.id
+                            }"
                           >
-                            <input
-                              :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
-                              v-model="form.practice_profession_compliance_category_compliance_documents"
-                              type="checkbox"
-                              :value="{
-                                profession_compliance_category_id: profession_compliance_category.id,
-                                compliance_document_id: compliance_document.id
-                              }"
-                            >
-                            <label
-                              :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
-                            >{{ compliance_document.name }}</label>
-                          </div>
-                          <div
-                            v-for="
-                              child_compliance_document in compliance_document.child_compliance_documents
-                                .filter(child_compliance_document => compliance_document.compliance_document_type_name === 'Safeguarding')
-                            "
-                            :key="`${child_compliance_document.id}-${child_compliance_document.name}`"
-                            class="ml-4 flex flex-row justify-start items-center"
-                          >
-                            <input
-                              :id="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
-                              v-model="form.practice_profession_compliance_category_compliance_documents"
-                              type="checkbox"
-                              :value="{
-                                profession_compliance_category_id: profession_compliance_category.id,
-                                compliance_document_id: child_compliance_document.id
-                              }"
-                            >
-                            <label
-                              :for="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
-                            >{{ child_compliance_document.name }}</label>
-                          </div>
-                        </template>
-                        <div class="ml-2">
-                          Optional
+                          <label
+                            :for="`${child_compliance_document.id}-${child_compliance_document.name}-${profession_compliance_category.id}`"
+                          >{{ child_compliance_document.name }}</label>
                         </div>
-                        <template
-                          v-for="compliance_document in profession_compliance_category.optional_compliance_documents"
+                      </template>
+                      <div class="ml-2">
+                        Optional
+                      </div>
+                      <template
+                        v-for="compliance_document in profession_compliance_category.optional_compliance_documents"
+                      >
+                        <div
+                          :key="`${compliance_document.id}-${compliance_document.name}`"
+                          class="ml-4 flex flex-row justify-start items-center"
                         >
-                          <div
-                            :key="`${compliance_document.id}-${compliance_document.name}`"
-                            class="ml-4 flex flex-row justify-start items-center"
+                          <input
+                            :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                            v-model="form.practice_profession_compliance_category_compliance_documents"
+                            type="checkbox"
+                            :value="{
+                              profession_compliance_category_id: profession_compliance_category.id,
+                              compliance_document_id: compliance_document.id
+                            }"
                           >
-                            <input
-                              :id="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
-                              v-model="form.practice_profession_compliance_category_compliance_documents"
-                              type="checkbox"
-                              :value="{
-                                profession_compliance_category_id: profession_compliance_category.id,
-                                compliance_document_id: compliance_document.id
-                              }"
-                            >
-                            <label
-                              :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
-                            >{{ compliance_document.name }}</label>
-                          </div>
-                        </template>
+                          <label
+                            :for="`${compliance_document.id}-${compliance_document.name}-${profession_compliance_category.id}`"
+                          >{{ compliance_document.name }}</label>
+                        </div>
+                      </template>
                     </div>
                   </template>
                   <div class="flex flex-col w-full md:w-1/4 p-2 text-sm">
@@ -540,10 +540,10 @@
                       :name="'mandatory_training_id'"
                       :label="'Mandatory training required from Locums:'"
                       :lists="mandatory_trainings"
+                      class="text-sm"
                       @checked="form.mandatory_training_id.push(parseInt($event))"
                       @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event))"
                       @uncheckAll="form.mandatory_training_id = []"
-                      class="text-sm"
                     />
                   </div>
                   <div class="flex flex-col w-full md:w-1/4 p-2 text-sm">
@@ -603,7 +603,7 @@
                   v-model="form.extra_information"
                   :type="'textarea'"
                   :name="'extra_information'"
-                  :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
+                  :label="'Extra Information (Parking restrictions, transport links, etc.)'"
                   :resize="false"
                 />
               </div>
