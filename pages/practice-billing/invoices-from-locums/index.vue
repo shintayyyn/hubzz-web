@@ -54,7 +54,7 @@
       </nuxt-link>
     </div>
     <AppFilter :enableSearch="false" class="mt-4">
-      <template v-slot:extraButton >
+      <template v-slot:extraButton>
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
@@ -83,7 +83,7 @@
             :type="'text'"
             :name="'invoice_number'"
             :label="'Invoice number'"
-              nolabel
+            nolabel
             border
           />
         </div>
@@ -98,7 +98,7 @@
             border
           />
         </div>
-        <div class="w-32" v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())">
+        <div v-if="$route.query.status && ['approved', 'pension-form-a'].includes($route.query.status.toLowerCase())" class="w-32">
           <AppInput
             v-model="is_paid"
             :wrapperClass="'px-1'"
@@ -126,13 +126,12 @@
           class="mx-1"
           @click="filterJobParts"
         />
-          <AppButton
+        <AppButton
           :disabled="disabledClearFilter"
           :label="'Clear'"
-          @click="clearFilters"
           customTheme="border hover:bg-gray-200"
+          @click="clearFilters"
         />
-        
       </template>
     </AppFilter>
 
@@ -242,9 +241,21 @@
         >
           <template v-slot:actions="slotProps">
             <div
-              v-if="practice.type !== 'Spoke' || 
-                (practice.type === 'Spoke' && !practice.parent_practice_id) ||
-                (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
+              v-if="
+                practice.type !== 'Spoke'
+                  || (practice.type === 'Spoke' && !practice.parent_practice_id)
+                  || (
+                    practice.type === 'Spoke'
+                  && practice.parent_practice_id
+                  && practice.parent_practice_id === slotProps.item.locum_invoice_parent_practice_id
+                  && practice.allow_surgery_bill_locum === true
+                  )
+                  || (
+                    practice.type === 'Spoke'
+                  && practice.parent_practice_id
+                  && practice.parent_practice_id !== slotProps.item.locum_invoice_parent_practice_id
+                  )
+              "
               class="flex flex-col bg-white border rounded border-gray-500"
             >
               <div
@@ -413,7 +424,7 @@ export default {
     AppButton,
     AppLoading,
     AppInput,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -778,7 +789,7 @@ export default {
         locum_invoice_paid: this.is_paid,
         locum_invoice_number_includes: this.invoice_number,
         job_part_number_includes: this.job_part_number_includes,
-        appointed_to_locum_user_name_includes: this.appointed_to_locum_user_name_includes
+        appointed_to_locum_user_name_includes: this.appointed_to_locum_user_name_includes,
         // practice_id: this.$auth.user.practice_id,
       }
 
@@ -856,7 +867,7 @@ export default {
         locum_invoice_paid: this.is_paid,
         locum_invoice_number_includes: this.invoice_number,
         job_part_number_includes: this.job_part_number_includes,
-        appointed_to_locum_user_name_includes: this.appointed_to_locum_user_name_includes
+        appointed_to_locum_user_name_includes: this.appointed_to_locum_user_name_includes,
         // practice_id: this.$auth.user.practice_id,
       }
 
