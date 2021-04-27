@@ -2,7 +2,7 @@
   <div class="px-6 py-4">
     <!-- HEADER -->
     <div class="flex justify-between text-sm text-white">
-      <div @click="$emit('close')" class="cursor-pointer px-2 py-3">
+      <div class="cursor-pointer px-2 py-3" @click="$emit('close')">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
     </div>
@@ -17,7 +17,7 @@
     />
 
     <div class="m-2 text-sm font-semibold">
-      <div>Surgery: {{spoke.surgery.name}}</div>
+      <div>Surgery: {{ spoke.surgery.name }}</div>
     </div>
     <div class="rounded-lg border p-4">
       <div class="flex flex-col flex-wrap justify-between">
@@ -33,7 +33,7 @@
           />
         </div>
         <!-- SET MAX RATES ;  NOT REQUIRED -->
-        <div class="p-2 mx-2 bg-gray-300 rounded-lg" v-if="surgeryCreateSessions == 'true'">
+        <div v-if="surgeryCreateSessions == 'true'" class="p-2 mx-2 bg-gray-300 rounded-lg">
           <div class="w-full p-1">
             <AppInput
               v-model="form.max_hourly_rate_limit"
@@ -41,7 +41,7 @@
               :name="'max_hourly_rate_limit'"
               :label="'Set max hourly rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_hourly_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -51,7 +51,7 @@
               :name="'max_halfday_rate_limit'"
               :label="'Set max half day rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_halfday_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -61,7 +61,7 @@
               :name="'max_wholeday_rate_limit'"
               :label="'Set max whole day rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_wholeday_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -71,7 +71,7 @@
               :name="'max_ooh_rate_limit'"
               :label="'Set max out-of-hours rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_ooh_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -81,7 +81,7 @@
               :name="'max_excess_hours'"
               :label="'Set max excess hours rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_excess_hours')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
         </div>
@@ -143,24 +143,24 @@
         </div>
       </div>
       <div class="flex flex-row justify-start">
-        <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
+        <AppButton :label="'Save'" :inStyle="'padding:5px 16px;'" @click="publish" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import AppButton from "@/components/Base/AppButton";
-import AppInput from "@/components/Base/AppInput";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppButton from "@/components/Base/AppButton"
+import AppInput from "@/components/Base/AppInput"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
-  props: ["spoke"],
   components: {
     AppButton,
     AppInput,
-    AppConfirmationModal
+    AppConfirmationModal,
   },
-  data() {
+  props: ["spoke",],
+  data () {
     return {
       modal: false,
       form: {
@@ -175,36 +175,36 @@ export default {
         allow_surgery_bill_locum: "",
         allow_surgery_bill_hubzz: "",
         share_banks_to_other_surgeries: "",
-        share_my_banks: ""
+        share_my_banks: "",
       },
-      formError: []
-    };
+      formError: [],
+    }
   },
   computed: {
-    surgeryCreateSessions: function() {
-      return this.form.allow_surgery_create_sessions;
-    }
+    surgeryCreateSessions: function () {
+      return this.form.allow_surgery_create_sessions
+    },
   },
 
   methods: {
-    save() {
-      this.modal = true;
+    save () {
+      this.modal = true
     },
-    publish() {
-      this.formError = [];
+    publish () {
+      this.formError = []
       let notRequired = [
         "max_hourly_rate_limit",
         "max_halfday_rate_limit",
         "max_wholeday_rate_limit",
         "max_ooh_rate_limit",
-        "max_excess_hours"
-      ];
-      this.Validate(this.form, notRequired);
+        "max_excess_hours",
+      ]
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        this.invite();
+        this.invite()
       }
     },
-    async invite() {
+    async invite () {
       await this.$axios
         .post(`/api/v1/practice/me/practice-surgeries/invite`, {
           child_practice_id: this.form.child_practice_id,
@@ -221,28 +221,28 @@ export default {
           allow_surgery_bill_hubzz: this.form.allow_surgery_bill_hubzz,
           share_banks_to_other_surgeries: this.form
             .share_banks_to_other_surgeries,
-          share_my_banks: this.form.share_my_banks
+          share_my_banks: this.form.share_my_banks,
         })
         .then(res => {
-          this.modal = false;
+          this.modal = false
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${res.data.message}`]
-          });
-          this.$router.push(`/hub-surgery-management/invitations/hub`);
+            text: [`${res.data.message}`,],
+          })
+          this.$router.push(`/hub-surgery-management/invitations/hub`)
         })
         .catch(err => {
-          console.log("err", err.response.data.error_messages);
+          console.log("err", err.response.data.error_messages)
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [err.response.data.error_messages[0].message]
-          });
-        });
-    }
-  }
-};
+            text: [err.response.data.error_messages[0].message,],
+          })
+        })
+    },
+  },
+}
 </script>
 
 <style>

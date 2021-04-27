@@ -7,10 +7,12 @@
       class="mb-2 cursor-pointer"
       @click="$router.push('/hub-surgery-management/invitations/spoke')"
     /> -->
-    <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Accept Spoke</div>
+    <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">
+      Accept Spoke
+    </div>
 
     <div class="m-2 text-sm font-semibold">
-      <div>Surgery: {{spoke.surgery.name}}</div>
+      <div>Surgery: {{ spoke.surgery.name }}</div>
     </div>
 
     <div class="rounded-lg border p-4">
@@ -27,8 +29,8 @@
           />
         </div>
         <div
-          class="p-2 mx-2 bg-gray-300 rounded-lg"
           v-if="[true, 'true'].includes(surgeryCreateSessions)"
+          class="p-2 mx-2 bg-gray-300 rounded-lg"
         >
           <div class="w-full p-1">
             <AppInput
@@ -37,7 +39,7 @@
               :name="'max_hourly_rate_limit'"
               :label="'Set max hourly rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_hourly_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -47,7 +49,7 @@
               :name="'max_halfday_rate_limit'"
               :label="'Set max half day rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_halfday_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -57,7 +59,7 @@
               :name="'max_wholeday_rate_limit'"
               :label="'Set max whole day rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_wholeday_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -67,7 +69,7 @@
               :name="'max_ooh_rate_limit'"
               :label="'Set max out-of-hours rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_ooh_rate_limit')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
           <div class="w-full p-1">
@@ -77,7 +79,7 @@
               :name="'max_excess_hours'"
               :label="'Set max excess hours rate limit for Spoke'"
               :error="formError.find(item => item.field === 'max_excess_hours')"
-              :inStyle="'text-align:right'"
+              :inStyle="'text-align:left'"
             />
           </div>
         </div>
@@ -138,22 +140,22 @@
         </div>
       </div>
       <div class="flex flex-row justify-start">
-        <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
+        <AppButton :label="'Save'" :inStyle="'padding:5px 16px;'" @click="publish" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton";
-import AppInput from "@/components/Base/AppInput";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppButton from "@/components/Base/AppButton"
+import AppInput from "@/components/Base/AppInput"
+
 export default {
   components: {
     AppButton,
     AppInput,
-    AppConfirmationModal
   },
-  data() {
+
+  data () {
     return {
       spoke: null,
       form: {
@@ -168,59 +170,61 @@ export default {
         allow_surgery_bill_locum: "",
         allow_surgery_bill_hubzz: "",
         share_banks_to_other_surgeries: "",
-        share_my_banks: ""
+        share_my_banks: "",
       },
-      formError: []
-    };
-  },
-  computed: {
-    surgeryCreateSessions: function() {
-      return this.form.allow_surgery_create_sessions;
+      formError: [],
     }
   },
-  async asyncData({ app, params, error }) {
+
+  computed: {
+    surgeryCreateSessions: function () {
+      return this.form.allow_surgery_create_sessions
+    },
+  },
+
+  async asyncData ({ app, params, error, }) {
     const resAll = await app.$axios.$get(
       `/api/v1/practice/me/practice-surgeries/spoke-invitations`
-    );
+    )
 
-    let invitationIds =
-      resAll.data &&
-      resAll.data.invitations &&
-      resAll.data.invitations.length > 0
+    let invitationIds
+      = resAll.data
+      && resAll.data.invitations
+      && resAll.data.invitations.length > 0
         ? resAll.data.invitations.map(item => item.id)
-        : [];
+        : []
 
     if (!invitationIds.includes(parseInt(params.invitationId))) {
-      return error({ status: 404, message: "Page Not Found" });
+      return error({ status: 404, message: "Page Not Found", })
     }
 
     const res = await app.$axios.$get(
       `/api/v1/practice/practice-spokes/${params.invitationId}`
-    );
-    let spoke = res.data && res.data.practices ? res.data.practices : null;
+    )
+    let spoke = res.data && res.data.practices ? res.data.practices : null
     return {
-      spoke
-    };
+      spoke,
+    }
   },
-  mounted() {
-    this.form.child_practice_id = this.spoke.id;
+  mounted () {
+    this.form.child_practice_id = this.spoke.id
   },
   methods: {
-    publish() {
-      this.formError = [];
+    publish () {
+      this.formError = []
       let notRequired = [
         "max_hourly_rate_limit",
         "max_halfday_rate_limit",
         "max_wholeday_rate_limit",
         "max_ooh_rate_limit",
-        "max_excess_hours"
-      ];
-      this.Validate(this.form, notRequired);
+        "max_excess_hours",
+      ]
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        this.invite();
+        this.invite()
       }
     },
-    async invite() {
+    async invite () {
       await this.$axios
         .post(`/api/v1/practice/practice-spokes`, {
           child_practice_id: this.form.child_practice_id,
@@ -237,27 +241,27 @@ export default {
           allow_surgery_bill_hubzz: this.form.allow_surgery_bill_hubzz,
           share_banks_to_other_surgeries: this.form
             .share_banks_to_other_surgeries,
-          share_my_banks: this.form.share_my_banks
+          share_my_banks: this.form.share_my_banks,
         })
-        .then(res => {
+        .then(() => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`Invitation accepted successfully`]
-          });
-          this.$router.push("/hub-surgery-management/invitations/spoke");
+            text: [`Invitation accepted successfully`,],
+          })
+          this.$router.push("/hub-surgery-management/invitations/spoke")
         })
         .catch(err => {
-          console.log("err", err.response.data.error_messages);
+          console.log("err", err.response.data.error_messages)
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: [err.response.data.error_messages[0].message]
-          });
-        });
-    }
-  }
-};
+            text: [err.response.data.error_messages[0].message,],
+          })
+        })
+    },
+  },
+}
 </script>
 <style scoped>
 .modal-container {
