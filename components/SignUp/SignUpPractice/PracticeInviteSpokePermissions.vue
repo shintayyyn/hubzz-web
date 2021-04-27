@@ -1,7 +1,7 @@
 <template>
   <div class="modal-container py-4 px-4 md:px-8">
     <div class="flex justify-between text-sm text-white">
-      <div @click="$emit('close')" class="cursor-pointer px-2 py-3">
+      <div class="cursor-pointer px-2 py-3" @click="$emit('close')">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
     </div>
@@ -21,8 +21,8 @@
         </div>
         <!-- SET MAX RATES ;  NOT REQUIRED -->
         <div
-          class="p-2 mx-2 bg-gray-300 rounded-lg"
           v-if="[true,'true'].includes(surgeryCreateSessions)"
+          class="p-2 mx-2 bg-gray-300 rounded-lg"
         >
           <div class="w-full p-1">
             <AppInput
@@ -133,7 +133,7 @@
         </div>
       </div>
       <div class="flex flex-row justify-start">
-        <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
+        <AppButton :label="'Save'" :inStyle="'padding:5px 16px;'" @click="publish" />
       </div>
     </div>
 
@@ -148,17 +148,17 @@
   </div>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton";
-import AppInput from "@/components/Base/AppInput";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppButton from "@/components/Base/AppButton"
+import AppInput from "@/components/Base/AppInput"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
-  props: ["spoke"],
   components: {
     AppButton,
     AppInput,
-    AppConfirmationModal
+    AppConfirmationModal,
   },
-  data() {
+  props: ["spoke",],
+  data () {
     return {
       modal: false,
       form: {
@@ -173,134 +173,134 @@ export default {
         allow_surgery_bill_locum: "",
         allow_surgery_bill_hubzz: "",
         share_banks_to_other_surgeries: "",
-        share_my_banks: ""
+        share_my_banks: "",
       },
-      formError: []
-    };
-  },
-  computed: {
-    surgeryCreateSessions() {
-      return this.form.allow_surgery_create_sessions;
+      formError: [],
     }
   },
-  mounted() {
+  computed: {
+    surgeryCreateSessions () {
+      return this.form.allow_surgery_create_sessions
+    },
+  },
+  mounted () {
     if (this.spoke.child_practice_id) {
-      this.form.max_hourly_rate_limit = this.spoke.max_hourly_rate_limit;
-      this.form.max_halfday_rate_limit = this.spoke.max_halfday_rate_limit;
-      this.form.max_wholeday_rate_limit = this.spoke.max_wholeday_rate_limit;
-      this.form.max_ooh_rate_limit = this.spoke.max_ooh_rate_limit;
-      this.form.max_excess_hours = this.spoke.max_excess_hours;
-      this.form.child_practice_id = this.spoke.child_practice_id;
-      this.form.allow_surgery_create_sessions = [false, "false"].includes(
+      this.form.max_hourly_rate_limit = this.spoke.max_hourly_rate_limit
+      this.form.max_halfday_rate_limit = this.spoke.max_halfday_rate_limit
+      this.form.max_wholeday_rate_limit = this.spoke.max_wholeday_rate_limit
+      this.form.max_ooh_rate_limit = this.spoke.max_ooh_rate_limit
+      this.form.max_excess_hours = this.spoke.max_excess_hours
+      this.form.child_practice_id = this.spoke.child_practice_id
+      this.form.allow_surgery_create_sessions = [false, "false",].includes(
         this.spoke.allow_surgery_create_sessions
       )
         ? false
-        : true;
-      this.form.allow_surgery_create_permanent_jobs = [false, "false"].includes(
+        : true
+      this.form.allow_surgery_create_permanent_jobs = [false, "false",].includes(
         this.spoke.allow_surgery_create_permanent_jobs
       )
         ? false
-        : true;
-      this.form.allow_surgery_bill_locum = [false, "false"].includes(
+        : true
+      this.form.allow_surgery_bill_locum = [false, "false",].includes(
         this.spoke.allow_surgery_bill_locum
       )
         ? false
-        : true;
-      this.form.allow_surgery_bill_hubzz = [false, "false"].includes(
+        : true
+      this.form.allow_surgery_bill_hubzz = [false, "false",].includes(
         this.spoke.allow_surgery_bill_hubzz
       )
         ? false
-        : true;
-      this.form.share_banks_to_other_surgeries = [false, "false"].includes(
+        : true
+      this.form.share_banks_to_other_surgeries = [false, "false",].includes(
         this.spoke.share_banks_to_other_surgeries
       )
         ? false
-        : true;
-      this.form.share_my_banks = [false, "false"].includes(
+        : true
+      this.form.share_my_banks = [false, "false",].includes(
         this.spoke.share_my_banks
       )
         ? false
-        : true;
+        : true
     }
   },
   methods: {
-    publish() {
-      this.formError = [];
+    publish () {
+      this.formError = []
       let notRequired = [
         "max_hourly_rate_limit",
         "max_halfday_rate_limit",
         "max_wholeday_rate_limit",
         "max_ooh_rate_limit",
-        "max_excess_hours"
-      ];
+        "max_excess_hours",
+      ]
       if (typeof this.form.allow_surgery_create_sessions === "boolean") {
-        notRequired.push("allow_surgery_create_sessions");
+        notRequired.push("allow_surgery_create_sessions")
       }
       if (typeof this.form.allow_surgery_create_permanent_jobs === "boolean") {
-        notRequired.push("allow_surgery_create_permanent_jobs");
+        notRequired.push("allow_surgery_create_permanent_jobs")
       }
       if (typeof this.form.allow_surgery_bill_locum === "boolean") {
-        notRequired.push("allow_surgery_bill_locum");
+        notRequired.push("allow_surgery_bill_locum")
       }
       if (typeof this.form.allow_surgery_bill_hubzz === "boolean") {
-        notRequired.push("allow_surgery_bill_hubzz");
+        notRequired.push("allow_surgery_bill_hubzz")
       }
       if (typeof this.form.share_banks_to_other_surgeries === "boolean") {
-        notRequired.push("share_banks_to_other_surgeries");
+        notRequired.push("share_banks_to_other_surgeries")
       }
       if (typeof this.form.share_my_banks === "boolean") {
-        notRequired.push("share_my_banks");
+        notRequired.push("share_my_banks")
       }
 
-      this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        this.modal = true;
+        this.modal = true
       }
     },
-    invite() {
-      let objForm = {};
+    invite () {
+      let objForm = {}
       if (this.spoke.child_practice_id) {
         objForm = {
           ...this.form,
           name: this.spoke.name,
           child_practice_id: this.spoke.child_practice_id,
-          allow_surgery_create_sessions: [false, "false"].includes(
+          allow_surgery_create_sessions: [false, "false",].includes(
             this.form.allow_surgery_create_sessions
           )
             ? "false"
             : "true",
-          allow_surgery_create_permanent_jobs: [false, "false"].includes(
+          allow_surgery_create_permanent_jobs: [false, "false",].includes(
             this.form.allow_surgery_create_permanent_jobs
           )
             ? "false"
             : "true",
-          allow_surgery_bill_locum: [false, "false"].includes(
+          allow_surgery_bill_locum: [false, "false",].includes(
             this.form.allow_surgery_bill_locum
           )
             ? "false"
             : "true",
-          allow_surgery_bill_hubzz: [false, "false"].includes(
+          allow_surgery_bill_hubzz: [false, "false",].includes(
             this.form.allow_surgery_bill_hubzz
           )
             ? "false"
             : "true",
-          share_banks_to_other_surgeries: [false, "false"].includes(
+          share_banks_to_other_surgeries: [false, "false",].includes(
             this.form.share_banks_to_other_surgeries
           )
             ? "false"
-            : "true"
-        };
+            : "true",
+        }
       } else {
         objForm = {
           ...this.form,
-          name: this.spoke.name
-        };
+          name: this.spoke.name,
+        }
       }
-      this.$emit("addSpoke", objForm);
-      this.modal = false;
-    }
-  }
-};
+      this.$emit("addSpoke", objForm)
+      this.modal = false
+    },
+  },
+}
 </script>
 <style scoped>
 .modal-container {
