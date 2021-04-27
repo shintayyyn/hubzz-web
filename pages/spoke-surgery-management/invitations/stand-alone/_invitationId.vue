@@ -38,7 +38,7 @@
                 :name="'max_hourly_rate_limit'"
                 :label="'Set max hourly rate limit for Spoke'"
                 :error="formError.find(item => item.field === 'max_hourly_rate_limit')"
-                :inStyle="'text-align:right'"
+                :inStyle="'text-align:left'"
               />
             </div>
             <div class="w-full p-1">
@@ -48,7 +48,7 @@
                 :name="'max_halfday_rate_limit'"
                 :label="'Set max half day rate limit for Spoke'"
                 :error="formError.find(item => item.field === 'max_halfday_rate_limit')"
-                :inStyle="'text-align:right'"
+                :inStyle="'text-align:left'"
               />
             </div>
             <div class="w-full p-1">
@@ -58,7 +58,7 @@
                 :name="'max_wholeday_rate_limit'"
                 :label="'Set max whole day rate limit for Spoke'"
                 :error="formError.find(item => item.field === 'max_wholeday_rate_limit')"
-                :inStyle="'text-align:right'"
+                :inStyle="'text-align:left'"
               />
             </div>
             <div class="w-full p-1">
@@ -68,7 +68,7 @@
                 :name="'max_ooh_rate_limit'"
                 :label="'Set max out-of-hours rate limit for Spoke'"
                 :error="formError.find(item => item.field === 'max_ooh_rate_limit')"
-                :inStyle="'text-align:right'"
+                :inStyle="'text-align:left'"
               />
             </div>
             <div class="w-full p-1">
@@ -78,7 +78,7 @@
                 :name="'max_excess_hours'"
                 :label="'Set max excess hours rate limit for Spoke'"
                 :error="formError.find(item => item.field === 'max_excess_hours')"
-                :inStyle="'text-align:right'"
+                :inStyle="'text-align:left'"
               />
             </div>
           </div>
