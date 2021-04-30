@@ -597,7 +597,6 @@ export default {
             this.params = {
               job_posting_status: newStatus ? newStatus : "Available",
               locum_user_id: this.$auth.user.id,
-              profession_id: this.$auth.user.locum_detail.profession.id,
               near_post_code: this.$auth.user.locum_postcode,
               limit: 15,
             }
