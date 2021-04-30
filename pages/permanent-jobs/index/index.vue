@@ -18,21 +18,21 @@
       v-if="$auth.user.domain === 'Practice'"
       class="w-full"
     >
-    <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
-      <template v-slot:extraButtonFirst v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
-        <AppInputSmall
-          v-model="search"
-          :type="'text'"
-          :name="'search'"
-          :button="true"
-          :buttonLabel="'Search'"
-          :placeholder="'Title / Practice Name'"
-          :disabled="loading"
-          :inStyle="'margin:0'"
-          @click="getPermanentJobsForPractice()"
-        />
-      </template>
-       <template v-slot:filter v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
+      <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
+        <template v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" v-slot:extraButtonFirst>
+          <AppInputSmall
+            v-model="search"
+            :type="'text'"
+            :name="'search'"
+            :button="true"
+            :buttonLabel="'Search'"
+            :placeholder="'Title / Practice Name'"
+            :disabled="loading"
+            :inStyle="'margin:0'"
+            @click="getPermanentJobsForPractice()"
+          />
+        </template>
+        <template v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" v-slot:filter>
           <div class="w-full md:w-32">
             <AppInput
               v-model="params.job_type"
@@ -49,7 +49,7 @@
 
           <div class="w-full md:w-1/6">
             <AppInput
-              v-model="params.profession"
+              v-model="params.profession_id"
               :type="'select'"
               :name="'profession'"
               :label="'Profession'"
@@ -75,35 +75,35 @@
           </div>
 
           <div class="w-full md:w-auto">
-            <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" :wrapperClass="'px-1'" nolabel border/>
+            <AppDate v-model="params.date_posted_start" label="Date Start" format="YYYY-MM-DD" :wrapperClass="'px-1'" nolabel border />
           </div>
 
           <div class="w-full md:w-auto">
-            <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'" nolabel border/>
+            <AppDate v-model="params.date_posted_end" label="Date End" format="YYYY-MM-DD" :wrapperClass="'px-1'" nolabel border />
           </div>
 
           <AppButton
             label="Apply"
-            @click="getJobs(params)"
             customTheme="border hover:bg-gray-200"
             class="mx-2"
+            @click="getJobs(params)"
           />
           <AppButton
             label="Clear"
             @click="filterReset"
           />
-      </template>
-      <template v-slot:extraFarRight v-if="$auth.user.domain === 'Practice'">
-        <button
-          class="px-3 py-1 text-sm font-bold cursor-pointer justify-end my-2"
-          :class="'border rounded-lg border-sunglow bg-sunglow'"
-          @click="$router.push('/permanent-jobs/create')"
-        >
-          + Create Salaried Role 
-        </button>
-      </template>
-    </AppFilter>
-     <!-- <button
+        </template>
+        <template v-if="$auth.user.domain === 'Practice'" v-slot:extraFarRight>
+          <button
+            class="px-3 py-1 text-sm font-bold cursor-pointer justify-end my-2"
+            :class="'border rounded-lg border-sunglow bg-sunglow'"
+            @click="$router.push('/permanent-jobs/create')"
+          >
+            + Create Salaried Role 
+          </button>
+        </template>
+      </AppFilter>
+      <!-- <button
         v-if="$auth.user.domain === 'Practice'"
         class="px-3 py-1 text-sm font-bold cursor-pointer justify-end whitespace-no-wrap ml-auto mt-2"
         :class="'border rounded-lg border-sunglow bg-sunglow'"
@@ -597,7 +597,6 @@ export default {
             this.params = {
               job_posting_status: newStatus ? newStatus : "Available",
               locum_user_id: this.$auth.user.id,
-              profession_id: this.$auth.user.locum_detail.profession.id,
               near_post_code: this.$auth.user.locum_postcode,
               limit: 15,
             }
@@ -685,7 +684,6 @@ export default {
             ? route.query.status
             : "Available",
           locum_user_id: app.$auth.user.id,
-          profession_id: app.$auth.user.locum_detail.profession.id,
           near_post_code: app.$auth.user.locum_postcode,
           limit: 15,
         }
@@ -979,7 +977,7 @@ export default {
       this.params.title = ""
       this.params.surgery = ""
       this.params.job_type = ""
-      this.params.profession = ""
+      this.params.profession_id = ""
       this.params.date_posted_start = ""
       this.params.date_posted_end = ""
       this.params.permanent_job_status = this.$route.query.status === null || this.$route.query.status === "Available"
