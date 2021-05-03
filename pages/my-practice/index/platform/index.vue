@@ -119,7 +119,7 @@ export default {
 
     noResultMessage () {
       if (!this.$route.query.status || this.$route.query.status.toLowerCase() === 'favorite') {
-        return 'You do not have a favorite practice.'
+        return 'You do not have a favourite practice.'
       }
       
       return 'You do not have any Associated Job for any Practices'

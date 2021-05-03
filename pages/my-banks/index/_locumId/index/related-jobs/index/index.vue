@@ -68,9 +68,9 @@
                   :name="'rate'"
                   :label="'Rate £'"
                   :limit="8"
-                  @keydown="isNumber($event)"
                   nolabel
                   border
+                  @keydown="isNumber($event)"
                 />
               </div>
               <div class="flex-1">
@@ -151,9 +151,9 @@
                   :name="'job_rate'"
                   :label="'Rate £'"
                   :limit="8"
-                  @keydown="isNumber($event)"
                   nolabel
                   border
+                  @keydown="isNumber($event)"
                 />
               </div>
               <div class="flex-1">
@@ -225,12 +225,10 @@
             />
             <AppButton
               :label="'Clear'"
-              @click="clearFilters"
               :customTheme="'border'"
+              @click="clearFilters"
             />
           </template>
-
-
         </AppFilter>
         <!-- <div class="flex">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
@@ -471,7 +469,7 @@ export default {
     AppButton,
     AppLoading,
     AppBreadcrumbs,
-    AppFilter
+    AppFilter,
   },
 
   props: {
@@ -586,7 +584,7 @@ export default {
       case "public":
         return `You do not have any ${queryStatus} jobs`
       case "applied":
-        return `There were no Locums who applied on your jobs yet`
+        return `There have been no applications for this job`
       case "completed":
       case "cancelled":
         return `You have not yet ${queryStatus} any job`
@@ -628,21 +626,21 @@ export default {
             dataIndex: "job.shift.name",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Rate",
             dataIndex: "job.rate",
             class: "text-center",
             sortable: true,
-            width: 120
+            width: 120,
           },
           {
             name: "Rate Type",
             dataIndex: "job.locum_detail_rate_type.name",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           }
         )
       } else if (
@@ -659,7 +657,7 @@ export default {
             name: "Job Number",
             dataIndex: "job_number",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Practice",
@@ -678,21 +676,21 @@ export default {
             dataIndex: "shift_name",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Rate",
             dataIndex: "rate",
             class: "text-center",
             sortable: true,
-            width: 120
+            width: 120,
           },
           {
             name: "Rate Type",
             dataIndex: "rate_type_name",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           }
         )
       }
@@ -702,14 +700,14 @@ export default {
           dataIndex: "date_start",
           sortable: true,
           class: "text-center",
-            width: 100
+          width: 100,
         },
         {
           name: "To",
           dataIndex: "date_end",
           sortable: true,
           class: "text-center",
-            width: 100
+          width: 100,
         }
       )
       if (queryStatus === "allocated") {
@@ -724,7 +722,7 @@ export default {
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
           class: "text-center",
-            width: 150
+          width: 150,
         })
       }
       if (queryStatus === "cancelled") {
@@ -732,7 +730,7 @@ export default {
           name: "Cancelled At",
           dataIndex: "cancelled_at_in_gb_formatted",
           class: "text-center",
-            width: 150
+          width: 150,
         })
       }
       if (["completed",].includes(queryStatus)) {
@@ -740,7 +738,7 @@ export default {
           name: "Completed At",
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
-            width: 150
+          width: 150,
         })
       }
       if (["approved",].includes(queryStatus)) {
@@ -748,7 +746,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
-            width: 150
+          width: 150,
         })
       }
 
@@ -758,7 +756,7 @@ export default {
             name: "Invoice status",
             dataIndex: "invoice_status",
             class: "text-center",
-            width: 120
+            width: 120,
           },
         )
       }
@@ -769,7 +767,7 @@ export default {
             name: "Tag",
             dataIndex: "status",
             class: "text-center",
-            width: 100
+            width: 100,
           }
         )
       }
@@ -779,12 +777,12 @@ export default {
       console.log("getBreadcrumbs", )
       // const breadcrumbs = this.$store.getters['getBreadcrumbs']
       return [...this.$store.state.breadcrumbs,
-      {
-        title: `${this.$route.query.jobStatus ? this.$route.query.jobStatus : 'Allocated'} Jobs`,
-        url: this.$route.path
-      }
-    ] 
-    }
+        {
+          title: `${this.$route.query.jobStatus ? this.$route.query.jobStatus : 'Allocated'} Jobs`,
+          url: this.$route.path,
+        },
+      ] 
+    },
   },
   watch: {
     async "$route.query" (newValue, oldValue) {

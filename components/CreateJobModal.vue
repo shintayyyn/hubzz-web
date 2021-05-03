@@ -259,7 +259,7 @@
                               </template>
                             </div>
                           </template>
-												</div>-->
+                        </div>-->
 
                         <AppInput
                           v-model="form.compliance_document_id"
@@ -358,7 +358,7 @@
                           required
                         />
                         <template v-if="bank_first === true || bank_first === 'true'">
-                          <div>Only favorite locum will be notified until this date</div>
+                          <div>Only favourite locum will be notified until this date</div>
                           <div class="flex flex-row flex-wrap justify-between items-end">
                             <div class="px-1 w-full md:w-1/2">
                               <AppDate
@@ -462,7 +462,7 @@
                           required
                         />
                         <template v-if="bank_first === true || bank_first === 'true'">
-                          <div>Only favorite locum will be notified until this date</div>
+                          <div>Only favourite locum will be notified until this date</div>
                           <div class="flex flex-row flex-wrap justify-between items-end">
                             <div class="px-1 w-full md:w-1/2">
                               <AppDate
@@ -491,7 +491,7 @@
                   </div>
                 </div>
               </div>
-						</div>-->
+            </div>-->
 
             <div class="w-full md:w-1/2 lg:pl-4 mb-4">
               <h4 class="font-bold mt-4">
@@ -685,7 +685,7 @@
                       <label for="minutes" class="text-xs sm:text-sm mt-2">minutes</label>
                     </div>
                   </div>
-								</div>-->
+                </div>-->
 
                 <template v-if="selectedProfession && selectedProfession.profession_category.name === 'GP'">
                   <AppInput
@@ -748,7 +748,7 @@
                   :disabled="loading"
                   @click="createJob"
                 />
-						</div>-->
+            </div>-->
             <div class="pt-4 pb-8 w-full flex">
               <AppButton class="ml-auto" :label="'Next'" :disabled="loading" @click="next" />
             </div>
@@ -995,7 +995,7 @@ export default {
       const professionComplianceCategory = this.professionComplianceCategories.find(
         professionComplianceCategory =>
           professionComplianceCategory.id
-					=== profession.profession_compliance_category_id
+          === profession.profession_compliance_category_id
       )
 
       return professionComplianceCategory || null
@@ -1035,7 +1035,7 @@ export default {
 
           if (
             professionComplianceCategory.id
-						=== this.selectedProfessionComplianceCategory.id
+            === this.selectedProfessionComplianceCategory.id
           ) {
             [
               referenceComplianceDocuments,
@@ -1087,8 +1087,8 @@ export default {
 
           return (
             professionComplianceCategoryId
-							=== this.selectedProfessionComplianceCategory.id
-						&& complianceDocumentIds.includes(complianceDocumentId)
+              === this.selectedProfessionComplianceCategory.id
+            && complianceDocumentIds.includes(complianceDocumentId)
           )
         })
         .map(practiceProfessionComplianceCategoryComplianceDocument => {
@@ -1110,11 +1110,11 @@ export default {
       )
 
       const practiceRates
-				= this.$auth.user
-				&& this.$auth.user.practice_detail
-				&& this.$auth.user.practice_detail.practice
-				  ? this.$auth.user.practice_detail.practice.practice_rates
-				  : []
+        = this.$auth.user
+        && this.$auth.user.practice_detail
+        && this.$auth.user.practice_detail.practice
+          ? this.$auth.user.practice_detail.practice.practice_rates
+          : []
 
       const practiceRate = practiceRates.find(
         item => item.type === profession.profession_category_name
@@ -1142,13 +1142,13 @@ export default {
 
               if (!isNaN(num)) {
                 shiftTotal
-									= shiftTotal
-									+ Math.round(
-									  (Math.round((num / 60) * 100) / 100)
-											* this.practice_rate
-											* 100
-									)
-										/ 100
+                  = shiftTotal
+                  + Math.round(
+                    (Math.round((num / 60) * 100) / 100)
+                      * this.practice_rate
+                      * 100
+                  )
+                    / 100
               }
             }
 
@@ -1168,7 +1168,7 @@ export default {
           .filter(
             practiceProfessionComplianceCategoryComplianceDocument =>
               practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-							=== this.selectedProfessionComplianceCategory.id
+              === this.selectedProfessionComplianceCategory.id
           )
           .map(
             practiceProfessionComplianceCategoryComplianceDocument =>
@@ -1267,7 +1267,7 @@ export default {
         )
 
         this.practiceProfessionComplianceCategoryComplianceDocuments
-					= foundPractice.practice_profession_compliance_category_compliance_documents
+          = foundPractice.practice_profession_compliance_category_compliance_documents
       }
     },
   },
@@ -1372,7 +1372,7 @@ export default {
           )
 
           const selectedProfessionCategoryId
-						= selectedProfession.profession_category.id
+            = selectedProfession.profession_category.id
           this.form.practice_id = this.repostJob.platform_job.practice.id
           this.form.title = this.repostJob.title
           this.form.description = this.repostJob.description
@@ -1433,7 +1433,7 @@ export default {
             .filter(
               practiceProfessionComplianceCategoryComplianceDocument =>
                 practiceProfessionComplianceCategoryComplianceDocument.profession_compliance_category_id
-								=== selectedProfessionCategoryId
+                === selectedProfessionCategoryId
             )
             .map(
               ({ compliance_document_id: complianceDocumentId, }) =>
@@ -1503,14 +1503,14 @@ export default {
             )
               ? this.$moment(this.repostJob.platform_job.selection_date).format(
                 "YYYY-MM-DD"
-							  )
+              )
               : null
             this.selection_date.time = this.$moment().isBefore(
               this.repostJob.platform_job.selection_date
             )
               ? this.$moment(this.repostJob.platform_job.selection_date).format(
                 "HH:mm"
-							  )
+              )
               : null
           }
 
@@ -1632,8 +1632,8 @@ export default {
         notRequired.push("selection_date")
       } else if (
         ["true", true,].includes(this.selection_notification)
-				&& this.selection_date.date
-				&& this.selection_date.time
+        && this.selection_date.date
+        && this.selection_date.time
       ) {
         notRequired.push("selection_date")
       }
@@ -1646,8 +1646,8 @@ export default {
         notRequired.push("favorite_only_until")
       } else if (
         ["true", true,].includes(this.bank_first)
-				&& this.favorite_only_until.date
-				&& this.favorite_only_until.time
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
       ) {
         notRequired.push("favorite_only_until")
       }
@@ -1720,7 +1720,7 @@ export default {
 
             if (
               shift.locum_detail_rate_type_id !== 0
-							&& shift.locum_detail_rate_type_id !== ""
+              && shift.locum_detail_rate_type_id !== ""
             ) {
               let rateTypeIndex = this.shiftErrors.findIndex(
                 err => err.field === `locum_detail_rate_type_id-s${index}-${i}`
@@ -1872,10 +1872,10 @@ export default {
         }
 
         this.form.ir35
-					= this.selectedProfession
-					&& this.selectedProfession.profession_category.name === "GP"
-					  ? this.form.ir35
-					  : false
+          = this.selectedProfession
+          && this.selectedProfession.profession_category.name === "GP"
+            ? this.form.ir35
+            : false
 
         this.loading = true
 
@@ -1883,16 +1883,16 @@ export default {
           .$post(`/api/v1/practice/jobs/check`, {
             ...this.form,
             old_job_id:
-							this.repostJob && !["Cancelled",].includes(this.repostJob.status)
-							  ? this.repostJob.id
-							  : null,
+              this.repostJob && !["Cancelled",].includes(this.repostJob.status)
+                ? this.repostJob.id
+                : null,
           })
           .then(() => {
             if (
               !this.shiftErrors.length
-							&& !this.hasShiftError
-							&& !this.formError.length
-							&& !has_conflict
+              && !this.hasShiftError
+              && !this.formError.length
+              && !has_conflict
             ) {
               this.toPublish = true
             }
@@ -1918,7 +1918,7 @@ export default {
             if (err.response) {
               if (
                 err.response.data.error_messages
-								&& err.response.data.error_messages.length > 0
+                && err.response.data.error_messages.length > 0
               ) {
                 this.shiftErrors = err.response.data.error_messages
                 // let detailsError = [
@@ -1941,7 +1941,7 @@ export default {
                         "YYYY-MM-DD"
                       ).format("DD/MM/YYYY")}-${item.index}`,
                       message:
-												"This schedule has a conflict with another schedule.",
+                        "This schedule has a conflict with another schedule.",
                     })
                   })
                   let conflictDates = sched_has_conflict.conflictSchedules
@@ -2075,7 +2075,7 @@ export default {
       ]
       if (
         this.form[formField].length >= limit
-				&& !acceptedKeys.includes(e.key)
+        && !acceptedKeys.includes(e.key)
       ) {
         e.preventDefault()
       }
@@ -2125,13 +2125,13 @@ export default {
 
     validateNumber (value, fieldName) {
       let displayFieldName
-				= fieldName.charAt(0).toUpperCase()
-				+ fieldName.slice(1).replace(/_/g, " ")
+        = fieldName.charAt(0).toUpperCase()
+        + fieldName.slice(1).replace(/_/g, " ")
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (
         parseInt(value) < 1
-				|| value.toString().includes("e")
-				|| value === ""
+        || value.toString().includes("e")
+        || value === ""
       ) {
         this.formError.push({
           field: fieldName,
@@ -2184,8 +2184,8 @@ export default {
         notRequired.push("selection_date")
       } else if (
         ["true", true,].includes(this.selection_notification)
-				&& this.selection_date.date
-				&& this.selection_date.time
+        && this.selection_date.date
+        && this.selection_date.time
       ) {
         notRequired.push("selection_date")
       }
@@ -2198,8 +2198,8 @@ export default {
         notRequired.push("favorite_only_until")
       } else if (
         ["true", true,].includes(this.bank_first)
-				&& this.favorite_only_until.date
-				&& this.favorite_only_until.time
+        && this.favorite_only_until.date
+        && this.favorite_only_until.time
       ) {
         notRequired.push("favorite_only_until")
       }
@@ -2274,10 +2274,10 @@ export default {
         }
 
         this.form.ir35
-					= this.selectedProfession
-					&& this.selectedProfession.profession_category.name === "GP"
-					  ? this.form.ir35
-					  : false
+          = this.selectedProfession
+          && this.selectedProfession.profession_category.name === "GP"
+            ? this.form.ir35
+            : false
 
         this.loading = true
 
@@ -2285,9 +2285,9 @@ export default {
           .$post(`/api/v1/practice/jobs`, {
             ...this.form,
             old_job_id:
-							this.repostJob && !["Cancelled",].includes(this.repostJob.status)
-							  ? this.repostJob.id
-							  : null,
+              this.repostJob && !["Cancelled",].includes(this.repostJob.status)
+                ? this.repostJob.id
+                : null,
           })
           .then(res => {
             if (this.$route.name === "dashboard-create") {
@@ -2346,7 +2346,7 @@ export default {
             if (err.response) {
               if (
                 err.response.data.error_messages
-								&& err.response.data.error_messages.length > 0
+                && err.response.data.error_messages.length > 0
               ) {
                 this.formError = err.response.data.error_messages
                 let detailsError = [
@@ -2419,25 +2419,25 @@ export default {
 
 <style scoped>
 .message-modal.job-notification {
-	min-width: 50vw;
+  min-width: 50vw;
 }
 .shield {
   z-index: 55;
 }
 .wrapper {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden auto;
-	transition: all 0.3s ease-in-out;
-	scroll-behavior: smooth;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden auto;
+  transition: all 0.3s ease-in-out;
+  scroll-behavior: smooth;
 }
 .err-shield {
-	background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 @media (min-width: 768px) {
-	.message-modal.job-notification {
-		min-width: 25vw;
-	}
+  .message-modal.job-notification {
+    min-width: 25vw;
+  }
 }
 </style>

@@ -8,7 +8,7 @@
       <div v-if="!initialLoading">
         <AppFilter searchLabel="Job Search" @onTabChange="onTabChange">
           <template v-slot:extraButton>
-             <AppButton
+            <AppButton
               v-if="showRefresh"
               :label="'Refresh'"
               :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
@@ -19,8 +19,8 @@
           <template v-slot:search>
             <div class="w-32">
               <AppInput
-                :wrapperClass="'px-1'"
                 v-model="profession_id"
+                :wrapperClass="'px-1'"
                 :type="'select'"
                 :name="'profession_id'"
                 :label="'Roles'"
@@ -38,9 +38,9 @@
                 :name="'rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
             <div class="w-32">
@@ -123,8 +123,8 @@
             </div>
             <div class="w-32">
               <AppInput
-                :wrapperClass="'px-1'"
                 v-model="profession_id"
+                :wrapperClass="'px-1'"
                 :type="'select'"
                 :name="'profession_id'"
                 :label="'Roles'"
@@ -142,9 +142,9 @@
                 :name="'rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
             <div class="w-32">
@@ -195,7 +195,7 @@
                 border
               />
             </div>
-            <div class="w-32" v-if="$route.query.status === 'Live'">
+            <div v-if="$route.query.status === 'Live'" class="w-32">
               <AppInput
                 v-model="favorite_only"
                 :type="'select'"
@@ -220,7 +220,6 @@
               @click="clearFilters"
             />
           </template>
-
         </AppFilter>
         <!-- <div class="flex items-center">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
@@ -396,7 +395,7 @@
         >
           No Jobs Found
         </div>
-<!-- 
+        <!-- 
         <transition name="fade" mode="out-in">
           <nuxt-link
             v-if="$route.name === 'sessions-index-id' || $route.name === 'sessions-index-id-job-parts-jobPartId'"
@@ -428,7 +427,7 @@ export default {
     AppDate,
     AppButton,
     AppLoading,
-    AppFilter
+    AppFilter,
   },
 
   props: {
@@ -537,7 +536,7 @@ export default {
       case "live":
         return `You do not have any ${queryStatus} jobs`
       case "applied":
-        return `There were no Locums who applied on your jobs yet`
+        return `There have been no applications for this job`
       case "completed":
       case "cancelled":
         return `You have not yet ${queryStatus} any job`
@@ -556,7 +555,7 @@ export default {
           name: "Job Number",
           dataIndex: "job_number",
           sortable: true,
-          width: 120
+          width: 120,
         },
         {
           name: "Practice",
@@ -581,35 +580,35 @@ export default {
           dataIndex: "shift_names",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Rates",
           dataIndex: "rate_range_formatted",
           sortable: true,
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Rate Type",
           dataIndex: "rate_type_names",
           sortable: true,
           class: "text-center",
-          width: 170
+          width: 170,
         },
         {
           name: "From",
           dataIndex: "datetime_start_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
+          width: 130,
         },
         {
           name: "To",
           dataIndex: "datetime_end_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
+          width: 130,
         },
       ]
 
@@ -619,7 +618,7 @@ export default {
           dataIndex: "favorite_only_formatted",
           class: "text-center",
           sortable: true,
-          width: 100
+          width: 100,
         })
       }
 
@@ -629,7 +628,7 @@ export default {
           dataIndex: "applicants_count",
           sortable: true,
           class: "text-center",
-          width: 100
+          width: 100,
         })
       }
 
@@ -829,7 +828,7 @@ export default {
   },
 
   methods: {
-    onTabChange(tab) {
+    onTabChange (tab) {
       if (tab && this.filterTab !== tab) {
         this.clearFilters()
         this.filterTab = tab
