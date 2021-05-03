@@ -172,7 +172,7 @@ export default {
       case "live":
         return `You do not have any ${queryStatus} jobs`
       case "applied":
-        return `There were no Locums who applied on your jobs yet`
+        return `There have been no applications for this job`
       case "completed":
       case "cancelled":
         return `You have not yet ${queryStatus} any job`

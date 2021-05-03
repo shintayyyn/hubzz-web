@@ -10,7 +10,7 @@
       <div v-if="!initialLoading">
         <AppFilter searchLabel="Job Search" @onTabChange="onTabChange">
           <template v-slot:extraButton>
-             <AppButton
+            <AppButton
               v-if="showRefresh"
               :label="'Refresh'"
               :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
@@ -40,9 +40,9 @@
                 :name="'job_rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
             <div class="w-32">
@@ -144,9 +144,9 @@
                 :name="'job_rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
             <div class="w-32">
@@ -196,7 +196,7 @@
                 border
               />
             </div>
-            <div class="w-32" v-if="$route.query.status && $route.query.status === 'Ongoing'">
+            <div v-if="$route.query.status && $route.query.status === 'Ongoing'" class="w-32">
               <AppInput
                 v-model="ended"
                 :type="'select'"
@@ -208,7 +208,7 @@
                 border
               />
             </div>
-            <div class="w-32" v-if="$route.query.status && $route.query.status !== 'Ongoing'">
+            <div v-if="$route.query.status && $route.query.status !== 'Ongoing'" class="w-32">
               <AppInput
                 v-model="invoice_status"
                 :type="'select'"
@@ -468,7 +468,7 @@ export default {
     AppDate,
     AppButton,
     AppLoading,
-    AppFilter
+    AppFilter,
   },
 
   props: {
@@ -483,18 +483,18 @@ export default {
   middleware ({ query, error, }) {
     if (
       query.status
-			&& ![
-			  "pending",
-			  "allocated",
-			  "ongoing",
-			  "live",
-			  "applied",
-			  "unfilled",
-			  "withdrawn",
-			  "cancelled",
-			  "completed",
-			  "approved",
-			].includes(query.status.toLowerCase())
+      && ![
+        "pending",
+        "allocated",
+        "ongoing",
+        "live",
+        "applied",
+        "unfilled",
+        "withdrawn",
+        "cancelled",
+        "completed",
+        "approved",
+      ].includes(query.status.toLowerCase())
     ) {
       return error({ status: 404, message: "This Session Status is Invalid", })
     }
@@ -564,7 +564,7 @@ export default {
       case "live":
         return `You do not have any ${queryStatus} jobs`
       case "applied":
-        return `There were no Locums who applied on your jobs yet`
+        return `There have been no applications for this job`
       case "completed":
       case "cancelled":
         return `You have not yet ${queryStatus} any job`
@@ -728,7 +728,7 @@ export default {
             dataIndex: "locum_invoice_status",
             sortable: true,
             class: "text-center",
-            width: 130
+            width: 130,
           }
         )
       }
@@ -765,9 +765,9 @@ export default {
       // let oldBank = oldValue.bank;
       if (
         newStatus
-				&& newStatus !== null
-				&& newStatus !== oldStatus
-				// || (newBank && newBank !== null && newBank !== oldBank)
+        && newStatus !== null
+        && newStatus !== oldStatus
+        // || (newBank && newBank !== null && newBank !== oldBank)
       ) {
         this.current_page = 1
         this.filterModal = false
@@ -955,7 +955,7 @@ export default {
   },
 
   methods: {
-    onTabChange(tab) {
+    onTabChange (tab) {
       if (tab && this.filterTab !== tab) {
         this.clearFilters()
         this.filterTab = tab
@@ -1034,8 +1034,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
+        && (this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1047,8 +1047,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Applied"
-					|| this.$route.query.status === "Live")
+        && (this.$route.query.status === "Applied"
+          || this.$route.query.status === "Live")
       ) {
         this.showRefresh = true
       }
@@ -1060,8 +1060,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Applied"
-					|| this.$route.query.status === "Live")
+        && (this.$route.query.status === "Applied"
+          || this.$route.query.status === "Live")
       ) {
         this.showRefresh = true
       }
@@ -1073,8 +1073,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Applied")
+        && (this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1086,8 +1086,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Allocated")
+        && (this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Allocated")
       ) {
         this.showRefresh = true
       }
@@ -1099,8 +1099,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Completed"
-					|| this.$route.query.status === "Ongoing")
+        && (this.$route.query.status === "Completed"
+          || this.$route.query.status === "Ongoing")
       ) {
         this.showRefresh = true
       }
@@ -1112,8 +1112,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Approved"
-					|| this.$route.query.status === "Completed")
+        && (this.$route.query.status === "Approved"
+          || this.$route.query.status === "Completed")
       ) {
         this.showRefresh = true
       }
@@ -1125,11 +1125,11 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Cancelled"
-					|| this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
+        && (this.$route.query.status === "Cancelled"
+          || this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1141,10 +1141,10 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
+        && (this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1156,11 +1156,11 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Declined"
-					|| this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
+        && (this.$route.query.status === "Declined"
+          || this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }
@@ -1172,8 +1172,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Declined"
-					|| this.$route.query.status === "Allocated")
+        && (this.$route.query.status === "Declined"
+          || this.$route.query.status === "Allocated")
       ) {
         this.showRefresh = true
       }
@@ -1185,7 +1185,7 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& this.$route.query.status === "Allocated"
+        && this.$route.query.status === "Allocated"
       ) {
         this.showRefresh = true
       }
@@ -1197,11 +1197,11 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions")
-				&& (this.$route.query.status === "Unfilled"
-					|| this.$route.query.status === "Allocated"
-					|| this.$route.query.status === "Ongoing"
-					|| this.$route.query.status === "Live"
-					|| this.$route.query.status === "Applied")
+        && (this.$route.query.status === "Unfilled"
+          || this.$route.query.status === "Allocated"
+          || this.$route.query.status === "Ongoing"
+          || this.$route.query.status === "Live"
+          || this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true
       }

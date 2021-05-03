@@ -215,30 +215,20 @@
                   )
               "
             >
-              <!-- <SessionDetailModalCompleteForm
-								v-if="jobPart.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
-								:job_part="jobPart"
-								@completed="$emit('close')"
-              />-->
               <SessionDetailModalCancelForm
                 v-if="['Live','Allocated','Applied'].includes(jobPart.job_status) && authPermissions.includes('Cancel Sessions Job')"
                 :job="jobPart.job"
                 @cancelled="$emit('close')"
               />
             </div>
-            <!-- <div
-							v-else
-							class="mx-4 m-2"
-            >You are not allowed to set jobs as completed. Please contact your Hub to gain access to this feature.</div>-->
           </div>
         </div>
 
         <div class="md:pr-4 w-full md:w-45p">
           <div class="flex flex-col">
-            <SessionPartDetailModalParts
-              :job_id="jobPart.job.id"
+            <PracticeJobViewJobParts
+              :jobId="jobPart.job.id"
               :cantCompleteJob="practice && practice.type !== 'Hub' && practice.parent_practice_id && !practice.allow_surgery_bill_locum"
-              @close="$emit('close')"
             />
 
             <div
@@ -249,7 +239,6 @@
             </div>
 
             <SessionDetailModalLocum
-            class="mt-2"
               v-if="(
                 jobPart.status === 'Allocated'
                   || jobPart.status === 'Ongoing'
@@ -258,6 +247,7 @@
                   || jobPart.status === 'Withdrawn'
                   || (jobPart.status === 'Cancelled' && jobPart.appointed_to_locum_user_id)
               )"
+              class="mt-2"
               :job="jobPart.job"
             />
           </div>
@@ -278,9 +268,9 @@
 
 <script>
 import SessionPartDetailModalInfo from "@/components/Sessions/SessionPart/SessionPartDetailModalInfo"
-import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts"
+import PracticeJobViewJobParts from "@/components/Sessions/PracticeJobViewJobParts"
+
 import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm"
-// import SessionDetailModalCompleteForm from "@/components/Sessions/SessionDetailModalCompleteForm"
 import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum"
 import AppButton from "@/components/Base/AppButton"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
@@ -289,8 +279,8 @@ import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailMod
 export default {
   components: {
     SessionPartDetailModalInfo,
-    SessionPartDetailModalParts,
-    // SessionDetailModalCompleteForm,
+    PracticeJobViewJobParts,
+
     SessionDetailModalCancelForm,
     SessionDetailModalLocum,
     AppButton,

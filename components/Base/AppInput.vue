@@ -185,7 +185,9 @@
                   >
                     <span>{{ postLabel }}</span>
                   </p>
-                <p v-if="(!label || nolabel) && required" class="text-red-600">*</p>
+                  <p v-if="(!label || nolabel) && required" class="text-red-600">
+                    *
+                  </p>
                 </div>
 
                 <transition name="drop-down">
@@ -270,8 +272,7 @@
                         :selected="value === item.value"
                         :disabled="item.disabled"
                       >
-                        <span>{{ item.label }}</span>
-                        <i v-if="item.description">({{ item.description }})</i>
+                        {{ item.description ? `${item.label} (${item.description})` : item.label }}
                       </option>
                     </select>
                     <span
@@ -286,7 +287,9 @@
                       />
                     </span>
                   </div>
-                  <p v-if="(!label || nolabel) && required" class="text-red-600">*</p>
+                  <p v-if="(!label || nolabel) && required" class="text-red-600">
+                    *
+                  </p>
                 </div>
                 <transition name="drop-down">
                   <div
@@ -302,23 +305,25 @@
             <template v-if="type === 'textarea'">
               <div class="flex flex-col w-full">
                 <div class="flex items-start">
-                <textarea
-                  id
-                  :ref="'textarea'"
-                  :cols="cols"
-                  :rows="rows"
-                  :value="value"
-                  :placeholder="label && nolabel ? label : placeholder"
-                  class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
-                  :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none', border ? 'border-2 rounded px-2' : 'border-b-2']"
-                  :limit="limit"
-                  :style="inStyle"
-                  :readonly="disabled"
-                  @input="$emit('input', $event.target.value)"
-                  @blur="$emit('blur', $event)"
-                  @keydown="limit ? ($emit('keydown'), limitInput($event, trimmedMessage(value))) : $emit('keydown')"
-                />
-                <p v-if="(!label || nolabel) && required" class="text-red-600">*</p>
+                  <textarea
+                    id
+                    :ref="'textarea'"
+                    :cols="cols"
+                    :rows="rows"
+                    :value="value"
+                    :placeholder="label && nolabel ? label : placeholder"
+                    class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none"
+                    :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none', border ? 'border-2 rounded px-2' : 'border-b-2']"
+                    :limit="limit"
+                    :style="inStyle"
+                    :readonly="disabled"
+                    @input="$emit('input', $event.target.value)"
+                    @blur="$emit('blur', $event)"
+                    @keydown="limit ? ($emit('keydown'), limitInput($event, trimmedMessage(value))) : $emit('keydown')"
+                  />
+                  <p v-if="(!label || nolabel) && required" class="text-red-600">
+                    *
+                  </p>
                 </div>
                 <div class="flex items-center justify-between">
                   <transition name="drop-down">

@@ -5,148 +5,138 @@
     <AppFormError v-if="false && formError.length > 0" :formError="formError" />
 
     <!-- =========PRACTICE========= -->
-    <template v-if="!loading && $auth.user.domain === 'Practice'">
-      <div class="flex flex-wrap max-w-3xl">
-        <div class="w-full border rounded-lg p-4">
-          <AppInput
-            v-model="practiceForm.username"
-            :type="'text'"
-            :name="'username'"
-            :label="'Username'"
-            :error="formError.find(item => item.field === 'username')"
-            required
-            @submit="save"
-            @blur="CheckEmptyField(practiceForm.username, 'username')"
-          />
+    <div v-if="!loading && $auth.user.domain === 'Practice'" class="flex flex-wrap max-w-3xl">
+      <div class="w-full border rounded-lg p-4">
+        <AppInput
+          v-model="practiceForm.username"
+          :type="'text'"
+          :name="'username'"
+          :label="'Username'"
+          :error="formError.find(item => item.field === 'username')"
+          required
+          @submit="save"
+          @blur="CheckEmptyField(practiceForm.username, 'username')"
+        />
 
-          <AppInput
-            v-model="practiceForm.email"
-            :type="'email'"
-            :name="'email'"
-            :label="'Email address'"
-            :error="formError.find(item => item.field === 'email')"
-            required
-            @submit="save"
-            @blur="CheckEmptyField(practiceForm.email, 'email')"
-          />
+        <AppInput
+          v-model="practiceForm.email"
+          :type="'email'"
+          :name="'email'"
+          :label="'Email address'"
+          :error="formError.find(item => item.field === 'email')"
+          required
+          @submit="save"
+          @blur="CheckEmptyField(practiceForm.email, 'email')"
+        />
 
-          <div v-if="user && user.email === practiceForm.email" class="-mt-4 mb-4">
-            <template v-if="user.email_verified">
-              <span class="text-xs">E-mail Verified on {{ user.email_verified_at_in_gb_formatted }}</span>
-            </template>
+        <div v-if="user && user.email === practiceForm.email" class="-mt-4 mb-4">
+          <template v-if="user.email_verified">
+            <span class="text-xs">E-mail Verified on {{ user.email_verified_at_in_gb_formatted }}</span>
+          </template>
 
-            <template v-if="!user.email_verified">
-              <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
-              
-              <span
-                class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
-                @click="resendEmailVerification()"
-              >Click here to re-send</span>
-            </template>
-          </div>
-
-          <AppInput
-            v-model="practiceForm.title"
-            :type="'text'"
-            :name="'title'"
-            :label="'Title'"
-            @submit="save"
-          />
-
-          <AppInput
-            v-model="practiceForm.first_name"
-            :type="'text'"
-            :name="'first_name'"
-            :label="'First name'"
-            :error="formError.find(item => item.field === 'first_name')"
-            required
-            @submit="save"
-            @blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
-          />
-
-          <AppInput
-            v-model="practiceForm.last_name"
-            :type="'text'"
-            :name="'last_name'"
-            :label="'Last name'"
-            :error="formError.find(item => item.field === 'last_name')"
-            required
-            @submit="save"
-            @blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
-          />
-
-          <AppInput
-            v-if="false"
-            v-model="practiceForm.suffix"
-            :type="'text'"
-            :name="'suffix'"
-            :label="'Suffix'"
-            @submit="save"
-          />
-
-          <AppInput
-            v-model="practiceForm.practice_role"
-            :type="'select'"
-            :name="'practice_role'"
-            :label="'Role'"
-            :placeholder="'Role...'"
-            :items="roles"
-            required
-          />
-
-          <AppInput
-            v-model="practiceForm.memorable_word_category_id"
-            type="select"
-            label="Memorable word category"
-            placeholder="Select..."
-            :error="formError.find(item => item.field === 'memorable_word_category_id')"
-            :items="memorableWordCategoriesSelectionList"
-            required
-          />
-
-          <AppInput
-            v-model="practiceForm.memorable_word"
-            type="text"
-            label="Memorable word"
-            placeholder="Your memorable word"
-            :error="formError.find(error => error.field === 'memorable_word')"
-            required
-          />
-
-          <AppDate
-            v-model="practiceForm.memorable_date"
-            label="Memorable date"
-            :error="formError.find(item => item.field === 'memorable_date')"
-            required
-          />
-
-          <AppInput
-            v-model="practiceForm.memorable_number"
-            type="number"
-            label="Memorable 6 digit number"
-            placeholder="Your memorable number"
-            :error="formError.find(error => error.field === 'memorable_number')"
-            required
-            :limit="6"
-          />
+          <template v-if="!user.email_verified">
+            <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
+            
+            <span
+              class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
+              @click="resendEmailVerification()"
+            >Click here to re-send</span>
+          </template>
         </div>
-        <div class="flex justify-end w-full mt-5">
-          <AppButton :label="'Save changes'" @click="save('practice')" />
-        </div>
-        <!-- <div class="md:w-1/2 w-full">
-            Your Account has the following Permissions
-            <div
-              v-for="(item,index) in authPermissions"
-              :key="index"
-            >
-            {{'• ' + item}}
-            </div>
-        </div> -->
+
+        <AppInput
+          v-model="practiceForm.title"
+          :type="'text'"
+          :name="'title'"
+          :label="'Title'"
+          @submit="save"
+        />
+
+        <AppInput
+          v-model="practiceForm.first_name"
+          :type="'text'"
+          :name="'first_name'"
+          :label="'First name'"
+          :error="formError.find(item => item.field === 'first_name')"
+          required
+          @submit="save"
+          @blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
+        />
+
+        <AppInput
+          v-model="practiceForm.last_name"
+          :type="'text'"
+          :name="'last_name'"
+          :label="'Last name'"
+          :error="formError.find(item => item.field === 'last_name')"
+          required
+          @submit="save"
+          @blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
+        />
+
+        <AppInput
+          v-if="false"
+          v-model="practiceForm.suffix"
+          :type="'text'"
+          :name="'suffix'"
+          :label="'Suffix'"
+          @submit="save"
+        />
+
+        <AppInput
+          v-model="practiceForm.practice_role"
+          :type="'select'"
+          :name="'practice_role'"
+          :label="'Role'"
+          :placeholder="'Role...'"
+          :items="roles"
+          required
+        />
+
+        <AppInput
+          v-model="practiceForm.memorable_word_category_id"
+          type="select"
+          label="Memorable word category"
+          placeholder="Select..."
+          :error="formError.find(item => item.field === 'memorable_word_category_id')"
+          :items="memorableWordCategoriesSelectionList"
+          required
+        />
+
+        <AppInput
+          v-model="practiceForm.memorable_word"
+          type="text"
+          label="Memorable word"
+          placeholder="Your memorable word"
+          :error="formError.find(error => error.field === 'memorable_word')"
+          required
+        />
+
+        <AppDate
+          v-model="practiceForm.memorable_date"
+          label="Memorable date"
+          :error="formError.find(item => item.field === 'memorable_date')"
+          required
+        />
+
+        <AppInput
+          v-model="practiceForm.memorable_number"
+          type="number"
+          label="Memorable 6 digit number"
+          placeholder="Your memorable number"
+          :error="formError.find(error => error.field === 'memorable_number')"
+          required
+          :limit="6"
+        />
       </div>
-    </template>
+
+      <div class="flex justify-end w-full mt-5">
+        <AppButton :label="'Save changes'" @click="save('practice')" />
+      </div>
+    </div>
 
     <!-- ==========LOCUM=========== -->
-    <template v-if="!loading && $auth.user.domain === 'Locum'">
+    <div v-if="!loading && $auth.user.domain === 'Locum'">
       <div class="flex flex-col md:flex-row items-start">
         <div class="w-full md:w-1/2 border rounded-lg p-4 md:mr-2">
           <AppInput
@@ -329,6 +319,7 @@
               @blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3', 'City / Town / District')"
             />
           </div>
+          
           <div class="border rounded-lg p-4 my-2">
             <AppInput
               v-model="locumForm.memorable_word_category_id"
@@ -369,11 +360,10 @@
         </div>
       </div>
 
-
       <div class="flex justify-end mt-5">
         <AppButton :label="'Save changes'" @click="save('locum')" />
       </div>
-    </template>
+    </div>
   </div>
 </template>
 

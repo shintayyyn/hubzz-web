@@ -174,13 +174,15 @@
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
             /> -->
-           
           </div>
         </div>
 
         <div class="w-full md:w-45p order-first md:order-none">
           <div class="flex flex-col">
-            <SessionPartDetailModalParts :job_id="job.id" :disabled-link="true" />
+            <PracticeJobViewJobParts
+              :jobId="job.id"
+              :disabledLink="true"
+            />
 
             <SessionDetailModalCandidates
               v-if="job.status === 'Applied'"
@@ -195,7 +197,7 @@
             />
             <SessionDetailModalMap v-if="showMap && job.status !== 'Allocated'" :job="job" />
 
-             <SessionDetailModalCancelForm
+            <SessionDetailModalCancelForm
               v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
               :job="job"
               @cancelled="$emit('close'), $emit('cancelled', $event)"
@@ -208,7 +210,8 @@
 </template>
 
 <script>
-import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/SessionPartDetailModalParts"
+import PracticeJobViewJobParts from "@/components/Sessions/PracticeJobViewJobParts"
+
 import SessionDetailModalInfo from "@/components/Sessions/SessionDetailModalInfo"
 import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailModalUpdateForm"
 import SessionDetailModalCandidates from "@/components/Sessions/SessionDetailModalCandidates"
@@ -221,9 +224,10 @@ import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 export default {
   components: {
+    PracticeJobViewJobParts,
+
     AppConfirmationModal,
     SessionDetailModalInfo,
-    SessionPartDetailModalParts,
     SessionDetailModalUpdateForm,
     SessionDetailModalCandidates,
     SessionDetailModalLocum,

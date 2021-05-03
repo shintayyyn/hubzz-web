@@ -204,7 +204,7 @@
                             required
                           />
                           <template v-if="bank_first === true || bank_first === 'true'">
-                            <div>Only favorite locum will be notified until this date</div>
+                            <div>Only favourite locum will be notified until this date</div>
                             <div class="flex flex-row flex-wrap justify-between items-end">
                               <div class="px-1 w-full md:w-1/2">
                                 <AppDate
