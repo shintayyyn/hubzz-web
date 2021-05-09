@@ -3,12 +3,13 @@
     <AppFilter :enableSearch="false" class="mt-4">
       <template v-slot:extraButton>
         <AppButton
-          v-if="showRefresh"
+          v-if="false && showRefresh"
           :label="'Refresh'"
           customTheme="border"
           @click="refreshInvoices"
         />
       </template>
+      
       <template v-slot:filter>
         <div class="">
           <AppInput
@@ -21,7 +22,7 @@
             border
           />
         </div>
-         <div class="">
+        <div class="">
           <AppInput
             v-model="params.job_part_number_includes"
             wrapperClass="pr-1"
@@ -38,7 +39,7 @@
           @click="filterInvoices"
         />
 
-         <AppButton
+        <AppButton
           :disabled="disabledClearFilter"
           :label="'Clear'"
           customTheme="border hover:bg-gray-200"
@@ -156,7 +157,7 @@ export default {
     AppTable,
     AppInput,
     AppButton,
-    AppFilter
+    AppFilter,
   },
   transition: {
     name: "fade",
@@ -186,7 +187,7 @@ export default {
         limit: 15,
         order_by: [],
         invoice_number: null,
-        job_part_number_includes: null
+        job_part_number_includes: null,
       },
       // app table column
       columns: [
@@ -195,14 +196,14 @@ export default {
           dataIndex: "practice.name",
           class: "text-left",
           sortable: true,
-          width: 250
+          width: 250,
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Job Part Numbers",
@@ -215,20 +216,20 @@ export default {
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Due Date",
           dataIndex: "due_date_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "£ Amount",
           dataIndex: "total_amount",
           class: "text-center currency",
           sortable: true,
-          width: 100
+          width: 100,
         },
         {
           name: "Payment Status",
@@ -237,7 +238,7 @@ export default {
           sortable: true,
           slot: true,
           slotName:"payment_status",
-          width: 150
+          width: 150,
         },
       ],
     }
@@ -247,7 +248,7 @@ export default {
       let invoiceNumber
         = this.params.invoice_number === "" ? null : this.params.invoice_number
 
-      if (invoiceNumber === null && [null, ''].includes(this.params.job_part_number_includes)) {
+      if (invoiceNumber === null && [null, '',].includes(this.params.job_part_number_includes)) {
         return true
       }
       return false
