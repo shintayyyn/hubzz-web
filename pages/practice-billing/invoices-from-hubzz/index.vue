@@ -9,7 +9,7 @@
           @click="refreshInvoices"
         />
       </template>
-      
+
       <template v-slot:filter>
         <div class="">
           <AppInput
@@ -226,7 +226,7 @@ export default {
         },
         {
           name: "£ Amount",
-          dataIndex: "total_amount",
+          dataIndex: "taxed_total",
           class: "text-center currency",
           sortable: true,
           width: 100,
