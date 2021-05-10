@@ -416,7 +416,7 @@
             Total
           </div>
           <div class="my-1 px-1 text-right text-lg font-semibold">
-            £ {{ practiceInvoice.untaxed_total_amount | currency }}
+            £ {{ practiceInvoice.total | currency }}
           </div>
         </div>
         <div class="flex flex-row px-4 justify-between w-full">
@@ -424,7 +424,7 @@
             VAT Amount
           </div>
           <div class="my-1 px-1 text-right text-lg font-semibold">
-            £ {{ practiceInvoice.tax_amount | currency }}
+            £ {{ practiceInvoice.tax | currency }}
           </div>
         </div>
         <div class="flex flex-row px-4 justify-between w-full">
@@ -432,7 +432,7 @@
             Total (with added VAT)
           </div>
           <div class="my-1 px-1 text-right text-lg font-semibold">
-            £ {{ practiceInvoice.total_amount | currency }}
+            £ {{ practiceInvoice.taxed_total | currency }}
           </div>
         </div>
 

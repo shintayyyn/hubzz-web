@@ -167,7 +167,7 @@
           </div>
           
           <div
-            v-if="propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))"
+            v-if="propInvoice && (isOOH || (!isOOH && propInvoice.generate_form))"
             class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">
@@ -190,7 +190,7 @@
           </div>
 
           <div
-            v-if="propInvoice && (propInvoice.ooh || propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+            v-if="propInvoice && (isOOH || propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
             class="flex flex-wrap justify-between"
           >
             <p class="text-sm w-1/2">
@@ -198,7 +198,7 @@
             </p>
 
             <p class="font-bold w-1/2 text-right">
-              {{ propInvoice && (propInvoice.ooh || propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
+              {{ propInvoice && (isOOH || propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id) ? 'Yes' : 'No' }}
             </p>
           </div>
         </div>
@@ -264,7 +264,7 @@
           </template>
 
           <div
-            v-if="propInvoice && (propInvoice.ooh || propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
+            v-if="propInvoice && (isOOH || propInvoice.generate_form || propInvoice.locum_form_a_id || propInvoice.locum_solo_form_id)"
             class="flex flex-wrap justify-between mt-4 p-2 border border-gray-600 bg-gray-300"
           >
             <p class="text-sm w-1/2">
@@ -554,7 +554,7 @@ export default {
     },
 
     isOOH () {
-      return this.propInvoice && this.propInvoice.ooh ? true : false
+      return this.propInvoice && this.propInvoice.ooh && this.propInvoice.profession_name === 'GP'
     },
 
     ni_paye_amount () {
@@ -581,12 +581,11 @@ export default {
     },
 
     pension_amount () {
-      // propInvoice && ((!propInvoice.ooh && propInvoice.generate_form) || (propInvoice.ooh))
+      // propInvoice && (this.isOOH || (!this.isOOH && propInvoice.generate_form))
       // this.propInvoice && this.propInvoice.generate_form
       if (
         this.propInvoice
-        && ((!this.propInvoice.ooh && this.propInvoice.generate_form)
-          || this.propInvoice.ooh)
+        && (this.isOOH || (!this.this.isOOH && this.propInvoice.generate_form))
       ) {
         if (this.propInvoice.approved) {
           if (this.propInvoice.locum_form_a_id) {
@@ -600,11 +599,11 @@ export default {
         }
 
         if (!this.propInvoice.approved) {
-          if (!this.propInvoice.ooh) {
+          if (!this.isOOH) {
             return this.total_work_payment * 0.9 * 0.1438
           }
 
-          if (this.propInvoice.ooh) {
+          if (this.isOOH) {
             const boxA = this.total_work_payment
             const boxB = 0 // professional_nhs_expenses
             const boxC = boxA - boxB // gp_nhs_pensionable_pay
@@ -989,7 +988,7 @@ export default {
     },
 
     async toggleModal (approved) {
-      if (this.propInvoice.ooh) {
+      if (this.isOOH) {
         this.toggle_modal = true
         this.form.ea_code = this.practice ? this.practice.pcse_ea_code : ''
         this.form.national_insurance_number = null
@@ -1055,7 +1054,7 @@ export default {
         "late_minutes",
       ]
 
-      if (!this.propInvoice.ooh || !approved) {
+      if (!this.isOOH || !approved) {
         notRequired.push(
           "ea_code",
           "national_insurance_number",
