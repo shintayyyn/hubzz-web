@@ -4,7 +4,7 @@
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
       <div class="header-section flex flex-wrap items-center w-full justify-between bg-white">
-        <div class="w-full sm:w-2/5 flex flex-wrap">
+        <div class="w-full lg:w-1/5 flex flex-wrap">
           <div class="w-1/3">
             <button class="burger cursor-pointer py-2 focus:outline-none h-full mr-4" @click="toggle">
               <div class="my-2 bg-yellow-500" />
@@ -59,7 +59,7 @@
 					</button>
 				</div> -->
 
-        <div class="w-full sm:w-3/5 leading-loose py-2">
+        <div class="w-full lg:w-3/5 leading-loose py-2">
           <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
             <div
               v-if="

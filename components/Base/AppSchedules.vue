@@ -133,6 +133,7 @@
               </div>
 
               <div class="px-4">
+                <div class="overflow-scroll">
                 <div class="flex items-end text-sm pb-2 text-gray-700">
                   <p class="px-2 text-center w-24">
                     Date
@@ -1259,6 +1260,7 @@
                       </button>
                     </template>
                   </div>
+                </div>
                 </div>
               </div>
             </template>
