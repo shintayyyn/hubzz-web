@@ -25,7 +25,7 @@
           </div>
         </div>
 
-        <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
+        <div class="w-1/2 text-xs sm:text-sm text-right leading-normal">
           <div>{{ propInvoice.locum_user.name }}</div>
           <div>{{ propInvoice.address_line_1 }}</div>
           <div>{{ propInvoice.address_line_2 }}</div>

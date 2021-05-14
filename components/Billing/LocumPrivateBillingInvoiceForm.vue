@@ -34,7 +34,7 @@
       <AppLoading :loading="saveLoading" spinner />
 
       <div class="flex flex-col">
-        <div class="text-xs sm:text-sm sm:text-right leading-normal">
+        <div class="text-xs sm:text-sm text-right leading-normal">
           <div>{{ $auth.user.personal_detail.name }}</div>
           <div>{{ $auth.user.address_detail.address.line_1 }}</div>
           <div v-if="$auth.user.address_detail.address.line_2">

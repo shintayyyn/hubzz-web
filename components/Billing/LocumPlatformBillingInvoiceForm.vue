@@ -55,7 +55,7 @@
             </div>
           </div>
 
-          <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
+          <div class="w-1/2 text-xs sm:text-sm text-right leading-normal">
             <div>{{ $auth.user.personal_detail.name }}</div>
             <div>{{ $auth.user.address_detail.address.line_1 }}</div>
             <div>{{ $auth.user.address_detail.address.line_2 }}</div>
