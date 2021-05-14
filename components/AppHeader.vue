@@ -3,12 +3,15 @@
     <div class="flex flex-row justify-between">
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
-      <div class="header-section flex items-center w-full justify-between bg-white">
-        <div class="w-3/5 flex items-center">
-          <button class="burger cursor-pointer py-2 focus:outline-none h-full mr-4" @click="toggle">
-            <div class="my-2 bg-yellow-500" />
-            <div class="my-2 bg-yellow-500" />
-          </button>
+      <div class="header-section flex flex-wrap items-center w-full justify-between bg-white">
+        <div class="w-full lg:w-1/5 flex flex-wrap">
+          <div class="w-1/3">
+            <button class="burger cursor-pointer py-2 focus:outline-none h-full mr-4" @click="toggle">
+              <div class="my-2 bg-yellow-500" />
+              <div class="my-2 bg-yellow-500" />
+            </button>
+          </div>
+          <div class="w-2/3" />
           <!-- <AppBreadcrumbs :fixed="false" /> -->
           <!-- <div
             v-if="
@@ -23,7 +26,7 @@
             "
             class="mx-2"
           > -->
-            <!-- <div class="flex flex-col items-start">
+          <!-- <div class="flex flex-col items-start">
               <AppButton
                 :disabled="!authPermissions.includes('Create Sessions Job')"
                 :label="'+ Create Job'"
@@ -33,9 +36,9 @@
               />
             </div> -->
                 
-                <!-- @click="$store.commit('calendar/CREATE_JOB_MODAL', true)" -->
-                <!-- @click="$router.push('/create-job')" -->
-            <!-- <button
+          <!-- @click="$store.commit('calendar/CREATE_JOB_MODAL', true)" -->
+          <!-- @click="$router.push('/create-job')" -->
+          <!-- <button
 							class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
 							:class="
 								$route.name === 'messages-slug' ||
@@ -56,28 +59,28 @@
 					</button>
 				</div> -->
 
-        <div class="w-2/5 leading-loose py-2">
+        <div class="w-full lg:w-3/5 leading-loose py-2">
           <div v-if="$auth.loggedIn" class="flex flex-no-wrap justify-end items-center">
             <div
-                v-if="
-                  $auth.user.domain === 'Practice' &&
-                    $auth.user.status === 'Active' &&
-                    ($auth.user.practice_detail.practice.status === 'Active' 
-                    || $auth.user.practice_detail.practice.status === 'Dormant') &&
-                    ($auth.user.practice_detail.practice.type === 'Hub' 
-                    ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
-                    ||($auth.user.practice_detail.practice.type === 'Spoke' &&
-                    $auth.user.practice_detail.practice.parent_practice_id)) 
-                "
-                class="mx-2"
-              >
+              v-if="
+                $auth.user.domain === 'Practice' &&
+                  $auth.user.status === 'Active' &&
+                  ($auth.user.practice_detail.practice.status === 'Active' 
+                  || $auth.user.practice_detail.practice.status === 'Dormant') &&
+                  ($auth.user.practice_detail.practice.type === 'Hub' 
+                  ||$auth.user.practice_detail.practice.type === 'Stand Alone' 
+                  ||($auth.user.practice_detail.practice.type === 'Spoke' &&
+                  $auth.user.practice_detail.practice.parent_practice_id)) 
+              "
+              class="mx-2"
+            >
               <AppButton
-                  :disabled="!authPermissions.includes('Create Sessions Job')"
-                  :label="'+ Create Job'"
-                  class="whitespace-no-wrap font-bold"
-                  :customTheme="'bg-info text-white'"
-                  @click="$router.push('/create-job')"
-                />
+                :disabled="!authPermissions.includes('Create Sessions Job')"
+                :label="'+ Create Job'"
+                class="whitespace-no-wrap font-bold"
+                :customTheme="'bg-info text-white'"
+                @click="$router.push('/create-job')"
+              />
             </div>
             <div
               v-if="$auth.user.domain === 'Locum'"
@@ -191,14 +194,14 @@
 import AppButton from "@/components/Base/AppButton"
 import CreateJobModal from "@/components/CreateJobModal"
 import AppNotifDropdown from "@/components/AppNotifDropdown"
-import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+// import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 
 export default {
   components: {
     AppButton,
     CreateJobModal,
     AppNotifDropdown,
-    AppBreadcrumbs
+    // AppBreadcrumbs,
   },
 
   data () {
@@ -227,7 +230,7 @@ export default {
 
     links () {
       return this.$store.state.breadcrumbs
-    }
+    },
   },
 
   watch: {

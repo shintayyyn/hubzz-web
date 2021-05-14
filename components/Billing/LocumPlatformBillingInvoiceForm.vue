@@ -55,7 +55,7 @@
             </div>
           </div>
 
-          <div class="w-1/2 text-xs sm:text-sm sm:text-right leading-normal">
+          <div class="w-1/2 text-xs sm:text-sm text-right leading-normal">
             <div>{{ $auth.user.personal_detail.name }}</div>
             <div>{{ $auth.user.address_detail.address.line_1 }}</div>
             <div>{{ $auth.user.address_detail.address.line_2 }}</div>
@@ -104,8 +104,8 @@
           INVOICE DETAILS
         </p>
 
-        <div class="w-full flex justify-between px-4 text-gray-600">
-          <div class="flex items-center">
+        <div class="w-full flex flex-wrap justify-between px-4 text-gray-600">
+          <div class="p-2 flex items-center">
             <p>Job No.</p>
 
             <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
@@ -113,14 +113,14 @@
             </p>
           </div>
 
-          <div class="flex items-center">
+          <div class="p-2 flex items-center">
             <p>Job Type</p>
             <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ job_part.type }}
             </p>
           </div>
 
-          <div class="flex items-center">
+          <div class="p-2 flex items-center">
             <p>Duration</p>
             
             <p class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
@@ -130,7 +130,7 @@
             </p>
           </div>
 
-          <div class="flex items-center">
+          <div class="p-2 flex items-center">
             <p>Total Work Hours</p>
             <p v-if="total_working_hours > 0" class="mx-2 border border-gray-600 rounded px-4 text-gray-700">
               {{ total_working_hours | hoursMinutes }}
