@@ -585,7 +585,7 @@ export default {
       // this.propInvoice && this.propInvoice.generate_form
       if (
         this.propInvoice
-        && (this.isOOH || (!this.this.isOOH && this.propInvoice.generate_form))
+        && (this.isOOH || (!this.isOOH && this.propInvoice.generate_form))
       ) {
         if (this.propInvoice.approved) {
           if (this.propInvoice.locum_form_a_id) {

@@ -64,6 +64,10 @@ export default {
   },
   methods: {
     onFileInput (e) {
+      if (!e.target.files[0]) {
+        return
+      }
+
       this.error = ""
       if (
         e.target.files[0].type.split("/")[0] !== "image"
