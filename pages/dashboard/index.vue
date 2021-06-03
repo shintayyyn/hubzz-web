@@ -17,9 +17,15 @@
 
     <div v-if="userIsAuthorized" class="appointment-section">
       <div class="flex justify-between items-center lg:max-w-6xl">
-        <div class="text-sm sm:text-base font-bold">
-          Appointments
+        <div class="flex">
+          <div class="mx-1 text-sm sm:text-base font-bold">
+            Appointments
+          </div>
+          <span>
+            <span class="mx-1 bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white" @click="legendsModal=true">i</span>
+          </span>
         </div>
+        
 
         <div v-if="$auth.user.domain === 'Locum'" class="flex">
           <AppButton
@@ -96,6 +102,124 @@
       </div>
     </div>
 
+    <!-- LEGENDS MODAL -->
+    <transition name="fade">
+      <div v-if="legendsModal" class="message-modal z-50">
+        <div class="w-full flex flex-col bg-white p-4 rounded-lg shadow-lg">
+          <p class="flex items-center justify-between flex-no-wrap font-bold">
+            <span>Legend</span>
+
+            <span class="cursor-pointer hover:text-gray-600" @click="legendsModal=false">
+              <svgicon name="cancel" width="12" height="12" class="fill-current" />
+            </span>
+          </p>
+
+          <div class="mt-2 flex flex-col md:flex-row">
+            <div class="md:w-3/5">
+              <p>Job Status</p>
+
+              <div class="flex items-center">
+                <span class="bg-job-active w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Allocated Jobs
+                </p>
+              </div>
+
+              <div class="flex items-center">
+                <span class="bg-job-pending w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Applied Jobs
+                </p>
+              </div>
+
+              <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
+                <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Unfilled Jobs, Withdrawn Jobs
+                </p>
+              </div>
+
+              <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
+                <span class="bg-gray-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Live Jobs
+                </p>
+              </div>
+
+              <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+                <span class="bg-blue-500 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Ongoing Private Jobs
+                </p>
+              </div>
+
+              <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+                <span>
+                  <svgicon name="pushpin" width="17" height="17" class="fill-current text-blue-500 -mt-3" />
+                </span>
+
+                <p class="ml-2">
+                  For Interview Permanent Jobs
+                </p>
+              </div>
+
+              <div v-if="$auth.user.domain === 'Locum'" class="flex items-center">
+                <span class="bg-red-400 w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Not Availabile
+                </p>
+              </div>
+            </div>
+
+            <div class="md:w-2/5">
+              <p>Shifts</p>
+
+              <div class="flex items-center">
+                <span class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  Whole Day
+                </p>
+              </div>
+
+              <div class="flex items-center">
+                <span class="bg-shift-am w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  AM
+                </p>
+              </div>
+
+              <div class="flex items-center">
+                <span class="bg-shift-pm w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  PM
+                </p>
+              </div>
+
+              <div class="flex items-center">
+                <span class="bg-shift-ooh w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
+
+                <p class="ml-2">
+                  OOH
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <!-- SHIELD -->
+    <div v-if="legendsModal" class="shield" @click="legendsModal=false" />
+
     <transition name="fade" mode="out-in">
       <nuxt-link
         v-if="['dashboard-id','dashboard-create','dashboard-expenses'].includes($route.name)" class="shield"
@@ -121,6 +245,12 @@ export default {
     Reminders,
     Statistics,
     AppButton,
+  },
+
+  data () {
+    return {
+      legendsModal: false,
+    }
   },
 
   computed: {
@@ -156,6 +286,7 @@ export default {
       return false
     },
   },
+  
 
   watch: {
     "$route.path" (value) {
@@ -173,6 +304,14 @@ export default {
 <style scoped>
   .shield {
     z-index: 509;
+  }
+
+  .message-modal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 510;
   }
 
   .dashboard-section {
