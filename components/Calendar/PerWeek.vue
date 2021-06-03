@@ -1,44 +1,44 @@
 <template>
   <section class="pt-3">
     <div class="flex flex-row flex-wrap justify-between mx-1">
-        <div class="w-1/2 flex items-center justify-between">
-          <span class="cursor-pointer mx-2" @click="adjustWeek('previous')">
-            <svgicon name="caret-down" class="fill-current" height="16" width="16" style="transform: rotate(180deg)" />
-          </span>
-          <div
-            class="font-bold text-gray-800"
-          >
-            {{ $moment(daysInWeek[0].date).format('MMM') }} {{ $moment(daysInWeek[0].date).format('YYYY') }} - {{ $moment(daysInWeek[6].date).format('MMM') }} {{ $moment(daysInWeek[6].date).format('YYYY') }}
-          </div>
+      <div class="w-1/2 flex items-center justify-between">
+        <span class="cursor-pointer mx-2" @click="adjustWeek('previous')">
+          <svgicon name="caret-down" class="fill-current" height="16" width="16" style="transform: rotate(180deg)" />
+        </span>
+        <div
+          class="font-bold text-gray-800"
+        >
+          {{ $moment(daysInWeek[0].date).format('MMM') }} {{ $moment(daysInWeek[0].date).format('YYYY') }} - {{ $moment(daysInWeek[6].date).format('MMM') }} {{ $moment(daysInWeek[6].date).format('YYYY') }}
+        </div>
            
 
-          <span class="cursor-pointer mx-2" @click="adjustWeek('next')">
-            <svgicon name="caret-down" class="fill-current" height="16" width="16" />
-          </span>
+        <span class="cursor-pointer mx-2" @click="adjustWeek('next')">
+          <svgicon name="caret-down" class="fill-current" height="16" width="16" />
+        </span>
+      </div>
+      <div class="w-1/2 flex items-center" :class="showRefresh ? 'justify-between' : 'justify-end'">
+        <div v-if="showRefresh" class="ml-2">
+          <AppButton
+            :label="'Refresh'"
+            :in-style="'font-size:12px;'"
+            :inClass="'text-xs py-1 px-4 rounded'"
+            @click="refreshJobs"
+          />
         </div>
-        <div class="w-1/2 flex items-center" :class="showRefresh ? 'justify-between' : 'justify-end'">
-          <div v-if="showRefresh" class="ml-2">
-            <AppButton
-              :label="'Refresh'"
-              :in-style="'font-size:12px;'"
-              :inClass="'text-xs py-1 px-4 rounded'"
-              @click="refreshJobs"
-            />
-          </div>
-          <div class="flex items-center">
-            <span
+        <div class="flex items-center">
+          <span
             class="text-xs py-1 px-4 rounded"
             :class="$store.state.calendar.view_type === 'per_month' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
             @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
-            >Month</span>
+          >Month</span>
 
-            <span
-              class="text-xs py-1 px-4 rounded ml-2"
-              :class="$store.state.calendar.view_type === 'per_week' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
-              @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
-            >Week</span>
-          </div>
+          <span
+            class="text-xs py-1 px-4 rounded ml-2"
+            :class="$store.state.calendar.view_type === 'per_week' ? 'bg-orange-500 text-white font-bold cursor-default':'border hover:bg-gray-400 cursor-pointer'"
+            @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
+          >Week</span>
         </div>
+      </div>
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
@@ -558,7 +558,7 @@
       </div>
     </template>
 
-     <span class="mt-4">
+    <!-- <span class="mt-4">
       <span class="bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white" @click="legendsModal=true">i</span>
     </span>
 
@@ -638,7 +638,7 @@
       </div>
     </transition>
 
-    <div v-if="legendsModal" class="shield" @click="legendsModal=false" />
+    <div v-if="legendsModal" class="shield" @click="legendsModal=false" /> -->
 
     <AppLoading :loading="$store.state.calendar.loading" />
   </section>
