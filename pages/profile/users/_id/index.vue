@@ -62,9 +62,9 @@
           :name="'username'"
           :label="'Username'"
           :error="formError.find(item => item.field === 'username')"
+          required
           @submit="save"
           @blur="CheckEmptyField(form.username, 'username')"
-          required
         />
   
         <AppInput
@@ -73,9 +73,9 @@
           :name="'email'"
           :label="'Email'"
           :error="formError.find(item => item.field === 'email')"
+          required
           @submit="save"
           @blur="CheckEmptyField(form.email, 'email')"
-          required
         />
   
         <AppInput
@@ -92,9 +92,9 @@
           :name="'first_name'"
           :label="'First name'"
           :error="formError.find(item => item.field === 'first_name')"
+          required
           @submit="save"
           @blur="CheckEmptyField(form.first_name, 'first_name')"
-          required
         />
   
         <AppInput
@@ -103,9 +103,9 @@
           :name="'last_name'"
           :label="'Last name'"
           :error="formError.find(item => item.field === 'last_name')"
+          required
           @submit="save"
           @blur="CheckEmptyField(form.last_name, 'last_name')"
-          required
         />
   
         <AppInput
@@ -396,7 +396,7 @@ export default {
             text: [`${res.message}`,],
           })
           // let index = this.users.findIndex(
-          // 	item => item.id == this.this.user.id
+          // 	item => item.id == this.user.id
           // );
           // if (index >= 0) {
           // 	this.users.splice(index, 1);
