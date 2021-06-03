@@ -2142,6 +2142,9 @@ export default {
             practice_last_edit_time_start: sched.practice_last_edit_time_start,
             practice_last_edit_time_end: sched.practice_last_edit_time_end,
 
+            practice_last_edit_invoiced_break_in_minutes: sched.practice_last_edit_invoiced_break_in_minutes,
+            practice_last_edit_invoiced_break_payable: sched.practice_last_edit_invoiced_break_payable,
+
             posted_break_in_minutes: sched.posted_break_in_minutes || '0',
             posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
             completed_break_in_minutes: sched.completed_break_in_minutes || '0',
@@ -2296,6 +2299,9 @@ export default {
               shift.final_time_start = shift.practice_last_edit_time_start
               shift.final_time_end = shift.practice_last_edit_time_end
             }
+
+            shift.invoiced_break_in_minutes = shift.practice_last_edit_invoiced_break_in_minutes
+            shift.invoiced_break_payable = shift.practice_last_edit_invoiced_break_payable
           } else {
             shift.dispute = false
             if (shift.orig_has_absences) {
@@ -3340,6 +3346,9 @@ export default {
             shift.final_time_end = shift.practice_last_edit_time_end
           }
           shift.remarks = ""
+
+          shift.invoiced_break_in_minutes = shift.practice_last_edit_invoiced_break_in_minutes
+          shift.invoiced_break_payable = shift.practice_last_edit_invoiced_break_payable
         } else {
           if (shift.orig_final_start === shift.orig_final_end) {
             shift.has_absences = true

@@ -100,6 +100,13 @@
           DISPUTED - Awaiting Practice Reply
         </div>
 
+        <div
+          v-if="propInvoice && propInvoice.last_disputed_by === 'Practice' && propInvoice.issued && !propInvoice.approved"
+          class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
+        >
+          DISPUTED
+        </div>
+
         <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
           INVOICE DETAILS
         </p>
