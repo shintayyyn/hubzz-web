@@ -382,7 +382,7 @@
       </div>
     </div>
 
-    <span class="mt-4">
+    <!-- <span class="mt-4">
       <span class="bg-gray-900 cursor-pointer hover:bg-gray-800 transition-hover px-3 rounded text-white" @click="legendsModal=true">i</span>
     </span>
 
@@ -500,7 +500,7 @@
       </div>
     </transition>
 
-    <div v-if="legendsModal" class="shield" @click="legendsModal=false" />
+    <div v-if="legendsModal" class="shield" @click="legendsModal=false" /> -->
 
     <AppLoading :loading="$store.state.calendar.loading" spinner />
   </section>
