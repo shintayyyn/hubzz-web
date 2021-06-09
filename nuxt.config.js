@@ -161,5 +161,16 @@ export default {
         autoprefixer: {},
       },
     },
+
+    babel: {
+      babelrc: false,
+      cacheDirectory: undefined,
+      presets: [
+        '@nuxt/babel-preset-app',
+      ],
+      plugins: [
+        '@babel/plugin-proposal-object-rest-spread',
+      ],
+    },
   },
 }
