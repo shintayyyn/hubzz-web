@@ -27,10 +27,10 @@ export default {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nunito', },
     ],
     script: [
-      {
-        src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js',
-        defer: true,
-      },
+      // {
+      //   src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js',
+      //   defer: true,
+      // },
       {
         src: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCqkvPPMK1lBnOF1NpxUggGFzkfcoaHV24&libraries=places',
       },
@@ -56,10 +56,10 @@ export default {
       mode: 'client',
     },
 
-    {
-      src: '@/plugins/one-signal.js',
-      mode: 'client',
-    },
+    // {
+    //   src: '@/plugins/one-signal.js',
+    //   mode: 'client',
+    // },
     {
       src: '@/plugins/vue-svgicon.js',
       ssr: true,
@@ -84,14 +84,14 @@ export default {
       src: '@/plugins/vue2-google-maps.js',
       mode: 'client',
     },
-    {
-      src: '@/plugins/jspdf.js',
-      mode: 'client',
-    },
-    {
-      src: '@/plugins/html2canvas.js',
-      mode: 'client',
-    },
+    // {
+    //   src: '@/plugins/jspdf.js',
+    //   mode: 'client',
+    // },
+    // {
+    //   src: '@/plugins/html2canvas.js',
+    //   mode: 'client',
+    // },
     {
       src: '@/plugins/broadcast-channel.js',
       mode: 'client',
@@ -152,9 +152,14 @@ export default {
   },
 
   build: {
-    transpile: [/^vue2-google-maps($|\/)/,],
+    transpile: [
+      /^vue2-google-maps($|\/)/,
+      '@nuxtjs/axios',
+    ],
+
     extend () {
     },
+
     postcss: {
       plugins: {
         tailwindcss: path.resolve(__dirname, './tailwind.config.js'),
