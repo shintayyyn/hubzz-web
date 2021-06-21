@@ -9,8 +9,8 @@ export default (ctx) => {
       appId: process.env.ONE_SIGNAL_APP_ID,
       allowLocalhostAsSecureOrigin: true,
       welcomeNotification: {
-        disable: true
-      }
+        disable: true,
+      },
     })
 
     // OneSignal.showNativePrompt()

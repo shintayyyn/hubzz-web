@@ -27,13 +27,13 @@ export const actions = {
       if (oneSignalId) {
         if (!oneSignalId && this.$auth.loggedIn) {
           await this.$axios.post('/api/v1/one-signal/login', {
-            one_signal_id: oneSignalId
+            one_signal_id: oneSignalId,
           })
 
           console.log('One Signal Logged In')
         } else {
           await this.$axios.post('/api/v1/one-signal/logout', {
-            one_signal_id: oneSignalId
+            one_signal_id: oneSignalId,
           })
 
           console.log('One Signal Logged Out')

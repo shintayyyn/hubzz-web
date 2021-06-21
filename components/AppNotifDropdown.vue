@@ -310,6 +310,11 @@ export default {
         "Practice Notification Practice Hub Deleted",
         "Practice Notification Practice Hub Accepted",
         "Practice Notification Practice Hub Rejected",
+
+        "User Notification Locum Referral Verified",
+        "User Notification Practice Referral Verified",
+
+        "User Notification Raffle Winner",
       ],
       popUpNotifications: [],
       showPopUpNotification: true,
@@ -638,12 +643,18 @@ export default {
         "Practice Notification Locum Payment Details Updated",
         
         "Practice Notification Locum Compliance Status Changed",
+
+        "User Notification Locum Referral Verified",
+        "User Notification Practice Referral Verified",
+        "User Notification Raffle Winner",
       ]
 
       if (validNotificationUrl.includes(notificationTypeName)) {
-        this.$router.push({
-          path: notificationUrl,
-        })
+        if (notificationUrl) {
+          this.$router.push({
+            path: notificationUrl,
+          })
+        }
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
