@@ -243,6 +243,12 @@ export default {
         "Locum Notification Locum Status Updated",
         "Locum Notification Dormanted",
 
+        "Locum Notification Account Deactivated",
+        "Locum Notification Account Deactivated By Admin",
+        "Locum Notification Account Reactivated",
+        "Locum Notification Account Reactivated By Admin",
+        "Locum Notification Account Delete Request Rejected",
+
         "Practice Notification Practice Actived",
         "Practice Notification Practice Reactivated",
         "Practice Notification Practice Suspended",
