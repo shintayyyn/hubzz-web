@@ -250,8 +250,14 @@ export default {
         "Locum Notification Account Delete Request Rejected",
 
         "Practice Notification Practice Actived",
-        "Practice Notification Practice Reactivated",
         "Practice Notification Practice Suspended",
+        "Practice Notification Practice Deactivated",
+        "Practice Notification Practice Deactivated By Admin",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Reactivated By Admin",
+        "Practice Notification Practice Delete Requested",
+        "Practice Notification Practice Delete Request Cancelled",
+        "Practice Notification Practice Delete Request Rejected",
 
         "Practice Notification Locum Compliance Expired",
         "Practice Notification Locum Compliance Expiring",
@@ -650,6 +656,16 @@ export default {
         
         "Practice Notification Locum Compliance Status Changed",
 
+        "Practice Notification Practice Actived",
+        "Practice Notification Practice Suspended",
+        "Practice Notification Practice Deactivated",
+        "Practice Notification Practice Deactivated By Admin",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Reactivated By Admin",
+        "Practice Notification Practice Delete Requested",
+        "Practice Notification Practice Delete Request Cancelled",
+        "Practice Notification Practice Delete Request Rejected",
+
         "User Notification Locum Referral Verified",
         "User Notification Practice Referral Verified",
         "User Notification Raffle Winner",
@@ -737,12 +753,6 @@ export default {
         "Locum Notification Locum Invoice Disputed",
         "Locum Notification Locum Invoice Approved",
         "Locum Notification Locum Invoice Paid",
-      ]
-
-      const practiceNotifications = [
-        "Practice Notification Practice Actived",
-        "Practice Notification Practice Reactivated",
-        "Practice Notification Practice Suspended",
       ]
 
       const practiceComplianceDocumentNotifications = [
@@ -1169,16 +1179,6 @@ export default {
             })
           }, 500)
         }
-
-        this.showNotificationsDropdown = false
-        this.updateNotificationSeen(notification)
-        return
-      }
-
-      if (practiceNotifications.includes(notificationTypeName)) {
-        this.$router.push({
-          name: "dashboard",
-        })
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
@@ -1932,6 +1932,17 @@ export default {
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
+        return
+      }
+
+      if (notificationUrl) {
+        this.$router.push({
+          path: notificationUrl,
+        })
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+
         return
       }
 

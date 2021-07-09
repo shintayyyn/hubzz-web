@@ -31,10 +31,27 @@
       </nuxt-link>
 
       <button
-        v-if="false"
+        v-if="$auth.user && $auth.user.domain === 'Practice' && $auth.user.practice_status !== 'Deactivated'"
         class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap text-gray-600"
+        @click="showDeactivatePracticeModal = true"
       >
         Deactivate Practice
+      </button>
+
+      <button
+        v-if="$auth.user && $auth.user.domain === 'Practice' && (!$auth.user.practice_delete_status || $auth.user.practice_delete_status === 'Rejected')"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap text-gray-600"
+        @click="showRequestDeletePracticeModal = true"
+      >
+        Request Delete Practice
+      </button>
+
+      <button
+        v-if="$auth.user && $auth.user.domain === 'Practice' && $auth.user.practice_delete_status && $auth.user.practice_delete_status === 'Pending'"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap text-gray-600"
+        @click="showCancelRequestDeletePracticeModal = true"
+      >
+        Cancel Request Delete
       </button>
     </div>
 
@@ -48,27 +65,70 @@
       :modal="modal"
       @confirm="goTo"
     />
+
+    <AppConfirmationModal
+      :label="deactivatingPractice ? 'Deactivating practice...' : 'Are you sure you want to deactivate your practice?'"
+      confirmLabel="Yes"
+      cancelLabel="No"
+      :modal="showDeactivatePracticeModal"
+      :loading="deactivatingPractice"
+      @confirm="deactivatePractice"
+      @cancel="showDeactivatePracticeModal = false"
+    />
+
+    <AppConfirmationModal
+      :label="requestingDeletePractice ? 'Requesting delete practice...' : 'Are you sure you want to DELETE your account? Deleting your account will erase ALL your data'"
+      confirmLabel="Yes"
+      cancelLabel="No"
+      :modal="showRequestDeletePracticeModal"
+      :loading="requestingDeletePractice"
+      @confirm="requestDeletePractice"
+      @cancel="showRequestDeletePracticeModal = false"
+    />
+
+    <AppConfirmationModal
+      :label="cancelingRequestDeletePractice ? 'Cancelling delete request...' : 'Are you sure you want to cancel your delete request?'"
+      confirmLabel="Yes"
+      cancelLabel="No"
+      :modal="showCancelRequestDeletePracticeModal"
+      :loading="cancelingRequestDeletePractice"
+      @confirm="cancelRequestDeletePractice"
+      @cancel="showCancelRequestDeletePracticeModal = false"
+    />
   </section>
 </template>
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+
 export default {
   components: {
     AppConfirmationModal,
     AppBreadcrumbs,
   },
+
   data () {
     return {
       modal: false,
       practicePermissions: [],
-      // type: null
+      // type: null,
+
+      showDeactivatePracticeModal: false,
+      deactivatingPractice: false,
+
+      showRequestDeletePracticeModal: false,
+      requestingDeletePractice: false,
+
+      showCancelRequestDeletePracticeModal: false,
+      cancelingRequestDeletePractice: false,
     }
   },
+
   computed: {
     authPermissions () {
       return this.$store.getters["permissions"]
     },
+
     links () {
       let route = this.$route
       let links = [
@@ -126,6 +186,7 @@ export default {
       return links
     },
   },
+
   watch: {
     authPermissions (value) {
       if (!this.CheckPermissions(value).hasPermission) {
@@ -133,6 +194,7 @@ export default {
       }
     },
   },
+
   async asyncData ({ store, error, }) {
     try {
       const authPermissions = store.getters["permissions"]
@@ -167,6 +229,7 @@ export default {
       throw err
     }
   },
+
   created () {
     let toRedirect = ''
     if (this.practicePermissions.find(item => item === 'View Profile Practice') === undefined) {
@@ -184,25 +247,138 @@ export default {
       this.$router.push(`/profile/${toRedirect}`)
     }
   },
+
   mounted () {
-    // if (this.$route.name === "profile") {
-    //   if (this.authPermissions.includes("View Profile Practice")) {
-    //     this.$router.push("/profile/practice");
-    //   } else if (
-    //     this.authPermissions.includes("View Surgery Management") &&
-    //     this.type != "Stand Alone"
-    //   ) {
-    //     this.$router.push("/profile/practice-spokes");
-    //   } else if (this.authPermissions.includes("View Profile Users")) {
-    //     this.$router.push("/profile/users");
-    //   } else if (
-    //     this.authPermissions.includes("View Profile Practice Document")
-    //   ) {
-    //     this.$router.push("/profile/practice-documents");
-    //   }
-    // }
+    this.$socket.on('Practice Notification Practice Deactivated', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.on('Practice Notification Practice Deactivated By Admin', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.on('Practice Notification Practice Reactivated By Admin', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.on('Practice Notification Practice Delete Requested', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.on('Practice Notification Practice Delete Request Cancelled', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.on('Practice Notification Practice Delete Request Rejected', this.practiceNotificationStatusUpdatedHandler)
   },
+
+  destroyed () {
+    this.$socket.removeListener('Practice Notification Practice Deactivated', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Deactivated By Admin', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Reactivated By Admin', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Delete Requested', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Delete Request Cancelled', this.practiceNotificationStatusUpdatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Delete Request Rejected', this.practiceNotificationStatusUpdatedHandler)
+  },
+
   methods: {
+    practiceNotificationStatusUpdatedHandler () {
+      this.$auth.fetchUser()
+    },
+
+    logout () {
+      this.$axios
+        .post("/api/v1/logout")
+        .catch(err => {
+          console.log("err", err.response || err)
+        })
+        .finally(() => {
+          return this.loggedOutHandler()
+        })
+        .then(() => {
+          this.$loggedOutBroadcastChannel.postMessage()
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+        })
+    },
+
+    async loggedOutHandler () {
+      try {
+        await this.$auth.logout()
+        this.$auth.$storage.setUniversal("_token.local", "")
+        this.$router.push("/")
+      } catch (err) {
+        console.log("err", err)
+      }
+    },
+
+    errorHandler (err) {
+      console.log('err', err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        message = err.response.data.message
+      } else if (err.request) {
+        message = 'Something went wrong!'
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'danger',
+          text: [`${message}`,],
+        })
+      }
+    },
+
+    deactivatePractice () {
+      this.deactivatingPractice = true
+    
+      this.$axios.put('/api/v1/practice/me/practice-account/deactivate').then((response) => {
+        console.log('response', response)
+
+        const message = response.data.message
+
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'success',
+          text: [`${message}`,],
+        })
+
+        this.logout()
+      }).catch(this.errorHandler).finally(() => {
+        this.showDeactivatePracticeModal = false
+        this.deactivatingPractice = false
+      })
+    },
+
+    requestDeletePractice () {
+      this.requestingDeletePractice = true
+    
+      this.$axios.put('/api/v1/practice/me/practice-account/request-delete').then((response) => {
+        console.log('response', response)
+
+        const message = response.data.message
+
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'success',
+          text: [`${message}`,],
+        })
+      }).catch(this.errorHandler).finally(() => {
+        this.showRequestDeletePracticeModal = false
+        this.requestingDeletePractice = false
+      })
+    },
+
+    cancelRequestDeletePractice () {
+      this.cancelingRequestDeletePractice = true
+    
+      this.$axios.put('/api/v1/practice/me/practice-account/cancel-request-delete').then((response) => {
+        console.log('response', response)
+
+        const message = response.data.message
+
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'success',
+          text: [`${message}`,],
+        })
+      }).catch(this.errorHandler).finally(() => {
+        this.showCancelRequestDeletePracticeModal = false
+        this.cancelingRequestDeletePractice = false
+      })
+    },
+
     goTo () {
       this.modal = false
       setTimeout(() => {

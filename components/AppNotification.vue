@@ -2,7 +2,7 @@
   <div class="app-notification">
     <transition name="drop">
       <div
-        v-if="$store.state.notification.enabled && $store.state.notification.status != 'message'"
+        v-if="$store.state.notification.enabled && $store.state.notification.status !== 'message'"
         class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
         style="min-width: 200px"
         :class="notificationStatus"
@@ -19,6 +19,7 @@
         </div>
       </div>
     </transition>
+
     <transition name="slide" mode="out-in">
       <div
         v-if="$store.state.notification.status === 'message' && !$route.path.includes('messages')"
@@ -50,115 +51,125 @@
 </template>
 
 <script>
-  export default {
-    computed: {
-      notificationStatus () {
-        switch (this.$store.state.notification.status) {
-          case "success":
-            return "border border-green-500 bg-green-200 text-green-600"
-          case "danger":
-            return "border border-red-500 bg-red-200 text-red-600"
-          case "uploading":
-            return "border border-yellow-500 bg-yellow-200 text-yellow-600"
-          case "alert":
-            return "border border-orange-500 bg-orange-200 text-orange-600"
-          case "info":
-            return "border border-blue-500 bg-blue-100"
-          case "message":
-            return "border border-blue-500 bg-blue-100"
-          default:
-            return "border border-orange-500 bg-orange-200 text-orange-600"
-        }
-      },
+export default {
+  data () {
+    return {
+      timeout: null,
+    }
+  },
 
-      notificationIcon () {
-        switch (this.$store.state.notification.status) {
-          case "success":
-            return "success-checkmark"
-          case "danger":
-            return "exclamation-mark"
-          case "uploading":
-            return "cloud-upload"
-          case "alert":
-            return "alert"
-          case "info":
-            return "info"
-          case "message":
-            return "chat"
-          default:
-            return "alert"
-        }
-      },
-
-      iconSvgColor () {
-        switch (this.$store.state.notification.status) {
-          case "success":
-            return "#38a169"
-          case "danger":
-            return "#e53e3e"
-          case "uploading":
-            return "#d69e2e"
-          case "info":
-            return "#3182ce"
-          case "message":
-            return "#3182ce"
-          default:
-            return "#fff, #000"
-        }
-      },
-
-      notify () {
-        return this.$store.state.notification.enabled
-      },
-
-      closable () {
-        return this.$store.state.notification.closable
-      },
-
-      conversations () {
-        return this.$store.getters["chat/getConversations"]
-      },
-    },
-
-    watch: {
-      notify () {
-        if (!this.$store.state.notification.closable) {
-          setTimeout(() => {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: false,
-              status: "",
-              text: "",
-              closable: false,
-              duration: ""
-            })
-          }, this.$store.state.notification.duration ? this.$store.state.notification.duration : 2000)
-        }
+  computed: {
+    notificationStatus () {
+      switch (this.$store.state.notification.status) {
+      case "success":
+        return "border border-green-500 bg-green-200 text-green-600"
+      case "danger":
+        return "border border-red-500 bg-red-200 text-red-600"
+      case "uploading":
+        return "border border-yellow-500 bg-yellow-200 text-yellow-600"
+      case "alert":
+        return "border border-orange-500 bg-orange-200 text-orange-600"
+      case "info":
+        return "border border-blue-500 bg-blue-100"
+      case "message":
+        return "border border-blue-500 bg-blue-100"
+      default:
+        return "border border-orange-500 bg-orange-200 text-orange-600"
       }
     },
 
-    methods: {
-      close () {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: false,
-          status: "",
-          text: ""
-          // closable: false
-        })
-      },
-
-      view () {
-        if (this.$store.state.notification.status === "message") {
-          let conversation = this.conversations.find(
-            (conversation, index) => index === 0
-          )
-          this.close()
-          this.$router.push(`/messages/${conversation.id}`)
-          this.$store.commit("chat/DELETE_UNREAD_MESSAGE", conversation.id)
-        }
-      },
+    notificationIcon () {
+      switch (this.$store.state.notification.status) {
+      case "success":
+        return "success-checkmark"
+      case "danger":
+        return "exclamation-mark"
+      case "uploading":
+        return "cloud-upload"
+      case "alert":
+        return "alert"
+      case "info":
+        return "info"
+      case "message":
+        return "chat"
+      default:
+        return "alert"
+      }
     },
 
-  }
+    iconSvgColor () {
+      switch (this.$store.state.notification.status) {
+      case "success":
+        return "#38a169"
+      case "danger":
+        return "#e53e3e"
+      case "uploading":
+        return "#d69e2e"
+      case "info":
+        return "#3182ce"
+      case "message":
+        return "#3182ce"
+      default:
+        return "#fff, #000"
+      }
+    },
+
+    notify () {
+      return this.$store.state.notification.enabled
+    },
+
+    closable () {
+      return this.$store.state.notification.closable
+    },
+
+    conversations () {
+      return this.$store.getters["chat/getConversations"]
+    },
+  },
+
+  watch: {
+    notify () {
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+      }
+
+      if (!this.$store.state.notification.closable && this.notify) {
+        this.timeout = setTimeout(() => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: false,
+            status: "",
+            text: "",
+            closable: false,
+            duration: "",
+          })
+        }, this.$store.state.notification.duration ? this.$store.state.notification.duration : 2000)
+      }
+    },
+  },
+
+  methods: {
+    close () {
+      this.$store.commit("SET_NOTIFICATION", {
+        enabled: false,
+        status: "",
+        text: "",
+        // closable: false
+      })
+    },
+
+    view () {
+      if (this.$store.state.notification.status === "message") {
+        let conversation = this.conversations.find(
+          (conversation, index) => index === 0
+        )
+        this.close()
+        this.$router.push(`/messages/${conversation.id}`)
+        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", conversation.id)
+      }
+    },
+  },
+
+}
 </script>
 
 <style>

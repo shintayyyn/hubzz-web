@@ -18,7 +18,7 @@ export const state = () => ({
   view_locum_jobs: false,
   view_permanent_jobs: false,
   session_expiring: false,
-  breadcrumbs: []
+  breadcrumbs: [],
 })
 
 export const mutations = {
@@ -28,24 +28,33 @@ export const mutations = {
   SET_PERMISSIONS (state, payload) {
     state.auth.user.practice_detail.role.permissions = payload
   },
+
   SET_NOTIFICATION (state, payload) {
+    state.notification.enabled = false
+    state.notification.status = ""
+    state.notification.text = []
+    state.notification.closable = false
+    state.notification.duration = ""
+
     state.notification.enabled = payload.enabled
     state.notification.status = payload.status
     state.notification.text = payload.text
     state.notification.closable = payload.closable
     state.notification.duration = payload.duration
   },
+
   TOGGLE_SIDEBAR (state, payload) {
     state.toggled_sidebar = payload
   },
-  SET_BREADCRUMBS(state, payload) {
+
+  SET_BREADCRUMBS (state, payload) {
     state.breadcrumbs = payload
     if (typeof localStorage === 'object') {
-    localStorage.setItem('breadcrumbs', JSON.stringify(payload))
+      localStorage.setItem('breadcrumbs', JSON.stringify(payload))
       // window.localStorage.setItem('breadcrumbs', JSON.stringify(payload))
     }
   },
-  ADD_BREADCRUMB(state, payload) {
+  ADD_BREADCRUMB (state, payload) {
     state.breadcrumbs.push(payload)
   },
   SET_LOCUM_PRIVATE_PRACTICES (state, payload) {
@@ -94,13 +103,13 @@ export const actions = {
       commit("SET_NOTIFICATION", {
         enabled: true,
         status: "danger",
-        text: ["Session Expired"],
+        text: ["Session Expired",],
         duration: 5000,
       })
     })
   },
 	
-  async joinRoom ({ dispatch, }, payload) {
+  async joinRoom () {
     try {
       // await this.$axios.$post('api/v1/socket/join-room', {
       //   socket_id: payload.socket_id,
@@ -110,13 +119,13 @@ export const actions = {
       console.log(err.response)
     }
   },
-  async leaveRoom ({}, payload) {
+  async leaveRoom () {
     // await this.$axios.$post('api/v1/socket/leave-room', {
     //   socket_id: payload.socket_id,
     //   room_name: payload.room_name
     // })
   },
-  async getViewJobsPermissions ({ state, commit, }, payload) {
+  async getViewJobsPermissions ({ commit, }) {
     await this.$axios.$get(`/api/v1/me`).then(
       res => {
         commit("SET_VIEW_LOCUM_JOBS", res.data.user.view_locum_jobs)
@@ -149,10 +158,12 @@ export const getters = {
   permissions (state) {
     return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []
   },
-  getBreadcrumbs(state) {
+  getBreadcrumbs (state) {
     if (typeof localStorage === 'object') {
-      return [...JSON.parse(localStorage.getItem('breadcrumbs'))]
+      return [
+        ...JSON.parse(localStorage.getItem('breadcrumbs')),
+      ]
     }
     return state.breadcrumbs
-  }
+  },
 }

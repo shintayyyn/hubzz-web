@@ -64,6 +64,13 @@
     />
 
     <AppConfirmationModal
+      :label="'Your Practice Has Been Deactivated'"
+      :confirmLabel="'Logout'"
+      :modal="showPracticeDeactivatedModal"
+      @confirm="logout"
+    />
+
+    <AppConfirmationModal
       :label="'Your Account Has Been Deleted'"
       :confirmLabel="'Ok'"
       :modal="showUserAccountDeletedModal"
@@ -88,6 +95,7 @@ export default {
       eligibleToSpoke: false,
       showLocumAccountDeactivatedModal: false,
       showUserAccountDeletedModal: false,
+      showPracticeDeactivatedModal: false,
     }
   },
 
@@ -556,6 +564,17 @@ export default {
     this.$socket.on('Locum Notification Account Deactivated By Admin', this.locumAccountDeactivatedHandler)
 
     this.$socket.on('User Notification Account Deleted', this.accountDeletedHandler)
+
+    this.$socket.on('Practice Notification Practice Deactivated', this.practiceDeactivatedHandler)
+    this.$socket.on('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
+
+    if (this.$auth.user && this.$auth.user.domain === 'Locum' && this.$auth.user.status === 'Deactivated') {
+      this.locumAccountDeactivatedHandler()
+    }
+
+    if (this.$auth.user && this.$auth.user.domain === 'Practice' && this.$auth.user.practice_status === 'Deactivated') {
+      this.practiceDeactivatedHandler()
+    }
   },
 
   destroyed () {
@@ -568,6 +587,9 @@ export default {
     this.$socket.removeListener('Locum Notification Account Deactivated By Admin', this.locumAccountDeactivatedHandler)
 
     this.$socket.removeListener('User Notification Account Deleted', this.accountDeletedHandler)
+
+    this.$socket.removeListener('Practice Notification Practice Deactivated', this.practiceDeactivatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
   },
 
   methods: {
@@ -577,6 +599,10 @@ export default {
 
     accountDeletedHandler () {
       this.showUserAccountDeletedModal = true
+    },
+
+    practiceDeactivatedHandler () {
+      this.showPracticeDeactivatedModal = true
     },
 
     toggleConfirmationModal () {

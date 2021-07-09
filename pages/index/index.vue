@@ -71,6 +71,12 @@
       :modal="showReativateLocumAccountModal"
       :loading="true"
     />
+    
+    <AppConfirmationModal
+      :label="'Reactivating practice...'"
+      :modal="showReativatePracticeModal"
+      :loading="true"
+    />
   </div>
 </template>
 
@@ -104,6 +110,7 @@ export default {
       loggingIn: false,
 
       showReativateLocumAccountModal: false,
+      showReativatePracticeModal: false,
     }
   },
 
@@ -228,23 +235,26 @@ export default {
 
         await this.$auth.fetchUser()
 
-        console.log('this.$auth.user', this.$auth.user)
-        if (this.$auth.user) {
-          console.log('this.$auth.user.reactivated_at', this.$auth.user.reactivated_at)
-        }
-
-        if (this.$auth.user.reactivated_at) {
-          console.log('asMinutes', this.$moment.duration(this.$moment.utc().diff(this.$moment.utc(this.$auth.user.reactivated_at, 'YYYY-MM-DD HH:mm:ss.SSSS'))).asMinutes())
-        }
-
         if (
           this.$auth.user
+          && this.$auth.user.domain === 'Locum'
           && this.$auth.user.reactivated_at
           && this.$moment.duration(this.$moment.utc().diff(this.$moment.utc(this.$auth.user.reactivated_at, 'YYYY-MM-DD HH:mm:ss.SSSS'))).asMinutes() < 1
         ) {
           this.showReativateLocumAccountModal = true
           await new Promise((resolve) => setTimeout(resolve, 1000 * 1))
           this.showReativateLocumAccountModal = false
+        }
+
+        if (
+          this.$auth.user
+          && this.$auth.user.domain === 'Practice'
+          && this.$auth.user.practice_reactivated_at
+          && this.$moment.duration(this.$moment.utc().diff(this.$moment.utc(this.$auth.user.practice_reactivated_at, 'YYYY-MM-DD HH:mm:ss.SSSS'))).asMinutes() < 1
+        ) {
+          this.showReativatePracticeModal = true
+          await new Promise((resolve) => setTimeout(resolve, 1000 * 1))
+          this.showReativatePracticeModal = false
         }
 
         this.$router.push('/dashboard')

@@ -41,7 +41,7 @@
         <button
           v-if="$auth.user.domain === 'Locum' && $auth.user.status !== 'Deactivated'"
           class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap text-gray-600"
-          @click="showDeativateLocumAccountModal = true"
+          @click="showDeactivateLocumAccountModal = true"
         >
           Deactivate Account
         </button>
@@ -72,14 +72,14 @@
       :label="deactivatingLocum ? 'Deactivating account...' : 'Are you sure you want to deactivate your account?'"
       confirmLabel="Yes"
       cancelLabel="No"
-      :modal="showDeativateLocumAccountModal"
+      :modal="showDeactivateLocumAccountModal"
       :loading="deactivatingLocum"
       @confirm="deactivateLocumAccount"
-      @cancel="showDeativateLocumAccountModal = false"
+      @cancel="showDeactivateLocumAccountModal = false"
     />
     
     <AppConfirmationModal
-      :label="requestingDeleteLocumAccount ? 'Requesting delete account...' : 'Are you sure you want to delete your account?'"
+      :label="requestingDeleteLocumAccount ? 'Requesting delete account...' : 'Are you sure you want to DELETE your account? Deleting your account will erase ALL your data'"
       confirmLabel="Yes"
       cancelLabel="No"
       :modal="showRequestDeleteLocumAccountModal"
@@ -89,7 +89,7 @@
     />
     
     <AppConfirmationModal
-      :label="cancelingDeleteAccountRequest ? 'Canceling delete account request...' : 'Are you sure you want to cancel your request?'"
+      :label="cancelingDeleteAccountRequest ? 'Canceling delete account request...' : 'Are you sure you want to cancel your delete request?'"
       confirmLabel="Yes"
       cancelLabel="No"
       :modal="showCancelDeleteLocumAccountRequestModal"
@@ -109,7 +109,7 @@ export default {
 
   data () {
     return {
-      showDeativateLocumAccountModal: false,
+      showDeactivateLocumAccountModal: false,
       deactivatingLocum: false,
       showRequestDeleteLocumAccountModal: false,
       requestingDeleteLocumAccount: false,
@@ -197,7 +197,7 @@ export default {
           })
         }
       }).finally(() => {
-        this.showDeativateLocumAccountModal = false
+        this.showDeactivateLocumAccountModal = false
         this.deactivatingLocum = false
       })
     },
