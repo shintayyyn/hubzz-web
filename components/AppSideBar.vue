@@ -73,7 +73,7 @@
     <AppConfirmationModal
       :label="'Your Account Has Been Deleted'"
       :confirmLabel="'Ok'"
-      :modal="showUserAccountDeletedModal"
+      :modal="showUserAccountDeletedModal || showPracticeUserDeletedModal"
       @confirm="confirm"
     />
 
@@ -104,6 +104,7 @@ export default {
       showUserAccountDeletedModal: false,
       showPracticeDeactivatedModal: false,
       showPracticeDeletedModal: false,
+      showPracticeUserDeletedModal: false,
     }
   },
 
@@ -578,6 +579,8 @@ export default {
 
     this.$socket.on('Practice Notification Practice Deleted', this.practiceDeletedHandler)
 
+    this.$socket.on('Practice Notification Practice User Deleted', this.practiceUserDeletedHandler)
+
     if (this.$auth.user && this.$auth.user.domain === 'Locum' && this.$auth.user.status === 'Deactivated') {
       this.locumAccountDeactivatedHandler()
     }
@@ -602,6 +605,8 @@ export default {
     this.$socket.removeListener('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
 
     this.$socket.removeListener('Practice Notification Practice Deleted', this.practiceDeletedHandler)
+
+    this.$socket.removeListener('Practice Notification Practice User Deleted', this.practiceUserDeletedHandler)
   },
 
   methods: {
@@ -619,6 +624,10 @@ export default {
 
     practiceDeletedHandler () {
       this.showPracticeDeletedModal = true
+    },
+
+    practiceUserDeletedHandler () {
+      this.showPracticeUserDeletedModal = true
     },
 
     toggleConfirmationModal () {
