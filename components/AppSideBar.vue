@@ -76,6 +76,13 @@
       :modal="showUserAccountDeletedModal"
       @confirm="confirm"
     />
+
+    <AppConfirmationModal
+      :label="'Your Practice Has Been Deleted'"
+      :confirmLabel="'Ok'"
+      :modal="showPracticeDeletedModal"
+      @confirm="confirm"
+    />
   </section>
 </template>
 
@@ -96,6 +103,7 @@ export default {
       showLocumAccountDeactivatedModal: false,
       showUserAccountDeletedModal: false,
       showPracticeDeactivatedModal: false,
+      showPracticeDeletedModal: false,
     }
   },
 
@@ -568,6 +576,8 @@ export default {
     this.$socket.on('Practice Notification Practice Deactivated', this.practiceDeactivatedHandler)
     this.$socket.on('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
 
+    this.$socket.on('Practice Notification Practice Deleted', this.practiceDeletedHandler)
+
     if (this.$auth.user && this.$auth.user.domain === 'Locum' && this.$auth.user.status === 'Deactivated') {
       this.locumAccountDeactivatedHandler()
     }
@@ -590,6 +600,8 @@ export default {
 
     this.$socket.removeListener('Practice Notification Practice Deactivated', this.practiceDeactivatedHandler)
     this.$socket.removeListener('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
+
+    this.$socket.removeListener('Practice Notification Practice Deleted', this.practiceDeletedHandler)
   },
 
   methods: {
@@ -603,6 +615,10 @@ export default {
 
     practiceDeactivatedHandler () {
       this.showPracticeDeactivatedModal = true
+    },
+
+    practiceDeletedHandler () {
+      this.showPracticeDeletedModal = true
     },
 
     toggleConfirmationModal () {
@@ -677,10 +693,11 @@ export default {
       }
     },
 
-    async confirm () {
-      await this.$auth.logout()
-      this.$auth.$storage.setUniversal("_token.local", "")
-      this.$router.push("/")
+    confirm () {
+      this.$auth.logout().finally(() => {
+        this.$auth.$storage.setUniversal("_token.local", "")
+        this.$router.push("/")
+      })
     },
 
     close () {

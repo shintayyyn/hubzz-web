@@ -258,6 +258,7 @@ export default {
         "Practice Notification Practice Delete Requested",
         "Practice Notification Practice Delete Request Cancelled",
         "Practice Notification Practice Delete Request Rejected",
+        "Practice Notification Practice Deleted",
 
         "Practice Notification Locum Compliance Expired",
         "Practice Notification Locum Compliance Expiring",
@@ -665,6 +666,7 @@ export default {
         "Practice Notification Practice Delete Requested",
         "Practice Notification Practice Delete Request Cancelled",
         "Practice Notification Practice Delete Request Rejected",
+        "Practice Notification Practice Deleted",
 
         "User Notification Locum Referral Verified",
         "User Notification Practice Referral Verified",

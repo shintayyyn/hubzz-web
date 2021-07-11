@@ -33,7 +33,7 @@
                 </div>
               </nuxt-link>
 
-              <AppLoading :loading="favoriteLoading" spinner />
+              <AppLoading :loading="favoriteLoadingPracticeIds.includes(practice.id)" spinner />
             </div>
           </div>
         </div>
@@ -79,28 +79,10 @@ export default {
     AppPagination,
   },
 
-  // middleware({ query, redirect, error, route }) {
-  //   if (!query.status && route.name === "my-practice-index") {
-  //     // api (Favorite only)
-  //     redirect(`/my-practice?status=Favorite`);
-  //   }
-  //   if (
-  //     query.status &&
-  //     !["favorite", "completed", "applied", "unsuccessful"].includes(
-  //       query.status.toLowerCase()
-  //     )
-  //   ) {
-  //     return error({
-  //       status: 404,
-  //       message: "This MyPractice Status is Invalid"
-  //     });
-  //   }
-  // },
-
   data () {
     return {
       loading: true,
-      favoriteLoading: false,
+      favoriteLoadingPracticeIds: [],
       current_page: 1,
       practices: [],
       total: 0,
@@ -201,7 +183,8 @@ export default {
       let queryStatus = this.$route.query.status
       let practice = this.practices.find(practice => practice.id === id)
       if (!practice.is_favorite) {
-        this.favoriteLoading = true
+        this.favoriteLoadingPracticeIds.push(id)
+
         this.$axios
           .$post(`/api/v1/locum/practices/${id}/favorite`)
           .then(() => {
@@ -223,10 +206,15 @@ export default {
             }
           })
           .finally(() => {
-            this.favoriteLoading = false
+            const index = this.favoriteLoadingPracticeIds.indexOf(id)
+
+            if (index > -1) {
+              this.favoriteLoadingPracticeIds.splice(index, 1)
+            }
           })
       } else if (practice.is_favorite) {
-        this.favoriteLoading = true
+        this.favoriteLoadingPracticeIds.push(id)
+
         this.$axios
           .$delete(`/api/v1/locum/practices/${id}/favorite`)
           .then(() => {
@@ -236,11 +224,13 @@ export default {
               text: ["Remove to favourites",],
             })
             practice.is_favorite = !practice.is_favorite
+
             if (!queryStatus || queryStatus.toLowerCase() === "favorite") {
-              this.practices.splice(
-                this.practices.findIndex(practice => practice.id === id),
-                1
-              )
+              const practiceIndex = this.practices.findIndex(practice => practice.id === id)
+
+              if (practiceIndex > -1) {
+                this.practices.splice(practiceIndex, 1)
+              }
             }
           })
           .catch(err => {
@@ -254,7 +244,11 @@ export default {
             }
           })
           .finally(() => {
-            this.favoriteLoading = false
+            const index = this.favoriteLoadingPracticeIds.indexOf(id)
+
+            if (index > -1) {
+              this.favoriteLoadingPracticeIds.splice(index, 1)
+            }
           })
       }
     },

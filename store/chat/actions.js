@@ -49,11 +49,20 @@ export default {
     })
   },
   async initializeUsersOnline ({ commit, }) {
-    this.$socket.on("presence-in", users => {
-      commit("ADD_USER_ONLINE", users.user.id)
+    this.$socket.on("presence-in", (payload) => {
+      const {
+        user_id: userId,
+      } = payload
+
+      commit("ADD_USER_ONLINE", userId)
     })
-    this.$socket.on("presence-out", users => {
-      commit("DELETE_USER_ONLINE", users.user.id)
+
+    this.$socket.on("presence-out", (payload) => {
+      const {
+        user_id: userId,
+      } = payload
+
+      commit("DELETE_USER_ONLINE", userId)
     })
   },
 

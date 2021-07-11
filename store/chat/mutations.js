@@ -86,33 +86,26 @@ export default {
       })
   },
   
-  ADD_USER_ONLINE (state, payload) {
-    let conversation = state.conversations.find(
-      conversation => conversation.id == state.activeConversationId
-    )
-    if (conversation) {
-      let user = conversation.conversation_member_users.find(
-        member => member.id == payload
-      )
-      if (user) {
+  ADD_USER_ONLINE (state, userId) {
+    const conversationIdex = state.conversations.findIndex(({ id, }) => id == state.activeConversationId)
+
+    if (conversationIdex > -1) {
+      const conversation = state.conversations[conversationIdex]
+
+      const conversationMemberUserIndex = conversation.conversation_member_users.findIndex(({ id, }) => id == userId)
+
+      if (conversationMemberUserIndex > -1) {
+        const user = conversation.conversation_member_users[conversationMemberUserIndex]
+
         user.is_online = true
-        conversation.conversation_member_users.splice(
-          conversation.conversation_member_users.findIndex(
-            item => item.user.id == payload
-          ),
-          1,
-          user
-        )
-        state.conversations.splice(
-          state.conversations.findIndex(
-            item => item.id == state.activeConversationId
-          ),
-          1,
-          conversation
-        )
+
+        conversation.conversation_member_users.splice(conversationMemberUserIndex, 1, user)
+
+        state.conversations.splice(conversationIdex, 1, conversation)
       }
     }
   },
+
   ADD_UNREAD_MESSAGE (state, payload) {
     state.unreadMessages.push({
       user_id: this.$auth.user.id,
@@ -129,37 +122,27 @@ export default {
       }
     })
   },
-  DELETE_USER_ONLINE (state, payload) {
-    // let index = state.usersOnline.findIndex(users => users == payload);
-    // if (index >= 0) {
-    //   state.usersOnline.splice(index, 1);
-    // }
-    let conversation = state.conversations.find(
-      conversation => conversation.id == state.activeConversationId
-    )
-    if (conversation) {
-      let user = conversation.conversation_member_users.find(
-        member => member.user.id == payload
-      )
-      if (user) {
-        user.user.is_online = false
-        conversation.conversation_member_users.splice(
-          conversation.conversation_member_users.findIndex(
-            item => item.user.id == payload
-          ),
-          1,
-          user
-        )
-        state.conversations.splice(
-          state.conversations.findIndex(
-            item => item.id == state.activeConversationId
-          ),
-          1,
-          conversation
-        )
+
+  DELETE_USER_ONLINE (state, userId) {
+    const conversationIdex = state.conversations.findIndex(({ id, }) => id == state.activeConversationId)
+
+    if (conversationIdex > -1) {
+      const conversation = state.conversations[conversationIdex]
+
+      const conversationMemberUserIndex = conversation.conversation_member_users.findIndex(({ id, }) => id == userId)
+
+      if (conversationMemberUserIndex > -1) {
+        const user = conversation.conversation_member_users[conversationMemberUserIndex]
+
+        user.is_online = false
+
+        conversation.conversation_member_users.splice(conversationMemberUserIndex, 1, user)
+
+        state.conversations.splice(conversationIdex, 1, conversation)
       }
     }
   },
+  
   DELETE_ACTIVE_CONVERSATION (state) {
     state.activeConversationId = null
   },
