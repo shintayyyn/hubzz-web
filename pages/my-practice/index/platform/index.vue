@@ -138,6 +138,7 @@ export default {
         this.$axios.get('/api/v1/locum/practices/count', {
           params: {
             locum_practice_type: queryStatus,
+            dont_show_deactivated_or_deleted_practice: true,
           },
         }).then(response => this.total = response.data.data.count),
 
@@ -163,6 +164,7 @@ export default {
       return this.$axios.get('/api/v1/locum/practices', {
         params: {
           locum_practice_type: queryStatus,
+          dont_show_deactivated_or_deleted_practice: true,
           limit: this.perPage,
           offset: this.offset,
         },

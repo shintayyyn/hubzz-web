@@ -37,7 +37,7 @@
             color="red"
           />
         </transition>
-        {{ trimmedMessage(message).length }}/{{ textLimit }}
+        <span>{{ trimmedMessage(message).length }}/{{ textLimit }}</span>
       </p>
     </div>
 
@@ -109,10 +109,29 @@ export default {
 
   methods: {
     setHasDeletedUser () {
-      let conversation = this.conversations.find(item => item.id === parseInt(this.$route.params.slug))
+      let conversation = this.conversations.find(conversation => conversation.id === parseInt(this.$route.params.slug))
 
       this.hasDeletedOrDeactivatedUser = conversation
-        && conversation.conversation_member_users.some(item => !item.email)
+        && conversation.conversation_member_users.some(conversationMemberUser => {
+          if (
+            conversationMemberUser.domain === 'Practice'
+            && (
+              ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
+              || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+            )
+          ) {
+            return true
+          }
+
+          if (
+            conversationMemberUser.domain === 'Locum'
+            && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+          ) {
+            return true
+          }
+
+          return !conversationMemberUser.email
+        })
     },
 
     newline () {

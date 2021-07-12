@@ -138,7 +138,7 @@
                     </p>
 
                     <p v-if="conversation.display_user && conversation.display_user.domain === 'Practice'" class="text-xs text-gray-600 truncate">
-                      <span>{{ conversation.display_user.practice_detail_practice_role }}</span>
+                      <span>{{ conversation.display_user.practice_detail_practice_role }} </span>
                       <span>({{ conversation.display_user.practice_name }})</span>
                     </p>
                     
@@ -323,17 +323,43 @@ export default {
     },
     
     userFullname (conversation) {
-      let user = conversation.conversation_member_users.find(user => user.id !== this.$auth.user.id)
+      const conversationMemberUser = conversation.conversation_member_users
+        .find(conversationMemberUser => conversationMemberUser.id !== this.$auth.user.id)
 
-      return user ? `${user.first_name} ${user.last_name}` : null
+      if (
+        conversationMemberUser.domain === 'Practice'
+        && (
+          ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
+          || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+        )
+      ) {
+        return 'Hubzz User'
+      }
+
+      if (
+        conversationMemberUser.domain === 'Locum'
+        && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+      ) {
+        return 'Hubzz User'
+      }
+
+      return conversationMemberUser
+        ? `${conversationMemberUser.first_name} ${conversationMemberUser.last_name}`
+        : null
     },
     
     userAvatar (conversation) {
-      let user_detail = conversation.conversation_member_users.find(
-        user => user.id != this.$auth.user.id
-      )
-      console.log(user_detail)
-      return user_detail.avatar ? user_detail.avatar.file.url : ""
+      const conversationMemberUser = conversation.conversation_member_users
+        .find(conversationMemberUser => conversationMemberUser.id !== this.$auth.user.id)
+
+      if (
+        conversationMemberUser.domain === 'Locum'
+        && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+      ) {
+        return ''
+      }        
+
+      return conversationMemberUser.avatar ? conversationMemberUser.avatar.file.url : ""
     },
     
     createMessage () {

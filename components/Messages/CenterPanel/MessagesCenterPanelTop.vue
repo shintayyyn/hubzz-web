@@ -53,6 +53,33 @@ export default {
       const user = this.user
 
       if (user) {
+        const conversationMemberUser = user
+
+        if (
+          conversationMemberUser.domain === 'Practice'
+          && (
+            ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
+            || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+          )
+        ) {
+          return {
+            name: "Hubzz User",
+            profession: null,
+            status: null,
+          }
+        }
+
+        if (
+          conversationMemberUser.domain === 'Locum'
+          && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+        ) {
+          return {
+            name: "Hubzz User",
+            profession: null,
+            status: null,
+          }
+        }
+
         return {
           ...user,
           name: `${user.first_name || ''} ${user.last_name || ''}`,
