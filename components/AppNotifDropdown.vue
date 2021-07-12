@@ -219,6 +219,7 @@ export default {
         "Locum Notification Job Unqualified",
         "Locum Notification Job Unsuccessful",
         "Locum Notification Job Withdrawn",
+        "Locum Notification Job Conflict Auto Withdrawn",
 
         "Locum Notification Job Part Completed",
         "Locum Notification Job Part Approved",
@@ -291,6 +292,8 @@ export default {
         "Practice Notification Job Unfilled",
         "Practice Notification Job Unfilled Warning",
         "Practice Notification Job Withdrawn",
+        "Practice Notification Job Conflict",
+        "Practice Notification Job Conflict Auto Withdrawn",
 
         "Practice Notification Job Part Completed",
         "Practice Notification Job Part Approved",
@@ -640,6 +643,8 @@ export default {
       const { name: notificationTypeName, } = notificationType
 
       const validNotificationUrl = [
+        "Locum Notification Job Conflict Auto Withdrawn",
+
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
@@ -648,6 +653,9 @@ export default {
         "Locum Notification Locum Solo Form",
         "Locum Notification Locum Solo Form Locum E-signed",
         "Locum Notification Locum Solo Form Practice E-signed",
+
+        "Practice Notification Job Conflict",
+        "Practice Notification Job Conflict Auto Withdrawn",
         
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
