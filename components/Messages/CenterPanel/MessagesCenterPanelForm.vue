@@ -11,7 +11,7 @@
 
     <div v-if="messageSent" class="bg-white h-full w-full absolute opacity-50" />
 
-    <div class="relative message-box border-t w-full p-2" :class="hasDeactiveUser ? 'disabled' : ''">
+    <div class="relative message-box border-t w-full p-2" :class="hasDeletedOrDeactivatedUser ? 'disabled' : ''">
       <textarea
         ref="textArea"
         v-model="message"
@@ -37,14 +37,14 @@
             color="red"
           />
         </transition>
-        {{ trimmedMessage(message).length }}/{{ textLimit }}
+        <span>{{ trimmedMessage(message).length }}/{{ textLimit }}</span>
       </p>
     </div>
 
     <button
-      :disabled="hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)"
+      :disabled="hasDeletedOrDeactivatedUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)"
       :class="
-        hasDeactiveUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)
+        hasDeletedOrDeactivatedUser || (trimmedMessage(message).length === 0 || trimmedMessage(message).length > textLimit)
           ? 'cursor-not-allowed bg-gray-500'
           : 'bg-blue-500 hover:bg-blue-600 '
       "
@@ -78,7 +78,7 @@ export default {
   data () {
     return {
       message: "",
-      hasDeactiveUser: false,
+      hasDeletedOrDeactivatedUser: false,
       textLimit: 250,
     }
   },
@@ -93,38 +93,14 @@ export default {
   },
 
   watch: {
-    // message (value) {
-    //   value = this.trimmedMessage(value)
-    // },
-    $route (value) {
-      let findConversation = this.conversations.find(
-        item => item.id === parseInt(value.params.slug)
-      )
-      let conversation_members = findConversation.conversation_member_users.map(
-        item => item.email !== null
-      )
-      if (conversation_members.includes(false)) {
-        this.hasDeactiveUser = true
-      } else {
-        this.hasDeactiveUser = false
-      }
+    $route () {
+      this.setHasDeletedUser()
     },
   },
 
   created () {
-    let findConversation = this.conversations.find(
-      item => item.id === parseInt(this.$route.params.slug)
-    )
+    this.setHasDeletedUser()
 
-    let conversation_members = findConversation
-      ? findConversation.conversation_member_users.map(item => item.email !== null)
-      : []
-
-    if (conversation_members.includes(false)) {
-      this.hasDeactiveUser = true
-    } else {
-      this.hasDeactiveUser = false
-    }
     this.$nextTick(() => {
       this.$refs.textArea.focus()
     })
@@ -132,6 +108,32 @@ export default {
   },
 
   methods: {
+    setHasDeletedUser () {
+      let conversation = this.conversations.find(conversation => conversation.id === parseInt(this.$route.params.slug))
+
+      this.hasDeletedOrDeactivatedUser = conversation
+        && conversation.conversation_member_users.some(conversationMemberUser => {
+          if (
+            conversationMemberUser.domain === 'Practice'
+            && (
+              ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
+              || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+            )
+          ) {
+            return true
+          }
+
+          if (
+            conversationMemberUser.domain === 'Locum'
+            && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+          ) {
+            return true
+          }
+
+          return !conversationMemberUser.email
+        })
+    },
+
     newline () {
       this.message = `${this.message}`
     },

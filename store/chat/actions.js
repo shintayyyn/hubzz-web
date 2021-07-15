@@ -49,11 +49,20 @@ export default {
     })
   },
   async initializeUsersOnline ({ commit, }) {
-    this.$socket.on("presence-in", users => {
-      commit("ADD_USER_ONLINE", users.user.id)
+    this.$socket.on("presence-in", (payload) => {
+      const {
+        user_id: userId,
+      } = payload
+
+      commit("ADD_USER_ONLINE", userId)
     })
-    this.$socket.on("presence-out", users => {
-      commit("DELETE_USER_ONLINE", users.user.id)
+
+    this.$socket.on("presence-out", (payload) => {
+      const {
+        user_id: userId,
+      } = payload
+
+      commit("DELETE_USER_ONLINE", userId)
     })
   },
 
@@ -127,34 +136,62 @@ export default {
           payload.user_id = foundConversation.conversation_member_users[0].id
         }
       } 
-    } else {
-      commit("MESSAGE_SENT_TIMEOUT", true)
-      setTimeout(() => {
-        commit("MESSAGE_SENT_TIMEOUT", false)
-      }, 1000)
     }
 
-    const response = await this.$axios.post(`/api/v1/conversations`, {
-      user_id: payload.user_id,
-      message: payload.message,
-    })
+    try {
+      const response = await this.$axios.post(`/api/v1/conversations`, {
+        user_id: payload.user_id,
+        message: payload.message,
+      })
+  
+      if (payload.user_id) {
+        commit("MESSAGE_SENT_TIMEOUT", true)
+        setTimeout(() => {
+          commit("MESSAGE_SENT_TIMEOUT", false)
+        }, 1000)
+      }
+  
+      const conversation = response.data.data.conversation
+  
+      let authUserIsTheSender = this.$auth.user.id === conversation.latest_conversation_message.user.id
+  
+      if (
+        authUserIsTheSender
+        && (
+          this.$router.app._route.name === "messages-create"
+          || this.$router.app._route.name === "messages-create-userId"
+        )
+      ) {
+        this.$router.push(`/messages/${conversation.id}`)
+        commit("SET_ACTIVE_CONVERSATION", conversation.id)
+      }
+      
+      commit("ADD_MESSAGE", conversation)
+    } catch (err) {
+      console.log("err", err.response || err)
 
-    const conversation = response.data.data.conversation
+      let message = null
 
-    let authUserIsTheSender = this.$auth.user.id === conversation.latest_conversation_message.user.id
+      if (err.response) {
+        if (err.response.status === 400 && err.response.data.error_messages) {
+          this.formError = err.response.data.error_messages
+        } else {
+          message = err.response.data.message
+        }
+      } else if (err.request) {
+        message = "Something went wrong!"
+      } else {
+        message = err.message
+      }
 
-    if (
-      authUserIsTheSender
-      && (
-        this.$router.app._route.name === "messages-create"
-        || this.$router.app._route.name === "messages-create-userId"
-      )
-    ) {
-      this.$router.push(`/messages/${conversation.id}`)
-      commit("SET_ACTIVE_CONVERSATION", conversation.id)
+      if (message) {
+        commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${message}`,],
+        }, { root: true, })
+      }
     }
-    
-    commit("ADD_MESSAGE", conversation)
   },
   async deleteMessage ({ commit, }, payload) {
     // let receiver_user_id = null;

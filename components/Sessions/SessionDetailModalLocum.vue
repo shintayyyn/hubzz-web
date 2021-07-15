@@ -3,11 +3,13 @@
     <div class="text-xs sm:text-sm font-bold">
       Locum
     </div>
+
     <div v-if="!user && loading" class="relative flex w-full" style="min-height:80px">
       <AppLoading :loading="loading" spinner />
     </div>
+
     <div v-if="user && !loading" class="relative rounded-lg border p-4 mt-2">
-      <div class="flex flex-col">
+      <div v-if="!['Deactivated', 'Deleted'].includes(user.status)" class="flex flex-col">
         <div class="flex flex-row justify-between">
           <div class="flex flex-col w-full">
             <AppAvatar
@@ -62,6 +64,7 @@
           </transition>
           <div v-if="sendMessageModal" class="shield" @click="sendMessageModal=false" />
         </div>
+
         <div class="body-info flex flex-wrap">
           <div class="w-full px-1">
             <div class="font-bold text-sm sm:text-md">
@@ -129,7 +132,7 @@
                   class="flex flex-row flex-no-wrap mt-2"
                 >
                   <div class="text-xs sm:text-sm">
-                    {{ item.rate_type.name }}: £ {{ item.min | currency}}
+                    {{ item.rate_type.name }}: £ {{ item.min | currency }}
                   </div>
                 </div>
               </div>
@@ -315,7 +318,31 @@
           </div>
         </div>
       </div>
+
+      <div v-if="['Deactivated', 'Deleted'].includes(user.status)" class="flex flex-col">
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-col w-full">
+            <AppAvatar
+              class="mb-4"
+              :height="'80px'"
+              :width="'80px'"
+              :src="''"
+            />
+
+            <div class="flex flex-col w-full">
+              <div class="font-bold text-sm lg:text-lg">
+                Hubzz User
+              </div>
+
+              <div class="text-xs lg:text-sm mb-6">
+                {{ user.locum_detail.profession.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
     <AppConfirmationModal
       :label="confirmation_text"
       :confirmLabel="'Yes'"
@@ -436,6 +463,7 @@ export default {
           )
         })
     },
+
     favorite () {
       this.confirmation_text = "Add this Locum to MyBanks?"
       this.confirmation_modal = true
@@ -444,6 +472,7 @@ export default {
       this.confirmation_text = "Remove this Locum to My Banks?"
       this.confirmation_modal = true
     },
+
     confirm () {
       if (!this.user.is_favorite) {
         this.$axios

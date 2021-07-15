@@ -148,9 +148,13 @@
           :disabled="!Boolean(verifiedEmail)"
           required
         />
+
+        <div v-if="user && user.status === 'Deleted'">
+          <span>User deleted at {{ user.account_deleted_at_in_gb_formatted }}</span>
+        </div>
   
         <div
-          v-if="user && user.practice_detail && user.practice_detail.role.name !== 'Practice User Admin'"
+          v-if="user && user.practice_detail && user.practice_detail.role && user.practice_detail.role.name !== 'Practice User Admin'"
           class="text-left mt-5"
         >
           <AppButton

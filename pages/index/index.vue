@@ -65,12 +65,26 @@
     <div class="flex justify-center">
       <AppButton label="Sign In" :disabled="loggingIn" @click="login" />
     </div>
+    
+    <AppConfirmationModal
+      :label="'Reactivating account...'"
+      :modal="showReativateLocumAccountModal"
+      :loading="true"
+    />
+    
+    <AppConfirmationModal
+      :label="'Reactivating practice...'"
+      :modal="showReativatePracticeModal"
+      :loading="true"
+    />
   </div>
 </template>
 
 <script>
 import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+
 import debounce from "lodash.debounce"
 
 export default {
@@ -84,6 +98,7 @@ export default {
   components: {
     AppInput,
     AppButton,
+    AppConfirmationModal,
   },
 
   data () {
@@ -93,6 +108,9 @@ export default {
       passwordInputType: 'password',
       formErrors: [],
       loggingIn: false,
+
+      showReativateLocumAccountModal: false,
+      showReativatePracticeModal: false,
     }
   },
 
@@ -216,6 +234,28 @@ export default {
         this.$auth.$storage.setUniversal('_token.local', 'Bearer ' + token)
 
         await this.$auth.fetchUser()
+
+        if (
+          this.$auth.user
+          && this.$auth.user.domain === 'Locum'
+          && this.$auth.user.reactivated_at
+          && this.$moment.duration(this.$moment.utc().diff(this.$moment.utc(this.$auth.user.reactivated_at, 'YYYY-MM-DD HH:mm:ss.SSSS'))).asMinutes() < 1
+        ) {
+          this.showReativateLocumAccountModal = true
+          await new Promise((resolve) => setTimeout(resolve, 1000 * 1))
+          this.showReativateLocumAccountModal = false
+        }
+
+        if (
+          this.$auth.user
+          && this.$auth.user.domain === 'Practice'
+          && this.$auth.user.practice_reactivated_at
+          && this.$moment.duration(this.$moment.utc().diff(this.$moment.utc(this.$auth.user.practice_reactivated_at, 'YYYY-MM-DD HH:mm:ss.SSSS'))).asMinutes() < 1
+        ) {
+          this.showReativatePracticeModal = true
+          await new Promise((resolve) => setTimeout(resolve, 1000 * 1))
+          this.showReativatePracticeModal = false
+        }
 
         this.$router.push('/dashboard')
 

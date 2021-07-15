@@ -55,6 +55,34 @@
       :modal="confirmation_modal"
       @confirm="confirm"
     />
+
+    <AppConfirmationModal
+      :label="'Your Account Has Been Deactivated'"
+      :confirmLabel="'Logout'"
+      :modal="showLocumAccountDeactivatedModal"
+      @confirm="logout"
+    />
+
+    <AppConfirmationModal
+      :label="'Your Practice Has Been Deactivated'"
+      :confirmLabel="'Logout'"
+      :modal="showPracticeDeactivatedModal"
+      @confirm="logout"
+    />
+
+    <AppConfirmationModal
+      :label="'Your Account Has Been Deleted'"
+      :confirmLabel="'Ok'"
+      :modal="showUserAccountDeletedModal || showPracticeUserDeletedModal"
+      @confirm="confirm"
+    />
+
+    <AppConfirmationModal
+      :label="'Your Practice Has Been Deleted'"
+      :confirmLabel="'Ok'"
+      :modal="showPracticeDeletedModal"
+      @confirm="confirm"
+    />
   </section>
 </template>
 
@@ -72,6 +100,11 @@ export default {
       signout_modal: false,
       confirmation_modal: false,
       eligibleToSpoke: false,
+      showLocumAccountDeactivatedModal: false,
+      showUserAccountDeletedModal: false,
+      showPracticeDeactivatedModal: false,
+      showPracticeDeletedModal: false,
+      showPracticeUserDeletedModal: false,
     }
   },
 
@@ -110,18 +143,20 @@ export default {
           active: `/${this.$route.path.split('/')[1]}` === '/account',
         })
 
-        locumTabList.push({
-          navigationTabTitle: "Compliance",
-          route: "/compliance",
-          active: `/${this.$route.path.split('/')[1]}` === '/compliance',
-        })
-
-        if (this.view_locum_jobs) {
+        if (accountStatus !== 'Deactivated') {
           locumTabList.push({
-            navigationTabTitle: "Availability",
-            route: "/availability",
-            active: `/${this.$route.path.split('/')[1]}` === '/availability',
+            navigationTabTitle: "Compliance",
+            route: "/compliance",
+            active: `/${this.$route.path.split('/')[1]}` === '/compliance',
           })
+
+          if (this.view_locum_jobs) {
+            locumTabList.push({
+              navigationTabTitle: "Availability",
+              route: "/availability",
+              active: `/${this.$route.path.split('/')[1]}` === '/availability',
+            })
+          }
         }
 
         if (
@@ -193,11 +228,13 @@ export default {
         //   })
         // }
 
-        locumTabList.push({
-          navigationTabTitle: "Invite",
-          route: "/invite",
-          active: `/${this.$route.path.split('/')[1]}` === '/invite',
-        })
+        if (accountStatus !== 'Deactivated') {
+          locumTabList.push({
+            navigationTabTitle: "Invite",
+            route: "/invite",
+            active: `/${this.$route.path.split('/')[1]}` === '/invite',
+          })
+        }
 
         locumTabList.push({
           navigationTabTitle: "FAQs",
@@ -527,30 +564,70 @@ export default {
   },
 
   mounted () {
-    this.$loggedOutBroadcastChannel.addEventListener(
-      "message",
-      this.loggedOutHandler
-    )
-    this.addSocketListener()
+    this.$loggedOutBroadcastChannel.addEventListener("message", this.loggedOutHandler)
+
+    this.$socket.on('Practice Notification Update Profile', this.updatePermissions)
+    this.$socket.on('Practice Notification Delete Profile', this.toggleConfirmationModal)
+
+    this.$socket.on('Locum Notification Account Deactivated', this.locumAccountDeactivatedHandler)
+    this.$socket.on('Locum Notification Account Deactivated By Admin', this.locumAccountDeactivatedHandler)
+
+    this.$socket.on('User Notification Account Deleted', this.accountDeletedHandler)
+
+    this.$socket.on('Practice Notification Practice Deactivated', this.practiceDeactivatedHandler)
+    this.$socket.on('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
+
+    this.$socket.on('Practice Notification Practice Deleted', this.practiceDeletedHandler)
+
+    this.$socket.on('Practice Notification Practice User Deleted', this.practiceUserDeletedHandler)
+
+    if (this.$auth.user && this.$auth.user.domain === 'Locum' && this.$auth.user.status === 'Deactivated') {
+      this.locumAccountDeactivatedHandler()
+    }
+
+    if (this.$auth.user && this.$auth.user.domain === 'Practice' && this.$auth.user.practice_status === 'Deactivated') {
+      this.practiceDeactivatedHandler()
+    }
   },
 
   destroyed () {
-    this.$loggedOutBroadcastChannel.removeEventListener(
-      "message",
-      this.loggedOutHandler
-    )
-    this.removeSocketListener()
+    this.$loggedOutBroadcastChannel.removeEventListener("message", this.loggedOutHandler)
+
+    this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
+    this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+
+    this.$socket.removeListener('Locum Notification Account Deactivated', this.locumAccountDeactivatedHandler)
+    this.$socket.removeListener('Locum Notification Account Deactivated By Admin', this.locumAccountDeactivatedHandler)
+
+    this.$socket.removeListener('User Notification Account Deleted', this.accountDeletedHandler)
+
+    this.$socket.removeListener('Practice Notification Practice Deactivated', this.practiceDeactivatedHandler)
+    this.$socket.removeListener('Practice Notification Practice Deactivated By Admin', this.practiceDeactivatedHandler)
+
+    this.$socket.removeListener('Practice Notification Practice Deleted', this.practiceDeletedHandler)
+
+    this.$socket.removeListener('Practice Notification Practice User Deleted', this.practiceUserDeletedHandler)
   },
 
   methods: {
-    addSocketListener () {
-      this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
-      this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+    locumAccountDeactivatedHandler () {
+      this.showLocumAccountDeactivatedModal = true
     },
 
-    removeSocketListener () {
-      this.$socket.removeListener('Practice Notification Update Profile', this.updatePermissions)
-      this.$socket.removeListener('Practice Notification Delete Profile', this.toggleConfirmationModal)
+    accountDeletedHandler () {
+      this.showUserAccountDeletedModal = true
+    },
+
+    practiceDeactivatedHandler () {
+      this.showPracticeDeactivatedModal = true
+    },
+
+    practiceDeletedHandler () {
+      this.showPracticeDeletedModal = true
+    },
+
+    practiceUserDeletedHandler () {
+      this.showPracticeUserDeletedModal = true
     },
 
     toggleConfirmationModal () {
@@ -625,10 +702,11 @@ export default {
       }
     },
 
-    async confirm () {
-      await this.$auth.logout()
-      this.$auth.$storage.setUniversal("_token.local", "")
-      this.$router.push("/")
+    confirm () {
+      this.$auth.logout().finally(() => {
+        this.$auth.$storage.setUniversal("_token.local", "")
+        this.$router.push("/")
+      })
     },
 
     close () {

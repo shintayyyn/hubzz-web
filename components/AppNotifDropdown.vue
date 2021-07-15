@@ -219,6 +219,7 @@ export default {
         "Locum Notification Job Unqualified",
         "Locum Notification Job Unsuccessful",
         "Locum Notification Job Withdrawn",
+        "Locum Notification Job Conflict Auto Withdrawn",
 
         "Locum Notification Job Part Completed",
         "Locum Notification Job Part Approved",
@@ -243,9 +244,24 @@ export default {
         "Locum Notification Locum Status Updated",
         "Locum Notification Dormanted",
 
+        "Locum Notification Account Deactivated",
+        "Locum Notification Account Deactivated By Admin",
+        "Locum Notification Account Reactivated",
+        "Locum Notification Account Reactivated By Admin",
+        "Locum Notification Account Delete Request Rejected",
+
         "Practice Notification Practice Actived",
-        "Practice Notification Practice Reactivated",
         "Practice Notification Practice Suspended",
+        "Practice Notification Practice Deactivated",
+        "Practice Notification Practice Deactivated By Admin",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Reactivated By Admin",
+        "Practice Notification Practice Delete Requested",
+        "Practice Notification Practice Delete Request Cancelled",
+        "Practice Notification Practice Delete Request Rejected",
+        "Practice Notification Practice Deleted",
+
+        "Practice Notification Practice User Deleted",
 
         "Practice Notification Locum Compliance Expired",
         "Practice Notification Locum Compliance Expiring",
@@ -276,6 +292,8 @@ export default {
         "Practice Notification Job Unfilled",
         "Practice Notification Job Unfilled Warning",
         "Practice Notification Job Withdrawn",
+        "Practice Notification Job Conflict",
+        "Practice Notification Job Conflict Auto Withdrawn",
 
         "Practice Notification Job Part Completed",
         "Practice Notification Job Part Approved",
@@ -625,6 +643,8 @@ export default {
       const { name: notificationTypeName, } = notificationType
 
       const validNotificationUrl = [
+        "Locum Notification Job Conflict Auto Withdrawn",
+
         "Locum Notification Locum Form A Paid",
         "Locum Notification Locum Form A Paid By Practice",
         "Locum Notification Locum Form A Sent To Practice",
@@ -633,6 +653,9 @@ export default {
         "Locum Notification Locum Solo Form",
         "Locum Notification Locum Solo Form Locum E-signed",
         "Locum Notification Locum Solo Form Practice E-signed",
+
+        "Practice Notification Job Conflict",
+        "Practice Notification Job Conflict Auto Withdrawn",
         
         "Practice Notification Locum Form A Paid",
         "Practice Notification Locum Form A Sent To Practice",
@@ -643,6 +666,19 @@ export default {
         "Practice Notification Locum Payment Details Updated",
         
         "Practice Notification Locum Compliance Status Changed",
+
+        "Practice Notification Practice Actived",
+        "Practice Notification Practice Suspended",
+        "Practice Notification Practice Deactivated",
+        "Practice Notification Practice Deactivated By Admin",
+        "Practice Notification Practice Reactivated",
+        "Practice Notification Practice Reactivated By Admin",
+        "Practice Notification Practice Delete Requested",
+        "Practice Notification Practice Delete Request Cancelled",
+        "Practice Notification Practice Delete Request Rejected",
+        "Practice Notification Practice Deleted",
+
+        "Practice Notification Practice User Deleted",
 
         "User Notification Locum Referral Verified",
         "User Notification Practice Referral Verified",
@@ -731,12 +767,6 @@ export default {
         "Locum Notification Locum Invoice Disputed",
         "Locum Notification Locum Invoice Approved",
         "Locum Notification Locum Invoice Paid",
-      ]
-
-      const practiceNotifications = [
-        "Practice Notification Practice Actived",
-        "Practice Notification Practice Reactivated",
-        "Practice Notification Practice Suspended",
       ]
 
       const practiceComplianceDocumentNotifications = [
@@ -1163,16 +1193,6 @@ export default {
             })
           }, 500)
         }
-
-        this.showNotificationsDropdown = false
-        this.updateNotificationSeen(notification)
-        return
-      }
-
-      if (practiceNotifications.includes(notificationTypeName)) {
-        this.$router.push({
-          name: "dashboard",
-        })
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
@@ -1926,6 +1946,17 @@ export default {
 
         this.showNotificationsDropdown = false
         this.updateNotificationSeen(notification)
+        return
+      }
+
+      if (notificationUrl) {
+        this.$router.push({
+          path: notificationUrl,
+        })
+
+        this.showNotificationsDropdown = false
+        this.updateNotificationSeen(notification)
+
         return
       }
 

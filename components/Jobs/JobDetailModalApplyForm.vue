@@ -175,9 +175,10 @@
       :cancelLabel="'Cancel'"
       :modal="warning_modal"
       :loading="loading"
-      @confirm="apply"
+      @confirm="applyLocumToJob"
       @cancel="warning_modal = false"
     />
+
     <transition name="fade" mode="out-in">
       <div v-if="modal" class="shield" @click="modal = false" />
     </transition>
@@ -273,39 +274,56 @@ export default {
           this.warning_modal = true
           this.loading = false
         } else if (this.conflictJobNumbers.length === 0) {
-          this.apply()
+          this.applyLocumToJob()
         }
       })
     },
 
-    async apply () {
+    errorHandler (err) {
+      console.log('err', err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        message = err.response.data.message
+      } else if (err.request) {
+        message = 'Something went wrong!'
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'danger',
+          text: [`${message}`,],
+        })
+      }
+    },
+
+    applyLocumToJob () {
+      const jobId = this.job.id
+      
       this.loading = true
-      await this.$axios
-        .$post(`/api/v1/locum/jobs/${this.job.id}/apply`)
-        .then(res => {
-          this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", this.job.id)
-          this.$store.commit("jobs/REMOVE_LOCUM_MATCHED_JOB", this.job.id)
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`,],
-          })
-          
-          this.$emit("applied", this.job.id)
+      
+      this.$axios.post(`/api/v1/locum/jobs/${jobId}/apply`).then((response) => {
+        const message = response.data.message
+
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`${message}`,],
         })
-        .catch(err => {
-          console.log("err", err.response || err)
-          if (err.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`,],
-            })
-          }
-        }).finally(() => {
-          this.modal = false
-          this.loading = false
-        })
+
+        this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", jobId)
+
+        this.$store.commit("jobs/REMOVE_LOCUM_MATCHED_JOB", jobId)
+        
+        this.$emit("applied", jobId)
+      }).catch(this.errorHandler).finally(() => {
+        this.modal = false
+        this.loading = false
+      })
     },
 
     convertDoc (document) {

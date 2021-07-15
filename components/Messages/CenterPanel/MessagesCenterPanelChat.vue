@@ -5,6 +5,7 @@
     @scroll="scrollHandler"
   >
     <AppLoading :loading="loading" :message="'Loading'" />
+
     <div class="relative flex flex-col h-full">
       <!-- CHAT -->
       <transition name="drop" mode="in-out">
@@ -16,6 +17,7 @@
           >Load More Messages</button>
         </span>
       </transition>
+
       <transition name="fade" mode="in-out">
         <span class="w-full flex justify-center">
           <button
@@ -41,7 +43,7 @@
               :class="isReceiver(item) ? 'items-start': 'items-end'"
             >
               <div
-                v-if="isDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
+                v-if="isMessageDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
                 class="flex my-1"
               >
                 <div
@@ -56,11 +58,13 @@
                     :src="item.user.avatar ? item.user.avatar.file.url : ''"
                   />
                 </div>
+
                 <div class="flex flex-col text-sm md:px-2">
                   <span
                     class="text-xs px-2 text-gray-600"
                     :class="isReceiver(item) ? '': 'text-right'"
                   >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
+
                   <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                     <div
                       class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
@@ -71,6 +75,7 @@
                       This message has been removed.
                     </div>
                   </div>
+
                   <transition name="drop-down" mode="out-in">
                     <div v-if="item.id == hoverId" class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
                       <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
@@ -78,6 +83,7 @@
                   </transition>
                 </div>
               </div>
+
               <div
                 v-else
                 class="flex my-1 md:max-w-sm lg:max-w-lg"
@@ -95,11 +101,13 @@
                     :src="item.user.avatar ? item.user.avatar.file.url : ''"
                   />
                 </div>
+
                 <div class="flex flex-col text-sm px-2">
                   <span
                     class="text-xs px-2 text-gray-600"
                     :class="isReceiver(item) ? '': 'text-right'"
                   >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
+
                   <div
                     class="flex items-center"
                     :class="isReceiver(item) ? '': 'flex-row-reverse'"
@@ -122,6 +130,7 @@
                       </div>
                     </transition>
                   </div>
+
                   <transition name="drop-down" mode="out-in">
                     <div
                       v-if="item.id == hoverId"
@@ -138,6 +147,7 @@
         </transition-group>
       </div>
     </div>
+
     <AppConfirmationModal
       :label="'Do you want to delete this message?'"
       :confirmLabel="'Yes'"
@@ -148,6 +158,7 @@
     />
   </div>
 </template>
+
 <script>
 import AppConfirmationModal from "~/components/Base/AppConfirmationModal"
 import AppAvatar from "~/components/Base/AppAvatar"
@@ -158,6 +169,14 @@ export default {
     AppAvatar,
     AppLoading,
   },
+
+  props: {
+    user: {
+      type: Object,
+      default: () => null,
+    },
+  },
+
   data () {
     return {
       oldMessageCount: 0,
@@ -180,17 +199,21 @@ export default {
       ],
     }
   },
+
   computed: {
     messages () {
       return this.$store.getters["chat/getMessages"]
     },
+
     conversations () {
       return this.$store.getters["chat/getConversations"]
     },
+
     activeConversationId () {
       return this.$store.state.chat.activeConversationId
     },
   },
+
   watch: {
     $route () {
       if (
@@ -200,6 +223,7 @@ export default {
         this.scrollToBottom()
       }
     },
+
     messages (value) {
       console.log("value", value)
       let atBottom
@@ -239,6 +263,7 @@ export default {
       this.oldMessageCount = value.length
     },
   },
+
   created () {
     this.route = this.$route.params.slug
     this.oldMessageCount = this.messages.length
@@ -248,6 +273,7 @@ export default {
     this.scrollToBottom()
     this.loading = false
   },
+
   methods: {
     onHover (id) {
       this.hoverId = id
@@ -256,13 +282,36 @@ export default {
 
     userFullname (item) {
       let fullName
-      if (item.user.personal_detail) {
-        fullName = `${item.user.personal_detail.first_name} ${item.user.personal_detail.last_name}`
+
+      if (this.user.id === item.user.id) {
+        const conversationMemberUser = this.user
+
+        if (
+          conversationMemberUser.domain === 'Practice'
+          && (
+            ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_user_status)
+            || ['Deleted', 'Deactivated',].includes(conversationMemberUser.practice_status)
+          )
+        ) {
+          return 'Hubzz User'
+        }
+
+        if (
+          conversationMemberUser.domain === 'Locum'
+          && ['Deleted', 'Deactivated',].includes(conversationMemberUser.locum_user_status)
+        ) {
+          return 'Hubzz User'
+        }
+      }
+
+      if (item.user) {
+        fullName = `${item.user.first_name} ${item.user.last_name}`
       } else if (item.user.email) {
         fullName = `${item.user.email}`
       } else {
         fullName = "Hubzz User"
       }
+
       return fullName
     },
 
@@ -330,10 +379,11 @@ export default {
       return this.$auth.user.id != item.user.id
     },
 
-    isDeleted (sender_id, sender_deleted, receiver_deleted) {
+    isMessageDeleted (sender_id, sender_deleted, receiver_deleted) {
       if (sender_deleted) {
         return true
       }
+
       if (receiver_deleted) {
         if (sender_id === this.$auth.user.id) {
           return false

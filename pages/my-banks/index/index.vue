@@ -27,62 +27,62 @@
       "
       class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden mb-3 border-b border-gray-500"
     >
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: undefined }}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            !surgeriesBank
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Banks
-        </nuxt-link>
+      <nuxt-link
+        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+        :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: undefined }}"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          !surgeriesBank
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Banks
+      </nuxt-link>
 
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: 'true' }}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            surgeriesBank
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Surgeries Banks
-        </nuxt-link>
+      <nuxt-link
+        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+        :to="{ path: '/my-banks', query: { ...$route.query, surgeries_bank: 'true' }}"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          surgeriesBank
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Surgeries Banks
+      </nuxt-link>
     </div>
 
     <div 
       v-if="practiceLocumType !== 'All'"
       class="flex flex-row justify-start overflow-x-auto lg:overflow-y-hidden mb-3 border-b border-gray-500"
     >
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: undefined }}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            professionCategoryName.toLowerCase() === 'gp'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          GP
-        </nuxt-link>
+      <nuxt-link
+        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+        :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: undefined }}"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          professionCategoryName.toLowerCase() === 'gp'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        GP
+      </nuxt-link>
 
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: 'Others' }}"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            professionCategoryName.toLowerCase() === 'others'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Others
-        </nuxt-link>
+      <nuxt-link
+        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+        :to="{ path: '/my-banks', query: { ...$route.query, profession_category_name: 'Others' }}"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          professionCategoryName.toLowerCase() === 'others'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Others
+      </nuxt-link>
     </div>
 
     <AppLoading :loading="loading" spinner />
@@ -345,6 +345,7 @@ export default {
           practice_locum_type: this.practiceLocumType,
           practice_locum_type_surgeries : this.surgeriesBank,
           profession_category_name: this.practiceLocumType === 'All' ? '' : this.professionCategoryName,
+          dont_show_deactivated_or_deleted_locum: true,
         },
       }).then((response) => {
         this.total = response.data.data.count
@@ -362,6 +363,7 @@ export default {
           practice_locum_type: this.practiceLocumType,
           practice_locum_type_surgeries : this.surgeriesBank,
           profession_category_name: this.practiceLocumType === 'All' ? '' : this.professionCategoryName,
+          dont_show_deactivated_or_deleted_locum: true,
           limit: this.perPage,
           offset: this.offset,
         },
