@@ -257,7 +257,15 @@ export default {
           this.showReativatePracticeModal = false
         }
 
-        this.$router.push('/dashboard')
+        if (
+          this.$auth.user
+          && this.$auth.user.domain === 'Locum'
+          && !this.$auth.user.profile_completed_at
+        ) {
+          this.$router.push('/account/profile')
+        } else {
+          this.$router.push('/dashboard')
+        }
 
         if (this.$socket.connected) {
           await this.$axios.post('/api/v1/socket/login', {
