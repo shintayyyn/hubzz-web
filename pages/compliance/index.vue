@@ -103,8 +103,7 @@
 						<div class="item w-1/6 p-2">Expiry date</div>
 						<div class="item w-1/6 p-2">Status</div>
 						<div class="item w-1/6 p-2">Note</div>
-						<div class="item w-1/6 p-2" 
-									style="position:sticky;right:0" />
+						<div class="hidden xxl:block xl:block lg:block item w-1/6 p-2"/>
 					</div>
 
 					<div v-for="item in mandatoryComplianceDocuments" :key="item.compliance_document_id">
@@ -234,7 +233,7 @@
 								<div class="item w-1/6 p-2">Expiry date</div>
 								<div class="item w-1/6 p-2">Status</div>
 								<div class="item w-1/6 p-2">Note</div>
-								<div class="item w-1/6 p-2" />
+								<div class="hidden xxl:block xl:block lg:block item w-1/6 p-2" />
 							</div>
 
 							<div
@@ -1725,7 +1724,7 @@ table tbody td {
 	max-width: 100%;
 }
 .table .item {
-	min-width: 300px;
+	min-width: 150px;
 }
 @media screen and (min-width: 1200px) {
 	.complianceModal {
