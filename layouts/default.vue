@@ -42,8 +42,8 @@
         class="xxl:ml-5 xl:ml-5 lg:ml-5 md:ml-5  mb-4"
         :class="
           $route.name === 'messages-slug' || $route.name === 'messages-create'
-            ? 'md:mt-28 mt-16'
-            : 'mt-28'
+            ? 'md:mt-28'
+            : 'mt-24'
         "
       />
     </div>

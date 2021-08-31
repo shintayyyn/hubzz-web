@@ -135,85 +135,85 @@
               <div class="px-4">
                 <div class="overflow-scroll">
                   <div class="flex items-end text-sm pb-2 text-gray-700">
-                    <p class="px-2 text-center w-24">
+                    <p class="px-2 text-center min-w-24">
                       Date
                     </p>
 
                     <div class="flex items-end justify-between text-center"
-                         :class="type === 'create' ? 'w-9/12 ' : 'w-full'"
+                         :class="type === 'create' ? 'min-w-9/12 ' : 'w-full'"
                     >
-                      <p :class="type === 'create' ? 'w-2/12' : type === 'invoice' ? 'w-40' : 'w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-1/12' : type === 'invoice' ? 'min-w-20' : 'min-w-1/12'">
                         Shift
                       </p>
 
-                      <p :class="type === 'create' ? 'w-16' : type === 'invoice' ? 'w-1/12' : 'w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-16' : type === 'invoice' ? 'min-w-16' : 'min-w-2/12'">
                         Start
                       </p>
 
-                      <p :class="type === 'create' ? 'w-16' : type === 'invoice' ? 'w-1/12 mx-2' : 'w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-16' : type === 'invoice' ? 'min-w-16' : 'min-w-2/12'">
                         End
                       </p>
 
-                      <p :class="type === 'create' ? 'w-16' : type === 'invoice' ? 'w-1/12' : 'w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-2/12'">
                         Hours
                       </p>
 
-                      <p :class="type === 'create' ? 'w-18' : type === 'invoice' ? 'w-2/12' : 'w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-20'">
                         Rate £
                       </p>
 
-                      <p :class="type === 'create' ? 'w-2/12' : type === 'invoice' ? 'w-40' : 'w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-32' : type === 'invoice' ? 'min-w-32' : 'min-w-32'">
                         Rate Type
                       </p>
 
-                      <p :class="type === 'create' ? 'w-18' : type === 'invoice' ? 'w-1/12' : 'w-1/12'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-20'">
                         Break
                       </p>
 
-                      <p :class="type === 'create' ? 'w-18 pr-3' : type === 'invoice' ? 'w-1/12' : 'w-1/12'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-20'">
                         Paid?
                       </p>
 
                       <!-- FOR COMPLETING & INVOICING JOB -->
                       <template v-if="['complete', 'terminate', 'invoice'].includes(type)">
-                        <p class="w-2/12">
+                        <p class="min-w-24">
                           Final Break
                         </p>
-                        <p :class="type === 'invoice' ? 'w-40' : 'w-2/12'">
+                        <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-24'">
                           Final Start
                         </p>
-                        <p :class="type === 'invoice' ? 'w-40' : 'w-2/12'">
+                        <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-24'">
                           Final End
                         </p>
-                        <p class="w-2/12">
+                        <p class="min-w-32">
                           Deducted Hours
                         </p>
                       </template>
 
                       <!-- FOR COMPLETING JOB -->
-                      <p v-if="['complete', 'terminate'].includes(type)" class="w-2/12" />
+                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
 
-                      <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="w-2/12">
+                      <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="min-w-32">
                         Any Absences?
                       </p>
 
-                      <p v-if="['complete', 'terminate'].includes(type)" class="w-2/12" />
+                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
 
                       <!-- FOR INVOICING -->
                       <template v-if="type === 'invoice'">
-                        <p class="w-2/12">
+                        <p class="min-w-20">
                           Final Hours
                         </p>
 
-                        <p class="w-2/12">
+                        <p class="min-w-20">
                           Final Rate
                         </p>
 
-                        <p class="w-40">
+                        <p class="min-w-20">
                           Dispute?
                         </p>
 
-                        <p class="w-40" />
+                        <p class="min-w-20" />
                       </template>
                     </div>
 
@@ -222,16 +222,21 @@
                     </p>
                   </div>
 
-                  <div v-for="(item, index) in filteredSchedule" :key="index" class="flex text-sm mb-2" :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'}` : ''">
+                  <div 
+                    v-for="(item, index) in filteredSchedule" 
+                    :key="index" 
+                    class="flex w-full text-sm mb-2" 
+                    :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'}` : ''"
+                  >
                     <template v-if="['complete', 'terminate'].includes(type)">
-                      <div class="w-24 px-2 py-3">
+                      <div class="min-w-24 px-2 py-3">
                         {{ item.date }}
                       </div>
 
                       <div class="w-full py-1">
                         <div v-for="(shift, i) in item.shifts" :key="i" class="flex flex-col w-full">
                           <div class="flex items-center justify-between w-full">
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="min-w-20 flex items-center justify-center">
                               <p
                                 class="rounded px-2 w-24 text-sm text-center py-1 font-bold"
                                 :class="shiftColor(shift.shift_id)"
@@ -244,23 +249,23 @@
                               </p>
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="min-w-20 flex items-center justify-center">
                               {{ shift.time_start }}
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="min-w-20 flex items-center justify-center">
                               {{ shift.time_end }}
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center text-center">
+                            <div class="min-w-16 flex items-center justify-center text-center">
                               {{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes }}
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="min-w-16 flex items-center justify-center">
                               {{ shift.rate | currency }}
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center text-center">
+                            <div class="min-w-16 flex items-center justify-center text-center">
                               {{
                                 rate_lists.find(item => item.value === shift.locum_detail_rate_type_id)
                                   ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label
@@ -541,26 +546,26 @@
                     </template>
 
                     <template v-else-if="type === 'invoice'">
-                      <div class="w-24 px-2 pt-3">
+                      <div class="min-w-24 px-2 pt-3">
                         {{ item.date }}
                       </div>
 
                       <div class="w-full py-2">
                         <div v-for="(shift, i) in item.shifts" :key="i" :class="i !== item.shifts.length-1 ? 'mb-2' : ''">
                           <div class="flex items-center justify-between w-full">
-                            <div class="flex items-center justify-center text-center w-40">
+                            <div class="flex items-center justify-center text-center min-w-20">
                               {{ shift.shift.name }}
                             </div>
 
-                            <div class="flex items-center justify-center text-center w-1/12">
+                            <div class="flex items-center justify-center text-center min-w-16">
                               {{ shift.orig_time_start ? shift.orig_time_start : shift.time_start }}
                             </div>
 
-                            <div class="flex items-center justify-center text-center w-1/12 mx-2">
+                            <div class="flex items-center justify-center text-center min-w-16 mx-2">
                               {{ shift.orig_time_end ? shift.orig_time_end : shift.time_end }}
                             </div>
 
-                            <div class="flex items-center justify-center text-center w-1/12">
+                            <div class="flex items-center justify-center text-center min-w-16">
                               <template v-if="shift.orig_time_start && shift.orig_time_end">
                                 <template
                                   v-if="totalHours(shift.orig_time_start, shift.orig_time_end, item.date) > 0"
@@ -586,25 +591,25 @@
                               </template>
                             </div>
 
-                            <div class="flex items-center justify-center text-center w-2/12">
+                            <div class="flex items-center justify-center text-center min-w-20">
                               {{ shift.rate }}
                             </div>
 
                             <div
-                              class="flex items-center justify-center text-center w-40"
+                              class="flex items-center justify-center text-center min-w-32"
                             >
                               {{ shift.locum_detail_rate_type.name }}
                             </div>
 
                             <!-- BREAK -->
-                            <div class="flex items-center justify-center text-center w-1/12">
+                            <div class="flex items-center justify-center text-center min-w-20">
                               <template v-if="[0, '0'].includes(shift.posted_break_in_minutes)">
                                 (none)
                               </template>
                               {{ shift.posted_break_in_minutes | minutes }}
                             </div>
 
-                            <div class="w-1/12 flex items-center justify-center">
+                            <div class="min-w-20 flex items-center justify-center">
                               <!-- {{ [false, 'false'].includes(shift.completed_break_payable) ? 'No' : 'Yes' }} -->
                               <button
                                 v-if="!(toDisplay || [true, 'true'].includes(shift.has_absences) || [false, 'false'].includes(shift.dispute))"
@@ -626,8 +631,8 @@
                                 {{ ['true', true].includes(shift.invoiced_break_payable) ? 'YES' : 'NO' }}
                               </template>
                             </div>
-
-                            <div class="flex items-center justify-center text-center w-2/12">
+                            <!-- final break -->
+                            <div class="flex items-center justify-center text-center min-w-24">
                               <AppInput
                                 v-model="shift.invoiced_break_in_minutes"
                                 label="Invoiced break in minutes:"
@@ -658,7 +663,7 @@
 
                             <!-- FIELDS -->
                             <!-- FINAL START -->
-                            <div class="flex flex-col items-center justify-center text-center w-40">
+                            <div class="flex flex-col items-center justify-center text-center min-w-24">
                               <!-- invoiceStatus === 'to-be-invoiced' || (shift.dispute && invoiceStatus !== 'to-be-invoiced') -->
                               <template
                                 v-if="
@@ -713,7 +718,7 @@
                             </div>
 
                             <!-- FINAL END -->
-                            <div class="flex items-center justify-center text-center w-40">
+                            <div class="flex items-center justify-center text-center min-w-24">
                               <AppTime
                                 v-if="
                                   $auth.user.domain === 'Locum'
@@ -757,13 +762,13 @@
 
                             <!-- HAS LATE / DEDUCTED HOURS-->
                             <div
-                              class="flex items-center justify-center text-center w-2/12"
+                              class="flex items-center justify-center text-center min-w-32"
                             >
                               {{ getDeductionHours(shift, item.date) }}
                             </div>
 
                             <!-- ANY ABSENCES -->
-                            <div class="flex items-center justify-center text-center w-2/12">
+                            <div class="flex items-center justify-center text-center min-w-32">
                               <button
                                 v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay"
                                 :disabled="[false, 'false'].includes(shift.dispute)"
@@ -782,12 +787,12 @@
                             </div>
 
                             <!-- FINAL HOURS -->
-                            <div class="flex items-center justify-center text-center w-2/12">
+                            <div class="flex items-center justify-center text-center min-w-20">
                               {{ finalHours(shift, item.date) }}
                             </div>
 
                             <!-- FINAL RATE -->
-                            <div class="flex items-center justify-center text-center w-2/12">
+                            <div class="flex items-center justify-center text-center min-w-20">
                               £ {{ getRate(shift,
                                            shift.final_time_start,
                                            shift.final_time_end,
@@ -795,7 +800,7 @@
                             </div>
 
                             <!-- DISPUTE? -->
-                            <div class="flex items-center justify-center text-center w-40">
+                            <div class="flex items-center justify-center text-center min-w-20">
                               <button
                                 v-if="$auth.user.domain === 'Locum' ? !toDisplay : false"
                                 class="px-2 py-1 text-white cursor-pointer focus:outline-none rounded uppercase w-full mx-2 text-xs"
@@ -812,7 +817,7 @@
                               </template>
                             </div>
                             <!-- REASON -->
-                            <div class="flex items-center justify-center w-40">
+                            <div class="flex items-center justify-center min-w-20">
                               <button
                                 v-if="shift.dispute"
                                 class="border py-1 px-2 text-xs rounded bg-yellow-500 font-bold"
