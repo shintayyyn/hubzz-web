@@ -724,8 +724,8 @@ export default {
 
 .sidebar {
   position: fixed;
-  margin-left: -200px;
-  width: 200px;
+  margin-left: -220px;
+  width: 220px;
   height: 100%;
   overflow: auto;
   border-right: solid 1px#ccc;
@@ -744,7 +744,7 @@ export default {
 
 @media screen and (min-width: 1280px) {
   .sidebar {
-    z-index: 49;
+    z-index: 100;
     margin-left: 0;
   }
 
