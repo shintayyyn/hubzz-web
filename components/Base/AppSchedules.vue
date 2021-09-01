@@ -133,59 +133,64 @@
               </div>
 
               <div class="px-4">
-                <div class="overflow-scroll">
-                  <div class="flex items-end text-sm pb-2 text-gray-700">
+                <div class="overflow-x-scroll">
+                  <!-- Headers -->
+                  <div 
+                    class="flex items-end text-sm pb-2 text-gray-700"
+                    :class="type === 'create' ? 'min-w-3/5' : 'row'"
+                  >
                     <p class="px-2 text-center min-w-24">
                       Date
                     </p>
 
-                    <div class="flex items-end justify-between text-center"
-                         :class="type === 'create' ? 'min-w-9/12 ' : 'w-full'"
+                    <div 
+                      class="flex items-end justify-between text-center"
+                      :class="type === 'create' ? '' : 'w-full'"
                     >
-                      <p :class="type === 'create' ? 'min-w-1/12' : type === 'invoice' ? 'min-w-20' : 'min-w-1/12'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-16'">
                         Shift
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-16' : type === 'invoice' ? 'min-w-16' : 'min-w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-24' : type === 'invoice' ? 'min-w-16' : 'min-w-8'">
                         Start
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-16' : type === 'invoice' ? 'min-w-16' : 'min-w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-24' : type === 'invoice' ? 'min-w-16' : 'min-w-8'">
                         End
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-2/12'">
+                      <p :class="type === 'create' ? 'min-w-16' : type === 'invoice' ? 'min-w-20' : 'min-w-8'">
                         Hours
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-20'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-8'">
                         Rate £
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-32' : type === 'invoice' ? 'min-w-32' : 'min-w-32'">
+                      <p :class="type === 'create' ? 'min-w-32' : type === 'invoice' ? 'min-w-32' : 'min-w-8'">
                         Rate Type
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-20'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-8'">
                         Break
                       </p>
 
-                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-20'">
+                      <p :class="type === 'create' ? 'min-w-20' : type === 'invoice' ? 'min-w-20' : 'min-w-8'">
                         Paid?
                       </p>
 
                       <!-- FOR COMPLETING & INVOICING JOB -->
                       <template v-if="['complete', 'terminate', 'invoice'].includes(type)">
-                        <p class="min-w-24">
+                        <p class="min-w-20">
                           Final Break
                         </p>
                         <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-24'">
                           Final Start
                         </p>
-                        <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-24'">
+                        <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-16'">
                           Final End
                         </p>
-                        <p class="min-w-32">
+                        <p class="min-w-15">
                           Deducted Hours
                         </p>
                       </template>
@@ -221,12 +226,12 @@
                       Other Options
                     </p>
                   </div>
-
+                  <!-- Filtered Schedules -->
                   <div 
                     v-for="(item, index) in filteredSchedule" 
                     :key="index" 
-                    class="flex w-full text-sm mb-2" 
-                    :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'}` : ''"
+                    class="flex flex-nowrap text-sm mb-2 " 
+                    :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'} row` : 'min-w-3/5'"
                   >
                     <template v-if="['complete', 'terminate'].includes(type)">
                       <div class="min-w-24 px-2 py-3">
@@ -265,7 +270,7 @@
                               {{ shift.rate | currency }}
                             </div>
 
-                            <div class="min-w-16 flex items-center justify-center text-center">
+                            <div class="min-w-24 flex items-center justify-center text-center">
                               {{
                                 rate_lists.find(item => item.value === shift.locum_detail_rate_type_id)
                                   ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label
@@ -274,7 +279,7 @@
                             </div>
 
                             <!-- BREAK -->
-                            <div class="w-1/12 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               <template v-if="[0, '0'].includes(shift.posted_break_in_minutes)">
                                 (none)
                               </template>
@@ -957,19 +962,19 @@
                     <!-- Create / Edit Job -->
                     <template v-else>
                       <div
-                        class="w-24 pl-3 pr-1 pt-4 pb-8 rounded-l-lg border-l border-t border-b"
+                        class="min-w-24 pl-3 pr-1 pt-4 pb-8 rounded-l-lg border-l border-t border-b"
                         :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                       >
                         {{ item.date }}
                       </div>
 
                       <div
-                        class="w-9/12 flex flex-col items-start rounded-r-lg border-r border-t border-b"
+                        class="flex flex-col items-start rounded-r-lg border-r border-t border-b"
                         :class="index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'"
                       >
                         <div v-for="(shift, i) in item.shifts" :key="i" class="w-full flex flex-col">
                           <div class="flex items-end w-full justify-between">
-                            <div class="flex flex-col w-2/12 px-1 mb-2 pt-2">
+                            <div class="flex flex-col min-w-16 px-1 mb-2 pt-2">
                               <div
                                 class="flex border text-gray-500 border-gray-500 justify-between items-center w-full px-1 py-1 text-xs rounded cursor-pointer"
                                 :class="shiftColor(shift.shift_id)"
@@ -1016,7 +1021,7 @@
                               </div>
                             </div>
 
-                            <div class="w-16 px-1">
+                            <div class="w-20 px-1">
                               <AppTime
                                 v-model="shift.time_start"
                                 :name="`time_start-s${index}-${i}`"
@@ -1046,7 +1051,7 @@
                               />
                             </div>
 
-                            <div class="w-16 px-1">
+                            <div class="w-20 px-1">
                               <AppTime
                                 v-model="shift.time_end"
                                 :name="`time_end-s${index}-${i}`"
@@ -1074,7 +1079,7 @@
                               />
                             </div>
 
-                            <div class="w-16 py-4 text-center text-xs">
+                            <div class="w-20 py-4 text-center text-xs">
                               <template v-if="totalHours(shift.time_start, shift.time_end, item.date) > 0">
                                 <p>{{ totalHours(shift.time_start, shift.time_end, item.date) | hours }} {{ totalHours(shift.time_start, shift.time_end, item.date) | minutes }}</p>
                               </template>
@@ -1094,7 +1099,7 @@
                               </template>
                             </div>
 
-                            <div class="w-18 px-1">
+                            <div class="w-28 px-1">
                               <AppInput
                                 v-model="shift.rate"
                                 :name="`rate-s${index}-${i}`"
@@ -1118,7 +1123,7 @@
                               />
                             </div>
 
-                            <div class="w-2/12 px-1">
+                            <div class="w-28 px-1">
                               <AppInput
                                 v-model="shift.locum_detail_rate_type_id"
                                 :name="`locum_detail_rate_type_id-s${index}-${i}`"
@@ -3424,6 +3429,9 @@ export default {
 </script>
 
 <style>
+.row {
+      min-width: 1600px;
+  }
 .message-modal.mini-modal {
   z-index: 56;
   position: fixed;
