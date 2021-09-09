@@ -39,11 +39,11 @@
       />
 
       <nuxt
-        class="mb-4"
+        class="xxl:ml-5 xl:ml-5 lg:ml-5 md:ml-5  mb-4"
         :class="
           $route.name === 'messages-slug' || $route.name === 'messages-create'
-            ? 'md:mt-20'
-            : 'mt-16'
+            ? 'md:mt-28'
+            : 'mt-24'
         "
       />
     </div>

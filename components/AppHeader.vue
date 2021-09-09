@@ -1,5 +1,5 @@
 <template>
-  <section class="fixed z-10 w-full border-b shadow lg:shadow-none">
+  <section class="fixed z-50 w-full border-b shadow lg:shadow-none">
     <div class="flex flex-row justify-between">
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline" />
 
