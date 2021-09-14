@@ -11,355 +11,340 @@
       </div>
 
       <div class="flex flex-wrap justify-between mt-4">
-          <div class="p-1 w-full md:w-1/2 lg:w-2/5">
-            <div class="flex flex-col rounded-lg border p-4">
-              <div class="flex flex-row flex-wrap justify-between items-center">
-                <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
-                  <div class="font-bold text-sm sm:text-md">
-                    Candidate
-                  </div>
-                  <div class="text-sm mb-8">
-                    {{ user.locum_detail.profession.name }}
-                  </div>
-                </div>
-                <AppAvatar
-                  class="order-1 md:order-2 mb-4 md:mb-0"
-                  :height="'80px'"
-                  :width="'80px'"
-                  :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : null"
-                />
-              </div>
-              <div class="font-bold text-sm sm:text-md">
-                Headline
-              </div>
-              <div
-                class="text-sm mb-8"
-              >
-                {{ user.locum_detail.headline && user.locum_detail.headline && user.locum_detail.headline.trim() ? user.locum_detail.headline : '(none)' }}
-              </div>
-              <div class="font-bold text-sm sm:text-md">
-                Biography
-              </div>
-              <div
-                class="text-sm mb-8"
-              >
-                {{ user.locum_detail.headline && user.locum_detail.short_biography && user.locum_detail.short_biography.trim() ? user.locum_detail.short_biography : '(none)' }}
-              </div>
-
-              <div
-                v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
-                :key="referenceLocumComplianceDocument.compliance_document_id"
-              >
+        <div class="p-1 w-full md:w-1/2 lg:w-2/5">
+          <div class="flex flex-col rounded-lg border p-4">
+            <div class="flex flex-row flex-wrap justify-between items-center">
+              <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
                 <div class="font-bold text-sm sm:text-md">
-                  {{ referenceLocumComplianceDocument.compliance_document_name }}
+                  Candidate
                 </div>
-
                 <div class="text-sm mb-8">
-                  {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+                  {{ user.locum_detail.profession.name }}
                 </div>
               </div>
+              <AppAvatar
+                class="order-1 md:order-2 mb-4 md:mb-0"
+                :height="'80px'"
+                :width="'80px'"
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : null"
+              />
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Headline
+            </div>
+            <div
+              class="text-sm mb-8"
+            >
+              {{ user.locum_detail.headline && user.locum_detail.headline && user.locum_detail.headline.trim() ? user.locum_detail.headline : '(none)' }}
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Biography
+            </div>
+            <div
+              class="text-sm mb-8"
+            >
+              {{ user.locum_detail.headline && user.locum_detail.short_biography && user.locum_detail.short_biography.trim() ? user.locum_detail.short_biography : '(none)' }}
+            </div>
+
+            <div
+              v-for="referenceLocumComplianceDocument in user.reference_locum_compliance_documents"
+              :key="referenceLocumComplianceDocument.compliance_document_id"
+            >
+              <div class="font-bold text-sm sm:text-md">
+                {{ referenceLocumComplianceDocument.compliance_document_name }}
+              </div>
+
+              <div class="text-sm mb-8">
+                {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
+              </div>
+            </div>
               
-              <div class="font-bold text-sm sm:text-md">
-                Speciality
+            <div class="font-bold text-sm sm:text-md">
+              Speciality
+            </div>
+            <div class="text-sm mb-8 flex flex-row flex-wrap">
+              <div
+                v-for="item in user.locum_detail.qualifications"
+                :key="item.id"
+                class="rounded-lg bg-sunglow px-2 py-1 m-1"
+              >
+                {{ item.name }}
               </div>
-              <div class="text-sm mb-8 flex flex-row flex-wrap">
-                <div
-                  v-for="item in user.locum_detail.qualifications"
-                  :key="item.id"
-                  class="rounded-lg bg-sunglow px-2 py-1 m-1"
-                >
-                  {{ item.name }}
-                </div>
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Clinical systems
+            </div>
+            <div class="text-sm mb-8 flex flex-row flex-wrap">
+              <div
+                v-for="item in user.locum_detail.clinical_systems"
+                :key="item.id"
+                class="rounded-lg bg-sunglow px-2 py-1 m-1"
+              >
+                {{ item.name }}
               </div>
-              <div class="font-bold text-sm sm:text-md">
-                Clinical systems
+            </div>
+            <div class="font-bold text-sm sm:text-md">
+              Languages
+            </div>
+            <div class="text-sm mb-8 flex flex-row flex-wrap">
+              <div class="rounded-lg bg-sunglow px-2 py-1 m-1">
+                English
               </div>
-              <div class="text-sm mb-8 flex flex-row flex-wrap">
-                <div
-                  v-for="item in user.locum_detail.clinical_systems"
-                  :key="item.id"
-                  class="rounded-lg bg-sunglow px-2 py-1 m-1"
-                >
-                  {{ item.name }}
-                </div>
-              </div>
-              <div class="font-bold text-sm sm:text-md">
-                Languages
-              </div>
-              <div class="text-sm mb-8 flex flex-row flex-wrap">
-                <div class="rounded-lg bg-sunglow px-2 py-1 m-1">
-                  English
-                </div>
-                <div
-                  v-for="item in user.locum_detail.spoken_languages"
-                  :key="item.id"
-                  class="rounded-lg bg-sunglow px-2 py-1 m-1"
-                >
-                  {{ item.name }}
-                </div>
+              <div
+                v-for="item in user.locum_detail.spoken_languages"
+                :key="item.id"
+                class="rounded-lg bg-sunglow px-2 py-1 m-1"
+              >
+                {{ item.name }}
               </div>
             </div>
           </div>
-          <div class="p-1 w-full md:w-1/2 lg:w-2/5">
-            <div class="flex flex-col rounded-lg border p-4">
-              <div class="font-bold text-sm sm:text-md">
-                Compliance documents
+        </div>
+        <div class="p-1 w-full md:w-1/2 lg:w-2/5">
+          <div class="flex flex-col rounded-lg border p-4">
+            <div class="font-bold text-sm sm:text-md">
+              Compliance documents
+            </div>
+            <div class="flex flex-col mb-6 text-sm">
+              <div
+                v-for="item in mandatory"
+                :key="item.id"
+                class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline items-start"
+              >
+                <svgicon name="cloud-download" height="24" width="24" />
+                <a
+                  :href="item.file.url"
+                  :download="item.file.filename"
+                  target="_blank"
+                  class="px-2"
+                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.compliance_document.name }}</a>
+                <span class="p-1 rounded-lg" :class="statusStyle(item.status)">
+                  {{ item && item.status ? item.status : null }}
+                </span>
+                <span class="text-xs p-1 mx-1">
+                  {{ item && item.expired_at 
+                    ? item.status === 'Approved' 
+                      ? 'until ' + $moment(item.expired_at).format('DD/MM/YYYY')
+                      : item.status === 'Expiring' 
+                        ?'on ' + $moment(item.expired_at).format('DD/MM/YYYY')
+                        : item.status === 'Expired'
+                          ? 'at ' + $moment(item.expired_at).format('DD/MM/YYYY')
+                          : null
+                    : null }}
+                </span>
               </div>
-              <div class="flex flex-col mb-6 text-sm">
-                <div
-                  v-for="item in mandatory"
-                  :key="item.id"
-                  class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline items-start"
-                >
-                  <svgicon name="cloud-download" height="24" width="24" />
+              <template v-if="mandatory && !mandatory.length">
+                <span class="text-sm">(none)</span>
+              </template>
+            </div>
+
+            <div class="font-bold text-sm sm:text-md">
+              Others documents
+            </div>
+            <div class="flex flex-col mb-6 text-sm">
+              <div
+                v-for="item in optional"
+                :key="item.id"
+                class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline items-start"
+              >
+                <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
+                <a
+                  :href="item.file.url"
+                  :download="item.file.filename"
+                  target="_blank"
+                  class="px-2"
+                  @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                >{{ item.compliance_document.name }}</a>
+              </div>
+              <template v-if="optional && !optional.length">
+                <span class="text-sm">(none)</span>
+              </template>
+            </div>
+
+            <div class="font-bold text-sm sm:text-md">
+              Mandatory Trainings
+            </div>
+            <div class="flex flex-col mb-6 text-sm">
+              <div
+                v-for="item in mandatoryTrainings"
+                :key="item.id"
+                class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
+              >
+                <div v-if="item.file" class="flex flex-row flex-no-wrap">
+                  <div class="w-5 h-5">
+                    <svgicon name="cloud-download" height="24" width="24" />
+                  </div>
                   <a
                     :href="item.file.url"
                     :download="item.file.filename"
-                    target="_blank"
-                    class="px-2"
-                    @click.prevent="downloadItem(item.file.url, item.file.filename)"
-                  >{{ item.compliance_document.name }}</a>
-                  <span class="p-1 rounded-lg" :class="statusStyle(item.status)">
-                    {{ item && item.status ? item.status : null }}
-                  </span>
-                  <span class="text-xs p-1 mx-1">
-                    {{ item && item.expired_at 
-                      ? item.status === 'Approved' 
-                        ? 'until ' + $moment(item.expired_at).format('DD/MM/YYYY')
-                        : item.status === 'Expiring' 
-                          ?'on ' + $moment(item.expired_at).format('DD/MM/YYYY')
-                          : item.status === 'Expired'
-                            ? 'at ' + $moment(item.expired_at).format('DD/MM/YYYY')
-                            : null
-                      : null }}
-                  </span>
+                    class="break-words leading-loose mx-2 text-xs md:text-sm"
+                    @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                  >{{ item.mandatory_training.name }}</a>
                 </div>
-                <template v-if="mandatory && !mandatory.length">
-                  <span class="text-sm">(none)</span>
-                </template>
               </div>
+              <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
+                <span class="text-sm">(none)</span>
+              </template>
+            </div>
 
-              <div class="font-bold text-sm sm:text-md">
-                Others documents
-              </div>
-              <div class="flex flex-col mb-6 text-sm">
-                <div
-                  v-for="item in optional"
-                  :key="item.id"
-                  class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline items-start"
-                >
-                  <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
-                  <a
-                    :href="item.file.url"
-                    :download="item.file.filename"
-                    target="_blank"
-                    class="px-2"
-                    @click.prevent="downloadItem(item.file.url, item.file.filename)"
-                  >{{ item.compliance_document.name }}</a>
-                </div>
-                <template v-if="optional && !optional.length">
-                  <span class="text-sm">(none)</span>
-                </template>
-              </div>
-
-              <div class="font-bold text-sm sm:text-md">
-                Mandatory Trainings
-              </div>
-              <div class="flex flex-col mb-6 text-sm">
-                <div
-                  v-for="item in mandatoryTrainings"
-                  :key="item.id"
-                  class="flex flex-row flex-no-wrap mt-1 cursor-pointer hover:underline"
-                >
-                  <div v-if="item.file" class="flex flex-row flex-no-wrap">
-                    <div class="w-5 h-5">
-                      <svgicon name="cloud-download" height="24" width="24" />
-                    </div>
-                    <a
-                      :href="item.file.url"
-                      :download="item.file.filename"
-                      class="break-words leading-loose mx-2 text-xs md:text-sm"
-                      @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
-                    >{{ item.mandatory_training.name }}</a>
+            <div class="font-bold text-sm sm:text-md">
+              Referees
+            </div>
+            <div v-if="referees.length > 0">
+              <div
+                v-for="item in referees"
+                :key="item.id"
+                :class="item && item.id ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
+              >
+                <div class="flex flex-col w-full justify-start">
+                  <div class="w-full">
+                    Contact Name:
+                  </div>
+                  <div class="w-full">
+                    {{ item.name && item.name.trim() ? item.name : '(none)' }}
                   </div>
                 </div>
-                <template v-if="mandatoryTrainings && !mandatoryTrainings.length">
-                  <span class="text-sm">(none)</span>
-                </template>
-              </div>
-
-              <div class="font-bold text-sm sm:text-md">
-                Preferred rates
-              </div>
-              <div class="flex flex-col mb-8">
-                <div
-                  v-for="item in user.locum_detail.rates"
-                  :key="item.id"
-                  class="flex flex-row flex-no-wrap mt-2"
-                >
-                  <div class="text-sm">
-                    {{ item.rate_type.name }}: £ {{ item.min | currency }}
+                <div class="flex flex-col w-full justify-start my-2">
+                  <div class="w-full">
+                    Telephone number:
+                  </div>
+                  <div
+                    class="w-full"
+                  >
+                    {{ item.phone_number && item.phone_number.trim() ? item.phone_number : '(none)' }}
                   </div>
                 </div>
-              </div>
-
-              <div class="font-bold text-sm sm:text-md">
-                Referees
-              </div>
-              <div v-if="referees.length > 0">
-                <div
-                  v-for="item in referees"
-                  :key="item.id"
-                  :class="item && item.id ? 'rounded-lg flex flex-col bg-gray-300 my-2 p-4 text-xs md:text-sm' : ''"
-                >
-                  <div class="flex flex-col w-full justify-start">
-                    <div class="w-full">
-                      Contact Name:
-                    </div>
-                    <div class="w-full">
-                      {{ item.name && item.name.trim() ? item.name : '(none)' }}
-                    </div>
+                <div class="flex flex-col w-full justify-start">
+                  <div class="w-full">
+                    Email Address:
                   </div>
-                  <div class="flex flex-col w-full justify-start my-2">
-                    <div class="w-full">
-                      Telephone number:
-                    </div>
-                    <div
-                      class="w-full"
-                    >
-                      {{ item.phone_number && item.phone_number.trim() ? item.phone_number : '(none)' }}
-                    </div>
-                  </div>
-                  <div class="flex flex-col w-full justify-start">
-                    <div class="w-full">
-                      Email Address:
-                    </div>
-                    <div class="w-full">
-                      {{ item.email && item.email.trim() ? item.email : '(none)' }}
-                    </div>
+                  <div class="w-full">
+                    {{ item.email && item.email.trim() ? item.email : '(none)' }}
                   </div>
                 </div>
-              </div>
-              <div v-else-if="referees.length === 0" class="text-xs md:text-sm">
-                (none)
               </div>
             </div>
+            <div v-else-if="referees.length === 0" class="text-xs md:text-sm">
+              (none)
+            </div>
           </div>
-          <div class="p-1 w-full lg:w-1/5">
-            <div class="flex flex-col rounded-lg border p-4">
-              <div class="flex flex-row flex-wrap justify-between items-center">
-                <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
-                  <div class="font-bold text-sm sm:text-md">
-                    Payment Details
-                  </div>
-
-                  <div class="text-sm mb-4" />
-                </div>
-              </div>
-              
-              <div class="ml-4">
+        </div>
+        <div class="p-1 w-full lg:w-1/5">
+          <div class="flex flex-col rounded-lg border p-4">
+            <div class="flex flex-row flex-wrap justify-between items-center">
+              <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
                 <div class="font-bold text-sm sm:text-md">
-                  Paid Under Payroll
+                  Payment Details
                 </div>
 
-                <div class="text-sm mb-4">
-                  {{ user.paid_under_payroll ? 'Yes' : 'No' }}
+                <div class="text-sm mb-4" />
+              </div>
+            </div>
+              
+            <div class="ml-4">
+              <div class="font-bold text-sm sm:text-md">
+                Paid Under Payroll
+              </div>
+
+              <div class="text-sm mb-4">
+                {{ user.paid_under_payroll ? 'Yes' : 'No' }}
+              </div>
+
+              <div v-if="user.paid_under_payroll">
+                <div class="font-bold text-sm sm:text-md">
+                  Payroll Details
                 </div>
 
-                <div v-if="user.paid_under_payroll">
+                <div class="text-sm mb-4" />
+
+                <div class="ml-4">
                   <div class="font-bold text-sm sm:text-md">
-                    Payroll Details
+                    Payroll Company Name
                   </div>
 
-                  <div class="text-sm mb-4" />
+                  <div class="text-sm mb-4">
+                    {{ user.payroll_account_name }}
+                  </div>
 
-                  <div class="ml-4">
-                    <div class="font-bold text-sm sm:text-md">
-                      Payroll Company Name
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Bank Name
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.payroll_account_name }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.payroll_bank_name }}
+                  </div>
 
-                    <div class="font-bold text-sm sm:text-md">
-                      Bank Name
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Sort Code
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.payroll_bank_name }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.payroll_sort_code }}
+                  </div>
 
-                    <div class="font-bold text-sm sm:text-md">
-                      Sort Code
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Payroll Bank Account Number
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.payroll_sort_code }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.payroll_account_number }}
+                  </div>
 
-                    <div class="font-bold text-sm sm:text-md">
-                      Payroll Bank Account Number
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Payroll Reference Number
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.payroll_account_number }}
-                    </div>
-
-                    <div class="font-bold text-sm sm:text-md">
-                      Payroll Reference Number
-                    </div>
-
-                    <div class="text-sm mb-4">
-                      {{ user.payroll_reference_number }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.payroll_reference_number }}
                   </div>
                 </div>
+              </div>
 
-                <div v-if="!user.paid_under_payroll">
+              <div v-if="!user.paid_under_payroll">
+                <div class="font-bold text-sm sm:text-md">
+                  Bank Details
+                </div>
+
+                <div class="text-sm mb-4" />
+
+                <div class="ml-4">
                   <div class="font-bold text-sm sm:text-md">
-                    Bank Details
+                    Account Name
                   </div>
 
-                  <div class="text-sm mb-4" />
+                  <div class="text-sm mb-4">
+                    {{ user.account_name }}
+                  </div>
 
-                  <div class="ml-4">
-                    <div class="font-bold text-sm sm:text-md">
-                      Account Name
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Bank Name
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.account_name }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.bank_name }}
+                  </div>
 
-                    <div class="font-bold text-sm sm:text-md">
-                      Bank Name
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Sort Code
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.bank_name }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.sort_code }}
+                  </div>
 
-                    <div class="font-bold text-sm sm:text-md">
-                      Sort Code
-                    </div>
+                  <div class="font-bold text-sm sm:text-md">
+                    Account Number
+                  </div>
 
-                    <div class="text-sm mb-4">
-                      {{ user.sort_code }}
-                    </div>
-
-                    <div class="font-bold text-sm sm:text-md">
-                      Account Number
-                    </div>
-
-                    <div class="text-sm mb-4">
-                      {{ user.account_number }}
-                    </div>
+                  <div class="text-sm mb-4">
+                    {{ user.account_number }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
       </div>
     </template>
   </div>
@@ -379,7 +364,7 @@ export default {
   components: {
     AppLoading,
     AppAvatar,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -390,7 +375,7 @@ export default {
       optional: [],
       mandatoryTrainings: [],
       referees: [],
-      links: []
+      links: [],
     }
   },
 
@@ -409,34 +394,34 @@ export default {
       this.links = [
         {
           title: 'My Banks',
-          url: '/my-banks'
+          url: '/my-banks',
         },
         {
           title: parent_tab,
-          url: url
+          url: url,
         },
       ]
 
       console.log("parent_tab", parent_tab)
 
-      if (!['Favorites', 'All'].includes(parent_tab)){
+      if (!['Favorites', 'All',].includes(parent_tab)){
         this.links.push({
           title: surg_tab,
-          url: url
+          url: url,
         })
       }
 
       if (parent_tab !== 'All') {
         this.links.push({
           title: prof_tab,
-          url: url
+          url: url,
         },)
       }
 
       this.links.push(
         {
           title: this.user.personal_detail.name,
-          url: this.$route.path
+          url: this.$route.path,
         }
       )
 
