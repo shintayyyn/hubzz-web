@@ -18,7 +18,7 @@ Vue.mixin({
         const response = await this.$axios.$get(`/api/v1/me`)
         let newStatus = response.data.user.status
         if (newStatus !== oldStatus) {
-          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' ? 'verified' : 'not verified', })
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' || newStatus === 'Dormant' ? 'verified' : 'not verified', })
         }
       } else if (this.$auth.user.domain === 'Practice') {
         let oldPracticeUserStatus = this.$auth.user.status
