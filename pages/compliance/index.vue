@@ -90,7 +90,7 @@
       <!-- MANDATORY -->
       <div class="mt-10">
         <div class="font-bold text-xs sm:text-base">
-          Documents you need to be approved by Hubzz HQ
+          Documents you need for your account to be verified - to be approved by Hubzz HQ
         </div>
         <div
           class="text-sm font-hairline italic"
@@ -131,6 +131,298 @@
           </div>
 
           <div v-for="item in mandatoryComplianceDocuments" :key="item.compliance_document_id">
+            <div
+              v-if="activeLoading.includes(item.compliance_document_id)"
+              class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
+            >
+              <span
+                class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
+              >Uploading</span>
+            </div>
+
+            <div
+              v-if="!activeLoading.includes(item.compliance_document_id)"
+              class="bg-yellow-500 flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 bg-white"
+              :class="!item.file ? 'text-gray-600' : 'hover cursor-pointer'"
+              @click="show(item, 'compliance')"
+            >
+              <div
+                class="flex flex-col"
+                :class="item.compliance_document_type_name !== 'Safeguarding' ? 'w-1/6 px-2' : 'w-4/6 text-black'"
+              >
+                <template v-if="item.compliance_document_type_name !== 'Safeguarding'">
+                  {{ item.compliance_document_name | StringMaxLength(55) }}
+                  <span
+                    v-if="item.compliance_document_type_name === 'Passport' && item.country_name"
+                  >{{ `${item.country_name} VISA? ${hasVisa ? 'Yes' : 'No'}` }}</span>
+                </template>
+
+                <template
+                  v-if="item.compliance_document_type_name === 'Safeguarding'"
+                >
+                  {{ item.compliance_document_name }}
+                </template>
+              </div>
+
+              <template v-if="item.compliance_document_type_name !== 'Safeguarding'">
+                <div v-if="(item.file || item.reference)" class="item w-1/6">
+                  <div v-if="item.file" class="flex flex-row flex-no-wrap items-center">
+                    <span>
+                      <svgicon name="cloud-download" height="24" width="24" />
+                    </span>
+
+                    <div class="pl-2">
+                      <a
+                        :href="item.file.url"
+                        :download="item.file.filename"
+                        target="_blank"
+                        class="truncate w-full"
+                        @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+                      >
+                        <span class="block md:hidden">{{ item.file.filename | StringMaxLength(15) }}</span>
+                        <span class="hidden xl:block xxl:hidden">{{ item.file.filename | StringMaxLength(12) }}</span>
+                        <span class="hidden xxl:block">{{ item.file.filename | StringMaxLength(20) }}</span>
+                        <span class="hidden md:block xl:hidden">{{ item.file.filename | StringMaxLength(10) }}</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="item.reference && item.reference !== 'null'"
+                    class="flex flex-row flex-no-wrap items-center"
+                  >
+                    {{ item.reference }}
+                  </div>
+                </div>
+
+                <div v-if="!(item.file || item.reference)" class="item w-1/6" />
+
+                <div class="item w-1/6 px-2">
+                  <template v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'">
+                    {{ item.uploaded_at_in_gb_formatted }}
+                  </template>
+                </div>
+
+                <!-- <div
+									v-if="item.file && item.uploaded_at_in_gb_formatted && item.compliance_document_type_name !== 'Safeguarding'"
+									class="item w-1/6 border border-red-600"
+								>{{ item.uploaded_at_in_gb_formatted }}</div>
+
+								<div
+									v-if="!(item.file && item.file.created_at && item.compliance_document_type_name !== 'Safeguarding')"
+									class="item w-1/6 border border-blue-600 py-2"
+								/> -->
+
+                <div class="item w-1/6 px-2">
+                  {{ item.expired_at_in_gb_formatted }}
+                </div>
+              </template>
+
+              <div v-if="item && item.status" class="w-1/6 px-2">
+                <div
+                  class="text-xs sm:text-sm text-black"
+                >
+                  {{ item.status }}
+                </div>
+              </div>
+
+              <div v-if="!(item && item.status)" class="w-1/6" />
+              <template v-if="item.compliance_document_type_name === 'Safeguarding'">
+                <div class="w-1/6" />
+                <div class="w-1/6" />
+              </template>
+
+              <template v-if="item.compliance_document_type_name !== 'Safeguarding'">
+                <div v-if="(item && item.note)" class="w-1/6 px-2">
+                  {{ item.note | StringMaxLength(15) }}
+                </div>
+                <div v-if="!(item && item.note)" class="w-1/6 px-2" />
+
+                <div
+                  v-if="item.compliance_document_type_name !== 'Safeguarding'"
+                  class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center"
+                  style="position:sticky;right:0"
+                >
+                  <div
+                    class="bg-white px-4 py-2 rounded cursor-pointer"
+                    @click.stop.prevent="uploadCompliance(item.id, item.compliance_document_id, item.compliance_document_type_name, item.file, item.has_reference, item.reference, item.country_id, 'mandatory')"
+                  >
+                    <span class="hidden md:block">Upload</span>
+                    <span class="block md:hidden">
+                      <svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
+                    </span>
+                  </div>
+                </div>
+
+                <div v-if="!(item.compliance_document_type_name !== 'Safeguarding')" class="w-1/6" />
+              </template>
+            </div>
+
+            <!-- SAFEGUARDING CHILDREN -->
+            <div v-if="item.compliance_document_type_name === 'Safeguarding'">
+              <div class="ml-8 flex flex-no-wrap justify-start font-bold leading-none text-sm">
+                <div class="item w-1/6 p-2">
+                  Type
+                </div>
+                <div class="item w-1/6 p-2">
+                  File
+                </div>
+                <div class="item w-1/6 p-2">
+                  Date uploaded
+                </div>
+                <div class="item w-1/6 p-2">
+                  Expiry date
+                </div>
+                <div class="item w-1/6 p-2">
+                  Status
+                </div>
+                <div class="item w-1/6 p-2">
+                  Note
+                </div>
+                <div class="hidden xxl:block xl:block lg:block item w-1/6 p-2" />
+              </div>
+
+              <div
+                v-for="childItem in item.child_locum_compliance_documents"
+                :key="childItem.compliance_document_id"
+                class="flex flex-col"
+              >
+                <div
+                  v-if="activeLoading.includes(childItem.compliance_document_id)"
+                  class="flex flex-no-wrap justify-between shadow-lg rounded-lg items-center p-3 my-3 ml-8 bg-gray-200"
+                >
+                  <span
+                    class="w-full loader-message md:text-center text-gray-800 cursor-wait bg-gray-200"
+                  >Uploading</span>
+                </div>
+
+                <div
+                  v-else
+                  class="flex flex-no-wrap justify-start shadow-md rounded-lg items-center p-3 my-3 ml-8 bg-white"
+                  :class="!childItem.file ? 'text-gray-600' : 'hover cursor-pointer'"
+                  @click="show(childItem, 'compliance')"
+                >
+                  <div class="item w-1/6 pr-2">
+                    {{ childItem.compliance_document_name | StringMaxLength(55) }}
+                  </div>
+
+                  <div v-if="(childItem.file || childItem.reference)" class="item w-1/6">
+                    <div v-if="childItem.file" class="flex flex-row flex-no-wrap items-center">
+                      <svgicon name="cloud-download" height="24" width="24" />
+
+                      <div class="mx-2">
+                        <a
+                          :href="childItem.file.url"
+                          :download="childItem.file.filename"
+                          target="_blank"
+                          class="whitespace-no-wrap"
+                          @click.stop.prevent="downloadItem(childItem.file.url, childItem.file.filename)"
+                        >{{ childItem.file.filename | StringMaxLength(15) }}</a>
+                      </div>
+                    </div>
+
+                    <div
+                      v-if="childItem.reference && childItem.reference !== 'null'"
+                      class="flex flex-row flex-no-wrap items-center"
+                    >
+                      {{ childItem.reference }}
+                    </div>
+                  </div>
+
+                  <div v-else class="item w-1/6 px-2" />
+
+                  <div class="item w-1/6 px-2">
+                    {{ childItem.uploaded_at_in_gb_formatted }}
+                  </div>
+
+                  <div class="item w-1/6 px-2">
+                    {{ childItem.expired_at_in_gb_formatted }}
+                  </div>
+
+                  <div v-if="childItem && childItem.status" class="item w-1/6 px-2">
+                    <div
+                      class="text-xs sm:text-sm"
+                    >
+                      {{ childItem.status }}
+                    </div>
+                  </div>
+
+                  <div v-if="!(childItem && childItem.status)" class="item w-1/6 px-2" />
+
+                  <div
+                    v-if="childItem && childItem.note"
+                    class="item w-1/6 px-2"
+                  >
+                    {{ childItem.note | StringMaxLength(15) }}
+                  </div>
+
+                  <div v-if="!(childItem && childItem.note)" class="item w-1/6" />
+
+                  <div
+                    class="md:w-1/6 flex flex-row flex-no-wrap justify-end items-center"
+                    style="position:sticky;right:0"
+                  >
+                    <div
+                      class="bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                      @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'mandatory-child')"
+                    >
+                      <span class="hidden md:block">Upload</span>
+                      <span class="block md:hidden">
+                        <svgicon class="fill-current" name="cloud-upload" width="20" height="20" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OTHER MANDATORY -->
+      <div class="mt-10">
+        <div class="font-bold text-xs sm:text-base">
+          Documents you need to be approved by Hubzz HQ
+        </div>
+        <div
+          class="text-sm font-hairline italic"
+        >
+          (Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are accepted)
+        </div>
+      </div>
+
+      <div class="mt-4 overflow-x-auto">
+        <template v-if="otherMandatoryComplianceDocuments.length.length === 0">
+          <span
+            class="text-center font-bold text-gray-500 text-xs md:text-sm"
+            colspan="7"
+          >This section is empty. Update your profile to fill this area.</span>
+        </template>
+
+        <div class="table">
+          <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm px-3">
+            <div class="item w-1/6 p-2">
+              Type
+            </div>
+            <div class="item w-1/6 p-2">
+              File
+            </div>
+            <div class="item w-1/6 p-2">
+              Date uploaded
+            </div>
+            <div class="item w-1/6 p-2">
+              Expiry date
+            </div>
+            <div class="item w-1/6 p-2">
+              Status
+            </div>
+            <div class="item w-1/6 p-2">
+              Note
+            </div>
+            <div class="hidden xxl:block xl:block lg:block item w-1/6 p-2" />
+          </div>
+
+          <div v-for="item in otherMandatoryComplianceDocuments" :key="item.compliance_document_id">
             <div
               v-if="activeLoading.includes(item.compliance_document_id)"
               class="flex flex-no-wrap justify-between shadow-md rounded-lg items-center p-3 my-3 bg-gray-200"
@@ -938,6 +1230,7 @@ export default {
       activeLoading: [],
       referenceComplianceDocuments: [],
       mandatoryComplianceDocuments: [],
+      otherMandatoryComplianceDocuments: [],
       optionalComplianceDocuments: [],
       mandatory_trainings: [],
       other_mandatory_trainings: [],
@@ -960,9 +1253,15 @@ export default {
 
   computed: {
     hasVisa () {
-      return this.mandatoryComplianceDocuments.find(
+      const mandatoryComplianceDocumentsVisa = this.mandatoryComplianceDocuments.find(
         item => item.compliance_document_type_name === "Visa"
       )
+      
+      const otherMandatoryComplianceDocumentsVisa = this.otherMandatoryComplianceDocuments.find(
+        item => item.compliance_document_type_name === "Visa"
+      )
+
+      return mandatoryComplianceDocumentsVisa || otherMandatoryComplianceDocumentsVisa
     },
   },
 
@@ -1107,11 +1406,13 @@ export default {
         const {
           reference_locum_compliance_documents: referenceComplianceDocuments,
           mandatory_locum_compliance_documents: mandatoryComplianceDocuments,
+          other_mandatory_locum_compliance_documents: otherMandatoryComplianceDocuments,
           optional_locum_compliance_documents: optionalComplianceDocuments,
         } = user
 
         this.referenceComplianceDocuments = referenceComplianceDocuments
         this.mandatoryComplianceDocuments = mandatoryComplianceDocuments
+        this.otherMandatoryComplianceDocuments = otherMandatoryComplianceDocuments
         this.optionalComplianceDocuments = optionalComplianceDocuments
       })
     },

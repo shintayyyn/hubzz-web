@@ -618,42 +618,42 @@
 
                 <div class="flex flex-col md:flex-row justify-between">
                   <div class="flex flex-col w-full md:w-1/3 md:pr-2">
-                      <AppInput
-                        v-model="form.min_rate_per_hour"
-                        :type="'number'"
-                        :name="'min_rate_per_hour'"
-                        :label="'Per Hour £'"
-                        :error="formError.find(item => item.field === 'min_rate_per_hour')"
-                        required
-                        @submit="updateLocumProfile"
-                        @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
-                      />
+                    <AppInput
+                      v-model="form.min_rate_per_hour"
+                      :type="'number'"
+                      :name="'min_rate_per_hour'"
+                      :label="'Per Hour £'"
+                      :error="formError.find(item => item.field === 'min_rate_per_hour')"
+                      required
+                      @submit="updateLocumProfile"
+                      @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                    />
                   </div>
 
                   <div class="flex flex-col w-full md:w-1/3 md:px-2">
-                      <AppInput
-                        v-model="form.min_rate_per_half_day_session"
-                        :type="'number'"
-                        :name="'min_rate_per_half_day_session'"
-                        :label="'Per Half Day Session £'"
-                        :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
-                        required
-                        @submit="updateLocumProfile"
-                        @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
-                      />
+                    <AppInput
+                      v-model="form.min_rate_per_half_day_session"
+                      :type="'number'"
+                      :name="'min_rate_per_half_day_session'"
+                      :label="'Per Half Day Session £'"
+                      :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
+                      required
+                      @submit="updateLocumProfile"
+                      @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+                    />
                   </div>
 
                   <div class="flex flex-col w-full md:w-1/3 md:pl-2">
-                      <AppInput
-                        v-model="form.min_rate_per_whole_day_session"
-                        :type="'number'"
-                        :name="'min_rate_per_whole_day_session'"
-                        :label="'Per Whole Day Session £'"
-                        :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
-                        required
-                        @submit="updateLocumProfile"
-                        @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
-                      />
+                    <AppInput
+                      v-model="form.min_rate_per_whole_day_session"
+                      :type="'number'"
+                      :name="'min_rate_per_whole_day_session'"
+                      :label="'Per Whole Day Session £'"
+                      :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
+                      required
+                      @submit="updateLocumProfile"
+                      @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+                    />
                   </div>
                 </div>
               </div>
@@ -2077,9 +2077,9 @@ export default {
         if (this.form.vat_registered && this.new_vat_certificate) {
           const formData1 = await new FormData()
 
-          await formData1.append("file", this.form.vat_certificate)
-          await formData1.append("locum_user_id", this.user.id)
-          await formData1.append("type", "VAT Certificate")
+          formData1.append("file", this.form.vat_certificate)
+          formData1.append("locum_user_id", this.user.id)
+          formData1.append("type", "VAT Certificate")
 
           console.log("vat file", formData1)
 
@@ -2124,18 +2124,12 @@ export default {
             })
         }
 
-        if (
-          this.form.employment_type === "Limited Company"
-          && this.new_certificate_of_incorporation
-        ) {
+        if (this.form.employment_type === "Limited Company" && this.new_certificate_of_incorporation) {
           const formData2 = await new FormData()
 
-          await formData2.append(
-            "file",
-            this.form.certificate_of_incorporation
-          )
-          await formData2.append("locum_user_id", this.user.id)
-          await formData2.append("type", "Certificate of Incorporation")
+          formData2.append("file", this.form.certificate_of_incorporation)
+          formData2.append("locum_user_id", this.user.id)
+          formData2.append("type", "Certificate of Incorporation")
 
           console.log("cert file", formData2)
 
