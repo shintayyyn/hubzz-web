@@ -32,21 +32,72 @@
         <div class="text-sm relative ml-4">
           <button
             class="block no-underline p-4 transition-hover focus:outline-none text-gray-500 hover:text-white hover:font-bold"
-            @click.prevent="signout_modal = true"
+            @click.prevent="showSignOutModal = true, checkSurvey()"
           >
             <span>Sign Out</span>
           </button>
         </div>
       </div>
     </div>
+    
+    <div v-if="survey" class="shield" @click.prevent="survey = null" />
+
+    <div v-if="survey">
+      <div v-if="!surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
+        <div v-for="surveyResponseAnswer in surveyResponseAnswers" :key="surveyResponseAnswer.survey_question_id">
+          <div v-if="surveyResponseAnswer.question_type === 'Text'" class="mb-4">
+            <h1 class="text-lg">{{ surveyResponseAnswer.question }}</h1>
+            <input class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" type="text" v-model="surveyResponseAnswer.answer">
+          </div>
+
+          <div v-if="surveyResponseAnswer.question_type === 'Text Box'" class="mb-4">
+            <h1 class="text-lg">{{ surveyResponseAnswer.question }}</h1>
+            <textarea class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" rows="4" v-model="surveyResponseAnswer.answer"/>
+          </div>
+          
+          <div v-if="surveyResponseAnswer.question_type === 'Rating'" class="mb-4">
+            <h1 class="text-lg">{{ surveyResponseAnswer.question }}</h1>
+            <div class="flex flex-wrap">
+              <span
+                v-for="number in 10"
+                :key="number"
+                class="flex justify-center border rounded-lg px-3 py-2 m-1 shadow-lg cursor-pointer"
+                :class="`${(surveyResponseAnswer.answer || 0) >= number ? 'bg-yellow-500' : 'bg-gray-200'}`"
+                @click="surveyResponseAnswer.answer = number"
+                :style="{ width: '28px', height: '32px', transition: '.1s' }"
+              ></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-row flex-no-wrap justify-end">
+          <button
+            class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
+            @click="submitServeyResponse"
+          >{{ submittingServeyResponse ? 'Submitting...' : 'Submit' }}</button>
+        </div>
+      </div>
+
+      <div v-if="surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
+        <h1 class="text-lg">Survey Response Submitted. Thank You.</h1>
+
+        <div class="flex flex-row flex-no-wrap justify-end">
+          <button
+            class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
+            @click="survey = null, surveyResponseSubmitted = false"
+          >Ok</button>
+        </div>
+      </div>
+    </div>
 
     <AppConfirmationModal
+      :showShield="!survey"
       :label="'Proceed to sign-out?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
-      :modal="signout_modal"
+      :modal="showSignOutModal"
       @confirm="logout"
-      @cancel="signout_modal = false"
+      @cancel="showSignOutModal = false"
     />
 
     <AppConfirmationModal
@@ -88,16 +139,20 @@
 
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppInput from "@/components/Base/AppInput"
+import AppButton from "@/components/Base/AppButton"
 
 export default {
   components: {
     AppConfirmationModal,
+    AppInput,
+    AppButton,
   },
 
   data () {
     return {
       user: null,
-      signout_modal: false,
+      showSignOutModal: false,
       confirmation_modal: false,
       eligibleToSpoke: false,
       showLocumAccountDeactivatedModal: false,
@@ -105,6 +160,10 @@ export default {
       showPracticeDeactivatedModal: false,
       showPracticeDeletedModal: false,
       showPracticeUserDeletedModal: false,
+      survey: null,
+      loadingSurvey: false,
+      surveyResponseAnswers: [],
+      surveyResponseSubmitted: false,
     }
   },
 
@@ -610,6 +669,78 @@ export default {
   },
 
   methods: {
+    checkSurvey() {
+      const domain = this.$auth.user && this.$auth.user.domain && this.$auth.user.domain.toLowerCase()
+      console.log('checkSurvey', domain)
+      if (domain) {
+        this.loadingSurvey = true
+        this.$axios.get(`/api/v1/surveys/${domain}`).then((response) => {
+          const survey = response.data.data.survey
+          this.survey = survey
+          this.surveyResponseAnswers = survey.survey_questions.map((surveyQuestion) => {
+
+            return {
+              survey_question_id: surveyQuestion.id,
+              question_type: surveyQuestion.question_type,
+              question: surveyQuestion.question,
+              answer: '',
+            }
+          })
+        }).catch((err) => {
+          console.log('err', err)
+
+          const message = (err.response && err.response.data && err.response.message) || 'Something went wrong!'
+        
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${message}`,],
+          })
+        }).finally(() => {
+          this.loadingSurvey = false
+        })
+      }
+    },
+
+    errorHandler(err) {
+      console.log('err', err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        if (err.response.status === 400 && err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+          message = err.response.data.error_messages.map(errorMessage => errorMessage.message).join(',')
+        } else {
+          message = err.response.data.message
+        }
+      } else if (err.request) {
+        message = 'Something went wrong!'
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: 'danger',
+          text: [`${message}`,],
+        })
+      }
+    },
+
+    submitServeyResponse() {
+      console.log('submitServeyResponse', this.surveyResponseAnswers)
+      this.submittingServeyResponse = true
+      this.$axios.post('/api/v1/survey-responses', {
+        survey_id: this.survey.id,
+        survey_response_answers: this.surveyResponseAnswers,
+      }).then(() => {
+        this.surveyResponseSubmitted = true
+      }).catch(this.errorHandler).finally(() => {
+        this.submittingServeyResponse = false
+      })
+    },
+
     locumAccountDeactivatedHandler () {
       this.showLocumAccountDeactivatedModal = true
     },
@@ -719,7 +850,7 @@ export default {
 
 <style scoped>
 .shield {
-  z-index: 599;
+  z-index: 511;
 }
 
 .sidebar {
@@ -751,5 +882,14 @@ export default {
   .close-button {
     display: none;
   }
+}
+
+.survey-modal {
+  position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
