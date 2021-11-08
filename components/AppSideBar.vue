@@ -46,26 +46,32 @@
       <div v-if="!surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
         <div v-for="surveyResponseAnswer in surveyResponseAnswers" :key="surveyResponseAnswer.survey_question_id">
           <div v-if="surveyResponseAnswer.question_type === 'Text'" class="mb-4">
-            <h1 class="text-lg">{{ surveyResponseAnswer.question }}</h1>
-            <input class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" type="text" v-model="surveyResponseAnswer.answer">
+            <h1 class="text-lg">
+              {{ surveyResponseAnswer.question }}
+            </h1>
+            <input v-model="surveyResponseAnswer.answer" class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" type="text">
           </div>
 
           <div v-if="surveyResponseAnswer.question_type === 'Text Box'" class="mb-4">
-            <h1 class="text-lg">{{ surveyResponseAnswer.question }}</h1>
-            <textarea class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" rows="4" v-model="surveyResponseAnswer.answer"/>
+            <h1 class="text-lg">
+              {{ surveyResponseAnswer.question }}
+            </h1>
+            <textarea v-model="surveyResponseAnswer.answer" class="w-full p-2 border rounded-lg bg-yellow-500 shadow-lg" rows="4" />
           </div>
           
           <div v-if="surveyResponseAnswer.question_type === 'Rating'" class="mb-4">
-            <h1 class="text-lg">{{ surveyResponseAnswer.question }}</h1>
+            <h1 class="text-lg">
+              {{ surveyResponseAnswer.question }}
+            </h1>
             <div class="flex flex-wrap">
               <span
                 v-for="number in 10"
                 :key="number"
                 class="flex justify-center border rounded-lg px-3 py-2 m-1 shadow-lg cursor-pointer"
                 :class="`${(surveyResponseAnswer.answer || 0) >= number ? 'bg-yellow-500' : 'bg-gray-200'}`"
-                @click="surveyResponseAnswer.answer = number"
                 :style="{ width: '28px', height: '32px', transition: '.1s' }"
-              ></span>
+                @click="surveyResponseAnswer.answer = number"
+              />
             </div>
           </div>
         </div>
@@ -74,20 +80,49 @@
           <button
             class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
             @click="submitServeyResponse"
-          >{{ submittingServeyResponse ? 'Submitting...' : 'Submit' }}</button>
+          >
+            {{ submittingServeyResponse ? 'Submitting...' : 'Submit' }}
+          </button>
         </div>
       </div>
 
       <div v-if="surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
-        <h1 class="text-lg">Survey Response Submitted. Thank You.</h1>
+        <h1 class="text-lg">
+          Survey Response Submitted. Thank You.
+        </h1>
 
         <div class="flex flex-row flex-no-wrap justify-end">
           <button
             class="px-4 py-2 bg-yellow-400 border border-white rounded-lg shaodw-lg text-sm font-bold"
             @click="survey = null, surveyResponseSubmitted = false"
-          >Ok</button>
+          >
+            Ok
+          </button>
         </div>
       </div>
+    </div>
+
+    <div class="error-alert w-5/6 md:w-1/2">
+      <transition name="drop">
+        <div
+          v-if="errorAlerts.length > 0"
+          class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
+          style="min-width: 200px"
+          :class="`border border-red-500 bg-red-200 text-red-600`"
+        >
+          <span class="mr-2 inline-block align-middle">
+            <svgicon :name="`exclamation-mark`" height="20" width="20" :color="`#e53e3e`" />
+          </span>
+
+          <span class="mr-2 inline-block align-middle">
+            <svgicon :name="`times`" height="20" width="20" :color="`#e53e3e`" />
+          </span>
+
+          <div class="font-bold text-sm leading-normal inline-block">
+            {{ errorAlerts[errorAlerts.length - 1] }}
+          </div>
+        </div>
+      </transition>
     </div>
 
     <AppConfirmationModal
@@ -139,14 +174,10 @@
 
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppInput from "@/components/Base/AppInput"
-import AppButton from "@/components/Base/AppButton"
 
 export default {
   components: {
     AppConfirmationModal,
-    AppInput,
-    AppButton,
   },
 
   data () {
@@ -163,7 +194,20 @@ export default {
       survey: null,
       loadingSurvey: false,
       surveyResponseAnswers: [],
+      submittingServeyResponse: false,
       surveyResponseSubmitted: false,
+      errorAlerts: [
+        // 'qweqweqweqweqweqweqweqwe',
+        // 'asdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkh',
+        // `
+        // qwewqeqweasdas
+        // qweqwe
+        // qweqweqweqweqwewqedkhasdasdasdasdasdasd asdasdasdasdasd asdasdasdasdsadsadasdasdasdasdasd akshd hdk qdhasldkjasdkhasd  dkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasddkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasd
+        // qwedasdasdasd
+        // qwe
+        // wqeqwewqedkhasdasdasdasdasdasd kakshd hdk qdhasldkjasdkhasd
+        // qweqweqweeqweqwewqe`,
+      ],
     }
   },
 
@@ -669,7 +713,7 @@ export default {
   },
 
   methods: {
-    checkSurvey() {
+    checkSurvey () {
       const domain = this.$auth.user && this.$auth.user.domain && this.$auth.user.domain.toLowerCase()
       console.log('checkSurvey', domain)
       if (domain) {
@@ -677,19 +721,33 @@ export default {
         this.$axios.get(`/api/v1/surveys/${domain}`).then((response) => {
           const survey = response.data.data.survey
           this.survey = survey
-          this.surveyResponseAnswers = survey.survey_questions.map((surveyQuestion) => {
+          if (survey && survey.survey_questions) {
+            this.surveyResponseAnswers = survey.survey_questions.map((surveyQuestion) => {
 
-            return {
-              survey_question_id: surveyQuestion.id,
-              question_type: surveyQuestion.question_type,
-              question: surveyQuestion.question,
-              answer: '',
-            }
-          })
+              return {
+                survey_question_id: surveyQuestion.id,
+                question_type: surveyQuestion.question_type,
+                question: surveyQuestion.question,
+                answer: '',
+              }
+            })
+          }
         }).catch((err) => {
-          console.log('err', err)
+          console.log('err', err.response || err)
 
-          const message = (err.response && err.response.data && err.response.message) || 'Something went wrong!'
+          let message = null
+
+          if (err.response) {
+            if (err.response.status === 400 && err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+              message = err.response.data.error_messages.map(errorMessage => errorMessage.message).join(',')
+            } else {
+              message = err.response.data.message
+            }
+          } else if (err.request) {
+            message = 'Something went wrong!'
+          } else {
+            message = err.message
+          }
         
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -702,7 +760,7 @@ export default {
       }
     },
 
-    errorHandler(err) {
+    errorHandler (err) {
       console.log('err', err.response || err)
 
       let message = null
@@ -719,6 +777,10 @@ export default {
         message = err.message
       }
 
+      // this.errorAlerts.push(message)
+
+      // return
+
       if (message) {
         this.$store.commit('SET_NOTIFICATION', {
           enabled: true,
@@ -728,7 +790,7 @@ export default {
       }
     },
 
-    submitServeyResponse() {
+    submitServeyResponse () {
       console.log('submitServeyResponse', this.surveyResponseAnswers)
       this.submittingServeyResponse = true
       this.$axios.post('/api/v1/survey-responses', {
@@ -891,5 +953,23 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.error-alert {
+  position: fixed;
+  top: 0;
+  left: 40%;
+  z-index: 700;
+  display: flex;
+  justify-content: center;
+  margin-left: -40px;
+}
+
+@media screen and (max-width: 600px) {
+  .error-alert {
+    width: 100%;
+    left: 0;
+    margin-left: 0;
+  }
 }
 </style>
