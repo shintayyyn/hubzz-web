@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div v-if="modal" class="shield" @click.prevent="$emit('cancel')" />
+    <div v-if="modal && showShield" class="shield" @click.prevent="$emit('cancel')" />
+
     <transition name="drop" mode="out-in">
       <div v-if="modal" class="flex justify-center remove-confirmation-modal">
         <div
@@ -55,6 +56,11 @@
 <script>
 export default {
   props: {
+    showShield: {
+      type: Boolean,
+      default: true,
+    },
+
     modal: {
       type: Boolean,
       default: false,
