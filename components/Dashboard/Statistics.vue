@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl my-3">
-      <svgicon v-if="!statistics.length" name="loader" width="60" height="60" />
+      <svgicon v-if="loadingStatistics" name="loader" width="60" height="60" />
       <div
         v-for="(item, index) in statistics"
         :key="index"
@@ -36,6 +36,7 @@ export default {
     return {
       statistics: [],
       disabled: "true",
+      loadingStatistics: false,
     }
   },
 
@@ -316,18 +317,19 @@ export default {
     },
 
     getLocumStats () {
+      this.loadingStatistics = true
       this.$axios
         .get(`/api/v1/locum/me/statistics`)
         .then(response => {
           this.statistics = []
 
           const {
-            total_available_job_count: totalAvailableJobCount,
-            allocated_job_count: allocatedJobCount,
-            applied_job_count: appliedJobCount,
-            ongoing_job_part_count: ongoingJobPartCount,
-            completed_job_part_count: completedJobPartCount,
-          } = response.data.data.locum_user_statistics
+            total_available_job_count: totalAvailableJobCount = 0,
+            allocated_job_count: allocatedJobCount = 0,
+            applied_job_count: appliedJobCount = 0,
+            ongoing_job_part_count: ongoingJobPartCount = 0,
+            completed_job_part_count: completedJobPartCount = 0,
+          } = response.data.data.locum_user_statistics || {}
 
           this.statistics.push({
             label: "Available Jobs",
@@ -362,23 +364,27 @@ export default {
         .catch(err => {
           console.log("err", err.response || err)
         })
+        .finally(() => {
+          this.loadingStatistics = false
+        })
     },
 
     getPracticeStats () {
+      this.loadingStatistics = true
       this.$axios
         .get(`/api/v1/practice/me/practice-statistics`)
         .then(res => {
           this.statistics = []
 
           const {
-            ongoing_job_part_count: ongoingJobPartCount,
-            applied_job_count: appliedJobCount,
-            allocated_job_count: allocatedJobCount,
-            live_job_count: liveJobCount,
-            completed_job_part_count: completedJobPartCount,
-            unfilled_job_count: unfilledJobCount,
-            to_be_completed_ongoing_job_part_count: toBeCompletedOngoingJobPartCount,
-          } = res.data.data.practice_statistics
+            ongoing_job_part_count: ongoingJobPartCount = 0,
+            applied_job_count: appliedJobCount = 0,
+            allocated_job_count: allocatedJobCount = 0,
+            live_job_count: liveJobCount = 0,
+            completed_job_part_count: completedJobPartCount = 0,
+            unfilled_job_count: unfilledJobCount = 0,
+            to_be_completed_ongoing_job_part_count: toBeCompletedOngoingJobPartCount = 0,
+          } = res.data.data.practice_statistics || {}
 
           this.statistics.push({
             label: "Ongoing Job Parts",
@@ -424,6 +430,9 @@ export default {
         })
         .catch(err => {
           console.log("err", err.response || err)
+        })
+        .finally(() => {
+          this.loadingStatistics = false
         })
     },
   },
