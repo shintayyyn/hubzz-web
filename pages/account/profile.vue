@@ -2,7 +2,7 @@
   <div class="flex flex-col lg:flex-row justify-start">
     <div class="w-full lg:pr-4 order-2 lg:order-1">
       <div class="relative w-full">
-        <AppLoading :loading="loading" spinner />
+        <AppLoading :loading="loading || uploadingVatCertificate" spinner />
 
         <AppFormError v-if="formError.length > 0" :formError="formError" />
 
@@ -970,6 +970,8 @@ export default {
       practiceTypes: [],
       mandatoryTrainings: [],
       otherMandatoryTrainings: [],
+
+      uploadingVatCertificate: false,
     }
   },
 
@@ -2074,55 +2076,57 @@ export default {
             }
           })
 
-        if (this.form.vat_registered && this.new_vat_certificate) {
-          const formData1 = await new FormData()
+        // if (this.form.vat_registered && this.new_vat_certificate) {
+        //   const formData1 = await new FormData()
 
-          formData1.append("file", this.form.vat_certificate)
-          formData1.append("locum_user_id", this.user.id)
-          formData1.append("type", "VAT Certificate")
+        //   formData1.append("file", this.form.vat_certificate)
+        //   formData1.append("locum_user_id", this.user.id)
+        //   formData1.append("type", "VAT Certificate")
 
-          console.log("vat file", formData1)
+        //   console.log("vat file", formData1)
 
-          // post request to API / send file
-          await this.$axios
-            .$post(`/api/v1/locum/me/profile/vat-document`, formData1)
-            .then(res => {
-              console.log("res", res)
-              if (!this.new_certificate_of_incorporation) {
-                this.$store.commit("SET_NOTIFICATION", {
-                  enabled: true,
-                  status: "success",
-                  text: [`Profile successfully updated.`,],
-                })
-                this.user = res.data.user
-                this.initialize()
-              }
-              this.vat_cartificate.file_created_at
-                = res.data.user.vat_cert_file_created_at
-              this.vat_cartificate.file_filename
-                = res.data.user.vat_cert_file_filename
-              this.vat_cartificate.file_id = res.data.user.vat_cert_file_id
-              this.vat_cartificate.file_size = res.data.user.vat_cert_file_size
-              this.vat_cartificate.file_subtype
-                = res.data.user.vat_cert_file_subtype
-              this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
-              this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
-            })
-            .catch(err => {
-              console.log("err", err)
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`,],
-              })
-            })
-            .finally(() => {
-              if (!this.new_certificate_of_incorporation) {
-                this.loading = false
-                this.scrollToTop()
-              }
-            })
-        }
+        //   // post request to API / send file
+        //   await this.$axios
+        //     .$post(`/api/v1/locum/me/profile/vat-document`, formData1)
+        //     .then(res => {
+        //       console.log("res", res)
+        //       if (!this.new_certificate_of_incorporation) {
+        //         this.$store.commit("SET_NOTIFICATION", {
+        //           enabled: true,
+        //           status: "success",
+        //           text: [`Profile successfully updated.`,],
+        //         })
+        //         this.user = res.data.user
+        //         this.initialize()
+        //       }
+        //       this.vat_cartificate.file_created_at
+        //         = res.data.user.vat_cert_file_created_at
+        //       this.vat_cartificate.file_filename
+        //         = res.data.user.vat_cert_file_filename
+        //       this.vat_cartificate.file_id = res.data.user.vat_cert_file_id
+        //       this.vat_cartificate.file_size = res.data.user.vat_cert_file_size
+        //       this.vat_cartificate.file_subtype
+        //         = res.data.user.vat_cert_file_subtype
+        //       this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
+        //       this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
+        //     })
+        //     .catch(err => {
+        //       console.log("err", err)
+        //       this.$store.commit("SET_NOTIFICATION", {
+        //         enabled: true,
+        //         status: "danger",
+        //         text: [`${err.response.data.message}`,],
+        //       })
+        //     })
+        //     .finally(() => {
+        //       if (!this.new_certificate_of_incorporation) {
+        //         this.loading = false
+        //         this.scrollToTop()
+        //       }
+        //     })
+        // }
+
+        // await this.uploadVatCertificate()
 
         if (this.form.employment_type === "Limited Company" && this.new_certificate_of_incorporation) {
           const formData2 = await new FormData()
@@ -2178,6 +2182,56 @@ export default {
       }
     },
 
+    async uploadVatCertificate () {
+      if (this.form.vat_registered && this.new_vat_certificate) {
+        const formData1 = await new FormData()
+
+        formData1.append("file", this.form.vat_certificate)
+        formData1.append("locum_user_id", this.user.id)
+        formData1.append("type", "VAT Certificate")
+
+        console.log("vat file", formData1)
+
+        this.uploadingVatCertificate = true
+        // post request to API / send file
+        await this.$axios
+          .$post(`/api/v1/locum/me/profile/vat-document`, formData1)
+          .then(res => {
+            console.log("res", res)
+
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`VAT certificate successfully updated.`,],
+            })
+            this.user = res.data.user
+            this.initialize()
+
+            this.vat_cartificate.file_created_at
+              = res.data.user.vat_cert_file_created_at
+            this.vat_cartificate.file_filename
+              = res.data.user.vat_cert_file_filename
+            this.vat_cartificate.file_id = res.data.user.vat_cert_file_id
+            this.vat_cartificate.file_size = res.data.user.vat_cert_file_size
+            this.vat_cartificate.file_subtype
+              = res.data.user.vat_cert_file_subtype
+            this.vat_cartificate.file_type = res.data.user.vat_cert_file_type
+            this.vat_cartificate.file_url = res.data.user.vat_cert_file_url
+          })
+          .catch(err => {
+            console.log("err", err)
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          })
+          .finally(() => {
+            this.uploadingVatCertificate = false
+          })
+      }
+    },
+
     onVATFileInput (e) {
       if (!e.target.files.length) {
         return
@@ -2211,6 +2265,8 @@ export default {
       this.form.vat_certificate = file
       this.new_vat_certificate = true
       console.log("vat file", this.form.vat_certificate)
+
+      this.uploadVatCertificate()
     },
 
     onIncFileInput (e) {
