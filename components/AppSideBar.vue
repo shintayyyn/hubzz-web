@@ -40,7 +40,7 @@
       </div>
     </div>
     
-    <div v-if="survey" class="shield" @click.prevent="survey = null" />
+    <div v-if="survey" class="shield" @click.prevent="survey = null, surveyResponseSubmitted = false" />
 
     <div v-if="survey">
       <div v-if="!surveyResponseSubmitted" class="rounded-lg shadow-md px-4 py-8 md:px-8 survey-modal border w-5/6 md:w-1/2 overflow-scroll" style="max-height: 70vh;">
