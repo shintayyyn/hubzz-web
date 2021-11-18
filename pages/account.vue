@@ -70,8 +70,8 @@
     
     <AppConfirmationModal
       :label="deactivatingLocum ? 'Deactivating account...' : 'Are you sure you want to deactivate your account?'"
-      confirmLabel="Yes"
-      cancelLabel="No"
+      confirmLabel="Deactivate"
+      cancelLabel="Cancel"
       :modal="showDeactivateLocumAccountModal"
       :loading="deactivatingLocum"
       @confirm="deactivateLocumAccount"
@@ -80,8 +80,8 @@
     
     <AppConfirmationModal
       :label="requestingDeleteLocumAccount ? 'Requesting delete account...' : 'Are you sure you want to DELETE your account? Deleting your account will erase ALL your data'"
-      confirmLabel="Yes"
-      cancelLabel="No"
+      confirmLabel="Delete"
+      cancelLabel="Cancel"
       :modal="showRequestDeleteLocumAccountModal"
       :loading="requestingDeleteLocumAccount"
       @confirm="requestDeleteLocumAccount"
