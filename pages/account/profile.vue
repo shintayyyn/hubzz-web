@@ -2205,7 +2205,12 @@ export default {
               text: [`VAT certificate successfully updated.`,],
             })
             this.user = res.data.user
+
+            const tempVatRegistred = this.form.vat_registered
+
             this.initialize()
+
+            this.form.vat_registered = tempVatRegistred
 
             this.vat_cartificate.file_created_at
               = res.data.user.vat_cert_file_created_at
