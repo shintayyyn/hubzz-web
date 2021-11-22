@@ -1,6 +1,9 @@
 <template>
   <div ref="container" class="flex flex-col items-center justify-center xl:mx-4 w-full">
-    <!-- <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" /> -->
+    <template v-if="false">
+      <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" />
+    </template>
+    
     <div class="flex w-full justify-center xl:justify-start">
       <div class="flex flex-col w-full p-4 m-1 rounded-lg border">
         <form class="w-full">
@@ -81,21 +84,21 @@
             required
             @blur="CheckEmptyField(form.address_line_3,'address_line_3')"
           />
+
           <AppInput
             v-model="form.address_line_4"
             :type="'text'"
             :name="'address_line_4'"
             :label="'Address Line 4'"
             :error="formError.find(item => item.field === 'address_line_4')"
-            @blur="CheckEmptyField(form.address_line_4,'address_line_4')"
           />
+
           <AppInput
             v-model="form.address_line_5"
             :type="'text'"
             :name="'address_line_5'"
             :label="'Address Line 5'"
             :error="formError.find(item => item.field === 'address_line_5')"
-            @blur="CheckEmptyField(form.address_line_5,'address_line_5')"
           />
         </form>
       </div>
