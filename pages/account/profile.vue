@@ -616,7 +616,7 @@
                   </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row justify-between">
+                <div class="flex flex-col md:flex-row md:items-end justify-between">
                   <div class="flex flex-col w-full md:w-1/3 md:pr-2">
                     <AppInput
                       v-model="form.min_rate_per_hour"
