@@ -196,13 +196,13 @@
                       </template>
 
                       <!-- FOR COMPLETING JOB -->
-                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
+                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-4" />
 
                       <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="min-w-32">
                         Any Absences?
                       </p>
 
-                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
+                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-4" />
 
                       <!-- FOR INVOICING -->
                       <template v-if="type === 'invoice'">
@@ -773,7 +773,7 @@
                             </div>
 
                             <!-- ANY ABSENCES -->
-                            <div class="flex items-center justify-center text-center min-w-32">
+                            <div class="flex items-center justify-center text-center min-w-24">
                               <button
                                 v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay"
                                 :disabled="[false, 'false'].includes(shift.dispute)"
