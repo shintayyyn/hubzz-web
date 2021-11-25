@@ -183,7 +183,7 @@
               <div class="flex items-center">
                 <span class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
 
-                <p class="ml-2">
+                <p class="ml-2 white-space:nowrap text-sm">
                   Whole Day
                 </p>
               </div>

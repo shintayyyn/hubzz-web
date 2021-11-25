@@ -28,7 +28,7 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-col bg-white border rounded border-gray-500">
+            <div class="relative flex flex-col bg-white border rounded border-gray-500 z-20">
               <div
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="$router.push({ name: 'locum-billing-private-invoices-locumInvoiceId-edit', params: { locumInvoiceId: slotProps.item.locum_invoice_id } })"
@@ -525,6 +525,13 @@ export default {
           locum_invoice_id: this.invoice_id,
         })
         .then(res => {
+          // get job part
+          const jobPart = this.job_parts.find((jobPart) => !jobPart.locum_form_a_id && !jobPart.locum_solo_form_id && jobPart.locum_invoice_id === this.invoice_id)
+
+          // put temp value
+          jobPart.locum_form_a_id = 'generating form...'
+          jobPart.locum_solo_form_id = 'loading...'
+
           this.getPrivateLocumInvoiced()
 
           this.$store.commit("SET_NOTIFICATION", {
