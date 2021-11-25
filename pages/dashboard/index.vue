@@ -183,7 +183,7 @@
               <div class="flex items-center">
                 <span class="bg-shift-whole-day w-12 h-2 md:w-20 md:h-3 rounded border border-white p-2" />
 
-                <p class="ml-2 white-space:nowrap text-sm">
+                <p class="ml-2 no-wrap-text text-sm">
                   Whole Day
                 </p>
               </div>
@@ -302,6 +302,10 @@ export default {
 </script>
 
 <style scoped>
+  .no-wrap-text {
+    white-space: nowrap;
+  }
+
   .shield {
     z-index: 509;
   }
