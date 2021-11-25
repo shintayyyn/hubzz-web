@@ -373,7 +373,7 @@ export default {
     max-height: 50px;
   }
   .dropdown, .dropdown-up {
-    z-index: 1;
+    /* z-index: 1; */
     width: 100%;
     /* margin-top: -4px; */
   }
