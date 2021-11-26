@@ -42,24 +42,24 @@
               </p>
             </div>
 
-            <div class="hidden lg:flex font-bold text-xs">
-              <p class="w-2/12">
+            <div class="hidden bg-gray-400 lg:flex font-bold text-xs">
+              <p class="p-1 w-2/12">
                 DATE
               </p>
 
-              <p class="w-2/12 text-center">
+              <p class="p-1 w-3/12 text-center">
                 TIME
               </p>
 
-              <p class="w-3/12 text-center">
+              <p class="p-1 w-2/12 text-center">
                 SHIFT
               </p>
 
-              <p class="w-2/12 text-center">
+              <p class="p-1 w-2/12 text-center">
                 RATE
               </p>
 
-              <p class="w-3/12 text-center">
+              <p class="p-1 w-3/12 text-center">
                 BREAK
               </p>
             </div>
@@ -70,11 +70,11 @@
                   {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
                 </p>
 
-                <p class="lg:w-2/12 lg:text-center">
+                <p class="lg:w-3/12 lg:text-center">
                   {{ sched.time_start }}-{{ sched.time_end }}
                 </p>
 
-                <p class="lg:w-3/12 lg:text-center">
+                <p class="lg:w-2/12 lg:text-center">
                   {{ sched.shift_name }}
                 </p>
 

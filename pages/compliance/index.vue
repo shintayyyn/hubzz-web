@@ -181,7 +181,7 @@
                       >
                         <span class="block md:hidden">{{ item.file.filename | StringMaxLength(15) }}</span>
                         <span class="hidden xl:block xxl:hidden">{{ item.file.filename | StringMaxLength(12) }}</span>
-                        <span class="hidden xxl:block">{{ item.file.filename | StringMaxLength(20) }}</span>
+                        <span class="hidden xxl:block">{{ item.file.filename | StringMaxLength(15) }}</span>
                         <span class="hidden md:block xl:hidden">{{ item.file.filename | StringMaxLength(10) }}</span>
                       </a>
                     </div>
@@ -473,7 +473,7 @@
                       >
                         <span class="block md:hidden">{{ item.file.filename | StringMaxLength(15) }}</span>
                         <span class="hidden xl:block xxl:hidden">{{ item.file.filename | StringMaxLength(12) }}</span>
-                        <span class="hidden xxl:block">{{ item.file.filename | StringMaxLength(20) }}</span>
+                        <span class="hidden xxl:block">{{ item.file.filename | StringMaxLength(15) }}</span>
                         <span class="hidden md:block xl:hidden">{{ item.file.filename | StringMaxLength(10) }}</span>
                       </a>
                     </div>

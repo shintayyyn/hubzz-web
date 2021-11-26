@@ -215,7 +215,7 @@
 
             <div class="flex flex-wrap justify-between">
               <p class="text-sm w-1/2">
-                Form Type:
+                FORM TYPE:
               </p>
 
               <p class="font-bold w-1/2 text-right">

@@ -181,7 +181,7 @@
 
                       <!-- FOR COMPLETING & INVOICING JOB -->
                       <template v-if="['complete', 'terminate', 'invoice'].includes(type)">
-                        <p class="min-w-20">
+                        <p class="min-w-32">
                           Final Break
                         </p>
                         <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-24'">
@@ -196,13 +196,13 @@
                       </template>
 
                       <!-- FOR COMPLETING JOB -->
-                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
+                      <!-- <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" /> -->
 
                       <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="min-w-32">
                         Any Absences?
                       </p>
 
-                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
+                      <!-- <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" /> -->
 
                       <!-- FOR INVOICING -->
                       <template v-if="type === 'invoice'">
@@ -254,23 +254,23 @@
                               </p>
                             </div>
 
-                            <div class="min-w-20 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               {{ shift.time_start }}
                             </div>
 
-                            <div class="min-w-20 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               {{ shift.time_end }}
                             </div>
 
-                            <div class="min-w-16 flex items-center justify-center text-center">
+                            <div class="min-w-20 flex items-center justify-center text-center">
                               {{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes }}
                             </div>
 
-                            <div class="min-w-16 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               {{ shift.rate | currency }}
                             </div>
 
-                            <div class="min-w-24 flex items-center justify-center text-center">
+                            <div class="min-w-28 flex items-center justify-center text-center">
                               {{
                                 rate_lists.find(item => item.value === shift.locum_detail_rate_type_id)
                                   ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label
@@ -399,7 +399,7 @@
                               />
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="w-auto flex items-center justify-center">
                               <button
                                 class="px-2 py-1 text-white focus:outline-none rounded uppercase w-24 border"
                                 :disabled="[true, 'true'].includes(shift.has_absences)"
@@ -427,9 +427,8 @@
                               </button>
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="w-2/12 flex items-center justify-center" v-if="[true, 'true'].includes(shift.has_late) && shift.late_hours_reason">
                               <button
-                                v-if="[true, 'true'].includes(shift.has_late) && shift.late_hours_reason"
                                 class="px-2 py-1 text-gray-700 border border-orange-500 cursor-pointer focus:outline-none rounded w-24"
                                 @click="lateChange(shift, index, i, 'late')"
                               >
@@ -454,9 +453,8 @@
                               </button>
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="w-2/12 flex items-center justify-center" v-if="[true, 'true'].includes(shift.has_absences) && shift.absent_reason">
                               <button
-                                v-if="[true, 'true'].includes(shift.has_absences) && shift.absent_reason"
                                 class="px-2 py-1 text-gray-700 border border-orange-500 cursor-pointer focus:outline-none rounded w-24"
                                 @click="lateChange(shift, index, i, 'absent')"
                               >
@@ -773,7 +771,7 @@
                             </div>
 
                             <!-- ANY ABSENCES -->
-                            <div class="flex items-center justify-center text-center min-w-32">
+                            <div class="flex items-center justify-center text-center min-w-24">
                               <button
                                 v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay"
                                 :disabled="[false, 'false'].includes(shift.dispute)"
