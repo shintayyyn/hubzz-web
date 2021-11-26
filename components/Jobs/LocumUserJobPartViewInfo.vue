@@ -44,28 +44,28 @@
         <div class="text-xs sm:text-sm overflow-y-auto flex flex-col items-center" style="max-height:205px;">
           <div style="position:sticky;top:0" class="flex justify-between w-full">
             <p
-              class="bg-white p-1 font-bold text-xs"
+              class="bg-gray-400 p-1 font-bold text-xs"
               :style="jobPart && jobPart.locum_invoiceable ? 'min-width:170px;max-width:170px' : 'min-width:190px;max-width:190px'"
             >
               DATE
             </p>
 
             <p
-              class="text-center bg-white p-1 font-bold text-xs"
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
               :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
             >
               SHIFT
             </p>
 
             <p
-              class="text-center bg-white p-1 font-bold text-xs"
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
               :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
             >
               RATE
             </p>
 
             <p
-              class="text-center bg-white p-1 font-bold text-xs"
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
               :style="jobPart && jobPart.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
             >
               POSTED BREAK
