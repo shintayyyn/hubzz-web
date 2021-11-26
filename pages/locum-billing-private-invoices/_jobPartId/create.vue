@@ -12,7 +12,7 @@
         :propJobPart="job_part"
         :taxRates="tax_rates"
         :vatRegistered="vat_registered"
-        @createInvoice="$emit('createInvoice', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
+        @createInvoice="$emit('createInvoice', $event), $router.push({ name: 'locum-billing-private-invoiced', query: {...$route.query} })"
       />
     </div>
   </div>
