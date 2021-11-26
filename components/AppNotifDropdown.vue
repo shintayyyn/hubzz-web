@@ -68,7 +68,7 @@
           <svgicon name="loader" :width="largeView ? '55' : '30'" :height="largeView ? '55' : '30'" />
         </span>
 
-        <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
+        <div v-if="!loading" class="h-full wrapper relative z-50" @scroll="scrollHandler">
           <transition-group name="fade" mode="in-out">
             <div
               v-for="notification in sortedNotifications"
