@@ -133,7 +133,7 @@
               </div>
 
               <div class="px-4">
-                <div class="overflow-x-scroll">
+                <div>
                   <!-- Headers -->
                   <div 
                     class="flex items-end text-sm pb-2 text-gray-700"
@@ -234,7 +234,7 @@
                     :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'} row` : 'min-w-3/5'"
                   >
                     <template v-if="['complete', 'terminate'].includes(type)">
-                      <div class="min-w-24 px-2 py-3">
+                      <div class="min-w-24 px-2 py-3 flex items-center">
                         {{ item.date }}
                       </div>
 

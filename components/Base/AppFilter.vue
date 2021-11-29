@@ -17,7 +17,7 @@
         <!-- Extra button slot -->
         <slot name="extraButton" />
       </div>
-      <div class="flex-end ml-auto">
+      <div class="flex-start mr-auto">
         <slot name="extraFarRight"/>
       </div>
     </div>

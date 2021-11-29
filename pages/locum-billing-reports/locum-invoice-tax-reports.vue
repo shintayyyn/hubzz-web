@@ -109,7 +109,7 @@
       <div class="w-full flex flex-col flex-wrap items-left text-lg font-semibold">
         <div>
           <!-- {{`Total Nett Amount: £${sumNettAmount | currency}`}} -->
-          Total Nett Amount: £{{ sumNettAmount | currency }}
+          Total Net Amount: £{{ sumNettAmount | currency }}
         </div>
         <div>
           Total NI Amount: £{{ sumNiAmount | currency }}

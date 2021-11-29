@@ -22,7 +22,7 @@
           v-model="practiceForm.email"
           :type="'email'"
           :name="'email'"
-          :label="'Email address'"
+          :label="'Email Address'"
           :error="formError.find(item => item.field === 'email')"
           required
           @submit="save"
@@ -56,7 +56,7 @@
           v-model="practiceForm.first_name"
           :type="'text'"
           :name="'first_name'"
-          :label="'First name'"
+          :label="'First Name'"
           :error="formError.find(item => item.field === 'first_name')"
           required
           @submit="save"
@@ -67,7 +67,7 @@
           v-model="practiceForm.last_name"
           :type="'text'"
           :name="'last_name'"
-          :label="'Last name'"
+          :label="'Last Name'"
           :error="formError.find(item => item.field === 'last_name')"
           required
           @submit="save"
@@ -96,7 +96,7 @@
         <AppInput
           v-model="practiceForm.memorable_word_category_id"
           type="select"
-          label="Memorable word category"
+          label="Memorable Word Category"
           placeholder="Select..."
           :error="formError.find(item => item.field === 'memorable_word_category_id')"
           :items="memorableWordCategoriesSelectionList"
@@ -106,7 +106,7 @@
         <AppInput
           v-model="practiceForm.memorable_word"
           type="text"
-          label="Memorable word"
+          label="Memorable Word"
           placeholder="Your memorable word"
           :error="formError.find(error => error.field === 'memorable_word')"
           required
@@ -114,7 +114,7 @@
 
         <AppDate
           v-model="practiceForm.memorable_date"
-          label="Memorable date"
+          label="Memorable Date"
           :error="formError.find(item => item.field === 'memorable_date')"
           required
         />
@@ -122,7 +122,7 @@
         <AppInput
           v-model="practiceForm.memorable_number"
           type="number"
-          label="Memorable 6 digit number"
+          label="Memorable 6 Digit Number"
           placeholder="Your memorable number"
           :error="formError.find(error => error.field === 'memorable_number')"
           required
@@ -143,7 +143,7 @@
             v-model="locumForm.email"
             :type="'email'"
             :name="'email'"
-            :label="'Email address'"
+            :label="'Email Address'"
             :error="formError.find(item => item.field === 'email')"
             required
             @submit="save"
@@ -178,7 +178,7 @@
             v-model="locumForm.first_name"
             :type="'text'"
             :name="'first_name'"
-            :label="'First name'"
+            :label="'First Name'"
             :error="formError.find(item => item.field === 'first_name')"
             required
             @submit="save"
@@ -189,7 +189,7 @@
             v-model="locumForm.last_name"
             :type="'text'"
             :name="'last_name'"
-            :label="'Last name'"
+            :label="'Last Name'"
             :error="formError.find(item => item.field === 'last_name')"
             required
             @submit="save"
@@ -242,7 +242,7 @@
             v-model="locumForm.mobile_number"
             type="text"
             name="mobile_number"
-            label="Mobile number"
+            label="Mobile Number"
             :error="formError.find(item => item.field === 'mobile_number')"
             :limit="11"
             :showMobilePrefix="true"
@@ -256,7 +256,7 @@
             v-model="locumForm.home_number"
             type="text"
             name="home_number"
-            label="Home number"
+            label="Home Number"
             :limit="11"
             @keydown="inputTelephone($event)"
             @submit="save"
@@ -266,7 +266,7 @@
             v-model="locumForm.work_number"
             type="text"
             name="work_number"
-            label="Work number"
+            label="Work Number"
             :limit="11"
             @keydown="inputTelephone($event)"
             @submit="save"
@@ -279,7 +279,7 @@
               v-model="locumForm.post_code"
               :urlIndex="'/api/v1/postcode-coordinates'"
               :name="'post_code'"
-              :label="'Post code'"
+              :label="'Post Code'"
               :error="formError.find(item => item.field === 'post_code')"
               :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
               required
@@ -290,7 +290,7 @@
               v-model="locumForm.address_line_1"
               :type="'text'"
               :name="'address_line_1'"
-              :label="'Address line 1'"
+              :label="'Address Line 1'"
               :error="formError.find(item => item.field === 'address_line_1')"
               :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
               required
@@ -302,7 +302,7 @@
               v-model="locumForm.address_line_2"
               :type="'text'"
               :name="'address_line_2'"
-              :label="'Address line 2 (optional)'"
+              :label="'Address Line 2 (optional)'"
               :inStyle="'background-color:#dae1e7;border-color:white; padding: 8px 12px;'"
               @submit="save"
             />
@@ -324,7 +324,7 @@
             <AppInput
               v-model="locumForm.memorable_word_category_id"
               type="select"
-              label="Memorable word category"
+              label="Memorable Word Category"
               placeholder="Select..."
               :error="formError.find(item => item.field === 'memorable_word_category_id')"
               :items="memorableWordCategoriesSelectionList"
@@ -334,7 +334,7 @@
             <AppInput
               v-model="locumForm.memorable_word"
               type="text"
-              label="Memorable word"
+              label="Memorable Word"
               placeholder="Your memorable word"
               :error="formError.find(error => error.field === 'memorable_word')"
               required
@@ -342,7 +342,7 @@
 
             <AppDate
               v-model="locumForm.memorable_date"
-              label="Memorable date"
+              label="Memorable Date"
               :error="formError.find(item => item.field === 'memorable_date')"
               required
             />
@@ -350,7 +350,7 @@
             <AppInput
               v-model="locumForm.memorable_number"
               type="number"
-              label="Memorable 6 digit number"
+              label="Memorable 6 Digit Number"
               placeholder="Your memorable number"
               :error="formError.find(error => error.field === 'memorable_number')"
               required
