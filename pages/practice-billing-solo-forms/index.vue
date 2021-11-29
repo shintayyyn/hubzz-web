@@ -286,14 +286,14 @@
           v-if="!locumSoloForms.length && !isFiltered"
           class="flex justify-center"
         >
-          You do not have any solo forms.
+          You do not have any Solo Forms.
         </div>
 
         <div
           v-if="!locumSoloForms.length && isFiltered"
           class="flex justify-center py-4"
         >
-          No solo forms found.
+          No Solo Forms found.
         </div>
 
         <div v-if="locumSoloFormIdToSign" class="p-2">

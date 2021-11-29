@@ -115,7 +115,7 @@
           </p>
 
           <div class="mt-2 flex flex-col md:flex-row">
-            <div class="md:w-3/5">
+            <div class="md:w-3/5 md:mr-2">
               <p>Job Status</p>
 
               <div class="flex items-center">
@@ -137,7 +137,7 @@
               <div v-if="$auth.user.domain === 'Practice'" class="flex items-center">
                 <span class="bg-job-unfilled w-2 h-2 md:w-3 md:h-3 rounded border border-white p-2" />
 
-                <p class="ml-2">
+                <p class="ml-2 no-wrap-text">
                   Unfilled Jobs, Withdrawn Jobs
                 </p>
               </div>
