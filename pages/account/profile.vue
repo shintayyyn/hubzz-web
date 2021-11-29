@@ -749,7 +749,7 @@
                 v-model="form.referee_2_contact_name"
                 :type="'text'"
                 :name="'referee_2_contact_name'"
-                :label="'Contact name'"
+                :label="'Contact Name'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :error="formError.find(item => item.field === 'referee_2_contact_name')"
               />
