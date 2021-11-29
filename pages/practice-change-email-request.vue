@@ -32,7 +32,7 @@
               <AppInput
                 v-model="firstName"
                 type="text"
-                label="First name"
+                label="First Name"
                 placeholder="Your first name"
                 :error="formErrors.find(error => error.field === 'first_name')"
                 required
@@ -41,7 +41,7 @@
               <AppInput
                 v-model="lastName"
                 type="text"
-                label="Last name"
+                label="Last Name"
                 placeholder="Your last name"
                 :error="formErrors.find(error => error.field === 'last_name')"
                 required
@@ -59,7 +59,7 @@
                 v-model="mobileNumber"
                 type="text"
                 name="mobile_number"
-                label="Mobile number"
+                label="Mobile Number"
                 :limit="11"
                 :showMobilePrefix="true"
                 @keydown="inputNumberOnly($event)"

@@ -581,7 +581,7 @@ export default {
         str = "You do not have any issued invoices."
         break
       case "solo-form":
-        str = "You do not have any solo forms."
+        str = "You do not have any Solo Forms."
         break
       case "pension-form-a":
         str = "You do not have any form a's."

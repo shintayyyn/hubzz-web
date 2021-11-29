@@ -50,7 +50,9 @@
       class="shield"
       @click="$router.go(-1)"
     /> -->
-    <nuxt-child />
+    <div class="pr-5">
+      <nuxt-child />
+    </div>
 
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"

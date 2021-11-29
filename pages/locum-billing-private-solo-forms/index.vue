@@ -49,7 +49,7 @@
         </AppTable>
 
         <div v-else class="flex justify-center">
-          You do not have any solo forms.
+          You do not have any Solo Forms.
         </div>
       </div>
     </transition>

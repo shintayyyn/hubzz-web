@@ -222,7 +222,7 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Job Number',
+          title: 'Job Part Number',
           key: 'job_part_number',
           sort_key: 'job_part_number',
           column: item => item.job_part_number,
@@ -249,7 +249,7 @@ export default {
           flexShrink: 0,
         },
         {
-          title: '£ NHSPS Pension Contribution Amount',
+          title: 'NHSPS Pension Contribution Amount',
           key: 'nhsps_pension_contributions_formatted',
           sort_key: 'nhsps_pension_contributions',
           column: item => item.nhsps_pension_contributions_formatted,
@@ -301,7 +301,7 @@ export default {
   mounted () {      
     const {
       practice_name_includes: practiceNameIncludes,
-      order_by: orderBy = [],
+      order_by: orderBy = ['date_start'],
       page,
     } = this.$route.query
 
