@@ -21,7 +21,7 @@
 
           <nuxt-link
             :to="navigationTab.route"
-            :event="$route.path.includes(navigationTab.route) ? '' : 'click'"
+            :event="$route.path.includes(navigationTab.route) ? 'click' : 'click'"
             class="block no-underline pl-4 py-3 mx-4 transition-hover"
             :class="navigationTab.active ? 'text-white font-bold' : 'text-gray-500 hover:text-white hover:font-bold'"
           >
