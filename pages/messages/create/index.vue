@@ -46,6 +46,8 @@ export default {
     if (window.innerWidth < 768) {
       this.$store.commit("IS_MOBILE", false)
     }
+
+    this.$store.commit('chat/SET_MESSAGES', [])
   },
 
   created () {
