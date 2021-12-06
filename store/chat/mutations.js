@@ -8,6 +8,11 @@ export default {
   SET_TOTAL_CONVERSATIONS_COUNT (state, payload) {
     state.conversations_count = payload
   },
+
+  CLEAR_MESSAGES (state) {
+    state.messages = []
+  },
+
   SET_MESSAGES (state, messages) {
     state.messages = messages
       .filter((v, i, a) => a.findIndex(({ id, }) => id === v.id) === i)

@@ -47,7 +47,7 @@ export default {
       this.$store.commit("IS_MOBILE", false)
     }
 
-    this.$store.commit('chat/SET_MESSAGES', [])
+    this.$store.commit('chat/CLEAR_MESSAGES')
   },
 
   created () {
