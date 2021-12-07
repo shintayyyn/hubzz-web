@@ -83,7 +83,7 @@
       </nuxt-link>
     </div>
 
-    <AppFilter :enableSearch="false" v-if="(!job_parts.length && isFiltered) || (!initialLoading && job_parts.length > 0) || (initialLoading && isFiltered)">
+    <AppFilter v-if="(!job_parts.length && isFiltered) || (!initialLoading && job_parts.length > 0) || (initialLoading && isFiltered)" :enableSearch="false">
       <template v-slot:extraButton>
         <AppButton
           v-if="showRefresh"
@@ -403,7 +403,7 @@ export default {
     AppButton,
     AppConfirmationModal,
     AppTable,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -493,7 +493,7 @@ export default {
           name: "Invoice Number",
           dataIndex: "locum_invoice_invoice_number",
           sortable: true,
-          width: 130
+          width: 130,
         })
       }
 
@@ -533,8 +533,18 @@ export default {
             class: "text-center",
             sortable: true,
             width: 130,
-          }
+          },
         )
+        
+        if (["issued",].includes(queryStatus)) {
+          columns.push({
+            name: "Pension Amount",
+            dataIndex: "pension_amount_formatted",
+            class: "text-center",
+            sortable: true,
+            width: 130,
+          })
+        }
       }
 
       if (["approved",].includes(queryStatus)) {
