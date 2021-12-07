@@ -999,7 +999,13 @@ export default {
       //     : total_gross_locum_wages 
       //   : total_gross_locum_wages
 
-      this.tax_amount = this.propInvoice && this.propInvoice.approved ? this.propInvoice.tax_amount : tax_amount
+      this.tax_amount = this.propInvoice
+        && (
+          this.propInvoice.approved
+          || this.propInvoice.status === 'Invoiced'
+        )
+        ? this.propInvoice.tax_amount
+        : tax_amount
 
       this.taxed_gross_rate = taxed_gross_rate
 
