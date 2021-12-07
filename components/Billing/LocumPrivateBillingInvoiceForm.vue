@@ -50,7 +50,7 @@
             {{ 
               $auth.user.locum_detail.invoice_detail 
                 && $auth.user.locum_detail.invoice_detail.utr_number 
-                && $auth.user.locum_detail.invoice_detail.employment_type === 'Self Employed' 
+                && $auth.user.locum_detail.invoice_detail.employment_type === 'Self-Employed' 
                 ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
                 : null 
             }}

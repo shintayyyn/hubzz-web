@@ -65,26 +65,47 @@
               Tel {{ $auth.user.contact_detail.mobile_number }}
             </div>
             <div>{{ $auth.user.email }}</div>
-            <div>
-              {{ 
-                $auth.user.locum_detail.invoice_detail 
-                  && $auth.user.locum_detail.invoice_detail.utr_number 
-                  && $auth.user.locum_detail.invoice_detail.employment_type 
-                    === 'Self Employed' 
-                  ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
-                  : null 
-              }}
-            </div>
-            <div>
-              {{ 
-                $auth.user.locum_detail.invoice_detail 
-                  && $auth.user.locum_detail.invoice_detail.company_registration_number 
-                  && $auth.user.locum_detail.invoice_detail.employment_type 
-                    === 'Limited Company' 
-                  ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
-                  : null 
-              }}
-            </div>
+
+            <template v-if="propJobPart">
+              <div>
+                {{ 
+                  $auth.user.locum_detail.invoice_detail 
+                    && $auth.user.locum_detail.invoice_detail.utr_number 
+                    && $auth.user.locum_detail.invoice_detail.employment_type === 'Self-Employed' 
+                    ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
+                    : null 
+                }}
+              </div>
+              
+              <div>
+                {{ 
+                  $auth.user.locum_detail.invoice_detail 
+                    && $auth.user.locum_detail.invoice_detail.company_registration_number 
+                    && $auth.user.locum_detail.invoice_detail.employment_type === 'Limited Company' 
+                    ? `Company Registration Number ${$auth.user.locum_detail.invoice_detail.company_registration_number}` 
+                    : null 
+                }}
+              </div>
+            </template>
+
+            <template v-if="propInvoice">
+              <div>
+                {{ 
+                  propInvoice.utr_number && propInvoice.employment_type === 'Self-Employed' 
+                    ? `UTR ${propInvoice.utr_number}` 
+                    : null 
+                }}
+              </div>
+              
+              <div>
+                {{ 
+                  propInvoice.company_registration_number && propInvoice.employment_type === 'Limited Company' 
+                    ? `Company Registration Number ${propInvoice.company_registration_number}` 
+                    : null 
+                }}
+              </div>
+            </template>
+
             <div>{{ $auth.user.vat_registered && $auth.user.vat_number ? `VAT Number: ${$auth.user.vat_number}` : '' }}</div>
             <div v-if="propInvoice">
               <span>Invoice Number:</span>
