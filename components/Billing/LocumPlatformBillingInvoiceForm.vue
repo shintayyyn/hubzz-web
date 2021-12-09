@@ -313,7 +313,7 @@
             <template
               v-if="
                 (!propInvoice || !(propInvoice.approved || propInvoice.status === 'Invoiced'))
-                  && vat_registered
+                  && locum_vat_registered
               "
             >
               <div 
