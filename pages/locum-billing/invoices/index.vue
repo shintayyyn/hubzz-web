@@ -624,7 +624,7 @@ export default {
         str = "You do not have any approved job parts."
         break
       case "pension-form-b":
-        str = "You do not have any nhs form b."
+        str = "You do not have any NHS Pension Form B."
         break
       default:
         str = "You do not have any completed job parts."
