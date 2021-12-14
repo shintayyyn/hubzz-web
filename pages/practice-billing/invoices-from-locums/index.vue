@@ -616,13 +616,13 @@ export default {
         str = "You do not have any disputed invoices."
         break
       case "issued":
-        str = "You do not have any invoiced job parts."
+        str = "You do not have any issued Invoice."
         break
       case "approved":
         str = "You do not have any approved job parts."
         break
       default:
-        str = "You do not have any completed job parts."
+        str = ""
       }
       return str
     },

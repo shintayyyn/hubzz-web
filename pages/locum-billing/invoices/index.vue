@@ -63,7 +63,7 @@
 
     <div
       v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
-      class="flex flex-row justify-start overflow-x-auto"
+      class="flex flex-row justify-start overflow-x-auto mb-2"
     >
       <nuxt-link
         :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
