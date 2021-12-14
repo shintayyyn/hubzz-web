@@ -52,7 +52,7 @@
           v-if="locum_form_bs.length === 0"
           class="flex justify-center"
         >
-          You do not have any form b's.
+          You do not have any NHS Pension Form B.
         </div>
       </div>
     </transition>

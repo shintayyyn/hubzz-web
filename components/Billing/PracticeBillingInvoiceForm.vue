@@ -103,7 +103,7 @@
         </div>
       </div>
       
-      <div class="w-full border-b">
+      <div class="w-full border-b overflow-x-auto">
         <AppSchedules
           :practice_rate="practice_rate"
           :schedule="propInvoice.job_part_schedule_items"

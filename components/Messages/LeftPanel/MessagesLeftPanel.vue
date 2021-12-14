@@ -88,13 +88,25 @@
                   </div>
 
                   <span
+                    v-if="!conversation.latest_conversation_message.seen_by_receiver && conversation.latest_conversation_message.user_id !== $auth.user.id"
+                    class="absolute"
+                    style="right:0.75rem"
+                  >
+                    <svgicon
+                      :name="'bell'"
+                      width="24"
+                      class="fill-current py-1"
+                    /> 
+                  </span>
+
+                  <span
                     class="absolute w-10 h-full right-0 flex items-center text-right text-xs text-gray-600 leading-none mx-2"
                     :class="
                       parseInt($route.params.slug) === conversation.id
                         ? 'bg-gray-300'
                         : !conversation.latest_conversation_message.seen_by_receiver
                           && conversation.latest_conversation_message.user_id !== $auth.user.id
-                          ? 'font-bold bg-gray-400'
+                          ? 'font-bold bg-gray-400 hidden'
                           : 'hover:bg-gray-200'
                     "
                   >{{ $moment(conversation.latest_conversation_message.created_at).fromNow() }}</span>
