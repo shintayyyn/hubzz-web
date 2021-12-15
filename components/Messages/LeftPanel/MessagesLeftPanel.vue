@@ -27,7 +27,7 @@
       <div class="relative flex flex-col justify-between h-full border-t">
         <div
           ref="chatlist"
-          class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
+          class="chat-list w-full h-full overflow-y-auto overflow-x-hidden pb-12"
           @scroll="scrollHandler"
         >
           <template v-if="!showResult || $route.params.slug == '/messages'">
@@ -92,11 +92,7 @@
                     class="absolute"
                     style="right:0.75rem"
                   >
-                    <svgicon
-                      :name="'bell'"
-                      width="24"
-                      class="fill-current py-1"
-                    /> 
+                    <span style="height:10px;width:10px;background-color:#ff1744;border-radius:50%;display:inline-block;"></span>
                   </span>
 
                   <span
