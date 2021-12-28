@@ -83,7 +83,14 @@
       </nuxt-link>
     </div>
 
-    <AppFilter v-if="(!job_parts.length && isFiltered) || (!initialLoading && job_parts.length > 0) || (initialLoading && isFiltered)" :enableSearch="false">
+    <AppFilter
+      v-if="
+        (!job_parts.length && isFiltered)
+          || (!initialLoading && job_parts.length > 0)
+          || (initialLoading && isFiltered)
+      "
+      :enableSearch="false"
+    >
       <template v-slot:extraButton>
         <AppButton
           v-if="showRefresh"
@@ -92,6 +99,7 @@
           @click="refreshInvoices"
         />
       </template>
+
       <template v-slot:filter>
         <div class="w-32">
           <AppInput
