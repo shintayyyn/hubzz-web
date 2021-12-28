@@ -170,7 +170,7 @@
           </div>
         </div>
 
-        <div class="w-full border-b">
+        <div class="w-full border-b overflow-x-auto">
           <AppSchedules
             v-if="!taxRatesLoading"
             :practice_rate="practice_rate"
