@@ -15,7 +15,7 @@
         :value="value"
         type="input"
         :placeholder="label && nolabel ? label : 'hh:mm'"
-          class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none text-center"
+        class="focus:border-yellow-400 focus:outline-none py-1 font-bold text-xs w-full shadow-none text-center"
         :class="[error ? 'border-red-500' : '', modal === true && 'border-yellow-400', inClass, disabled ? 'cursor-not-allowed text-gray-500' : '', border ? 'border-2 rounded px-2' : 'border-b-2']"
         :style="inStyle"
         readonly
@@ -158,24 +158,64 @@ const minutes = [
 export default {
   mixins: [clickaway,],
   props: {
-    value: String,
-    name: String,
-    label: String,
-    error: Object,
-    inStyle: String,
-    required: Boolean,
-    inClass: String,
-    wrapperClass: String,
-    disabled: Boolean,
-    hourType: String,
+    value: {
+      type: String,
+      default: '',
+    },
+    
+    name: {
+      type: String,
+      default: '',
+    },
+    
+    label: {
+      type: String,
+      default: '',
+    },
+    
+    error: {
+      type: Object,
+      default: () => null,
+    },
+    
+    inStyle: {
+      type: String,
+      default: '',
+    },
+    
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    
+    inClass: {
+      type: String,
+      default: '',
+    },
+    
+    wrapperClass: {
+      type: String,
+      default: '',
+    },
+    
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    
+    hourType: {
+      type: String,
+      default: '',
+    },
+
     nolabel: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     border: {
       type: Boolean,
-      default: false
+      default: false,
     },
   },
   data () {
@@ -257,30 +297,49 @@ export default {
     },
   },
   watch: {
-    selectedHour (newValue, oldValue) {
+    selectedHour (newValue) {
       if (newValue === "24") {
         this.selectTime("00", "minute")
       }
       this.$emit("change", newValue)
     },
-    selectedMinute (newValue, oldValue) {
+    selectedMinute (newValue) {
       this.$emit("change", newValue)
     },
+
+    value () {
+      this.setHourMinuteFromValue()
+    },
   },
+
   created () {
-    if (this.value) {
-      this.selectedHour = this.value.split(":")[0]
-      this.selectedMinute = this.value.split(":")[1]
-    }
+    this.setHourMinuteFromValue()
   },
+
   methods: {
+    setHourMinuteFromValue () {
+      const hour = this.value && this.value.split(":")[0] ? this.value.split(":")[0] : ''
+
+      const minute = this.value && this.value.split(":")[1] ? this.value.split(":")[1] : ''
+
+      if (hour !== this.selectedHour) {
+        this.selectedHour = hour
+      }
+
+      if (minute !== this.selectedMinute) {
+        this.selectedMinute = minute
+      }
+    },
+
     selectTime (value, type) {
       if (type === "hour") {
         this.selectedHour = value
       }
+
       if (type === "minute") {
         this.selectedMinute = value
       }
+
       this.$emit("input", `${this.selectedHour}:${this.selectedMinute}`)
     },
     toggledOff () {

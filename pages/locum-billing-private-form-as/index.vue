@@ -49,7 +49,7 @@
         </AppTable>
 
         <div v-else class="flex justify-center">
-          You do not have any form a's.
+          You do not have any NHS Pension Form A.
         </div>
       </div>
     </transition>

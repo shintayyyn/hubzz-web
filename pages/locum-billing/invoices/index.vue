@@ -63,7 +63,7 @@
 
     <div
       v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
-      class="flex flex-row justify-start overflow-x-auto"
+      class="flex flex-row justify-start overflow-x-auto mb-2"
     >
       <nuxt-link
         :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
@@ -83,7 +83,14 @@
       </nuxt-link>
     </div>
 
-    <AppFilter :enableSearch="false" v-if="(!job_parts.length && isFiltered) || (!initialLoading && job_parts.length > 0) || (initialLoading && isFiltered)">
+    <AppFilter
+      v-if="
+        (!job_parts.length && isFiltered)
+          || (!initialLoading && job_parts.length > 0)
+          || (initialLoading && isFiltered)
+      "
+      :enableSearch="false"
+    >
       <template v-slot:extraButton>
         <AppButton
           v-if="showRefresh"
@@ -92,6 +99,7 @@
           @click="refreshInvoices"
         />
       </template>
+
       <template v-slot:filter>
         <div class="w-32">
           <AppInput
@@ -403,7 +411,7 @@ export default {
     AppButton,
     AppConfirmationModal,
     AppTable,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -493,7 +501,7 @@ export default {
           name: "Invoice Number",
           dataIndex: "locum_invoice_invoice_number",
           sortable: true,
-          width: 130
+          width: 130,
         })
       }
 
@@ -533,8 +541,18 @@ export default {
             class: "text-center",
             sortable: true,
             width: 130,
-          }
+          },
         )
+        
+        if (["issued",].includes(queryStatus)) {
+          columns.push({
+            name: "Pension Amount",
+            dataIndex: "pension_amount_formatted",
+            class: "text-center",
+            sortable: true,
+            width: 130,
+          })
+        }
       }
 
       if (["approved",].includes(queryStatus)) {
@@ -614,7 +632,7 @@ export default {
         str = "You do not have any approved job parts."
         break
       case "pension-form-b":
-        str = "You do not have any nhs form b."
+        str = "You do not have any NHS Pension Form B."
         break
       default:
         str = "You do not have any completed job parts."

@@ -41,6 +41,14 @@ export default {
     }
   },
 
+  watch: {
+    $route (newVal) {
+      if (newVal.name === "locum-billing") {
+        this.$router.push("/locum-billing/invoices?status=to-be-invoiced")
+      }
+    },
+  },
+
   mounted () {
     if (this.$route.name === "locum-billing") {
       this.$router.push("/locum-billing/invoices?status=to-be-invoiced")

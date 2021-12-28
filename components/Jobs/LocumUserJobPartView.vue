@@ -1,7 +1,7 @@
 <template>
   <div class="px-2">
     <AppLoading :loading="loading" spinner />
-<!-- 
+    <!-- 
     <div>
       <svgicon
         name="left-arrow"
@@ -20,7 +20,12 @@
       <div
         class="py-1 px-4 mx-1 rounded font-semibold text-sm"
         :class="bgStatus(job_part.locum_job_part_status)"
-        @click="['Approved','Cancelled'].includes(job_part.locum_job_part_status) ? toggle_invoice_modal = true : null"
+        @click="
+          ['Approved'].includes(job_part.locum_job_part_status)
+            || (['Cancelled'].includes(job_part.locum_job_part_status) && job_part.terminated)
+              ? toggle_invoice_modal = true
+              : null
+        "
       >
         {{ status(job_part.locum_job_part_status) }}
       </div>
@@ -213,7 +218,6 @@
 
         <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
           <div class="flex flex-col">
-
             <LocumUserJobViewJobParts :jobId="job_part.job_id" />
 
             <LocumUserJobViewJobMap
@@ -296,7 +300,7 @@ export default {
     job_part_job: {
       type: Object,
       default: () => null,
-    }
+    },
   },
 
   data () {
