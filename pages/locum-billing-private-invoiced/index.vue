@@ -52,7 +52,12 @@
               </button>
 
               <div
-                v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                v-if="
+                  !slotProps.item.locum_form_a_id
+                    && !slotProps.item.locum_solo_form_id
+                    && slotProps.item.shift && slotProps.item.shift.name !== 'OOH'
+                    && claimNhs
+                "
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
               >
@@ -60,7 +65,11 @@
               </div>
 
               <div
-                v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                v-if="
+                  !slotProps.item.locum_form_a_id
+                    && !slotProps.item.locum_solo_form_id
+                    && slotProps.item.shift && slotProps.item.shift.name === 'OOH'
+                "
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="select_invoice(slotProps.item.locum_invoice_id, 'generateSoloForm')"
               >
@@ -243,6 +252,8 @@ export default {
 
       locumSoloFormIdToPay: null,
       locumFormAIdToPay: null,
+
+      claimNhs: false,
     }
   },
 
@@ -304,6 +315,12 @@ export default {
     this.initialLoading = true
     this.getCountAndPrivateLocumInvoiced().finally(() => {
       this.initialLoading = false
+    })
+
+    this.$axios.get('/api/v1/me').then((response) => {
+      this.claimNhs = response.data.data.user.locum_detail.claim_nhs
+    }).catch((err) => {
+      console.log('err', err)
     })
   },
 
