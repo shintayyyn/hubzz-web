@@ -181,7 +181,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Duration of eact appointment?
+          Duration of each appointment?
         </div>
         
         <div class="text-xs sm:text-sm mb-6">
