@@ -77,7 +77,7 @@
                 class="text-center bg-gray-400 p-1 font-bold text-xs"
                 style="min-width:130px;max-width:130px"
               >
-                 {{ 
+                {{ 
                   job_part.status === 'Approved'
                     ? 'APPROVED BREAK'
                     : job_part.invoice_status === 'Disputed'
@@ -406,7 +406,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Duration of eact appointment?
+          Duration of each appointment?
         </div>
 
         <div class="text-xs sm:text-sm mb-6">
