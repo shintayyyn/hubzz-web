@@ -305,7 +305,7 @@
                 </p>
 
                 <p class="font-bold w-1/2 text-right">
-                  £ {{ taxed_gross_rate | currency }}
+                  £ {{ propInvoice.job_part_taxed_total_rate | currency }}
                 </p>
               </div>
             </template>
