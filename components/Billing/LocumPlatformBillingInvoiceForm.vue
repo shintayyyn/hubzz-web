@@ -405,7 +405,7 @@
                 <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
                 <div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
                 <div>Payroll bank account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
-                <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.payroll_reference_number ? propInvoiceDetail.payroll_detail.payroll_reference_number : 'xxxxx*OR' }}</div>
+                <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.reference_number ? propInvoiceDetail.payroll_detail.reference_number : 'xxxxx*OR' }}</div>
               </div>
 
               <div v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll" class="flex flex-col text-xs sm:text-sm">
