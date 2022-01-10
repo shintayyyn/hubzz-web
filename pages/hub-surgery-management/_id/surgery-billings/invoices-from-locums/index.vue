@@ -123,7 +123,7 @@
               v-model="form.ni_amount"
               :type="'number'"
               :name="'ni_amount'"
-              :label="'Ni Amount'"
+              :label="'NI Amount'"
               :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
               :error="formError.find(item => item.field === 'ni_amount')"
             />
@@ -139,7 +139,7 @@
               v-model="form.paye_amount"
               :type="'number'"
               :name="'paye_amount'"
-              :label="'Paye Amount'"
+              :label="'PAYE Amount'"
               :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
               :error="formError.find(item => item.field === 'paye_amount')"
             />
@@ -241,7 +241,7 @@ export default {
         columns.push({
           name: "Invoice No.",
           dataIndex: "invoice_number",
-          width: 130
+          width: 130,
         })
       }
 
@@ -249,7 +249,7 @@ export default {
         {
           name: "Job Part No.",
           dataIndex: "job_part_number",
-          width: 130
+          width: 130,
         },
         {
           name: "Job Title",
@@ -260,19 +260,19 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 100
+          width: 100,
         },
         {
           name: "Under IR35",
           dataIndex: "job_ir35",
           class: "text-center",
-          width: 80
+          width: 80,
         },
         {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice",
           class: "text-center",
-          width: 150
+          width: 150,
         }
       )
 
@@ -282,7 +282,7 @@ export default {
           dataIndex: "paid_formatted",
           class: "text-center",
           sortable: true,
-          width: 60
+          width: 60,
         })
       }
 
@@ -292,7 +292,7 @@ export default {
           dataIndex: "paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 100
+          width: 100,
         })
       }
 
@@ -301,7 +301,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         })
       } else if (queryStatus === "to-be-invoiced") {
         columns.push({
@@ -329,9 +329,9 @@ export default {
         columns.push({
           name: "Actions",
           dataIndex: "actions",
-          class: ["approved"].includes(queryStatus) ? "dropdown" : "text-center",
+          class: ["approved",].includes(queryStatus) ? "dropdown" : "text-center",
           initialDropdown: 'View',
-          width: ["approved"].includes(queryStatus) ? 115 : 80
+          width: ["approved",].includes(queryStatus) ? 115 : 80,
         })
       }
 
