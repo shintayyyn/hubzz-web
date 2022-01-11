@@ -214,31 +214,96 @@
             </p>
           </div>
 
-          <div 
-            v-if="(propInvoice && propInvoice.job_part_total_rate !== propInvoice.job_part_taxed_total_rate) || propInvoice.locum_user_vat_registered"
-            class="flex flex-wrap justify-between"
+          <template
+            v-if="
+              propInvoice
+                && (propInvoice.approved || propInvoice.status === 'Invoiced')
+                && propInvoice.tax_amount
+            "
           >
-            <p class="text-sm w-1/2">
-              TAX AMOUNT:
-            </p>
+            <div 
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAX AMOUNT:
+              </p>
 
-            <p class="font-bold w-1/2 text-right">
-              £ {{ tax_amount | currency }}
-            </p>
-          </div>
+              <p class="font-bold w-1/2 text-right">
+                £ {{ propInvoice.tax_amount | currency }}
+              </p>
+            </div>
 
-          <div 
-            v-if="(propInvoice && propInvoice.job_part_total_rate !== propInvoice.job_part_taxed_total_rate) || propInvoice.locum_user_vat_registered"
-            class="flex flex-wrap justify-between"
+            <div 
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAXED TOTAL WORK PAYMENT:
+              </p>
+
+              <p class="font-bold w-1/2 text-right">
+                £ {{ propInvoice.job_part_taxed_total_rate | currency }}
+              </p>
+            </div>
+          </template>
+
+          <template
+            v-if="
+              (!propInvoice || !(propInvoice.approved || propInvoice.status === 'Invoiced'))
+                && propInvoice.locum_user_vat_registered
+            "
           >
-            <p class="text-sm w-1/2">
-              TAXED TOTAL WORK PAYMENT:
-            </p>
+            <div 
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAX AMOUNT:
+              </p>
 
-            <p class="font-bold w-1/2 text-right">
-              £ {{ taxed_gross_rate | currency }}
-            </p>
-          </div>
+              <p class="font-bold w-1/2 text-right">
+                £ {{ tax_amount | currency }}
+              </p>
+            </div>
+
+            <div 
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAXED TOTAL WORK PAYMENT:
+              </p>
+
+              <p class="font-bold w-1/2 text-right">
+                £ {{ taxed_gross_rate | currency }}
+              </p>
+            </div>
+          </template>
+
+          <template v-if="false">
+            <div 
+              v-if="(propInvoice && propInvoice.job_part_total_rate !== propInvoice.job_part_taxed_total_rate) || propInvoice.locum_user_vat_registered"
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAX AMOUNT:
+              </p>
+
+              <p class="font-bold w-1/2 text-right">
+                £ {{ tax_amount | currency }}
+              </p>
+            </div>
+
+            <div 
+              v-if="(propInvoice && propInvoice.job_part_total_rate !== propInvoice.job_part_taxed_total_rate) || propInvoice.locum_user_vat_registered"
+              class="flex flex-wrap justify-between"
+            >
+              <p class="text-sm w-1/2">
+                TAXED TOTAL WORK PAYMENT:
+              </p>
+
+              <p class="font-bold w-1/2 text-right">
+                £ {{ taxed_gross_rate | currency }}
+              </p>
+            </div>
+          </template>
 
           <template v-if="propInvoice && propInvoice.approved">
             <div class="flex flex-wrap justify-between">
