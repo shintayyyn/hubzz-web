@@ -493,8 +493,8 @@
                   :name="'ni_number'"
                   :label="'NI number'"
                   :error="formError.find(item => item.field === 'ni_number')"
-                  :placeholder="'AA000000'"
-                  :limit="8"
+                  :placeholder="'AA000000A'"
+                  :limit="9"
                   required
                 />
                 <AppInput
@@ -1882,11 +1882,14 @@ export default {
 
         if (
           this.form.ni_number
-          && (!this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
-            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length
-              !== 2
+          && (
+            !this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g)
+            || this.form.ni_number.substring(0, 2).match(/[A-Za-z]/g).length !== 2
             || !this.form.ni_number.substring(2, 8).match(/[0-9]/g)
-            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6)
+            || this.form.ni_number.substring(2, 8).match(/[0-9]/g).length !== 6
+            || !this.form.ni_number.substring(8, 9).match(/[A-Za-z]/g)
+            || this.form.ni_number.substring(8, 9).match(/[A-Za-z]/g).length !== 1
+          )
         ) {
           this.formError.push({
             field: "ni_number",
