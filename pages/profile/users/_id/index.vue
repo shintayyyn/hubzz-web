@@ -166,7 +166,7 @@
   
           <AppButton
             v-if="authPermissions.includes('Deactivate Profile Users') && user.status !== 'Deactivated'"
-            :label="'Deactivate User'"
+            :label="'Delete User'"
             :disabled="loading"
             :custom-theme="'bg-red-500 hover:bg-red-600 text-white'"
             @click="modal = true"
@@ -174,7 +174,7 @@
         </div>
   
         <AppConfirmationModal
-          :label="'Proceed to deactivate this user?'"
+          :label="'Proceed to delete this user?'"
           :confirm-label="'Yes'"
           :cancel-label="'Cancel'"
           :modal="modal"
@@ -390,7 +390,7 @@ export default {
     remove () {
       this.loading = true
       this.$axios
-        .$put(`/api/v1/practice/practice-users/${this.user.id}/deactivate`)
+        .$put(`/api/v1/practice/practice-users/${this.user.id}/delete`)
         .then(res => {
           console.log(res)
           this.loading = false

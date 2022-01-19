@@ -5,7 +5,7 @@ dotenv.config()
 import path from 'path'
 
 export default {
-  mode: 'universal',
+  mode: 'spa',
 
   env: {
     API_URL: process.env.API_URL,

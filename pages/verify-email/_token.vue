@@ -15,41 +15,41 @@
 </template>
 
 <script>
-  import AppButton from "@/components/Base/AppButton"
+import AppButton from "@/components/Base/AppButton"
 
-  export default {
-    layout: "verification",
+export default {
+  layout: "verification",
 
-    components: {
-      AppButton
-    },
+  components: {
+    AppButton,
+  },
 
-    data () {
-      return {
-        emailVerificationToken: null,
-      }
-    },
-
-    async asyncData ({ app, params }) {
-      try {
-        let response = await app.$axios.get(`/api/v1/email-verification/${params.token}`)
-
-        const emailVerificationToken = response.data.data.email_verification_token
-
-        return {
-          emailVerificationToken
-        }
-      } catch (err) {
-        throw err
-      }
-    },
-
-    mounted () {
-      this.$axios.post(`/api/v1/email-verification/${this.emailVerificationToken.token}`).then(() => {
-        if (this.$auth.loggedIn) {
-          this.$auth.fetchUser()
-        }
-      })
+  data () {
+    return {
+      emailVerificationToken: null,
     }
-  }
+  },
+
+  async asyncData ({ app, params, }) {
+    try {
+      let response = await app.$axios.get(`/api/v1/email-verification/${params.token}`)
+
+      const emailVerificationToken = response.data.data.email_verification_token
+
+      return {
+        emailVerificationToken,
+      }
+    } catch (err) {
+      throw err
+    }
+  },
+
+  mounted () {
+    this.$axios.post(`/api/v1/email-verification/${this.emailVerificationToken.token}`).then(() => {
+      if (this.$auth.loggedIn) {
+        this.$auth.fetchUser()
+      }
+    })
+  },
+}
 </script>

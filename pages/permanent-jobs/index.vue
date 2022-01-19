@@ -1,6 +1,6 @@
 <template>
   <section class="flex flex-col items-start w-full">
-		<AppBreadcrumbs :links="links" v-if="$route.name !== 'permanent-jobs-index'"/>
+    <AppBreadcrumbs v-if="$route.name !== 'permanent-jobs-index'" :links="links" />
     <template v-if="$route.name === 'permanent-jobs-index'">
       <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
         <div class="flex overflow-x-auto items-center">
@@ -43,14 +43,14 @@
         </div>
       </div>
     </template>
-		
-<!-- 
+    
+    <!-- 
     <div
       v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
       class="shield"
       @click="$router.go(-1)"
     /> -->
-    <div class="pr-5">
+    <div class="pr-5 w-full">
       <nuxt-child />
     </div>
 
@@ -64,13 +64,11 @@
 </template>
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppButton from "@/components/Base/AppButton"
 import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 export default {
   components: {
-    AppButton,
     AppConfirmationModal,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -80,46 +78,46 @@ export default {
     }
   },
   computed: {
-    links() {
+    links () {
       console.log("hello world", this.$route)
       let route = this.$route
       let links = [
-						{
-							title: `${route.query.status ? route.query.status : 'Available'} Salaried Roles`,
-							url: `/permanent-jobs${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
-						},
-          ]
+        {
+          title: `${route.query.status ? route.query.status : 'Available'} Salaried Roles`,
+          url: `/permanent-jobs${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`,
+        },
+      ]
       if (route.name === 'permanent-jobs-index-create') {
         links = [
           {
             title: 'Permanent Jobs',
-            url: '/permanent-jobs'
+            url: '/permanent-jobs',
           },
           {
             title: 'Create Permanent Job',
-            url: '/permanent-jobs/create'
-          }
+            url: '/permanent-jobs/create',
+          },
         ]
       }
       if (route.params.id) {
         links.push({
           title: route.params.id,
-          url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+          url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`,
         })
       }
       if (route.params.locumId) {
         links.push({
           title: 'Applicants',
-          url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+          url: `/permanent-jobs/${route.params.id}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`,
         },
         {
           title: route.params.locumId,
-          url: `/permanent-jobs/${route.params.id}/${route.params.locumId}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`
+          url: `/permanent-jobs/${route.params.id}/${route.params.locumId}${route.query.status && route.query.status !== 'Available' ? '/?status='+route.query.status : ''}`,
         })
       }
       console.log(links)
       return links
-    }
+    },
   },
   watch: {
     authPermissions (value) {
@@ -135,7 +133,7 @@ export default {
 
       if (
         app.$auth.user.domain === "Practice"
-				&& authPermissions.includes("View Permanent Job") === false
+        && authPermissions.includes("View Permanent Job") === false
       ) {
         error({
           statusCode: 403,
@@ -145,12 +143,12 @@ export default {
       }
       if (
         app.$auth.user.domain === "Practice"
-				&& app.$auth.user.practice_detail
-				&& app.$auth.user.practice_detail.practice
-				&& app.$auth.user.practice_detail.practice.type === "Spoke"
-				&& app.$auth.user.practice_detail.practice.parent_practice_id === null
-				&& app.$auth.user.practice_detail.practice
-				  .allow_surgery_create_permanent_jobs === false
+        && app.$auth.user.practice_detail
+        && app.$auth.user.practice_detail.practice
+        && app.$auth.user.practice_detail.practice.type === "Spoke"
+        && app.$auth.user.practice_detail.practice.parent_practice_id === null
+        && app.$auth.user.practice_detail.practice
+          .allow_surgery_create_permanent_jobs === false
       ) {
         error({
           statusCode: 403,
@@ -170,8 +168,8 @@ export default {
     if (this.$auth.user.domain === "Practice") {
       if (
         this.$auth.user.practice_detail.practice.type == "Spoke"
-				&& this.$auth.user.practice_detail.practice
-				  .allow_surgery_create_permanent_jobs === false
+        && this.$auth.user.practice_detail.practice
+          .allow_surgery_create_permanent_jobs === false
       ) {
         this.spokeIsNotAllowed = true
       }

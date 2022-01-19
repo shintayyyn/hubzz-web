@@ -656,7 +656,7 @@
                   >
                     <div
                       class="bg-yellow-500 px-4 py-2 rounded cursor-pointer"
-                      @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'mandatory-child')"
+                      @click.stop.prevent="uploadCompliance(childItem.id, childItem.compliance_document_id, childItem.compliance_document_type_name, childItem.file, childItem.has_reference, childItem.reference, childItem.country_id, 'other-mandatory-child')"
                     >
                       <span class="hidden md:block">Upload</span>
                       <span class="block md:hidden">
@@ -1561,26 +1561,50 @@ export default {
           }
 
           if (this.type === "mandatory-child") {
-            let updatedMandatoryComplianceChildrenIndex = this.mandatoryComplianceDocuments
+            const safeguarding = this.mandatoryComplianceDocuments
               .find(
                 item => item.compliance_document_type_name === "Safeguarding"
               )
-              .child_locum_compliance_documents.findIndex(
-                childIndex =>
-                  childIndex.compliance_document_id
-									=== this.form.compliance_document_id
-              )
 
-            if (updatedMandatoryComplianceChildrenIndex > -1) {
-              this.mandatoryComplianceDocuments
-                .find(
-                  item => item.compliance_document_type_name === "Safeguarding"
+            if (safeguarding) {
+              let updatedMandatoryComplianceChildrenIndex = safeguarding.child_locum_compliance_documents
+                .findIndex(
+                  childIndex =>
+                    childIndex.compliance_document_id
+                    === this.form.compliance_document_id
                 )
-                .child_locum_compliance_documents.splice(
+
+              if (updatedMandatoryComplianceChildrenIndex > -1) {
+                safeguarding.child_locum_compliance_documents.splice(
                   updatedMandatoryComplianceChildrenIndex,
                   1,
                   this.getUpdatedObject(response)
                 )
+              }
+            }
+          }
+
+          if (this.type === "other-mandatory-child") {
+            const safeguarding = this.otherMandatoryComplianceDocuments
+              .find(
+                item => item.compliance_document_type_name === "Safeguarding"
+              )
+
+            if (safeguarding) {
+              let updatedOtherMandatoryComplianceChildrenIndex = safeguarding.child_locum_compliance_documents
+                .findIndex(
+                  childIndex =>
+                    childIndex.compliance_document_id
+                    === this.form.compliance_document_id
+                )
+
+              if (updatedOtherMandatoryComplianceChildrenIndex > -1) {
+                safeguarding.child_locum_compliance_documents.splice(
+                  updatedOtherMandatoryComplianceChildrenIndex,
+                  1,
+                  this.getUpdatedObject(response)
+                )
+              }
             }
           }
 
@@ -1600,26 +1624,25 @@ export default {
           }
 
           if (this.type === "optional-child") {
-            let updatedOptionalComplianceChildrenIndex = this.optionalComplianceDocuments
+            const safeguarding = this.optionalComplianceDocuments
               .find(
                 item => item.compliance_document_type_name === "Safeguarding"
               )
-              .child_locum_compliance_documents.findIndex(
+
+            if (safeguarding) {
+              let updatedOptionalComplianceChildrenIndex = safeguarding.child_locum_compliance_documents.findIndex(
                 childIndex =>
                   childIndex.compliance_document_id
-									=== this.form.compliance_document_id
+                  === this.form.compliance_document_id
               )
 
-            if (updatedOptionalComplianceChildrenIndex > -1) {
-              this.optionalComplianceDocuments
-                .find(
-                  item => item.compliance_document_type_name === "Safeguarding"
-                )
-                .child_locum_compliance_documents.splice(
+              if (updatedOptionalComplianceChildrenIndex > -1) {
+                safeguarding.child_locum_compliance_documents.splice(
                   updatedOptionalComplianceChildrenIndex,
                   1,
                   this.getUpdatedObject(response)
                 )
+              }
             }
           }
 
@@ -1671,14 +1694,11 @@ export default {
         compliance_document_id:
 					responseObject.data.locum_compliance_document.compliance_document.id,
         compliance_document_name:
-					responseObject.data.locum_compliance_document.compliance_document
-					  .name,
+					responseObject.data.locum_compliance_document.compliance_document.name,
         compliance_document_type_id:
-					responseObject.data.locum_compliance_document.compliance_document
-					  .compliance_document_type.id,
+					responseObject.data.locum_compliance_document.compliance_document.compliance_document_type.id,
         compliance_document_type_name:
-					responseObject.data.locum_compliance_document.compliance_document
-					  .compliance_document_type.name,
+					responseObject.data.locum_compliance_document.compliance_document.compliance_document_type.name,
         // compliance_document_parent_type_id: responseObject.data.locum_compliance_document,
         // compliance_document_parent_type_name: responseObject.data.locum_compliance_document,
         // parent_compliance_document_id: responseObject.data.locum_compliance_document,

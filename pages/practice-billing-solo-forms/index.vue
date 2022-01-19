@@ -132,7 +132,7 @@
           @click="filterJobParts"
         />
 
-         <AppButton
+        <AppButton
           :disabled="disabledClearFilter"
           :label="'Clear'"
           customTheme="border hover:bg-gray-200"
@@ -407,7 +407,7 @@ export default {
     AppButton,
     AppLoading,
     AppInput,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -474,13 +474,13 @@ export default {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           sortable: true,
-          width: 120
+          width: 120,
         },
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Job Title",
@@ -492,26 +492,26 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 120
+          width: 120,
         },
         {
           name: "Under IR35",
           dataIndex: "ir35_formatted",
           class: "text-center",
-          width: 100
+          width: 100,
         },
         {
           name: "Under Parent Practice",
           dataIndex: "under_parent_practice_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Locum",
@@ -523,7 +523,7 @@ export default {
           dataIndex: "actions",
           class: "dropdown",
           initialDropdown: 'View Solo Form',
-          width: 165
+          width: 165,
         },
       ]
     },
@@ -644,7 +644,7 @@ export default {
             invoice_number: this.invoice_number,
             job_part_number_includes: this.jobPartNumberIncludes,
             practice_id: this.$auth.user.practice_id,
-            locum_user_name_includes: this.locum_user_name_includes
+            locum_user_name_includes: this.locum_user_name_includes,
           },
         }),
         this.$axios.get("/api/v1/practice/locum-solo-forms", {

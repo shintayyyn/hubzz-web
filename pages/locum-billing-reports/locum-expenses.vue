@@ -184,7 +184,7 @@ export default {
     AppInput,
     AppButton,
     AppDate,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -245,16 +245,16 @@ export default {
       links: [
         {
           title: 'Billing',
-          url: '/locum-billing'
+          url: '/locum-billing',
         },
         {
           title: 'Reports',
-          url: '/locum-billing-reports'
+          url: '/locum-billing-reports',
         },
         {
-          title: 'Rep-014'
-        }
-      ]
+          title: 'Rep-014',
+        },
+      ],
     }
   },
 
@@ -346,7 +346,7 @@ export default {
       description_includes: descriptionIncludes,
       min_total: minTotal,
       max_total: maxTotal,
-      order_by: orderBy = [],
+      order_by: orderBy = ['date:desc',],
       page,
     } = this.$route.query
 
