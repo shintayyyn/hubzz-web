@@ -618,8 +618,8 @@ export default {
       }
       this.formError = []
       this.Validate(this.form, notRequired)
-      this.loadingPayment = true
       if (!this.formError.length) {
+        this.loadingPayment = true
         this.$axios
           .$put(
             `/api/v1/locum/locum-invoices/${this.invoice_id}/paid`,
