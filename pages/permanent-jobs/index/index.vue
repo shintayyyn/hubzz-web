@@ -10,7 +10,7 @@
         :buttonLabel="'Search'"
         :placeholder="'Title / Practice Name / Profession'"
         :disabled="loading"
-        @click="getPermanentJobsForLocum()"
+        @click="searchSubmit(Search)"
       />
     </div>
     <!-- Filters -->
@@ -1120,10 +1120,12 @@ export default {
               permanent_job.status = "Available"
             }
           }
-          this.loading = false
+          
           return permanent_job
         }
       )
+      
+      this.loading = false
     },
 
     async getPermanentJobsForPractice (params) {
