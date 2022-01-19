@@ -342,7 +342,7 @@
             </template>
 
             <template v-if="propInvoice && propInvoice.approved">
-              <div v-if="ni_paye_amount > 0" class="flex flex-wrap justify-between">
+              <div class="flex flex-wrap justify-between">
                 <p class="text-sm w-1/2">
                   NI / PAYE:
                 </p>
