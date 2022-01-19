@@ -289,6 +289,15 @@ export default {
           flexGrow: 1,
           flexShrink: 0,
         },
+        {
+          title: 'Paid Date',
+          key: 'paid_at_formatted',
+          sort_key: 'paid_at_formatted',
+          column: (item) => item.paid_at_formatted,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
       ]
     },
 

@@ -135,7 +135,7 @@ export default {
     ReportPagination,
     AppInput,
     AppButton,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -176,16 +176,16 @@ export default {
       links: [
         {
           title: 'Billing',
-          url: '/locum-billing'
+          url: '/locum-billing',
         },
         {
           title: 'Reports',
-          url: '/locum-billing-reports'
+          url: '/locum-billing-reports',
         },
         {
-          title: 'Rep-011'
-        }
-      ]
+          title: 'Rep-011',
+        },
+      ],
     }
   },
 
@@ -301,7 +301,7 @@ export default {
   mounted () {      
     const {
       practice_name_includes: practiceNameIncludes,
-      order_by: orderBy = ['date_start'],
+      order_by: orderBy = ['date_start:desc',],
       page,
     } = this.$route.query
 
