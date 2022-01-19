@@ -156,9 +156,9 @@
         <div class="flex flex-row flex-no-wrap justify-center">
           <AppButton
             class="mx-1"
-            :label="'Save'"
+            :label="loadingPayment ? 'Loading...' : 'Save'"
             :in-style="'padding:5px 10px'"
-            @click="confirmPayment"
+            @click="loadingPayment ? null : confirmPayment()"
           />
           <AppButton
             class="mx-1"
@@ -254,6 +254,7 @@ export default {
       locumFormAIdToPay: null,
 
       claimNhs: false,
+      loadingPayment: false,
     }
   },
 
@@ -617,6 +618,7 @@ export default {
       }
       this.formError = []
       this.Validate(this.form, notRequired)
+      this.loadingPayment = true
       if (!this.formError.length) {
         this.$axios
           .$put(
@@ -660,8 +662,40 @@ export default {
             this.form.paye_amount = null
           })
           .catch(err => {
-            console.log("err", err.response || err)
-            throw err
+            console.log('err', err.response || err)
+
+            let message = null
+
+            if (err.response) {
+              if (err.response.status === 400 && err.response.data.error_messages) {
+                this.formError = err.response.data.error_messages
+                // const formErrors = err.response.data.error_messages
+
+                // console.log('formErrors', formErrors)
+
+                // message = formErrors.map(({ message, }) => message)
+                //   .join('\n')
+              } else {
+                message = err.response.data.message
+              }
+            } else if (err.request) {
+              message = 'Something went wrong!'
+            } else {
+              message = err.message
+            }
+
+            console.log('message', message)
+
+            if (message) {
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [`${message}`,],
+              })
+            }
+          })
+          .finally(() => {
+            this.loadingPayment = false
           })
       }
     },
