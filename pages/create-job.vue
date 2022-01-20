@@ -1971,6 +1971,7 @@ export default {
             this.loading = false
           })
       }
+
       if (this.shiftErrors.length) {
         let has_empty_sched_dates = this.shiftErrors.filter(err =>
           err.field.includes("shift-")
@@ -2004,6 +2005,7 @@ export default {
               partsLabel += item
             }
           })
+          
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
