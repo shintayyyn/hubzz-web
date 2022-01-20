@@ -10,7 +10,7 @@
         :buttonLabel="'Search'"
         :placeholder="'Title / Practice Name / Profession'"
         :disabled="loading"
-        @click="getPermanentJobsForLocum()"
+        @click="searchSubmit(search)"
       />
     </div>
     <!-- Filters -->
@@ -1067,63 +1067,71 @@ export default {
 
     async getPermanentJobsForLocum (params) {
       this.loading = true
-      await this.$axios
-        .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
-        .then(res => {
-          this.permanent_jobs_for_locum_count
-						= res.data && res.data.count ? res.data.count : 0
-        })
+      try {
+        await this.$axios
+          .$get(`/api/v1/locum/permanent-jobs/count`, { params, })
+          .then(res => {
+            this.permanent_jobs_for_locum_count
+              = res.data && res.data.count ? res.data.count : 0
+          })
 
-      await this.$axios
-        .$get(`/api/v1/locum/permanent-jobs`, { params, })
-        .then(res => {
-          this.permanent_jobs_for_locum = res.data && res.data.permanent_jobs
-            ? res.data.permanent_jobs
-            : null
-        })
+        await this.$axios
+          .$get(`/api/v1/locum/permanent-jobs`, { params, })
+          .then(res => {
+            this.permanent_jobs_for_locum = res.data && res.data.permanent_jobs
+              ? res.data.permanent_jobs
+              : null
+          })
 
-      await this.$axios
-        .$get(`/api/v1/locum/permanent-job-applications/count`)
-        .then(res => {
-          this.permanent_job_applications_count
-						= res.data && res.data.count ? res.data.count : 0
-        })
+        await this.$axios
+          .$get(`/api/v1/locum/permanent-job-applications/count`)
+          .then(res => {
+            this.permanent_job_applications_count
+              = res.data && res.data.count ? res.data.count : 0
+          })
 
-      await this.$axios
-        .$get(`/api/v1/locum/permanent-job-applications`)
-        .then(res => {
-          this.permanent_job_applications = res.data && res.data.permanent_job_applications
-            ? res.data.permanent_job_applications
-            : null
-        })
+        await this.$axios
+          .$get(`/api/v1/locum/permanent-job-applications`)
+          .then(res => {
+            this.permanent_job_applications = res.data && res.data.permanent_job_applications
+              ? res.data.permanent_job_applications
+              : null
+          })
 
-      this.permanent_jobs_for_locum = await this.permanent_jobs_for_locum.map(
-        permanent_job => {
-          const permanent_job_app_found = this.permanent_job_applications.find(
-            permanent_job_application =>
-              permanent_job_application.permanent_job_id === permanent_job.id
-          )
+        this.permanent_jobs_for_locum = await this.permanent_jobs_for_locum.map(
+          permanent_job => {
+            const permanent_job_app_found = this.permanent_job_applications.find(
+              permanent_job_application =>
+                permanent_job_application.permanent_job_id === permanent_job.id
+            )
 
-          if (permanent_job_app_found) {
-            if (permanent_job_app_found.application_status === "Rejected") {
-              permanent_job.status = "Closed"
+            if (permanent_job_app_found) {
+              if (permanent_job_app_found.application_status === "Rejected") {
+                permanent_job.status = "Closed"
+              } else {
+                permanent_job.status
+                  = permanent_job_app_found.application_status_formatted
+              }
             } else {
-              permanent_job.status
-								= permanent_job_app_found.application_status_formatted
+              if (permanent_job.job_posting_status === "Closed") {
+                permanent_job.status = "Closed"
+              } else if (permanent_job.job_posting_status === "Unfilled") {
+                permanent_job.status = "Unfilled"
+              } else if (permanent_job.job_posting_status === "Available") {
+                permanent_job.status = "Available"
+              }
             }
-          } else {
-            if (permanent_job.job_posting_status === "Closed") {
-              permanent_job.status = "Closed"
-            } else if (permanent_job.job_posting_status === "Unfilled") {
-              permanent_job.status = "Unfilled"
-            } else if (permanent_job.job_posting_status === "Available") {
-              permanent_job.status = "Available"
-            }
+
+            return permanent_job
           }
-          this.loading = false
-          return permanent_job
-        }
-      )
+        )
+        
+        this.loading = false
+      } catch (err) {
+        console.log('err', err)
+
+        this.loading = false
+      }
     },
 
     async getPermanentJobsForPractice (params) {

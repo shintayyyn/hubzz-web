@@ -68,7 +68,7 @@
           <svgicon name="loader" :width="largeView ? '55' : '30'" :height="largeView ? '55' : '30'" />
         </span>
 
-        <div v-if="!loading" class="h-full wrapper" @scroll="scrollHandler">
+        <div v-if="!loading" class="h-full wrapper relative z-50" @scroll="scrollHandler">
           <transition-group name="fade" mode="in-out">
             <div
               v-for="notification in sortedNotifications"
@@ -1389,35 +1389,26 @@ export default {
         }
 
         if (jobPracticeId !== this.$auth.user.practice_id && practiceSurgeryId) {
-          this.$router.push({
-            name: "hub-surgery-management-id-surgery-sessions-index",
-            params: {
-              id: practiceSurgeryId,
-            },
-          })
-
-          setTimeout(() => {
-            if (routeParamJobPartId) {
-              this.$router.push({
-                name:
-                  "hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId",
-                params: {
-                  id: practiceSurgeryId,
-                  sessionId: routeParamId,
-                  jobPartId: routeParamJobPartId,
-                },
-              })
-            } else {
-              this.$router.push({
-                name:
-                  "hub-surgery-management-id-surgery-sessions-index-sessionId",
-                params: {
-                  id: practiceSurgeryId,
-                  sessionId: routeParamId,
-                },
-              })
-            }
-          }, 500)
+          if (routeParamJobPartId) {
+            this.$router.push({
+              name:
+                "hub-surgery-management-id-surgery-sessions-index-sessionId-job-parts-jobPartId",
+              params: {
+                id: practiceSurgeryId,
+                sessionId: routeParamId,
+                jobPartId: routeParamJobPartId,
+              },
+            })
+          } else {
+            this.$router.push({
+              name:
+                "hub-surgery-management-id-surgery-sessions-index-sessionId",
+              params: {
+                id: practiceSurgeryId,
+                sessionId: routeParamId,
+              },
+            })
+          }
         } else {
           if (this.$route.name === "job-parts-index") {
             if (routeParamJobPartId) {

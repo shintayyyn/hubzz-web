@@ -27,7 +27,7 @@
               </div>
             </div>
           </div>
-          <div class="flex justify-start items-start z-50">
+          <div class="flex justify-start items-start z-40">
             <template v-if="user.is_favorite">
               <svgicon
                 name="on-star"
@@ -118,23 +118,6 @@
               </div>
               <div class="text-xs sm:text-sm mb-6">
                 {{ user.locum_detail.special_requirements ? user.locum_detail.special_requirements : '(none)' }}
-              </div>
-            </div>
-
-            <div>
-              <div class="font-bold text-sm sm:text-md">
-                Preferred rates
-              </div>
-              <div class="flex flex-col mb-8">
-                <div
-                  v-for="item in user.locum_detail.rates"
-                  :key="item.id"
-                  class="flex flex-row flex-no-wrap mt-2"
-                >
-                  <div class="text-xs sm:text-sm">
-                    {{ item.rate_type.name }}: £ {{ item.min | currency }}
-                  </div>
-                </div>
               </div>
             </div>
 

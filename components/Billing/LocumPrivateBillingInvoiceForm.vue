@@ -50,7 +50,7 @@
             {{ 
               $auth.user.locum_detail.invoice_detail 
                 && $auth.user.locum_detail.invoice_detail.utr_number 
-                && $auth.user.locum_detail.invoice_detail.employment_type === 'Self Employed' 
+                && $auth.user.locum_detail.invoice_detail.employment_type === 'Self-Employed' 
                 ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` 
                 : null 
             }}
@@ -284,8 +284,8 @@
           <div>Payroll company name: {{ propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx' }}</div>
           <div>Bank: {{ propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx' }}</div>
           <div>Sort code: {{ propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx' }}</div>
-          <div>Payroll acount number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
-          <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.payroll_reference_number ? propInvoiceDetail.payroll_detail.payroll_reference_number : 'xxxxx*OR' }}</div>
+          <div>Payroll account number: {{ propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR' }}</div>
+          <div>Payroll reference number: {{ propInvoiceDetail.payroll_detail.reference_number ? propInvoiceDetail.payroll_detail.reference_number : 'xxxxx*OR' }}</div>
         </div>
         
         <div
@@ -416,12 +416,23 @@ export default {
       const formattedDateStart = this.$moment(this.propJobPart.date_start).format("DD/MM/YYYY")
       const formattedDateEnd = this.$moment(this.propJobPart.date_end).format("DD/MM/YYYY")
       const shiftName = this.propJobPart.job.shift.name
-      const totalHoursOf = this.propJobPart.final_hours.toFixed(2)
+      // const totalHoursOf = this.propJobPart.final_hours.toFixed(2)
+
+      const jobPartTotalOriginalHoursInMinutes = this.propJobPart.job_part_total_original_hours_in_minutes
+
+      const jobPartTotalOriginalHoursInMinutesHoursOnly = Math.floor(jobPartTotalOriginalHoursInMinutes / 60)
+      const jobPartTotalOriginalHoursInMinutesMinutesOnly = jobPartTotalOriginalHoursInMinutes % 60
+
+      const hrOrHrs = jobPartTotalOriginalHoursInMinutesHoursOnly > 1 ? 'hrs' : 'hr'
+      const minOrMins = jobPartTotalOriginalHoursInMinutesMinutesOnly > 1 ? 'mins' : 'min'
+      const hasMin = jobPartTotalOriginalHoursInMinutesMinutesOnly > 0
 
       const description
         = `Job number ${jobPartNumber} ${jobType} Job at £${jobRate} ${jobRateTypeName}`
         + ` from ${formattedDateStart} to ${formattedDateEnd} / ${shiftName} /`
-        + ` Total hours of ${totalHoursOf}`
+        // + ` Total hours of ${totalHoursOf}`
+        + ` Total hours of ${jobPartTotalOriginalHoursInMinutesHoursOnly} ${hrOrHrs}`
+        + (hasMin ? ` ${jobPartTotalOriginalHoursInMinutesMinutesOnly} ${minOrMins}` : '')
 
       this.form.items = [
         {

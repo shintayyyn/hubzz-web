@@ -162,6 +162,7 @@ export default {
           || this.$router.app._route.name === "messages-create-userId"
         )
       ) {
+        commit('CLEAR_MESSAGES')
         this.$router.push(`/messages/${conversation.id}`)
         commit("SET_ACTIVE_CONVERSATION", conversation.id)
       }

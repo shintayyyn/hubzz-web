@@ -28,7 +28,7 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-col bg-white border rounded border-gray-500">
+            <div class="relative flex flex-col bg-white border rounded border-gray-500 z-20">
               <div
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="$router.push({ name: 'locum-billing-private-invoices-locumInvoiceId-edit', params: { locumInvoiceId: slotProps.item.locum_invoice_id } })"
@@ -52,7 +52,12 @@
               </button>
 
               <div
-                v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                v-if="
+                  !slotProps.item.locum_form_a_id
+                    && !slotProps.item.locum_solo_form_id
+                    && slotProps.item.shift && slotProps.item.shift.name !== 'OOH'
+                    && claimNhs
+                "
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
               >
@@ -60,7 +65,11 @@
               </div>
 
               <div
-                v-if="!slotProps.item.locum_form_a_id && !slotProps.item.locum_solo_form_id"
+                v-if="
+                  !slotProps.item.locum_form_a_id
+                    && !slotProps.item.locum_solo_form_id
+                    && slotProps.item.shift && slotProps.item.shift.name === 'OOH'
+                "
                 class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
                 @click="select_invoice(slotProps.item.locum_invoice_id, 'generateSoloForm')"
               >
@@ -124,7 +133,7 @@
           v-model="form.ni_amount"
           :type="'number'"
           :name="'ni_amount'"
-          :label="'Ni Amount'"
+          :label="'NI Amount'"
           :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
           :error="formError.find(item => item.field === 'ni_amount')"
         />
@@ -140,16 +149,16 @@
           v-model="form.paye_amount"
           :type="'number'"
           :name="'paye_amount'"
-          :label="'Paye Amount'"
+          :label="'PAYE Amount'"
           :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
           :error="formError.find(item => item.field === 'paye_amount')"
         />
         <div class="flex flex-row flex-no-wrap justify-center">
           <AppButton
             class="mx-1"
-            :label="'Save'"
+            :label="loadingPayment ? 'Loading...' : 'Save'"
             :in-style="'padding:5px 10px'"
-            @click="confirmPayment"
+            @click="loadingPayment ? null : confirmPayment()"
           />
           <AppButton
             class="mx-1"
@@ -243,6 +252,9 @@ export default {
 
       locumSoloFormIdToPay: null,
       locumFormAIdToPay: null,
+
+      claimNhs: false,
+      loadingPayment: false,
     }
   },
 
@@ -304,6 +316,12 @@ export default {
     this.initialLoading = true
     this.getCountAndPrivateLocumInvoiced().finally(() => {
       this.initialLoading = false
+    })
+
+    this.$axios.get('/api/v1/me').then((response) => {
+      this.claimNhs = response.data.data.user.locum_detail.claim_nhs
+    }).catch((err) => {
+      console.log('err', err)
     })
   },
 
@@ -525,6 +543,13 @@ export default {
           locum_invoice_id: this.invoice_id,
         })
         .then(res => {
+          // get job part
+          const jobPart = this.job_parts.find((jobPart) => !jobPart.locum_form_a_id && !jobPart.locum_solo_form_id && jobPart.locum_invoice_id === this.invoice_id)
+
+          // put temp value
+          jobPart.locum_form_a_id = 'generating form...'
+          jobPart.locum_solo_form_id = 'loading...'
+
           this.getPrivateLocumInvoiced()
 
           this.$store.commit("SET_NOTIFICATION", {
@@ -594,6 +619,7 @@ export default {
       this.formError = []
       this.Validate(this.form, notRequired)
       if (!this.formError.length) {
+        this.loadingPayment = true
         this.$axios
           .$put(
             `/api/v1/locum/locum-invoices/${this.invoice_id}/paid`,
@@ -636,8 +662,40 @@ export default {
             this.form.paye_amount = null
           })
           .catch(err => {
-            console.log("err", err.response || err)
-            throw err
+            console.log('err', err.response || err)
+
+            let message = null
+
+            if (err.response) {
+              if (err.response.status === 400 && err.response.data.error_messages) {
+                this.formError = err.response.data.error_messages
+                // const formErrors = err.response.data.error_messages
+
+                // console.log('formErrors', formErrors)
+
+                // message = formErrors.map(({ message, }) => message)
+                //   .join('\n')
+              } else {
+                message = err.response.data.message
+              }
+            } else if (err.request) {
+              message = 'Something went wrong!'
+            } else {
+              message = err.message
+            }
+
+            console.log('message', message)
+
+            if (message) {
+              this.$store.commit('SET_NOTIFICATION', {
+                enabled: true,
+                status: 'danger',
+                text: [`${message}`,],
+              })
+            }
+          })
+          .finally(() => {
+            this.loadingPayment = false
           })
       }
     },

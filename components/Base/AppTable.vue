@@ -52,15 +52,15 @@
               <div
                 v-for="(column, index) in columns"
                 :key="index"
+                :ref="`col${index}`"
                 class="flex-1 px-1 break-word hyphens h-full"
                 :class="column.class"
                 :style="`min-width: 100px; ${column.width ? `max-width: ${column.width}px` : ''}; ${column.dataIndex !== 'actions' ? countLines(index, column.width, rowIndex) : '' }`"
-                :ref="`col${index}`"
                 style="line-height:20px; "
               >
                 <template v-if="Array.isArray(dataCell(item, column))">
-                  <div v-for="(item, index) in dataCell(item, column)" :key="`${item}-${index}`">
-                    {{ item }}
+                  <div v-for="(childItem, childIndex) in dataCell(item, column)" :key="`${childItem}-${childIndex}`">
+                    {{ childItem }}
                   </div>
                 </template>
                 <template v-else>
@@ -69,26 +69,33 @@
                   </template>
                   <template v-if="column.dataIndex === 'actions'">
                     <template v-if="column.class.includes('dropdown')">
-                      <div class="relative" @click="dropdownIndex===rowIndex ? dropdownIndex=null : dropdownIndex=rowIndex" >
+                      <div class="relative" @click="dropdownIndex===rowIndex ? dropdownIndex=null : dropdownIndex=rowIndex">
                         <div class="flex items-center w-full">
-                          <div class="flex flex-col relative w-full" >
-                            <div class="cursor-pointer rounded flex items-center justify-between px-2 text-xs border border-gray-500 bg-white"
-                              :class="dropdownIndex !== null && dropdownIndex===rowIndex ? 'bg-white' : ''">
-                                <span>{{ column.initialDropdown ? column.initialDropdown : 'Select Action' }}</span>
-                                <span v-if="dropdownIndex!==rowIndex"><svgicon name="caret-down" width="8" /></span>
-                              </div>
-                              <div class="absolute bottom-0 "
-                              :class="(items.length > 1 && total > perPage-5) && rowIndex === items.length-1 ? 'dropdown-up' :'dropdown'"
-                                v-if="dropdownIndex !== null && dropdownIndex===rowIndex">
-                                  <slot name="actions" :item="item" @click="$emit('click', item)"/>
-                              </div>
-                          </div>
-                          <span 
-                              v-if="dropdownIndex !== null && dropdownIndex===rowIndex"
-                              class="p-1 bg-orange-400 ml-1 rounded"
+                          <div class="flex flex-col relative w-full">
+                            <div
+                              class="cursor-pointer rounded flex items-center justify-between px-2 text-xs border border-gray-500 bg-white"
+                              :class="dropdownIndex !== null && dropdownIndex===rowIndex ? 'bg-white' : ''"
                             >
+                              <span>{{ column.initialDropdown ? column.initialDropdown : 'Select Action' }}</span>
+                              <span v-if="dropdownIndex!==rowIndex"><svgicon name="caret-down" width="8" /></span>
+                            </div>
+
+                            <div
+                              v-if="dropdownIndex !== null && dropdownIndex===rowIndex"
+                              style="z-index: 1;"
+                              class="absolute bottom-0"
+                              :class="(items.length > 1 && total > perPage-5) && rowIndex === items.length-1 ? 'dropdown-up' :'dropdown'"
+                            >
+                              <slot name="actions" :item="item" @click="$emit('click', item)" />
+                            </div>
+                          </div>
+
+                          <span 
+                            v-if="dropdownIndex !== null && dropdownIndex===rowIndex"
+                            class="p-1 bg-orange-400 ml-1 rounded"
+                          >
                             <svgicon name="left-arrow" style="transform:rotate(180deg)" width="8" />
-                            </span>
+                          </span>
                         </div>
                       </div>
                     </template>
@@ -155,7 +162,6 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination"
 import AppLoading from "@/components/Base/AppLoading"
-import { isArray } from 'highcharts'
 export default {
   components: {
     AppLoading,
@@ -189,28 +195,33 @@ export default {
     orderBy: {
       type: Array,
       required: false,
+      default: () => [],
     },
     routerLink: {
       type: [String, Function,],
+      default: () => null,
     },
     routerId: {
       type: String,
+      default: () => null,
     },
     customWidth: {
       type: Number,
+      default: () => null,
     },
     minHeight: {
       type: String,
+      default: () => null,
     },
     noTextResize: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data () {
     return {
       params: [],
-      dropdownIndex: null
+      dropdownIndex: null,
       // totalPages: 0
     }
   },
@@ -338,7 +349,7 @@ export default {
       }
       return str
     },
-    countLines(index, width, rowIndex) {
+    countLines (index, width, rowIndex) {
       if (this.noTextResize) return
       let el = null
       if (this.$refs[`col${index}`]) {
@@ -373,7 +384,7 @@ export default {
     max-height: 50px;
   }
   .dropdown, .dropdown-up {
-    z-index: 1;
+    /* z-index: 1; */
     width: 100%;
     /* margin-top: -4px; */
   }

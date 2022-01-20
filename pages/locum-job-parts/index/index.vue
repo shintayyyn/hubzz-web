@@ -5,8 +5,7 @@
         <AppLoading :loading="initialLoading" spinner />
       </div>
 
-      <div  v-if="!initialLoading">
-
+      <div v-if="!initialLoading">
         <AppFilter searchLabel="Job Search" @onTabChange="onTabChange">
           <template v-slot:search>
             <div class="w-32">
@@ -17,9 +16,9 @@
                 :name="'job_rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
 
@@ -63,7 +62,7 @@
             </div>
 
             <div class="" style="width: 7em">
-              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" nolabel border/>
+              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" nolabel border />
             </div>
 
             <div class="" style="width: 8em">
@@ -80,7 +79,7 @@
             </div>
 
             <div class="" style="width: 7em">
-              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" nolabel border/>
+              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" nolabel border />
             </div>
             
             <div class="">
@@ -137,9 +136,9 @@
                 :name="'job_rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
 
@@ -183,7 +182,7 @@
             </div>
 
             <div class="" style="width: 7em">
-              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" nolabel border/>
+              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" nolabel border />
             </div>
 
             <div class="" style="width: 8em">
@@ -200,21 +199,21 @@
             </div>
 
             <div class="" style="width: 7em">
-              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" nolabel border/>
+              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" nolabel border />
             </div>
 
             <div class="w-32">
-            <AppInput
-              v-model="invoice_status"
-              :wrapperClass="'px-1'"
-              :type="'select'"
-              :name="'invoice_status'"
-              :label="'Invoice Status'"
-              :items="invoiceStatusList"
-              nolabel
-              border
-            />
-          </div>
+              <AppInput
+                v-model="invoice_status"
+                :wrapperClass="'px-1'"
+                :type="'select'"
+                :name="'invoice_status'"
+                :label="'Invoice Status'"
+                :items="invoiceStatusList"
+                nolabel
+                border
+              />
+            </div>
 
             <AppButton
               class="mr-1"
@@ -458,7 +457,7 @@ export default {
     AppPostCode,
     AppButton,
     AppLoading,
-    AppFilter
+    AppFilter,
   },
 
   props: {
@@ -708,7 +707,7 @@ export default {
     async "$route.query" (newValue, oldValue) {
       let newStatus = newValue.status
       let oldStatus = oldValue.status
-      if (newStatus && newStatus !== null && newStatus !== oldStatus) {
+      if (newStatus !== oldStatus) {
         this.current_page = 1
         this.filterModal = false
         this.showRefresh = false
@@ -805,7 +804,7 @@ export default {
   },
 
   methods: {
-    onTabChange(tab) {
+    onTabChange (tab) {
       if (tab && this.filterTab !== tab) {
         this.clearFilters()
         this.filterTab = tab

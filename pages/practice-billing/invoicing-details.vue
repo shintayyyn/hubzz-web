@@ -3,33 +3,35 @@
     <div class="rounded-lg bg-gray-300 p-4 mb-4 my-2 flex ">
       <div class="w-1/3 flex flex-col py-2 mb-1 md:mb-2">
         <div class="relative flex flex-wrap leading-none items-center">
-          <label class="text-xs sm:text-sm py-1">Sage Reference</label>
+          <label class="text-xs sm:text-sm py-1">SAGE Reference</label>
         </div>
 
         <div class="flex flex-row justify-start mt-1">
           <div class="flex flex-col w-full mt-1">
-            <span class="ml-6 text-md sm:text-lg font-bold">{{ (practice && practice.sage_ref) || 'N/A' }}</span>
+            <span class="text-md sm:text-lg font-bold">{{ (practice && practice.sage_ref) || 'N/A' }}</span>
           </div>
         </div>
       </div>
 
       <div class="w-2/3">
-        <div class="relative flex flex-wrap leading-none items-center">
+        <!-- <div class="relative flex flex-wrap leading-none items-center">
           <label class="text-xs sm:text-sm py-1">Rates</label>
-        </div>
+        </div> -->
 
-        <div class="flex">
-          <div v-for="practiceRate in practice.practice_rates" v-if="practice" :key="`practice_rate_${practiceRate.type}`"
+        <div v-if="practice" class="flex">
+          <div
+            v-for="practiceRate in practice.practice_rates"
+            :key="`practice_rate_${practiceRate.type}`"
             class="pl-2 w-1/2"
           >
             <div class="flex flex-col py-2 mb-1 md:mb-2">
               <div class="relative flex flex-wrap leading-none items-center">
-                <label class="text-xs sm:text-sm py-1">{{ practiceRate.type }}</label>
+                <label class="text-xs sm:text-sm py-1">{{ practiceRate.type }} Rate</label>
               </div>
 
               <div class="flex flex-row justify-start mt-1">
                 <div class="flex flex-col w-full mt-1">
-                  <span class="ml-6 text-md sm:text-lg font-bold">£
+                  <span class="text-md sm:text-lg font-bold">£
                     {{ practiceRate.rate ? practiceRate.rate.toFixed(2) : 'N/A' }}</span>
                 </div>
               </div>
@@ -46,18 +48,18 @@
       :label="'Are you VAT registered?'"
     />
 
-    <div class="flex flex-wrap items-end" v-if="form.vat_registered">
+    <div v-if="form.vat_registered" class="flex flex-wrap items-end">
       <AppInput 
-        class="w-full md:w-1/2 md:px-2"
-        v-model="form.vat_number" 
+        v-model="form.vat_number"
+        class="w-full md:w-1/2 md:px-2" 
         :type="'text'" 
         :name="'vat_number'" 
         :label="'VAT Number'"
         :error="formError.find(item => item.field === 'vat_number')"
       />
       <AppDate 
-        class="w-full md:w-1/2 md:px-2"
-        v-model="form.tax_year_end_date" 
+        v-model="form.tax_year_end_date"
+        class="w-full md:w-1/2 md:px-2" 
         :name="'tax_year_end_date'" 
         :label="'Tax Year End Date'"
         :error="formError.find(item => item.field === 'tax_year_end_date')"
@@ -70,8 +72,8 @@
 
     <div class="flex flex-wrap">
       <AppInput 
-        class="w-full md:w-1/2 md:px-2"
-        v-model="form.account_name" 
+        v-model="form.account_name"
+        class="w-full md:w-1/2 md:px-2" 
         :type="'text'" 
         :name="'account_name'" 
         :label="'Account name'"
@@ -79,8 +81,8 @@
       />
 
       <AppInput 
-        class="w-full md:w-1/2 md:px-2"
-        v-model="form.bank_name" 
+        v-model="form.bank_name"
+        class="w-full md:w-1/2 md:px-2" 
         :type="'text'" 
         :name="'bank_name'" 
         :label="'Bank name'"
@@ -88,8 +90,8 @@
       />
 
       <AppInput
-        class="w-full md:w-1/2 md:px-2"
         v-model="form.sort_code"
+        class="w-full md:w-1/2 md:px-2"
         :type="'numberDash'"
         :name="'sort_code'"
         :label="'Sort code'"
@@ -99,8 +101,8 @@
       />
 
       <AppInput
-        class="w-full md:w-1/2 md:px-2"
         v-model="form.account_number"
+        class="w-full md:w-1/2 md:px-2"
         :type="'text'"
         :name="'account_number'"
         :label="'Account number'"

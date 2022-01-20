@@ -36,7 +36,7 @@
                   </div>
 
                   <div class="text-xs sm:text-sm mt-4">
-                    Phone number
+                    Phone Number
                   </div>
 
                   <div class="text-xs font-bold py-2">
@@ -44,29 +44,23 @@
                   </div>
                 </div>
 
-                <div class="flex flex-col lg:flex-row xl:flex-col w-full xl:w-2/5 p-1">
-                  <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
-                    <div class="text-xs sm:text-sm">
-                      Type
-                    </div>
-
-                    <div
-                      class="text-xs font-bold py-2"
-                    >
-                      {{ practice ? !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board' : '' }}
-                    </div>
+                <div class="flex flex-col w-full lg:w-1/2 xl:w-1/5 p-1">
+                  <div class="text-xs sm:text-sm" mt-4>
+                    Type
                   </div>
 
-                  <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
-                    <div class="text-xs sm:text-sm">
-                      Address
-                    </div>
+                  <div class="text-xs font-bold py-2">
+                    {{ practice ? !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board' : '' }}
+                  </div>
 
-                    <div class="text-xs font-bold py-2">
-                      {{ practice ? practice.address_line_1 : '' }} {{ practice ? practice.address_line_2 : '' }}
-                      {{ practice ? practice.address_line_3 : '' }} {{ practice ? practice.address_line_4 : '' }} {{ practice ? practice.address_line_5 : '' }}
-                      {{ practice ? practice.postcode : '' }}
-                    </div>
+                  <div class="text-xs sm:text-sm mt-4">
+                    Address
+                  </div>
+
+                  <div class="text-xs font-bold py-2">
+                    {{ practice ? practice.address_line_1 : '' }} {{ practice ? practice.address_line_2 : '' }}
+                    {{ practice ? practice.address_line_3 : '' }} {{ practice ? practice.address_line_4 : '' }} {{ practice ? practice.address_line_5 : '' }}
+                    {{ practice ? practice.postcode : '' }}
                   </div>
                 </div>
               </div>
@@ -158,7 +152,7 @@
                   v-model="form.phone_number"
                   :type="'text'"
                   :name="'phone_number'"
-                  label="Phone number"
+                  label="Phone Number"
                   :limit="11"
                   :error="formError.find(item => item.field === 'phone_number')"
                   required

@@ -49,14 +49,18 @@
               </p>
 
               <p class="w-3/12 text-center">
+                TIME
+              </p>
+
+              <p class="w-3/12 text-center">
                 SHIFT
               </p>
 
-              <p class="w-4/12">
+              <p class="w-4/12 text-center">
                 RATE
               </p>
 
-              <p class="w-4/12">
+              <p class="w-4/12 text-center">
                 BREAK
               </p>
             </div>
@@ -68,18 +72,22 @@
             >
               <div v-for="(sched, index) in job.schedules" :key="index" class="lg:flex py-1 border-b">
                 <p class="lg:w-5/12">
-                  {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }} | {{ sched.time_start }}-{{ sched.time_end }}
+                  {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+                </p>
+
+                <p class="lg:w-3/12 lg:text-center">
+                  {{ sched.time_start }}-{{ sched.time_end }}
                 </p>
 
                 <p class="lg:w-3/12 lg:text-center">
                   {{ sched.shift.name }}
                 </p>
 
-                <p class="lg:w-4/12">
+                <p class="lg:w-4/12 lg:text-center">
                   £{{ sched.rate }} {{ sched.locum_detail_rate_type.name }}
                 </p>
 
-                <p class="lg:w-4/12">
+                <p class="lg:w-4/12 lg:text-center">
                   {{ sched.posted_break_formatted }}
                 </p>
               </div>
@@ -191,7 +199,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Duration of eact appointment?
+          Duration of each appointment?
         </div>
 
         <div class="text-xs sm:text-sm mb-6">

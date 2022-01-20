@@ -43,7 +43,7 @@
               <AppInput
                 v-model="firstName"
                 type="text"
-                label="First name"
+                label="First Name"
                 placeholder="Your first name"
                 :error="formErrors.find(error => error.field === 'first_name')"
                 required
@@ -52,7 +52,7 @@
               <AppInput
                 v-model="lastName"
                 type="text"
-                label="Last name"
+                label="Last Name"
                 placeholder="Your last name"
                 :error="formErrors.find(error => error.field === 'last_name')"
                 required

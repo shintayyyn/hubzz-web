@@ -1,8 +1,10 @@
 <template>
   <div class="info-section h-full rounded border py-4">
     <div class="leading-relaxed px-2">
-      <p class="text-gray-600 font-bold text-sm">Quick View</p>
-<!--  <p class="uppercase text-lg font-bold">
+      <p class="text-gray-600 font-bold text-sm">
+        Quick View
+      </p>
+      <!--  <p class="uppercase text-lg font-bold">
         {{ $moment(dateInfo).format('DD / MM / YYYY') }}
       </p> -->
     </div>
@@ -14,7 +16,7 @@
           key="'no-jobs'"
           class="mt-4  text-center"
         >
-          No jobs to display.
+          No jobs on this day
         </div>
 
         <div v-if="viewPracticeJobs && !loading" class="py-2">

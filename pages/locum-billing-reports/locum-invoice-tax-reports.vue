@@ -108,8 +108,8 @@
 
       <div class="w-full flex flex-col flex-wrap items-left text-lg font-semibold">
         <div>
-          <!-- {{`Total Nett Amount: £${sumNettAmount | currency}`}} -->
-          Total Nett Amount: £{{ sumNettAmount | currency }}
+          <!-- {{`Total Net Amount: £${sumNettAmount | currency}`}} -->
+          Total Net Amount: £{{ sumNettAmount | currency }}
         </div>
         <div>
           Total NI Amount: £{{ sumNiAmount | currency }}
@@ -153,7 +153,7 @@ export default {
     AppInput,
     AppButton,
     AppDate,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -200,16 +200,16 @@ export default {
       links: [
         {
           title: 'Billing',
-          url: '/locum-billing'
+          url: '/locum-billing',
         },
         {
           title: 'Reports',
-          url: '/locum-billing-reports'
+          url: '/locum-billing-reports',
         },
         {
-          title: 'Rep-012'
-        }
-      ]
+          title: 'Rep-012',
+        },
+      ],
     }
   },
 
@@ -281,10 +281,19 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Nett',
+          title: 'Net',
           key: 'nett_amount_formatted',
           sort_key: 'nett_amount',
           column: (item) => item.nett_amount_formatted,
+          justify: 'start',
+          flexGrow: 1,
+          flexShrink: 0,
+        },
+        {
+          title: 'Paid Date',
+          key: 'paid_at_formatted',
+          sort_key: 'paid_at_formatted',
+          column: (item) => item.paid_at_formatted,
           justify: 'start',
           flexGrow: 1,
           flexShrink: 0,

@@ -28,7 +28,154 @@
           Schedule
         </p>
 
-        <div class="flex text-xs bg-gray-400 py-1 font-bold pl-1" :class="job_part.schedules.length > 7 ? 'pr-2' : ''">
+        <div class="text-xs sm:text-sm overflow-y-auto flex flex-col items-center" style="max-height:205px;">
+          <div style="position:sticky;top:0" class="flex justify-between w-full">
+            <p
+              class="bg-gray-400 p-1 font-bold text-xs"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              DATE
+            </p>
+
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              TIME
+            </p>
+
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              SHIFT
+            </p>
+
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              RATE
+            </p>
+
+            <p
+              class="text-center bg-gray-400 p-1 font-bold text-xs"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              POSTED BREAK
+            </p>
+
+            <template v-if="job_part && job_part.locum_invoiceable">
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:120px;max-width:120px"
+              >
+                {{ job_part.status === 'Approved' ? 'FINAL TIME' : 'COMPLETED TIME' }}
+              </p>
+
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:130px;max-width:130px"
+              >
+                {{ 
+                  job_part.status === 'Approved'
+                    ? 'APPROVED BREAK'
+                    : job_part.invoice_status === 'Disputed'
+                      ? 'DISPUTED BREAK'
+                      : job_part.invoice_status === 'Invoiced'
+                        ? 'INVOICED BREAK'
+                        : 'COMPLETED BREAK'
+                }}
+              </p>
+
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:120px;max-width:120px"
+              >
+                REMARKS
+              </p>
+
+              <p
+                class="text-center bg-gray-400 p-1 font-bold text-xs"
+                style="min-width:120px;max-width:120px"
+              >
+                REASON
+              </p>
+            </template>
+          </div>
+
+          <div v-for="(sched, index) in job_part.schedules" :key="index" class="flex justify-between w-full pb-2">
+            <p
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              {{ $moment(sched.date, 'YYYY-MM-DD').format('DD/MM/YYYY') }}
+            </p>
+
+            <p
+              class="text-center"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              {{ sched.time_start }}-{{ sched.time_end }}
+            </p>
+
+            <p
+              class="text-center"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              {{ sched.shift.name }}
+            </p>
+
+            <p
+              class="text-center"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              £{{ sched.rate |currency }} {{ sched.locum_detail_rate_type.name !== 'Hourly' ? 'per' : '' }} {{ sched.locum_detail_rate_type.name }}
+            </p>
+
+            <p
+              class="text-center"
+              :style="job_part && job_part.locum_invoiceable ? 'min-width:120px;max-width:120px' : 'min-width:180px;max-width:180px'"
+            >
+              {{ sched.posted_break_formatted }}
+            </p>
+
+            <template v-if="job_part && job_part.locum_invoiceable">
+              <p
+                class="text-center"
+                style="min-width:120px;max-width:120px"
+              >
+                {{ job_part.status === 'Approved' ? `${sched.approved_time_start} - ${sched.approved_time_end}` : `${sched.final_time_start} - ${sched.final_time_end}` }}
+              </p>
+
+              <p
+                class="text-center"
+                style="min-width:130px;max-width:130px"
+              >
+                {{
+                  job_part.status === 'Approved' || job_part.invoice_status === 'Disputed' || job_part.invoice_status === 'Invoiced'
+                    ? sched.invoiced_break_formatted
+                    : sched.completed_break_formatted
+                }}
+              </p>
+
+              <p
+                class="text-center"
+                style="min-width:120px;max-width:120px"
+              >
+                {{ job_part.status === 'Approved' ? sched.approved_remarks : sched.completed_remarks }}
+              </p>
+
+              <p
+                class="text-center"
+                style="min-width:120px;max-width:120px"
+              >
+                {{ job_part.status === 'Approved' ? sched.approved_reason ? sched.approved_reason : sched.completed_reason : sched.completed_reason }}
+              </p>
+            </template>
+          </div>
+        </div>
+
+        <!-- <div class="flex text-xs bg-gray-400 py-1 font-bold pl-1" :class="job_part.schedules.length > 7 ? 'pr-2' : ''">
           <div :class="job_part && job_part.locum_invoiceable ? 'w-2/12' : 'w-3/12'">
             DATE
           </div>
@@ -116,7 +263,7 @@
               </div>
             </template>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -259,7 +406,7 @@
         </div>
 
         <div class="font-bold text-sm sm:text-md">
-          Duration of eact appointment?
+          Duration of each appointment?
         </div>
 
         <div class="text-xs sm:text-sm mb-6">

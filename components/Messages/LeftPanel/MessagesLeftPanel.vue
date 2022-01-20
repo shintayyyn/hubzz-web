@@ -27,7 +27,7 @@
       <div class="relative flex flex-col justify-between h-full border-t">
         <div
           ref="chatlist"
-          class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
+          class="chat-list w-full h-full overflow-y-auto overflow-x-hidden pb-12"
           @scroll="scrollHandler"
         >
           <template v-if="!showResult || $route.params.slug == '/messages'">
@@ -88,13 +88,21 @@
                   </div>
 
                   <span
+                    v-if="!conversation.latest_conversation_message.seen_by_receiver && conversation.latest_conversation_message.user_id !== $auth.user.id"
+                    class="absolute"
+                    style="right:0.75rem"
+                  >
+                    <span style="height:10px;width:10px;background-color:#ff1744;border-radius:50%;display:inline-block;"></span>
+                  </span>
+
+                  <span
                     class="absolute w-10 h-full right-0 flex items-center text-right text-xs text-gray-600 leading-none mx-2"
                     :class="
                       parseInt($route.params.slug) === conversation.id
                         ? 'bg-gray-300'
                         : !conversation.latest_conversation_message.seen_by_receiver
                           && conversation.latest_conversation_message.user_id !== $auth.user.id
-                          ? 'font-bold bg-gray-400'
+                          ? 'font-bold bg-gray-400 hidden'
                           : 'hover:bg-gray-200'
                     "
                   >{{ $moment(conversation.latest_conversation_message.created_at).fromNow() }}</span>

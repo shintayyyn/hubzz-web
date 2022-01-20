@@ -2,7 +2,7 @@
   <div>
     <div class="flex items-center">
       <!-- Extra button slot -->
-      <div class="mr-2">
+      <div>
         <slot name="extraButtonFirst" />
       </div>
       <button v-if="enableFilter" @click="filterTab && filterTab==='default' ? filterTab=null : filterTab = 'default'" class="flex items-center justify-between text-sm p-1 border rounded mr-2 transition-hover" :class="filterTab==='default' ? 'bg-sunglow border-sunglow' : ''">
@@ -17,7 +17,7 @@
         <!-- Extra button slot -->
         <slot name="extraButton" />
       </div>
-      <div class="flex-end ml-auto">
+      <div class="flex-start mr-auto">
         <slot name="extraFarRight"/>
       </div>
     </div>

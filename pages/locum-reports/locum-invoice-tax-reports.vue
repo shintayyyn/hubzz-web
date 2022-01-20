@@ -231,7 +231,7 @@ export default {
           flexShrink: 0,
         },
         {
-          title: 'Nett',
+          title: 'Net',
           key: 'nett_amount_formatted',
           sort_key: 'nett_amount',
           column: (item) => item.nett_amount_formatted,

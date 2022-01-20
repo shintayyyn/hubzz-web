@@ -133,7 +133,7 @@
               </div>
 
               <div class="px-4">
-                <div class="overflow-x-scroll">
+                <div>
                   <!-- Headers -->
                   <div 
                     class="flex items-end text-sm pb-2 text-gray-700"
@@ -181,7 +181,7 @@
 
                       <!-- FOR COMPLETING & INVOICING JOB -->
                       <template v-if="['complete', 'terminate', 'invoice'].includes(type)">
-                        <p class="min-w-20">
+                        <p class="min-w-32">
                           Final Break
                         </p>
                         <p :class="type === 'invoice' ? 'min-w-24' : 'min-w-24'">
@@ -196,13 +196,13 @@
                       </template>
 
                       <!-- FOR COMPLETING JOB -->
-                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
+                      <!-- <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" /> -->
 
                       <p v-if="['complete', 'terminate', 'invoice'].includes(type)" class="min-w-32">
                         Any Absences?
                       </p>
 
-                      <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" />
+                      <!-- <p v-if="['complete', 'terminate'].includes(type)" class="min-w-20" /> -->
 
                       <!-- FOR INVOICING -->
                       <template v-if="type === 'invoice'">
@@ -234,7 +234,7 @@
                     :class="type !== 'create' ? `border rounded-lg ${index % 2 ? 'bg-lighter-gray' : 'bg-light-gray'} row` : 'min-w-3/5'"
                   >
                     <template v-if="['complete', 'terminate'].includes(type)">
-                      <div class="min-w-24 px-2 py-3">
+                      <div class="min-w-24 px-2 py-3 flex items-center">
                         {{ item.date }}
                       </div>
 
@@ -254,23 +254,23 @@
                               </p>
                             </div>
 
-                            <div class="min-w-20 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               {{ shift.time_start }}
                             </div>
 
-                            <div class="min-w-20 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               {{ shift.time_end }}
                             </div>
 
-                            <div class="min-w-16 flex items-center justify-center text-center">
+                            <div class="min-w-20 flex items-center justify-center text-center">
                               {{ totalHours(shift.time_start, shift.time_end, item.date) | hoursMinutes }}
                             </div>
 
-                            <div class="min-w-16 flex items-center justify-center">
+                            <div class="min-w-24 flex items-center justify-center">
                               {{ shift.rate | currency }}
                             </div>
 
-                            <div class="min-w-24 flex items-center justify-center text-center">
+                            <div class="min-w-28 flex items-center justify-center text-center">
                               {{
                                 rate_lists.find(item => item.value === shift.locum_detail_rate_type_id)
                                   ? rate_lists.find(item => item.value === shift.locum_detail_rate_type_id).label
@@ -399,7 +399,7 @@
                               />
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div class="w-auto flex items-center justify-center">
                               <button
                                 class="px-2 py-1 text-white focus:outline-none rounded uppercase w-24 border"
                                 :disabled="[true, 'true'].includes(shift.has_absences)"
@@ -427,9 +427,8 @@
                               </button>
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div v-if="[true, 'true'].includes(shift.has_late) && shift.late_hours_reason" class="w-2/12 flex items-center justify-center">
                               <button
-                                v-if="[true, 'true'].includes(shift.has_late) && shift.late_hours_reason"
                                 class="px-2 py-1 text-gray-700 border border-orange-500 cursor-pointer focus:outline-none rounded w-24"
                                 @click="lateChange(shift, index, i, 'late')"
                               >
@@ -454,9 +453,8 @@
                               </button>
                             </div>
 
-                            <div class="w-2/12 flex items-center justify-center">
+                            <div v-if="[true, 'true'].includes(shift.has_absences) && shift.absent_reason" class="w-2/12 flex items-center justify-center">
                               <button
-                                v-if="[true, 'true'].includes(shift.has_absences) && shift.absent_reason"
                                 class="px-2 py-1 text-gray-700 border border-orange-500 cursor-pointer focus:outline-none rounded w-24"
                                 @click="lateChange(shift, index, i, 'absent')"
                               >
@@ -773,7 +771,7 @@
                             </div>
 
                             <!-- ANY ABSENCES -->
-                            <div class="flex items-center justify-center text-center min-w-32">
+                            <div class="flex items-center justify-center text-center min-w-24">
                               <button
                                 v-if="$auth.user.domain === 'Locum' ? !toDisplay : shift.dispute && !['issued', 'approved'].includes(invoiceStatus) && !toDisplay"
                                 :disabled="[false, 'false'].includes(shift.dispute)"
@@ -798,10 +796,7 @@
 
                             <!-- FINAL RATE -->
                             <div class="flex items-center justify-center text-center min-w-20">
-                              £ {{ getRate(shift,
-                                           shift.final_time_start,
-                                           shift.final_time_end,
-                                           item.date) | currency }}
+                              £ {{ getRate(shift, shift.final_time_start, shift.final_time_end, item.date) | currency }}
                             </div>
 
                             <!-- DISPUTE? -->
@@ -993,7 +988,7 @@
                               <select
                                 v-model="shift.shift_id"
                                 class="custom-select -mt-8 py-1 text-sm px-1"
-                                @change="changeShiftId(shift.shift_id, item.shifts, i, shift), checkScheduleShiftShiftId(shift, index, i)"
+                                @change="changeShiftId(shift.shift_id, item.shifts, i, shift), checkScheduleShiftShiftId(shift, shift.scheduleIndex, i)"
                               >
                                 <option
                                   v-for="option in shifts_option"
@@ -1006,16 +1001,16 @@
 
                               <div
                                 v-if="
-                                  formError.find(err => err.field === `shift_id-s${index}-${i}`)
-                                    || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`))
+                                  formError.find(err => err.field === `shift_id-s${shift.scheduleIndex}-${i}`)
+                                    || (shiftErrors && shiftErrors.find(err => err.field === `shift_id-s${shift.scheduleIndex}-${i}`))
                                 "
                                 class="text-xs text-red-500 pt-2"
                               >
                                 {{
-                                  formError.find(err => err.field === `shift_id-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `shift_id-s${index}-${i}`).message
+                                  formError.find(err => err.field === `shift_id-s${shift.scheduleIndex}-${i}`)
+                                    ? formError.find(err => err.field === `shift_id-s${shift.scheduleIndex}-${i}`).message
                                     : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `shift_id-s${index}-${i}`).message
+                                      ? shiftErrors.find(err => err.field === `shift_id-s${shift.scheduleIndex}-${i}`).message
                                       : null
                                 }}
                               </div>
@@ -1024,7 +1019,7 @@
                             <div class="w-20 px-1">
                               <AppTime
                                 v-model="shift.time_start"
-                                :name="`time_start-s${index}-${i}`"
+                                :name="`time_start-s${shift.scheduleIndex}-${i}`"
                                 :wrapperClass="'mb-1 py-1'"
                                 :inStyle="`
                                 background-color: transparent;
@@ -1036,15 +1031,15 @@
                                 }
                               `"
                                 :error="
-                                  formError.find(err => err.field === `time_start-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `time_start-s${index}-${i}`)
+                                  formError.find(err => err.field === `time_start-s${shift.scheduleIndex}-${i}`)
+                                    ? formError.find(err => err.field === `time_start-s${shift.scheduleIndex}-${i}`)
                                     : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `time_start-s${index}-${i}`)
+                                      ? shiftErrors.find(err => err.field === `time_start-s${shift.scheduleIndex}-${i}`)
                                       : null
                                 "
                                 @change="
                                   emitSchedule(),
-                                  CheckIfEmptyFormError(shift.time_start, `time_start-s${index}-${i}`),
+                                  CheckIfEmptyFormError(shift.time_start, `time_start-s${shift.scheduleIndex}-${i}`),
                                   changeStartTime(shift)
                                 "
                                 @blur="CheckEmptyField(form.phone_number,'phone_number')"
@@ -1054,7 +1049,7 @@
                             <div class="w-20 px-1">
                               <AppTime
                                 v-model="shift.time_end"
-                                :name="`time_end-s${index}-${i}`"
+                                :name="`time_end-s${shift.scheduleIndex}-${i}`"
                                 :wrapperClass="'mb-1 py-1'"
                                 :inStyle="`
                                 background-color: transparent;
@@ -1066,15 +1061,15 @@
                                 }
                               `"
                                 :error="
-                                  formError.find(err => err.field === `time_end-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `time_end-s${index}-${i}`)
+                                  formError.find(err => err.field === `time_end-s${shift.scheduleIndex}-${i}`)
+                                    ? formError.find(err => err.field === `time_end-s${shift.scheduleIndex}-${i}`)
                                     : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `time_end-s${index}-${i}`)
+                                      ? shiftErrors.find(err => err.field === `time_end-s${shift.scheduleIndex}-${i}`)
                                       : null
                                 "
                                 @change="
                                   emitSchedule(),
-                                  CheckIfEmptyFormError(shift.time_end, `time_end-s${index}-${i}`)
+                                  CheckIfEmptyFormError(shift.time_end, `time_end-s${shift.scheduleIndex}-${i}`)
                                 "
                               />
                             </div>
@@ -1102,7 +1097,7 @@
                             <div class="w-28 px-1">
                               <AppInput
                                 v-model="shift.rate"
-                                :name="`rate-s${index}-${i}`"
+                                :name="`rate-s${shift.scheduleIndex}-${i}`"
                                 class="w-full"
                                 :type="'text'"
                                 :min="1"
@@ -1110,37 +1105,37 @@
                                 :wrapperClass="'mb-1 py-1'"
                                 :limit="8"
                                 :error="
-                                  formError.find(err => err.field === `rate-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `rate-s${index}-${i}`)
+                                  formError.find(err => err.field === `rate-s${shift.scheduleIndex}-${i}`)
+                                    ? formError.find(err => err.field === `rate-s${shift.scheduleIndex}-${i}`)
                                     : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `rate-s${index}-${i}`)
+                                      ? shiftErrors.find(err => err.field === `rate-s${shift.scheduleIndex}-${i}`)
                                       : null
                                 "
-                                @blur="[shift.rate === '' ? shift.rate = 0 : shift.rate, CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)]"
+                                @blur="[shift.rate === '' ? shift.rate = 0 : shift.rate, CheckIfEmptyFormError(shift.rate, `rate-s${shift.scheduleIndex}-${i}`)]"
                                 @focus="shift.rate === 0 ? shift.rate = '' : shift.rate"
                                 @keydown="isNumber($event)"
-                                @change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${index}-${i}`)"
+                                @change="emitSchedule(), CheckIfEmptyFormError(shift.rate, `rate-s${shift.scheduleIndex}-${i}`)"
                               />
                             </div>
 
                             <div class="w-28 px-1">
                               <AppInput
                                 v-model="shift.locum_detail_rate_type_id"
-                                :name="`locum_detail_rate_type_id-s${index}-${i}`"
+                                :name="`locum_detail_rate_type_id-s${shift.scheduleIndex}-${i}`"
                                 :type="'select'"
                                 :items="rate_lists"
                                 :wrapperClass="'mb-1 py-1'"
                                 :inStyle="'font-size: 13px; padding-left: 8px;'"
                                 :error="
-                                  formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`)
+                                  formError.find(err => err.field === `locum_detail_rate_type_id-s${shift.scheduleIndex}-${i}`)
+                                    ? formError.find(err => err.field === `locum_detail_rate_type_id-s${shift.scheduleIndex}-${i}`)
                                     : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${index}-${i}`)
+                                      ? shiftErrors.find(err => err.field === `locum_detail_rate_type_id-s${shift.scheduleIndex}-${i}`)
                                       : null
                                 "
                                 @change="
                                   emitSchedule(),
-                                  CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${index}-${i}`)
+                                  CheckIfEmptyFormError(shift.locum_detail_rate_type_id, `locum_detail_rate_type_id-s${shift.scheduleIndex}-${i}`)
                                 "
                               />
                             </div>
@@ -1149,7 +1144,7 @@
                             <div class="w-18 px-1">
                               <AppInput
                                 v-model="shift.posted_break_in_minutes"
-                                :name="`posted_break_in_minutes-s${index}-${i}`"
+                                :name="`posted_break_in_minutes-s${shift.scheduleIndex}-${i}`"
                                 class="w-full"
                                 :type="'text'"
                                 :min="1"
@@ -1157,24 +1152,24 @@
                                 :wrapperClass="'mb-1 py-1'"
                                 :limit="4"
                                 :error="
-                                  formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
-                                    ? formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                  formError.find(err => err.field === `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)
+                                    ? formError.find(err => err.field === `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)
                                     : shiftErrors
-                                      ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                      ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)
                                       : null
                                 "
                                 postLabel="m"
                                 @focus="[0, '0'].includes(shift.posted_break_in_minutes) ? shift.posted_break_in_minutes = '' : shift.posted_break_in_minutes"
-                                @blur="[shift.posted_break_in_minutes === '' ? shift.posted_break_in_minutes = 0 : shift.posted_break_in_minutes, CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)]"
+                                @blur="[shift.posted_break_in_minutes === '' ? shift.posted_break_in_minutes = 0 : shift.posted_break_in_minutes, CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)]"
                                 @keydown="isNumber($event)"
-                                @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
-                                @input="checkScheduleShiftPostedBreakInMinutes(shift, index, i)"
+                                @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)"
+                                @input="checkScheduleShiftPostedBreakInMinutes(shift, shift.scheduleIndex, i)"
                               />
                             </div>
                             <div class="w-18 pl-1 pr-3">
                               <AppInput
                                 v-model="shift.posted_break_payable"
-                                :name="`posted_break_payable-s${index}-${i}`"
+                                :name="`posted_break_payable-s${shift.scheduleIndex}-${i}`"
                                 :type="'select'"
                                 :items="[{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }]"
                                 :wrapperClass="'mb-1 py-1'"
@@ -1190,7 +1185,7 @@
                             <AppInput
                               v-model="shift.posted_break_in_minutes"
                               label="Break in minutes:"
-                              :name="`posted_break_in_minutes-s${index}-${i}`"
+                              :name="`posted_break_in_minutes-s${shift.scheduleIndex}-${i}`"
                               class="w-full"
                               :type="'text'"
                               :min="1"
@@ -1198,16 +1193,16 @@
                               :wrapperClass="'mb-1 py-1'"
                               :limit="4"
                               :error="
-                                formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
-                                  ? formError.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                formError.find(err => err.field === `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)
+                                  ? formError.find(err => err.field === `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)
                                   : shiftErrors
-                                    ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${index}-${i}`)
+                                    ? shiftErrors.find(err => err.field === `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)
                                     : null
                               "
-                              @blur="CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
+                              @blur="CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)"
                               @keydown="isNumber($event)"
-                              @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${index}-${i}`)"
-                              @input="checkScheduleShiftPostedBreakInMinutes(shift, index, i)"
+                              @change="emitSchedule(), CheckIfEmptyFormError(shift.posted_break_in_minutes, `posted_break_in_minutes-s${shift.scheduleIndex}-${i}`)"
+                              @input="checkScheduleShiftPostedBreakInMinutes(shift, shift.scheduleIndex, i)"
                             />
                           </div>
 
@@ -1215,7 +1210,7 @@
                             <AppInput
                               v-model="shift.posted_break_payable"
                               label="Break payable:"
-                              :name="`posted_break_payable-s${index}-${i}`"
+                              :name="`posted_break_payable-s${shift.scheduleIndex}-${i}`"
                               :type="'select'"
                               :items="[{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }]"
                               :wrapperClass="'mb-1 py-1'"
@@ -1239,7 +1234,7 @@
                           <button
                             class="whitespace-no-wrap w-1/2 flex items-center justify-center border border-gray-500 hover:bg-gray-200 text-gray-700 font-bold bg-white py-1 px-1 rounded-lg text-xs transition-hover px-4 focus:outline-none ml-1"
                             :class="rowNotFilled(item.shifts)?'cursor-not-allowed bg-gray-300 text-gray-500':''"
-                            @click="addShift(item.shifts, index, item.date)"
+                            @click="addShift(item.shifts, item.scheduleIndex, item.date)"
                           >
                             <svgicon
                               name="times-solid"
@@ -1847,7 +1842,17 @@ export default {
         )
       }
 
-      job_parts_schedule = this.schedules.filter(item =>
+      job_parts_schedule = this.schedules.map((schedule, scheduleIndex) => {
+        schedule.shifts = schedule.shifts.map((shift, shiftIndex) => {
+          shift.scheduleIndex = scheduleIndex
+          shift.shiftIndex = shiftIndex
+          return shift
+        })
+
+        schedule.scheduleIndex = scheduleIndex
+
+        return schedule
+      }).filter(item =>
         activeJobPart.dates.includes(
           this.$moment(item.date, "DD/MM/YYYY").format("YYYY-MM-DD")
         )
@@ -2994,7 +2999,7 @@ export default {
       return this.$moment.duration(dateTimeEnd.diff(datetimeStart)).asMinutes()
     },
 
-    changeShiftId (id, shifts, index, shift) {
+    changeShiftId (id, shifts, index) {
       if (["5", 5,].includes(id)) {
         shifts.splice(index, 1)
         let rowError = this.formError.filter(err =>
@@ -3007,8 +3012,8 @@ export default {
           }
         })
       } else if (["1", 1, "2", 2,].includes(id)) {
-        shift.time_start = ""
-        shift.time_end = ""
+        // shift.time_start = ""
+        // shift.time_end = ""
       }
       this.emitSchedule()
     },

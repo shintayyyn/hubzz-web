@@ -315,7 +315,7 @@
           v-model="form.ni_amount"
           :type="'number'"
           :name="'ni_amount'"
-          :label="'Ni Amount'"
+          :label="'NI Amount'"
           :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
           :error="formError.find(item => item.field === 'ni_amount')"
         />
@@ -331,7 +331,7 @@
           v-model="form.paye_amount"
           :type="'number'"
           :name="'paye_amount'"
-          :label="'Paye Amount'"
+          :label="'PAYE Amount'"
           :in-style="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
           :error="formError.find(item => item.field === 'paye_amount')"
         />
@@ -581,7 +581,7 @@ export default {
         str = "You do not have any issued invoices."
         break
       case "solo-form":
-        str = "You do not have any solo forms."
+        str = "You do not have any Solo Forms."
         break
       case "pension-form-a":
         str = "You do not have any form a's."

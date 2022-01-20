@@ -36,7 +36,7 @@
               <AppInput
                 v-model="memorableWordCategoryId"
                 type="select"
-                label="Memorable word category"
+                label="Memorable Word Category"
                 placeholder="Select..."
                 :error="formErrors.find(item => item.field === 'memorable_word_category_id')"
                 :items="memorableWordCategoriesSelectionList"
@@ -46,7 +46,7 @@
               <AppInput
                 v-model="memorableWord"
                 type="text"
-                label="Memorable word"
+                label="Memorable Word"
                 placeholder="Your memorable word"
                 :error="formErrors.find(error => error.field === 'memorable_word')"
                 required
@@ -54,7 +54,7 @@
 
               <AppDate
                 v-model="memorableDate"
-                label="Memorable date"
+                label="Memorable Date"
                 :error="formErrors.find(item => item.field === 'memorable_date')"
                 required
               />
@@ -62,7 +62,7 @@
               <AppInput
                 v-model="memorableNumber"
                 type="number"
-                label="Memorable 6 digit number"
+                label="Memorable 6 Digit Number"
                 placeholder="Your memorable number"
                 :error="formErrors.find(error => error.field === 'memorable_number')"
                 required

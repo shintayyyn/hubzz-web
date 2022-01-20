@@ -309,22 +309,8 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="font-bold text-sm sm:text-md">
-              Preferred rates
-            </div>
-
-            <div class="flex flex-col mb-4">
-              <div
-                v-for="item in user.locum_detail.rates"
-                :key="item.id"
-                class="flex flex-row flex-no-wrap mt-2"
-              >
-                <div class="text-xs sm:text-sm">
-                  {{ item.rate_type.name }}: £ {{ item.min }}
-                </div>
-              </div>
-						</div>-->
           </div>
+          
           <div class="font-bold text-sm sm:text-md">
             Referees
           </div>
