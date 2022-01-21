@@ -96,6 +96,7 @@
       :per-page="params.limit"
       :columns="columns"
       :order-by="params.order_by"
+      :customWidth="800"
       :router-link="'/practice-billing/invoices-from-hubzz'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"

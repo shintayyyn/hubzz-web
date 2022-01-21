@@ -16,6 +16,7 @@
           :orderBy="order_by"
           :loading="loading"
           :routerLink="routerLink"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"

@@ -9,6 +9,7 @@
         :currentPage="current_page"
         :perPage="params.limit"
         :columns="columns"
+        :customWidth="800"
         :loading="loading"
         :routerLink="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`"
         @pagechanged="pagechanged"

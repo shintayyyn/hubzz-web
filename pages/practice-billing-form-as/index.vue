@@ -240,6 +240,7 @@
           :per-page="limit"
           :columns="columns"
           :order-by="order_by"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"

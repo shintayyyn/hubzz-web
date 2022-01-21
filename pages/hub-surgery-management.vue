@@ -4,7 +4,7 @@
     <div v-if="!$route.params.id && !$route.params.invoiceId && !$route.params.jobId && !['hub-surgery-management-invitations-hub-create'].includes($route.name)" class="flex overflow-x-auto border-b border-sunglow">
       <nuxt-link
         :to="`/hub-surgery-management`"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        class="md:mr-3 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
           $route.name === 'hub-surgery-management-index' || $route.name.includes('hub-surgery-management-id')
             ? 'border-b-4 border-sunglow'
@@ -17,7 +17,7 @@
       <nuxt-link
         v-if="authPermissions && authPermissions.includes('Invitation Processes Surgery Management')"
         :to="{ name: 'hub-surgery-management-invitations-spoke'}"
-        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        class="md:mr-3 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
           $route.name.includes('hub-surgery-management-invitations')
             ? 'border-b-4 border-sunglow'
@@ -51,7 +51,6 @@ export default {
       return this.$store.getters["permissions"]
     },
     links() {
-      console.log("hub route", this.$route)
       let links = [
         {
           title: 'Surgery Management',

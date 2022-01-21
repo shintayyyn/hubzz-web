@@ -31,6 +31,7 @@
       :columns="columns"
       :orderBy="params.order_by"
       :routerLink="'/roles-and-permissions/roles'"
+      :customWidth="800"
       @remove="remove"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"

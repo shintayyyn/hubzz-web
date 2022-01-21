@@ -11,6 +11,7 @@
         :columns="columns"
         :orderBy="params.order_by"
         :routerLink="'/practice-billing/invoices-from-hubzz'"
+        :customWidth="800"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
         @sorted="sorted"
