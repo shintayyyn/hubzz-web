@@ -1842,17 +1842,23 @@ export default {
         )
       }
 
-      job_parts_schedule = this.schedules.map((schedule, scheduleIndex) => {
-        schedule.shifts = schedule.shifts.map((shift, shiftIndex) => {
-          shift.scheduleIndex = scheduleIndex
-          shift.shiftIndex = shiftIndex
-          return shift
-        })
+      if (this.type === 'create') {
+        job_parts_schedule = this.schedules.map((schedule, scheduleIndex) => {
+          schedule.shifts = schedule.shifts.map((shift, shiftIndex) => {
+            shift.scheduleIndex = scheduleIndex
+            shift.shiftIndex = shiftIndex
+            return shift
+          })
 
-        schedule.scheduleIndex = scheduleIndex
+          schedule.scheduleIndex = scheduleIndex
 
-        return schedule
-      }).filter(item =>
+          return schedule
+        })  
+      } else {
+        job_parts_schedule = this.schedules
+      }
+
+      job_parts_schedule = job_parts_schedule.filter(item =>
         activeJobPart.dates.includes(
           this.$moment(item.date, "DD/MM/YYYY").format("YYYY-MM-DD")
         )
