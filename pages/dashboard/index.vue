@@ -1,12 +1,12 @@
 <template>
-  <section class="dashboard-section">
+  <section>
     <div v-if="$auth.user.domain === 'Locum' || $auth.user.domain === 'Practice'" class="reminders-section mb-4">
       <Reminders />
     </div>
 
     <div
       v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_locum_jobs))"
-      class="statistics-section"
+      class="statistics-section "
     >
       <div class="text-sm sm:text-base font-bold">
         Quick Statistics
@@ -16,7 +16,7 @@
     </div>
 
     <div v-if="userIsAuthorized" class="appointment-section">
-      <div class="flex justify-between items-center lg:max-w-6xl">
+      <div class="flex justify-between items-center lg:min-w-6xl lg:max-w-6xl pr-6">
         <div class="flex">
           <div class="mx-1 text-sm sm:text-base font-bold">
             Appointments

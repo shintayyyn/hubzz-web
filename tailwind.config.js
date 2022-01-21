@@ -8,11 +8,16 @@ module.exports = {
   separator: ':',
   theme: {
     screens: {
+      smallerMobile: '361px',
+      smallmobile: '375px',
+      mobile:'425px',
       sm: '640px',
+      galaxyFold: '717px',
       md: '768px',
       lg: '1024px',
-      xl: '1280px',
+      xl: '1281px',
       xxl: '1419px',
+      fhd: '1920px',
     },
     colors: {
       transparent: 'transparent',

@@ -2,13 +2,13 @@
   <section class="jobs-section">
     <template v-if="$route.name === 'locum-job-parts-index'">
       <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
-        <div class="flex overflow-x-auto items-center">
-          <template v-for="tab in tabs" >
+        <div class="flex overflow-x-auto items-center max-w-10/12">
+          <template v-for="tab in tabs">
             <nuxt-link
               :key="tab.title"
               :event="$store.state.jobs.loading_jobs ? '' : 'click'"
               :to="tab.route"
-              class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
+              class="md:mr-2 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
               :class="tab.active ? 'border-b-4 border-sunglow' : 'text-gray-600'"
             >
               {{ tab.title }}

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl my-3">
+    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl lg:min-w-5xl my-3 pr-6">
       <svgicon v-if="loadingStatistics" name="loader" width="60" height="60" />
       <div
         v-for="(item, index) in statistics"
