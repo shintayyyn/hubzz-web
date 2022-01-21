@@ -22,8 +22,9 @@
         :columns="columns"
         :orderBy="params.order_by"
         :sticky="'first'"
+        :customWidth="800"
         @show="showTax"
-      ></AppTable>
+      />
       <!-- <div class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
@@ -68,7 +69,7 @@ const lists = [
     fees_charged: "2.00",
     expenses_charged: "369.00",
     employers_superannuation: "0.00",
-    month_total: "31,095.00"
+    month_total: "31,095.00",
   },
   {
     id: 2,
@@ -76,7 +77,7 @@ const lists = [
     fees_charged: "2.00",
     expenses_charged: "369.00",
     employers_superannuation: "0.00",
-    month_total: "31,095.00"
+    month_total: "31,095.00",
   },
   {
     id: 3,
@@ -84,31 +85,31 @@ const lists = [
     fees_charged: "2.00",
     expenses_charged: "369.00",
     employers_superannuation: "0.00",
-    month_total: "31,095.00"
-  }
-];
+    month_total: "31,095.00",
+  },
+]
 const yearLists = [
   {
     value: "2020-08-01",
-    label: "2 June, 2020"
+    label: "2 June, 2020",
   },
   {
     value: "2020-08-01",
-    label: "2 June, 2020"
+    label: "2 June, 2020",
   },
   {
     value: "2020-08-01",
-    label: "2 June, 2020"
-  }
-];
-import AppInput from "@/components/Base/AppInput";
-import AppTable from "@/components/Base/AppTable";
+    label: "2 June, 2020",
+  },
+]
+import AppInput from "@/components/Base/AppInput"
+import AppTable from "@/components/Base/AppTable"
 export default {
   components: {
     AppInput,
-    AppTable
+    AppTable,
   },
-  data() {
+  data () {
     return {
       lists,
       yearLists,
@@ -122,7 +123,7 @@ export default {
         offset: 0,
         limit: 5,
         status: "Paid",
-        order_by: ["date_created:desc"]
+        order_by: ["date_created:desc",],
       },
       columns: [
         {
@@ -137,26 +138,26 @@ export default {
         {
           name: "Expenses Charge",
           dataIndex: "expenses_charged",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Employers Superannuation",
           dataIndex: "employers_superannuation",
-          class: "text-center"
+          class: "text-center",
         },
         {
           name: "Month total",
           dataIndex: "month_total",
-          class: "text-center"
-        }
-      ]
-    };
+          class: "text-center",
+        },
+      ],
+    }
   },
   methods: {
-    showTax(id) {
-      console.log("id:", id);
-    }
-  }
-};
+    showTax (id) {
+      console.log("id:", id)
+    },
+  },
+}
 </script>
 <style>

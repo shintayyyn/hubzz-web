@@ -21,7 +21,7 @@
                   `justify-center text-center ${column.class}` : column.class,
               column.sortable && 'cursor-pointer'
             ]"
-            :style="`min-width: 100px; ${column.width ? `max-width: ${column.width}px` : ''}`"
+            :style="` ${column.width ? `max-width: ${column.width}px` : ''}`"
             @click="column.sortable && sort(column.dataIndex)"
           >
             <span class="px-2">{{ column.name }}</span>
@@ -55,7 +55,7 @@
                 :ref="`col${index}`"
                 class="flex-1 px-1 break-word hyphens h-full"
                 :class="column.class"
-                :style="`min-width: 100px; ${column.width ? `max-width: ${column.width}px` : ''}; ${column.dataIndex !== 'actions' ? countLines(index, column.width, rowIndex) : '' }`"
+                :style="`${column.width ? `max-width: ${column.width}px` : ''}; ${column.dataIndex !== 'actions' ? countLines(index, column.width, rowIndex) : '' }`"
                 style="line-height:20px; "
               >
                 <template v-if="Array.isArray(dataCell(item, column))">

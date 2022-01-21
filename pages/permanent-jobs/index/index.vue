@@ -227,6 +227,7 @@
           :columns="practiceColumns"
           :loading="loading"
           :router-link="'/permanent-jobs'"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
         >
@@ -284,6 +285,7 @@
           :columns="locumColumns"
           :loading="loading"
           :router-link="'/permanent-jobs'"
+          :customWidth="900"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
         >
@@ -402,32 +404,34 @@ export default {
           name: "Title",
           dataIndex: "title",
           class: "text-center",
+          // width: 150,
         },
         {
           name: "Surgery",
           dataIndex: "practice_name",
           class: "text-center",
+          // width: 100,
         },
         {
           name: "Salary £",
           slotName: "salary_slot",
           dataIndex: "",
           class: "text-center",
-          width: 80,
+          width: 100,
         },
         {
           name: "Posted",
           dataIndex: "",
           slotName: "date_posted",
           class: "text-center",
-          width: 100,
+          // width: 100,
         },
         {
           name: "Closes",
           dataIndex: "",
           slotName: "date_closing",
           class: "text-center",
-          width: 100,
+          // width: 100,
         },
         {
           name: "Work Hours",
@@ -439,6 +443,7 @@ export default {
           name: "Profession",
           dataIndex: "profession_name",
           class: "text-center",
+          width: 100,
         },
         {
           name: "Industry",
@@ -554,7 +559,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120,
+                  width: 100,
                 },
                 {
                   name: "Closing tag",
@@ -562,7 +567,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
-                  width: 150,
+                  width: 100,
                 },
               ]
             } else if (this.$auth.user.domain === "Practice") {
@@ -580,7 +585,7 @@ export default {
                   slotName: "status_slot",
                   dataIndex: "",
                   class: "text-center",
-                  width: 120,
+                  // width: 120,
                 },
                 {
                   name: "Closing tag",
@@ -588,7 +593,7 @@ export default {
                   slotName: "closing_tag",
                   dataIndex: "",
                   class: "text-center",
-                  width: 150,
+                  // width: 150,
                 },
               ]
             }

@@ -918,7 +918,7 @@ export default {
 .sidebar {
   position: fixed;
   margin-left: -220px;
-  width: 220px;
+  width: 200px;
   height: 100%;
   overflow: auto;
   border-right: solid 1px#ccc;
