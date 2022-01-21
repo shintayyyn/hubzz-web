@@ -1854,6 +1854,8 @@ export default {
 
           return schedule
         })  
+      } else {
+        job_parts_schedule = this.schedules
       }
 
       job_parts_schedule = job_parts_schedule.filter(item =>
