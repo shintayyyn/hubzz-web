@@ -64,7 +64,7 @@ import AppInput from "@/components/Base/AppInput"
 export default {
   components: {
     AppTable,
-    AppInput
+    AppInput,
   },
 
   transition: {
@@ -115,7 +115,7 @@ export default {
   computed: {
     authPermissions () {
       return this.$store.getters["permissions"]
-    }
+    },
   },
 
   watch: {
