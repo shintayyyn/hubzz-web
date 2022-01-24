@@ -1,5 +1,5 @@
 <template>
-  <CreatePermanentJobModal isPage/>
+  <CreatePermanentJobModal isPage />
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
   .wrapper {
     position: relative;
     width: 100%;

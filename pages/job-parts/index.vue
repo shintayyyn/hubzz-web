@@ -35,7 +35,7 @@
             :key="tab.title"
             :event="$store.state.jobs.loading_jobs ? '' : 'click'"
             :to="tab.route"
-            class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+            class="md:mr-2 px-3 py-2 text-sm font-bold cursor-pointer"
             :class="tab.active ? 'border-b-4 border-yellow-500' : 'text-gray-600'"
           >
             {{ tab.title }}

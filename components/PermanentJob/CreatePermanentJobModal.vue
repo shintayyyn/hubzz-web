@@ -588,7 +588,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .modal-container {
   margin: 0;
   z-index: 510;
