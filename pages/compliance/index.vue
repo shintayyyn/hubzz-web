@@ -107,7 +107,7 @@
           >This section is empty. Update your profile to fill this area.</span>
         </template>
 
-        <div class="table">
+        <div class="table w-full" style="min-width: 800px;">
           <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm px-3">
             <div class="item w-1/6 p-2">
               Type
@@ -399,7 +399,7 @@
           >This section is empty. Update your profile to fill this area.</span>
         </template>
 
-        <div class="table">
+        <div class="table w-full" style="min-width: 800px;">
           <div class="flex flex-no-wrap justify-start font-bold leading-none text-sm px-3">
             <div class="item w-1/6 p-2">
               Type
@@ -692,7 +692,7 @@
           >This section is empty. Update your profile to fill this area.</span>
         </template>
 
-        <div class="table">
+        <div class="table w-full" style="min-width: 800px;">
           <div class="flex flex-no-wrap justify-between font-bold leading-none text-sm px-3">
             <div class="w-1/3 p-2">
               Type
@@ -984,7 +984,7 @@
       </div>
 
       <div class="mt-4 overflow-x-auto">
-        <template v-if="other_mandatory_trainings.length.length === 0">
+        <template v-if="other_mandatory_trainings.length === 0">
           <span
             class="text-center font-bold text-gray-500 text-xs md:text-sm"
             colspan="7"
