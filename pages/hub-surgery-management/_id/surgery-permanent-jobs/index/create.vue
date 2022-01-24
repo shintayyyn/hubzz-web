@@ -3,13 +3,13 @@
 </template>
 
 <script>
-  import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal"
+import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal"
 
-  export default {
-    components: {
-      CreatePermanentJobModal
-    },
-  }
+export default {
+  components: {
+    CreatePermanentJobModal,
+  },
+}
 </script>
 
 <style>
@@ -29,8 +29,5 @@
     .modal-container {
       width: 80%;
     }
-  }
-  .shield {
-    z-index: 509;
   }
 </style>
