@@ -16,9 +16,9 @@
                 :name="'rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
 
@@ -91,13 +91,19 @@
             </div>
 
             <div class="w-32 pr-1">
-              <AppInput v-model="miles" :wrapperClass="'pr-1'" :type="'number'" :name="'miles'" :label="'Miles'" nolabel border/>
+              <AppInput v-model="miles" :wrapperClass="'pr-1'" :type="'number'" :name="'miles'" :label="'Miles'" nolabel border />
             </div>
 
             <div class="flex items-center pr-1">
-              <p class="text-sm mr-2">Match Rate?</p>
-              <button @click="matchedRate === true ? matchedRate = null : matchedRate = true" class="border-2 rounded mx-1 px-2 " :class="matchedRate === true ? 'bg-sunglow border-sunglow' :'hover:bg-sunglow hover:border-sunglow'">Y</button>
-              <button @click="matchedRate === false ? matchedRate = null : matchedRate = false" class="border-2 rounded px-2 " :class="matchedRate === false ? 'bg-sunglow border-sunglow' :'hover:bg-sunglow hover:border-sunglow'">N</button>
+              <p class="text-sm mr-2">
+                Match Rate?
+              </p>
+              <button class="border-2 rounded mx-1 px-2 " :class="matchedRate === true ? 'bg-sunglow border-sunglow' :'hover:bg-sunglow hover:border-sunglow'" @click="matchedRate === true ? matchedRate = null : matchedRate = true">
+                Y
+              </button>
+              <button class="border-2 rounded px-2 " :class="matchedRate === false ? 'bg-sunglow border-sunglow' :'hover:bg-sunglow hover:border-sunglow'" @click="matchedRate === false ? matchedRate = null : matchedRate = false">
+                N
+              </button>
             </div>
             
             <AppButton
@@ -156,9 +162,9 @@
                 :name="'rate'"
                 :label="'Rate £'"
                 :limit="8"
-                @keydown="isNumber($event)"
                 nolabel
                 border
+                @keydown="isNumber($event)"
               />
             </div>
 
@@ -476,7 +482,7 @@ export default {
     AppPostCode,
     AppButton,
     AppLoading,
-    AppFilter
+    AppFilter,
   },
 
   props: {
@@ -826,10 +832,10 @@ export default {
         locum_practice_type: "Applied",
       },
     }).then(res => {
-      this.practiceLists = [{label: 'Any Surgery', value: null}, ...res.data.practices.map(item => ({
+      this.practiceLists = [{label: 'Any Surgery', value: null,}, ...res.data.practices.map(item => ({
         label: item.name,
         value: item.id,
-      }))]
+      })),]
     })
   },
 
@@ -855,7 +861,7 @@ export default {
   },
 
   methods: {
-    onTabChange(tab) {
+    onTabChange (tab) {
       if (tab && this.filterTab !== tab) {
         this.clearFilters()
         this.filterTab = tab

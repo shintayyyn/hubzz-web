@@ -60,7 +60,6 @@
         NHS Pensions Form B
       </nuxt-link>
     </div>
-    <template></template>
 
     <AppFilter v-if="(!locumSoloForms.length && isFiltered) || (!initialLoading && locumSoloForms.length > 0) || (initialLoading && isFiltered)" :enableSearch="false">
       <template v-slot:extraButton>
@@ -231,6 +230,7 @@
           :columns="columns"
           :order-by="order_by"
           :loading="loading"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -328,7 +328,7 @@
         />
 
         <div
-          class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer -mt-5"
+          class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer mt-5"
           @click="$refs.inputFile.click()"
         >
           <input
@@ -409,7 +409,7 @@ export default {
     AppLoading,
     AppButton,
     AppTable,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -458,51 +458,56 @@ export default {
           dataIndex: "practice_name",
           class: "text-center",
           sortable: true,
+          width: 130,
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           sortable: true,
-          width: 150
+          class: "text-center",
+          width: 150,
         },
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 150
+          class: "text-center",
+          width: 150,
         },
         {
           name: "Job Title",
           dataIndex: "job_title",
           sortable: true,
+          class: "text-center",
+          width: 130,
         },
         {
           name: "£ Amount",
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
+          width: 130,
         },
         {
           name: "Paid At",
           dataIndex: "paid_at_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
+          width: 130,
         },
         {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Actions",
           dataIndex: "actions",
           class: "dropdown",
           initialDropdown: 'View Solo Form',
-          width: 140
+          width: 140,
         },
       ]
     },
