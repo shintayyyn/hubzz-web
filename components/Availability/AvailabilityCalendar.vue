@@ -366,13 +366,13 @@ export default {
       }
 
       this.startOfMonth = this.$moment(
-        `${this.selectedYear}-${this.selectedMonth + 1}`
+        `${this.selectedYear}-${this.selectedMonth + 1}`, 'YYYY-MM'
       )
         .startOf("month")
         .format("YYYY-MM-DD")
 
       this.endOfMonth = this.$moment(
-        `${this.selectedYear}-${this.selectedMonth + 1}`
+        `${this.selectedYear}-${this.selectedMonth + 1}`, 'YYYY-MM'
       )
         .endOf("month")
         .format("YYYY-MM-DD")
