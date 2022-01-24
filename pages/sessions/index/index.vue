@@ -376,7 +376,7 @@
           :loading="loading"
           :routerLink="routerLink"
           :min-height="'55vh'"
-          :customWidth="1400"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
