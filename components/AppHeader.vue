@@ -325,7 +325,7 @@ export default {
     padding: 1px 3% 0;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1281px) {
 	.burger {
 		display: none;
 	}
