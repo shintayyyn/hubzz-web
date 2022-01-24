@@ -2994,6 +2994,14 @@ export default {
         return 0
       }
 
+      if (this.$moment(timeStart, 'HH:mm').format('HH:mm') !== timeStart) {
+        return 0
+      }
+
+      if (this.$moment(timeEnd, 'HH:mm').format('HH:mm') !== timeEnd) {
+        return 0
+      }
+
       const datetimeStart = this.$moment(
         `${date} ${timeStart}`,
         "DD/MM/YYYY HH:mm"

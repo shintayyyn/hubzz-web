@@ -276,7 +276,24 @@
                     <label for="fileInc" class="leading-loose mx-2 cursor-pointer">Upload</label>
                   </div>
                   <p
-                    v-if="form.certificate_of_incorporation && form.certificate_of_incorporation.name"
+                    v-if="
+                      new_certificate_of_incorporation &&
+                        form.certificate_of_incorporation &&
+                        form.certificate_of_incorporation.name
+                    "
+                    class="text-sm mx-2"
+                  >
+                    <span
+                      class="truncate"
+                    >
+                      <span>{{ form.certificate_of_incorporation.name }}</span>
+                    </span>
+                  </p>
+                  <p
+                    v-if="
+                      !new_certificate_of_incorporation &&
+                        form.certificate_of_incorporation && form.certificate_of_incorporation.name
+                    "
                     class="text-sm mx-2"
                   >
                     <a
