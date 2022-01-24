@@ -469,19 +469,19 @@ table thead th {
 	}
 
 	::-webkit-scrollbar-track:hover {
-		background: #eee;
+		background: rgb(209, 209, 209);
 		border-radius: 3px;
 	}
 
 	/* Handle */
 	::-webkit-scrollbar-thumb {
-		background: #ddd;
+		background: rgb(185, 185, 185);
 		border-radius: 3px;
 	}
 
 	/* Handle on hover */
 	::-webkit-scrollbar-thumb:hover {
-		background: #ccc;
+		background: rgb(168, 168, 168);
 	}
 }
 /* Customized Checkbox */

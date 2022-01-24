@@ -31,6 +31,7 @@
       :columns="columns"
       :orderBy="params.order_by"
       :routerLink="'/roles-and-permissions/roles'"
+      :customWidth="800"
       @remove="remove"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
@@ -63,7 +64,7 @@ import AppInput from "@/components/Base/AppInput"
 export default {
   components: {
     AppTable,
-    AppInput
+    AppInput,
   },
 
   transition: {
@@ -114,7 +115,7 @@ export default {
   computed: {
     authPermissions () {
       return this.$store.getters["permissions"]
-    }
+    },
   },
 
   watch: {

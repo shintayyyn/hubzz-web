@@ -395,20 +395,24 @@
           </div>
         </div>
         </transition> -->
-        <AppTable
-          v-if="jobs.length > 0"
-          :total="total"
-          :items="jobs"
-          :current-page="current_page"
-          :per-page="limit"
-          :columns="columns"
-          :order-by="order_by"
-          :loading="loading"
-          :routerLink="routerLink"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
-        />
+        <div>
+          <AppTable
+            v-if="jobs.length > 0"
+            :total="total"
+            :items="jobs"
+            :current-page="current_page"
+            :per-page="limit"
+            :columns="columns"
+            :order-by="order_by"
+            :loading="loading"
+            :routerLink="routerLink"
+            :customWidth="800"
+            @pagechanged="pagechanged"
+            @limitchanged="limitchanged"
+            @sorted="sorted"
+          />
+        </div>
+        
 
         <div v-if="!jobs.length && !loading && !isFiltered" class="flex justify-center py-4">
           {{ noJobsToDisplay }}

@@ -1,9 +1,9 @@
 <template>
   <section>
-    <div class="relative calendar bg-white mt-4 lg:max-w-6xl">
+    <div class="relative calendar bg-white mt-4 lg:min-w-5xl lg:max-w-6xl">
       <div class="relative flex flex-row flex-wrap w-full h-full">
         <div
-          class="relative w-full lg:w-2/3 px-2 pb-4 border rounded pt-2"
+          class="relative w-full lg:w-2/3 px-2 pb-4 border rounded py-2 px-4"
         >
           <PerMonth
             v-if="$store.state.calendar.view_type === 'per_month'"
@@ -18,7 +18,7 @@
           />
         </div>
 
-        <div class="w-full lg:w-1/3 pl-4">
+        <div class="w-full lg:w-1/3 pl-4 pr-6">
           <Info
             :locumUnavailabilities="locumUnavailabilities"
           />

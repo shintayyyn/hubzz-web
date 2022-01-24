@@ -11,6 +11,7 @@
         :columns="columns"
         :orderBy="params.order_by"
         :routerLink="'/practice-billing/invoices-from-hubzz'"
+        :customWidth="800"
         @pagechanged="pagechanged"
         @limitchanged="limitchanged"
         @sorted="sorted"
@@ -125,7 +126,7 @@ export default {
           name: "Invoice Number",
           dataIndex: "invoice_number",
           class: "text-left",
-          width: 130
+          width: 130,
         },
         {
           name: "£ Amount",
@@ -136,19 +137,19 @@ export default {
           name: "Paid At",
           dataIndex: "paid_at",
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Created At",
           dataIndex: "date_created_in_gb_formatted",
           class: "text-center",
-          width: 150
+          width: 150,
         },
         {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center",
-          width: 120
+          width: 120,
         },
       ],
     }

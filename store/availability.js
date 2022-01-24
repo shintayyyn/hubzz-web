@@ -3,7 +3,7 @@ export const state = () => ({
   months: [
     'January', 'February', 'March', 'April',
     'May', 'June', 'July', 'August',
-    'September', 'October', 'November', 'December'
+    'September', 'October', 'November', 'December',
   ],
   shifts: [],
   date_today: null,
@@ -24,9 +24,9 @@ export const mutations = {
 }
 
 export const actions = {
-  getShifts({commit}) {
+  getShifts ({ commit, }) {
     this.$axios.$get(`/api/v1/shifts`).then(res => {
-        commit('SET_SHIFTS', res.data.shifts)
+      commit('SET_SHIFTS', res.data.shifts)
     })
   }, 
 }

@@ -65,16 +65,16 @@
       </template>
       <template v-slot:filter>
         <div class="w-32">
-            <AppInput
-              v-model="ir35"
-              :wrapperClass="'px-1'"
-              :type="'select'"
-              :name="'ir35'"
-              :placeholder="'Inside ir35'"
-              :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
-              nolabel
-              border
-            />
+          <AppInput
+            v-model="ir35"
+            :wrapperClass="'px-1'"
+            :type="'select'"
+            :name="'ir35'"
+            :placeholder="'Inside ir35'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: ''} ]"
+            nolabel
+            border
+          />
         </div>
 
         <div class="">
@@ -132,7 +132,7 @@
           @click="filterJobParts"
         />
 
-         <AppButton
+        <AppButton
           :disabled="disabledClearFilter"
           :label="'Clear'"
           customTheme="border hover:bg-gray-200"
@@ -240,6 +240,7 @@
           :per-page="limit"
           :columns="columns"
           :order-by="order_by"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -425,7 +426,7 @@ export default {
     AppButton,
     AppLoading,
     AppInput,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -550,7 +551,7 @@ export default {
           dataIndex: "actions",
           class: "dropdown",
           initialDropdown: 'View Form A',
-          width: 125
+          width: 125,
         },
       ]
     },

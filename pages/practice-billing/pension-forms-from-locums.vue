@@ -20,6 +20,7 @@
           :perPage="limit"
           :columns="columns"
           :orderBy="order_by"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
