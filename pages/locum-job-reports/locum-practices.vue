@@ -147,7 +147,7 @@ export default {
     ReportTable,
     ReportPagination,
     AppDate,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -188,7 +188,7 @@ export default {
       dateStart: '',
       dateEnd: '',
       
-      links: []
+      links: [],
     }
   },
 
@@ -320,7 +320,7 @@ export default {
       practice_name_includes: practiceNameIncludes,
       date_start: dateStart,
       date_end: dateEnd,
-      order_by: orderBy = [],
+      order_by: orderBy = ['date_start:desc',],
       page,
     } = this.$route.query
     
@@ -337,11 +337,11 @@ export default {
     this.links = [
       {
         title: 'Job Reports',
-        url: '/locum-job-reports'
+        url: '/locum-job-reports',
       },
       {
-        title: 'Rep-013'
-      }
+        title: 'Rep-013',
+      },
     ]
   },
 
