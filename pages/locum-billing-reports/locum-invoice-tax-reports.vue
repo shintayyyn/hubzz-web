@@ -95,6 +95,10 @@
             <div class="whitespace-no-wrap">
               Page: {{ activePage }} / {{ pages }}
             </div>
+
+            <div class="whitespace-no-wrap">
+              Order By: {{ orderByProcessed }}
+            </div>
           </div>
         </div>
 
@@ -292,7 +296,7 @@ export default {
         {
           title: 'Paid Date',
           key: 'paid_at_formatted',
-          sort_key: 'paid_at_formatted',
+          sort_key: 'paid_at',
           column: (item) => item.paid_at_formatted,
           justify: 'start',
           flexGrow: 1,
@@ -317,6 +321,8 @@ export default {
         replaced = replaced.replace('Asc', 'Ascending')
       } 
       this.orderByProcessed = replaced
+
+      this.orderByProcessed = this.orderByProcessed.replace('Paid At', 'Paid Date')
       this.getLocumInvoices()
     },
 
@@ -335,7 +341,7 @@ export default {
       practice_name_includes: practiceNameIncludes,
       date_start: dateStart,
       date_end: dateEnd,
-      order_by: orderBy = [],
+      order_by: orderBy = ['paid_at:desc',],
       page,
     } = this.$route.query
 
