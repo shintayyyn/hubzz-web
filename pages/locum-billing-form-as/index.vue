@@ -326,7 +326,7 @@
         />
 
         <div
-          class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer -mt-5"
+          class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer mt-5"
           @click="$refs.inputFile.click()"
         >
           <input
@@ -417,7 +417,7 @@ export default {
     AppButton,
     AppConfirmationModal,
     AppTable,
-    AppFilter
+    AppFilter,
   },
 
   data () {
@@ -474,7 +474,7 @@ export default {
           name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true,
-          width: 130
+          width: 130,
         },
         {
           name: "Job Title",
@@ -486,7 +486,7 @@ export default {
           dataIndex: "job_part_gross_rate_formatted",
           class: "text-center",
           sortable: true,
-          width: 130
+          width: 130,
         },
         // {
         //   name: 'OOH',
@@ -504,27 +504,27 @@ export default {
           name: "Paid By Practice At",
           dataIndex: "paid_by_practice_at_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         },
         {
           name: "Paid By Locum At",
           dataIndex: "paid_at_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         },
         {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
-          width: 150
+          width: 150,
         },
         {
           name: "Actions",
           dataIndex: "actions",
           class: "dropdown",
           initialDropdown: 'View Form A',
-          width: 170
+          width: 170,
         },
       ]
     },
