@@ -296,7 +296,7 @@ export default {
         {
           title: 'Paid Date',
           key: 'paid_at_formatted',
-          sort_key: 'paid_at_formatted',
+          sort_key: 'paid_at',
           column: (item) => item.paid_at_formatted,
           justify: 'start',
           flexGrow: 1,
@@ -321,6 +321,8 @@ export default {
         replaced = replaced.replace('Asc', 'Ascending')
       } 
       this.orderByProcessed = replaced
+
+      this.orderByProcessed = this.orderByProcessed.replace('Paid At', 'Paid Date')
       this.getLocumInvoices()
     },
 
