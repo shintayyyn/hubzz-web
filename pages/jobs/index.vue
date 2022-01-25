@@ -3,7 +3,7 @@
     <template v-if="$route.name === 'jobs-index'">
       <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
         <div class="flex overflow-x-auto items-center">
-          <template v-for="tab in tabs" >
+          <template v-for="tab in tabs">
             <nuxt-link
               :key="tab.title"
               :event="$store.state.jobs.loading_jobs ? '' : 'click'"

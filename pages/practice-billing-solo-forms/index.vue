@@ -316,7 +316,7 @@
             />
 
             <div
-              class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer -mt-5"
+              class="hover:underline flex flex-row flex-no-wrap justify-center items-center bg-yellow-500 px-4 py-2 rounded cursor-pointer mt-5"
               @click="$refs.inputFile.click()"
             >
               <input
