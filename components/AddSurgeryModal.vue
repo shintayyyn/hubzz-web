@@ -144,7 +144,7 @@
                   v-model="form.address_line_1"
                   :type="'text'"
                   :name="'address_line_1'"
-                  :label="'address_line_1'"
+                  :label="'Address Line 1'"
                   :error="formError.find(item => item.field === 'address_line_1')"
                   @blur="CheckEmptyField(form.address_line_1,'address_line_1')"
                 />
@@ -152,28 +152,28 @@
                   v-model="form.address_line_2"
                   :type="'text'"
                   :name="'address_line_2'"
-                  :label="'address_line_2'"
+                  :label="'Address Line 2'"
                   :error="formError.find(item => item.field === 'address_line_2')"
                 />
                 <AppInput
                   v-model="form.address_line_3"
                   :type="'text'"
                   :name="'address_line_3'"
-                  :label="'address_line_3'"
+                  :label="'Address Line 3'"
                   :error="formError.find(item => item.field === 'address_line_3')"
                 />
                 <AppInput
                   v-model="form.address_line_4"
                   :type="'text'"
                   :name="'address_line_4'"
-                  :label="'address_line_4'"
+                  :label="'Address Line 4'"
                   :error="formError.find(item => item.field === 'address_line_4')"
                 />
                 <AppInput
                   v-model="form.address_line_5"
                   :type="'text'"
                   :name="'address_line_5'"
-                  :label="'address_line_5'"
+                  :label="'Address Line 5'"
                   :error="formError.find(item => item.field === 'address_line_5')"
                 />
               </form>

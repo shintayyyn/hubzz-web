@@ -935,7 +935,7 @@ export default {
   display: block;
 }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1281px) {
   .sidebar {
     z-index: 100;
     margin-left: 0;

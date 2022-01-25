@@ -23,6 +23,7 @@
           :columns="columns"
           :order-by="order_by"
           :loading="loading"
+          :customWidth="800"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
