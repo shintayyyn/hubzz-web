@@ -166,6 +166,7 @@ export default {
       activePage: 1,
       locumUserNameIncludes: '',
       practiceNameIncludes: '',
+      downloadToken: null,
     }
   },
 
@@ -190,7 +191,7 @@ export default {
           title: '#',
           key: 'index',
           sort_key: null,
-          column: (item, index) => this.offset + index + 1,
+          column: (_, index) => this.offset + index + 1,
           justify: 'start',
           flexGrow: 0,
           flexShrink: 0,
@@ -387,15 +388,32 @@ export default {
         }).then((responses) => {
           return responses.data.data.declined_job_reports
         }),
-        new Promise((resolve) => setTimeout(resolve, 500)),
+
+        this.$axios.post('/api/v1/practice/declined-job-reports/generate-key', {
+          filename: `declined-job-reports.pdf`,
+          filter: {
+            ...params,
+          },
+        }, {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+          },
+        }).then((responses) => {
+          const token = responses.data.data.token
+
+          return token
+        }),
       ]).then((results) => {
         const [
           count,
           declinedJobReports,
+          downloadToken,
         ] = results
 
         this.count = count
         this.declinedJobReports = declinedJobReports
+        this.downloadToken = downloadToken
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -405,32 +423,7 @@ export default {
     },
 
     async downloadPDF () {
-      let params = await {
-        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : null,
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : null,
-        limit: 999,
-        order_by: this.orderBy,
-      }
-
-      await this.$axios.post('/api/v1/practice/declined-job-reports/generate-key', {
-        filename: `declined-job-reports.pdf`,
-        filter: {
-          ...params,
-        },
-      }, {
-        params: {
-          ...params,
-        },
-      }).then((responses) => {
-        const token = responses.data.data.token
-
-        window.open(`${process.env.API_URL}/api/v1/declined-job-reports/pdf?token=${token}`)
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.downloading = false
-      })
+      window.open(`${process.env.API_URL}/api/v1/declined-job-reports/pdf?token=${this.downloadToken}`)
     },
   },
 

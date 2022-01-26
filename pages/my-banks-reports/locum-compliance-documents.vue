@@ -77,8 +77,8 @@
         <div>
           <label class="">Limit: </label>
           <select v-model="limit">
-            <option v-for="limit in limits" :key="`limit_${limit}`" :value="limit">
-              {{ limit }}
+            <option v-for="limitOption in limits" :key="`limit_${limitOption}`" :value="limitOption">
+              {{ limitOption }}
             </option>
           </select>
         </div>
@@ -150,6 +150,7 @@ import AppButton from '@/components/Base/AppButton'
 import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
 import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
+
 export default {
   components: {
     ReportTable,
@@ -157,7 +158,7 @@ export default {
     AppButton,
     AppInput,
     AppDate,
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
 
   data () {
@@ -201,17 +202,18 @@ export default {
       links: [
         {
           title: 'My Banks',
-          url: '/my-banks'
+          url: '/my-banks',
         },
         {
           title: 'Reports',
-          url: '/my-banks-reports'
+          url: '/my-banks-reports',
         },
         {
           title: 'Rep-008',
-          url: this.$route.path
-        }
-      ]
+          url: this.$route.path,
+        },
+      ],
+      downloadToken: null,
     }
   },
 
@@ -235,7 +237,7 @@ export default {
           title: '#',
           key: 'index',
           sort_key: null,
-          column: (item, index) => this.offset + index + 1,
+          column: (_, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
           flexShrink: 0,
@@ -404,6 +406,7 @@ export default {
     getLocumComplianceDocuments () {
       this.loading = true
       this.locumComplianceDocuments = []
+
       const params = {
         expired_at: this.expiredAt ? this.expiredAt : undefined,
         expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
@@ -411,12 +414,14 @@ export default {
         locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : undefined,
         profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
       }
+
       Promise.all([
         this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents/count', {
           params,
         }).then((responses) => {
           return responses.data.data.count
         }),
+
         this.$axios.get('/api/v1/admin/reports/locum-expiring-compliance-documents', {
           params: {
             ...params,
@@ -427,15 +432,30 @@ export default {
         }).then((responses) => {
           return responses.data.data.locum_expiring_compliance_documents
         }),
-        new Promise((resolve) => setTimeout(resolve, 500)),
+
+        this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
+          filename: `practiceExpiringLocumCompliance.pdf`,
+        }, {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+          },
+        }).then((responses) => {
+          const token = responses.data.data.token
+
+          return token
+
+        }),
       ]).then((results) => {
         const [
           count,
           locumComplianceDocuments,
+          downloadToken,
         ] = results
 
         this.count = count
         this.locumComplianceDocuments = locumComplianceDocuments
+        this.downloadToken = downloadToken
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -443,34 +463,9 @@ export default {
         this.loading = false
       })
     },
+
     async downloadPDF () {
-      this.downloading = true
-      const params = await {
-        locum_name_includes: this.locumNameIncludes ? this.locumNameIncludes : null,
-        expired_at: this.expiredAt ? this.expiredAt : null,
-        expired_at_date_start: this.expiredAtDateStart ? this.expiredAtDateStart : undefined,
-        expired_at_date_end: this.expiredAtDateEnd ? this.expiredAtDateEnd : undefined,
-        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : null,
-        limit: 999,
-        order_by: this.orderBy,
-      }
-
-      await this.$axios.post('/api/v1/practice-reports/practice-expiring-locum-compliance-report/generate-key', {
-        filename: `practiceExpiringLocumCompliance.pdf`,
-      }, {
-        params: {
-          ...params,
-        },
-      }).then((responses) => {
-        const token = responses.data.data.token
-
-        window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-expiring-locum-compliance-report/pdf?token=${token}`)
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.downloading = false
-      })
+      window.open(`${process.env.API_URL}/api/v1/practice-reports/practice-expiring-locum-compliance-report/pdf?token=${this.downloadToken}`)
     },
   },
 }

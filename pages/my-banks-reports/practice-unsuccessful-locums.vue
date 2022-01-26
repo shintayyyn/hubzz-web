@@ -211,6 +211,7 @@ export default {
           url: this.$route.path,
         },
       ],
+      downloadToken: null,
     }
   },
 
@@ -414,6 +415,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.count
         }),
+
         this.$axios.get('/api/v1/practice/unsuccessful-locum-reports', {
           params: {
             ...params,
@@ -424,15 +426,29 @@ export default {
         }).then((responses) => {
           return responses.data.data.unsuccessful_locum_reports
         }),
-        new Promise((resolve) => setTimeout(resolve, 500)),
+
+        this.$axios.post('/api/v1/practice/unsuccessful-locum-reports/generate-key', {
+          filename: `unsuccessful-locum-reports.pdf`,
+        }, {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+          },
+        }).then((responses) => {
+          const token = responses.data.data.token
+
+          return token
+        }),
       ]).then((results) => {
         const [
           count,
           unsuccessfulLocumReports,
+          downloadToken,
         ] = results
 
         this.count = count
         this.unsuccessfulLocumReports = unsuccessfulLocumReports
+        this.downloadToken = downloadToken
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -442,32 +458,7 @@ export default {
     },
 
     async downloadPDF () {
-      this.downloading = true
-
-      let params = {
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
-        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        order_by: this.orderBy,
-        limit: 9999999,
-      }
-
-      await this.$axios.post('/api/v1/practice/unsuccessful-locum-reports/generate-key', {
-        filename: `unsuccessful-locum-reports.pdf`,
-      }, {
-        params: {
-          ...params,
-        },
-      }).then((responses) => {
-        const token = responses.data.data.token
-
-        window.open(`${process.env.API_URL}/api/v1/unsuccessful-locum-reports/pdf?token=${token}`)
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.downloading = false
-      })
+      window.open(`${process.env.API_URL}/api/v1/unsuccessful-locum-reports/pdf?token=${this.downloadToken}`)
     },
   },
 

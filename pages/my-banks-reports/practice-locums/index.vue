@@ -195,6 +195,7 @@ export default {
         25,
       ],
       activePage: 1,
+      downloadToken: null,
     }
   },
 
@@ -405,6 +406,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.count
         }),
+
         this.$axios.get('/api/v1/practice/locum-used-reports', {
           params: {
             ...params,
@@ -415,15 +417,29 @@ export default {
         }).then((responses) => {
           return responses.data.data.locum_used_reports
         }),
-        new Promise((resolve) => setTimeout(resolve, 500)),
+
+        this.$axios.post('/api/v1/practice/locum-used-reports/generate-key', {
+          filename: `locum-used.csv`,
+        }, {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+          },
+        }).then((responses) => {
+          const token = responses.data.data.token
+          
+          return token
+        }),
       ]).then((results) => {
         const [
           count,
           locumUsedReports,
+          downloadToken,
         ] = results
 
         this.count = count
         this.locumUsedReports = locumUsedReports
+        this.downloadToken = downloadToken
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -433,30 +449,7 @@ export default {
     },
 
     downloadCsv () {
-      this.downloading = true
-      const params = {
-        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
-        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
-        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
-        order_by: this.orderBy,
-      }
-
-      this.$axios.post('/api/v1/practice/locum-used-reports/generate-key', {
-        filename: `locum-used.csv`,
-      }, {
-        params: {
-          ...params,
-        },
-      }).then((responses) => {
-        const token = responses.data.data.token
-
-        window.open(`${process.env.API_URL}/api/v1/locum-used-reports/csv?token=${token}`)
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.downloading = false
-      })
+      window.open(`${process.env.API_URL}/api/v1/locum-used-reports/csv?token=${this.downloadToken}`)
     },
   },
 
