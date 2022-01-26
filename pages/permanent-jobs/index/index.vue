@@ -29,7 +29,7 @@
             :placeholder="'Title / Practice Name'"
             :disabled="loading"
             :inStyle="'margin:0'"
-            @click="getPermanentJobsForPractice()"
+            @click="getJobs(params)"
           />
         </template>
         <template v-if="$auth.user.domain === 'Practice'" v-slot:filter>
@@ -60,7 +60,7 @@
               border
             />
           </div>
-          <div class="w-full md:w-1/6">
+          <div v-if="$route.query.status !== 'Pending'" class="w-full md:w-1/6">
             <AppInput
               v-model="params.job_posting_status"
               :type="'select'"
@@ -612,6 +612,7 @@ export default {
             })
             this.loading = false
           } else if (this.$auth.user.domain === "Practice") {
+            console.log('practice search', newStatus)
             let practice_type = this.$auth.user.practice_detail.practice.type
             this.params = {
               job_posting_status: newStatus ? newStatus : "Available",
@@ -979,6 +980,7 @@ export default {
 
   methods: {
     filterReset () {
+      this.search = ""
       this.params.title = ""
       this.params.surgery = ""
       this.params.job_type = ""
@@ -1144,6 +1146,7 @@ export default {
         ...params,
         search: this.params.search,
       }
+      console.log('get perm jobs for practice', params)
       await this.$axios
         .$get("/api/v1/practice/permanent-jobs/count", { params, })
         .then(res => {
