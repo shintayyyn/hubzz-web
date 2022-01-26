@@ -219,7 +219,7 @@ export default {
           title: '#',
           key: 'index',
           sort_key: null,
-          column: (item, index) => this.offset + index + 1,
+          column: (_, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
           flexShrink: 0,
@@ -308,6 +308,20 @@ export default {
   },
 
   mounted () {
+    const {
+      practice_name_includes: practiceNameIncludes = '',
+      locum_user_name_includes: locumUserNameIncludes = '',
+      profession_name_includes: professionNameIncludes = '',
+      order_by: orderBy = [],
+      page,
+    } = this.$route.query
+
+    this.orderBy = orderBy
+    this.activePage = page ? Number.parseInt(page) : 1
+    this.practiceNameIncludes = practiceNameIncludes
+    this.locumUserNameIncludes = locumUserNameIncludes
+    this.professionNameIncludes = professionNameIncludes
+
     this.getLocumUsedReports()
   },
 
