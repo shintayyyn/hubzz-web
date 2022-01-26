@@ -15,6 +15,58 @@
       <div class="text-sm md:text-lg ">
         Rep-006
       </div>
+      
+      <!-- FILTER -->
+      <div
+        class="flex-wrap justify-start items-center w-full shadow-lg p-3 rounded-lg flex bg-waterloo my-2"
+      >
+        <div class="md:px-1 w-full">
+          <label class="text-md md:text-lg text-bold">Filters</label>
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="practiceNameIncludes"
+            placeholder="Search practice"
+            type="text"
+            label="Practice"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="locumUserNameIncludes"
+            placeholder="Search locum"
+            type="text"
+            label="Locum"
+          />
+        </div>
+
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            v-model="professionNameIncludes"
+            placeholder="Search profession"
+            type="text"
+            label="Profession"
+          />
+        </div>
+
+        <div class="md:px-1 flex flex-wrap w-full justify-end">
+          <AppButton
+            label="Reset"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterReset"
+          />
+
+          <AppButton
+            class="mx-2"
+            label="Submit"
+            :in-style="'padding:5px 14px;margin-bottom:5px'"
+            @click="filterSearch"
+          />
+        </div>
+      </div>
+      <!-- FILTER ENDS HERE -->
 
       <div v-if="false">
         <div>
@@ -97,17 +149,25 @@
 import ReportTable from '@/components/Reports/ReportTable'
 import ReportPagination from '@/components/Reports/ReportPagination'
 import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
+import AppButton from '@/components/Base/AppButton'
+import AppInput from '@/components/Base/AppInput'
+
 export default {
   components: {
     ReportTable,
     ReportPagination,
-    AppBreadcrumbs
+    AppBreadcrumbs,
+    AppInput,
+    AppButton,
   },
 
   data () {
     return {
       loading: false,
       downloading: false,
+      practiceNameIncludes: '',
+      locumUserNameIncludes: '',
+      professionNameIncludes:'',
       count: 0,
       unsuccessfulLocumReports: [],
       orderBy: [],
@@ -140,17 +200,18 @@ export default {
       links: [
         {
           title: 'My Banks',
-          url: '/my-banks'
+          url: '/my-banks',
         },
         {
           title: 'Reports',
-          url: '/my-banks-reports'
+          url: '/my-banks-reports',
         },
         {
           title: 'Rep-006',
-          url: this.$route.path
-        }
-      ]
+          url: this.$route.path,
+        },
+      ],
+      downloadToken: null,
     }
   },
 
@@ -175,7 +236,7 @@ export default {
           title: '#',
           key: 'index',
           sort_key: null,
-          column: (item, index) => this.offset + index + 1,
+          column: (_, index) => this.offset + index + 1,
           justify: 'end',
           flexGrow: 0,
           flexShrink: 0,
@@ -256,17 +317,49 @@ export default {
 
   mounted () {      
     const {
+      practice_name_includes: practiceNameIncludes = '',
+      locum_user_name_includes: locumUserNameIncludes = '',
+      profession_name_includes: professionNameIncludes = '',
       order_by: orderBy = [],
       page,
     } = this.$route.query
 
     this.orderBy = orderBy
     this.activePage = page ? Number.parseInt(page) : 1
+    this.practiceNameIncludes = practiceNameIncludes
+    this.locumUserNameIncludes = locumUserNameIncludes
+    this.professionNameIncludes = professionNameIncludes
 
     this.getPracticeUnsuccessfulLocums()
   },
 
   methods: {
+    filterReset () {
+      this.practiceNameIncludes = ''
+      this.locumUserNameIncludes = ''
+      this.professionNameIncludes = ''
+
+      this.filterSearch()
+    },
+
+    filterSearch () {
+      this.activePage = 1
+
+      const query = {
+        ...this.$route.query,
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
+        profession_name_includes: this.professionNameIncludes ? this.professionNameIncludes : undefined,
+        page: undefined,
+      }
+
+      if (this.$router.resolve({ query, }).href !== this.$route.fullPath) {
+        this.$router.replace({ query, })
+      }
+
+      this.getPracticeUnsuccessfulLocums()
+    },
+
     setOrderBy (orderBy) {
       this.orderBy = orderBy
       this.activePage = 1
@@ -307,7 +400,13 @@ export default {
     getPracticeUnsuccessfulLocums () {
       this.loading = true
       this.unsuccessfulLocumReports = []
-      let params = {}
+
+      let params = {
+        practice_name_includes: this.practiceNameIncludes ? this.practiceNameIncludes : undefined,
+        locum_user_name_includes: this.locumUserNameIncludes ? this.locumUserNameIncludes : undefined,
+        profession_name_includes : this.professionNameIncludes ? this.professionNameIncludes : undefined,
+      }
+      
       Promise.all([
         this.$axios.get('/api/v1/practice/unsuccessful-locum-reports/count',{
           params: {
@@ -316,6 +415,7 @@ export default {
         }).then((responses) => {
           return responses.data.data.count
         }),
+
         this.$axios.get('/api/v1/practice/unsuccessful-locum-reports', {
           params: {
             ...params,
@@ -326,15 +426,29 @@ export default {
         }).then((responses) => {
           return responses.data.data.unsuccessful_locum_reports
         }),
-        new Promise((resolve) => setTimeout(resolve, 500)),
+
+        this.$axios.post('/api/v1/practice/unsuccessful-locum-reports/generate-key', {
+          filename: `unsuccessful-locum-reports.pdf`,
+        }, {
+          params: {
+            ...params,
+            order_by: this.orderBy,
+          },
+        }).then((responses) => {
+          const token = responses.data.data.token
+
+          return token
+        }),
       ]).then((results) => {
         const [
           count,
           unsuccessfulLocumReports,
+          downloadToken,
         ] = results
 
         this.count = count
         this.unsuccessfulLocumReports = unsuccessfulLocumReports
+        this.downloadToken = downloadToken
       }).catch((err) => {
         console.log('err.response ? err.response.data : err', err.response ? err.response.data : err)
         this.$nuxt.error(err.response ? err.response.data : err)
@@ -344,28 +458,7 @@ export default {
     },
 
     async downloadPDF () {
-      this.downloading = true
-      let params = await {
-        order_by: this.orderBy,
-        limit: 999,
-      }
-
-      await this.$axios.post('/api/v1/practice/unsuccessful-locum-reports/generate-key', {
-        filename: `unsuccessful-locum-reports.pdf`,
-      }, {
-        params: {
-          ...params,
-        },
-      }).then((responses) => {
-        const token = responses.data.data.token
-
-        window.open(`${process.env.API_URL}/api/v1/unsuccessful-locum-reports/pdf?token=${token}`)
-      }).catch((err) => {
-        console.log('err', err)
-        this.$nuxt.error(err.response ? err.response.data : err)
-      }).finally(() => {
-        this.downloading = false
-      })
+      window.open(`${process.env.API_URL}/api/v1/unsuccessful-locum-reports/pdf?token=${this.downloadToken}`)
     },
   },
 

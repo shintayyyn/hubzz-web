@@ -18,8 +18,8 @@
       v-if="$auth.user.domain === 'Practice'"
       class="w-full"
     >
-      <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0">
-        <template v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" v-slot:extraButtonFirst>
+      <AppFilter :enableSearch="false" :enableFilter="$auth.user.domain === 'Practice'">
+        <template v-if="$auth.user.domain === 'Practice'" v-slot:extraButtonFirst>
           <AppInputSmall
             v-model="search"
             :type="'text'"
@@ -32,7 +32,7 @@
             @click="getPermanentJobsForPractice()"
           />
         </template>
-        <template v-if="$auth.user.domain === 'Practice' && permanent_jobs_for_practice_count > 0" v-slot:filter>
+        <template v-if="$auth.user.domain === 'Practice'" v-slot:filter>
           <div class="w-full md:w-32">
             <AppInput
               v-model="params.job_type"

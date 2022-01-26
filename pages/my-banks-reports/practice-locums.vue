@@ -42,29 +42,31 @@
     </div>
   </div>
 </template>
+
 <script>
 import AppBreadcrumbs from '@/components/Base/AppBreadcrumbs'
 export default {
   components: {
-    AppBreadcrumbs
+    AppBreadcrumbs,
   },
-  data() {
+
+  data () {
     return {
       links: [
         {
           title: 'My Banks',
-          url: '/my-banks'
+          url: '/my-banks',
         },
         {
           title: 'Reports',
-          url: '/my-banks-reports'
+          url: '/my-banks-reports',
         },
         {
           title: 'Rep-005',
-          url: this.$route.path
-        }
-      ]
+          url: this.$route.path,
+        },
+      ],
     }
-  }
+  },
 }
 </script>
