@@ -258,7 +258,7 @@ export default {
   },
 
 
-  async asyncData ({ app, store, error }) {
+  async asyncData ({ app, store, error, }) {
     try {
       const authPermissions = store.getters["permissions"]
       if (app.$auth.user.domain === 'Practice'
