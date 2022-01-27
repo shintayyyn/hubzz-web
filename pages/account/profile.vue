@@ -505,7 +505,7 @@
                   @keypress="inputNumberOnly($event)"
                 />
                 <AppInput
-                  v-model="form.ni_number"
+                  :value="form.ni_number"
                   :type="'text'"
                   :name="'ni_number'"
                   :label="'NI number'"
@@ -513,6 +513,7 @@
                   :placeholder="'AA000000A'"
                   :limit="9"
                   required
+                  @input="(v) => form.ni_number = v.toUpperCase()"
                 />
                 <AppInput
                   v-model="form.ay_percentage_rate"
