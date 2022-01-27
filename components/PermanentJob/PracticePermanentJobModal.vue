@@ -721,14 +721,14 @@ export default {
 				});
 		},
 
-		getAssignedLocum(userID) {
+		getAssignedLocum (userID) {
 			this.$axios.$get(`/api/v1/practice/locums/${userID}`).then(res => {
 				this.assignedLocum = res.data.user;
 				console.log("assignedLocum", this.assignedLocum);
 			});
 		},
 
-		editJobLabel(edit) {
+		editJobLabel (edit) {
 			console.log("edit", edit);
 			if (
 				(edit === false &&
@@ -751,7 +751,7 @@ export default {
 			}
 		},
 
-		editPermanentJob() {
+		editPermanentJob () {
 			this.formError = [];
 
 			let notRequired = [
@@ -791,7 +791,7 @@ export default {
 			}
 		},
 
-		async repostPermanentJob() {
+		async repostPermanentJob () {
 			this.formError = [];
 			let notRequired = [
 				"parent_practice_id",
@@ -844,7 +844,7 @@ export default {
 			}
 		},
 
-		async forceCloseJob() {
+		async forceCloseJob () {
 			if (this.form.hired_through === "") {
 				this.$store.commit("SET_NOTIFICATION", {
 					enabled: true,
@@ -873,7 +873,7 @@ export default {
 			}
 		},
 
-		async acceptRejectSpokePermanentJob(approveReject) {
+		async acceptRejectSpokePermanentJob (approveReject) {
 			this.formError = [];
 			let notRequired = [];
 
@@ -902,19 +902,19 @@ export default {
 			}
 		},
 
-		onEditorBlur(editor) {
+		onEditorBlur (editor) {
 			console.log("editor blur!", editor);
 		},
 
-		onEditorFocus(editor) {
+		onEditorFocus (editor) {
 			console.log("editor focus!", editor);
 		},
 
-		onEditorReady(editor) {
+		onEditorReady (editor) {
 			console.log("editor ready!", editor);
 		},
 
-		statusStyle(jobPostingStatus) {
+		statusStyle (jobPostingStatus) {
 			switch (jobPostingStatus) {
 				case "Available":
 					return "bg-green-500 text-white";
@@ -926,17 +926,27 @@ export default {
 					return "bg-yellow-400 text-black";
 			}
 		},
-		jobClosingTag(jobClosingTag) {
+		jobClosingTag (jobClosingTag) {
 			switch (jobClosingTag) {
-				case "Direct Hiring":
-					return "Hired Directly";
-				case "Through HUBZZ":
-					return "Hired Through Hubzz";
-				default:
-					return "Closed By Practice";
-			}
+      case "Filled through HUBZZ":
+        return "Filled through HUBZZ"
+      case "Filled through Recruitment Agency":
+        return "Filled through Recruitment Agency"
+      case "Filled by Direct Applicant":
+        return "Filled by Direct Applicant"
+      case "Filled by Advert":
+        return "Filled by Advert"
+      case "Filled Internally":
+        return "Filled Internally"
+      case "Withdrawn":
+        return "Withdrawn"
+      case "Unfilled":
+        return "Unfilled" 
+      default:
+        return "Closed By Practice"
+      }
 		},
-		downloadItem(fileUrl, fileName) {
+		downloadItem (fileUrl, fileName) {
 			const axios = require("axios");
 			axios({
 				url: fileUrl,

@@ -78,7 +78,7 @@
               v-model="form.date_closing"
               :name="'date_closing'"
               :label="'Date Closing'"
-              is-after
+              is-after  
               :start-date="$moment(form.date_posted).add(1, 'days').format('YYYY-MM-DD')"
               :error="formError.find(item => item.field === 'date_closing')"
               required
