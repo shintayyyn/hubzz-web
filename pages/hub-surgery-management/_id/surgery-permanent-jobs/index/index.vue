@@ -457,14 +457,20 @@ export default {
       }
 
       switch (closingTag) {
-      case "Direct Hiring":
-        return "Hired Directly"
-      case "Through HUBZZ":
-        return "Hired Through Hubzz"
-      case "Rejected":
-        return "Rejected"
+      case "Filled through HUBZZ":
+        return "Filled through HUBZZ"
+      case "Filled through Recruitment Agency":
+        return "Filled through Recruitment Agency"
+      case "Filled by Direct Applicant":
+        return "Filled by Direct Applicant"
+      case "Filled by Advert":
+        return "Filled by Advert"
+      case "Filled Internally":
+        return "Filled Internally"
+      case "Withdrawn":
+        return "Withdrawn"
       case "Unfilled":
-        return "Unfilled"
+        return "Unfilled" 
       default:
         return "Closed By Practice"
       }

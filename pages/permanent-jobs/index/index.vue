@@ -547,7 +547,7 @@ export default {
         this.permanent_job_status = [
           {
             label: "Closed due to Specified Reason",
-            value: "Closed",
+            value: "Closed with Reason",
           },
           {
             label: "Closed for being Unfilled",
@@ -864,7 +864,7 @@ export default {
       this.permanent_job_status = [
         {
           label: "Closed due to Specified Reason",
-          value: "Closed",
+          value: "Closed with Reason",
         },
         {
           label: "Closed for being Unfilled",
@@ -887,7 +887,6 @@ export default {
         permanent_job_status : "",
       }
       this.search = ""
-      
 
       const params = {
         search: "",
@@ -946,16 +945,20 @@ export default {
       }
 
       switch (closingTag) {
-      case "Direct Hiring":
-        return "Hired Directly"
-      case "Through HUBZZ":
-        return "Hired Through Hubzz"
-      case "Rejected":
-        return "Rejected"
+      case "Filled through HUBZZ":
+        return "Filled through HUBZZ"
+      case "Filled through Recruitment Agency":
+        return "Filled through Recruitment Agency"
+      case "Filled by Direct Applicant":
+        return "Filled by Direct Applicant"
+      case "Filled by Advert":
+        return "Filled by Advert"
+      case "Filled Internally":
+        return "Filled Internally"
+      case "Withdrawn":
+        return "Withdrawn"
       case "Unfilled":
-        return "Unfilled"
-      case "Interview Declined":
-        return "Interview Declined"
+        return "Unfilled" 
       default:
         return "Closed By Practice"
       }
@@ -1065,7 +1068,9 @@ export default {
             ? params.job_posting_status 
             : this.$route.query.status === 'Closed'
               ? 'Closed'
-              : 'Available',
+              : this.$route.query.status === 'Pending'
+                ? 'Pending'
+                : 'Available',
         search: params.search,
       }
       console.log('get perm jobs for practice', params)
