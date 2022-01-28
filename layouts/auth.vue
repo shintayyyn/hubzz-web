@@ -28,6 +28,21 @@
       </div>
     </div>
 
+    <transition name="slide" mode="out-in">
+      <div v-if="showPrivacyPolicy" class="px-6 py-4 modal-container">
+        <div class="">
+          <svgicon
+            name="left-arrow"
+            height="32"
+            width="32"
+            class="cursor-pointer"
+            @click="showPrivacyPolicy = false"
+          />
+        </div>
+        <TermsAndConditions />
+      </div>
+    </transition>
+
     <div class="__privacy_notice absolute bottom-0 left-0 right-0 flex text-sm px-3 py-4"
          style="background-color: #FFDA3A"
          :style="`z-index: ${showPrivacyNotice ? 100 : -100}; opacity: ${showPrivacyNotice ? 1 : 0};`"
@@ -38,9 +53,9 @@
         </h2>
         <div>
           <span>We use cookies to improve your experience on our site. To find out more, read our</span>
-          <nuxt-link to="/" class="underline hover:no-underline">
+          <span class="cursor-pointer underline hover:no-underline" @click="showPrivacyPolicy = true">
             privacy policy.
-          </nuxt-link>
+          </span>
         </div>
       </div>
       <div style="flex: 0 0 20%;" class="flex justify-end items-center">
@@ -53,53 +68,66 @@
 </template>
 
 <script>
-  import AppNotification from "@/components/AppNotification"
-  export default {
-    components: {
-      AppNotification
-    },
+import AppNotification from "@/components/AppNotification"
+import TermsAndConditions from "@/components/TermsAndConditions"
+export default {
+  components: {
+    AppNotification,
+    TermsAndConditions,
+  },
 
-    middleware: "isAuthenticated",
+  middleware: "isAuthenticated",
 
-    transitions: "fade",
+  transitions: "fade",
 
-    data () {
-      return {
-        showPrivacyNotice: false
-      }
-    },
-
-    mounted () {
-      this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
-      this.$store.dispatch("sign-up/getProfessions")
-      this.$store.dispatch("sign-up/getQualifications")
-      this.$store.dispatch("sign-up/getClinicalSystems")
-      this.$store.dispatch("sign-up/getSpokenLanguages")
-      this.$store.dispatch("sign-up/getPracticeTypes")
-      this.$store.dispatch("sign-up/getMandatoryTrainings")
-    },
-
-    methods: {
-      acceptCookies () {
-        this.$cookies.set("cookies-accepted", true)
-
-        this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
-      },
-
-      toggle () {
-        if (this.$cookies.get("cookies-accepted")) {
-          this.$cookies.remove("cookies-accepted")
-        } else {
-          this.$cookies.set("cookies-accepted", true)
-        }
-
-        this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
-      }
+  data () {
+    return {
+      showPrivacyNotice: false,
+      showPrivacyPolicy: false,
     }
-  }
+  },
+
+  mounted () {
+    this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
+    this.$store.dispatch("sign-up/getProfessions")
+    this.$store.dispatch("sign-up/getQualifications")
+    this.$store.dispatch("sign-up/getClinicalSystems")
+    this.$store.dispatch("sign-up/getSpokenLanguages")
+    this.$store.dispatch("sign-up/getPracticeTypes")
+    this.$store.dispatch("sign-up/getMandatoryTrainings")
+  },
+
+  methods: {
+    acceptCookies () {
+      this.$cookies.set("cookies-accepted", true)
+
+      this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
+    },
+
+    toggle () {
+      if (this.$cookies.get("cookies-accepted")) {
+        this.$cookies.remove("cookies-accepted")
+      } else {
+        this.$cookies.set("cookies-accepted", true)
+      }
+
+      this.showPrivacyNotice = !this.$cookies.get("cookies-accepted")
+    },
+  },
+}
 </script>
 
-<style>
+<style scoped>
+  .modal-container {
+    z-index: 510;
+  }
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 50%;
+    }
+  }
+
   .__privacy_notice {
     transition: 0.8s;
   }

@@ -2,7 +2,7 @@
   <div class="__layout_index w-screen h-screen flex flex-col xl:flex-row">
     <div class="__bg_logo flex justify-center items-center pt-5 pb-8">
       <nuxt-link to="/" class="__logo">
-        <img src="~/assets/images/hubzz_logo.png" />
+        <img src="~/assets/images/hubzz_logo.png">
       </nuxt-link>
     </div>
 
@@ -19,11 +19,15 @@
         <h2>Your Privacy</h2>
         <div>
           <span>We use cookies to improve your experience on our site. To find out more, read our</span>
-          <nuxt-link to="/">privacy policy.</nuxt-link>
+          <nuxt-link to="/">
+            privacy policy.
+          </nuxt-link>
         </div>
       </div>
       <div style="flex: 0 0 20%;" class="flex justify-end items-center">
-        <button class="p-2 rounded-full shadow-lg hover:text-white" @click="acceptCookies">OK</button>
+        <button class="p-2 rounded-full shadow-lg hover:text-white" @click="acceptCookies">
+          OK
+        </button>
       </div>
     </div>
   </div>
@@ -31,24 +35,24 @@
 
 <script>
 export default {
-  async asyncData({ app }) {
-    console.log('layout index asyncData')
-  },
-
-  data() {
+  data () {
     return {
-      showPrivacyNotice: false
+      showPrivacyNotice: false,
     }
   },
 
+  mounted () {
+    this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
+  },
+
   methods: {
-    acceptCookies() {
+    acceptCookies () {
       this.$cookies.set('cookies-accepted', true)
 
       this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
     },
 
-    toggle() {
+    toggle () {
       if (this.$cookies.get('cookies-accepted')) {
         this.$cookies.remove('cookies-accepted')
       } else {
@@ -56,12 +60,8 @@ export default {
       }
 
       this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
-    }
+    },
   },
-
-  mounted() {
-    this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
-  }
 }
 </script>
 
