@@ -108,7 +108,7 @@
                   <p
                     class="text-xs sm:text-sm break-words"
                   >
-                    {{ jobPart.job.platform_job.declined_reason ? jobPart.job.platform_job.declined_reason : '(none)' }}
+                    {{ jobPart.job.declined_reason ? jobPart.job.declined_reason : '(none)' }}
                   </p>
                 </div>
                 <div class="w-full md:w-1/3 px-2 leading-tight">
