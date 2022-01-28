@@ -424,6 +424,11 @@ export default {
   },
 
   mounted () {
+    if (this.$route.query.referral_code) {
+      this.hasReferral = true
+      this.referralCode = this.$route.query.referral_code
+    }
+
     this.loading = true
     this.$axios.get('/api/v1/professions?limit=999').then((response) => {
       this.professions = response.data.data.professions
