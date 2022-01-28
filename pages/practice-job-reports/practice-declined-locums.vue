@@ -1,13 +1,7 @@
 
 <template>
-  <div class="report-modal p-4 md:p-8 shadow-lg">
+  <div class="px-2">
     <div class="page-overlap flex-1 flex flex-col self-end bg-trout">
-      <div class="flex justify-between text-sm">
-        <nuxt-link to="/practice-job-reports" class=" hover:text-sunglow p-1">
-          <svgicon name="left-arrow" height="32" width="32" class="fill-current" />
-        </nuxt-link>
-      </div>
-
       <div class="text-lg md:text-2xl ">
         Locums that have Declined
       </div>

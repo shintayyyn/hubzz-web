@@ -23,7 +23,7 @@
           <label class="text-bold">Filters</label>
         </div>
 
-        <div class="w-full flex flex-wrap items-center">
+        <div class="w-full flex flex-wrap items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3 h-full pt-2">
             <AppInput
               v-model="practiceNameIncludes"
