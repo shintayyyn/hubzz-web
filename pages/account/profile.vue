@@ -381,6 +381,7 @@
                 :error="formError.find(item => item.field === 'payroll_sort_code')"
                 :limit="8"
                 required
+                @keydown="inputNumberOnly($event)"
               />
 
               <AppInput
