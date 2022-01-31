@@ -1306,7 +1306,20 @@ export default {
   methods: {
     initializeCompliances () {
       this.$axios.get("/api/v1/countries?limit=1000000").then(response => {
-        this.countries = response.data.data.countries.map(country => {
+        const sortedCountries = response.data.data.countries
+          .sort((a, b) => {
+            return a.name > b.name ? 1 : -1
+          })
+
+        const ukIndex = sortedCountries.findIndex((country) => country.name === 'United Kingdom')
+
+        if (ukIndex > -1) {
+          const ukCountry = sortedCountries[ukIndex]
+          sortedCountries.splice(ukIndex, 1)
+          sortedCountries.unshift(ukCountry)
+        }
+        
+        this.countries = sortedCountries.map(country => {
           return {
             label: country.name,
             value: country.id,

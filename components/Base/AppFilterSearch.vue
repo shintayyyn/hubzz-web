@@ -1,11 +1,11 @@
 <template>
   <section>
     <div v-on-clickaway="toggledOff" class="relative flex flex-col mb-3 md:mb-4">
-       <div
-          v-if="label || info"
-          class="relative flex flex-wrap leading-none mb-1"
-          :class="info ? 'flex-wrap justify-between' : 'items-center'"
-        >
+      <div
+        v-if="label || info"
+        class="relative flex flex-wrap leading-none mb-1"
+        :class="info ? 'flex-wrap justify-between' : 'items-center'"
+      >
         <label v-if="label" :for="name" class="text-xs sm:text-sm py-1">
           {{ label }}
           <span v-if="required" class="text-red-500">*</span>
@@ -36,19 +36,19 @@
 
         <div v-if="!disabled">
           <div class="flex items-start">
-          <input
-            v-show="show"
-            ref="input"
-            v-model="search"
-            type="text"
-            :placeholder="placeholder"
-            class="focus:outline-none rounded-lg border-2 py-1 px-2 m-1 text-xs sm:text-sm flex items-center justify-between "
-            :class="error ? 'border-red-500' : ''"
-            @focus="toggled = true"
-            @keydown="handleKeyDownEvent"
-            @change="$emit('change')"
-          >
-          <span v-if="!label && required" class="text-red-500">*</span>
+            <input
+              v-show="show"
+              ref="input"
+              v-model="search"
+              type="text"
+              :placeholder="placeholder"
+              class="focus:outline-none rounded-lg border-2 py-1 px-2 m-1 text-xs sm:text-sm flex items-center justify-between "
+              :class="error ? 'border-red-500' : ''"
+              @focus="toggled = true"
+              @keydown="handleKeyDownEvent"
+              @change="$emit('change')"
+            >
+            <span v-if="!label && required" class="text-red-500">*</span>
           </div>
           <transition name="drop-down">
             <div
@@ -90,396 +90,396 @@
 </template>
 
 <script>
-  import { mixin as clickaway } from "vue-clickaway"
-  import AppLoading from "@/components/Base/AppLoading"
+import { mixin as clickaway, } from "vue-clickaway"
+import AppLoading from "@/components/Base/AppLoading"
 
-  export default {
+export default {
 
-    components: {
-      AppLoading,
+  components: {
+    AppLoading,
+  },
+
+  mixins: [clickaway,],
+
+  props: {
+    responseObj: {
+      type: String,
+      default: null,
     },
 
-    mixins: [clickaway],
-
-    props: {
-      responseObj: {
-        type: String,
-        default: null,
-      },
-
-      value: {
-        type: [Array, String, Number],
-        default: () => null,
-      },
-
-      name: {
-        type: String,
-        default: null,
-      },
-
-      label: {
-        type: String,
-        default: null,
-      },
-
-      placeholder: {
-        type: String,
-        default: null,
-      },
-
-      error: {
-        type: Object,
-        default: () => null,
-      },
-
-      info: {
-        type: String,
-        default: null,
-      },
-
-      url: {
-        type: String,
-        default: null,
-      },
-
-      limitItem: {
-        type: Number,
-        default: null,
-      },
-
-      required: {
-        type: Boolean,
-        default: false
-      },
-
-      disabled: Boolean,
-
-      professionCategoryId: {
-        type: String,
-        default: null
-      },
-
-      defaultItem: {
-        type: String,
-        default: null
-      },
-
-      selectionLists: {
-        type: Array,
-        default: () => [],
-      },
+    value: {
+      type: [Array, String, Number,],
+      default: () => null,
     },
 
-    data () {
-      return {
-        loading: false,
-        search: "",
-        total: 0,
-        hasMore: true,
-        items: [],
-        toggled: false,
-        activeIndex: 0
+    name: {
+      type: String,
+      default: null,
+    },
+
+    label: {
+      type: String,
+      default: null,
+    },
+
+    placeholder: {
+      type: String,
+      default: null,
+    },
+
+    error: {
+      type: Object,
+      default: () => null,
+    },
+
+    info: {
+      type: String,
+      default: null,
+    },
+
+    url: {
+      type: String,
+      default: null,
+    },
+
+    limitItem: {
+      type: Number,
+      default: null,
+    },
+
+    required: {
+      type: Boolean,
+      default: false,
+    },
+
+    disabled: Boolean,
+
+    professionCategoryId: {
+      type: String,
+      default: null,
+    },
+
+    defaultItem: {
+      type: String,
+      default: null,
+    },
+
+    selectionLists: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
+  data () {
+    return {
+      loading: false,
+      search: "",
+      total: 0,
+      hasMore: true,
+      items: [],
+      toggled: false,
+      activeIndex: 0,
+    }
+  },
+
+  computed: {
+    show () {
+      return !this.limitItem || this.limitItem !== this.value.length
+    },
+
+    filteredItems () {
+      return this.items.filter(filterItem => {
+        const index = this.value.findIndex(item => {
+          return item.value && item.value === filterItem.value
+        })
+        return index === -1 && filterItem.value
+      })
+    },
+  },
+
+  watch: {
+    activeIndex (value) {
+      const getRef = document.getElementById(
+        `${this.filteredItems[value].label}`
+      )
+      getRef.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "start",
+      })
+    },
+
+    professionCategoryId (newValue, oldValue) {
+      if (newValue && oldValue) {
+        this.items = []
+        this.getListsCount(this.search)
       }
     },
 
-    computed: {
-      show () {
-        return !this.limitItem || this.limitItem !== this.value.length
-      },
-
-      filteredItems () {
-        return this.items.filter(filterItem => {
-          const index = this.value.findIndex(item => {
-            return item.value && item.value === filterItem.value
-          })
-          return index === -1 && filterItem.value
-        })
-      },
-    },
-
-    watch: {
-      activeIndex (value) {
-        const getRef = document.getElementById(
-          `${this.filteredItems[value].label}`
-        )
-        getRef.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "start"
-        })
-      },
-
-      professionCategoryId (newValue, oldValue) {
-        if (newValue && oldValue) {
-          this.items = []
-          this.getListsCount(this.search)
-        }
-      },
-
-      search () {
-        this.$emit('search', this.search)
-        this.items = []
-        this.getListsCount(this.search)
-      },
-
-      selectionLists () {
-        this.items = this.selectionLists
-      },
-    },
-
-    created () {
-      this.items = this.selectionLists
-
+    search () {
+      this.$emit('search', this.search)
+      this.items = []
       this.getListsCount(this.search)
     },
 
-    methods: {
-      scrollHandler () {
-        if (
-          this.$refs.filterSearchOptions.offsetHeight +
-            this.$refs.filterSearchOptions.scrollTop >=
-          this.$refs.filterSearchOptions.scrollHeight - 1
-        ) {
-          if (this.hasMore === true && !this.loading) {
-            this.getLists(this.items.length, this.search)
-          }
-        }
-      },
+    selectionLists () {
+      this.items = this.selectionLists
+    },
+  },
 
-      getListsCount (search) {
-        if (!this.url) {
-          return
-        }
+  created () {
+    this.items = this.selectionLists
 
-        this.items = []
-        let params = {}
+    this.getListsCount(this.search)
+  },
 
-        if (this.name === "qualification_id" || this.name === "specialty") {
-          params = {
-            ...params,
-            profession_category_id: this.professionCategoryId
-          }
-        }
-
-        params = { ...params, search }
-
-        this.$axios
-          .$get(`${this.url}/count`, { params })
-          .then(res => {
-            this.total = res.data.count
-            this.getLists(this.items.length, this.search)
-          })
-          .catch(err => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`]
-              })
-            }
-          })
-      },
-
-      getLists (offset, search) {
-        if (!this.url) {
-          return
-        }
-
-        this.loading = true
-        this.hasMore = true
-
-        let params = {}
-
-        if (this.name === "qualification_id" || this.name === "specialty") {
-          params = {
-            ...params,
-            profession_category_id: this.professionCategoryId
-          }
-        }
-
-        params = { ...params, offset, limit: 10, search }
-
-        this.$axios
-          .$get(`${this.url}`, { params })
-          .then(res => {
-            if (res.data.practice_types) {
-              if (res.data.practice_types.length === 0) {
-                this.loadMore = false
-              } else {
-                res.data.practice_types.forEach(item => {
-                  this.items.push({
-                    label: item.name,
-                    value: item.id
-                  })
-                })
-                if (res.data.practice_types.length < 10) {
-                  this.loadMore = false
-                }
-              }
-            }
-
-            if (res.data.qualifications) {
-              if (res.data.qualifications.length === 0) {
-                this.hasMore = false
-              } else {
-                res.data.qualifications.forEach(item => {
-                  this.items.push({
-                    label: item.name,
-                    value: item.id
-                  })
-                })
-                if (res.data.qualifications.length < 10) {
-                  this.hasMore = false
-                }
-              }
-            }
-
-            if (res.data.clinical_systems) {
-              if (res.data.clinical_systems.length === 0) {
-                this.hasMore = false
-              } else {
-                res.data.clinical_systems.forEach(item => {
-                  this.items.push({
-                    label: item.name,
-                    value: item.id
-                  })
-                })
-                if (res.data.clinical_systems.length < 10) {
-                  this.hasMore = false
-                }
-              }
-            }
-
-            if (res.data.spoken_languages) {
-              if (res.data.spoken_languages.length === 0) {
-                this.hasMore = false
-              } else {
-                res.data.spoken_languages.forEach(item => {
-                  this.items.push({
-                    label: item.name,
-                    value: item.id
-                  })
-                })
-                if (res.data.spoken_languages.length < 10) {
-                  this.hasMore = false
-                }
-              }
-            }
-
-            if (res.data.surgeries) {
-              if (res.data.surgeries.length === 0) {
-                this.hasMore = false
-              } else {
-                res.data.surgeries.forEach(item => {
-                  this.items.push({
-                    label: item.name,
-                    value: item.id
-                  })
-                })
-                if (res.data.surgeries.length < 10) {
-                  this.hasMore = false
-                }
-              }
-            }
-
-            if (this.responseObj) {
-              if (res.data[this.responseObj].length === 0) {
-                this.hasMore = false
-              } else {
-                res.data[this.responseObj].forEach(item => {
-                  this.items.push({
-                    label: item.name,
-                    value: item.id
-                  })
-                })
-                if (res.data[this.responseObj].length < 10) {
-                  this.hasMore = false
-                }
-              }
-            }
-          }).catch((err) => {
-            console.log("err", err.response || err)
-            if (err.response.data.message) {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "danger",
-                text: [`${err.response.data.message}`]
-              })
-            }
-          }).finally(() => {
-            this.loading = false
-          })
-      },
-
-      add (item) {
-        if (this.limitItem && this.limitItem == this.value.length) {
-          return
-        }
-
-        const newValue = JSON.parse(JSON.stringify(this.value))
-        newValue.push(item)
-        this.$refs.input.focus()
-        this.$emit('input', newValue)
-        this.$emit("add")
-
-        if (
-          this.$refs.filterSearchOptions.offsetHeight +
-            this.$refs.filterSearchOptions.scrollTop >=
-          this.$refs.filterSearchOptions.scrollHeight - 1
-        ) {
-          if (this.hasMore === true && !this.loading) {
-            this.getLists(this.items.length, this.search)
-          }
-        }
-      },
-
-      remove (index) {
-        const newValue = JSON.parse(JSON.stringify(this.value))
-        newValue.splice(index, 1)
-        this.$refs.input.focus()
-        this.$emit('input', newValue)
-        this.$emit("remove")
-      },
-
-      toggledOff () {
-        this.toggled = false
-      },
-
-      handleKeyDownEvent () {
-        if (!this.toggled) {
-          return
-        }
-
-        if (event.key === "ArrowUp") {
-          if (this.activeIndex > 0) {
-            this.activeIndex--
-          }
-        }
-
-        if (event.key === "ArrowDown") {
-          if (this.activeIndex < this.items.length - 1) {
-            this.activeIndex++
-          }
-        }
-
-        if (event.key === "Enter") {
-          this.add(this.items[this.activeIndex])
-        }
-
-        if (event.key === "Backspace") {
-          if (!this.search) {
-            this.remove(this.value.length - 1)
-          }
-          this.$refs.input.focus()
-        }
-
-        if (event.key === "Escape") {
-          this.toggledOff()
+  methods: {
+    scrollHandler () {
+      if (
+        this.$refs.filterSearchOptions.offsetHeight
+          + this.$refs.filterSearchOptions.scrollTop
+        >= this.$refs.filterSearchOptions.scrollHeight - 1
+      ) {
+        if (this.hasMore === true && !this.loading) {
+          this.getLists(this.items.length, this.search)
         }
       }
     },
-  }
+
+    getListsCount (search) {
+      if (!this.url) {
+        return
+      }
+
+      this.items = []
+      let params = {}
+
+      if (this.name === "qualification_id" || this.name === "specialty") {
+        params = {
+          ...params,
+          profession_category_id: this.professionCategoryId,
+        }
+      }
+
+      params = { ...params, search, }
+
+      this.$axios
+        .$get(`${this.url}/count`, { params, })
+        .then(res => {
+          this.total = res.data.count
+          this.getLists(this.items.length, this.search)
+        })
+        .catch(err => {
+          console.log("err", err.response || err)
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        })
+    },
+
+    getLists (offset, search) {
+      if (!this.url) {
+        return
+      }
+
+      this.loading = true
+      this.hasMore = true
+
+      let params = {}
+
+      if (this.name === "qualification_id" || this.name === "specialty") {
+        params = {
+          ...params,
+          profession_category_id: this.professionCategoryId,
+        }
+      }
+
+      params = { ...params, offset, limit: 10, search, }
+
+      this.$axios
+        .$get(`${this.url}`, { params, })
+        .then(res => {
+          if (res.data.practice_types) {
+            if (res.data.practice_types.length === 0) {
+              this.loadMore = false
+            } else {
+              res.data.practice_types.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.practice_types.length < 10) {
+                this.loadMore = false
+              }
+            }
+          }
+
+          if (res.data.qualifications) {
+            if (res.data.qualifications.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.qualifications.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.qualifications.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (res.data.clinical_systems) {
+            if (res.data.clinical_systems.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.clinical_systems.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.clinical_systems.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (res.data.spoken_languages) {
+            if (res.data.spoken_languages.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.spoken_languages.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.spoken_languages.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (res.data.surgeries) {
+            if (res.data.surgeries.length === 0) {
+              this.hasMore = false
+            } else {
+              res.data.surgeries.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data.surgeries.length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+
+          if (this.responseObj) {
+            if (res.data[this.responseObj].length === 0) {
+              this.hasMore = false
+            } else {
+              res.data[this.responseObj].forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id,
+                })
+              })
+              if (res.data[this.responseObj].length < 10) {
+                this.hasMore = false
+              }
+            }
+          }
+        }).catch((err) => {
+          console.log("err", err.response || err)
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`,],
+            })
+          }
+        }).finally(() => {
+          this.loading = false
+        })
+    },
+
+    add (item) {
+      if (this.limitItem && this.limitItem == this.value.length) {
+        return
+      }
+
+      const newValue = JSON.parse(JSON.stringify(this.value))
+      newValue.push(item)
+      this.$refs.input.focus()
+      this.$emit('input', newValue)
+      this.$emit("add")
+
+      if (
+        this.$refs.filterSearchOptions.offsetHeight
+          + this.$refs.filterSearchOptions.scrollTop
+        >= this.$refs.filterSearchOptions.scrollHeight - 1
+      ) {
+        if (this.hasMore === true && !this.loading) {
+          this.getLists(this.items.length, this.search)
+        }
+      }
+    },
+
+    remove (index) {
+      const newValue = JSON.parse(JSON.stringify(this.value))
+      newValue.splice(index, 1)
+      this.$refs.input.focus()
+      this.$emit('input', newValue)
+      this.$emit("remove")
+    },
+
+    toggledOff () {
+      this.toggled = false
+    },
+
+    handleKeyDownEvent () {
+      if (!this.toggled) {
+        return
+      }
+
+      if (event.key === "ArrowUp") {
+        if (this.activeIndex > 0) {
+          this.activeIndex--
+        }
+      }
+
+      if (event.key === "ArrowDown") {
+        if (this.activeIndex < this.items.length - 1) {
+          this.activeIndex++
+        }
+      }
+
+      if (event.key === "Enter") {
+        this.add(this.items[this.activeIndex])
+      }
+
+      if (event.key === "Backspace") {
+        if (!this.search) {
+          this.remove(this.value.length - 1)
+        }
+        this.$refs.input.focus()
+      }
+
+      if (event.key === "Escape") {
+        this.toggledOff()
+      }
+    },
+  },
+}
 </script>
 
 <style scoped>

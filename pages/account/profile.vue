@@ -63,7 +63,7 @@
               :error="formError.find(item => item.field === 'qualification_id')"
               :info="'Choose at least one qualification'"
               :url="'/api/v1/qualifications'"
-              :professionCategoryId="true ? null : professionCategoryId.toString()"
+              :professionCategoryId="!professionCategoryId ? null : professionCategoryId.toString()"
               required
               @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
               @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
@@ -381,6 +381,7 @@
                 :error="formError.find(item => item.field === 'payroll_sort_code')"
                 :limit="8"
                 required
+                @keydown="inputNumberOnly($event)"
               />
 
               <AppInput
