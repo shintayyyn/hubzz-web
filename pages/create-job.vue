@@ -401,8 +401,8 @@
                       />
 
                       <AppFilterSearch
-                        v-model="form.spoken_language_id"
-                        :name="'spoken_language_id'"
+                        v-model="form.spoken_language"
+                        :name="'spoken_language'"
                         :placeholder="'Choose Spoken languages'"
                         :url="'/api/v1/spoken-languages'"
                         :default-item="'English'"
@@ -713,7 +713,10 @@ export default {
         other_mandatory_training_id: [],
         role: "",
         specialty: [],
+        qualification_id: [],
         clinical_system: [],
+        clinical_system_id: [],
+        spoken_language: [],
         spoken_language_id: [],
         compliance_document_id: [],
         schedules: [],
@@ -1229,7 +1232,7 @@ export default {
 
           this.repostJob.platform_job.spoken_languages.forEach(
             spokenLanguage => {
-              this.form.spoken_language_id.push({
+              this.form.spoken_language.push({
                 label: spokenLanguage.name,
                 value: spokenLanguage.id,
               })
@@ -1771,9 +1774,9 @@ export default {
           item => item.value
         )
 
-        this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+        this.selectedSpokenLanguage = [...this.form.spoken_language,]
 
-        this.form.spoken_language_id = this.form.spoken_language_id.map(
+        this.form.spoken_language_id = this.form.spoken_language.map(
           item => item.value
         )
 
@@ -1862,7 +1865,7 @@ export default {
 
             this.form.specialty = this.selectedQualification
 
-            this.form.spoken_language_id = this.selectedSpokenLanguage
+            this.form.spoken_language = this.selectedSpokenLanguage
 
             this.form.session_requirements = this.form.session_requirements
               ? this.form.session_requirements.split(",")
@@ -2161,9 +2164,9 @@ export default {
           item => item.value
         )
 
-        this.selectedSpokenLanguage = [...this.form.spoken_language_id,]
+        this.selectedSpokenLanguage = [...this.form.spoken_language,]
 
-        this.form.spoken_language_id = this.form.spoken_language_id.map(
+        this.form.spoken_language_id = this.form.spoken_language.map(
           item => item.value
         )
 
@@ -2288,7 +2291,7 @@ export default {
 
             this.form.specialty = this.selectedQualification
 
-            this.form.spoken_language_id = this.selectedSpokenLanguage
+            this.form.spoken_language = this.selectedSpokenLanguage
 
             this.form.session_requirements = this.form.session_requirements
               ? this.form.session_requirements.split(",")
