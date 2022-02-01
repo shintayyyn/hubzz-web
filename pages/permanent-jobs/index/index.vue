@@ -985,6 +985,20 @@ export default {
     }, 500),
 
     async getPermanentJobsForLocum (params) {
+      params = {
+        ...params,
+        locum_user_id: this.$auth.user.id,
+        near_post_code: this.$auth.user.locum_postcode,
+        job_posting_status: 
+          params.job_posting_status 
+            ? params.job_posting_status 
+            : this.$route.query.status === 'Closed'
+              ? 'Closed'
+              : this.$route.query.status === 'Pending'
+                ? 'Pending'
+                : 'Available',
+        search: params.search,
+      }
       this.loading = true
       try {
         await this.$axios
