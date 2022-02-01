@@ -46,6 +46,7 @@
             :error="formError.find(item => item.field === 'code')"
             required
             @blur="CheckEmptyField(form.code,'code')"
+            @keydown="(e) => /^[a-zA-Z0-9 ]+$/i.test(e.key) ? '' : e.preventDefault()"
           />
           <AppPostCode
             v-model="form.postcode"

@@ -176,7 +176,7 @@
                     @keypress.enter="$emit('submit')"
                     @blur="$emit('blur')"
                     @keypress="type === 'number' ? isNumber($event) : type === 'numberDash' ? isNumberDash($event) : $emit('keypress')"
-                    @keydown="limit ? ($emit('keydown'), limitInput($event, value)) : $emit('keydown')"
+                    @keydown="limit ? ($emit('keydown', $event), limitInput($event, value)) : $emit('keydown', $event)"
                   >
 
                   <p

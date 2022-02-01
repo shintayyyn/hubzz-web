@@ -92,6 +92,7 @@
                   type="text"
                   label="Title"
                   placeholder="(ex. Mr., Ms., Mrs.)"
+                  :error="formErrors.find(({ field }) => field === 'title')"
                 />
 
                 <AppInput
@@ -352,6 +353,22 @@ export default {
       }
     },
 
+    title () {
+      this.formErrors = this.formErrors.filter(formError => formError.field !== 'title')
+
+      if (!this.title) {
+        return
+      } else if (this.title.length > 255) {
+        this.formErrors.push({
+          field: 'title',
+          message: 'Title name maximum length is 255 characters.',
+          validation: 'max',
+        })
+        
+        return
+      }
+    },
+
     firstName () {
       this.formErrors = this.formErrors.filter(formError => formError.field !== 'first_name')
 
@@ -360,6 +377,14 @@ export default {
           field: 'first_name',
           message: 'First name is required.',
           validation: 'required',
+        })
+        
+        return
+      } else if (this.firstName.length > 255) {
+        this.formErrors.push({
+          field: 'first_name',
+          message: 'First name maximum length is 255 characters.',
+          validation: 'max',
         })
         
         return
@@ -374,6 +399,14 @@ export default {
           field: 'last_name',
           message: 'Last name is required.',
           validation: 'required',
+        })
+        
+        return
+      } else if (this.lastName.length > 255) {
+        this.formErrors.push({
+          field: 'last_name',
+          message: 'Last name maximum length is 255 characters.',
+          validation: 'max',
         })
         
         return
@@ -473,10 +506,10 @@ export default {
 
           profession_id: 'required',
 
-          title: 'string',
-          first_name: 'required|string',
-          last_name: 'required|string',
-          suffix: 'string',
+          title: 'string|max:255',
+          first_name: 'required|string|max:255',
+          last_name: 'required|string|max:255',
+          suffix: 'string|max:255',
 
           mobile_number: 'string',
 
@@ -496,14 +529,18 @@ export default {
           'profession_id.exists': 'Invalid profession.',
 
           'title.string': 'Invalid title.',
+          'title.max': 'Title maximum length is 255 characters.',
 
           'first_name.required': 'First name is required.',
           'first_name.string': 'Invalid first name.',
+          'first_name.max': 'First name maximum length is 255 characters.',
 
           'last_name.required': 'Last name is required.',
           'last_name.string': 'Invalid last name.',
+          'last_name.max': 'Last name maximum length is 255 characters.',
 
           'suffix.string': 'Invalid suffix.',
+          'suffix.max': 'Suffix maximum length is 255 characters.',
 
           'mobile_number.string': 'Invalid mobile number.',
 
@@ -520,9 +557,9 @@ export default {
           'password_confirmation.same': 'Passwords do not match.',
         }).then(() => []).catch((errors) => errors)
 
-        if (this.formErrors.length || this.showPrivacyPolicyError) {
-          return
-        }
+        // if (this.formErrors.length || this.showPrivacyPolicyError) {
+        //   return
+        // }
 
         this.signingUp = true
 
