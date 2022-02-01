@@ -158,7 +158,7 @@
                   required
                   @submit="save"
                   @blur="CheckEmptyField(form.phone_number, 'phone_number')"
-                  @keydown="inputNumberOnly($event)"
+                  @keydown="(e) => mixinPhoneNumber(e)"
                 />
 
                 <AppInput
@@ -193,6 +193,7 @@
                   @submit="save"
                   @input="checkPcseEaCode"
                   @blur="checkPcseEaCode"
+                  @keydown="(e) => mixinPcseEaCode(e)"
                 />
 
                 <AppInput
@@ -205,6 +206,7 @@
                   @submit="save"
                   @input="checkNhspsEaCode"
                   @blur="checkNhspsEaCode"
+                  @keydown="(e) => mixinNhspsEaCode(e)"
                 />
                 
                 <template v-if="false && isOOH">
@@ -334,6 +336,7 @@
                     :label="'VAT Number'"
                     :error="formError.find(item => item.field === 'vat_number')"
                     :limit="11"
+                    @keydown="(e) => mixinVatNumber(e)"
                   />
 
                   <AppDate
@@ -368,12 +371,13 @@
 
                 <AppInput
                   v-model="form.sort_code"
-                  :type="'numberDash'"
+                  :type="'text'"
                   :name="'sort_code'"
                   :label="'Sort code'"
                   :error="formError.find(item => item.field === 'sort_code')"
                   required
                   :limit="8"
+                  @keydown="(e) => mixinSortCode(e)"
                 />
 
                 <AppInput
@@ -384,7 +388,7 @@
                   :error="formError.find(item => item.field === 'account_number')"
                   :limit="8"
                   required
-                  @keydown="inputNumberOnly($event)"
+                  @keydown="(e) => mixinAccountNumber(e)"
                 />
               </div>
 
@@ -816,7 +820,7 @@ export default {
       if (value && value.length > 0) {
         let digit = value.split('-').join('')
 
-        final = digit.match(/.{1,2}/g).join('-')
+        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
         this.form.sort_code = final
       } else {
         return ''
