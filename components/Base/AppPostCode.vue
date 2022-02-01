@@ -53,18 +53,42 @@ import { mixin as clickaway, } from "vue-clickaway"
 export default {
   mixins: [clickaway,],
   props: {
-    value: [String, Object,],
-    name: String,
-    label: String,
-    urlIndex: String,
-    dataIndex: String,
-    error: Object,
-    inStyle: String,
+    value: {
+      type: [String, Object,],
+      default: () => null,
+    },
+    name: {
+      type: String,
+      default: null,
+    },
+    label: {
+      type: String,
+      default: null,
+    },
+    urlIndex: {
+      type: String,
+      default: null,
+    },
+    dataIndex: {
+      type: String,
+      default: null,
+    },
+    error: {
+      type: Object,
+      default: () => null,
+    },
+    inStyle: {
+      type: String,
+      default: null,
+    },
     required: {
       type: Boolean,
       default: false,
     },
-    wrapperClass: String,
+    wrapperClass: {
+      type: String,
+      default: null,
+    },
     nolabel: {
       type: Boolean,
       default: false,
@@ -182,31 +206,32 @@ export default {
       this.showLists = false
     },
     handleKeyDownEvent (e) {
-      this.alphaNumeric(e)
+      if (this.showLists) {
+        if (e.key === "ArrowUp") {
+          if (this.activeIndex === 0) {
+            this.activeIndex = 4
+          } else {
+            this.activeIndex--
+          }
+        }
+        if (e.key === "ArrowDown") {
+          if (this.activeIndex === 4) {
+            this.activeIndex = 0
+          } else {
+            this.activeIndex++
+          }
+        }
+        if (e.key === "Enter") {
+          this.add()
+          e.preventDefault()
+        }
+        if (e.key === "Escape" || e.key === "Tab") {
+          this.toggledOff()
+        }
+      }
 
-      if (!this.showLists) {
-        return
-      }
-      if (event.key === "ArrowUp") {
-        if (this.activeIndex === 0) {
-          this.activeIndex = 4
-        } else {
-          this.activeIndex--
-        }
-      }
-      if (event.key === "ArrowDown") {
-        if (this.activeIndex === 4) {
-          this.activeIndex = 0
-        } else {
-          this.activeIndex++
-        }
-      }
-      if (event.key === "Enter") {
-        this.add()
+      if (!/^[a-zA-Z0-9 ]+$/i.test(e.key)) {
         e.preventDefault()
-      }
-      if (event.key === "Escape" || event.key === "Tab") {
-        this.toggledOff()
       }
     },
   },
@@ -220,11 +245,11 @@ export default {
   min-height: 1rem;
 } */
 .option-list {
-	transition: all 0.3s ease-in-out;
-	height: 0;
+  transition: all 0.3s ease-in-out;
+  height: 0;
 }
 .slide-down {
-	transition: all 0.3s ease-in-out;
-	height: 200px;
+  transition: all 0.3s ease-in-out;
+  height: 200px;
 }
 </style>

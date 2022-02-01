@@ -43,13 +43,10 @@ export default {
       switch (this.activeTab) {
       case "PracticeDetails":
         return 75
-        break
       case "PracticeSurgeryDetails":
         return 85
-        break
       case "PracticeAccountDetails":
         return 100
-        break
       default:
         return 0
       }
