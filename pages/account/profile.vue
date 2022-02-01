@@ -1271,7 +1271,7 @@ export default {
       if (value && value.length > 0) {
         let digit = value.split("-").join("")
 
-        final = digit.match(/.{1,2}/g).join("-")
+        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
         this.form.payroll_sort_code = final
       } else {
         return ""
@@ -1283,7 +1283,7 @@ export default {
       if (value && value.length > 0) {
         let digit = value.split("-").join("")
 
-        final = digit.match(/.{1,2}/g).join("-")
+        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
         this.form.sort_code = final
       } else {
         return ""

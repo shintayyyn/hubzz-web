@@ -328,6 +328,42 @@ Vue.mixin({
       return true
     },
 
+    mixinSortCode (e) {
+      if (!(/^[0-9 ]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
+    mixinVatNumber (e) {
+      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
+    mixinPhoneNumber (e) {
+      if (!(/^[0-9 ]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
+    mixinAccountNumber (e) {
+      if (!(/^[0-9 ]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
+    mixinPcseEaCode (e) {
+      if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
+    mixinNhspsEaCode (e) {
+      if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
     inputNumberOnly (e) {
       // numbers only [0-9]
       e = (e) ? e : window.event
