@@ -51,7 +51,7 @@
                 :limit="getReferenceLimit(referenceLocumComplianceDocument.compliance_document_name)"
                 required
                 @blur="checkReferenceLocumCompliance(referenceLocumComplianceDocument.compliance_document_name)"
-                @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? inputNumberOnly($event) : alphaNumeric($event)"
+                @keydown="getReferenceIsInteger(referenceLocumComplianceDocument.compliance_document_name) ? mixinNumber($event) : mixinAplhanumberic($event)"
               />
             </div>
 
@@ -99,7 +99,7 @@
               :label="'Your NHS Smart Card ID number'"
               :error="formError.find(item => item.field === 'nhs_smart_card_id_number')"
               :limit="12"
-              @keydown="inputNumberOnly($event)"
+              @keydown="(e) => mixinNumber(e)"
               @submit="updateLocumProfile"
             />
 
@@ -149,6 +149,7 @@
               :error="formError.find(item => item.field === 'vat_number')"
               :limit="11"
               @submit="updateLocumProfile"
+              @keydown="(e) => mixinNumber(e)"
             />
 
             <section v-if="false && form.vat_registered">
@@ -252,6 +253,7 @@
                 :error="formError.find(item => item.field === 'company_registration_number')"
                 :placeholder="'The number of your company from Companies House'"
                 required
+                @keydown="(e) => mixinNumber(e)"
               />
               <div class="flex flex-col items-start mb-4">
                 <p class="text-sm">
@@ -381,7 +383,7 @@
                 :error="formError.find(item => item.field === 'payroll_sort_code')"
                 :limit="8"
                 required
-                @keydown="inputNumberOnly($event)"
+                @keydown="mixinSortCode($event)"
               />
 
               <AppInput
@@ -392,7 +394,7 @@
                 :error="formError.find(item => item.field === 'payroll_account_number')"
                 :limit="8"
                 required
-                @keydown="inputNumberOnly($event)"
+                @keydown="mixinAccountNumber($event)"
               />
 
               <AppInput
@@ -436,7 +438,7 @@
                 :error="formError.find(item => item.field === 'sort_code')"
                 :limit="8"
                 required
-                @keydown="inputNumberOnly($event)"
+                @keydown="mixinSortCode($event)"
               />
 
               <AppInput
@@ -447,7 +449,7 @@
                 :error="formError.find(item => item.field === 'account_number')"
                 :limit="8"
                 required
-                @keydown="inputNumberOnly($event)"
+                @keydown="mixinAccountNumber($event)"
               />
             </template>
 
@@ -503,7 +505,7 @@
                   :error="formError.find(item => item.field === 'nhs_number')"
                   :limit="8"
                   required
-                  @keypress="inputNumberOnly($event)"
+                  @keydown="(e) => mixinNumber(e)"
                 />
                 <AppInput
                   :value="form.ni_number"
@@ -557,6 +559,7 @@
                   :name="'nhs_registration_number'"
                   :label="'Registration Number'"
                   :error="formError.find(item => item.field === 'nhs_registration_number')"
+                  @keydown="(e) => mixinNumber(e)"
                 />
               </template>
             </template>
@@ -750,7 +753,7 @@
                 :label="'Telephone Number'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :limit="11"
-                @keydown="inputNumberOnly($event)"
+                @keydown="(e) => mixinPhoneNumber(e)"
               />
 
               <AppInput
@@ -790,7 +793,7 @@
                 :label="'Telephone Number'"
                 :inStyle="'background-color:#dae1e7;border-color:white'"
                 :limit="11"
-                @keydown="inputNumberOnly($event)"
+                @keydown="(e) => mixinPhoneNumber(e)"
               />
 
               <AppInput

@@ -328,6 +328,18 @@ Vue.mixin({
       return true
     },
 
+    mixinNumber (e) {
+      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
+    mixinAplhanumberic (e) {
+      if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        e.preventDefault()
+      }
+    },
+
     mixinSortCode (e) {
       if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
         e.preventDefault()
