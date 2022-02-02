@@ -329,7 +329,7 @@ Vue.mixin({
     },
 
     mixinSortCode (e) {
-      if (!(/^[0-9 ]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
         e.preventDefault()
       }
     },
@@ -341,13 +341,13 @@ Vue.mixin({
     },
 
     mixinPhoneNumber (e) {
-      if (!(/^[0-9 ]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
         e.preventDefault()
       }
     },
 
     mixinAccountNumber (e) {
-      if (!(/^[0-9 ]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
         e.preventDefault()
       }
     },
