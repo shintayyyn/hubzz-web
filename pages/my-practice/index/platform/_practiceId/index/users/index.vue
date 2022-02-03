@@ -54,11 +54,6 @@ export default {
           dataIndex: "email",
           class: "text-center",
         },
-        {
-          name: "Created At",
-          dataIndex: "created_at_in_gb_formatted",
-          class: "text-center",
-        },
       ],
       // app table params
       params: {

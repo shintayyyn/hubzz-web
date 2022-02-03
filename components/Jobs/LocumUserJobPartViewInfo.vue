@@ -404,6 +404,9 @@
           <div v-for="qualification in jobPart.qualifications" :key="qualification.id" class="rounded-lg bg-sunglow py-1 px-2 m-1">
             {{ qualification.name }}
           </div>
+          <div v-if="jobPart.qualifications.length === 0" class="rounded-lg bg-sunglow py-1 px-2 m-1">
+            N/A
+          </div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">

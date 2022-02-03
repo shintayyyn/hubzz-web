@@ -63,10 +63,11 @@
               :error="formError.find(item => item.field === 'qualification_id')"
               :info="'Choose at least one qualification'"
               :url="'/api/v1/qualifications'"
+              :addNaOption="true"
+              :showClearButton="true"
+              :defaultNaIfEmpty="true"
               :professionCategoryId="!professionCategoryId ? null : professionCategoryId.toString()"
               required
-              @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
-              @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
             />
 
             <AppFilterSearch
@@ -830,8 +831,6 @@
         </div>
       </div>
     </div>
-
-    
 
     <AppConfirmationModal
       :label="'Proceed to remove this mandatory traning?'"
@@ -1797,6 +1796,7 @@ export default {
         "headline",
         "short_biography",
         "special_requirements",
+        "qualification_id",
         "spoken_language_id",
         "referee_1_contact_name",
         "referee_1_position",

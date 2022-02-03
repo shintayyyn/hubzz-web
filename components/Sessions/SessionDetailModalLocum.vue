@@ -105,6 +105,15 @@
 
             <div>
               <div class="font-bold text-sm sm:text-md">
+                NI Number
+              </div>
+              <div class="text-xs sm:text-sm mb-6">
+                {{ user.locum_detail.ni_number }}
+              </div>
+            </div>
+
+            <div>
+              <div class="font-bold text-sm sm:text-md">
                 NHS Smart Card ID Number
               </div>
               <div class="text-xs sm:text-sm mb-6">
@@ -184,6 +193,12 @@
                 class="rounded-lg bg-sunglow py-1 px-2 m-1"
               >
                 {{ item.name }}
+              </div>
+              <div
+                v-if="user.locum_detail.qualifications.length === 0"
+                class="rounded-lg bg-sunglow py-1 px-2 m-1"
+              >
+                N/A
               </div>
             </div>
             <div class="font-bold text-sm sm:text-md">
