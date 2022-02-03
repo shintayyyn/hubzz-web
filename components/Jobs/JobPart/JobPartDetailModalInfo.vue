@@ -399,6 +399,12 @@
           >
             {{ item.name }}
           </div>
+          <div
+            v-if="job_part.job.platform_job.qualifications.length === 0"
+            class="rounded-lg bg-sunglow px-2 py-1 m-1"
+          >
+            N/A
+          </div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">

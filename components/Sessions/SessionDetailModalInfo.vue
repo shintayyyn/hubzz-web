@@ -302,11 +302,14 @@
 
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
           <div
-            v-for="item in job.platform_job.qualifications"
+            v-for="item in job.qualifications"
             :key="item.id"
             class="rounded-lg bg-sunglow px-2 py-1 m-1"
           >
             {{ item.name }}
+          </div>
+          <div v-if="job.qualifications.length === 0" class="rounded-lg bg-sunglow px-2 py-1 m-1">
+            N/A
           </div>
         </div>
 
