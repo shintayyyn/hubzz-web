@@ -22,6 +22,18 @@
         </div>
 
         <div
+          v-if="naSelected"
+          class="rounded-lg bg-sunglow border-2 border-sunglow px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between"
+        >
+          N/A
+          <span
+            v-if="!disabled"
+            class="font-bold cursor-pointer text-base pl-2"
+            @click="naSelected = false"
+          ><svgicon name="times-solid" width="8" class="fill-current opacity-50 hover:opacity-100" /></span>
+        </div>
+
+        <div
           v-for="(item, index) in value"
           :key="`${item.value}-${index}`"
           class="rounded-lg bg-sunglow border-2 border-sunglow px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between"
@@ -34,10 +46,18 @@
           ><svgicon name="times-solid" width="8" class="fill-current opacity-50 hover:opacity-100" /></span>
         </div>
 
+        <div
+          v-if="value.length > 0 && showClearButton"
+          class="rounded-lg bg-white border-2 border-gray-500 px-2 m-1 text-xs sm:text-sm py-1 flex items-center justify-between cursor-pointer"
+          @click="clearValue()"
+        >
+          Clear
+        </div>
+
         <div v-if="!disabled">
           <div class="flex items-start">
             <input
-              v-show="show"
+              v-show="show && !naSelected"
               ref="input"
               v-model="search"
               type="text"
@@ -61,7 +81,7 @@
         </div>
       </div>
 
-      <div v-show="show" class="relative flex flex-col w-full z-10">
+      <div v-show="show && !naSelected" class="relative flex flex-col w-full z-10">
         <div
           ref="filterSearchOptions"
           class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
@@ -70,12 +90,22 @@
         >
           <div class="relative">
             <div
+              v-if="addNaOption && value.length === 0"
+              class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+              :class="{'bg-gray-300': naActive}"
+              @mouseover="activeIndex = -1, naActive = true"
+              @click="selectNa()"
+            >
+              N/A
+            </div>
+
+            <div
               v-for="(item, index) in filteredItems"
               :id="`${item.label}`"
               :key="`${item.value}-${index}`"
               class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
               :class="{'bg-gray-300': activeIndex === index}"
-              @mouseover="activeIndex = index"
+              @mouseover="activeIndex = index, naActive = false"
               @click="add(item)"
             >
               {{ item.label }}
@@ -168,6 +198,21 @@ export default {
       type: Array,
       default: () => [],
     },
+
+    addNaOption: {
+      type: Boolean,
+      default: false,
+    },
+
+    defaultNaIfEmpty: {
+      type: Boolean,
+      default: false,
+    },
+
+    showClearButton: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data () {
@@ -179,6 +224,8 @@ export default {
       items: [],
       toggled: false,
       activeIndex: 0,
+      naActive: false,
+      naSelected: false,
     }
   },
 
@@ -199,6 +246,9 @@ export default {
 
   watch: {
     activeIndex (value) {
+      if (value === -1) {
+        return
+      }
       const getRef = document.getElementById(
         `${this.filteredItems[value].label}`
       )
@@ -230,10 +280,24 @@ export default {
   created () {
     this.items = this.selectionLists
 
+    if (this.addNaOption && this.defaultNaIfEmpty && this.value.length === 0) {
+      this.naSelected = true
+    }
+
     this.getListsCount(this.search)
   },
 
   methods: {
+    selectNa () {
+      this.naSelected = true
+      this.$emit('input', [])
+      this.$emit("remove")
+    },
+
+    clearValue () {
+      this.$emit('input', [])
+    },
+
     scrollHandler () {
       if (
         this.$refs.filterSearchOptions.offsetHeight
