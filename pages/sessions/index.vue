@@ -50,7 +50,7 @@
     </template>
 
     <div class="mt-5">
-      <nuxt-child :invoiceStatusList="invoiceStatusList" />
+      <nuxt-child :invoiceStatusList="invoiceStatusList" @scrollToTop="scrollToTop()" />
     </div>
    
 
@@ -351,6 +351,11 @@ export default {
   },
 
   methods: {
+    scrollToTop () {
+      console.log('scrollToTop session index')
+      this.$emit('scrollToTop')
+    },
+
     goTo () {
       this.confirmation_modal = false
       setTimeout(() => {

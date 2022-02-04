@@ -36,7 +36,7 @@ export default {
       initialLoading: false,
       loadingJob: false,
       job: null,
-      links: []
+      links: [],
     }
   },
 
@@ -64,11 +64,11 @@ export default {
         this.links = [
           {
             title: `${response.data.data.job.status} Sessions`,
-            url: `/sessions/?status=${response.data.data.job.status}`
+            url: `/sessions/?status=${response.data.data.job.status}`,
           },
           {
-            title: response.data.data.job.title
-          }
+            title: response.data.data.job.title,
+          },
         ]
       }).catch((err) => {
         console.log('err', err.response || err)
@@ -94,7 +94,9 @@ export default {
     },
 
     scrollToTop () {
+      console.log('scrollToTop id index')
       this.$nextTick(() => {
+        this.$emit('scrollToTop')
         this.$refs.modalContainer.scrollTop = 0
       })
     },

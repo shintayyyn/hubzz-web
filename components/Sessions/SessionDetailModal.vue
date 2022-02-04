@@ -294,6 +294,11 @@ export default {
   },
 
   methods: {
+    scrollToTop () {
+      console.log('scrollToTop session detail')
+      this.$emit('scrollToTop')
+    },
+
     updateJob ({ newJobId, oldJobId, }) {
       this.$emit("close")
 

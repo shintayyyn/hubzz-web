@@ -557,6 +557,9 @@
             :error="formError.find(item => item.field === 'qualification_id')"
             :info="'Choose at least one qualification'"
             :url="'/api/v1/qualifications'"
+            :addNaOption="true"
+            :showClearButton="true"
+            :defaultNaIfEmpty="true"
             :professionCategoryId="selectedProfession && selectedProfession.profession_category
               ? selectedProfession.profession_category.id.toString()
               : null
@@ -564,8 +567,6 @@
             :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
             :disabled="job.status === 'Allocated'"
             required
-            @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
-            @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
           />
 
           <AppFilterSearch
@@ -1089,16 +1090,6 @@ export default {
             : 0))
       return taxed_hubzz_fee
     },
-
-    totalUnpaidBreakInMinutes () {
-      return this.form.schedules.reduce((totalUnpaidBreakInMinutes, schedule) => {
-        const unpaidBreakInMinutes = (schedule.posted_break_payable === 'false' || !schedule.posted_break_payable) && schedule.posted_break_in_minutes
-          ? parseFloat(schedule.posted_break_in_minutes)
-          : 0
-
-        return totalUnpaidBreakInMinutes + unpaidBreakInMinutes
-      }, 0)
-    },
   },
 
   watch: {
@@ -1438,7 +1429,7 @@ export default {
       deductions,
       total_lates,
       hasError,
-      job_parts
+      // job_parts
     ) {
       this.editedSchedule = []
       this.schedules = schedule
@@ -1756,6 +1747,7 @@ export default {
         "is_another_doctor",
         "is_nurse_available",
         "opportunity_for_catch_up_slots",
+        "qualification_id",
         "spoken_language_id",
         "ir35",
         "mandatory_training_id",
@@ -1984,6 +1976,7 @@ export default {
             this.loading = false
           })
       } else {
+        console.log('scrollToTop emit')
         this.$emit("scrollToTop")
       }
     },
