@@ -53,7 +53,7 @@
     -->
 
     <div class="mt-5">
-      <nuxt-child :invoiceStatusList="invoiceStatusList" />
+      <nuxt-child :invoiceStatusList="invoiceStatusList" @scrollToTop="scrollToTop()" />
     </div>
 
     <AppConfirmationModal
@@ -67,7 +67,7 @@
 
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import AppLoading from "@/components/Base/AppLoading"
+// import AppLoading from "@/components/Base/AppLoading"
 
 export default {
   transition: (to, from) => {
@@ -117,7 +117,7 @@ export default {
 
   components: {
     AppConfirmationModal,
-    AppLoading,
+    // AppLoading,
   },
 
   data () {
@@ -327,11 +327,11 @@ export default {
         this.confirmation_modal = true
       }
     },
-    "$route"(route) {
+    "$route" (route) {
       if (route.path === "/sessions") {
         this.$router.push("/job-parts/?status=Allocated")
       }
-    }
+    },
   },
 
   async asyncData ({ app, error, store, }) {
@@ -358,6 +358,11 @@ export default {
   },
 
   methods: {
+    screenToTop () {
+      console.log('screenToTop session')
+      this.$emit('scrollToTop')
+    },
+
     goTo () {
       this.confirmation_modal = false
       setTimeout(() => {

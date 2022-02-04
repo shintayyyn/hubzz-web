@@ -5,6 +5,7 @@
     <AppSideBar @modal="signout_modal = $event" />
 
     <div
+      ref="scrollContainer"
       :class="
         $route.name === 'messages-slug' || $route.name === 'messages-create'
           ? 'content-message'
@@ -45,6 +46,7 @@
             ? 'md:mt-28'
             : 'mt-24'
         "
+        @scrollToTop="scrollToTop()"
       />
     </div>
   </section>
@@ -139,6 +141,14 @@ export default {
   },
 
   methods: {
+    scrollToTop () {
+      console.log('scrollToTop layout default')
+      this.$nextTick(() => {
+        this.$emit('scrollToTop')
+        this.$refs.scrollContainer.scrollTop = 0
+      })
+    },
+
     logout () {
       this.$axios
         .post("/api/v1/logout")
