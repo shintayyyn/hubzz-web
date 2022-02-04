@@ -55,6 +55,18 @@
               />
             </div>
 
+            <AppInput
+              :value="form.ni_number"
+              :type="'text'"
+              :name="'ni_number'"
+              :label="'NI number'"
+              :error="formError.find(item => item.field === 'ni_number')"
+              :placeholder="'AA000000A'"
+              :limit="9"
+              required
+              @input="(v) => form.ni_number = v.toUpperCase()"
+            />
+
             <AppFilterSearch
               v-model="form.qualification_id"
               :name="'qualification_id'"
@@ -508,17 +520,7 @@
                   required
                   @keydown="(e) => mixinNumber(e)"
                 />
-                <AppInput
-                  :value="form.ni_number"
-                  :type="'text'"
-                  :name="'ni_number'"
-                  :label="'NI number'"
-                  :error="formError.find(item => item.field === 'ni_number')"
-                  :placeholder="'AA000000A'"
-                  :limit="9"
-                  required
-                  @input="(v) => form.ni_number = v.toUpperCase()"
-                />
+
                 <AppInput
                   v-model="form.ay_percentage_rate"
                   :type="'number'"
@@ -983,6 +985,7 @@ export default {
         name: "",
         email: "",
       },
+      
       formError: [],
 
       new_vat_certificate: false,
@@ -1885,8 +1888,6 @@ export default {
       if (["false", false,].includes(this.form.claim_nhs)) {
         notRequired.push("nhs_number")
         this.form.nhs_number = null
-        notRequired.push("ni_number")
-        this.form.ni_number = null
       }
 
       if (["true", true,].includes(this.form.claim_nhs)) {
