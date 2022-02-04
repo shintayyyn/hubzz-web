@@ -35,7 +35,7 @@
             <div
               class="text-sm mb-8"
             >
-              {{ user.locum_detail.headline && user.locum_detail.headline && user.locum_detail.headline.trim() ? user.locum_detail.headline : '(none)' }}
+              {{ user.locum_detail && user.locum_detail.headline && user.locum_detail.headline.trim() ? user.locum_detail.headline : '(none)' }}
             </div>
             <div class="font-bold text-sm sm:text-md">
               Biography
@@ -65,7 +65,7 @@
             <div
               class="text-sm mb-8"
             >
-              {{ user.locum_detail.headline && user.locum_detail.ni_number && user.locum_detail.ni_number.trim() ? user.locum_detail.ni_number : '(none)' }}
+              {{ user.locum_detail && user.locum_detail.ni_number && user.locum_detail.ni_number.trim() ? user.locum_detail.ni_number : '(none)' }}
             </div>
               
             <div class="font-bold text-sm sm:text-md">
