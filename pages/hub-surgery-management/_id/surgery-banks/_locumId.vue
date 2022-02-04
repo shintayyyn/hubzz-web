@@ -62,6 +62,13 @@
               </div>
 
               <div class="font-bold text-sm sm:text-md">
+                Ni Number
+              </div>
+              <div class="text-sm mb-6">
+                {{ user.locum_detail.ni_number ? user.locum_detail.ni_number : '(none)' }}
+              </div>
+
+              <div class="font-bold text-sm sm:text-md">
                 Speciality
               </div>
               <div class="text-sm mb-6 flex flex-row flex-wrap">
@@ -69,6 +76,11 @@
                      class="rounded-lg bg-sunglow px-2 py-1 m-1"
                 >
                   {{ item.name }}
+                </div>
+                <div v-id="user.locum_detail.qualifications.length === 0"
+                     class="rounded-lg bg-sunglow px-2 py-1 m-1"
+                >
+                  N/A
                 </div>
               </div>
               <div class="font-bold text-sm sm:text-md">
