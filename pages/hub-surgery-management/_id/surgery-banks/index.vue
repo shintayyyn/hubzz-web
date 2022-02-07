@@ -16,15 +16,16 @@
                   :src="locum.avatar && locum.avatar.file && locum.avatar.file.url ? locum.avatar.file.url : ''"
                 />
               </div>
-              <div
-                class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
-              >
-                {{ locum.personal_detail.name }}
+              <div class="w-full font-bold text-sm sm:text-lg leading-tight mt-4">
+                {{ locum.name }}
               </div>
-              <div
-                class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
-              >
-                {{ locum.locum_detail.profession.name }}
+
+              <div class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight">
+                {{ locum.email }}
+              </div>
+
+              <div class="w-full mb-2 font-bold text-gray-700 text-sm leading-tight">
+                {{ locum.profession_name }}
               </div>
             </div>
           </nuxt-link>
@@ -64,7 +65,7 @@ export default {
   components: {
     AppAvatar,
     AppPagination,
-    AppLoading
+    AppLoading,
   },
   
   props: {

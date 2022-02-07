@@ -2290,7 +2290,12 @@ export default {
               status: "success",
               text: ["Successfully created job",],
             })
-            this.$router.push('/sessions/?status=Live')
+
+            if (job.status === 'Pending') {
+              this.$router.push('/sessions/?status=Pending')
+            } else {
+              this.$router.push('/sessions/?status=Live')
+            }
           })
           .catch(err => {
             console.log("err", err.response || err)

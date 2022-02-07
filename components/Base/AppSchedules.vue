@@ -1847,7 +1847,7 @@ export default {
         )
       }
 
-      if (this.type === 'create') {
+      if (!this.type || this.type === 'create') {
         job_parts_schedule = this.schedules.map((schedule, scheduleIndex) => {
           schedule.shifts = schedule.shifts.map((shift, shiftIndex) => {
             shift.scheduleIndex = scheduleIndex
