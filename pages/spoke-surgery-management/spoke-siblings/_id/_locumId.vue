@@ -75,6 +75,15 @@
                   {{ referenceLocumComplianceDocument.reference ? referenceLocumComplianceDocument.reference : 'N/A' }}
                 </div>
               </div>
+
+              <div class="font-bold text-sm sm:text-md">
+                NI Number
+              </div>
+              <div
+                class="text-sm mb-8"
+              >
+                {{ user.locum_detail && user.locum_detail.ni_number && user.locum_detail.ni_number.trim() ? user.locum_detail.ni_number : '(none)' }}
+              </div>
               
               <div class="font-bold text-sm sm:text-md">
                 Speciality
@@ -87,9 +96,8 @@
                 >
                   {{ item.name }}
                 </div>
-
                 <div
-                  v-id="user.locum_detail.qualifications.length === 0"
+                  v-if="user.locum_detail.qualifications.length === 0"
                   class="rounded-lg bg-yellow-500 p-2 m-1"
                 >
                   N/A
