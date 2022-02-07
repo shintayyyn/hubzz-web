@@ -29,14 +29,27 @@
                 :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : null"
               />
             </div>
+            
+            <div class="font-bold text-sm sm:text-md">
+              E-mail
+            </div>
+
+            <div
+              class="text-sm mb-8"
+            >
+              {{ user.email ? user.email : '(none)' }}
+            </div>
+
             <div class="font-bold text-sm sm:text-md">
               Headline
             </div>
+
             <div
               class="text-sm mb-8"
             >
               {{ user.locum_detail && user.locum_detail.headline && user.locum_detail.headline.trim() ? user.locum_detail.headline : '(none)' }}
             </div>
+
             <div class="font-bold text-sm sm:text-md">
               Biography
             </div>

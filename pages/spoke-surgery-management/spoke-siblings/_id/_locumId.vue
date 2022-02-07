@@ -79,6 +79,13 @@
                 >
                   {{ item.name }}
                 </div>
+
+                <div
+                  v-id="user.locum_detail.qualifications.length === 0"
+                  class="rounded-lg bg-yellow-500 p-2 m-1"
+                >
+                  N/A
+                </div>
               </div>
               <div class="font-bold text-sm sm:text-md">
                 Clinical systems
