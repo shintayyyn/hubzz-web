@@ -39,6 +39,14 @@
                 />
               </div>
               <div class="font-bold text-sm sm:text-md">
+                E-mail
+              </div>
+              <div
+                class="text-sm mb-8"
+              >
+                {{ user.email ? user.email : '(none)' }}
+              </div>
+              <div class="font-bold text-sm sm:text-md">
                 Headline
               </div>
               <div

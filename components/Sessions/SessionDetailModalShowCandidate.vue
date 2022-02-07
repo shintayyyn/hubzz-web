@@ -50,6 +50,16 @@
             </div>
 
             <div class="font-bold text-sm sm:text-md">
+              E-mail
+            </div>
+
+            <div
+              class="text-xs sm:text-sm mb-4"
+            >
+              {{ user.email ? user.email : '(none)' }}
+            </div>
+
+            <div class="font-bold text-sm sm:text-md">
               Headline
             </div>
 

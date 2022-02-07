@@ -32,6 +32,12 @@
                 />
               </div>
               <div class="font-bold text-sm sm:text-md">
+                E-mail
+              </div>
+              <div class="text-sm mb-8">
+                {{ user.email }}
+              </div>
+              <div class="font-bold text-sm sm:text-md">
                 Headline
               </div>
               <div class="text-sm mb-8">
@@ -63,6 +69,11 @@
                      class="rounded-lg bg-yellow-500 p-2 m-1"
                 >
                   {{ item.name }}
+                </div>
+                <div v-if="user.locum_detail.qualifications.length === 0"
+                     class="rounded-lg bg-yellow-500 p-2 m-1"
+                >
+                  N/A
                 </div>
               </div>
               <div class="font-bold text-sm sm:text-md">
