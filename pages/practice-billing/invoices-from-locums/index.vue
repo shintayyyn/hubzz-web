@@ -598,7 +598,7 @@ export default {
       let selectedInvoice = this.job_parts.find(
         item => item.locum_invoice_id === this.invoice_id
       )
-      return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false
+      return selectedInvoice.ir35 ? selectedInvoice.ir35 : false
     },
 
     authPermissions () {
