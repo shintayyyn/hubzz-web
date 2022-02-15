@@ -334,6 +334,18 @@ Vue.mixin({
       }
     },
 
+    mixinNiNumber (e, niNumber) {
+      if (niNumber.length < 2 || niNumber.length === 8) {
+        if (!(/^[a-zA-Z]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+          e.preventDefault()
+        }
+      } else {
+        if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+          e.preventDefault()
+        }
+      }
+    },
+
     mixinAplhanumberic (e) {
       if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
         e.preventDefault()

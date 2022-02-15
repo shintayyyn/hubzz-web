@@ -65,6 +65,7 @@
               :limit="9"
               required
               @input="(v) => form.ni_number = v.toUpperCase()"
+              @keydown="(e) => mixinNiNumber(e, form.ni_number)"
             />
 
             <AppFilterSearch
@@ -1015,7 +1016,7 @@ export default {
         {
           name: "NMC reference check",
           limit: 8,
-          integer: false,
+          integer: true,
         },
         {
           name: "HCPC reference check",
@@ -1035,7 +1036,7 @@ export default {
         {
           name: "NMC Number",
           limit: 8,
-          integer: false,
+          integer: true,
         },
         {
           name: "HCPC Number",
