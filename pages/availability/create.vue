@@ -1,5 +1,5 @@
 <template>
-  <div ref="modalContainer"  class="px-2 max-w-3xl">
+  <div ref="modalContainer" class="px-2 max-w-3xl">
     <!-- <nuxt-link :to="'/availability'">
       <svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
     </nuxt-link> -->
@@ -314,7 +314,7 @@ export default {
         .post(`/api/v1/locum/unavailabilities`, {
           date_start: this.date_start,
           date_end: this.date_end,
-          shift_id: this.availabilityType === 'unavailability'
+          shift_id: this.availabilityType === 'unavailable'
             ? selectedShiftIds
             : notSelectedShiftIds,
         })

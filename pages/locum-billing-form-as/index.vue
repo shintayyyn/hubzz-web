@@ -736,6 +736,35 @@ export default {
       this.showRefresh = false
     },
 
+    errorHandler (err) {
+      console.log("err", err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        if (
+          err.response.data.error_messages
+          && err.response.data.error_messages.length > 0
+        ) {
+          this.formErrors = err.response.data.error_messages
+        } else {
+          message = err.response.data.message
+        }
+      } else if (err.request) {
+        message = "Something weng wrong!"
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${message}`,],
+        })
+      }
+    },
+
     payFormA () {
       this.$axios
         .put(
@@ -762,32 +791,7 @@ export default {
           this.locumFormAIdToPay = null
         })
         .catch(err => {
-          console.log("err", err.response || err)
-
-          let message = null
-
-          if (err.response) {
-            if (
-              err.response.data.error_messages
-              && err.response.data.error_messages.length > 0
-            ) {
-              this.formErrors = err.response.data.error_messages
-            } else {
-              message = err.response.data.message
-            }
-          } else if (err.request) {
-            message = "Something weng wrong!"
-          } else {
-            message = err.message
-          }
-
-          if (message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${message}`,],
-            })
-          }
+          this.errorHandler(err)
         })
     },
 
@@ -860,32 +864,7 @@ export default {
           this.locumFormAIdToSign = null
         })
         .catch(err => {
-          console.log("err", err.response || err)
-
-          let message = null
-
-          if (err.response) {
-            if (
-              err.response.data.error_messages
-              && err.response.data.error_messages.length > 0
-            ) {
-              this.formErrors = err.response.data.error_messages
-            } else {
-              message = err.response.data.message
-            }
-          } else if (err.request) {
-            message = "Something went wrong!"
-          } else {
-            message = err.message
-          }
-
-          if (message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${message}`,],
-            })
-          }
+          this.errorHandler(err)
         })
         .finally(() => {
           this.locumESigningLocumFormA = false
