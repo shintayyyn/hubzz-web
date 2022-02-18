@@ -321,10 +321,16 @@ export default {
         .then(response => {
           this.$store.commit("jobs/ADD_OR_UPDATE_LOCUM_UNAVAILABILITIES", response.data.data.unavailabilities)
 
+          const message = this.availabilityType === 'unavailable'
+            ? 'Unavailability Created Successfully'
+            : this.availabilityType === 'available'
+              ? 'Availability Created Successfully'
+              : response.data.message
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: [`${response.data.message}`,],
+            text: [`${message}`,],
           })
 
           this.$router.push('/availability')
