@@ -108,8 +108,7 @@
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
         <div class="w-full md:w-1/2">
-        
-         <div v-if="job && job.conflict" class="flex flex-col mb-4">
+          <div v-if="job && job.conflict" class="flex flex-col mb-4">
             <div class="bg-white rounded-lg border p-4 w-full">
               <div class="leading-tight">
                 <p class="font-bold text-sm sm:text-md px-1 mb-1">
@@ -194,7 +193,7 @@
           </div>
         </div>
 
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+        <div class="p-0 md:pl-4 w-full md:w-1/2 _order-first md:order-none">
           <div class="flex flex-col">
             <LocumUserJobViewJobParts :jobId="jobId" :disabled-link="true" />
 

@@ -177,7 +177,7 @@
           </div>
         </div>
 
-        <div class="w-full md:w-45p order-first md:order-none">
+        <div class="w-full md:w-45p _order-first md:order-none">
           <div class="flex flex-col">
             <PracticeJobViewJobParts
               :jobId="job.id"

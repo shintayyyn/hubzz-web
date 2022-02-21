@@ -216,7 +216,7 @@
           </div>
         </div>
 
-        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
+        <div class="md:pl-2 w-full md:w-45p _order-first md:order-none">
           <div class="flex flex-col">
             <LocumUserJobViewJobParts :jobId="job_part.job_id" />
 

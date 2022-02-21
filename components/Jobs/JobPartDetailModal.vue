@@ -172,12 +172,10 @@
               :loadingJobPart="loadingJobPart"
               :job_part="job_part"
             />
-
-            
           </div>
         </div>
 
-        <div class="md:pl-2 w-full md:w-45p order-first md:order-none">
+        <div class="md:pl-2 w-full md:w-45p _order-first md:order-none">
           <div class="flex flex-col">
             <JobPartDetailModalParts :job_id="job_part.job.id" />
 
@@ -252,8 +250,8 @@ export default {
 
     isModal:{
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data () {
