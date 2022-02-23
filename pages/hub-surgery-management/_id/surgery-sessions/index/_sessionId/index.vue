@@ -5,58 +5,59 @@
 </template>
 
 <script>
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal"
 
 export default {
   transition: {
     name: "slide",
-    mode: "out-in"
+    mode: "out-in",
   },
   components: {
-    SessionDetailModal
+    SessionDetailModal,
   },
-  data() {
+  data () {
     return {
-      job: null
-    };
+      job: null,
+    }
   },
-  async asyncData({ app, params, error }) {
+  
+  async asyncData ({ app, params, error, }) {
     try {
-      const { sessionId } = params;
+      const { sessionId, } = params
 
-      let response = await app.$axios.get(`/api/v1/practice/jobs/${sessionId}`);
+      let response = await app.$axios.get(`/api/v1/practice/jobs/${sessionId}`)
 
-      let job = response.data.data.job;
+      let job = response.data.data.job
 
       return {
-        job
-      };
+        job,
+      }
     } catch (err) {
       if (err.response && err.response.status === 404) {
         return error({
           status: 404,
-          message: "This session could not be found."
-        });
+          message: "This session could not be found.",
+        })
       }
 
-      throw err;
+      throw err
     }
   },
 
   methods: {
-    close() {
+    close () {
       this.$router.push({
         name: "hub-surgery-management-id-surgery-sessions-index",
         params: {
-          ...this.$route.params
+          ...this.$route.params,
         },
         query: {
-          ...this.$route.query
-        }
-      });
-    }
-  }
-};
+          ...this.$route.query,
+        },
+      })
+    },
+  },
+}
 </script>
 
 <style scoped>

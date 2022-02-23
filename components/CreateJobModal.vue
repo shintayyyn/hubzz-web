@@ -1205,9 +1205,6 @@ export default {
           })
       }
     },
-    "form.specialty" (value) {
-      this.CheckEmptyField(value, "specialty")
-    },
     "form.clinical_system" (value) {
       this.CheckEmptyField(value, "clinical_system")
     },
@@ -1603,6 +1600,8 @@ export default {
         "is_another_doctor",
         "is_nurse_available",
         "opportunity_for_catch_up_slots",
+        "specialty",
+        "qualification_id",
         "spoken_language_id",
         "ir35",
         "mandatory_training_id",
@@ -2156,6 +2155,8 @@ export default {
         "is_another_doctor",
         "is_nurse_available",
         "opportunity_for_catch_up_slots",
+        "specialty",
+        "qualification_id",
         "spoken_language_id",
         "ir35",
         "mandatory_training_id",
