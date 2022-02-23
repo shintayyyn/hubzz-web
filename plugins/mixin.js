@@ -335,6 +335,10 @@ Vue.mixin({
     },
 
     mixinNiNumber (e, niNumber) {
+      if (niNumber === null || niNumber === undefined) {
+        niNumber = ''
+      }
+
       if (niNumber.length < 2 || niNumber.length === 8) {
         if (!(/^[a-zA-Z]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
           e.preventDefault()

@@ -467,7 +467,7 @@
 import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
 import AppDate from "@/components/Base/AppDate"
-import AppTime from "@/components/Base/AppTime"
+// import AppTime from "@/components/Base/AppTime"
 import AppPostCode from "@/components/Base/AppPostCode"
 import AppButton from "@/components/Base/AppButton"
 import AppLoading from "@/components/Base/AppLoading"
@@ -478,7 +478,7 @@ export default {
     AppTable,
     AppInput,
     AppDate,
-    AppTime,
+    // AppTime,
     AppPostCode,
     AppButton,
     AppLoading,
@@ -496,7 +496,11 @@ export default {
     },
   },
 
-  middleware ({ query, error, }) {
+  middleware ({ query, error, redirect, }) {
+    if (!query.status || query.status.toLowerCase() === 'allocated') {
+      return redirect('/jobs?status=Available')
+    }
+
     if (
       query.status
       && ![
@@ -559,9 +563,9 @@ export default {
   computed: {
     defaultMatchedRate () {
       return null
-      return this.$route.query.status && this.$route.query.status.toLowerCase() === 'available'
-        ? 'true'
-        : null
+      // return this.$route.query.status && this.$route.query.status.toLowerCase() === 'available'
+      //   ? 'true'
+      //   : null
     },
 
     getRequestQueryFilters () {
