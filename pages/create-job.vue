@@ -385,6 +385,7 @@
                         :url="'/api/v1/qualifications'"
                         :addNaOption="true"
                         :showClearButton="true"
+                        :defaultNaIfEmpty="repostJob ? true : false"
                         :professionCategoryId="selectedProfession && selectedProfession.profession_category
                           ? selectedProfession.profession_category.id.toString()
                           : null
