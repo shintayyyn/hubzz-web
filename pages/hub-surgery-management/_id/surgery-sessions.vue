@@ -34,125 +34,125 @@
     </div> -->
 
     <div v-if="!$route.params.jobId && !$route.params.sessionId && !$route.params.jobPartId" class="flex flex-row justify-start overflow-x-auto mt-2 border-b border-gray-500">
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'pending'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Pending
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'pending'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Pending
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Allocated`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            !$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated')
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Allocated
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Allocated`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          !$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated')
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Allocated
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Ongoing`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Ongoing
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Ongoing`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Ongoing
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Live`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Live
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Live`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Live
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Applied
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Applied`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Applied
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Unfilled`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Unfilled
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Unfilled`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Unfilled
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Withdrawn
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Withdrawn
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Cancelled`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Cancelled
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Cancelled`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Cancelled
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Completed`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Completed
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Completed`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Completed
+      </nuxt-link>
 
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Approved`"
-          class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
-          :class="
-            $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved'
-              ? 'border-b-4 border-gray-500'
-              : 'text-gray-600'
-          "
-        >
-          Approved
-        </nuxt-link>
+      <nuxt-link
+        :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Approved`"
+        class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer"
+        :class="
+          $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved'
+            ? 'border-b-4 border-gray-500'
+            : 'text-gray-600'
+        "
+      >
+        Approved
+      </nuxt-link>
     </div>
 
     <div class="mt-5">
@@ -183,7 +183,7 @@
 
 <script>
 import CreateJobModal from "@/components/CreateJobModal"
-import AppLoading from "@/components/Base/AppLoading"
+// import AppLoading from "@/components/Base/AppLoading"
 
 export default {
   transition: {
@@ -193,7 +193,7 @@ export default {
 
   components: {
     CreateJobModal,
-    AppLoading,
+    // AppLoading,
   },
 
   data () {

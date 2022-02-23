@@ -49,7 +49,7 @@ export default {
       this.$router.push({
         name: "hub-surgery-management-id-surgery-sessions-index",
         params: {
-          ...this.$route.params,
+          id: this.$route.params.id,
         },
         query: {
           ...this.$route.query,

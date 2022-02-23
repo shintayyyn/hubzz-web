@@ -2329,6 +2329,8 @@ export default {
               status: "success",
               text: ["Successfully created job",],
             })
+
+            this.close()
           })
           .catch(err => {
             console.log("err", err.response || err)
