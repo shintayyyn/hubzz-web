@@ -14,7 +14,7 @@
     
     <p>
       <span>Go back to</span>
-      <nuxt-link :to="'/'" class="font-bold cursor-pointer hover:underline">
+      <nuxt-link :to="'/'" class="font-bold cursor-pointer hover:underline" @click.native="redirectToHomePage()">
         Home page
       </nuxt-link>
       <span>.</span>
@@ -35,6 +35,14 @@ export default {
 
   mounted () {
     console.log(this.error)
+  },
+
+  methods: {
+    redirectToHomePage () {
+      if (this.$route.name === 'index') {
+        window.location = '/'
+      }
+    },
   },
 }
 </script>
