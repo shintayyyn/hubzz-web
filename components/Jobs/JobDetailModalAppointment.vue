@@ -35,6 +35,7 @@
             :placeholder="'Select...'"
             :items="practices"
             :error="formError.find(item => item.field === 'private_practice_id')"
+            required
           />
 
           <div class="-mt-6 md:-mt-4 pt-4">
@@ -51,6 +52,7 @@
                 :label="'Job Dates'"
                 :error="formError.find(item => item.field === 'dates')"
                 multipleSelection
+                required
               />
             </div>
             <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -68,6 +70,7 @@
                 :name="'time_start'"
                 :label="'Start time'"
                 :error="formError.find(item => item.field === 'time_start')"
+                required
               />
             </div>
             <!-- <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -86,6 +89,7 @@
                 :name="'time_end'"
                 :label="'End time'"
                 :error="formError.find(item => item.field === 'time_end')"
+                required
               />
             </div>
           </div>
@@ -100,6 +104,7 @@
                 :placeholder="'Select...'"
                 :items="shifts"
                 :error="formError.find(item => item.field === 'shift_id')"
+                required
               />
             </div>
 
@@ -113,6 +118,7 @@
                 :in-style="'text-align:right'"
                 :error="formError.find(item => item.field === 'rate')"
                 :limit="8"
+                required
                 @keydown="isNumber($event)"
               />
             </div>
@@ -126,6 +132,7 @@
                 :placeholder="'Select...'"
                 :items="rate_types"
                 :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
+                required
               />
             </div>
           </div>

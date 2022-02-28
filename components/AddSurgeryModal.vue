@@ -102,7 +102,15 @@
           <div class="flex w-full justify-center xl:justify-start">
             <div class="flex flex-col w-full p-4 my-4 rounded-lg border">
               <form class="w-full">
-                <AppInput v-model="form.name" :type="'text'" :name="'name'" :label="'Practice'" />
+                <AppInput
+                  v-model="form.name"
+                  :type="'text'"
+                  :name="'name'"
+                  :label="'Practice'"
+                  :error="formError.find(item => item.field === 'name')"
+                  required
+                />
+
                 <AppInput
                   v-model="form.phone_number"
                   :type="'text'"
@@ -110,9 +118,11 @@
                   label="Phone number"
                   :limit="11"
                   :error="formError.find(item => item.field === 'phone_number')"
+                  required
                   @blur="CheckEmptyField(form.phone_number,'phone_number')"
                   @keydown="inputNumberOnly($event)"
                 />
+
                 <AppPostCode
                   v-model="form.clinical_commissioning_group_name"
                   :urlIndex="'/api/v1/clinical-commissioning-groups'"
@@ -121,16 +131,20 @@
                   :label="'Clinical Commissioning Group name'"
                   :error="formError.find(item => item.field === 'clinical_commissioning_group_name')"
                   :inStyle="'background-color:#dae1e7;border-color:white'"
+                  required
                   @blur="CheckEmptyField(form.clinical_commissioning_group_name, 'clinical_commissioning_group_name')"
                 />
+
                 <AppInput
                   v-model="form.code"
                   :type="'text'"
                   :name="'code'"
                   :label="'Code'"
                   :error="formError.find(item => item.field === 'code')"
+                  required
                   @blur="CheckEmptyField(form.code,'code')"
                 />
+
                 <AppPostCode
                   v-model="form.postcode"
                   :urlIndex="'/api/v1/postcode-coordinates'"
@@ -138,16 +152,20 @@
                   :label="'Post code'"
                   :error="formError.find(item => item.field === 'postcode')"
                   :inStyle="'background-color:#dae1e7;border-color:white'"
+                  required
                   @blur="CheckEmptyField(form.postcode, 'postcode')"
                 />
+
                 <AppInput
                   v-model="form.address_line_1"
                   :type="'text'"
                   :name="'address_line_1'"
                   :label="'Address Line 1'"
                   :error="formError.find(item => item.field === 'address_line_1')"
+                  required
                   @blur="CheckEmptyField(form.address_line_1,'address_line_1')"
                 />
+
                 <AppInput
                   v-model="form.address_line_2"
                   :type="'text'"
@@ -155,6 +173,7 @@
                   :label="'Address Line 2'"
                   :error="formError.find(item => item.field === 'address_line_2')"
                 />
+
                 <AppInput
                   v-model="form.address_line_3"
                   :type="'text'"
@@ -162,6 +181,7 @@
                   :label="'Address Line 3'"
                   :error="formError.find(item => item.field === 'address_line_3')"
                 />
+
                 <AppInput
                   v-model="form.address_line_4"
                   :type="'text'"
@@ -169,6 +189,7 @@
                   :label="'Address Line 4'"
                   :error="formError.find(item => item.field === 'address_line_4')"
                 />
+                
                 <AppInput
                   v-model="form.address_line_5"
                   :type="'text'"
@@ -190,25 +211,26 @@
     </div>
   </section>
 </template>
+
 <script>
 import AppInput from "@/components/Base/AppInput"
 import AppButton from "@/components/Base/AppButton"
 import AppPostCode from "@/components/Base/AppPostCode"
-import AppFormError from "@/components/Base/AppFormError"
+// import AppFormError from "@/components/Base/AppFormError"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 export default {
   components: {
     AppInput,
     AppButton,
     AppPostCode,
-    AppFormError,
+    // AppFormError,
     AppConfirmationModal,
   },
   props: {
     page: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data () {
     return {
@@ -276,12 +298,14 @@ export default {
           }
         })
     },
+
     select (item) {
       if (!this.selectedSurgeries.includes(item.id)) {
         this.selectedSurgery = item
         this.confirmation_add_modal = true
       }
     },
+
     proceed () {
       this.form.name = this.selectedSurgery.name
       this.form.phone_number = this.selectedSurgery.phone_number
@@ -298,6 +322,7 @@ export default {
       this.input_details = true
       this.confirmation_add_modal = false
     },
+
     checkCoordinates (postcode) {
       return this.$axios
         .$post("/api/v1/postcode-to-coordinates", { postcode, })
@@ -320,6 +345,7 @@ export default {
           }
         })
     },
+
     async add () {
       this.formError = []
       this.Validate(this.form, [
@@ -362,6 +388,7 @@ export default {
           })
       }
     },
+    
     closeInputDetails () {
       this.input_details = false
       this.form.name = ""
