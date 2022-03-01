@@ -336,54 +336,57 @@
               </div>
             </div>
           </div>
-          
-          <div class="font-bold text-sm sm:text-md">
-            Referees
-          </div>
 
-          <div v-if="referees.length > 0" class="flex flex-col md:flex-row">
-            <div
-              v-for="item in referees"
-              :key="item.id"
-              :class="item && item.id ? 'rounded-lg flex flex-col flex-1 bg-gray-300 my-2 mx-1 p-4 text-xs md:text-sm' : ''"
-            >
-              <div class="flex w-full justify-start">
-                <div class="w-full">
-                  Contact Name:
+          <div :class="'rounded-lg flex flex-col flex-1 rounded-lg border my-2 mb-4 p-2 text-xs md:text-sm'">
+            <div class="font-bold text-sm sm:text-md">
+              Referees
+            </div>
+
+            <div v-if="referees.length > 0" class="flex flex-col md:flex-row">
+              <div
+                v-for="item in referees"
+                :key="item.id"
+                :class="item && item.id ? 'rounded-lg flex flex-col flex-1 bg-gray-300 my-2 mx-1 p-4 text-xs md:text-sm' : ''"
+              >
+                <div class="flex w-full justify-start">
+                  <div class="w-full">
+                    Contact Name:
+                  </div>
+
+                  <div class="w-full">
+                    {{ item.name && item.name.trim() ? item.name : '(none)' }}
+                  </div>
                 </div>
 
-                <div class="w-full">
-                  {{ item.name && item.name.trim() ? item.name : '(none)' }}
-                </div>
-              </div>
+                <div class="flex w-full justify-start my-2">
+                  <div class="w-full">
+                    Telephone number:
+                  </div>
 
-              <div class="flex w-full justify-start my-2">
-                <div class="w-full">
-                  Telephone number:
-                </div>
-
-                <div
-                  class="w-full"
-                >
-                  {{ item.phone_number && item.phone_number.trim() ? item.phone_number : '(none)' }}
-                </div>
-              </div>
-
-              <div class="flex w-full justify-start">
-                <div class="w-full">
-                  Email Address:
+                  <div
+                    class="w-full"
+                  >
+                    {{ item.phone_number && item.phone_number.trim() ? item.phone_number : '(none)' }}
+                  </div>
                 </div>
 
-                <div class="w-full">
-                  {{ item.email && item.email.trim() ? item.email : '(none)' }}
+                <div class="flex w-full justify-start">
+                  <div class="w-full">
+                    Email Address:
+                  </div>
+
+                  <div class="w-full">
+                    {{ item.email && item.email.trim() ? item.email : '(none)' }}
+                  </div>
                 </div>
               </div>
             </div>
+
+            <div v-if="referees.length === 0" class="text-xs md:text-sm mb-4" :class="'rounded-lg flex flex-col flex-1 bg-gray-300 my-2 mx-1 p-4 text-xs md:text-sm'">
+              (none)
+            </div>
           </div>
 
-          <div v-else-if="referees.length === 0" class="text-xs md:text-sm">
-            (none)
-          </div>
           <AppButton
             v-if="authPermissions.includes('Appoint Sessions Job')"
             :label="'Appoint to this job'"
