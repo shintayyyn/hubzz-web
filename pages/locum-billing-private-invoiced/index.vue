@@ -54,7 +54,8 @@
 
               <div
                 v-if="
-                  !slotProps.item.locum_form_a_id
+                  (authUser && authUser.profession_category_name === 'GP')
+                    && !slotProps.item.locum_form_a_id
                     && !slotProps.item.locum_solo_form_id
                     && slotProps.item.shift && slotProps.item.shift.name !== 'OOH'
                     && claimNhs
@@ -67,7 +68,8 @@
 
               <div
                 v-if="
-                  !slotProps.item.locum_form_a_id
+                  (authUser && authUser.profession_category_name === 'GP')
+                    && !slotProps.item.locum_form_a_id
                     && !slotProps.item.locum_solo_form_id
                     && slotProps.item.shift && slotProps.item.shift.name === 'OOH'
                 "
@@ -256,6 +258,8 @@ export default {
 
       claimNhs: false,
       loadingPayment: false,
+
+      authUser: null,
     }
   },
 
@@ -321,6 +325,7 @@ export default {
 
     this.$axios.get('/api/v1/me').then((response) => {
       this.claimNhs = response.data.data.user.locum_detail.claim_nhs
+      this.authUser = response.data.data.user
     }).catch((err) => {
       console.log('err', err)
     })
