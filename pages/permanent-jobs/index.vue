@@ -1,6 +1,7 @@
 <template>
   <section class="flex flex-col items-start w-full">
     <AppBreadcrumbs v-if="$route.name !== 'permanent-jobs-index'" :links="links" />
+
     <template v-if="$route.name === 'permanent-jobs-index'">
       <div class="flex flex-wrap items-center justify-between w-full border-b border-sunglow">
         <div class="flex overflow-x-auto items-center">
@@ -18,6 +19,7 @@
           >
             Pending
           </nuxt-link>
+
           <nuxt-link
             to="/permanent-jobs"
             class="md:mr-5 px-3 py-2 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -62,6 +64,7 @@
     />
   </section>
 </template>
+
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
@@ -77,6 +80,7 @@ export default {
       confirmation_modal: false,
     }
   },
+
   computed: {
     links () {
       console.log("hello world", this.$route)
@@ -119,6 +123,7 @@ export default {
       return links
     },
   },
+  
   watch: {
     authPermissions (value) {
       if (!this.CheckPermissions(value).hasPermission) {

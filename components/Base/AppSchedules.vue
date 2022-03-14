@@ -3121,8 +3121,8 @@ export default {
         shift.posted_break_in_minutes
         && shift.time_start
         && shift.time_end
-        && this.schedules[scheduleIndex].date
-        && parseInt(shift.posted_break_in_minutes) > this.totalHours(shift.time_start, shift.time_end, this.schedules[scheduleIndex].date)
+        && this.schedules?.[scheduleIndex]?.date
+        && parseInt(shift.posted_break_in_minutes) > this.totalHours(shift.time_start, shift.time_end, this.schedules?.[scheduleIndex]?.date)
       ) {
         this.formError.push({
           field: `posted_break_in_minutes-s${scheduleIndex}-${shiftIndex}`,
