@@ -239,7 +239,8 @@
         </div>
       </div>
       <div class="flex">
-        <AppButton :label="'Create'" class="ml-auto mr-2" @click="createPermanentJob()" />
+        <AppButton v-if="!creatingPermanentJob" :label="creatingPermanentJob ? 'Creating...' : 'Create'" class="ml-auto mr-2" @click="creatingPermanentJob ? null : createPermanentJob()" />
+        <AppButton v-if="creatingPermanentJob" :label="creatingPermanentJob ? 'Creating...' : 'Create'" class="ml-auto mr-2" />
       </div>
     </div>
   </section>
@@ -362,6 +363,7 @@ export default {
           title: 'Create Permanent Job',
         },
       ],
+      creatingPermanentJob: false,
     }
   },
   computed: {
@@ -455,6 +457,10 @@ export default {
       console.log("editor ready!", editor)
     },
     async createPermanentJob () {
+      if (this.creatingPermanentJob) {
+        return
+      }
+
       if (
         this.form.practice_id !== this.$auth.user.practice_detail.practice.id
         && (this.$auth.user.practice_detail.practice.type === "Hub" || this.$auth.user.practice_detail.practice.type === "Stand Alone")
@@ -516,6 +522,8 @@ export default {
         // 		salary_amount: this.form.salary_amount ? this.form.salary_amount : 0
         // 	})
         console.log("formData", formData)
+
+        this.creatingPermanentJob = true
         await this.$axios
           .post(`/api/v1/practice/permanent-jobs`, formData)
           .then(() => {
@@ -527,6 +535,7 @@ export default {
             this.$router.push("/permanent-jobs")
           })
           .catch(err => {
+            this.creatingPermanentJob = false
             this.formError = err.response.data.error_messages
             this.$nextTick(() => {
               this.$refs.modalContainer.scrollTop = 0

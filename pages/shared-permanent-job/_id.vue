@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-8">
+  <div class="mx-8 w-full">
     <div class="flex flex-row flex-no-wrap justify-start items-center mt-4 md:mt-8">
       <h4 class="text-lg md:text-xl font-bold flex items-center">
         <span>{{ sharedPermanentJob.title }}</span>
@@ -11,14 +11,14 @@
 
       <AppButton class="mx-2" :label="'Apply'" @click="goRegister" />
     </div>
-    <div class="flex flex-col md:flex-row">
+    <div class="flex flex-col md:flex-row w-full">
       <div class="w-full pr-2">
         <div class="bg-white rounded-lg shadow-lg p-4">
           <p class="font-bold">
             Practice
           </p>
           <p class="pl-2 pb-3">
-            {{ sharedPermanentJob ? sharedPermanentJob.practice.name : null }}
+            {{ sharedPermanentJob ? sharedPermanentJob.practice_name : null }}
           </p>
           <p class="font-bold">
             Description
@@ -84,7 +84,7 @@
             Role
           </p>
           <p class="pl-2 pb-3">
-            {{ sharedPermanentJob ? sharedPermanentJob.professions.name : null }}
+            {{ sharedPermanentJob ? sharedPermanentJob.profession_name : null }}
           </p>
 
           <p class="font-bold">

@@ -398,8 +398,8 @@
                 />
                 <AppButton
                   v-if="permanent_job.job_posting_status === 'Closed' || permanent_job.job_posting_status === 'Unfilled'"
-                  :label="'Confirm Repost Job'"
-                  @click="repostPermanentJob()"
+                  :label="repostingPermanentJob ? 'Reposting Job...' : 'Confirm Repost Job'"
+                  @click="repostingPermanentJob ? null : repostPermanentJob()"
                 />
               </template>
             </div>
@@ -452,7 +452,6 @@
 import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
 import AppDate from "@/components/Base/AppDate"
-import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
 import AppLoading from "@/components/Base/AppLoading"
 // import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate"
 import PermanentJobCandidates from "@/components/PermanentJob/PermanentJobCandidates"
@@ -468,7 +467,6 @@ export default {
     PermanentJobMap,
     PermanentJobLocum,
     FileModal,
-    AppBreadcrumbs,
     AppLoading,
   },
   props: {
@@ -557,7 +555,8 @@ export default {
       // 	modules: {
       // 		toolbar: null
       // 	}date_posted
-      // }
+      // },
+      repostingPermanentJob: false,
     }
   },
   watch: {
@@ -569,8 +568,8 @@ export default {
         this.form.parent_practice_id
 					= this.permanent_job.parent_practice_id
 					|| this.$auth.user.practice_detail.practice.parent_practice_id
-					  ? this.permanent_job.parent_practice_id || this.$auth.user.practice_detail.practice.parent_practice_id
-					  : null
+            ? this.permanent_job.parent_practice_id || this.$auth.user.practice_detail.practice.parent_practice_id
+            : null
         this.form.title = this.permanent_job.title
         this.form.description = this.permanent_job.description;
         (this.form.date_posted = this.$moment().format("YYYY-MM-DD")),
@@ -675,8 +674,8 @@ export default {
         this.form.practice_id = this.permanent_job.practice_id
         this.form.parent_practice_id
 						= this.permanent_job.parent_practice_id || this.$auth.user.practice_detail.practice.parent_practice_id
-						  ? this.permanent_job.parent_practice_id ||this.$auth.user.practice_detail.practice.parent_practice_id
-						  : null
+            ? this.permanent_job.parent_practice_id ||this.$auth.user.practice_detail.practice.parent_practice_id
+            : null
         this.form.profession_id = this.permanent_job.profession_id
         this.loading = false
       })
@@ -771,9 +770,9 @@ export default {
         .then(res => {
           this.permanent_job = res.data.permanent_job
 
-          let status = this.permanent_job.job_posting_status !== 'Available' 
-            ? ['Unfilled', 'Closed',].includes(this.permanent_job.job_posting_status) ? 'Closed' : this.permanent_job.job_posting_status
-            : 'Available'
+          // let status = this.permanent_job.job_posting_status !== 'Available' 
+          //   ? ['Unfilled', 'Closed',].includes(this.permanent_job.job_posting_status) ? 'Closed' : this.permanent_job.job_posting_status
+          //   : 'Available'
         })
         .finally(() => {
           if (this.permanent_job.appointed_to_locum_user_id) {
@@ -856,6 +855,10 @@ export default {
     },
 
     async repostPermanentJob () {
+      if (this.repostingPermanentJob) {
+        return
+      }
+
       this.formError = []
       let notRequired = [
         "parent_practice_id",
@@ -871,6 +874,7 @@ export default {
       console.log("errors: ", this.formError)
 
       if (!this.formError.length) {
+        this.repostingPermanentJob = true
         await this.$axios
           .post(`/api/v1/practice/permanent-jobs`, {
             ...this.form,
@@ -890,6 +894,7 @@ export default {
             this.$router.push(goToRoute)
           })
           .catch(err => {
+            this.repostingPermanentJob = false
             this.formError = err.response.data.error_messages
             console.log("eror", err)
             this.$nextTick(() => {
@@ -920,10 +925,9 @@ export default {
           .$put(
             `/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`,
             {
-              hired_through:
-								this.form.hired_through === "Closed by Practice"
-								  ? null
-								  : this.form.hired_through,
+              hired_through: this.form.hired_through === "Closed by Practice"
+                ? null
+                : this.form.hired_through,
             }
           )
           .then(() => {

@@ -1,12 +1,13 @@
 <template>
-  <div class="__layout_index w-screen h-screen flex ">
+  <div class="__layout_index w-screen h-screen flex w-full">
     <!-- flex-col xl:flex-row -->
     <div class="__bg_logo flex justify-center items-center pt-5 pb-8">
       <nuxt-link to="/" class="__logo">
-        <img src="~/assets/images/hubzz-logo.png" />
+        <img src="~/assets/images/hubzz-logo.png">
       </nuxt-link>
     </div>
-    <nuxt/>
+
+    <nuxt />
   </div>
 </template>
 
@@ -15,7 +16,3 @@ export default {
 
 }
 </script>
-
-<style>
-
-</style>

@@ -228,6 +228,7 @@
         </p>
       </template>
     </transition>
+
     <div
       v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
       class="shield"
@@ -236,6 +237,7 @@
     <nuxt-child />
   </section>
 </template>
+
 <script>
 import debounce from "lodash.debounce"
 import AppTable from "@/components/Base/AppTable"
@@ -513,9 +515,10 @@ export default {
             let practice_type = this.$auth.user.practice_detail.practice.type
             const params = {
               job_posting_status: newStatus ? newStatus : "",
-              practice_id: practice_type === "Hub" && newStatus === "Pending"
-                ? null
-                : this.$auth.user.practice_id,
+              logged_in_practice_id: this.$auth.user.logged_in_practice,
+              // practice_id: practice_type === "Hub" && newStatus === "Pending"
+              //   ? null
+              //   : this.$auth.user.practice_id,
               parent_practice_id: practice_type === "Hub" && newStatus === "Pending"
                 ? this.$auth.user.practice_id
                 : null,
@@ -666,9 +669,10 @@ export default {
           job_posting_status: route.query.status
             ? route.query.status
             : "Available",
-          practice_id: practice_type === "Hub" && route.query.status === "Pending"
-            ? null
-            : app.$auth.user.practice_id,
+          logged_in_practice_id: app.$auth.user.logged_in_practice,
+          // practice_id: practice_type === "Hub" && route.query.status === "Pending"
+          //   ? null
+          //   : app.$auth.user.practice_id,
           parent_practice_id: practice_type === "Hub" && route.query.status === "Pending"
             ? app.$auth.user.practice_id
             : null,
@@ -1072,9 +1076,10 @@ export default {
       let practice_type = this.$auth.user.practice_detail.practice.type
       params = {
         ...params,
-        practice_id: practice_type === "Hub" && this.$route.query.status === "Pending"
-          ? null
-          : this.$auth.user.practice_id,
+        logged_in_practice_id: this.$auth.user.logged_in_practice,
+        // practice_id: practice_type === "Hub" && this.$route.query.status === "Pending"
+        //   ? null
+        //   : this.$auth.user.practice_id,
         parent_practice_id: practice_type === "Hub" && this.$route.query.status === "Pending"
           ? this.$auth.user.practice_id
           : null,
