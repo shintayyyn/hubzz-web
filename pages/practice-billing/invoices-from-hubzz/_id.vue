@@ -27,7 +27,9 @@
         class="mx-4 font-semibold"
       >
         <div>{{ `* This invoice has been marked Invalid on ${practiceInvoice.unpaid_at_in_gb_formatted}` }}</div>
-        <div v-if="practiceInvoice.unpaid_reason">{{ `For the reason: ${practiceInvoice.unpaid_reason}` }}</div>
+        <div v-if="practiceInvoice.unpaid_reason">
+          {{ `For the reason: ${practiceInvoice.unpaid_reason}` }}
+        </div>
       </div>
 
       <div class="mx-4 my-2">
@@ -51,7 +53,7 @@ import HubzzBillingForm from "@/components/Billing/HubzzBillingForm"
 export default {
   transition: {
     name: "slide",
-    mode: "out-in"
+    mode: "out-in",
   },
   components: {
     HubzzBillingForm,
@@ -61,9 +63,9 @@ export default {
       return this.practiceInvoice.paid_at
         ? this.practiceInvoice.paid_at
         : this.practiceInvoice.issued_at
-    }
+    },
   },
-  async asyncData ({ app, params }) {
+  async asyncData ({ app, params, }) {
     try {
       if (process.client) {
         document.body.style.cursor = "wait"
@@ -74,12 +76,11 @@ export default {
       response = await app.$axios.get(
         `/api/v1/practice/practice-invoices/${params.id}`
       )
-      const practiceInvoice =
-        response.data &&
-        response.data.data &&
-        response.data.data.practice_invoice
-          ? response.data.data.practice_invoice
-          : null
+      const practiceInvoice = response.data
+        && response.data.data
+        && response.data.data.practice_invoice
+        ? response.data.data.practice_invoice
+        : null
 
       if (process.client) {
         document.body.style.cursor = "auto"
@@ -92,42 +93,49 @@ export default {
       let debitItems = []
       let creditItems = []
       console.log('practiceInvoiceItems', practiceInvoiceItems)
-			for (let i = 0; i < practiceInvoiceItems.length; i++) {
-				const newItem = {
-					job_part_id: practiceInvoiceItems[i].id,
-					description: practiceInvoiceItems[i].description,
+      
+      for (let i = 0; i < practiceInvoiceItems.length; i++) {
+        const newItem = {
+          id: null,
+          job_part_id: practiceInvoiceItems[i].id,
+          description: practiceInvoiceItems[i].description,
           total: practiceInvoiceItems[i].total.toFixed(2),
-          total_hours: practiceInvoiceItems[i].job_part ? (practiceInvoiceItems[i].job_part.final_hours)/60 : null
+          total_hours: practiceInvoiceItems[i].job_part ? (practiceInvoiceItems[i].job_part.final_hours)/60 : null,
         }
-        if(practiceInvoiceItems[i].type.includes('Job Part - Approved') 
+
+        if (
+          practiceInvoiceItems[i].type.includes('Job Part - Approved') 
           || practiceInvoiceItems[i].type.includes('Job Part - Issued')
-          || practiceInvoiceItems[i].type.includes('Job Part - Invoiced')) {
+          || practiceInvoiceItems[i].type.includes('Job Part - Invoiced')
+          || practiceInvoiceItems[i].type.includes('Job Part - To Be Invoiced')
+        ) {
           console.log('normal invoice item has been pushed')
           newItem.id = invoiceItems.length + 1
           invoiceItems.push(newItem)
-        }else if(practiceInvoiceItems[i].type.includes('Job Part - Disputed')){
+        } else if (practiceInvoiceItems[i].type.includes('Job Part - Disputed')){
           console.log('disputed invoice item has been pushed')
           newItem.id = disputedItems.length + 1
           disputedItems.push(newItem)
-        }else if(practiceInvoiceItems[i].type.includes('Debit')) {
+        } else if (practiceInvoiceItems[i].type.includes('Debit')) {
           console.log('debit invoice item has been pushed')
           newItem.id = debitItems.length + 1
           debitItems.push(newItem)
-        }else if(practiceInvoiceItems[i].type.includes('Credit')) {
+        } else if (practiceInvoiceItems[i].type.includes('Credit')) {
           console.log('credit invoice item has been pushed')
           newItem.id = creditItems.length + 1
           creditItems.push(newItem)
-        }else{
+        } else {
           console.log('it didnt work lol')
         }
       }
+      
       return {
         practiceInvoice,
         practice,
         invoiceItems,
         disputedItems,
         debitItems,
-        creditItems
+        creditItems,
       }
     } catch (err) {
       // if (err && err.response.status === 404) {
@@ -151,7 +159,7 @@ export default {
   },
   
   methods: {
-  }
+  },
 }
 </script>
 
