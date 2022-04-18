@@ -84,6 +84,11 @@ export default {
               label: 'Please wait for HUBZZ to verify your Compliance documents',
               route: '/compliance',
             })
+          } else if (complianceStatus === 'Expiring') {
+            this.reminders.push({
+              label: 'Some of your Compliance Documents is expiring. Please update your compliance documentation',
+              route: '/compliance',
+            })
           }
 
           // Billing

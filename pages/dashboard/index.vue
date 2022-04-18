@@ -4,6 +4,15 @@
       <Reminders />
     </div>
 
+    <div v-if="userIsAuthorized && $auth.user.domain === 'Locum'" class="mb-8">
+      <div
+        v-if="$auth.user.compliance_status === 'Expiring'"
+        class="text-sm sm:text-base font-bold"
+      >
+        Some of your Compliance Documents is expiring. Please update your compliance documentation
+      </div>
+    </div>
+
     <div
       v-if="userIsAuthorized && ($auth.user.domain === 'Practice' || ($auth.user.domain === 'Locum' && $auth.user.view_locum_jobs))"
       class="statistics-section "
