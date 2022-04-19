@@ -959,6 +959,10 @@ export default {
         return totalUnpaidBreakInMinutes + unpaidBreakInMinutes
       }, 0)
     },
+
+    authPracticeId () {
+      return this.$auth.user?.pratice_id
+    },
   },
 
   watch: {
@@ -2292,10 +2296,28 @@ export default {
               text: ["Successfully created job",],
             })
 
-            if (job.status === 'Pending') {
-              this.$router.push('/sessions/?status=Pending')
+            console.log('redirect', {
+              jobPracticeId: job.practice_id,
+              jobPracticeSurgeryId: job.practice_surgery_id,
+              authPracticeId: this.authPracticeId,
+            })
+
+            if (
+              job.practice_id !== this.authPracticeId
+              && job.parent_practice_id === this.authPracticeId
+              && job.practice_surgery_id
+            ) {
+              if (job.status === 'Pending') {
+                this.$router.push(`/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions?jobStatus=Pending`)
+              } else {
+                this.$router.push(`/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions?jobStatus=Live`)
+              }
             } else {
-              this.$router.push('/sessions/?status=Live')
+              if (job.status === 'Pending') {
+                this.$router.push('/sessions/?status=Pending')
+              } else {
+                this.$router.push('/sessions/?status=Live')
+              }
             }
           })
           .catch(err => {
