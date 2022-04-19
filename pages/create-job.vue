@@ -959,10 +959,6 @@ export default {
         return totalUnpaidBreakInMinutes + unpaidBreakInMinutes
       }, 0)
     },
-
-    authPracticeId () {
-      return this.$auth.user?.pratice_id
-    },
   },
 
   watch: {
@@ -2296,15 +2292,21 @@ export default {
               text: ["Successfully created job",],
             })
 
+            const authUser = this.$auth.user
+
+            console.log('authUser', authUser)
+
+            const authUserPracticeId = authUser?.practice_id
+
             console.log('redirect', {
               jobPracticeId: job.practice_id,
               jobPracticeSurgeryId: job.practice_surgery_id,
-              authPracticeId: this.authPracticeId,
+              authUserPracticeId,
             })
 
             if (
-              job.practice_id !== this.authPracticeId
-              && job.parent_practice_id === this.authPracticeId
+              job.practice_id !== authUserPracticeId
+              && job.parent_practice_id === authUserPracticeId
               && job.practice_surgery_id
             ) {
               if (job.status === 'Pending') {
