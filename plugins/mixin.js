@@ -1,4 +1,4 @@
-import Vue from "vue"
+import Vue from 'vue'
 
 import isEmail from 'validator/lib/isEmail'
 
@@ -18,25 +18,63 @@ Vue.mixin({
         const response = await this.$axios.$get(`/api/v1/me`)
         let newStatus = response.data.user.status
         if (newStatus !== oldStatus) {
-          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' || newStatus === 'Dormant' ? 'verified' : 'not verified', })
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', {
+            modal: true,
+            status:
+              newStatus === 'Active' || newStatus === 'Dormant'
+                ? 'verified'
+                : 'not verified',
+          })
         }
       } else if (this.$auth.user.domain === 'Practice') {
         let oldPracticeUserStatus = this.$auth.user.status
-        let oldPracticeUserVerified = oldPracticeUserStatus === 'Disabled' ? 'false' : 'true'
+        let oldPracticeUserVerified
+          = oldPracticeUserStatus === 'Disabled' ? 'false' : 'true'
         let oldPracticeStatus = this.$auth.user.practice_detail.practice.status
-        let oldPracticeVerified = ['Inactive', 'Account Suspension', 'Deactivated',].includes(oldPracticeStatus) ? 'false' : 'true'
-        let oldVerified = [oldPracticeUserStatus, oldPracticeUserVerified, oldPracticeStatus, oldPracticeVerified,].includes('false') ? 'false' : 'true'
+        let oldPracticeVerified = [
+          'Inactive',
+          'Account Suspension',
+          'Deactivated',
+        ].includes(oldPracticeStatus)
+          ? 'false'
+          : 'true'
+        let oldVerified = [
+          oldPracticeUserStatus,
+          oldPracticeUserVerified,
+          oldPracticeStatus,
+          oldPracticeVerified,
+        ].includes('false')
+          ? 'false'
+          : 'true'
 
         const response = await this.$axios.$get(`/api/v1/me`)
 
         let newPracticeUserStatus = response.data.user.status
-        let newPracticeUserVerified = newPracticeUserStatus === 'Disabled' ? 'false' : 'true'
-        let newPracticeStatus = response.data.user.practice_detail.practice.status
-        let newPracticeVerified = ['Inactive', 'Account Suspension', 'Deactivated',].includes(newPracticeStatus) ? 'false' : 'true'
-        let newVerified = [newPracticeUserStatus, newPracticeUserVerified, newPracticeStatus, newPracticeVerified,].includes('false') ? 'false' : 'true'
+        let newPracticeUserVerified
+          = newPracticeUserStatus === 'Disabled' ? 'false' : 'true'
+        let newPracticeStatus
+          = response.data.user.practice_detail.practice.status
+        let newPracticeVerified = [
+          'Inactive',
+          'Account Suspension',
+          'Deactivated',
+        ].includes(newPracticeStatus)
+          ? 'false'
+          : 'true'
+        let newVerified = [
+          newPracticeUserStatus,
+          newPracticeUserVerified,
+          newPracticeStatus,
+          newPracticeVerified,
+        ].includes('false')
+          ? 'false'
+          : 'true'
 
         if (oldVerified !== newVerified) {
-          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newVerified === 'true' ? 'verified' : 'not verified', })
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', {
+            modal: true,
+            status: newVerified === 'true' ? 'verified' : 'not verified',
+          })
         }
       }
     },
@@ -47,7 +85,7 @@ Vue.mixin({
       let arr = new Array()
       let dt = new Date(start)
       while (dt <= new Date(end)) {
-        arr.push(this.$moment(new Date(dt)).format("YYYY-MM-DD"))
+        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'))
         dt.setDate(dt.getDate() + 1)
       }
       return arr
@@ -60,14 +98,16 @@ Vue.mixin({
 
       if (!preferredDisplayName) {
         if (fieldName.includes('_id')) {
-          trimmedFieldName = fieldName.replace(/_id/g, "")
+          trimmedFieldName = fieldName.replace(/_id/g, '')
         }
 
         if (fieldName.includes('_or_')) {
-          trimmedFieldName = fieldName.replace(/_or_/g, "/")
+          trimmedFieldName = fieldName.replace(/_or_/g, '/')
         }
 
-        displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
+        displayFieldName
+          = trimmedFieldName.charAt(0).toUpperCase()
+          + trimmedFieldName.slice(1).replace(/_/g, ' ')
       }
 
       let index = this.formError.findIndex(item => item.field === fieldName)
@@ -76,29 +116,37 @@ Vue.mixin({
         this.formError.splice(index, 1)
       }
 
-      if (!this.formError || this.formError.find(err => err.field === fieldName)) {
+      if (
+        !this.formError
+        || this.formError.find(err => err.field === fieldName)
+      ) {
         return
       }
-      
 
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
-          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `,
+          message: `${
+            preferredDisplayName ? preferredDisplayName : displayFieldName
+          } is required `,
         })
       }
 
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({
           field: fieldName,
-          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `,
+          message: `${
+            preferredDisplayName ? preferredDisplayName : displayFieldName
+          } is required `,
         })
       }
 
-      if (typeof inputField === "boolean" && inputField === false) {
+      if (typeof inputField === 'boolean' && inputField === false) {
         this.formError.push({
           field: fieldName,
-          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `,
+          message: `${
+            preferredDisplayName ? preferredDisplayName : displayFieldName
+          } is required `,
         })
       }
 
@@ -121,12 +169,14 @@ Vue.mixin({
         let displayFieldName = null
 
         if (key.includes('_id')) {
-          trimmedFieldName = key.replace(/_id/g, "")
+          trimmedFieldName = key.replace(/_id/g, '')
         }
         if (key.includes('_or_')) {
-          trimmedFieldName = key.replace(/_or_/g, "/")
+          trimmedFieldName = key.replace(/_or_/g, '/')
         }
-        displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
+        displayFieldName
+          = trimmedFieldName.charAt(0).toUpperCase()
+          + trimmedFieldName.slice(1).replace(/_/g, ' ')
 
         if (preferredDisplayName) {
           let findField = preferredDisplayName.find(item => item.field === key)
@@ -174,74 +224,74 @@ Vue.mixin({
             if (!isEmail(value)) {
               this.formError.push({
                 field: trimmedFieldName,
-                message: "This is not a valid email",
+                message: 'This is not a valid email',
               })
             }
           }
         }
       }
     },
-    // Realtime Checking of user permissions. 
+    // Realtime Checking of user permissions.
     CheckPermissions (permissions) {
       let hasPermission = true
       switch (this.$route.name) {
-      case "profile-practice":
-        if (!permissions.includes("View Profile Practice")) {
+      case 'profile-practice':
+        if (!permissions.includes('View Profile Practice')) {
           hasPermission = false
         }
         break
-      case "profile-branches-surgeries":
-        if (!permissions.includes("View Surgery Management")) {
+      case 'profile-branches-surgeries':
+        if (!permissions.includes('View Surgery Management')) {
           hasPermission = false
         }
         break
-      case "profile-branches-surgeries-id":
-        if (!permissions.includes("View Surgery Management")) {
+      case 'profile-branches-surgeries-id':
+        if (!permissions.includes('View Surgery Management')) {
           hasPermission = false
         }
         break
-      case "profile-branches-surgeries-create":
-        if (!permissions.includes("View Surgery Management")) {
+      case 'profile-branches-surgeries-create':
+        if (!permissions.includes('View Surgery Management')) {
           hasPermission = false
         }
         break
-      case "profile-users":
-        if (!permissions.includes("View Profile Users")) {
+      case 'profile-users':
+        if (!permissions.includes('View Profile Users')) {
           hasPermission = false
         }
         break
-      case "profile-users-id":
-        if (!permissions.includes("Show Profile Users")) {
+      case 'profile-users-id':
+        if (!permissions.includes('Show Profile Users')) {
           hasPermission = false
         }
         break
-      case "profile-users-create":
-        if (!permissions.includes("Create Profile Users")) {
+      case 'profile-users-create':
+        if (!permissions.includes('Create Profile Users')) {
           hasPermission = false
         }
         break
-      case "profile-practice-documents":
-        if (!permissions.includes("View Profile Practice Document")) {
+      case 'profile-practice-documents':
+        if (!permissions.includes('View Profile Practice Document')) {
           hasPermission = false
         }
         break
-      case "profile-practice-documents-id":
-        if (!permissions.includes("Show Profile Practice Document")) {
+      case 'profile-practice-documents-id':
+        if (!permissions.includes('Show Profile Practice Document')) {
           hasPermission = false
         }
         break
-      case "sessions-index":
-        if (!permissions.includes("View Sessions Job")) {
+      case 'sessions-index':
+        if (!permissions.includes('View Sessions Job')) {
           hasPermission = false
         }
         break
-      case "sessions-index-id":
-        if (!permissions.includes("Show Sessions Job")) {
+      case 'sessions-index-id':
+        if (!permissions.includes('Show Sessions Job')) {
           hasPermission = false
         }
         break
-      case "permanent-jobs":
-        if (!permissions.includes("View Permanent Jobs")) {
+      case 'permanent-jobs':
+        if (!permissions.includes('View Permanent Jobs')) {
           hasPermission = false
         }
         break
@@ -264,13 +314,13 @@ Vue.mixin({
 
     isNumber (e) {
       let acceptedKeys = [
-        "Backspace",
-        "Tab",
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-        "Delete",
+        'Backspace',
+        'Tab',
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'Delete',
       ]
       // for input type number to avoid entering 'e'
       e = e ? e : window.event
@@ -281,18 +331,11 @@ Vue.mixin({
       //   return true
       // }
 
-      const {
-        key,
-        target,
-      } = e
+      const { key, target, } = e
 
-      const {
-        value,
-        selectionStart,
-        selectionEnd,
-      } = target
+      const { value, selectionStart, selectionEnd, } = target
 
-      console.log("key", key)
+      console.log('key', key)
 
       if (key < 10) {
         if (value.includes('.')) {
@@ -320,8 +363,8 @@ Vue.mixin({
     },
 
     isNumberDash (e) {
-      var charCode = (e.which) ? e.which : e.keyCode
-      // && charCode != 45 
+      var charCode = e.which ? e.which : e.keyCode
+      // && charCode != 45
       if (charCode != 46 && charCode > 33 && (charCode < 48 || charCode > 57)) {
         e.preventDefault()
       }
@@ -329,7 +372,14 @@ Vue.mixin({
     },
 
     mixinNumber (e) {
-      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
@@ -340,63 +390,132 @@ Vue.mixin({
       }
 
       if (niNumber.length < 2 || niNumber.length === 8) {
-        if (!(/^[a-zA-Z]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        if (
+          !(
+            /^[a-zA-Z]+$/i.test(e.key)
+            || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+              e.key
+            )
+          )
+        ) {
           e.preventDefault()
         }
       } else {
-        if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+        if (
+          !(
+            /^[0-9]+$/i.test(e.key)
+            || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+              e.key
+            )
+          )
+        ) {
           e.preventDefault()
         }
       }
     },
 
     mixinAplhanumberic (e) {
-      if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[a-zA-Z0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     mixinSortCode (e) {
-      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     mixinVatNumber (e) {
-      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[0-9 ]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     mixinPhoneNumber (e) {
-      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     mixinAccountNumber (e) {
-      if (!(/^[0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     mixinPcseEaCode (e) {
-      if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[a-zA-Z0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     mixinNhspsEaCode (e) {
-      if (!(/^[a-zA-Z0-9]+$/i.test(e.key) || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(e.key))) {
+      if (
+        !(
+          /^[a-zA-Z0-9]+$/i.test(e.key)
+          || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab',].includes(
+            e.key
+          )
+        )
+      ) {
         e.preventDefault()
       }
     },
 
     inputNumberOnly (e) {
       // numbers only [0-9]
-      e = (e) ? e : window.event
-      var charCode = (e.which) ? e.which : e.keyCode
-      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40) && (![46,].includes(charCode)))) {
+      e = e ? e : window.event
+      var charCode = e.which ? e.which : e.keyCode
+      if (
+        charCode > 31
+        && (charCode < 48 || charCode > 57)
+        && (charCode < 96 || charCode > 105)
+        && (charCode < 37 || charCode > 40)
+        && ![46,].includes(charCode)
+      ) {
         e.preventDefault()
       } else {
         return true
@@ -404,28 +523,36 @@ Vue.mixin({
     },
     alphaNumeric (e) {
       // numbers only [0-9, A-Z, a-z]
-      e = (e) ? e : window.event
-      var charCode = (e.which) ? e.which : e.keyCode
+      e = e ? e : window.event
+      var charCode = e.which ? e.which : e.keyCode
       let specialKeys = [8, 9, 46, 36, 35, 37, 38, 39, 40,]
       if (e.shiftKey) {
-        if ((charCode => 48 || charCode <= 57) && (charCode < 65 || charCode > 122)) {
+        if (
+          (charCode => 48 || charCode <= 57)
+          && (charCode < 65 || charCode > 122)
+        ) {
           e.preventDefault()
         } else {
           return true
         }
       } else {
-        if ((charCode > 31) && (charCode < 65 || charCode > 122) && (charCode < 48 || charCode > 57) && (!specialKeys.includes(charCode)) && (![46,].includes(charCode))) {
+        if (
+          charCode > 31
+          && (charCode < 65 || charCode > 122)
+          && (charCode < 48 || charCode > 57)
+          && !specialKeys.includes(charCode)
+          && ![46,].includes(charCode)
+        ) {
           e.preventDefault()
         } else {
           return true
         }
       }
-
     },
     inputTelephone (e) {
       // [0-9,+,-,#]
-      e = (e) ? e : window.event
-      var charCode = (e.which) ? e.which : e.keyCode
+      e = e ? e : window.event
+      var charCode = e.which ? e.which : e.keyCode
       if (e.shiftKey) {
         if (charCode !== 187) {
           e.preventDefault()
@@ -433,7 +560,13 @@ Vue.mixin({
           return true
         }
       }
-      if ((charCode > 31 && (charCode < 48 || charCode > 57) && (charCode < 96 || charCode > 105) && (charCode < 37 || charCode > 40) && (![107, 46,].includes(charCode)))) {
+      if (
+        charCode > 31
+        && (charCode < 48 || charCode > 57)
+        && (charCode < 96 || charCode > 105)
+        && (charCode < 37 || charCode > 40)
+        && ![107, 46,].includes(charCode)
+      ) {
         e.preventDefault()
       } else {
         return true
@@ -450,11 +583,10 @@ Vue.mixin({
     },
 
     datesToJobParts (dates) {
-      const datesDays = dates
-        .reduce((datesDays, date) => {
-          datesDays[date] = this.$moment(date, 'YYYY-MM-DD').format('dddd')
-          return datesDays
-        }, {})
+      const datesDays = dates.reduce((datesDays, date) => {
+        datesDays[date] = this.$moment(date, 'YYYY-MM-DD').format('dddd')
+        return datesDays
+      }, {})
 
       const jobParts = []
 
@@ -468,19 +600,15 @@ Vue.mixin({
         Sunday: 6,
       }
 
-      dates.forEach((date) => {
+      dates.forEach(date => {
         if (jobParts.length === 0) {
           jobParts.push({
-            dates: [
-              date,
-            ],
+            dates: [date,],
           })
         } else {
           const lastJobPart = jobParts[jobParts.length - 1]
 
-          const {
-            dates: jobPartDates,
-          } = lastJobPart
+          const { dates: jobPartDates, } = lastJobPart
 
           const lastDate = jobPartDates[jobPartDates.length - 1]
 
@@ -492,17 +620,21 @@ Vue.mixin({
 
           const dateDayOrder = dayOrder[dateDay]
 
-          const daysDifference = this.$moment(date, 'YYYY-MM-DD').diff(this.$moment(lastDate, 'YYYY-MM-DD'), 'days')
+          const daysDifference = this.$moment(date, 'YYYY-MM-DD').diff(
+            this.$moment(lastDate, 'YYYY-MM-DD'),
+            'days'
+          )
 
           const validDaysDifference = dayOrder.Sunday - lastDateDayOrder
 
-          if (lastDateDayOrder <= dateDayOrder && validDaysDifference >= daysDifference) {
+          if (
+            lastDateDayOrder <= dateDayOrder
+            && validDaysDifference >= daysDifference
+          ) {
             lastJobPart.dates.push(date)
           } else {
             jobParts.push({
-              dates: [
-                date,
-              ],
+              dates: [date,],
             })
           }
         }

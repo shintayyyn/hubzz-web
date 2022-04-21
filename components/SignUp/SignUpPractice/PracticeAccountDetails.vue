@@ -1,5 +1,8 @@
 <template>
-  <div ref="container" class="flex flex-col items-center justify-center xl:mx-4 w-full">
+  <div
+    ref="container"
+    class="flex flex-col items-center justify-center xl:mx-4 w-full"
+  >
     <!-- <AppFormError v-if="formError.length > 0" class="w-full mb-4" :formError="formError" /> -->
     <div class="flex w-full justify-center xl:justify-start">
       <div class="flex flex-col w-full p-4 m-1 rounded-lg border">
@@ -26,13 +29,17 @@
             :items="hub_types"
             required
           />
-          <div v-if="form.type === 'Hub'" class="bg-gray-300 rounded-lg mx-4 mb-4">
+          <div
+            v-if="form.type === 'Hub'"
+            class="bg-gray-300 rounded-lg mx-4 mb-4"
+          >
             <div v-if="form.hub_type === 'Type 1'" class="px-4 py-2">
               <p class="font-semibold ">
                 Hub
               </p>
               <p class="text-sm">
-                Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.
+                Hubs can create jobs for their own surgeries, and can invite
+                Spokes, and create jobs for them.
               </p>
             </div>
             <div v-if="form.hub_type === 'Type 2'" class="px-4 py-2 my-2">
@@ -40,7 +47,8 @@
                 Hub - Healthboard
               </p>
               <p class="text-sm">
-                Healthboard Hubs can only create jobs for its spokes but not for itself.
+                Healthboard Hubs can only create jobs for its spokes but not for
+                itself.
               </p>
             </div>
           </div>
@@ -60,7 +68,7 @@
             :placeholder="'Your first name'"
             :error="formError.find(item => item.field === 'first_name')"
             required
-            @blur="CheckEmptyField(form.first_name,'first_name')"
+            @blur="CheckEmptyField(form.first_name, 'first_name')"
           />
           <AppInput
             v-model="form.last_name"
@@ -70,7 +78,7 @@
             :placeholder="'Your last name'"
             :error="formError.find(item => item.field === 'last_name')"
             required
-            @blur="CheckEmptyField(form.last_name,'last_name')"
+            @blur="CheckEmptyField(form.last_name, 'last_name')"
           />
           <AppInput
             v-if="false"
@@ -89,7 +97,7 @@
             :placeholder="'Select...'"
             :items="practice_roles"
             required
-            @blur="CheckEmptyField(form.practice_role,'practice_role')"
+            @blur="CheckEmptyField(form.practice_role, 'practice_role')"
           />
           <AppInput
             v-model="form.practice_type_id"
@@ -100,10 +108,23 @@
             :lists="practiceTypes"
             required
             :showSelectAll="true"
-            @checked="practiceTypeId => form.practice_type_id.push(parseInt(practiceTypeId))"
-            @unchecked="practiceTypeId => form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt(practiceTypeId))"
-            @selectAll="() => form.practice_type_id = practiceTypes.map(({ value }) => value)"
-            @unselectAll="() => form.practice_type_id = []"
+            @checked="
+              practiceTypeId =>
+                form.practice_type_id.push(parseInt(practiceTypeId))
+            "
+            @unchecked="
+              practiceTypeId =>
+                (form.practice_type_id = form.practice_type_id.filter(
+                  id => id !== parseInt(practiceTypeId)
+                ))
+            "
+            @selectAll="
+              () =>
+                (form.practice_type_id = practiceTypes.map(
+                  ({ value }) => value
+                ))
+            "
+            @unselectAll="() => (form.practice_type_id = [])"
           />
           <template v-if="false && isOOH">
             <AppInput
@@ -111,9 +132,18 @@
               :type="'text'"
               :name="'national_insurance_number'"
               :label="'National Insurance number'"
-              :error="formError.find(item => item.field === 'national_insurance_number')"
+              :error="
+                formError.find(
+                  item => item.field === 'national_insurance_number'
+                )
+              "
               required
-              @blur="CheckEmptyField(form.national_insurance_number, 'national_insurance_number')"
+              @blur="
+                CheckEmptyField(
+                  form.national_insurance_number,
+                  'national_insurance_number'
+                )
+              "
               @keypress="inputNumberOnly($event)"
             />
             <AppInput
@@ -150,7 +180,10 @@
               :type="'select'"
               :name="'section_scheme_year'"
               :label="'NHS Pension Scheme Year?'"
-              :items="[{ label: '1995/2008', value: '1995/2008' }, { label: '2015', value: '2015' }]"
+              :items="[
+                { label: '1995/2008', value: '1995/2008' },
+                { label: '2015', value: '2015' }
+              ]"
               required
             />
             <AppInput
@@ -158,45 +191,95 @@
               :type="'text'"
               :name="'professional_nhs_expenses'"
               :label="'Professional NHS Expense'"
-              :error="formError.find(item => item.field === 'professional_nhs_expenses')"
+              :error="
+                formError.find(
+                  item => item.field === 'professional_nhs_expenses'
+                )
+              "
               required
-              @blur="CheckEmptyField(form.professional_nhs_expenses, 'professional_nhs_expenses')"
+              @blur="
+                CheckEmptyField(
+                  form.professional_nhs_expenses,
+                  'professional_nhs_expenses'
+                )
+              "
             />
             <AppInput
               v-model="form.added_year_contributions"
               :type="'text'"
               :name="'added_year_contributions'"
-              :label="'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'"
-              :error="formError.find(item => item.field === 'added_year_contributions')"
+              :label="
+                'Additional contributions for Added Years, Additional Pension, NHS AVC Scheme'
+              "
+              :error="
+                formError.find(
+                  item => item.field === 'added_year_contributions'
+                )
+              "
               required
-              @blur="CheckEmptyField(form.added_year_contributions, 'added_year_contributions')"
+              @blur="
+                CheckEmptyField(
+                  form.added_year_contributions,
+                  'added_year_contributions'
+                )
+              "
             />
             <AppInput
               v-model="form.added_early_retirement_contributions"
               :type="'text'"
               :name="'added_early_retirement_contributions'"
-              :label="'Additional contributions for Early Retirement Reduction Buy Out'"
-              :error="formError.find(item => item.field === 'added_early_retirement_contributions')"
+              :label="
+                'Additional contributions for Early Retirement Reduction Buy Out'
+              "
+              :error="
+                formError.find(
+                  item => item.field === 'added_early_retirement_contributions'
+                )
+              "
               required
-              @blur="CheckEmptyField(form.added_early_retirement_contributions, 'added_early_retirement_contributions')"
+              @blur="
+                CheckEmptyField(
+                  form.added_early_retirement_contributions,
+                  'added_early_retirement_contributions'
+                )
+              "
             />
             <AppInput
               v-model="form.nhsps_employer_contributions"
               :type="'text'"
               :name="'nhsps_employer_contributions'"
               :label="'NHSPS employer contributions'"
-              :error="formError.find(item => item.field === 'nhsps_employer_contributions')"
+              :error="
+                formError.find(
+                  item => item.field === 'nhsps_employer_contributions'
+                )
+              "
               required
-              @blur="CheckEmptyField(form.nhsps_employer_contributions, 'nhsps_employer_contributions')"
+              @blur="
+                CheckEmptyField(
+                  form.nhsps_employer_contributions,
+                  'nhsps_employer_contributions'
+                )
+              "
             />
             <AppInput
               v-model="form.nhs_pension_scheme_employing_authority_name"
               :type="'text'"
               :name="'nhs_pension_scheme_employing_authority_name'"
               :label="'NHSPS employing authority name'"
-              :error="formError.find(item => item.field === 'nhs_pension_scheme_employing_authority_name')"
+              :error="
+                formError.find(
+                  item =>
+                    item.field === 'nhs_pension_scheme_employing_authority_name'
+                )
+              "
               required
-              @blur="CheckEmptyField(form.nhs_pension_scheme_employing_authority_name, 'nhs_pension_scheme_employing_authority_name')"
+              @blur="
+                CheckEmptyField(
+                  form.nhs_pension_scheme_employing_authority_name,
+                  'nhs_pension_scheme_employing_authority_name'
+                )
+              "
             />
           </template>
           <AppInput
@@ -212,12 +295,16 @@
               :name="'vat_number'"
               :label="'VAT Number'"
               :error="formError.find(item => item.field === 'vat_number')"
+              :limit="11"
+              @keydown="e => mixinVatNumber(e)"
             />
             <AppDate
               v-model="form.tax_year_end_date"
               :name="'tax_year_end_date'"
               :label="'Tax Year End Date'"
-              :error="formError.find(item => item.field === 'tax_year_end_date')"
+              :error="
+                formError.find(item => item.field === 'tax_year_end_date')
+              "
             />
           </template>
 
@@ -271,30 +358,34 @@
                 :type="'text'"
                 :name="'search'"
                 :placeholder="'Surgery Name, Surgery Code, or keywords'"
-                :error="formError.find(item => item.field === 'hub_practice_id')"
+                :error="
+                  formError.find(item => item.field === 'hub_practice_id')
+                "
                 @submit="search"
               />
-              <AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="search" />
+              <AppButton
+                :label="'Search'"
+                :inStyle="'padding:5px 14px;'"
+                class="mb-4"
+                @click="search"
+              />
 
               <div v-if="showResult && practiceLists.length === 0" class="mt-5">
-                <div
-                  class="text-xs xl:text-base font-bold"
-                >
-                  No practice matched that name. Try again with whole words, practice code or CCG.
+                <div class="text-xs xl:text-base font-bold">
+                  No practice matched that name. Try again with whole words,
+                  practice code or CCG.
                 </div>
               </div>
               <div
                 v-if="showResult && practiceLists.length > 0"
                 class="rounded-lg border overflow-auto bg-white mb-4"
               >
-                <div
-                  class="text-xs lg:text-base font-bold p-4"
-                >
+                <div class="text-xs lg:text-base font-bold p-4">
                   Select by clicking on the practice that you wish to add
                 </div>
 
                 <div
-                  v-for="(item) in practiceLists"
+                  v-for="item in practiceLists"
                   :key="item.id"
                   class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
                   @click="select(item)"
@@ -305,7 +396,11 @@
                         <span>{{ item.surgery.name }}</span>
                         <span
                           class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
-                          :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
+                          :class="
+                            item.type == 'Spoke'
+                              ? 'bg-blue-400'
+                              : 'bg-purple-400'
+                          "
                         >{{ item.type }}</span>
                         <span
                           v-if="item.invited === true"
@@ -313,17 +408,23 @@
                         >Invited</span>
                       </div>
                     </div>
-                    <div class="flex flex-row flex-no-wrap mt-1 text-sm text-xs md:text-sm">
+                    <div
+                      class="flex flex-row flex-no-wrap mt-1 text-sm text-xs md:text-sm"
+                    >
                       <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
                         CCG
                       </div>
-                      <div
-                        class="flex items-center"
-                      >
-                        {{ item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A' }}
+                      <div class="flex items-center">
+                        {{
+                          item.surgery.clinical_commissioning_group
+                            ? item.surgery.clinical_commissioning_group.name
+                            : 'N/A'
+                        }}
                       </div>
                     </div>
-                    <div class="flex flex-row flex-no-wrap mt-1 text-sm text-xs md:text-sm">
+                    <div
+                      class="flex flex-row flex-no-wrap mt-1 text-sm text-xs md:text-sm"
+                    >
                       <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
                         Practice Code
                       </div>
@@ -337,10 +438,9 @@
                   <p class="font-bold">
                     These are just top 10 matches from your search term.
                   </p>
-                  <p
-                    class="font-bold"
-                  >
-                    Try again with practice code or its full name if the practice isn't in the result.
+                  <p class="font-bold">
+                    Try again with practice code or its full name if the
+                    practice isn't in the result.
                   </p>
                 </div>
               </div>
@@ -387,27 +487,29 @@
               :error="formError.find(item => item.field === 'hub_practice_id')"
               @submit="search"
             />
-            <AppButton :label="'Search'" :inStyle="'padding:5px 14px;'" class="mb-4" @click="search" />
+            <AppButton
+              :label="'Search'"
+              :inStyle="'padding:5px 14px;'"
+              class="mb-4"
+              @click="search"
+            />
 
             <div v-if="showResult && practiceLists.length === 0" class="mt-5">
-              <div
-                class="text-xs xl:text-base font-bold"
-              >
-                No practice matched that name. Try again with whole words, practice code or CCG.
+              <div class="text-xs xl:text-base font-bold">
+                No practice matched that name. Try again with whole words,
+                practice code or CCG.
               </div>
             </div>
             <div
               v-if="showResult && practiceLists.length > 0"
               class="rounded-lg border overflow-auto bg-white mb-4"
             >
-              <div
-                class="text-xs lg:text-base font-bold p-4"
-              >
+              <div class="text-xs lg:text-base font-bold p-4">
                 Select by clicking on the practice that you wish to add
               </div>
 
               <div
-                v-for="(item) in spokeLists"
+                v-for="item in spokeLists"
                 :key="item.id"
                 class="border-t-2 p-4 cursor-pointer hover:bg-gray-400"
                 @click="select(item)"
@@ -418,7 +520,9 @@
                       <span>{{ item.surgery.name }}</span>
                       <span
                         class="p-1 px-4 rounded-lg text-sm mx-2 text-white"
-                        :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'"
+                        :class="
+                          item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'
+                        "
                       >{{ item.type }}</span>
                       <span
                         v-if="item.invited === true"
@@ -430,10 +534,12 @@
                     <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">
                       CCG
                     </div>
-                    <div
-                      class="flex items-center"
-                    >
-                      {{ item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A' }}
+                    <div class="flex items-center">
+                      {{
+                        item.surgery.clinical_commissioning_group
+                          ? item.surgery.clinical_commissioning_group.name
+                          : 'N/A'
+                      }}
                     </div>
                   </div>
                   <div class="flex flex-row flex-no-wrap mt-1 text-sm">
@@ -450,10 +556,9 @@
                 <p class="font-bold">
                   These are just top 10 matches from your search term.
                 </p>
-                <p
-                  class="font-bold"
-                >
-                  Try again with practice code or its full name if the practice isn't in the result.
+                <p class="font-bold">
+                  Try again with practice code or its full name if the practice
+                  isn't in the result.
                 </p>
               </div>
             </div>
@@ -503,7 +608,7 @@
             :label="'Username'"
             :error="formError.find(item => item.field === 'username')"
             required
-            @blur="CheckEmptyField(form.username,'username')"
+            @blur="CheckEmptyField(form.username, 'username')"
           />
 
           <AppInput
@@ -514,7 +619,7 @@
             :placeholder="'Your email address'"
             :error="formError.find(item => item.field === 'email')"
             required
-            @blur="CheckEmptyField(form.email,'email')"
+            @blur="CheckEmptyField(form.email, 'email')"
           />
 
           <AppInput
@@ -525,7 +630,7 @@
             :placeholder="'Your password'"
             :error="formError.find(item => item.field === 'password')"
             required
-            @blur="CheckEmptyField(form.password,'password')"
+            @blur="CheckEmptyField(form.password, 'password')"
           />
           <AppInput
             v-model="form.password_confirmation"
@@ -534,9 +639,16 @@
             :label="'Repeat password to verify'"
             :placeholder="'Repeat password'"
             :password="form.password"
-            :error="formError.find(item => item.field === 'password_confirmation')"
+            :error="
+              formError.find(item => item.field === 'password_confirmation')
+            "
             required
-            @blur="CheckEmptyField(form.password_confirmation,'password_confirmation')"
+            @blur="
+              CheckEmptyField(
+                form.password_confirmation,
+                'password_confirmation'
+              )
+            "
           />
 
           <AppInput
@@ -567,10 +679,8 @@
               >
               <label for="privacy_policy" class="text-xs sm:text-sm py-1">
                 I agree with the
-                <span
-                  class="cursor-pointer underline"
-                  @click="modal = true"
-                >Terms and Conditions and Privacy Policy</span> of Hubzz
+                <span class="cursor-pointer underline" @click="modal = true">Terms and Conditions and Privacy Policy</span>
+                of Hubzz
                 <span class="text-red-500">*</span>
               </label>
             </div>
@@ -579,7 +689,16 @@
                 v-if="formError.find(item => item.field === 'privacy_policy')"
                 class="py-1 text-xs text-red-500"
               >
-                {{ formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ") }}
+                {{
+                  formError
+                    .find(item => item.field === 'privacy_policy')
+                    .message.charAt(0)
+                    .toUpperCase() +
+                    formError
+                      .find(item => item.field === 'privacy_policy')
+                      .message.slice(1)
+                      .replace(/_/g, ' ')
+                }}
               </div>
             </transition>
           </div>
@@ -588,12 +707,15 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeSurgeryDetails')" />
+      <AppButton
+        :label="'<<'"
+        @click="$emit('nextTab', 'PracticeSurgeryDetails')"
+      />
       <div class="mx-2" />
       <AppButton :label="'Sign Up'" @click="signUp" />
     </div>
 
-    <div v-if="modal" class="shield" @click="modal=false" />
+    <div v-if="modal" class="shield" @click="modal = false" />
     <transition name="slide" mode="out-in">
       <div v-if="modal" class="px-6 py-4 modal-container">
         <div class="">
@@ -610,7 +732,9 @@
     </transition>
 
     <AppConfirmationModal
-      :label="`Proceed to invite this ${form.type === 'Hub' ? 'Spoke' : 'Hub'}?`"
+      :label="
+        `Proceed to invite this ${form.type === 'Hub' ? 'Spoke' : 'Hub'}?`
+      "
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="toggle_invite_modal"
@@ -631,29 +755,29 @@
 </template>
 
 <script>
-import AppInput from "@/components/Base/AppInput"
-import AppDate from "@/components/Base/AppDate"
-import AppButton from "@/components/Base/AppButton"
+import AppInput from '@/components/Base/AppInput'
+import AppDate from '@/components/Base/AppDate'
+import AppButton from '@/components/Base/AppButton'
 // import AppFormError from "@/components/Base/AppFormError"
-import TermsAndConditions from "@/components/TermsAndConditions"
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
-import PracticeInviteSpokePermissions from "@/components/SignUp/SignUpPractice/PracticeInviteSpokePermissions"
+import TermsAndConditions from '@/components/TermsAndConditions'
+import AppConfirmationModal from '@/components/Base/AppConfirmationModal'
+import PracticeInviteSpokePermissions from '@/components/SignUp/SignUpPractice/PracticeInviteSpokePermissions'
 
 const types = [
-  { value: "Hub", label: "Hub", },
-  { value: "Spoke", label: "Spoke", },
-  { value: "Stand Alone", label: "Stand Alone", },
+  { value: 'Hub', label: 'Hub', },
+  { value: 'Spoke', label: 'Spoke', },
+  { value: 'Stand Alone', label: 'Stand Alone', },
 ]
 
 const hub_types = [
-  { value: "Type 1", label: "Type 1", },
-  { value: "Type 2", label: "Type 2", },
+  { value: 'Type 1', label: 'Type 1', },
+  { value: 'Type 2', label: 'Type 2', },
 ]
 
 const practice_roles = [
-  { value: "Partner", label: "Partner", },
-  { value: "Practice Manager", label: "Practice Manager", },
-  { value: "Practice Staff", label: "Practice Staff", },
+  { value: 'Partner', label: 'Partner', },
+  { value: 'Practice Manager', label: 'Practice Manager', },
+  { value: 'Practice Staff', label: 'Practice Staff', },
 ]
 
 export default {
@@ -669,7 +793,7 @@ export default {
 
   data () {
     return {
-      search_text: "",
+      search_text: '',
       practiceLists: [],
       showResult: false,
       toggle_invite_modal: false,
@@ -686,22 +810,22 @@ export default {
       form: {
         hub_practice_id: null,
         surgeries: [],
-        type: "",
-        hub_type: "",
-        title: "",
-        first_name: "",
-        last_name: "",
-        suffix: "",
-        practice_role: "",
+        type: '',
+        hub_type: '',
+        title: '',
+        first_name: '',
+        last_name: '',
+        suffix: '',
+        practice_role: '',
         practice_type_id: [],
-        username: "",
-        email: "",
-        password: "",
-        password_confirmation: "",
+        username: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
         privacy_policy: false,
         vat_registered: false,
-        vat_number: "",
-        tax_year_end_date: "",
+        vat_number: '',
+        tax_year_end_date: '',
         // account_name: "",
         // bank_name: "",
         // sort_code: "",
@@ -726,15 +850,15 @@ export default {
 
   computed: {
     practiceTypes () {
-      return this.$store.getters["sign-up/getPracticeTypes"]
+      return this.$store.getters['sign-up/getPracticeTypes']
     },
 
     practiceAccountDetails () {
-      return this.$store.getters["sign-up/practiceAccountDetails"]
+      return this.$store.getters['sign-up/practiceAccountDetails']
     },
 
     practiceAccountFormError () {
-      return this.$store.getters["sign-up/practiceAccountFormError"]
+      return this.$store.getters['sign-up/practiceAccountFormError']
     },
 
     spokeLists () {
@@ -754,7 +878,7 @@ export default {
 
     isOOH () {
       const practiceType = this.practiceTypes.find(
-        practiceType => practiceType.label === "OOH (Out of Hours)"
+        practiceType => practiceType.label === 'OOH (Out of Hours)'
       )
       return (
         practiceType && this.form.practice_type_id.includes(practiceType.value)
@@ -763,14 +887,37 @@ export default {
   },
 
   watch: {
+    'form.vat_number' () {
+      const array = this.form.vat_number
+        .split('')
+        .filter(v =>
+          ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0',].includes(v)
+        )
+        .slice(0, 9)
+
+      if (array.length > 3) {
+        array.splice(3, 0, ' ')
+      }
+
+      if (array.length > 8) {
+        array.splice(8, 0, ' ')
+      }
+
+      const value = array.join('')
+
+      if (this.form.vat_number !== value) {
+        this.form.vat_number = value
+      }
+    },
+
     practiceAccountFormError (value) {
-      console.log("account error", value)
+      console.log('account error', value)
       if (value.length > 0) {
         value.forEach(item => {
           this.formError.push({
             field:
-              item.validation === "confirmed"
-                ? "password_confirmation"
+              item.validation === 'confirmed'
+                ? 'password_confirmation'
                 : item.field,
             message: item.message,
             validation: item.validation,
@@ -778,20 +925,22 @@ export default {
         })
       }
     },
-    "form.sort_code" (value) {
-      let final = ""
+    'form.sort_code' (value) {
+      let final = ''
       if (value && value.length > 0) {
-        let digit = value.split("-").join("")
+        let digit = value.split('-').join('')
 
-        final = digit.match(/.{1,2}/g) ? digit.match(/.{1,2}/g).join('-') : digit
+        final = digit.match(/.{1,2}/g)
+          ? digit.match(/.{1,2}/g).join('-')
+          : digit
         this.form.sort_code = final
       } else {
-        return ""
+        return ''
       }
     },
 
-    "form.type" () {
-      this.search_text = ""
+    'form.type' () {
+      this.search_text = ''
       this.displayPracticeHub = null
       this.selectedPracticeHubId = null
       this.toggle_invite_modal = false
@@ -817,8 +966,8 @@ export default {
       this.practiceAccountFormError.forEach(item => {
         this.formError.push({
           field:
-            item.validation === "confirmed"
-              ? "password_confirmation"
+            item.validation === 'confirmed'
+              ? 'password_confirmation'
               : item.field,
           message: item.message,
           validation: item.validation,
@@ -832,21 +981,21 @@ export default {
       this.displayPracticeHub = null
       this.selectedPracticeHubId = null
       this.showResult = false
-      this.search_text = ""
+      this.search_text = ''
       this.displaySpokes = []
     },
     select (item) {
-      if (this.form.type === "Spoke") {
+      if (this.form.type === 'Spoke') {
         this.selectedPracticeHubId = item.id
         this.toggle_invite_modal = true
       }
-      if (this.form.type === "Hub") {
+      if (this.form.type === 'Hub') {
         this.selectedPracticeSpoke = item
         this.toggle_permission_modal = true
       }
     },
     invite () {
-      if (this.form.type === "Spoke") {
+      if (this.form.type === 'Spoke') {
         this.displayPracticeHub = this.practiceLists.find(
           practiceHub => practiceHub.id === this.selectedPracticeHubId
         )
@@ -910,9 +1059,9 @@ export default {
           search: this.search_text,
           limit: 10,
           practice_type:
-            this.form.type === "Spoke"
-              ? ["Hub", "Stand Alone",]
-              : ["Spoke", "Stand Alone",],
+            this.form.type === 'Spoke'
+              ? ['Hub', 'Stand Alone',]
+              : ['Spoke', 'Stand Alone',],
         }
         this.$axios
           .$get(`/api/v1/practice/practice-spokes`, { params, })
@@ -922,12 +1071,12 @@ export default {
             this.showResult = true
           })
           .catch(err => {
-            console.log("err", err.response || err)
+            console.log('err', err.response || err)
 
-            this.$store.commit("SET_NOTIFICATION", {
+            this.$store.commit('SET_NOTIFICATION', {
               enabled: true,
-              status: "danger",
-              text: ["Something went wrong!",],
+              status: 'danger',
+              text: ['Something went wrong!',],
             })
           })
       }
@@ -935,43 +1084,43 @@ export default {
     signUp () {
       this.formError = []
 
-      if (this.form.type === "Spoke") {
+      if (this.form.type === 'Spoke') {
         this.form.hub_practice_id = this.selectedPracticeHubId
       }
-      if (this.form.type === "Hub") {
+      if (this.form.type === 'Hub') {
         this.form.surgeries = this.displaySpokes
       }
 
       let notRequired = [
-        "title",
-        "suffix",
-        "vat_registered",
-        "hub_practice_id",
-        "surgeries",
+        'title',
+        'suffix',
+        'vat_registered',
+        'hub_practice_id',
+        'surgeries',
       ]
 
-      if (["Spoke", "Stand Alone",].includes(this.form.type)) {
-        notRequired.push("hub_type")
+      if (['Spoke', 'Stand Alone',].includes(this.form.type)) {
+        notRequired.push('hub_type')
       }
-      if (["false", false,].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number", "tax_year_end_date")
+      if (['false', false,].includes(this.form.vat_registered)) {
+        notRequired.push('vat_number', 'tax_year_end_date')
       }
-      if ([false, "false",].includes(this.has_referral)) {
-        notRequired.push("referral_code")
+      if ([false, 'false',].includes(this.has_referral)) {
+        notRequired.push('referral_code')
         this.form.referral_code = null
       }
-      if (!this.form.practice_type_id.includes("8")) {
+      if (!this.form.practice_type_id.includes('8')) {
         notRequired.push(
-          "national_insurance_number",
-          "sd_number",
-          "paying_reference",
-          "ea_code",
-          "professional_nhs_expenses",
-          "section_scheme_year",
-          "added_year_contributions",
-          "added_early_retirement_contributions",
-          "nhsps_employer_contributions",
-          "nhs_pension_scheme_employing_authority_name"
+          'national_insurance_number',
+          'sd_number',
+          'paying_reference',
+          'ea_code',
+          'professional_nhs_expenses',
+          'section_scheme_year',
+          'added_year_contributions',
+          'added_early_retirement_contributions',
+          'nhsps_employer_contributions',
+          'nhs_pension_scheme_employing_authority_name'
         )
         this.form.national_insurance_number = null
         this.form.sd_number = null
@@ -987,9 +1136,9 @@ export default {
 
       this.Validate(this.form, notRequired)
       if (!this.formError.length) {
-        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", this.form)
+        this.$store.commit('sign-up/SET_PRACTICE_ACCOUNT_DETAILS', this.form)
         setTimeout(() => {
-          this.$store.dispatch("sign-up/registeredPractice")
+          this.$store.dispatch('sign-up/registeredPractice')
         }, 1000)
       }
     },
