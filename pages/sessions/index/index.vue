@@ -1,7 +1,11 @@
 <template>
   <section class="relative">
     <transition name="fade" mode="out-in">
-      <div v-if="initialLoading" class="relative flex w-full" style="min-height:80px">
+      <div
+        v-if="initialLoading"
+        class="relative flex w-full"
+        style="min-height:80px"
+      >
         <AppLoading :loading="initialLoading" spinner />
       </div>
 
@@ -91,11 +95,7 @@
                 border
               />
             </div>
-            <AppButton
-              class="mr-1"
-              :label="'Search'"
-              @click="filterJob"
-            />
+            <AppButton class="mr-1" :label="'Search'" @click="filterJob" />
           </template>
 
           <template v-slot:filter>
@@ -202,17 +202,17 @@
                 :name="'favorite_only'"
                 :label="'Favourite Only'"
                 :placeholder="'Select...'"
-                :items="[{label: 'All', value: ''}, {label: 'Yes', value: true}, {label: 'No', value: false}]"
+                :items="[
+                  { label: 'All', value: '' },
+                  { label: 'Yes', value: true },
+                  { label: 'No', value: false }
+                ]"
                 :wrapperClass="'px-1'"
                 nolabel
                 border
               />
             </div>
-            <AppButton
-              class="mr-1"
-              :label="'Apply'"
-              @click="filterJob"
-            />
+            <AppButton class="mr-1" :label="'Apply'" @click="filterJob" />
 
             <AppButton
               :label="'Clear'"
@@ -502,7 +502,7 @@ export default {
   computed: {
     getRequestQueryFilters () {
       return {
-        practice_id: this.$route.query.status === "Pending" ? null : this.$auth.user.practice_detail.practice.id,
+        // practice_id: this.$route.query.status === "Pending" ? null : this.$auth.user.practice_detail.practice.id,
         practice_job_status: this.$route.query.status || "Allocated",
         type: this.type,
         shift_id_includes: this.shift_id,
@@ -832,7 +832,7 @@ export default {
       if (tab && this.filterTab !== tab) {
         this.clearFilters()
         this.filterTab = tab
-      }else if (!tab && !this.filterTab) {
+      } else if (!tab && !this.filterTab) {
         this.filterTab = tab
       }
     },
