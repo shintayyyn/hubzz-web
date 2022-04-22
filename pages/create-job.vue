@@ -2304,23 +2304,23 @@ export default {
               authUserPracticeId,
             })
 
-            if (
-              job.practice_id !== authUserPracticeId
-              && job.parent_practice_id === authUserPracticeId
-              && job.practice_surgery_id
-            ) {
-              if (job.status === 'Pending') {
-                this.$router.push(`/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions?jobStatus=Pending`)
-              } else {
-                this.$router.push(`/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions?jobStatus=Live`)
-              }
+            // if (
+            //   job.practice_id !== authUserPracticeId
+            //   && job.parent_practice_id === authUserPracticeId
+            //   && job.practice_surgery_id
+            // ) {
+            //   if (job.status === 'Pending') {
+            //     this.$router.push(`/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions?jobStatus=Pending`)
+            //   } else {
+            //     this.$router.push(`/hub-surgery-management/${job.practice_surgery_id}/surgery-sessions?jobStatus=Live`)
+            //   }
+            // } else {
+            if (job.status === 'Pending') {
+              this.$router.push('/sessions/?status=Pending')
             } else {
-              if (job.status === 'Pending') {
-                this.$router.push('/sessions/?status=Pending')
-              } else {
-                this.$router.push('/sessions/?status=Live')
-              }
+              this.$router.push('/sessions/?status=Live')
             }
+            // }
           })
           .catch(err => {
             console.log("err", err.response || err)
