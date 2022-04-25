@@ -38,250 +38,249 @@
           </template>
 
           <template v-slot:filter>
-          <template v-if="!isJobPart" >
-            <div class="flex-1">
-              <AppInput
-                v-model="job_number_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_number_includes'"
-                :label="'Job number'"
-                nolabel
-                border
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="title_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'title_includes'"
-                :label="'Job Title'"
-                nolabel
-                border
-              />
-            </div>
-            <div class="w-32">
-              <AppInput
-                v-model="shift_id"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-                nolabel
-                border
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="rate"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'rate'"
-                :label="'Rate £'"
-                :limit="8"
-                @keydown="isNumber($event)"
-                nolabel
-                border
-              />
-            </div>
-            <div class="w-32">
-              <AppInput
-                v-model="rate_type_id"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'rate_type_id'"
-                :label="'Rate Type'"
-                :items="rates"
-                nolabel
-                border
-              />
-            </div>
-            <div class="flex-1">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                nolabel
-                border
-              />
-            </div>
-            <div class="w-24">
-              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" nolabel border :wrapperClass="'px-1'"/>
-            </div>
-            <div class="flex-1">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                nolabel
-                border
-              />
-            </div>
-            <div class="w-24">
-              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" nolabel border :wrapperClass="'px-1'"/>
-            </div>
-            <div class="flex-1">
-              <AppPostCode
-                v-model="near_post_code"
-                :wrapperClass="'px-1'"
-                :name="'near_post_code'"
-                :label="'Post code'"
-                nolabel
-                border
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="miles"
-                :wrapperClass="'px-1'"
-                :type="'number'"
-                :name="'miles'"
-                :label="'Miles'"
-                nolabel
-                border
-              />
-            </div>
+            <template v-if="!isJobPart">
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_number_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_number_includes'"
+                  :label="'Job number'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="title_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'title_includes'"
+                  :label="'Job Title'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="w-32">
+                <AppInput
+                  v-model="shift_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'shift_id'"
+                  :label="'Shift'"
+                  :items="shifts"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="rate"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'rate'"
+                  :label="'Rate £'"
+                  :limit="8"
+                  nolabel
+                  border
+                  @keydown="isNumber($event)"
+                />
+              </div>
+              <div class="w-32">
+                <AppInput
+                  v-model="rate_type_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'rate_type_id'"
+                  :label="'Rate Type'"
+                  :items="rates"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_start"
+                  :name="'calendar_date_start'"
+                  :label="'From'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="w-24">
+                <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" nolabel border :wrapperClass="'px-1'" />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_end"
+                  :name="'calendar_date_end'"
+                  :label="'To'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="w-24">
+                <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" nolabel border :wrapperClass="'px-1'" />
+              </div>
+              <div class="flex-1">
+                <AppPostCode
+                  v-model="near_post_code"
+                  :wrapperClass="'px-1'"
+                  :name="'near_post_code'"
+                  :label="'Post code'"
+                  nolabel
+                  border
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="miles"
+                  :wrapperClass="'px-1'"
+                  :type="'number'"
+                  :name="'miles'"
+                  :label="'Miles'"
+                  nolabel
+                  border
+                />
+              </div>
+            </template>
+            <template v-if="isJobPart">
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_part_number_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_part_number_includes'"
+                  :label="'Job part number'"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_title_includes"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_title_includes'"
+                  :label="'Job Title'"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_shift_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'job_shift_id'"
+                  :label="'Shift'"
+                  :items="shifts"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_rate"
+                  :wrapperClass="'px-1'"
+                  :type="'text'"
+                  :name="'job_rate'"
+                  :label="'Rate £'"
+                  :limit="8"
+                  border
+                  nolabel
+                  @keydown="isNumber($event)"
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="job_rate_type_id"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'job_rate_type_id'"
+                  :label="'Rate Type'"
+                  :items="rates"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_start"
+                  :name="'calendar_date_start'"
+                  :label="'From'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" border nolabel />
+              </div>
+              <div class="flex-1">
+                <AppDate
+                  v-model="calendar_date_end"
+                  :name="'calendar_date_end'"
+                  :label="'To'"
+                  :format="'YYYY-MM-DD'"
+                  :wrapperClass="'px-1'"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" border nolabel />
+              </div>
+              <div class="flex-1">
+                <AppPostCode
+                  v-model="near_post_code"
+                  :wrapperClass="'px-1'"
+                  :name="'near_post_code'"
+                  :label="'Post code'"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="miles"
+                  :wrapperClass="'px-1'"
+                  :type="'number'"
+                  :name="'miles'"
+                  :label="'Miles'"
+                  border
+                  nolabel
+                />
+              </div>
+              <div class="flex-1">
+                <AppInput
+                  v-model="invoice_status"
+                  :wrapperClass="'px-1'"
+                  :type="'select'"
+                  :name="'invoice_status'"
+                  :label="'Invoice Status'"
+                  :items="invoiceStatusList"
+                  border
+                  nolabel
+                />
+              </div>
+            </template>
+            <AppButton
+              class="mx-2"
+              :label="'Search'"
+              @click="filterJob"
+            />
+            <AppButton
+              :label="'Clear'"
+              customTheme="border"
+              @click="clearFilters"
+            />
           </template>
-          <template v-if="isJobPart" >
-            <div class="flex-1">
-              <AppInput
-                v-model="job_part_number_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_part_number_includes'"
-                :label="'Job part number'"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="job_title_includes"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_title_includes'"
-                :label="'Job Title'"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="job_shift_id"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'job_shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="job_rate"
-                :wrapperClass="'px-1'"
-                :type="'text'"
-                :name="'job_rate'"
-                :label="'Rate £'"
-                :limit="8"
-                @keydown="isNumber($event)"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="job_rate_type_id"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'job_rate_type_id'"
-                :label="'Rate Type'"
-                :items="rates"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppDate
-                v-model="calendar_date_start"
-                :name="'calendar_date_start'"
-                :label="'From'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppTime v-model="time_start" :name="'time_start'" :label="'Start Time'" :wrapperClass="'px-1'" border nolabel/>
-            </div>
-            <div class="flex-1">
-              <AppDate
-                v-model="calendar_date_end"
-                :name="'calendar_date_end'"
-                :label="'To'"
-                :format="'YYYY-MM-DD'"
-                :wrapperClass="'px-1'"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppTime v-model="time_end" :name="'time_end'" :label="'End Time'" :wrapperClass="'px-1'" border nolabel/>
-            </div>
-            <div class="flex-1">
-              <AppPostCode
-                v-model="near_post_code"
-                :wrapperClass="'px-1'"
-                :name="'near_post_code'"
-                :label="'Post code'"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="miles"
-                :wrapperClass="'px-1'"
-                :type="'number'"
-                :name="'miles'"
-                :label="'Miles'"
-                border
-                nolabel
-              />
-            </div>
-            <div class="flex-1">
-              <AppInput
-                v-model="invoice_status"
-                :wrapperClass="'px-1'"
-                :type="'select'"
-                :name="'invoice_status'"
-                :label="'Invoice Status'"
-                :items="invoiceStatusList"
-                border
-                nolabel
-              />
-            </div>
-          </template>
-          <AppButton
-            class="mx-2"
-            :label="'Search'"
-            @click="filterJob"
-          />
-          <AppButton
-            :label="'Clear'"
-            @click="clearFilters"
-            customTheme="border"
-          />
-        </template>
-
         </AppFilter>
         <!-- <div class="flex items-center">
           <button @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
@@ -586,7 +585,7 @@ export default {
     AppPostCode,
     AppButton,
     AppLoading,
-    AppFilter
+    AppFilter,
   },
 
   props: {
@@ -709,6 +708,7 @@ export default {
       case "withdrawn":
       case "approved":
       case "private":
+      case "unsuccessful":
         return `You do not have any ${queryStatus} jobs`
       case "available":
       case "matched":
@@ -717,10 +717,7 @@ export default {
       case "bank":
         return `There are no available jobs nearby and suited for you at this time`
       case "applied":
-      case "unsuccessful":
-        return `You have not yet ${
-          queryStatus === "applied" ? "applied" : "rejected"
-        } for a job`
+        return `You have not yet applied for a job`
       case "completed":
         return "You have not yet completed any job"
 
@@ -743,7 +740,7 @@ export default {
             name: "Job Part Number",
             dataIndex: "job_part_number",
             sortable: true,
-            width: 120
+            width: 120,
           },
           {
             name: "Surgery",
@@ -762,21 +759,21 @@ export default {
             dataIndex: "job.shift.name",
             class: "text-center",
             sortable: true,
-            width: 140
+            width: 140,
           },
           {
             name: "Rate",
             dataIndex: "job.rate",
             sortable: true,
             class: "text-center",
-            width: 100
+            width: 100,
           },
           {
             name: "Rate Type",
             dataIndex: "job.locum_detail_rate_type.name",
             class: "text-center",
             sortable: true,
-            width: 140
+            width: 140,
           }
         )
       } else if (
@@ -793,7 +790,7 @@ export default {
             name: "Job Number",
             dataIndex: "job_number",
             sortable: true,
-            width: 130
+            width: 130,
           },
           {
             name: "Surgery",
@@ -812,21 +809,21 @@ export default {
             dataIndex: "shift_name",
             class: "text-center",
             sortable: true,
-            width: 150
+            width: 150,
           },
           {
             name: "Rate",
             dataIndex: "rate",
             sortable: true,
             class: "text-center",
-            width: 130
+            width: 130,
           },
           {
             name: "Rate Type",
             dataIndex: "rate_type_name",
             class: "text-center",
             sortable: true,
-            width: 130
+            width: 130,
           }
         )
       }
@@ -838,7 +835,7 @@ export default {
           // dataIndex: "date_start",
           sortable: true,
           class: "text-center",
-          width: 130
+          width: 130,
         },
         {
           name: "To",
@@ -847,7 +844,7 @@ export default {
           // dataIndex: "date_end",
           sortable: true,
           class: "text-center",
-          width: 130
+          width: 130,
         }
       )
       if (queryStatus === "applied") {
@@ -862,7 +859,7 @@ export default {
           name: "Rejected At",
           dataIndex: "appointed_at_in_gb_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         })
       }
       if (queryStatus === "withdrawn") {
@@ -870,7 +867,7 @@ export default {
           name: "Withdrawn At",
           dataIndex: "declined_at_in_gb_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         })
       }
       if (queryStatus === "cancelled") {
@@ -878,7 +875,7 @@ export default {
           name: "Cancelled At",
           dataIndex: "cancelled_at_in_gb_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         })
       }
       if (["completed",].includes(queryStatus)) {
@@ -886,7 +883,7 @@ export default {
           name: "Completed At",
           dataIndex: "completed_at_in_gb_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         })
       }
       if (["approved",].includes(queryStatus)) {
@@ -894,7 +891,7 @@ export default {
           name: "Approved At",
           dataIndex: "approved_at_in_gb_formatted",
           class: "text-center",
-          width: 130
+          width: 130,
         })
       }
       
@@ -904,7 +901,7 @@ export default {
             name: "Invoice status",
             dataIndex: "invoice_status",
             class: "text-center",
-            width: 100
+            width: 100,
           },
         )
       }
@@ -915,7 +912,7 @@ export default {
             name: "Tag",
             dataIndex: "locum_status",
             class: "text-center",
-            width: 80
+            width: 80,
           }
         )
       }

@@ -2,6 +2,5 @@
   "tabWidth": 2,
   "semi": false,
   "singleQuote": true,
-  "space-before-function-paren": 1,
   "print-width": 160
 }

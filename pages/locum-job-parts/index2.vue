@@ -399,6 +399,7 @@ export default {
       case "withdrawn":
       case "approved":
       case "private":
+      case "unsuccessful":
         return `You do not have any ${queryStatus} jobs`
       case "available":
       case "matched":
@@ -407,10 +408,7 @@ export default {
       case "bank":
         return `There are no available jobs nearby and suited for you at this time`
       case "applied":
-      case "unsuccessful":
-        return `You have not yet ${
-          queryStatus === "applied" ? "applied" : "rejected"
-        } for a job`
+        return `You have not yet applied for a job`
       case "completed":
         return "You have not yet completed any job"
 
