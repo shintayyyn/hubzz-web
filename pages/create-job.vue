@@ -432,7 +432,7 @@
                         />
 
                         <div class="mb-6 text-center md:text-left mt-2">
-                          <AppButton :label="'Add Compliance Document (Profile Page)'" class="w-full mt-1" :customTheme="'bg-white shadow border hover:bg-gray-100'" @click="goToProfile" />
+                          <AppButton :label="'Add Compliance Document (Profile Page)'" class="w-full mt-1" :customTheme="'bg-white shadow border hover:bg-gray-100'" @click="showGoToProfileModal = true" />
                         </div>
                       </template>
                       <template v-else-if="!form.practice_id">
@@ -538,7 +538,7 @@
                     />
 
                     <div class="mb-6 text-center md:text-left">
-                      <AppButton :label="'Add Compliance Document (Profile Page)'" class="w-full mt-1" :customTheme="'bg-white shadow border hover:bg-gray-100'" @click="goToProfile" />
+                      <AppButton :label="'Add Compliance Document (Profile Page)'" class="w-full mt-1" :customTheme="'bg-white shadow border hover:bg-gray-100'" @click="showGoToProfileModal = true" />
                     </div>
                   </template>
 
@@ -597,6 +597,15 @@
         </nuxt-link>
       </div>
     </div>
+
+    <AppConfirmationModal
+      :label="'By clicking continue, you will be taken out of the Create a Session screen'"
+      :confirmLabel="'Continue'"
+      :cancelLabel="'Back'"
+      :modal="showGoToProfileModal"
+      @confirm="goToProfile"
+      @cancel="showGoToProfileModal = false"
+    />
   </div>
 </template>
 
@@ -610,6 +619,7 @@ import AppButton from "@/components/Base/AppButton"
 import AppTime from "@/components/Base/AppTime"
 import AppLoading from "@/components/Base/AppLoading"
 import AppBreadcrumbs from "@/components/Base/AppBreadcrumbs"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
 
 const session_requirements_lists = [
   { label: "Practice admin", value: "Practice admin", },
@@ -628,6 +638,7 @@ export default {
     AppLoading,
     AppMultipleDates,
     AppBreadcrumbs,
+    AppConfirmationModal,
   },
 
   data () {
@@ -730,6 +741,7 @@ export default {
         favorite_only_until: null,
       },
       formError: [],
+      showGoToProfileModal: false,
     }
   },
 
@@ -2058,9 +2070,10 @@ export default {
     },
 
     goToProfile () {
-      this.$store.commit("calendar/CREATE_JOB_MODAL", false)
-      this.$store.commit("calendar/CLEAR_REPOST_JOB")
-      window.open("/profile", "_blank")
+      // this.$store.commit("calendar/CREATE_JOB_MODAL", false)
+      // this.$store.commit("calendar/CLEAR_REPOST_JOB")
+      // window.open("/profile", "_blank")
+      this.$router.push("/profile")
     },
 
     uncheckMandatory (value) {
