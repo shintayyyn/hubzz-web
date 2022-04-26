@@ -510,7 +510,7 @@
       <AppButton
         v-if="propInvoice && !propInvoice.approved && allowToBill && propInvoice.last_disputed_by !== 'Practice'"
         class="m-1"
-        :label="'Accept & Approve Changes'"
+        :label="'Accept & Approve'"
         :inStyle="'padding:5px 14px;font-size:1em'"
         :disabled="saveLoading || sched_has_changes || shiftErrors.length > 0"
         @click="toggleModal(true)"
