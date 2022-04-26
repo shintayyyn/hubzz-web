@@ -505,7 +505,7 @@
 
     <div 
       v-if="authPermissions.includes('Process Billings')"
-      class="flex justify-start items-center mb-6"
+      class="flex flex-wrap justify-start items-center mb-6"
     >
       <AppButton
         v-if="propInvoice && !propInvoice.approved && allowToBill && propInvoice.last_disputed_by !== 'Practice'"
