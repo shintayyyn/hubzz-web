@@ -54,9 +54,13 @@
 
       <div
         v-if="propInvoice.status === 'Disputed'"
-        class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 uppercase text-gray-700"
+        class="w-full bg-orange-400 mt-4 py-1 text-center rounded font-bold mx-2 text-gray-700"
       >
-        Disputed by Locum
+        DISPUTED BY LOCUM
+
+        <p v-if="getRemarks()">
+          Reason: {{ getRemarks() }}
+        </p>
       </div>
 
       <p class="w-full bg-gray my-4 py-1 text-center text-white rounded font-bold mx-2">
@@ -105,6 +109,7 @@
       
       <div class="w-full border-b overflow-x-auto">
         <AppSchedules
+          ref="appSchedulesInput"
           :practice_rate="practice_rate"
           :schedule="propInvoice.job_part_schedule_items"
           :error="formError.find(err => err.field === 'schedules')"
@@ -115,7 +120,7 @@
           :invoiceStatus="$route.query.status"
           :tax_rates="tax_rates"
           :locum_vat_registered="propInvoice.locum_user_vat_registered"
-          :toDisplay="propInvoice.approved || propInvoice.last_disputed_by === 'Practice' || $route.query.status === 'issued' || !propInvoice.disputed_items_count"
+          :toDisplay="(!disputeByPractice) || propInvoice.approved || propInvoice.last_disputed_by === 'Practice' || $route.query.status === 'issued' || !propInvoice.disputed_items_count"
           @getSchedule="getSchedule"
         />
       </div>
@@ -512,11 +517,20 @@
       />
 
       <AppButton
-        v-if="propInvoice && !propInvoice.approved && allowToBill && sched_has_changes && propInvoice.last_disputed_by !== 'Practice'"
+        v-if="propInvoice && !propInvoice.approved && allowToBill && propInvoice.last_disputed_by !== 'Practice'"
+        class="m-1"
+        :label="disputeByPractice ? 'Undispute' : 'Dispute'"
+        :inStyle="'padding:5px 14px;font-size:1em'"
+        :disabled="saveLoading || shiftErrors.length > 0"
+        @click="toggleDispute"
+      />
+
+      <AppButton
+        v-if="(true || disputeByPractice) || (propInvoice && !propInvoice.approved && allowToBill && sched_has_changes && propInvoice.last_disputed_by !== 'Practice')"
         class="m-1"
         :label="'Save Changes'"
         :inStyle="'padding:5px 14px;font-size:1em'"
-        :disabled="saveLoading || shiftErrors.length > 0"
+        :disabled="!sched_has_changes || saveLoading || shiftErrors.length > 0"
         @click="save(false)"
       />
       
@@ -610,6 +624,8 @@ export default {
       // solo_form_pension_amount: 0
 
       tax_rates: {},
+
+      disputeByPractice: false,
     }
   },
 
@@ -864,54 +880,68 @@ export default {
   },
 
   mounted () {
-    if (this.propInvoice) {
-      this.form.date_start = this.propInvoice.date_start
-      this.form.date_end = this.propInvoice.date_end
-
-      this.form.items = [
-        {
-          type: "Job Part",
-          job_part_id: this.propInvoice.items[0].job_part.id,
-          description: this.propInvoice.items[0].description,
-          total: this.propInvoice.items[0].total,
-          dispute: this.propInvoice.items[0].disputed,
-          absent_days: this.propInvoice.items[0].absent_days,
-          final_hours: this.propInvoice.items[0].final_hours,
-          late_hours: this.propInvoice.items[0].late_hours,
-          remarks: this.propInvoice.items[0].remarks,
-        },
-      ]
-      this.form.total_amount = this.propInvoice.total_amount
-      this.isApproved = this.propInvoice.items[0].approved
-
-      if (
-        this.$auth.user.practice_detail
-        && this.$auth.user.practice_detail.practice.type !== "Spoke"
-      ) {
-        this.allowToBill = true
-      } else if (
-        this.$auth.user.practice_detail.practice.type === "Spoke"
-        && !this.$auth.user.practice_detail.practice.parent_practice_id
-      ) {
-        this.allowToBill = true
-      } else if (
-        this.$auth.user.practice_detail.practice.parent_practice_id
-        && this.$auth.user.practice_detail.practice.allow_surgery_bill_locum
-          === true
-      ) {
-        this.allowToBill = true
-      }
-    }
-
-    this.form.hours = Math.floor(this.form.items[0].final_hours / 60)
-    this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
-    this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
-    this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
-
+    this.resetInput()
     this.getPracticeProfile()
   },
 
   methods: {
+    getRemarks () {
+      const remarks = this.propInvoice?.job_part_schedule_items?.map?.(({ remarks, }) => remarks).join(', ')
+
+      return remarks || ''
+    },
+
+    toggleDispute () {
+      this.disputeByPractice = !this.disputeByPractice
+      this.$refs.appSchedulesInput.initialize()
+    },
+
+    resetInput () {
+      if (this.propInvoice) {
+        this.form.date_start = this.propInvoice.date_start
+        this.form.date_end = this.propInvoice.date_end
+
+        this.form.items = [
+          {
+            type: "Job Part",
+            job_part_id: this.propInvoice.items[0].job_part.id,
+            description: this.propInvoice.items[0].description,
+            total: this.propInvoice.items[0].total,
+            dispute: this.propInvoice.items[0].disputed,
+            absent_days: this.propInvoice.items[0].absent_days,
+            final_hours: this.propInvoice.items[0].final_hours,
+            late_hours: this.propInvoice.items[0].late_hours,
+            remarks: this.propInvoice.items[0].remarks,
+          },
+        ]
+        this.form.total_amount = this.propInvoice.total_amount
+        this.isApproved = this.propInvoice.items[0].approved
+
+        if (
+          this.$auth.user.practice_detail
+          && this.$auth.user.practice_detail.practice.type !== "Spoke"
+        ) {
+          this.allowToBill = true
+        } else if (
+          this.$auth.user.practice_detail.practice.type === "Spoke"
+          && !this.$auth.user.practice_detail.practice.parent_practice_id
+        ) {
+          this.allowToBill = true
+        } else if (
+          this.$auth.user.practice_detail.practice.parent_practice_id
+          && this.$auth.user.practice_detail.practice.allow_surgery_bill_locum
+            === true
+        ) {
+          this.allowToBill = true
+        }
+      }
+
+      this.form.hours = Math.floor(this.form.items[0].final_hours / 60)
+      this.form.minutes = Math.floor(this.form.items[0].final_hours % 60)
+      this.form.late_hours = Math.floor(this.form.items[0].late_hours / 60)
+      this.form.late_minutes = Math.floor(this.form.items[0].late_hours % 60)
+    },
+
     getPracticeProfile () {
       this.$axios.get(`/api/v1/practice/me/practice-profile`)
         .then(response => this.practice = response.data.data.practice)

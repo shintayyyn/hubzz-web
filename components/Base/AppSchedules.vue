@@ -2056,164 +2056,171 @@ export default {
   },
 
   created () {
-    if (this.schedule.length) {
-      let status = this.$route.query.status ? this.$route.query.status : ""
-
-      this.schedule.forEach(sched => {
-        let isExisting = this.schedules.find(
-          item =>
-            item.date
-            === this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
-        ) || null
-
-        if (!isExisting) {
-          const formattedDate = this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
-
-          this.scheduleDates.push(formattedDate)
-
-          isExisting = {
-            date: formattedDate,
-            shifts: [],
-          }
-
-          this.schedules.push(isExisting)
-        }
-
-        if (this.type === "complete") {
-          isExisting.shifts.push({
-            id: sched.id,
-            rate: sched.rate,
-            shift_id: sched.shift_id,
-            time_end: sched.time_end,
-            time_start: sched.time_start,
-            locum_detail_rate_type_name: sched.locum_detail_rate_type ? sched.locum_detail_rate_type.name : '',
-            locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
-            final_time_start: sched.time_start,
-            final_time_end: sched.time_end,
-            has_late: false,
-            late_hours_reason: "",
-            has_absences: false,
-            absent_reason: "",
-            posted_break_in_minutes: sched.posted_break_in_minutes || '0',
-            posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
-            completed_break_in_minutes: sched.posted_break_in_minutes || '0',
-            completed_break_payable: sched.posted_break_payable ? 'true' : 'false',
-          })
-        } else if (this.type === "terminate") {
-          isExisting.shifts.push({
-            id: sched.id,
-            rate: sched.rate,
-            shift_id: sched.shift_id,
-            time_end: sched.time_end,
-            time_start: sched.time_start,
-            locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
-            locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
-            final_time_start: "",
-            final_time_end: "",
-            has_late: false,
-            late_hours_reason: "",
-            has_absences: false,
-            absent_reason: "",
-            posted_break_in_minutes: sched.posted_break_in_minutes || '0',
-            posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
-            completed_break_in_minutes: sched.posted_break_in_minutes || '0',
-            completed_break_payable: sched.posted_break_payable ? 'true' : 'false',
-          })
-        } else if (this.type === "invoice") {
-          let isAbsent = !this.invoiceDetails
-            ? sched.final_time_start === sched.final_time_end
-            : sched.time_start === sched.time_end
-
-          let finalRate = this.getRate(
-            sched,
-            sched.final_time_start,
-            sched.final_time_end,
-            this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
-          )
-
-          let isDisputed = sched.remarks ? true : false
-
-          isExisting.shifts.push({
-            id: sched.id,
-            rate: sched.rate,
-            shift: sched.shift,
-            shift_id: sched.shift.id,
-            orig_time_start: sched.original_time_start,
-            orig_time_end: sched.original_time_end,
-            time_end: status === "issued" ? sched.original_time_end : sched.time_end,
-            time_start: status === "issued" ? sched.original_time_start : sched.time_start,
-            locum_detail_rate_type: sched.locum_detail_rate_type,
-            locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
-            locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
-            orig_final_start: sched.final_time_start,
-            orig_final_end: sched.final_time_end,
-            orig_has_absences: isAbsent,
-            final_time_start: isAbsent
-              ? ""
-              : !this.invoiceDetails
-                ? sched.final_time_start
-                : sched.time_start,
-            final_time_end: isAbsent
-              ? ""
-              : !this.invoiceDetails
-                ? sched.final_time_end
-                : sched.time_end,
-            late_hours: sched.late_hours_in_minutes,
-            has_absences: isAbsent,
-            dispute: isDisputed,
-            remarks: sched.remarks ? sched.remarks : "",
-            total: finalRate,
-
-            last_disputed_by: sched.last_disputed_by,
-            practice_last_edit_time_start: sched.practice_last_edit_time_start,
-            practice_last_edit_time_end: sched.practice_last_edit_time_end,
-
-            practice_last_edit_invoiced_break_in_minutes: sched.practice_last_edit_invoiced_break_in_minutes,
-            practice_last_edit_invoiced_break_payable: sched.practice_last_edit_invoiced_break_payable,
-
-            posted_break_in_minutes: sched.posted_break_in_minutes || '0',
-            posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
-            completed_break_in_minutes: sched.completed_break_in_minutes || '0',
-            completed_break_payable: sched.completed_break_payable ? 'true' : 'false',
-            invoiced_break_in_minutes: this.invoiceDetails
-              ? sched.invoiced_break_in_minutes || '0'
-              : sched.completed_break_in_minutes || '0',
-            invoiced_break_payable: this.invoiceDetails
-              ? sched.invoiced_break_payable ? 'true' : 'false'
-              : sched.completed_break_payable ? 'true' : 'false',
-          })
-        } else {
-          isExisting.shifts.push({
-            rate: sched.rate,
-            shift_id: sched.shift_id,
-            time_end: sched.time_end,
-            time_start: sched.time_start,
-            locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
-            posted_break_in_minutes: sched.posted_break_in_minutes,
-            posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
-          })
-        }
-
-        // for original copy to check if has changes
-        if (this.type !== "create") {
-          this.original_schedule = JSON.parse(JSON.stringify(this.schedules))
-        }
-      })
-    }
-
-    if (
-      ["complete", "terminate",].includes(this.type)
-      && this.jobPartTerminationCompletion
-    ) {
-      const job_part_in_job = this.jobPartTerminationCompletion.job.job_parts.find(
-        job_part => job_part.id === this.jobPartTerminationCompletion.id
-      )
-
-      this.job_part_queue_number = job_part_in_job.part
-    }
+    this.initialize()
   },
 
   methods: {
+    initialize () {
+      this.scheduleDates = []
+      this.schedules = []
+      
+      if (this.schedule.length) {
+        let status = this.$route.query.status ? this.$route.query.status : ""
+
+        this.schedule.forEach(sched => {
+          let isExisting = this.schedules.find(
+            item =>
+              item.date
+              === this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+          ) || null
+
+          if (!isExisting) {
+            const formattedDate = this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+
+            this.scheduleDates.push(formattedDate)
+
+            isExisting = {
+              date: formattedDate,
+              shifts: [],
+            }
+
+            this.schedules.push(isExisting)
+          }
+
+          if (this.type === "complete") {
+            isExisting.shifts.push({
+              id: sched.id,
+              rate: sched.rate,
+              shift_id: sched.shift_id,
+              time_end: sched.time_end,
+              time_start: sched.time_start,
+              locum_detail_rate_type_name: sched.locum_detail_rate_type ? sched.locum_detail_rate_type.name : '',
+              locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+              final_time_start: sched.time_start,
+              final_time_end: sched.time_end,
+              has_late: false,
+              late_hours_reason: "",
+              has_absences: false,
+              absent_reason: "",
+              posted_break_in_minutes: sched.posted_break_in_minutes || '0',
+              posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
+              completed_break_in_minutes: sched.posted_break_in_minutes || '0',
+              completed_break_payable: sched.posted_break_payable ? 'true' : 'false',
+            })
+          } else if (this.type === "terminate") {
+            isExisting.shifts.push({
+              id: sched.id,
+              rate: sched.rate,
+              shift_id: sched.shift_id,
+              time_end: sched.time_end,
+              time_start: sched.time_start,
+              locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
+              locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+              final_time_start: "",
+              final_time_end: "",
+              has_late: false,
+              late_hours_reason: "",
+              has_absences: false,
+              absent_reason: "",
+              posted_break_in_minutes: sched.posted_break_in_minutes || '0',
+              posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
+              completed_break_in_minutes: sched.posted_break_in_minutes || '0',
+              completed_break_payable: sched.posted_break_payable ? 'true' : 'false',
+            })
+          } else if (this.type === "invoice") {
+            let isAbsent = !this.invoiceDetails
+              ? sched.final_time_start === sched.final_time_end
+              : sched.time_start === sched.time_end
+
+            let finalRate = this.getRate(
+              sched,
+              sched.final_time_start,
+              sched.final_time_end,
+              this.$moment(sched.date, "YYYY-MM-DD").format("DD/MM/YYYY")
+            )
+
+            let isDisputed = sched.remarks ? true : false
+
+            isExisting.shifts.push({
+              id: sched.id,
+              rate: sched.rate,
+              shift: sched.shift,
+              shift_id: sched.shift.id,
+              orig_time_start: sched.original_time_start,
+              orig_time_end: sched.original_time_end,
+              time_end: status === "issued" ? sched.original_time_end : sched.time_end,
+              time_start: status === "issued" ? sched.original_time_start : sched.time_start,
+              locum_detail_rate_type: sched.locum_detail_rate_type,
+              locum_detail_rate_type_name: sched.locum_detail_rate_type.name,
+              locum_detail_rate_type_id: sched.locum_detail_rate_type.id,
+              orig_final_start: sched.final_time_start,
+              orig_final_end: sched.final_time_end,
+              orig_has_absences: isAbsent,
+              final_time_start: isAbsent
+                ? ""
+                : !this.invoiceDetails
+                  ? sched.final_time_start
+                  : sched.time_start,
+              final_time_end: isAbsent
+                ? ""
+                : !this.invoiceDetails
+                  ? sched.final_time_end
+                  : sched.time_end,
+              late_hours: sched.late_hours_in_minutes,
+              has_absences: isAbsent,
+              dispute: isDisputed,
+              remarks: sched.remarks ? sched.remarks : "",
+              total: finalRate,
+
+              last_disputed_by: sched.last_disputed_by,
+              practice_last_edit_time_start: sched.practice_last_edit_time_start,
+              practice_last_edit_time_end: sched.practice_last_edit_time_end,
+
+              practice_last_edit_invoiced_break_in_minutes: sched.practice_last_edit_invoiced_break_in_minutes,
+              practice_last_edit_invoiced_break_payable: sched.practice_last_edit_invoiced_break_payable,
+
+              posted_break_in_minutes: sched.posted_break_in_minutes || '0',
+              posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
+              completed_break_in_minutes: sched.completed_break_in_minutes || '0',
+              completed_break_payable: sched.completed_break_payable ? 'true' : 'false',
+              invoiced_break_in_minutes: this.invoiceDetails
+                ? sched.invoiced_break_in_minutes || '0'
+                : sched.completed_break_in_minutes || '0',
+              invoiced_break_payable: this.invoiceDetails
+                ? sched.invoiced_break_payable ? 'true' : 'false'
+                : sched.completed_break_payable ? 'true' : 'false',
+            })
+          } else {
+            isExisting.shifts.push({
+              rate: sched.rate,
+              shift_id: sched.shift_id,
+              time_end: sched.time_end,
+              time_start: sched.time_start,
+              locum_detail_rate_type_id: sched.locum_detail_rate_type_id,
+              posted_break_in_minutes: sched.posted_break_in_minutes,
+              posted_break_payable: sched.posted_break_payable ? 'true' : 'false',
+            })
+          }
+
+          // for original copy to check if has changes
+          if (this.type !== "create") {
+            this.original_schedule = JSON.parse(JSON.stringify(this.schedules))
+          }
+        })
+      }
+
+      if (
+        ["complete", "terminate",].includes(this.type)
+        && this.jobPartTerminationCompletion
+      ) {
+        const job_part_in_job = this.jobPartTerminationCompletion.job.job_parts.find(
+          job_part => job_part.id === this.jobPartTerminationCompletion.id
+        )
+
+        this.job_part_queue_number = job_part_in_job.part
+      }
+    },
+
     emitSchedule () {
       if (this.type === "invoice") {
         this.$emit(
