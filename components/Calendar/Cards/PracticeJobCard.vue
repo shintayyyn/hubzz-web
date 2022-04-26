@@ -11,7 +11,7 @@
       <div class="text-gray-800 my-1 font-bold">
         {{ jobTitle }}
       </div>
-       <!--<div class="flex flex-wrap items-center w-full">
+      <div class="flex flex-wrap items-center w-full">
         <div v-for="shift in jobShift" :key="shift.id" class="w-1/2">
           <div
             :key="shift.id"
@@ -21,7 +21,7 @@
             {{ shift.name }}
           </div>
         </div> 
-      </div>-->
+      </div>
       <div class="text-gray-600 mt-2 text-sm sm:text-md">
         {{ jobSurgeryName }}
       </div>
@@ -34,6 +34,12 @@
         {{ $moment(dateEnd).format('DD / MM / YYYY') }}
       </div>
     </div>
+    <p
+      class="text-center py-1 text-sm w-full font-bold"
+      :class="['Applied'].includes(propJob.status) ? 'text-black' : 'text-white'"
+    >
+      {{ propJob ? propJob.status : '' }}
+    </p>
     <!-- <p
       v-if="hasPermissionToShow"
       class="text-center text-white py-1 text-sm w-full font-bold"
