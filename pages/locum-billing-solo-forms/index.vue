@@ -484,8 +484,14 @@ export default {
           sortable: true,
         },
         {
-          name: "Paid At",
+          name: "Locum Paid At",
           dataIndex: "paid_at_formatted",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Practice Paid At",
+          dataIndex: "practice_paid_at_formatted",
           class: "text-center",
           sortable: true,
         },

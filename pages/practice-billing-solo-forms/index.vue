@@ -275,6 +275,14 @@
               >
                 Send Form to Locum
               </div> 
+
+              <div
+                v-if="!slotProps.item.practice_paid_at_formatted && authPermissions.includes('Process Billings')"
+                class="rounded text-xs px-2 hover:bg-sunglow cursor-pointer "
+                @click="locumSoloFormIdToMarkAsPaidByPractice = slotProps.item.id"
+              >
+                Mark as Paid
+              </div> 
             </div>
 
             <div v-else class="text-gray-600">
@@ -295,6 +303,44 @@
           class="flex justify-center py-4"
         >
           No Solo Forms found.
+        </div>
+
+        <div v-if="locumSoloFormIdToMarkAsPaidByPractice" class="p-2">
+          <div class="relative rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+            <AppLoading :loading="markingAsPaidByPractice" spinner />
+
+            <AppDate
+              v-model="form.practice_paid_at"
+              :name="'practice_paid_at'"
+              :label="'Payment made on'"
+              :error="formErrors.find(formError => formError.field === 'practice_paid_at')"
+              is-before
+            />
+
+            <div class="flex flex-row flex-no-wrap justify-center">
+              <AppButton
+                v-if="!markingAsPaidByPractice"
+                class="mx-1"
+                :label="'Save'"
+                :in-style="'padding:5px 10px'"
+                @click="markAsPaidByPractice"
+              />
+
+              <AppButton
+                v-if="markingAsPaidByPractice"
+                class="mx-1"
+                :label="'Saving...'"
+                :in-style="'padding:5px 10px'"
+              />
+
+              <AppButton
+                class="mx-1"
+                :label="'Cancel'"
+                :in-style="'padding:5px 10px'"
+                @click="locumSoloFormIdToMarkAsPaidByPractice = null"
+              />
+            </div>
+          </div>
         </div>
 
         <div v-if="locumSoloFormIdToSign" class="p-2">
@@ -395,6 +441,7 @@ import AppButton from "@/components/Base/AppButton"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
 import AppFilter from "@/components/Base/AppFilter"
+import AppDate from "@/components/Base/AppDate"
 
 export default {
   transition: {
@@ -409,6 +456,7 @@ export default {
     AppLoading,
     AppInput,
     AppFilter,
+    AppDate,
   },
 
   data () {
@@ -439,13 +487,15 @@ export default {
       invoice_id: null,
       send_solo_form_modal: false,
       form: {
+        practice_paid_at: '',
         paid_at: null,
         ni: false,
         ni_amount: null,
         paye: false,
         paye_amount: null,
       },
-
+      locumSoloFormIdToMarkAsPaidByPractice: null,
+      markingAsPaidByPractice: false,
       locumSoloFormIdToSign: null,
       locumESignText: "",
       fileFile: null,
@@ -506,6 +556,18 @@ export default {
           dataIndex: "under_parent_practice_formatted",
           class: "text-center",
           width: 150,
+        },
+        {
+          name: "Locum Paid At",
+          dataIndex: "paid_at_formatted",
+          class: "text-center",
+          sortable: true,
+        },
+        {
+          name: "Practice Paid At",
+          dataIndex: "practice_paid_at_formatted",
+          class: "text-center",
+          sortable: true,
         },
         {
           name: "Approved At",
@@ -628,6 +690,67 @@ export default {
   },
 
   methods: {
+    errorHandler (err) {
+      console.log("err", err.response || err)
+
+      let message = null
+
+      if (err.response) {
+        if (
+          err.response.data.error_messages
+          && err.response.data.error_messages.length > 0
+        ) {
+          this.formErrors = err.response.data.error_messages
+        } else {
+          message = err.response.data.message
+        }
+      } else if (err.request) {
+        message = "Something went wrong!"
+      } else {
+        message = err.message
+      }
+
+      if (message) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${message}`,],
+        })
+      }
+    },
+
+    markAsPaidByPractice () {
+      this.markingAsPaidByPractice = true
+      this.$axios
+        .put(
+          `/api/v1/practice/locum-solo-forms/${this.locumSoloFormIdToMarkAsPaidByPractice}/mark-as-paid-by-practice`,
+          this.form
+        )
+        .then(response => {
+          const locumSoloForm = response.data.data.locum_solo_form
+
+          const index = this.locumSoloForms.findIndex(({ id, }) => id === locumSoloForm.id)
+
+          if (index > -1) {
+            this.locumSoloForms.splice(index, 1, locumSoloForm)
+          }
+
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: 'success',
+            text: [`${response.data.message}`,],
+          })
+
+          this.locumSoloFormIdToMarkAsPaidByPractice = null
+        })
+        .catch(err => {
+          this.errorHandler(err)
+        })
+        .finally(() => {
+          this.markingAsPaidByPractice = false
+        })
+    },
+
     viewAsPdf (locumSoloFormId) {
       window.open(
         `${process.env.API_URL}/api/v1/locum-solo-form/${locumSoloFormId}/pdf`

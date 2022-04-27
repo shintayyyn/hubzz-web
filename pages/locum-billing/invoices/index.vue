@@ -170,91 +170,6 @@
       </div>
 
       <div v-if="!initialLoading">
-        <!-- <div class="flex items-center">
-          <button  v-if="!['pension-form-b'].includes($route.query.status)" @click="filterModal = !filterModal" class="flex items-center justify-between text-sm p-1 border rounded mr-1">
-            <p class="mx-2">Filter</p>
-            <span class="mx-2"><svgicon name="caret-down" width="10" :style="filterModal ? 'transform: rotate(180deg)' : ''" /></span>
-          </button>
-          
-          <transition name="fade">
-          <div v-if="filterModal" class="md:px-1 flex w-full">
-            <AppButton
-              :disabled="disabledClearFilter"
-              :label="'Clear'"
-              :in-style="'padding:5px 14px;margin-bottom:0'"
-              @click="clearFilters"
-            />
-
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              :in-style="'padding:5px 14px;margin-bottom:0'"
-              @click="filterJobParts"
-            />
-          </div>
-          </transition>
-        </div>
-
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          :in-style="'padding:5px 14px;margin-bottom:0;font-size:14px;'"
-          customTheme="border-2"
-          @click="refreshInvoices"
-        />
-
-        <transition name="drop-down">
-        <div class="flex flex-col md:flex-row items-start mt-2" v-if="filterModal" >
-          <div class="md:px-1 w-full md:w-1/4">
-            <AppInput
-              v-model="job_ir35"
-              :wrapperClass="'px-1'"
-              :type="'select'"
-              :name="'job_ir35'"
-              :label="'Inside ir35'"
-              :items="[{ label: 'All', value: null }, { label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-
-          <div
-            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'to-be-invoiced'"
-            class="md:px-1 w-full md:w-1/4"
-          >
-            <AppInput
-              v-model="invoice_number"
-              :wrapperClass="'px-1'"
-              :type="'text'"
-              :name="'invoice_number'"
-              :label="'Invoice number'"
-            />
-          </div>
-
-          <div class="md:px-1 w-full md:w-1/4">
-            <AppInput
-              v-model="job_part_number_includes"
-              :wrapperClass="'px-1'"
-              :type="'text'"
-              :name="'job_part_number_includes'"
-              :label="'Job Part number'"
-            />
-          </div>
-
-          <div
-            v-if="$route.query.status && ['approved'].includes($route.query.status.toLowerCase())"
-            class="md:px-1 w-full md:w-1/4"
-          >
-            <AppInput
-              v-model="is_paid"
-              :wrapperClass="'px-1'"
-              :type="'select'"
-              :name="'is_paid'"
-              :label="'Paid'"
-              :items="[{ label: 'All', value: null}, { label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-        </div>
-        </transition> -->
-
         <template
           v-if="(!$route.query.status || ($route.query.status && $route.query.status !== 'pension-form-b'))"
         >
@@ -310,6 +225,14 @@
                 >
                   View
                 </div>
+
+                <div
+                  v-if="['approved'].includes($route.query.status) && slotProps.item.locum_invoice_locum_paid_at_in_gb_formatted === 'N/A'"
+                  class="rounded text-xs px-2  hover:bg-orange-300 cursor-pointer"
+                  @click="locumInvoiceIdToMarkAsPaidByLocum = slotProps.item.locum_invoice_id"
+                >
+                  Mark as Paid
+                </div>
               </div>
             </template>
           </AppTable>
@@ -360,6 +283,34 @@
         </template>
       </div>
     </transition>
+    
+    <div v-if="locumInvoiceIdToMarkAsPaidByLocum" class="p-2">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.locum_paid_at"
+          :name="'locum_paid_at'"
+          :label="'Payment made on'"
+          :error="formError.find(item => item.field === 'locum_paid_at')"
+          is-before
+        />
+
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            :in-style="'padding:5px 10px'"
+            @click="markAsPaidByLocum"
+          />
+
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            :in-style="'padding:5px 10px'"
+            @click="locumInvoiceIdToMarkAsPaidByLocum = null"
+          />
+        </div>
+      </div>
+    </div>
 
     <AppConfirmationModal
       :label="'Proceed to delete this draft?'"
@@ -379,7 +330,7 @@
             'locum-billing-invoices-id-edit',
             'locum-billing-invoices-form-b-create',
           ].includes($route.name)
-            || delete_invoice_modal
+            || delete_invoice_modal || locumInvoiceIdToMarkAsPaidByLocum
         "
         :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
         class="shield"
@@ -401,6 +352,8 @@ import AppTable from "@/components/Base/AppTable"
 import AppInput from "@/components/Base/AppInput"
 import AppLoading from "@/components/Base/AppLoading"
 import AppFilter from "@/components/Base/AppFilter"
+import AppDate from "@/components/Base/AppDate"
+
 export default {
   transition: {
     name: "fade",
@@ -414,10 +367,17 @@ export default {
     AppConfirmationModal,
     AppTable,
     AppFilter,
+    AppDate,
   },
 
   data () {
     return {
+      locumInvoiceIdToMarkAsPaidByLocum: false,
+      form: {
+        locum_paid_at: '',
+      },
+      formError: [],
+
       hasFormA: false,
       hasFormB: false,
 
@@ -565,12 +525,18 @@ export default {
           sortable: true,
           width: 100,
         })
-      }
 
-      if (["approved",].includes(queryStatus)) {
         columns.push({
-          name: "Paid At",
+          name: "Practice Paid At",
           dataIndex: "locum_invoice_paid_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
+          width: 120,
+        })
+
+        columns.push({
+          name: "Locum Paid At",
+          dataIndex: "locum_invoice_locum_paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
           width: 120,
@@ -606,8 +572,8 @@ export default {
       columns.push({
         name: "Actions",
         dataIndex: "actions",
-        class: queryStatus !== 'to-be-invoiced' ? "text-center" : 'dropdown',
-        width: queryStatus !== 'to-be-invoiced' ? 100 : 150,
+        class: !['to-be-invoiced', 'approved',].includes(queryStatus) ? "text-center" : 'dropdown',
+        width: !['to-be-invoiced', 'approved',].includes(queryStatus) ? 100 : 150,
       })
 
       return columns
@@ -694,6 +660,70 @@ export default {
   },
 
   methods: {
+    markAsPaidByLocum () {
+      let notRequired = []
+      console.log('markAsPaidByLocum', this.form)
+      this.formError = []
+      this.Validate(this.form, notRequired)
+      if (!this.formError.length) {
+        this.$axios
+          .$put(
+            `/api/v1/locum/locum-invoices/${this.locumInvoiceIdToMarkAsPaidByLocum}/mark-as-paid-by-locum`,
+            this.form
+          )
+          .then(res => {
+            let jobPart = this.job_parts.find(item => item.id === res.data.locum_invoice.items[0].job_part.id)
+
+            let index = this.job_parts.findIndex(item => item.id === jobPart.id)
+
+            const locumInvoice = res.data.locum_invoice
+
+            if (index > -1) {
+              jobPart.locum_invoice_locum_paid_at = locumInvoice.locum_paid_at
+              jobPart.locum_invoice_locum_paid_at_in_gb_formatted = locumInvoice.locum_paid_at_in_gb_formatted
+
+              this.job_parts.splice(index, 1, jobPart)
+            }
+
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`,],
+            })
+
+            this.locumInvoiceIdToMarkAsPaidByLocum = null
+          })
+          .catch(err => {
+            console.log("err", err.response || err)
+
+            let message = null
+
+            if (err.response) {
+              if (
+                err.response.status === 400
+                && err.response.data.error_messages
+              ) {
+                this.formError = err.response.data.error_messages
+              } else {
+                message = err.response.data.message
+              }
+            } else if (err.request) {
+              message = "Something weng wrong!"
+            } else {
+              message = err.message
+            }
+
+            if (message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${message}`,],
+              })
+            }
+          })
+      }
+    },
+
     openFormBPdf (locumFormBId) {
       window.open(`${process.env.API_URL}/api/v1/locum-form-b/${locumFormBId}/pdf`)
     },
@@ -1009,7 +1039,16 @@ export default {
 </script>
 
 <style scoped>
-.shield {
-  z-index: 511;
-}
+  .shield {
+    z-index: 511;
+  }
+
+  .payment-modal {
+    position: fixed;
+    background-color: white;
+    z-index: 512;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>

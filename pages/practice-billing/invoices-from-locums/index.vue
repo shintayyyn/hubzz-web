@@ -537,8 +537,16 @@ export default {
         })
 
         columns.push({
-          name: "Paid At",
+          name: "Practice Paid At",
           dataIndex: "locum_invoice_paid_at_in_gb_formatted",
+          class: "text-center",
+          sortable: true,
+          width: 100,
+        })
+
+        columns.push({
+          name: "Locum Paid At",
+          dataIndex: "locum_invoice_locum_paid_at_in_gb_formatted",
           class: "text-center",
           sortable: true,
           width: 100,
